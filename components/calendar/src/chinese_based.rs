@@ -175,19 +175,27 @@ impl PackedChineseBasedYearInfo {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
 pub(crate) struct ChineseBasedYearInfo {
-    pub(crate) new_year: RataDie,
+    new_year: RataDie,
     days_in_prev_year: u16,
     /// last_day_of_month[12] = last_day_of_month[11] in non-leap years
     /// These days are 1-indexed: so the last day of month for a 30-day 一月 is 30
     /// The array itself is zero-indexed, be careful passing it self.0.month!
     last_day_of_month: [u16; 13],
     ///
-    pub(crate) leap_month: Option<NonZeroU8>,
+    leap_month: Option<NonZeroU8>,
 }
 
 impl ChineseBasedYearInfo {
+    pub(crate) fn new_year(self) -> RataDie {
+        self.new_year
+    }
+
     fn next_new_year(self) -> RataDie {
         self.new_year + i64::from(self.last_day_of_month[12])
+    }
+
+    pub(crate) fn leap_month(self) -> Option<NonZeroU8> {
+        self.leap_month
     }
 
     /// The last day of year in the previous month.
@@ -208,6 +216,14 @@ impl ChineseBasedYearInfo {
                 .copied()
                 .unwrap_or(0)
         }
+    }
+
+    fn days_in_year(self) -> u16 {
+        self.last_day_of_month[12]
+    }
+
+    fn days_in_prev_year(self) -> u16 {
+        self.days_in_prev_year
     }
 
     /// The last day of year in the current month.
@@ -386,17 +402,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
 
     /// Calls days_in_year on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
-        let next_new_year = self.0.year_info.next_new_year();
-        let new_year = self.0.year_info.new_year;
-        YearBounds {
-            new_year,
-            next_new_year,
-        }
-        .count_days()
+        self.0.year_info.days_in_year()
     }
     /// Gets the days in the previous year
     pub(crate) fn days_in_prev_year(&self) -> u16 {
-        self.0.year_info.days_in_prev_year
+        self.0.year_info.days_in_prev_year()
     }
 
     /// Calculate the number of days in the year so far for a ChineseBasedDate;

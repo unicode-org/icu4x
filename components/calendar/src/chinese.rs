@@ -229,7 +229,7 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .0.year_info.leap_month;
+        let leap_month_option = date.0 .0.year_info.leap_month();
         let leap_month = if let Some(leap) = leap_month_option {
             leap.get()
         } else {
@@ -424,7 +424,7 @@ impl Chinese {
         let cyclic = (number - 1).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year
+            info.new_year()
         } else {
             Inner::fixed_mid_year_from_year(number)
         };
@@ -690,7 +690,7 @@ mod test {
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
             let chinese_date = iso.to_calendar(Chinese);
             assert!(chinese_date.is_in_leap_year());
-            let new_year = chinese_date.inner.0 .0.year_info.new_year;
+            let new_year = chinese_date.inner.0 .0.year_info.new_year();
             assert_eq!(
                 expected_month,
                 calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
