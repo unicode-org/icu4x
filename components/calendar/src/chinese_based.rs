@@ -121,8 +121,8 @@ impl PackedChineseBasedYearInfo {
         }
 
         let new_year_offset = ((self.0 & 0b11111000) >> 3) as u16;
-        let new_year =
-            Iso::fixed_from_iso(Iso::iso_from_year_day(related_iso, 21 + new_year_offset).inner);
+        let iso_ny = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
+        let new_year = iso_ny + 21 + i64::from(new_year_offset);
 
         let mut last_day_of_month: [u16; 13] = [0; 13];
         let mut months_total = 0;
