@@ -473,6 +473,14 @@ pub fn days_in_month<C: ChineseBased>(
     (result, next_new_moon)
 }
 
+/// Given a new year, calculate the number of days in the previous year
+pub fn days_in_prev_year<C: ChineseBased>(new_year: RataDie) -> u16 {
+    let date = new_year - 300;
+    let prev_solstice = winter_solstice_on_or_before::<C>(date);
+    let (prev_new_year, _) = new_year_on_or_before_fixed_date::<C>(date, prev_solstice);
+    u16::try_from(new_year - prev_new_year).unwrap_or(360)
+}
+
 /// Returns the last day of every month in the year, as well as a leap month index (1-indexed) if any
 /// In the case of no leap months, month 12 and 13 will have identical "last day"
 /// values

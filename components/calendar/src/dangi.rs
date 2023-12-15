@@ -277,7 +277,7 @@ impl Calendar for Dangi {
             day_of_year: date.0 .0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_dangi_year(prev_year, None),
-            days_in_prev_year: Self::days_in_provided_year(prev_year, date.0 .0.year_info),
+            days_in_prev_year: date.0.days_in_prev_year(),
             next_year: Self::format_dangi_year(next_year, None),
         }
     }

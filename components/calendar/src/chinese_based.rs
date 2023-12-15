@@ -71,8 +71,10 @@ fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
     let (last_day_of_month, leap_month) =
         chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
+    let days_in_prev_year = chinese_based::days_in_prev_year::<CB>(new_year);
     ChineseBasedYearInfo {
         new_year,
+        days_in_prev_year,
         // TODO(#3933): switch ChineseBasedYearInfo to packed info so we don't need to store as bloaty u16s
         last_day_of_month: last_day_of_month
             // +1 since new_year is in the current month
@@ -109,7 +111,7 @@ pub(crate) struct PackedChineseBasedYearInfo(pub(crate) u8, pub(crate) u8, pub(c
 
 impl PackedChineseBasedYearInfo {
     #[allow(unused)] // TODO(#3933)
-    pub(crate) fn unpack(self, related_iso: i32) -> ChineseBasedYearInfo {
+    pub(crate) fn unpack(self, related_iso: i32, days_in_prev_year: u16) -> ChineseBasedYearInfo {
         fn month_length(is_long: bool) -> u16 {
             if is_long {
                 30
@@ -163,6 +165,7 @@ impl PackedChineseBasedYearInfo {
 
         ChineseBasedYearInfo {
             new_year,
+            days_in_prev_year,
             last_day_of_month,
             leap_month,
         }
@@ -173,6 +176,7 @@ impl PackedChineseBasedYearInfo {
 // TODO(#3933): potentially make this smaller
 pub(crate) struct ChineseBasedYearInfo {
     pub(crate) new_year: RataDie,
+    days_in_prev_year: u16,
     /// last_day_of_month[12] = last_day_of_month[11] in non-leap years
     /// These days are 1-indexed: so the last day of month for a 30-day 一月 is 30
     /// The array itself is zero-indexed, be careful passing it self.0.month!
@@ -389,6 +393,10 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
             next_new_year,
         }
         .count_days()
+    }
+    /// Gets the days in the previous year
+    pub(crate) fn days_in_prev_year(&self) -> u16 {
+        self.0.year_info.days_in_prev_year
     }
 
     /// Calculate the number of days in the year so far for a ChineseBasedDate;
