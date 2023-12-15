@@ -61,6 +61,7 @@ use private::Sealed;
 /// be dereferenced. Rust allows unaligned pointers; see [`std::ptr::read_unaligned`].
 pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     /// The raw type used for [`Self::into_raw`] and [`Self::drop_raw`].
+    #[doc(hidden)]
     type Raw;
 
     /// Converts this pointer-like into a pointer.
