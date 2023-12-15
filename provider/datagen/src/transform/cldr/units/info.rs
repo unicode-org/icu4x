@@ -5,7 +5,6 @@
 use std::{borrow::Cow, collections::BTreeMap};
 
 use crate::transform::cldr::cldr_serde::{self};
-use fraction::{GenericFraction, Zero};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
@@ -116,6 +115,7 @@ fn test_basic() {
     use icu_provider::prelude::*;
     use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
+    use num_rational::Ratio;
     use zerofrom::ZeroFrom;
     use zerovec::maps::ZeroVecLike;
 
@@ -157,7 +157,7 @@ fn test_basic() {
             factor_num: ZeroVec::from(big_one.to_bytes_le()),
             factor_den: ZeroVec::from(big_one.to_bytes_le()),
             offset_sign: Sign::Positive,
-            offset_num: ZeroVec::from(BigUint::zero().to_bytes_le()),
+            offset_num: ZeroVec::from(BigUint::from(0u32).to_bytes_le()),
             offset_den: ZeroVec::from(big_one.to_bytes_le()),
             exactness: Exactness::Exact,
         }
@@ -167,17 +167,17 @@ fn test_basic() {
     let foot_convert_index = foot.convert_info.get().unwrap().as_unsigned_int() as usize;
     let foot_convert_ule = convert_units.zvl_get(foot_convert_index).unwrap();
     let foot_convert: ConversionInfo = ZeroFrom::zero_from(foot_convert_ule);
-    let ft_to_m = GenericFraction::<BigUint>::new(BigUint::from(3048u32), BigUint::from(10000u32));
+    let ft_to_m = Ratio::new(BigUint::from(3048u32), BigUint::from(10000u32));
 
     assert_eq!(
         foot_convert,
         ConversionInfo {
             base_unit: Cow::Borrowed("meter"),
             factor_sign: Sign::Positive,
-            factor_num: ZeroVec::from(ft_to_m.numer().unwrap().to_bytes_le()),
-            factor_den: ZeroVec::from(ft_to_m.denom().unwrap().to_bytes_le()),
+            factor_num: ZeroVec::from(ft_to_m.numer().to_bytes_le()),
+            factor_den: ZeroVec::from(ft_to_m.denom().to_bytes_le()),
             offset_sign: Sign::Positive,
-            offset_num: ZeroVec::from(BigUint::zero().to_bytes_le()),
+            offset_num: ZeroVec::from(BigUint::from(0u32).to_bytes_le()),
             offset_den: ZeroVec::from(big_one.to_bytes_le()),
             exactness: Exactness::Exact,
         }
