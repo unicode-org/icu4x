@@ -338,7 +338,7 @@ impl Dangi {
         let cyclic = (number as i64 - 1 + 364).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year()
+            info.new_year(year)
         } else {
             Inner::fixed_mid_year_from_year(number)
         };

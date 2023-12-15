@@ -198,11 +198,11 @@ pub(crate) struct ChineseBasedYearInfo {
 }
 
 impl ChineseBasedYearInfo {
-    pub(crate) fn new_year(self) -> RataDie {
+    pub(crate) fn new_year(self, _extended_year: i32) -> RataDie {
         self.new_year
     }
 
-    fn next_new_year(self) -> RataDie {
+    fn next_new_year(self, _extended_year: i32) -> RataDie {
         self.new_year + i64::from(self.last_day_of_month[12])
     }
 
@@ -279,10 +279,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     ) -> ChineseBasedYearInfo {
         let data = cal.get_precomputed_data();
         let year_info = data.load_or_compute_info(*getter_year);
-        if date < year_info.new_year {
+        if date < year_info.new_year(*getter_year) {
             *getter_year -= 1;
             data.load_or_compute_info(*getter_year)
-        } else if date >= year_info.next_new_year() {
+        // FIXME (manishearth) try collapsing these new year calculations into one
+        } else if date >= year_info.next_new_year(*getter_year) {
             *getter_year += 1;
             data.load_or_compute_info(*getter_year)
         } else {
@@ -297,11 +298,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         extended_year: i32,
     ) -> ChineseBasedDateInner<C> {
         debug_assert!(
-            date < year_info.next_new_year(),
+            date < year_info.next_new_year(extended_year),
             "Stored date {date:?} out of bounds!"
         );
         // 1-indexed day of year
-        let day_of_year = u16::try_from(date - year_info.new_year + 1);
+        let day_of_year = u16::try_from(date - year_info.new_year(extended_year) + 1);
         debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
@@ -356,7 +357,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
-        let first_day_of_year = date.0.year_info.new_year;
+        let first_day_of_year = date.0.year_info.new_year(date.0.year);
         let day_of_year = date.day_of_year(); // 1 indexed
         first_day_of_year + i64::from(day_of_year) - 1
     }
