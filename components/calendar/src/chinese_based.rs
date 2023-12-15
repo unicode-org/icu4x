@@ -96,82 +96,93 @@ impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
 
 /// The struct containing compiled ChineseData
 ///
-/// Bit structure:
+/// Bit structure (little endian: note that shifts go in the opposite direction!)
 ///
 /// ```text
-/// Bit:             7   6   5   4   3   2   1   0
-/// Byte 0:          [new year offset] | [  month lengths ..
-/// Byte 1:          ....... month lengths .......
-/// Byte 2:          ... ] | [ leap month index  ]
+/// Bit:             0   1   2   3   4   5   6   7
+/// Byte 0:          [  month lengths .............
+/// Byte 1:         .. month lengths ] | [ leap month index ..
+/// Byte 2:          ] | [   NY offset   ] | unused
 /// ```
 ///
 /// Where the New Year Offset is the offset from ISO Jan 21 of that year for Chinese New Year,
 /// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
+///
+/// Should not
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct PackedChineseBasedYearInfo(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 
 impl PackedChineseBasedYearInfo {
-    #[allow(unused)] // TODO(#3933)
-    pub(crate) fn unpack(self, related_iso: i32, days_in_prev_year: u16) -> ChineseBasedYearInfo {
-        fn month_length(is_long: bool) -> u16 {
-            if is_long {
-                30
-            } else {
-                29
+    fn new(month_lengths: [bool; 13], leap_month_idx: Option<NonZeroU8>, ny_offset: u8) -> Self {
+        debug_assert!(
+            !month_lengths[12] || leap_month_idx.is_some(),
+            "Last month length should not be set for non-leap years"
+        );
+        debug_assert!(ny_offset < 32, "Year offset too big to store");
+        debug_assert!(
+            leap_month_idx.map(|l| l.get() <= 13).unwrap_or(true),
+            "Leap month indices must be 1 <= i <= 13"
+        );
+        let mut all = 0u32; // last byte unused
+
+        for month in 0..13 {
+            if month_lengths[month] {
+                all |= 1 << month as u32;
             }
         }
+        let leap_month_idx = leap_month_idx.map(|x| x.get()).unwrap_or(0);
+        all |= (leap_month_idx as u32) << (8 + 5);
+        all |= (ny_offset as u32) << (16 + 1);
+        let le = all.to_le_bytes();
+        Self(le[0], le[1], le[2])
+    }
 
-        let new_year_offset = ((self.0 & 0b11111000) >> 3) as u16;
+    // Get the new year offset from January 21
+    fn ny_offset(self) -> u8 {
+        self.2 >> 1
+    }
+
+    fn ny_rd(self, related_iso: i32) -> RataDie {
+        let ny_offset = self.ny_offset();
         let iso_ny = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
-        let new_year = iso_ny + 21 + i64::from(new_year_offset);
+        iso_ny + 21 + i64::from(ny_offset)
+    }
 
-        let mut last_day_of_month: [u16; 13] = [0; 13];
-        let mut months_total = 0;
+    fn leap_month_idx(self) -> Option<NonZeroU8> {
+        let low_bits = self.1 >> 5;
+        let high_bits = (self.2 & 0b1) << 3;
 
-        months_total += month_length(self.0 & 0b100 != 0);
-        last_day_of_month[0] = months_total;
-        months_total += month_length(self.0 & 0b010 != 0);
-        last_day_of_month[1] = months_total;
-        months_total += month_length(self.0 & 0b001 != 0);
-        last_day_of_month[2] = months_total;
-        months_total += month_length(self.1 & 0b10000000 != 0);
-        last_day_of_month[3] = months_total;
-        months_total += month_length(self.1 & 0b01000000 != 0);
-        last_day_of_month[4] = months_total;
-        months_total += month_length(self.1 & 0b00100000 != 0);
-        last_day_of_month[5] = months_total;
-        months_total += month_length(self.1 & 0b00010000 != 0);
-        last_day_of_month[6] = months_total;
-        months_total += month_length(self.1 & 0b00001000 != 0);
-        last_day_of_month[7] = months_total;
-        months_total += month_length(self.1 & 0b00000100 != 0);
-        last_day_of_month[8] = months_total;
-        months_total += month_length(self.1 & 0b00000010 != 0);
-        last_day_of_month[9] = months_total;
-        months_total += month_length(self.1 & 0b00000001 != 0);
-        last_day_of_month[10] = months_total;
-        months_total += month_length(self.2 & 0b10000000 != 0);
-        last_day_of_month[11] = months_total;
+        NonZeroU8::new(low_bits + high_bits)
+    }
 
-        let leap_month_bits = self.2 & 0b00111111;
-        // Leap month is if the sentinel bit is set
-        if leap_month_bits != 0 {
-            months_total += month_length(self.2 & 0b01000000 != 0);
-        }
-        // In non-leap months, `last_day_of_month` will have identical entries at 12 and 11
-        last_day_of_month[12] = months_total;
+    // Whether a particular month has 30 days (month is 1-indexed)
+    fn month_has_30_days(self, month: u8) -> bool {
+        let months = u16::from_le_bytes([self.0, self.1]);
+        months & (1 << (month - 1) as u16) != 0
+    }
 
-        // Will automatically set to None when the leap month bits are zero
-        let leap_month = NonZeroU8::new(leap_month_bits);
+    // Which day of year is the last day of a month (month is 1-indexed)
+    fn last_day_of_month(self, month: u8) -> u16 {
+        let months = u16::from_le_bytes([self.0, self.1]);
+        // month is 1-indexed, so `29 * month` includes the current month
+        let mut prev_month_lengths = 29 * month as u16;
+        // month is 1-indexed, so `1 << month` is a mask with all zeroes except
+        // for a 1 at the bit index at the next month. Subtracting it from 1 gets us
+        // a bitmask for all months up to now
+        let long_month_bits = months & (1 - (1 << month as u16));
+        prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
+        prev_month_lengths
+    }
 
-        ChineseBasedYearInfo {
-            new_year,
-            days_in_prev_year,
-            last_day_of_month,
-            leap_month,
+    fn year_length(self) -> u16 {
+        if self.leap_month_idx().is_some() {
+            self.last_day_of_month(13)
+        } else {
+            self.last_day_of_month(12)
         }
     }
 }
+
 /// A data struct used to load and use information for a set of ChineseBasedDates
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
@@ -580,4 +591,73 @@ pub(crate) fn chinese_based_ordinal_lunar_month_from_code(
         }
     }
     None
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    fn packed_roundtrip_single(
+        mut month_lengths: [bool; 13],
+        leap_month_idx: Option<NonZeroU8>,
+        ny_offset: u8,
+    ) {
+        if leap_month_idx.is_none() {
+            // Avoid bad invariants
+            month_lengths[12] = false;
+        }
+        let packed = PackedChineseBasedYearInfo::new(month_lengths, leap_month_idx, ny_offset);
+
+        assert_eq!(
+            ny_offset,
+            packed.ny_offset(),
+            "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
+        );
+        assert_eq!(
+            leap_month_idx,
+            packed.leap_month_idx(),
+            "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
+        );
+        let mut month_lengths_roundtrip = [false; 13];
+        for (i, len) in month_lengths_roundtrip.iter_mut().enumerate() {
+            *len = packed.month_has_30_days(i as u8 + 1);
+        }
+        assert_eq!(
+            month_lengths, month_lengths_roundtrip,
+            "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
+        );
+    }
+
+    #[test]
+    fn test_roundtrip_packed() {
+        const SHORT: [bool; 13] = [false; 13];
+        const LONG: [bool; 13] = [true; 13];
+        const ALTERNATING1: [bool; 13] = [
+            false, true, false, true, false, true, false, true, false, true, false, true, false,
+        ];
+        const ALTERNATING2: [bool; 13] = [
+            true, false, true, false, true, false, true, false, true, false, true, false, true,
+        ];
+        const RANDOM1: [bool; 13] = [
+            true, true, false, false, true, true, false, true, true, true, true, false, true,
+        ];
+        const RANDOM2: [bool; 13] = [
+            false, true, true, true, true, false, true, true, true, false, false, true, false,
+        ];
+        packed_roundtrip_single(SHORT, None, 5);
+        packed_roundtrip_single(SHORT, None, 10);
+        packed_roundtrip_single(SHORT, NonZeroU8::new(11), 15);
+        packed_roundtrip_single(LONG, NonZeroU8::new(12), 15);
+        packed_roundtrip_single(ALTERNATING1, None, 2);
+        packed_roundtrip_single(ALTERNATING1, NonZeroU8::new(3), 5);
+        packed_roundtrip_single(ALTERNATING2, None, 9);
+        packed_roundtrip_single(ALTERNATING2, NonZeroU8::new(7), 26);
+        packed_roundtrip_single(RANDOM1, None, 29);
+        packed_roundtrip_single(RANDOM1, NonZeroU8::new(12), 29);
+        packed_roundtrip_single(RANDOM1, NonZeroU8::new(2), 21);
+        packed_roundtrip_single(RANDOM2, None, 25);
+        packed_roundtrip_single(RANDOM2, NonZeroU8::new(2), 19);
+        packed_roundtrip_single(RANDOM2, NonZeroU8::new(5), 2);
+        packed_roundtrip_single(RANDOM2, NonZeroU8::new(12), 5);
+    }
 }
