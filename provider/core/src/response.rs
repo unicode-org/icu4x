@@ -75,14 +75,17 @@ pub struct DataResponseMetadata {
 pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 
 pub(crate) enum DataPayloadInner<M: DataMarker> {
-    Yoke(Yoke<M::Yokeable, CartableOptionPointer<SelectedRc<Box<[u8]>>>>),
+    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
     StaticRef(&'static M::Yokeable),
 }
 
 /// The type of the "cart" that is used by `DataPayload`.
 #[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
-pub struct Cart(SelectedRc<Box<[u8]>>);
+pub struct Cart(CartInner);
+
+/// The actual cart type (private typedef).
+pub(crate) type CartInner = SelectedRc<Box<[u8]>>;
 
 impl Deref for Cart {
     type Target = Box<[u8]>;
@@ -111,7 +114,7 @@ impl Cart {
     #[inline]
     pub(crate) fn unwrap_yoke<Y>(
         yoke: Yoke<Y, Option<Cart>>,
-    ) -> Yoke<Y, Option<SelectedRc<Box<[u8]>>>>
+    ) -> Yoke<Y, Option<CartInner>>
     where
         for<'a> Y: Yokeable<'a>,
     {
