@@ -892,8 +892,8 @@ impl AuxiliaryKeys {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_locid::extensions::private::subtag;
+    /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
     /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));

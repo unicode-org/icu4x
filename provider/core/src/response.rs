@@ -74,9 +74,79 @@ pub struct DataResponseMetadata {
 /// ```
 pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 
+/// A container for data payloads with storage for something else.
+///
+/// The type parameter `O` is stored as part of the interior enum, leading to
+/// better stack size optimization.
+///
+/// # Examples
+///
+/// Create and use DataPayloadOr:
+///
+/// ```
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider::DataPayloadOr;
+///
+/// let payload: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
+///     .load(DataRequest {
+///         locale: &"de".parse().unwrap(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// let payload_some =
+///     DataPayloadOr::<HelloWorldV1Marker, ()>::from_payload(payload);
+/// let payload_none = DataPayloadOr::<HelloWorldV1Marker, ()>::from_other(());
+///
+/// assert_eq!(
+///     payload_some.get(),
+///     Ok(&HelloWorldV1 {
+///         message: "Hallo Welt".into()
+///     })
+/// );
+/// assert_eq!(payload_none.get(), Err(&()));
+/// ```
+///
+/// Stack size comparison:
+///
+/// ```
+/// use core::mem::size_of;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider::DataPayloadOr;
+///
+/// const W: usize = size_of::<usize>();
+///
+/// // HelloWorldV1 is 3 words:
+/// assert_eq!(W * 3, size_of::<HelloWorldV1>());
+///
+/// // DataPayload adds a word for a total of 4 words:
+/// assert_eq!(W * 4, size_of::<DataPayload<HelloWorldV1Marker>>());
+///
+/// // Option<DataPayload> balloons to 5 words:
+/// assert_eq!(W * 5, size_of::<Option<DataPayload<HelloWorldV1Marker>>>());
+///
+/// // But, using DataPayloadOr is the same size as DataPayload:
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, ()>>());
+/// ```
+pub struct DataPayloadOr<M: DataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
+
 pub(crate) enum DataPayloadInner<M: DataMarker> {
     Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
     StaticRef(&'static M::Yokeable),
+}
+
+pub(crate) enum DataPayloadOrInner<M: DataMarker, O> {
+    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
+    Inner(DataPayloadOrInnerInner<M, O>),
+}
+
+pub(crate) enum DataPayloadOrInnerInner<M: DataMarker, O> {
+    StaticRef(&'static M::Yokeable),
+    Other(O),
 }
 
 /// The type of the "cart" that is used by `DataPayload`.
@@ -112,9 +182,7 @@ impl Cart {
     }
 
     #[inline]
-    pub(crate) fn unwrap_yoke<Y>(
-        yoke: Yoke<Y, Option<Cart>>,
-    ) -> Yoke<Y, Option<CartInner>>
+    pub(crate) fn unwrap_yoke<Y>(yoke: Yoke<Y, Option<Cart>>) -> Yoke<Y, Option<CartInner>>
     where
         for<'a> Y: Yokeable<'a>,
     {
@@ -130,6 +198,19 @@ where
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.get().fmt(f)
+    }
+}
+
+impl<M, O> Debug for DataPayloadOr<M, O>
+where
+    M: DataMarker,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    O: Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.get()
+            .map(|v| Debug::fmt(&v, f))
+            .unwrap_or_else(|v| Debug::fmt(v, f))
     }
 }
 
@@ -158,6 +239,25 @@ where
     }
 }
 
+impl<M, O> Clone for DataPayloadOr<M, O>
+where
+    M: DataMarker,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    O: Clone,
+{
+    fn clone(&self) -> Self {
+        Self(match &self.0 {
+            DataPayloadOrInner::Yoke(yoke) => DataPayloadOrInner::Yoke(yoke.clone()),
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
+                DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(*r))
+            }
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => {
+                DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o.clone()))
+            }
+        })
+    }
+}
+
 impl<M> PartialEq for DataPayload<M>
 where
     M: DataMarker,
@@ -168,10 +268,33 @@ where
     }
 }
 
+impl<M, O> PartialEq for DataPayloadOr<M, O>
+where
+    M: DataMarker,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    O: Eq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        match (self.get(), other.get()) {
+            (Ok(x), Ok(y)) => YokeTraitHack(x).into_ref() == YokeTraitHack(y).into_ref(),
+            (Err(x), Err(y)) => x == y,
+            _ => false,
+        }
+    }
+}
+
 impl<M> Eq for DataPayload<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+{
+}
+
+impl<M, O> Eq for DataPayloadOr<M, O>
+where
+    M: DataMarker,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+    O: Eq,
 {
 }
 
@@ -182,6 +305,27 @@ fn test_clone_eq() {
     #[allow(clippy::redundant_clone)]
     let p2 = p1.clone();
     assert_eq!(p1, p2);
+
+    let p1 = DataPayloadOr::<HelloWorldV1Marker, usize>::from_payload(p1);
+    #[allow(clippy::redundant_clone)]
+    let p2 = p1.clone();
+    assert_eq!(p1, p2);
+
+    let p3 = DataPayloadOr::<HelloWorldV1Marker, usize>::from_other(555);
+    #[allow(clippy::redundant_clone)]
+    let p4 = p3.clone();
+    assert_eq!(p3, p4);
+
+    let p5 = DataPayloadOr::<HelloWorldV1Marker, usize>::from_other(666);
+    assert_ne!(p3, p5);
+    assert_ne!(p4, p5);
+
+    assert_ne!(p1, p3);
+    assert_ne!(p1, p4);
+    assert_ne!(p1, p5);
+    assert_ne!(p2, p3);
+    assert_ne!(p2, p4);
+    assert_ne!(p2, p5);
 }
 
 impl<M> DataPayload<M>
@@ -671,6 +815,56 @@ where
 {
     fn default() -> Self {
         Self::from_owned(Default::default())
+    }
+}
+
+impl<M, O> DataPayloadOr<M, O>
+where
+    M: DataMarker,
+{
+    /// Creates a [`DataPayloadOr`] from a [`DataPayload`].
+    #[inline]
+    pub fn from_payload(payload: DataPayload<M>) -> Self {
+        match payload.0 {
+            DataPayloadInner::Yoke(yoke) => Self(DataPayloadOrInner::Yoke(yoke)),
+            DataPayloadInner::StaticRef(r) => Self(DataPayloadOrInner::Inner(
+                DataPayloadOrInnerInner::StaticRef(r),
+            )),
+        }
+    }
+
+    /// Creates a [`DataPayloadOr`] from the other type `O`.
+    #[inline]
+    pub fn from_other(other: O) -> Self {
+        Self(DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(
+            other,
+        )))
+    }
+
+    /// Gets the value from this [`DataPayload`] as `Ok` or the other type as `Err`.
+    #[allow(clippy::needless_lifetimes)]
+    #[inline]
+    pub fn get<'a>(&'a self) -> Result<&'a <M::Yokeable as Yokeable<'a>>::Output, &'a O> {
+        match &self.0 {
+            DataPayloadOrInner::Yoke(yoke) => Ok(yoke.get()),
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
+                Ok(Yokeable::transform(*r))
+            }
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => Err(o),
+        }
+    }
+
+    /// Consumes this [`DataPayloadOr`], returning either the wrapped
+    /// [`DataPayload`] or the other type.
+    #[inline]
+    pub fn into_inner(self) -> Result<DataPayload<M>, O> {
+        match self.0 {
+            DataPayloadOrInner::Yoke(yoke) => Ok(DataPayload(DataPayloadInner::Yoke(yoke))),
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
+                Ok(DataPayload(DataPayloadInner::StaticRef(r)))
+            }
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(o)) => Err(o),
+        }
     }
 }
 
