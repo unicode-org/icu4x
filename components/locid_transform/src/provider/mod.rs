@@ -59,7 +59,6 @@ use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
 pub const KEYS: &[DataKey] = &[
-    AliasesV1Marker::KEY,
     AliasesV2Marker::KEY,
     CollationFallbackSupplementV1Marker::KEY,
     LikelySubtagsExtendedV1Marker::KEY,

@@ -220,17 +220,17 @@ impl LocaleCanonicalizer {
         provider: &(impl AnyProvider + ?Sized),
     ) -> Result<Self, LocaleTransformError> {
         let expander = LocaleExpander::try_new_with_any_provider(provider)?;
-        Self::try_new_with_expander_with_any_provider(&provider, expander)
+        Self::try_new_with_expander_compat(&provider.as_downcasting(), expander)
     }
 
     // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + AnyProvider + ?Sized),
+        provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, LocaleTransformError> {
         let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
-        Self::try_new_with_expander_with_buffer_provider(&provider, expander)
+        Self::try_new_with_expander_compat(&provider.as_deserializing(), expander)
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -296,17 +296,7 @@ impl LocaleCanonicalizer {
         Ok(Self { aliases, expander })
     }
 
-    #[cfg(feature = "compiled_data")]
-    #[cfg(skip)]
-    #[doc = ""]
-    #[doc = " ✨ *Enabled with the `compiled_data` Cargo feature.*"]
-    #[doc = ""]
-    #[doc = " [📚 Help choosing a constructor](icu_provider::constructors)"]
-    pub fn new_with_expander(options: LocaleExpander) -> Result<Self, LocaleTransformError> {
-        Self::try_new_with_expander_unstable(&crate::provider::Baked, options)
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_expander_with_buffer_provider)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_with_expander)]
     pub fn try_new_with_expander_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
         options: LocaleExpander,
