@@ -194,7 +194,7 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub const fn from_owned(data: M::Yokeable) -> Self {
+    pub fn from_owned(data: M::Yokeable) -> Self {
         Self(DataPayloadInner::Yoke(Yoke::new_owned(data)))
     }
 
