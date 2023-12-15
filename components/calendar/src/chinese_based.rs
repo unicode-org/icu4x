@@ -21,13 +21,14 @@
 
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
-    types::MonthCode,
+    types::{FormattableMonth, MonthCode},
     Calendar, CalendarError, Iso,
 };
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
 use calendrical_calculations::rata_die::RataDie;
 use core::num::NonZeroU8;
+use tinystr::tinystr;
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
 ///
@@ -194,6 +195,10 @@ impl ChineseBasedYearInfo {
         self.new_year + i64::from(self.last_day_of_month[12])
     }
 
+    /// Get which month is the leap month. This produces the month *number*
+    /// that is the leap month (not the ordinal month). In other words, for
+    /// a year with an M05L, this will return Some(5). Note that the regular month precedes
+    /// the leap month.
     pub(crate) fn leap_month(self) -> Option<NonZeroU8> {
         self.leap_month
     }
@@ -414,6 +419,76 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     pub(crate) fn day_of_year(&self) -> u16 {
         self.0.year_info.last_day_of_previous_month(self.0.month) + u16::from(self.0.day)
     }
+
+    /// The calendar-specific month code represented by `date`;
+    /// since the Chinese calendar has leap months, an "L" is appended to the month code for
+    /// leap months. For example, in a year where an intercalary month is added after the second
+    /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
+    pub(crate) fn month(&self) -> FormattableMonth {
+        let ordinal = self.0.month;
+        let leap_month_option = self.0.year_info.leap_month();
+
+        // 1 indexed leap month name. This is also the ordinal for the leap month
+        // in the year (e.g. in `M01, M01L, M02, ..`, the leap month is for month 1, and it is also
+        // ordinally `month 2`, zero-indexed)
+        let leap_month = if let Some(leap) = leap_month_option {
+            leap.get()
+        } else {
+            // sentinel value
+            14
+        };
+        let code_inner = if leap_month == ordinal {
+            // Month cannot be 1 because a year cannot have a leap month before the first actual month,
+            // and the maximum num of months ina leap year is 13.
+            debug_assert!((2..=13).contains(&ordinal));
+            match ordinal {
+                2 => tinystr!(4, "M01L"),
+                3 => tinystr!(4, "M02L"),
+                4 => tinystr!(4, "M03L"),
+                5 => tinystr!(4, "M04L"),
+                6 => tinystr!(4, "M05L"),
+                7 => tinystr!(4, "M06L"),
+                8 => tinystr!(4, "M07L"),
+                9 => tinystr!(4, "M08L"),
+                10 => tinystr!(4, "M09L"),
+                11 => tinystr!(4, "M10L"),
+                12 => tinystr!(4, "M11L"),
+                13 => tinystr!(4, "M12L"),
+                _ => tinystr!(4, "und"),
+            }
+        } else {
+            let mut adjusted_ordinal = ordinal;
+            if ordinal > leap_month {
+                // Before adjusting for leap month, if ordinal > leap_month,
+                // the month cannot be 1 because this implies the leap month is < 1, which is impossible;
+                // cannot be 2 because that implies the leap month is = 1, which is impossible,
+                // and cannot be more than 13 because max number of months in a year is 13.
+                debug_assert!((2..=13).contains(&ordinal));
+                adjusted_ordinal -= 1;
+            }
+            debug_assert!((1..=12).contains(&adjusted_ordinal));
+            match adjusted_ordinal {
+                1 => tinystr!(4, "M01"),
+                2 => tinystr!(4, "M02"),
+                3 => tinystr!(4, "M03"),
+                4 => tinystr!(4, "M04"),
+                5 => tinystr!(4, "M05"),
+                6 => tinystr!(4, "M06"),
+                7 => tinystr!(4, "M07"),
+                8 => tinystr!(4, "M08"),
+                9 => tinystr!(4, "M09"),
+                10 => tinystr!(4, "M10"),
+                11 => tinystr!(4, "M11"),
+                12 => tinystr!(4, "M12"),
+                _ => tinystr!(4, "und"),
+            }
+        };
+        let code = MonthCode(code_inner);
+        FormattableMonth {
+            ordinal: ordinal as u32,
+            code,
+        }
+    }
 }
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
@@ -477,6 +552,7 @@ pub(crate) fn chinese_based_ordinal_lunar_month_from_code(
     if code.0.len() == 4 && bytes[3] != b'L' {
         return None;
     }
+    // Unadjusted is zero-indexed month index, must add one to it to use
     let mut unadjusted = 0;
     if bytes[1] == b'0' {
         if bytes[2] >= b'1' && bytes[2] <= b'9' {
@@ -486,13 +562,17 @@ pub(crate) fn chinese_based_ordinal_lunar_month_from_code(
         unadjusted = 10 + bytes[2] - b'0';
     }
     if bytes[3] == b'L' {
+        // Asked for a leap month that doesn't exist
         if unadjusted + 1 != leap_month {
             return None;
         } else {
+            // The leap month occurs after the regular month of the same name
             return Some(unadjusted + 1);
         }
     }
     if unadjusted != 0 {
+        // If the month has an index greater than that of the leap month,
+        // bump it up by one
         if unadjusted + 1 > leap_month {
             return Some(unadjusted + 1);
         } else {
