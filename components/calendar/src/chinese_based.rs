@@ -61,6 +61,13 @@ pub(crate) struct ChineseBasedPrecomputedData<CB: ChineseBased> {
     _cb: CB, // this is zero-sized
 }
 
+/// The first day of the ISO year on which Chinese New Year may occur
+///
+/// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
+///
+/// Chinese New Year in the year 30 AD is January 20 (30-01-20)
+const FIRST_NY: u8 = 20;
+
 fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
     let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
     let year_bounds = YearBounds::compute::<CB>(mid_year);
@@ -69,18 +76,27 @@ fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
         next_new_year,
         ..
     } = year_bounds;
-    let (last_day_of_month, leap_month) =
+    let (month_lengths, leap_month) =
         chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
+    let related_iso = CB::iso_from_extended(extended_year);
+    let iso_ny = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
+
+    // +1 because `new_year - iso_ny` is zero-indexed, but `FIRST_NY` is 1-indexed
+    let ny_offset = new_year - iso_ny - i64::from(FIRST_NY) + 1;
+    let ny_offset = if let Ok(ny_offset) = u8::try_from(ny_offset) {
+        ny_offset
+    } else {
+        debug_assert!(false, "Expected small new years offset, got {ny_offset}");
+        0
+    };
     let days_in_prev_year = chinese_based::days_in_prev_year::<CB>(new_year);
+
+    let packed_data = PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset);
+
     ChineseBasedYearInfo {
-        new_year,
         days_in_prev_year,
-        // TODO(#3933): switch ChineseBasedYearInfo to packed info so we don't need to store as bloaty u16s
-        last_day_of_month: last_day_of_month
-            // +1 since new_year is in the current month
-            .map(|rd| (rd.to_i64_date() - new_year.to_i64_date() + 1) as u16),
-        leap_month,
+        packed_data,
     }
 }
 
@@ -109,7 +125,7 @@ impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
 /// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
 ///
 /// Should not
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct PackedChineseBasedYearInfo(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 
 impl PackedChineseBasedYearInfo {
@@ -125,8 +141,9 @@ impl PackedChineseBasedYearInfo {
         );
         let mut all = 0u32; // last byte unused
 
-        for month in 0..13 {
-            if month_lengths[month] {
+        for (month, length_30) in month_lengths.iter().enumerate() {
+            #[allow(clippy::indexing_slicing)]
+            if *length_30 {
                 all |= 1 << month as u32;
             }
         }
@@ -145,7 +162,8 @@ impl PackedChineseBasedYearInfo {
     fn ny_rd(self, related_iso: i32) -> RataDie {
         let ny_offset = self.ny_offset();
         let iso_ny = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
-        iso_ny + 21 + i64::from(ny_offset)
+        // -1 because `iso_ny` is itself in the year, and `FIRST_NY` is 1-indexed
+        iso_ny + i64::from(FIRST_NY) + i64::from(ny_offset) - 1
     }
 
     fn leap_month_idx(self) -> Option<NonZeroU8> {
@@ -156,6 +174,7 @@ impl PackedChineseBasedYearInfo {
     }
 
     // Whether a particular month has 30 days (month is 1-indexed)
+    #[cfg(test)]
     fn month_has_30_days(self, month: u8) -> bool {
         let months = u16::from_le_bytes([self.0, self.1]);
         months & (1 << (month - 1) as u16) != 0
@@ -167,14 +186,14 @@ impl PackedChineseBasedYearInfo {
         // month is 1-indexed, so `29 * month` includes the current month
         let mut prev_month_lengths = 29 * month as u16;
         // month is 1-indexed, so `1 << month` is a mask with all zeroes except
-        // for a 1 at the bit index at the next month. Subtracting it from 1 gets us
+        // for a 1 at the bit index at the next month. Subtracting 1 from it gets us
         // a bitmask for all months up to now
-        let long_month_bits = months & (1 - (1 << month as u16));
+        let long_month_bits = months & ((1 << month as u16) - 1);
         prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
         prev_month_lengths
     }
 
-    fn year_length(self) -> u16 {
+    fn days_in_year(self) -> u16 {
         if self.leap_month_idx().is_some() {
             self.last_day_of_month(13)
         } else {
@@ -187,23 +206,24 @@ impl PackedChineseBasedYearInfo {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
 pub(crate) struct ChineseBasedYearInfo {
-    new_year: RataDie,
     days_in_prev_year: u16,
-    /// last_day_of_month[12] = last_day_of_month[11] in non-leap years
-    /// These days are 1-indexed: so the last day of month for a 30-day 一月 is 30
-    /// The array itself is zero-indexed, be careful passing it self.0.month!
-    last_day_of_month: [u16; 13],
-    ///
-    leap_month: Option<NonZeroU8>,
+    /// Contains:
+    /// - length of each month in the year
+    /// - whether or not there is a leap month, and which month it is
+    /// - the date of Chinese New Year in the related ISO year
+    packed_data: PackedChineseBasedYearInfo,
 }
 
 impl ChineseBasedYearInfo {
-    pub(crate) fn new_year(self, _extended_year: i32) -> RataDie {
-        self.new_year
+    /// Get the new year R.D. given the extended year that this yearinfo is for    
+    pub(crate) fn new_year<CB: ChineseBased>(self, extended_year: i32) -> RataDie {
+        self.packed_data.ny_rd(CB::iso_from_extended(extended_year))
     }
 
-    fn next_new_year(self, _extended_year: i32) -> RataDie {
-        self.new_year + i64::from(self.last_day_of_month[12])
+    /// Get the next new year R.D. given the extended year that this yearinfo is for
+    /// (i.e, this year, not next year)
+    fn next_new_year<CB: ChineseBased>(self, extended_year: i32) -> RataDie {
+        self.new_year::<CB>(extended_year) + i64::from(self.packed_data.days_in_year())
     }
 
     /// Get which month is the leap month. This produces the month *number*
@@ -211,7 +231,7 @@ impl ChineseBasedYearInfo {
     /// a year with an M05L, this will return Some(5). Note that the regular month precedes
     /// the leap month.
     pub(crate) fn leap_month(self) -> Option<NonZeroU8> {
-        self.leap_month
+        self.packed_data.leap_month_idx()
     }
 
     /// The last day of year in the previous month.
@@ -223,19 +243,16 @@ impl ChineseBasedYearInfo {
     fn last_day_of_previous_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         // Get the last day of the previous month.
-        // Since `month` is 1-indexed, this needs to subtract *two* to get to the right index of the array
-        if month < 2 {
+        // Since `month` is 1-indexed, this needs to check if the month is 1 for the zero case
+        if month == 1 {
             0
         } else {
-            self.last_day_of_month
-                .get(usize::from(month - 2))
-                .copied()
-                .unwrap_or(0)
+            self.packed_data.last_day_of_month(month - 1)
         }
     }
 
     fn days_in_year(self) -> u16 {
-        self.last_day_of_month[12]
+        self.packed_data.days_in_year()
     }
 
     fn days_in_prev_year(self) -> u16 {
@@ -250,12 +267,7 @@ impl ChineseBasedYearInfo {
     /// is not in this year
     fn last_day_of_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
-        // Get the last day of the previous month.
-        // Since `month` is 1-indexed, this needs to subtract one
-        self.last_day_of_month
-            .get(usize::from(month - 1))
-            .copied()
-            .unwrap_or(0)
+        self.packed_data.last_day_of_month(month)
     }
 
     fn days_in_month(self, month: u8) -> u8 {
@@ -279,11 +291,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     ) -> ChineseBasedYearInfo {
         let data = cal.get_precomputed_data();
         let year_info = data.load_or_compute_info(*getter_year);
-        if date < year_info.new_year(*getter_year) {
+        if date < year_info.new_year::<C::CB>(*getter_year) {
             *getter_year -= 1;
             data.load_or_compute_info(*getter_year)
         // FIXME (manishearth) try collapsing these new year calculations into one
-        } else if date >= year_info.next_new_year(*getter_year) {
+        } else if date >= year_info.next_new_year::<C::CB>(*getter_year) {
             *getter_year += 1;
             data.load_or_compute_info(*getter_year)
         } else {
@@ -298,11 +310,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         extended_year: i32,
     ) -> ChineseBasedDateInner<C> {
         debug_assert!(
-            date < year_info.next_new_year(extended_year),
+            date < year_info.next_new_year::<C::CB>(extended_year),
             "Stored date {date:?} out of bounds!"
         );
         // 1-indexed day of year
-        let day_of_year = u16::try_from(date - year_info.new_year(extended_year) + 1);
+        let day_of_year = u16::try_from(date - year_info.new_year::<C::CB>(extended_year) + 1);
         debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
@@ -317,7 +329,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
 
         debug_assert!(
-            month < 13 || year_info.leap_month.is_some(),
+            month < 13 || year_info.leap_month().is_some(),
             "Cannot have 13 months in a non-leap year!"
         );
         let day_before_month_start = year_info.last_day_of_previous_month(month);
@@ -352,12 +364,16 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         Self::chinese_based_date_from_info(date, year_info, getter_year)
     }
 
+    pub(crate) fn new_year(self) -> RataDie {
+        self.0.year_info.new_year::<C::CB>(self.0.year)
+    }
+
     /// Get a RataDie from a ChineseBasedDateInner
     ///
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
-        let first_day_of_year = date.0.year_info.new_year(date.0.year);
+        let first_day_of_year = date.new_year();
         let day_of_year = date.day_of_year(); // 1 indexed
         first_day_of_year + i64::from(day_of_year) - 1
     }
@@ -401,7 +417,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     /// Also takes a `ChineseBasedYearInfo` argument.
     fn months_in_year_with_info(year_info: ChineseBasedYearInfo) -> u8 {
-        if year_info.leap_month.is_some() {
+        if year_info.leap_month().is_some() {
             13
         } else {
             12
@@ -512,7 +528,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     fn months_for_every_year(_year: i32, year_info: ChineseBasedYearInfo) -> u8 {
-        if year_info.leap_month.is_some() {
+        if year_info.leap_month().is_some() {
             13
         } else {
             12
@@ -521,7 +537,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
 
     /// Returns true if the given year is a leap year, and false if not.
     fn is_leap_year(_year: i32, year_info: ChineseBasedYearInfo) -> bool {
-        year_info.leap_month.is_some()
+        year_info.leap_month().is_some()
     }
 
     /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
@@ -529,7 +545,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     /// determined by finding the day immediately before the next new year and calculating the number
     /// of days since the last new moon (beginning of the last month in the year).
     fn last_month_day_in_year(_year: i32, year_info: ChineseBasedYearInfo) -> (u8, u8) {
-        if year_info.leap_month.is_some() {
+        if year_info.leap_month().is_some() {
             (13, year_info.days_in_month(13))
         } else {
             (12, year_info.days_in_month(12))
@@ -546,7 +562,7 @@ pub(crate) fn chinese_based_ordinal_lunar_month_from_code(
     code: MonthCode,
     year_info: ChineseBasedYearInfo,
 ) -> Option<u8> {
-    let leap_month = if let Some(leap) = year_info.leap_month {
+    let leap_month = if let Some(leap) = year_info.leap_month() {
         leap.get()
     } else {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;

@@ -343,8 +343,9 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     }
 }
 
+type ChineseCB = calendrical_calculations::chinese_based::Chinese;
 impl ChineseBasedWithDataLoading for Chinese {
-    type CB = calendrical_calculations::chinese_based::Chinese;
+    type CB = ChineseCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
         Default::default()
     }
@@ -367,7 +368,7 @@ impl Chinese {
         let cyclic = (number - 1).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year(year)
+            info.new_year::<ChineseCB>(year)
         } else {
             Inner::fixed_mid_year_from_year(number)
         };
@@ -633,7 +634,7 @@ mod test {
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
             let chinese_date = iso.to_calendar(Chinese);
             assert!(chinese_date.is_in_leap_year());
-            let new_year = chinese_date.inner.0 .0.year_info.new_year();
+            let new_year = chinese_date.inner.0.new_year();
             assert_eq!(
                 expected_month,
                 calendrical_calculations::chinese_based::get_leap_month_from_new_year::<

@@ -318,8 +318,9 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     }
 }
 
+type DangiCB = calendrical_calculations::chinese_based::Dangi;
 impl ChineseBasedWithDataLoading for Dangi {
-    type CB = calendrical_calculations::chinese_based::Dangi;
+    type CB = DangiCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
         Default::default()
     }
@@ -338,7 +339,7 @@ impl Dangi {
         let cyclic = (number as i64 - 1 + 364).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year(year)
+            info.new_year::<DangiCB>(year)
         } else {
             Inner::fixed_mid_year_from_year(number)
         };
