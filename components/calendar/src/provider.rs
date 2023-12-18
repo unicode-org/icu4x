@@ -15,6 +15,8 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+pub mod chinese_based;
+
 use crate::types::IsoWeekday;
 use core::str::FromStr;
 use icu_provider::prelude::*;
