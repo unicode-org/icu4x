@@ -97,9 +97,9 @@ impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
     for ChineseBasedPrecomputedData<'b, CB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
-        // TODO(#3933): load based on year
-
-        compute_cache::<CB>(extended_year)
+        self.data
+            .and_then(|d| d.get_for_extended_year(extended_year))
+            .unwrap_or_else(|| compute_cache::<CB>(extended_year))
     }
 }
 
