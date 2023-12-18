@@ -157,7 +157,7 @@ impl Calendar for Dangi {
         DangiDateInner(Inner::chinese_based_date_from_fixed(
             self,
             fixed,
-            iso.year().number,
+            iso.inner.0,
         ))
     }
 

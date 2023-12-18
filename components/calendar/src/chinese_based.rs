@@ -61,9 +61,18 @@ pub(crate) struct ChineseBasedPrecomputedData<'a, CB: ChineseBased> {
     _cb: CB, // this is zero-sized
 }
 
+/// Compute ChineseBasedYearInfo for a given extended year
 fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
     let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
     let year_bounds = YearBounds::compute::<CB>(mid_year);
+    compute_cache_with_yb::<CB>(extended_year, year_bounds)
+}
+
+/// Compute ChineseBasedYearInfo for a given extended year, for which you have already computed the YearBounds
+fn compute_cache_with_yb<CB: ChineseBased>(
+    extended_year: i32,
+    year_bounds: YearBounds,
+) -> ChineseBasedYearInfo {
     let YearBounds {
         new_year,
         next_new_year,
@@ -103,6 +112,35 @@ impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
     }
 }
 
+impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
+    /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the ChineseBasedYearInfo and extended year for that date, loading
+    /// from cache or computing.
+    fn load_or_compute_info_for_iso(
+        &self,
+        fixed: RataDie,
+        iso: ArithmeticDate<Iso>,
+    ) -> (ChineseBasedYearInfo, i32) {
+        let cached = self.data.and_then(|d| d.get_for_iso::<CB>(iso));
+        if let Some(cached) = cached {
+            return cached;
+        };
+        // compute
+
+        let extended_year = CB::extended_from_iso(iso.year);
+        let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
+        let year_bounds = YearBounds::compute::<CB>(mid_year);
+        let YearBounds { new_year, .. } = year_bounds;
+        if fixed >= new_year {
+            (
+                compute_cache_with_yb::<CB>(extended_year, year_bounds),
+                extended_year,
+            )
+        } else {
+            let extended_year = extended_year - 1;
+            (compute_cache::<CB>(extended_year), extended_year)
+        }
+    }
+}
 /// A data struct used to load and use information for a set of ChineseBasedDates
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
@@ -189,28 +227,6 @@ impl ChineseBasedYearInfo {
 impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBasedYearInfo>>
     ChineseBasedDateInner<C>
 {
-    /// Given a 1-indexed chinese extended year, fetch its data from the cache.
-    ///
-    /// If the actual year data that was fetched is for a different year, update the getter year
-    fn get_precomputed_data_for_year_helper(
-        cal: &C,
-        date: RataDie,
-        getter_year: &mut i32,
-    ) -> ChineseBasedYearInfo {
-        let data = cal.get_precomputed_data();
-        let year_info = data.load_or_compute_info(*getter_year);
-        if date < year_info.new_year::<C::CB>(*getter_year) {
-            *getter_year -= 1;
-            data.load_or_compute_info(*getter_year)
-        // FIXME (manishearth) try collapsing these new year calculations into one
-        } else if date >= year_info.next_new_year::<C::CB>(*getter_year) {
-            *getter_year += 1;
-            data.load_or_compute_info(*getter_year)
-        } else {
-            year_info
-        }
-    }
-
     /// Get a ChineseBasedDateInner from a fixed date and the cache/extended year associated with it
     fn chinese_based_date_from_info(
         date: RataDie,
@@ -258,18 +274,18 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         ))
     }
 
-    /// Get a ChineseBasedDateInner from a fixed date, with the related ISO year
+    /// Get a ChineseBasedDateInner from a fixed date, with the related ISO date
+    /// (passed in to avoid recomputing)
     pub(crate) fn chinese_based_date_from_fixed(
         cal: &C,
-        date: RataDie,
-        iso_year: i32,
+        fixed: RataDie,
+        iso: ArithmeticDate<Iso>,
     ) -> ChineseBasedDateInner<C> {
-        // Get the 1-indexed Chinese extended year, used for fetching data from the cache
-        let epoch_as_iso = Iso::iso_from_fixed(C::CB::EPOCH);
-        let mut getter_year = iso_year - epoch_as_iso.year().number + 1;
+        let data = cal.get_precomputed_data();
 
-        let year_info = Self::get_precomputed_data_for_year_helper(cal, date, &mut getter_year);
-        Self::chinese_based_date_from_info(date, year_info, getter_year)
+        let (year_info, extended_year) = data.load_or_compute_info_for_iso(fixed, iso);
+
+        Self::chinese_based_date_from_info(fixed, year_info, extended_year)
     }
 
     pub(crate) fn new_year(self) -> RataDie {
