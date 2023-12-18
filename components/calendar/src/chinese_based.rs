@@ -123,8 +123,6 @@ impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
 ///
 /// Where the New Year Offset is the offset from ISO Jan 21 of that year for Chinese New Year,
 /// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
-///
-/// Should not
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct PackedChineseBasedYearInfo(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 
