@@ -21,7 +21,7 @@
 
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
-    provider::chinese_based::PackedChineseBasedYearInfo,
+    provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
     types::{FormattableMonth, MonthCode},
     Calendar, CalendarError, Iso,
 };
@@ -38,7 +38,7 @@ pub(crate) trait ChineseBasedWithDataLoading: Calendar {
     type CB: ChineseBased;
     /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year
     /// does not correspond to any compiled data.
-    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB>;
+    fn get_precomputed_data<'a>(&'a self) -> ChineseBasedPrecomputedData<'a, Self::CB>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
@@ -56,9 +56,8 @@ impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
 /// Contains any loaded precomputed data. If constructed with Default, will
 /// *not* contain any extra data and will always compute stuff from scratch
 #[derive(Default)]
-pub(crate) struct ChineseBasedPrecomputedData<CB: ChineseBased> {
-    // TODO(#3933)
-    // this should have the ability to be empty
+pub(crate) struct ChineseBasedPrecomputedData<'a, CB: ChineseBased> {
+    data: Option<&'a ChineseBasedCacheV1<'a>>,
     _cb: CB, // this is zero-sized
 }
 
@@ -94,8 +93,8 @@ fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
     }
 }
 
-impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
-    for ChineseBasedPrecomputedData<CB>
+impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
+    for ChineseBasedPrecomputedData<'b, CB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
         // TODO(#3933): load based on year
