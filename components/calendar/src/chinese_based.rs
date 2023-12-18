@@ -117,6 +117,13 @@ pub(crate) struct ChineseBasedYearInfo {
 }
 
 impl ChineseBasedYearInfo {
+    pub(crate) fn new(days_in_prev_year: u16, packed_data: PackedChineseBasedYearInfo) -> Self {
+        Self {
+            days_in_prev_year,
+            packed_data,
+        }
+    }
+
     /// Get the new year R.D. given the extended year that this yearinfo is for    
     pub(crate) fn new_year<CB: ChineseBased>(self, extended_year: i32) -> RataDie {
         self.packed_data.ny_rd(CB::iso_from_extended(extended_year))
