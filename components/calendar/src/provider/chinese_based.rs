@@ -45,6 +45,16 @@ pub struct ChineseBasedCacheV1<'data> {
 }
 
 impl<'data> ChineseBasedCacheV1<'data> {
+    /// Compute this data for a range of years
+    #[cfg(feature = "datagen")]
+    pub fn compute_for<CB: ChineseBased>(extended_years: core::ops::Range<i32>) -> Self {
+        let data = crate::chinese_based::compute_many_packed::<CB>(extended_years.clone());
+        ChineseBasedCacheV1 {
+            first_extended_year: extended_years.start,
+            data: data.into(),
+        }
+    }
+
     /// Get the cached data for a given extended year
     pub(crate) fn get_for_extended_year(&self, extended_year: i32) -> Option<ChineseBasedYearInfo> {
         let delta = extended_year - self.first_extended_year;

@@ -26,6 +26,7 @@ use crate::{
     Calendar, CalendarError, Iso,
 };
 
+use alloc::vec::Vec;
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
 use calendrical_calculations::rata_die::RataDie;
 use core::num::NonZeroU8;
@@ -73,6 +74,22 @@ fn compute_cache_with_yb<CB: ChineseBased>(
     extended_year: i32,
     year_bounds: YearBounds,
 ) -> ChineseBasedYearInfo {
+    let YearBounds { new_year, .. } = year_bounds;
+
+    let days_in_prev_year = chinese_based::days_in_prev_year::<CB>(new_year);
+
+    let packed_data = compute_packed_with_yb::<CB>(extended_year, year_bounds);
+
+    ChineseBasedYearInfo {
+        days_in_prev_year,
+        packed_data,
+    }
+}
+
+fn compute_packed_with_yb<CB: ChineseBased>(
+    extended_year: i32,
+    year_bounds: YearBounds,
+) -> PackedChineseBasedYearInfo {
     let YearBounds {
         new_year,
         next_new_year,
@@ -92,14 +109,21 @@ fn compute_cache_with_yb<CB: ChineseBased>(
         debug_assert!(false, "Expected small new years offset, got {ny_offset}");
         0
     };
-    let days_in_prev_year = chinese_based::days_in_prev_year::<CB>(new_year);
+    PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset)
+}
 
-    let packed_data = PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset);
+#[cfg(feature = "datagen")]
+pub(crate) fn compute_many_packed<CB: ChineseBased>(
+    extended_years: core::ops::Range<i32>,
+) -> Vec<PackedChineseBasedYearInfo> {
+    extended_years
+        .map(|extended_year| {
+            let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
+            let year_bounds = YearBounds::compute::<CB>(mid_year);
 
-    ChineseBasedYearInfo {
-        days_in_prev_year,
-        packed_data,
-    }
+            compute_packed_with_yb::<CB>(extended_year, year_bounds)
+        })
+        .collect()
 }
 
 impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
