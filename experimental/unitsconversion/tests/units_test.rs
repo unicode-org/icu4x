@@ -6,6 +6,7 @@ use core::str::FromStr;
 use icu_unitsconversion::measureunit::MeasureUnitParser;
 use num::BigRational;
 use std::collections::HashSet;
+use zerotrie::ZeroTrieSimpleAscii;
 
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
@@ -76,9 +77,12 @@ fn test_conversion() {
         })
         .collect();
 
-    let parser = MeasureUnitParser::from_payload(
+    // TODO: how to convert from `&ZeroTrie<ZeroVec<'_, u8>>` to &ZeroTrieSimpleAscii<Vec<u8>>?
+    let payload: ZeroTrieSimpleAscii<Vec<u8>> = ZeroTrieSimpleAscii::try_from(
         &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1.units_conversion_trie,
-    );
+    )
+    .unwrap();
+    let parser = MeasureUnitParser::from_payload(&payload);
 
     // TODO(#4461): Those units must be parsable.
     let non_parsable_units: HashSet<&str> = [
