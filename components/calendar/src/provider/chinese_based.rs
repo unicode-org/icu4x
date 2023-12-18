@@ -29,9 +29,15 @@ use zerovec::ule::{AsULE, ULE};
 ///
 /// Where the New Year Offset is the offset from ISO Jan 21 of that year for Chinese New Year,
 /// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ULE)]
 #[repr(packed)]
-pub(crate) struct PackedChineseBasedYearInfo(pub(crate) u8, pub(crate) u8, pub(crate) u8);
+pub struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
 
 impl PackedChineseBasedYearInfo {
     /// The first day of the ISO year on which Chinese New Year may occur
