@@ -17,6 +17,7 @@
 - Utilities
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
+        - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)
 
 ## icu4x 1.4 (Nov 16, 2023)
 

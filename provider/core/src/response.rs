@@ -155,7 +155,11 @@ pub(crate) enum DataPayloadOrInnerInner<M: DataMarker, O> {
     Other(O),
 }
 
-/// The type of the "cart" that is used by `DataPayload`.
+/// The type of the "cart" that is used by [`DataPayload`].
+///
+/// This type is public but the inner cart type is private. To create a
+/// [`Yoke`] with this cart, use [`Cart::try_make_yoke`]. Then, convert
+/// it to a [`DataPayload`] with [`DataPayload::from_yoked_buffer`].
 #[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
 pub struct Cart(CartInner);
@@ -187,12 +191,14 @@ impl Cart {
             .map(Yoke::wrap_cart_in_option)
     }
 
+    /// Helper function to convert `Yoke<Y, Option<Cart>>` to `Yoke<Y, Option<CartInner>>`.
     #[inline]
-    pub(crate) fn unwrap_yoke<Y>(yoke: Yoke<Y, Option<Cart>>) -> Yoke<Y, Option<CartInner>>
+    pub(crate) fn unwrap_cart<Y>(yoke: Yoke<Y, Option<Cart>>) -> Yoke<Y, Option<CartInner>>
     where
         for<'a> Y: Yokeable<'a>,
     {
-        // Safety: `Cart` has one field and we are removing it from the newtype.
+        // Safety: `Cart` has one field and we are removing it from the newtype,
+        // and we are preserving it in the new cart, unwrapping it from the newtype.
         unsafe { yoke.replace_cart(|option_cart| option_cart.map(|cart| cart.0)) }
     }
 }
@@ -800,7 +806,7 @@ impl DataPayload<BufferMarker> {
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
-        let yoke = Cart::unwrap_yoke(yoke);
+        let yoke = Cart::unwrap_cart(yoke);
         Self(DataPayloadInner::Yoke(
             yoke.convert_cart_into_option_pointer(),
         ))
