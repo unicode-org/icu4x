@@ -25,10 +25,23 @@ pub trait ChineseBased {
     /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
     /// may not track years ordinally in the same way many western calendars do.
     const EPOCH: RataDie;
+
+    /// The ISO year that corresponds to year 1
+    const EPOCH_ISO: i32;
+    /// Given an ISO year, return the extended year
+
+    fn extended_from_iso(iso_year: i32) -> i32 {
+        iso_year - Self::EPOCH_ISO + 1
+    }
+    /// Given an extended year, return the ISO year
+    fn iso_from_extended(extended_year: i32) -> i32 {
+        extended_year - 1 + Self::EPOCH_ISO
+    }
 }
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
 const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-2636)
+const CHINESE_EPOCH_ISO: i32 = -2636;
 
 /// The Chinese calendar relies on knowing the current day at the moment of a new moon;
 /// however, this can vary depending on location. As such, new moon calculations are based
@@ -47,6 +60,7 @@ const CHINESE_LOCATION_POST_1929: Location =
 
 // The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
 const KOREAN_EPOCH: RataDie = RataDie::new(-852065); // Lunar new year 2333 BCE (-2332 ISO)
+const KOREAN_EPOCH_ISO: i32 = -2332; // Lunar new year 2333 BCE (-2332 ISO)
 
 /// The Korean Dangi calendar relies on knowing the current day at the moment of a new moon;
 /// however, this can vary depending on location. As such, new moon calculations are based on
@@ -122,6 +136,7 @@ impl ChineseBased for Chinese {
     }
 
     const EPOCH: RataDie = CHINESE_EPOCH;
+    const EPOCH_ISO: i32 = CHINESE_EPOCH_ISO;
 }
 
 impl ChineseBased for Dangi {
@@ -140,6 +155,7 @@ impl ChineseBased for Dangi {
     }
 
     const EPOCH: RataDie = KOREAN_EPOCH;
+    const EPOCH_ISO: i32 = KOREAN_EPOCH_ISO;
 }
 
 /// Marks the bounds of a lunar year
@@ -473,15 +489,22 @@ pub fn days_in_month<C: ChineseBased>(
     (result, next_new_moon)
 }
 
-/// Returns the last day of every month in the year, as well as a leap month index (1-indexed) if any
-/// In the case of no leap months, month 12 and 13 will have identical "last day"
-/// values
+/// Given a new year, calculate the number of days in the previous year
+pub fn days_in_prev_year<C: ChineseBased>(new_year: RataDie) -> u16 {
+    let date = new_year - 300;
+    let prev_solstice = winter_solstice_on_or_before::<C>(date);
+    let (prev_new_year, _) = new_year_on_or_before_fixed_date::<C>(date, prev_solstice);
+    u16::try_from(new_year - prev_new_year).unwrap_or(360)
+}
+
+/// Returns the length of each month in the year, as well as a leap month index (1-indexed) if any.
+/// Month lengths are stored as true for 30-day, false for 29-day.
+/// In the case of no leap months, month 13 will have value false.
 pub fn month_structure_for_year<C: ChineseBased>(
     new_year: RataDie,
     next_new_year: RataDie,
-) -> ([RataDie; 13], Option<NonZeroU8>) {
-    let mut ret = [RataDie::new(0); 13];
-    ret[12] = next_new_year - 1; // last day of last month is the day before the next new year
+) -> ([bool; 13], Option<NonZeroU8>) {
+    let mut ret = [false; 13];
 
     let mut current_month_start = new_year;
     let mut current_month_major_solar_term = major_solar_term_from_fixed::<C>(new_year);
@@ -490,26 +513,22 @@ pub fn month_structure_for_year<C: ChineseBased>(
         let next_month_start = new_moon_on_or_after::<C>((current_month_start + 28).as_moment());
         let next_month_major_solar_term = major_solar_term_from_fixed::<C>(next_month_start);
 
-        #[allow(clippy::indexing_slicing)] // array is of length 13, we iterate till i=11
-        {
-            ret[usize::from(i)] = next_month_start - 1;
-        }
-
         if next_month_major_solar_term == current_month_major_solar_term {
             leap_month_index = NonZeroU8::new(i + 1);
         }
 
         let diff = next_month_start - current_month_start;
         debug_assert!(diff == 29 || diff == 30);
+        #[allow(clippy::indexing_slicing)] // array is of length 13, we iterate till i=11
+        if diff == 30 {
+            ret[usize::from(i)] = true;
+        }
 
         current_month_start = next_month_start;
         current_month_major_solar_term = next_month_major_solar_term;
     }
 
-    let first_month_diff = ret[0] - new_year + 1; // +1 since new_year is in the current month
-    debug_assert!(first_month_diff == 29 || first_month_diff == 30);
-
-    if ret[11] == ret[12] {
+    if current_month_start == next_new_year {
         // not all months without solar terms are leap months; they are only leap months if
         // the year can admit them
         //
@@ -520,11 +539,17 @@ pub fn month_structure_for_year<C: ChineseBased>(
         //
         // As such, if a month without a solar term is found in a non-leap year, we just ingnore it.
         leap_month_index = None;
+    } else {
+        let diff = next_new_year - current_month_start;
+        debug_assert!(diff == 29 || diff == 30);
+        if diff == 30 {
+            ret[12] = true;
+        }
     }
-    if ret[11] != ret[12] && leap_month_index.is_none() {
+    if current_month_start != next_new_year && leap_month_index.is_none() {
         leap_month_index = NonZeroU8::new(13); // The last month is a leap month
         debug_assert!(
-            major_solar_term_from_fixed::<C>(ret[12]) == current_month_major_solar_term,
+            major_solar_term_from_fixed::<C>(current_month_start) == current_month_major_solar_term,
             "A leap month is required here, but it had a major solar term!"
         );
     }
@@ -580,36 +605,27 @@ mod test {
         for year in 1900..2050 {
             let fixed = crate::iso::fixed_from_iso(year, 1, 1);
             let chinese_year = chinese_based_date_from_fixed::<Chinese>(fixed);
-            let (month_ends, leap) = month_structure_for_year::<Chinese>(
+            let (month_lengths, leap) = month_structure_for_year::<Chinese>(
                 chinese_year.year_bounds.new_year,
                 chinese_year.year_bounds.next_new_year,
             );
-            let chinese_ny = chinese_year.year_bounds.new_year;
-            assert_eq!(
-                month_ends[12] - chinese_ny + 1,
-                i64::from(days_in_provided_year::<Chinese>(chinese_year.year)),
-                "Year length must be the same"
-            );
-            let mut month_start = chinese_ny;
-            for (i, month_end) in month_ends.into_iter().enumerate() {
-                let next_month_start = month_end + 1;
-                let month_len = next_month_start - month_start;
-                if month_len == 0 && i == 12 {
+
+            for (i, month_is_30) in month_lengths.into_iter().enumerate() {
+                if leap.is_none() && i == 12 {
                     // month_days has no defined behavior for month 13 on non-leap-years
                     continue;
                 }
+                let month_len = 29 + i32::from(month_is_30);
                 let month_days = month_days::<Chinese>(chinese_year.year, i as u8 + 1);
                 assert_eq!(
                     month_len,
-                    i64::from(month_days),
+                    i32::from(month_days),
                     "Month length for month {} must be the same",
                     i + 1
                 );
-
-                month_start = next_month_start;
             }
             println!(
-                "{year} (chinese {}): {month_ends:?} {leap:?}",
+                "{year} (chinese {}): {month_lengths:?} {leap:?}",
                 chinese_year.year
             );
         }

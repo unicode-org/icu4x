@@ -206,64 +206,7 @@ impl Calendar for Dangi {
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
-        let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .0.year_info.leap_month;
-        let leap_month = if let Some(leap) = leap_month_option {
-            leap.get()
-        } else {
-            14
-        };
-        let code_inner = if leap_month == ordinal {
-            // Month cannot be 1 because a year cannot have a leap month before the first actual month,
-            // and the maximum num of months ina leap year is 13.
-            debug_assert!((2..=13).contains(&ordinal));
-            match ordinal {
-                2 => tinystr!(4, "M01L"),
-                3 => tinystr!(4, "M02L"),
-                4 => tinystr!(4, "M03L"),
-                5 => tinystr!(4, "M04L"),
-                6 => tinystr!(4, "M05L"),
-                7 => tinystr!(4, "M06L"),
-                8 => tinystr!(4, "M07L"),
-                9 => tinystr!(4, "M08L"),
-                10 => tinystr!(4, "M09L"),
-                11 => tinystr!(4, "M10L"),
-                12 => tinystr!(4, "M11L"),
-                13 => tinystr!(4, "M12L"),
-                _ => tinystr!(4, "und"),
-            }
-        } else {
-            let mut adjusted_ordinal = ordinal;
-            if ordinal > leap_month {
-                // Before adjusting for leap month, if ordinal > leap_month,
-                // the month cannot be 1 because this implies the leap month is < 1, which is impossible;
-                // cannot be 2 because that implies the leap month is = 1, which is impossible,
-                // and cannot be more than 13 because max number of months in a year is 13.
-                debug_assert!((2..=13).contains(&ordinal));
-                adjusted_ordinal -= 1;
-            }
-            debug_assert!((1..=12).contains(&adjusted_ordinal));
-            match adjusted_ordinal {
-                1 => tinystr!(4, "M01"),
-                2 => tinystr!(4, "M02"),
-                3 => tinystr!(4, "M03"),
-                4 => tinystr!(4, "M04"),
-                5 => tinystr!(4, "M05"),
-                6 => tinystr!(4, "M06"),
-                7 => tinystr!(4, "M07"),
-                8 => tinystr!(4, "M08"),
-                9 => tinystr!(4, "M09"),
-                10 => tinystr!(4, "M10"),
-                11 => tinystr!(4, "M11"),
-                12 => tinystr!(4, "M12"),
-                _ => tinystr!(4, "und"),
-            }
-        };
-        let code = types::MonthCode(code_inner);
-        types::FormattableMonth {
-            ordinal: ordinal as u32,
-            code,
-        }
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> crate::types::DayOfMonth {
@@ -277,7 +220,7 @@ impl Calendar for Dangi {
             day_of_year: date.0 .0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_dangi_year(prev_year, None),
-            days_in_prev_year: Self::days_in_provided_year(prev_year, date.0 .0.year_info),
+            days_in_prev_year: date.0.days_in_prev_year(),
             next_year: Self::format_dangi_year(next_year, None),
         }
     }
@@ -375,8 +318,9 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     }
 }
 
+type DangiCB = calendrical_calculations::chinese_based::Dangi;
 impl ChineseBasedWithDataLoading for Dangi {
-    type CB = calendrical_calculations::chinese_based::Dangi;
+    type CB = DangiCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
         Default::default()
     }
@@ -395,7 +339,7 @@ impl Dangi {
         let cyclic = (number as i64 - 1 + 364).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year
+            info.new_year::<DangiCB>(year)
         } else {
             Inner::fixed_mid_year_from_year(number)
         };
