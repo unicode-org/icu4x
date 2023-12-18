@@ -67,15 +67,15 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        let units_conversion_trie = ZeroTrieSimpleAscii::try_from(&conversion_info_map)
-            .map_err(|e| {
+        let units_conversion_trie =
+            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
                 DataError::custom("Could not create ZeroTrie from units.json data")
                     .with_display_context(&e)
-            })?
-            .convert_store()
-            .into_zerotrie();
+            })?;
 
-        let parser = MeasureUnitParser::from_payload(&units_conversion_trie);
+        let binding = units_conversion_trie.clone();
+        let parser = MeasureUnitParser::from_payload(&binding);
+        let units_conversion_trie = units_conversion_trie.convert_store().into_zerotrie();
 
         let convert_infos = convert_units_vec
             .iter()
