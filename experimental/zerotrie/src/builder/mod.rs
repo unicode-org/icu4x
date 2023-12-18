@@ -159,7 +159,13 @@ use super::ZeroTrieSimpleAscii;
 impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// **Const Constructor:** Creates an [`ZeroTrieSimpleAscii`] from a sorted slice of keys and values.
     ///
-    /// This function needs to know the exact length of the resulting trie at compile time.
+    /// This function needs to know the exact length of the resulting trie at compile time. To
+    /// figure out N, first set N to be too large (say 0xFFFF), then look at the resulting
+    /// compile error which will tell you how to set N, like this:
+    ///
+    /// > the evaluated program panicked at 'Buffer too large. Size needed: 17'
+    ///
+    /// That error message says you need to set `N` to 17.
     ///
     /// Also see [`Self::from_sorted_str_tuples`].
     ///
@@ -213,7 +219,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// Panics if capacity is too large:
     ///
     /// ```compile_fail
-    /// # use zerotrie::{ZeroTrieSimpleAscii, AsciiStr};
+    /// # use zerotrie::ZeroTrieSimpleAscii;
     /// const TRIE: ZeroTrieSimpleAscii<[u8; 20]> = ZeroTrieSimpleAscii::from_sorted_u8_tuples(&[
     ///     (b"bar", 2),
     ///     (b"bazzoo", 3),
@@ -232,7 +238,13 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
 
     /// **Const Constructor:** Creates an [`ZeroTrieSimpleAscii`] from a sorted slice of keys and values.
     ///
-    /// This function needs to know the exact length of the resulting trie at compile time.
+    /// This function needs to know the exact length of the resulting trie at compile time. To
+    /// figure out `N`, first set `N` to be too large (say 0xFFFF), then look at the resulting
+    /// compile error which will tell you how to set `N`, like this:
+    ///
+    /// > the evaluated program panicked at 'Buffer too large. Size needed: 17'
+    ///
+    /// That error message says you need to set `N` to 17.
     ///
     /// Also see [`Self::from_sorted_u8_tuples`].
     ///
