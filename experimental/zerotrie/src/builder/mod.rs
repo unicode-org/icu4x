@@ -160,8 +160,8 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// **Const Constructor:** Creates an [`ZeroTrieSimpleAscii`] from a sorted slice of keys and values.
     ///
     /// This function needs to know the exact length of the resulting trie at compile time. To
-    /// figure out N, first set N to be too large (say 0xFFFF), then look at the resulting
-    /// compile error which will tell you how to set N, like this:
+    /// figure out `N`, first set `N` to be too large (say 0xFFFF), then look at the resulting
+    /// compile error which will tell you how to set `N`, like this:
     ///
     /// > the evaluated program panicked at 'Buffer too large. Size needed: 17'
     ///
