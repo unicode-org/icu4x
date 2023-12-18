@@ -115,13 +115,14 @@ impl Cart {
             .map(Yoke::wrap_cart_in_option)
     }
 
-    /// Helper function to convert `Yoke<Y, Option<Cart>>` to `Yoke<Y, Option<CartInner>>`
+    /// Helper function to convert `Yoke<Y, Option<Cart>>` to `Yoke<Y, Option<CartInner>>`.
     #[inline]
     pub(crate) fn unwrap_cart<Y>(yoke: Yoke<Y, Option<Cart>>) -> Yoke<Y, Option<CartInner>>
     where
         for<'a> Y: Yokeable<'a>,
     {
-        // Safety: `Cart` has one field and we are removing it from the newtype.
+        // Safety: `Cart` has one field and we are removing it from the newtype,
+        // and we are preserving it in the new cart, unwrapping it from the newtype.
         unsafe { yoke.replace_cart(|option_cart| option_cart.map(|cart| cart.0)) }
     }
 }
