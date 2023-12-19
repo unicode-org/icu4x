@@ -479,44 +479,37 @@ fn generate_rule_break_data(
         }
     }
 
-    let rule_status_table = if segmenter.segmenter_type == "word" {
-        segmenter
-            .tables
-            .iter()
-            .map(|p| match &*p.name {
-                "Numeric" => WordType::Number,
-                "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
-                    WordType::Letter
-                }
-                _ => WordType::None,
-            })
-            .collect()
-    } else {
-        Default::default()
-    };
-
     RuleBreakDataV1 {
-        property_table: RuleBreakPropertyTable(
-            CodePointTrieBuilder {
-                data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
-                default_value: 0,
-                error_value: 0,
-                trie_type: match trie_type {
-                    crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-                    crate::TrieType::Small => codepointtrie::TrieType::Small,
-                },
-            }
-            .build(),
-        ),
-        break_state_table: RuleBreakStateTable(ZeroVec::new_owned(
-            break_state_table
-                .into_iter()
-                // All states are initialized
-                .map(|o| o.unwrap())
-                .map(zerovec::ule::AsULE::to_unaligned)
-                .collect(),
-        )),
-        rule_status_table: RuleStatusTable(rule_status_table),
+        property_table: CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match trie_type {
+                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => codepointtrie::TrieType::Small,
+            },
+        }
+        .build(),
+        break_state_table: break_state_table
+            .into_iter()
+            // All states are initialized
+            .map(|o| o.unwrap())
+            .collect(),
+        word_type_table: if segmenter.segmenter_type == "word" {
+            segmenter
+                .tables
+                .iter()
+                .map(|p| match &*p.name {
+                    "Numeric" => WordType::Number,
+                    "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
+                        WordType::Letter
+                    }
+                    _ => WordType::None,
+                })
+                .collect()
+        } else {
+            Default::default()
+        },
         property_count: properties_names.len().try_into().unwrap(),
         last_codepoint_property: (simple_properties_count - 1).try_into().unwrap(),
         sot_property: (properties_names.len() - 2).try_into().unwrap(),
@@ -690,10 +683,10 @@ mod tests {
         const XX: u8 = 45;
         const ID: u8 = 21;
 
-        assert_eq!(data.property_table.0.get32(0x20000), ID);
-        assert_eq!(data.property_table.0.get32(0x3fffd), ID);
-        assert_eq!(data.property_table.0.get32(0xd0000), XX);
-        assert_eq!(data.property_table.0.get32(0xe0001), CM);
-        assert_eq!(data.property_table.0.get32(0xe0020), CM);
+        assert_eq!(data.property_table.get32(0x20000), ID);
+        assert_eq!(data.property_table.get32(0x3fffd), ID);
+        assert_eq!(data.property_table.get32(0xd0000), XX);
+        assert_eq!(data.property_table.get32(0xe0001), CM);
+        assert_eq!(data.property_table.get32(0xe0020), CM);
     }
 }

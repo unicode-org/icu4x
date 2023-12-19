@@ -411,6 +411,9 @@ jobs:
     - name: Install GCC 11
       run: |
         apt-get install -y gcc-11 g++-11
+    - name: Install jq
+      run: |
+        apt-get install -y jq
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
@@ -476,6 +479,9 @@ jobs:
     - name: Install lld-15
       run: |
         apt-get install -y lld-15
+    - name: Install jq
+      run: |
+        apt-get install -y jq
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`

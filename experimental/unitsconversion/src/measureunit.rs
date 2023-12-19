@@ -13,16 +13,19 @@ use crate::{
     ConversionError,
 };
 
+// TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
-    /// Contains the zero-trie payload.
-    zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
+    /// Contains the payload.
+    payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
 }
 
 impl<'data> MeasureUnitParser<'data> {
+    // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    pub fn new(zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
-        Self { zerotrie_payload }
+    #[cfg(feature = "datagen")]
+    pub fn from_payload(payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
+        Self { payload }
     }
 
     // TODO: complete all the cases for the prefixes.
@@ -68,7 +71,7 @@ impl<'data> MeasureUnitParser<'data> {
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
     fn get_unit_id(&self, part: &'data str) -> Option<usize> {
-        self.zerotrie_payload.get(part.as_bytes())
+        self.payload.get(part.as_bytes())
     }
 
     /// Process a part of an identifier.
@@ -133,7 +136,6 @@ impl<'data> MeasureUnitParser<'data> {
     }
 }
 
-// TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 pub struct MeasureUnit {
     /// Contains the processed units.

@@ -8,3 +8,5 @@
 
 #[cfg(all(feature = "fs_exporter", feature = "use_wasm"))]
 mod make_testdata;
+
+mod data;

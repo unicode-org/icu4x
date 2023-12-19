@@ -144,7 +144,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                         };
 
                         let previous_break_state_is_cp_prop =
-                            index <= self.data.last_codepoint_property as u8;
+                            index <= self.data.last_codepoint_property;
 
                         match self.get_break_state_from_table(index, prop) {
                             BreakState::Keep => continue 'a,
@@ -205,7 +205,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
         // Note: Default value is 0 == UNKNOWN
-        self.data.property_table.0.get32(codepoint.into())
+        self.data.property_table.get32(codepoint.into())
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {
@@ -213,7 +213,6 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
         // We use unwrap_or to fall back to the base case and prevent panics on bad data.
         self.data
             .break_state_table
-            .0
             .get(idx)
             .unwrap_or(BreakState::Keep)
     }
@@ -230,8 +229,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
             return WordType::None;
         }
         self.data
-            .rule_status_table
-            .0
+            .word_type_table
             .get((self.boundary_property - 1) as usize)
             .unwrap_or(WordType::None)
     }
