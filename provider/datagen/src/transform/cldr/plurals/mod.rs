@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
@@ -63,7 +64,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
@@ -122,7 +123,7 @@ impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProviderInternal<PluralRangesV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0

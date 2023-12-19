@@ -14,6 +14,7 @@ use icu_locid::subtags::language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -138,7 +139,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(

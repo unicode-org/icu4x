@@ -19,7 +19,7 @@ use icu_locid::{
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
@@ -182,8 +182,8 @@ impl DatagenProvider {
         &self,
         calendar: Value,
         keylengths: &'static [Subtag],
-    ) -> Result<Vec<DataLocale>, DataError> {
-        let mut r = Vec::new();
+    ) -> Result<HashSet<DataLocale>, DataError> {
+        let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
@@ -683,9 +683,9 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
 // in timepattern_convert
 impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         let calendar = value!("gregory");
-        let mut r = Vec::new();
+        let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
@@ -729,7 +729,7 @@ macro_rules! impl_symbols_datagen {
         }
 
         impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }
@@ -745,7 +745,7 @@ macro_rules! impl_pattern_datagen {
         }
 
         impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }

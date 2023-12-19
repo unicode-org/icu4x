@@ -271,12 +271,7 @@ impl DatagenProvider {
         #[allow(deprecated)] // SourceData
         self.source
             .supported_locales_cache
-            .insert_with(M::KEY, || {
-                Box::new(
-                    self.supported_locales_impl()
-                        .map(|v| v.into_iter().collect()),
-                )
-            })
+            .insert_with(M::KEY, || Box::new(self.supported_locales_impl()))
             .as_ref()
             .map_err(|e| *e)
     }
@@ -512,7 +507,7 @@ impl SourceData {
 }
 
 pub(crate) trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError>;
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError>;
 }
 
 impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider

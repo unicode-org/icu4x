@@ -17,6 +17,7 @@ use icu_dimension::provider::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use tinystr::tinystr;
 
 /// Returns the pattern selection for a currency.
@@ -96,7 +97,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
