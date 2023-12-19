@@ -261,6 +261,19 @@ impl DatagenProvider {
     ) -> Result<impl IntoIterator<Item = icu_locid::LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
+
+    pub(crate) fn supported_locales_vec<M>(&self) -> Result<&Vec<DataLocale>, DataError>
+    where
+        M: KeyedDataMarker,
+        Self: IterableDataProviderInternal<M>,
+    {
+        #[allow(deprecated)] // SourceData
+        self.source
+            .supported_locales_cache_vec
+            .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
+            .as_ref()
+            .map_err(|e| *e)
+    }
 }
 
 /// Specifies the trie type to use.
@@ -500,22 +513,10 @@ where
     DatagenProvider: IterableDataProviderInternal<M>,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        #[allow(deprecated)] // SourceData
-        self.source
-            .supported_locales_cache_vec
-            .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
-            .as_ref()
-            .cloned()
-            .map_err(|e| *e)
+        self.supported_locales_vec().cloned()
     }
 
     fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        #[allow(deprecated)] // SourceData
-        self.source
-            .supported_locales_cache_vec
-            .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
-            .as_ref()
-            .map_err(|e| *e)
-            .map(|v| v.contains(locale))
+        self.supported_locales_vec().map(|v| v.contains(locale))
     }
 }
