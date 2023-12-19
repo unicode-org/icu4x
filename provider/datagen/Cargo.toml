@@ -73,7 +73,7 @@ proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = "1.9"
+elsa = "1.10"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
