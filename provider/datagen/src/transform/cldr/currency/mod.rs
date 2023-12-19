@@ -10,6 +10,7 @@ use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use crate::DatagenProvider;
 use icu_dimension::provider::*;
@@ -95,8 +96,8 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .numbers()

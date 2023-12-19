@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde::ca;
 use crate::DatagenProvider;
 use icu_datetime::pattern::{self, CoarseHourCycle};
@@ -727,8 +728,8 @@ macro_rules! impl_symbols_datagen {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }
@@ -743,8 +744,8 @@ macro_rules! impl_pattern_datagen {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }

@@ -7,7 +7,10 @@
 use crate::source::*;
 use crate::transform::cldr::source::CldrCache;
 use crate::{CollationHanDatabase, CoverageLevel};
+use elsa::sync::FrozenMap;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -78,6 +81,7 @@ impl DatagenProvider {
                 icuexport_dictionary_fallback: None,
                 #[cfg(feature = "legacy_api")]
                 collations: Default::default(),
+                supported_locales_cache_vec: Default::default(),
             },
         }
     }
@@ -306,6 +310,28 @@ pub struct SourceData {
     pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
+    pub(crate) supported_locales_cache_vec:
+        FrozenMapThrowawayClone<DataKey, Box<Result<Vec<DataLocale>, DataError>>>,
+}
+
+pub(crate) struct FrozenMapThrowawayClone<K, V>(pub(crate) FrozenMap<K, V>);
+
+impl<K, V> Default for FrozenMapThrowawayClone<K, V> {
+    fn default() -> Self {
+        Self(FrozenMap::new())
+    }
+}
+
+impl<K, V> Clone for FrozenMapThrowawayClone<K, V> {
+    fn clone(&self) -> Self {
+        Default::default()
+    }
+}
+
+impl<K, V> Debug for FrozenMapThrowawayClone<K, V> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "FrozenMap")
+    }
 }
 
 #[cfg(feature = "legacy_api")]
@@ -483,5 +509,44 @@ impl SourceData {
             .as_deref()
             .ok_or(DatagenProvider::MISSING_CLDR_ERROR)?
             .locales(levels.iter().copied())
+    }
+}
+
+pub(crate) trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
+    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError>;
+}
+
+impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
+where
+    DatagenProvider: IterableDataProviderInternal<M>,
+{
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        if M::KEY == icu_transliterate::provider::TransliteratorRulesV1Marker::KEY {
+            // Don't do caching for this one. It uses its own mutex
+            return self.supported_locales_impl();
+        }
+        #[allow(deprecated)] // SourceData
+        self.source
+            .supported_locales_cache_vec
+            .0
+            .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
+            .as_ref()
+            .cloned()
+            .map_err(|e| *e)
+    }
+
+    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
+        if M::KEY == icu_transliterate::provider::TransliteratorRulesV1Marker::KEY {
+            // Don't do caching for this one. It uses its own mutex
+            return self.supported_locales_impl().map(|v| v.contains(locale));
+        }
+        #[allow(deprecated)] // SourceData
+        self.source
+            .supported_locales_cache_vec
+            .0
+            .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
+            .as_ref()
+            .map_err(|e| *e)
+            .map(|v| v.contains(locale))
     }
 }

@@ -6,10 +6,14 @@ pub mod cldr;
 pub mod icuexport;
 pub mod segmenter;
 
+use std::borrow::Cow;
+use std::collections::HashSet;
+
 use crate::DatagenProvider;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
+use icu_transliterate::provider::TransliteratorRulesV1Marker;
 
 impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
@@ -31,7 +35,7 @@ impl DatagenProvider {
     {
         if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supported_locales()?.contains(req.locale) {
+        } else if !self.supports_locale(req.locale)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())

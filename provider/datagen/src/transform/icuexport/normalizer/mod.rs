@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
+use crate::provider::IterableDataProviderInternal;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
@@ -33,8 +34,8 @@ macro_rules! normalization_provider {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(vec![DataLocale::default()])
             }
         }

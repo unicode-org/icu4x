@@ -5,6 +5,7 @@
 use std::collections::HashSet;
 use std::marker::PhantomData;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
@@ -46,8 +47,8 @@ macro_rules! exemplar_chars_impls {
             }
         }
 
-        impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$data_marker_name> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

@@ -4,6 +4,7 @@
 
 use std::collections::BTreeMap;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
@@ -62,8 +63,8 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
@@ -121,8 +122,8 @@ impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<PluralRangesV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
