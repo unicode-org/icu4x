@@ -263,7 +263,7 @@ impl DatagenProvider {
         self.cldr()?.locales(levels)
     }
 
-    pub(crate) fn supported_locales_vec<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
+    pub(crate) fn supported_locales_set<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
     where
         M: KeyedDataMarker,
         Self: IterableDataProviderInternal<M>,
@@ -520,11 +520,11 @@ where
     DatagenProvider: IterableDataProviderInternal<M>,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales_vec()
+        self.supported_locales_set()
             .map(|v| v.iter().cloned().collect())
     }
 
     fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        self.supported_locales_vec().map(|v| v.contains(locale))
+        self.supported_locales_set().map(|v| v.contains(locale))
     }
 }
