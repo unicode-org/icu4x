@@ -73,7 +73,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                     .with_display_context(&e)
             })?;
 
-        let binding = units_conversion_trie.clone();
+        let binding = units_conversion_trie.clone().convert_store();
         let parser = MeasureUnitParser::from_payload(&binding);
         let units_conversion_trie = units_conversion_trie.convert_store().into_zerotrie();
 
