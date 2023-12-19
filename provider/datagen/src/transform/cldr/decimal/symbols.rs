@@ -50,7 +50,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProviderInternal<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        self.supported_locales()
+        self.supported_locales_for_numbers()
     }
 }
 

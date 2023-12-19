@@ -110,13 +110,13 @@ impl IterableDataProviderInternal<ShortCompactDecimalFormatDataV1Marker>
     for crate::DatagenProvider
 {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        self.supported_locales()
+        self.supported_locales_for_numbers()
     }
 }
 
 impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        self.supported_locales()
+        self.supported_locales_for_numbers()
     }
 }
 

@@ -74,7 +74,7 @@ impl crate::DatagenProvider {
             .collect())
     }
 
-    fn supported_locales(&self) -> Result<HashSet<DataLocale>, DataError> {
+    fn supported_locales_for_numbers(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
