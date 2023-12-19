@@ -26,7 +26,6 @@ use crate::{
     Calendar, CalendarError, Iso,
 };
 
-use alloc::vec::Vec;
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
 use calendrical_calculations::rata_die::RataDie;
 use core::num::NonZeroU8;
@@ -115,7 +114,7 @@ fn compute_packed_with_yb<CB: ChineseBased>(
 #[cfg(feature = "datagen")]
 pub(crate) fn compute_many_packed<CB: ChineseBased>(
     extended_years: core::ops::Range<i32>,
-) -> Vec<PackedChineseBasedYearInfo> {
+) -> alloc::vec::Vec<PackedChineseBasedYearInfo> {
     extended_years
         .map(|extended_year| {
             let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);

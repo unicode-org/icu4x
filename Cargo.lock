@@ -1521,6 +1521,7 @@ version = "1.4.0"
 name = "icu_datagen"
 version = "1.4.0"
 dependencies = [
+ "calendrical_calculations",
  "clap 4.2.1",
  "crlify",
  "databake",
