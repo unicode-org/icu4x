@@ -87,6 +87,7 @@ impl SerdeCache {
     }
 
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
+        self.populate_list_cache();
         let hash_set = self
             .list_cache
             .read()
