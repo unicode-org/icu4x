@@ -6,7 +6,6 @@ use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_compactdecimal::provider::*;
 use icu_locid::extensions::unicode::key;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
