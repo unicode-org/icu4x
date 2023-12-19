@@ -138,6 +138,7 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 2]>>());
 /// assert_eq!(W * 5, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 3]>>());
 /// ```
+#[doc(hidden)] // TODO(#4467): establish this as an internal API
 pub struct DataPayloadOr<M: DataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
 
 pub(crate) enum DataPayloadInner<M: DataMarker> {
