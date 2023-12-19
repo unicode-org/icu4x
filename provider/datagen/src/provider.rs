@@ -10,6 +10,7 @@ use crate::{CollationHanDatabase, CoverageLevel};
 use elsa::sync::FrozenMap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -80,7 +81,7 @@ impl DatagenProvider {
                 icuexport_dictionary_fallback: None,
                 #[cfg(feature = "legacy_api")]
                 collations: Default::default(),
-                supported_locales_cache_vec: Default::default(),
+                supported_locales_cache: Default::default(),
             },
         }
     }
@@ -262,15 +263,20 @@ impl DatagenProvider {
         self.cldr()?.locales(levels)
     }
 
-    pub(crate) fn supported_locales_vec<M>(&self) -> Result<&Vec<DataLocale>, DataError>
+    pub(crate) fn supported_locales_vec<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
     where
         M: KeyedDataMarker,
         Self: IterableDataProviderInternal<M>,
     {
         #[allow(deprecated)] // SourceData
         self.source
-            .supported_locales_cache_vec
-            .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
+            .supported_locales_cache
+            .insert_with(M::KEY, || {
+                Box::new(
+                    self.supported_locales_impl()
+                        .map(|v| v.into_iter().collect()),
+                )
+            })
             .as_ref()
             .map_err(|e| *e)
     }
@@ -322,8 +328,8 @@ pub struct SourceData {
     pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
-    pub(crate) supported_locales_cache_vec:
-        Arc<FrozenMap<DataKey, Box<Result<Vec<DataLocale>, DataError>>>>,
+    pub(crate) supported_locales_cache:
+        Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
 }
 
 #[cfg(feature = "legacy_api")]
@@ -513,7 +519,8 @@ where
     DatagenProvider: IterableDataProviderInternal<M>,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales_vec().cloned()
+        self.supported_locales_vec()
+            .map(|v| v.iter().cloned().collect())
     }
 
     fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
