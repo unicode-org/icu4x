@@ -328,6 +328,7 @@ pub struct SourceData {
     pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
+    #[allow(clippy::type_complexity)] // not as complex as it appears
     pub(crate) supported_locales_cache:
         Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
 }
