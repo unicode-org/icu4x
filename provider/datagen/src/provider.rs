@@ -310,27 +310,7 @@ pub struct SourceData {
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
     pub(crate) supported_locales_cache_vec:
-        FrozenMapThrowawayClone<DataKey, Box<Result<Vec<DataLocale>, DataError>>>,
-}
-
-pub(crate) struct FrozenMapThrowawayClone<K, V>(pub(crate) FrozenMap<K, V>);
-
-impl<K, V> Default for FrozenMapThrowawayClone<K, V> {
-    fn default() -> Self {
-        Self(FrozenMap::new())
-    }
-}
-
-impl<K, V> Clone for FrozenMapThrowawayClone<K, V> {
-    fn clone(&self) -> Self {
-        Default::default()
-    }
-}
-
-impl<K, V> Debug for FrozenMapThrowawayClone<K, V> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "FrozenMap")
-    }
+        Arc<FrozenMap<DataKey, Box<Result<Vec<DataLocale>, DataError>>>>,
 }
 
 #[cfg(feature = "legacy_api")]
@@ -523,7 +503,6 @@ where
         #[allow(deprecated)] // SourceData
         self.source
             .supported_locales_cache_vec
-            .0
             .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
             .as_ref()
             .cloned()
@@ -534,7 +513,6 @@ where
         #[allow(deprecated)] // SourceData
         self.source
             .supported_locales_cache_vec
-            .0
             .insert_with(M::KEY, || Box::from(self.supported_locales_impl()))
             .as_ref()
             .map_err(|e| *e)
