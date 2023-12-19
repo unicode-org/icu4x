@@ -8,6 +8,41 @@ use zerotrie::ZeroTrieSimpleAscii;
 
 use crate::provider::{Base, SiPrefix};
 
+/// The offset of the SI prefixes.
+/// NOTE:
+///     The offset is added to the power of the decimal SI prefixes in order to avoid negative powers.
+///     Therefore, if there is a prefix with power more than -30, the offset should be increased.
+const SI_PREFIXES_OFFSET: u8 = 30;
+
+/// A trie that contains the decimal SI prefixes.
+const DECIMAL_PREFIXES_TRIE: ZeroTrieSimpleAscii<[u8; 167]> =
+    ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
+        ("atto", (-18 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("centi", (-2 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("deca", (1 + SI_PREFIXES_OFFSET) as usize),
+        ("deci", (-1 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("exa", (18 + SI_PREFIXES_OFFSET) as usize),
+        ("femto", (-15 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("giga", (9 + SI_PREFIXES_OFFSET) as usize),
+        ("hecto", (2 + SI_PREFIXES_OFFSET) as usize),
+        ("kilo", (3 + SI_PREFIXES_OFFSET) as usize),
+        ("mega", (6 + SI_PREFIXES_OFFSET) as usize),
+        ("micro", (-6 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("milli", (-3 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("nano", (-9 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("peta", (15 + SI_PREFIXES_OFFSET) as usize),
+        ("pico", (-12 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("quecto", (-30 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("quetta", (30 + SI_PREFIXES_OFFSET) as usize),
+        ("ronna", (27 + SI_PREFIXES_OFFSET) as usize),
+        ("ronto", (-27 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("tera", (12 + SI_PREFIXES_OFFSET) as usize),
+        ("yocto", (-24 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("yotta", (24 + SI_PREFIXES_OFFSET) as usize),
+        ("zepto", (-21 + SI_PREFIXES_OFFSET as i16) as usize),
+        ("zetta", (21 + SI_PREFIXES_OFFSET) as usize),
+    ]);
+
 // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
 // TODO: consider using a trie for the prefixes.
 // TODO: complete all the cases for the prefixes.
@@ -16,53 +51,33 @@ use crate::provider::{Base, SiPrefix};
 ///    if the prefix is found, the function will return (power, part without the prefix).
 ///    if the prefix is not found, the function will return (0, part).
 fn get_si_prefix_base_ten(part: &str) -> (i8, &str) {
-    let prefixes = vec![
-        ("quetta", 30, 0),
-        ("ronna", 27, 1),
-        ("yotta", 24, 2),
-        ("zetta", 21, 3),
-        ("exa", 18, 4),
-        ("peta", 15, 5),
-        ("tera", 12, 6),
-        ("giga", 9, 7),
-        ("mega", 6, 8),
-        ("kilo", 3, 9),
-        ("hecto", 2, 10),
-        ("deca", 1, 11),
-        ("deci", -1, 12),
-        ("centi", -2, 13),
-        ("milli", -3, 14),
-        ("micro", -6, 15),
-        ("nano", -9, 16),
-        ("pico", -12, 17),
-        ("femto", -15, 18),
-        ("atto", -18, 19),
-        ("zepto", -21, 20),
-        ("yocto", -24, 21),
-        ("ronto", -27, 22),
-        ("quecto", -30, 23),
-    ];
+    let mut cursor = DECIMAL_PREFIXES_TRIE.cursor();
 
-    let prefixes_map = prefixes
-        .iter()
-        .map(|(prefix, _, index)| (prefix.as_bytes().to_vec(), *index))
-        .collect::<BTreeMap<Vec<u8>, usize>>();
-
-    let trie = ZeroTrieSimpleAscii::try_from(&prefixes_map).unwrap();
-    let mut cursor = trie.cursor();
-
-    let mut longest_match = (0, part);
+    let mut longest_match = (0 as i8, part);
     for (i, b) in part.bytes().enumerate() {
         cursor.step(b);
         if cursor.is_empty() {
             break;
         }
         if let Some(value) = cursor.take_value() {
-            longest_match = (prefixes[value].1, &part[i + 1..]);
+            let power = value as i8 - SI_PREFIXES_OFFSET as i8;
+            longest_match = (power, &part[i + 1..]);
         }
     }
     longest_match
 }
+
+/// A trie that contains the binary SI prefixes.
+const BINARY_TRIE: ZeroTrieSimpleAscii<[u8; 55]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
+    ("exbi", 60),
+    ("gibi", 30),
+    ("kibi", 10),
+    ("mebi", 20),
+    ("pebi", 50),
+    ("tebi", 40),
+    ("yobi", 80),
+    ("zebi", 70),
+]);
 
 // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
 // TODO: consider using a trie for the prefixes.
@@ -72,23 +87,7 @@ fn get_si_prefix_base_ten(part: &str) -> (i8, &str) {
 ///     if the prefix is found, the function will return (power, part without the prefix).
 ///     if the prefix is not found, the function will return (0, part).
 fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
-    let prefixes = vec![
-        ("yobi", 80),
-        ("zebi", 70),
-        ("exbi", 60),
-        ("pebi", 50),
-        ("tebi", 40),
-        ("gibi", 30),
-        ("mebi", 20),
-        ("kibi", 10),
-    ];
-    let prefixes_map = prefixes
-        .iter()
-        .map(|(prefix, index)| (prefix.as_bytes().to_vec(), *index))
-        .collect::<BTreeMap<Vec<u8>, usize>>();
-    let trie = ZeroTrieSimpleAscii::try_from(&prefixes_map).unwrap();
-    let mut cursor = trie.cursor();
-
+    let mut cursor = BINARY_TRIE.cursor();
     let mut longest_match = (0, part);
     for (i, b) in part.bytes().enumerate() {
         cursor.step(b);

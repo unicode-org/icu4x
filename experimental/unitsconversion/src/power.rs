@@ -4,7 +4,8 @@
 
 use zerotrie::{ZeroTrieSimpleAscii, ZeroTrieSimpleAsciiCursor};
 
-const TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
+/// A trie that contains the powers.
+const POWERS_TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
     ("cubic", 3),
     ("pow1", 1),
     ("pow10", 10),
@@ -31,7 +32,7 @@ const TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sorted_str
 ///     - If the power is not found, the function returns (1, part).
 ///     - If the power is found, the function will return (power, part without the string of the power).
 pub fn get_power(part: &str) -> (u8, &str) {
-    let mut cursor = TRIE.cursor();
+    let mut cursor = POWERS_TRIE.cursor();
     let mut longest_match = (1, part);
     for (i, b) in part.bytes().enumerate() {
         cursor.step(b);
