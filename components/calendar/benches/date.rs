@@ -139,7 +139,7 @@ fn date_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
-        "calendar/chinese",
+        "calendar/chinese_calculating",
         &fxs,
         icu::calendar::chinese::Chinese::new_always_calculating(),
         |y, m, d| {
@@ -156,7 +156,24 @@ fn date_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
-        "calendar/dangi",
+        "calendar/chinese_cached",
+        &fxs,
+        icu::calendar::chinese::Chinese::new(),
+        |y, m, d| {
+            Date::try_new_chinese_date_with_calendar(
+                y,
+                m,
+                d,
+                icu::calendar::chinese::Chinese::new(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/dangi_calculating",
         &fxs,
         icu::calendar::dangi::Dangi::new_always_calculating(),
         |y, m, d| {
@@ -167,6 +184,18 @@ fn date_benches(c: &mut Criterion) {
                 icu::calendar::dangi::Dangi::new_always_calculating(),
             )
             .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/dangi_cached",
+        &fxs,
+        icu::calendar::dangi::Dangi::new(),
+        |y, m, d| {
+            Date::try_new_dangi_date_with_calendar(y, m, d, icu::calendar::dangi::Dangi::new())
+                .unwrap()
         },
     );
 
