@@ -137,7 +137,7 @@ impl Ord for Dangi {
 }
 
 impl Dangi {
-    /// Creates a new [`Dangi`] using only modern eras (post-meiji) from compiled data.
+    /// Creates a new [`Dangi`] with some precomputed calendrical calculations.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

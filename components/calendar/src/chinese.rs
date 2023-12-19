@@ -145,7 +145,7 @@ impl Ord for Chinese {
 }
 
 impl Chinese {
-    /// Creates a new [`Chinese`] using only modern eras (post-meiji) from compiled data.
+    /// Creates a new [`Chinese`] with some precomputed calendrical calculations.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
