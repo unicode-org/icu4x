@@ -69,8 +69,6 @@ macro_rules! implement {
                     .get_rules_for(<$marker>::KEY)?
                     .0
                     .keys()
-                    // TODO(#568): Avoid the clone
-                    .cloned()
                     .map(DataLocale::from)
                     .collect())
             }
@@ -128,8 +126,6 @@ impl IterableDataProviderInternal<PluralRangesV1Marker> for crate::DatagenProvid
             .get_plural_ranges()?
             .0
             .keys()
-            // TODO(#568): Avoid the clone
-            .cloned()
             .map(DataLocale::from)
             .chain([DataLocale::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
