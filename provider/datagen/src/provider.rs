@@ -520,10 +520,6 @@ where
     DatagenProvider: IterableDataProviderInternal<M>,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        if M::KEY == icu_transliterate::provider::TransliteratorRulesV1Marker::KEY {
-            // Don't do caching for this one. It uses its own mutex
-            return self.supported_locales_impl();
-        }
         #[allow(deprecated)] // SourceData
         self.source
             .supported_locales_cache_vec
@@ -535,10 +531,6 @@ where
     }
 
     fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        if M::KEY == icu_transliterate::provider::TransliteratorRulesV1Marker::KEY {
-            // Don't do caching for this one. It uses its own mutex
-            return self.supported_locales_impl().map(|v| v.contains(locale));
-        }
         #[allow(deprecated)] // SourceData
         self.source
             .supported_locales_cache_vec
