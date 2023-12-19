@@ -1,0 +1,27 @@
+// @generated
+/// Implement `DataProvider<DangiCacheV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_calendar_dangicache_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl $provider {
+            #[doc(hidden)]
+            pub const SINGLETON_CALENDAR_DANGICACHE_V1: &'static <icu::calendar::provider::chinese_based::DangiCacheV1Marker as icu_provider::DataMarker>::Yokeable = &icu::calendar::provider::chinese_based::ChineseBasedCacheV1 { first_extended_year: 4233i32, data: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xD26\x17R\x07<\xA5\x0E&J\xCE\x12K\x056\x97\n\x1EV\xB5\nj\x050U\x0B\x1ARw\x04R\x07*%\xF7\x14%\x0B:K\n\"\x9B\xD2\x0C\xAD\n2j\x05\x1Eik\x06\xA9\x0B,R\x1B\x19\x92\r>%\r&M\xDA\x10V\t6\xB5\x02 \xAD\xB5\x08\xD4\x060\xA9\r\x1A\x92}\x06\x92\x0E*&\xED\x14'\x058W\n\"\xB6\xD2\x0C\xDA\n2\xD4\x06\x1E\xA9\x8E\x08I\x07,\x93\x16\x17\x93\n<+\x05&[\xEA\x0Em\t4j\x0B T\xBB\x0C\xA4\x0B0I\x0B\x1A\x93z\x04\x95\n*+\x15\x13-\x058\xAD\n\"j\xD5\x0E\xB2\r2\xA4\r\x1EI\x9D\x08J\r.\x95:\x17\x96\n<V\x05&\xB5\xEA\x10\xD5\n4\xD2\x06 \xA5\xAE\n\xA5\x0E0J\x0E\x1A\x96\x8C\x04\x9B\n(V\x15\x15j\x058Y\x0B\"R\xD7\x0ER\x074%\x07\x1CK\xB6\x06K\n,\xAB2\x17\xAD\x02:k\x05$i\xEB\x10\xA9\r6\x92\r %\xBB\n%\r0Mz\x1BV\n>\xB6\x02(\xAD\xF5\x12\xD4\x06:\xA9\r\"\x92\xDD\x0E\x92\x0E4&\r\x1EV\x8A\x06W\n*\xB62\x17Z\x0B<\xD4\x06&\xC9\xCE\x10I\x076\x93\x06 '\xB5\x08+\x05.[\n\x18Zu\x04j\x03(U\x1B\x13\xA4\x0B:I\x0B$\x93\xDA\x0C\x95\n2-\x05\x1C]\x8A\x06\xAD\n*\xAAU\x17\xD2\x05<\xA5\r&J\xDD\x10J\r6\x95\n -\xB5\nV\x05.\xB5\n\x18\xAAu\x04\xD2\x06*\xA5\xEE\x12\xA5\x0E8J\x0E$\x96\xCC\x0E\x9B\x0C0Z\x05\x1C\xD5\x8A\x06i\x0B,R\x97\x17R\x07<%\x0B&K\xF6\x10K\n4\xAB\x04\x1E[\xC5\x08m\x05.i\x0B\x18R{\x04\x92\r*%\x1D\x15%\r8M\n\"\xAD\xD4\x0C\xB6\x022\xB5\x05\x1A\xA9\x8D\x06\xA9\x0E,\x92=\x19\x92\x0E<&\r&V\xEA\x10W\n4\xD6\x04\x1E\xB5\xA6\x08\xD5\x06.\xC9\x0E\x1A\x92\x8E\x04\x93\x06(+\x15\x13+\x058[\n Z\xD5\x0Cj\x052U\x0B\x1CI\xB7\x06I\x0B,\x93:\x17\x95\n<-\x05$\xAD\xEA\x0E\xB5\n4\xAA\x05 \xA5\xAB\x08\xA5\r.J\r\x1A\x95\x9A\x04\x95\x0C(.\x15\x13V\x058\xB5\n\"\xB2\xD5\x0C\xD2\x062\xA5\x0E\x1CJ\xBE\x08J\x06,\x97,\x15\xAB\x0C:Z\x05&\xD5\xEA\x0Ei\x0B4R\x07 \xA5\xB6\n%\x0B.K\x06\x18\x97\x94\x02") } };
+        }
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::calendar::provider::chinese_based::DangiCacheV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::calendar::provider::chinese_based::DangiCacheV1Marker>, icu_provider::DataError> {
+                if req.locale.is_empty() {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_CALENDAR_DANGICACHE_V1)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::calendar::provider::chinese_based::DangiCacheV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}
