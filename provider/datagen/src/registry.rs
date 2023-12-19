@@ -158,6 +158,8 @@ registry!(
     #[cfg(test)]
     icu_dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
+    icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
+    icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",

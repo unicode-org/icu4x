@@ -71,9 +71,9 @@ fn test_fixture(fixture_name: &str, file: &str) {
         };
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese::new_always_calculating());
+        let input_chinese = input_value.to_calendar(Chinese::new());
         let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi::new_always_calculating());
+        let input_dangi = input_value.to_calendar(Dangi::new());
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));

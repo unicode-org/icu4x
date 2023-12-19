@@ -117,7 +117,7 @@ fn datetime_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
-        "calendar/chinese",
+        "calendar/chinese_calculating",
         &fxs,
         icu::calendar::chinese::Chinese::new_always_calculating(),
         |y, m, d, h, min, s| {
@@ -129,6 +129,26 @@ fn datetime_benches(c: &mut Criterion) {
                 min,
                 s,
                 icu::calendar::chinese::Chinese::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/chinese_cached",
+        &fxs,
+        icu::calendar::chinese::Chinese::new(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_chinese_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::chinese::Chinese::new(),
             )
             .unwrap()
         },
