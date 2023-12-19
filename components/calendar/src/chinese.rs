@@ -445,6 +445,15 @@ mod test {
     use super::*;
     use crate::types::MonthCode;
     use calendrical_calculations::rata_die::RataDie;
+    /// Run a test twice, with two calendars
+    fn do_twice(
+        chinese_calculating: &Chinese,
+        chinese_cached: &Chinese,
+        test: impl Fn(crate::Ref<Chinese>, &'static str),
+    ) {
+        test(crate::Ref(chinese_calculating), "calculating");
+        test(crate::Ref(chinese_cached), "cached");
+    }
 
     #[test]
     fn test_chinese_from_fixed() {
@@ -531,22 +540,31 @@ mod test {
             },
         ];
 
-        let chinese = Chinese::new_always_calculating();
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
         for case in cases {
             let rata_die = RataDie::new(case.fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let chinese = Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
-            assert_eq!(
-                case.expected_year, chinese.0.year,
-                "Chinese from fixed failed for case: {case:?}"
-            );
-            assert_eq!(
-                case.expected_month, chinese.0.month,
-                "Chinese from fixed failed for case: {case:?}"
-            );
-            assert_eq!(
-                case.expected_day, chinese.0.day,
-                "Chinese from fixed failed for case: {case:?}"
+
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese =
+                        Inner::chinese_based_date_from_fixed(&chinese.0, rata_die, iso.inner.0);
+                    assert_eq!(
+                        case.expected_year, chinese.0.year,
+                        "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
+                    );
+                    assert_eq!(
+                        case.expected_month, chinese.0.month,
+                        "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
+                    );
+                    assert_eq!(
+                        case.expected_day, chinese.0.day,
+                        "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
+                    );
+                },
             );
         }
     }
@@ -577,15 +595,23 @@ mod test {
             },
         ];
 
-        let chinese = Chinese::new_always_calculating();
-        let chinese = crate::Ref(&chinese);
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
         for case in cases {
-            let date =
-                Date::try_new_chinese_date_with_calendar(case.year, case.month, case.day, chinese)
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let date = Date::try_new_chinese_date_with_calendar(
+                        case.year, case.month, case.day, chinese,
+                    )
                     .unwrap();
-            let fixed = Inner::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
-            let expected = case.expected;
-            assert_eq!(fixed, expected, "Fixed from Chinese failed with expected: {fixed} and calculated: {expected}, for test case: {case:?}");
+                    let fixed =
+                        Inner::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
+                    let expected = case.expected;
+                    assert_eq!(fixed, expected, "[{calendar_type}] Fixed from Chinese failed, with expected: {fixed} and calculated: {expected}, for test case: {case:?}");
+                },
+            );
         }
     }
 
@@ -595,14 +621,23 @@ mod test {
         let max_fixed = 1963020;
         let mut iters = 0;
         let max_iters = 560;
-        let chinese = Chinese::new_always_calculating();
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let chinese = Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
-            let result = Inner::fixed_from_chinese_based_date_inner(chinese);
-            let result_debug = result.to_i64_date();
-            assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
+
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese =
+                        Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
+                    let result = Inner::fixed_from_chinese_based_date_inner(chinese);
+                    let result_debug = result.to_i64_date();
+                    assert_eq!(result, rata_die, "[{calendar_type}] Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
+                },
+            );
             fixed += 7043;
             iters += 1;
         }
@@ -611,13 +646,21 @@ mod test {
     #[test]
     fn test_chinese_epoch() {
         let iso = Date::try_new_iso_date(-2636, 2, 15).unwrap();
-        let chinese = iso.to_calendar(Chinese::new_always_calculating());
-        assert_eq!(chinese.year().number, 1);
-        assert_eq!(chinese.month().ordinal, 1);
-        assert_eq!(chinese.month().code.0, "M01");
-        assert_eq!(chinese.day_of_month().0, 1);
-        assert_eq!(chinese.year().cyclic.unwrap().get(), 1);
-        assert_eq!(chinese.year().related_iso, Some(-2636));
+
+        do_twice(
+            &Chinese::new_always_calculating(),
+            &Chinese::new(),
+            |chinese, _calendar_type| {
+                let chinese = iso.to_calendar(chinese);
+
+                assert_eq!(chinese.year().number, 1);
+                assert_eq!(chinese.month().ordinal, 1);
+                assert_eq!(chinese.month().code.0, "M01");
+                assert_eq!(chinese.day_of_month().0, 1);
+                assert_eq!(chinese.year().cyclic.unwrap().get(), 1);
+                assert_eq!(chinese.year().related_iso, Some(-2636));
+            },
+        )
     }
 
     #[test]
@@ -651,23 +694,32 @@ mod test {
             },
         ];
 
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
+
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let chinese = iso.to_calendar(Chinese::new_always_calculating());
-            assert_eq!(
-                case.expected_year,
-                chinese.year().number,
-                "ISO to Chinese failed for case: {case:?}"
-            );
-            assert_eq!(
-                case.expected_month,
-                chinese.month().ordinal,
-                "ISO to Chinese failed for case: {case:?}"
-            );
-            assert_eq!(
-                case.expected_day,
-                chinese.day_of_month().0,
-                "ISO to Chinese failed for case: {case:?}"
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese = iso.to_calendar(chinese);
+                    assert_eq!(
+                        case.expected_year,
+                        chinese.year().number,
+                        "[{calendar_type}] ISO to Chinese failed for case: {case:?}"
+                    );
+                    assert_eq!(
+                        case.expected_month,
+                        chinese.month().ordinal,
+                        "[{calendar_type}] ISO to Chinese failed for case: {case:?}"
+                    );
+                    assert_eq!(
+                        case.expected_day,
+                        chinese.day_of_month().0,
+                        "[{calendar_type}] ISO to Chinese failed for case: {case:?}"
+                    );
+                },
             );
         }
     }
@@ -682,18 +734,31 @@ mod test {
             (2017, 7),
             (2028, 6),
         ];
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
+
         for case in expected {
             let year = case.0;
             let expected_month = case.1;
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
-            let chinese_date = iso.to_calendar(Chinese::new_always_calculating());
-            assert!(chinese_date.is_in_leap_year());
-            let new_year = chinese_date.inner.0.new_year();
-            assert_eq!(
-                expected_month,
-                calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
-                    calendrical_calculations::chinese_based::Chinese,
-                >(new_year)
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese_date = iso.to_calendar(chinese);
+                    assert!(
+                        chinese_date.is_in_leap_year(),
+                        "[{calendar_type}] {year} should be a leap year"
+                    );
+                    let new_year = chinese_date.inner.0.new_year();
+                    assert_eq!(
+                        expected_month,
+                        calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
+                            calendrical_calculations::chinese_based::Chinese,
+                        >(new_year),
+                        "[{calendar_type}] {year} have leap month {expected_month}"
+                    );
+                },
             );
         }
     }
@@ -831,14 +896,23 @@ mod test {
             },
         ];
 
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
+
         for case in cases {
             let iso = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
-            let chinese = iso.to_calendar(Chinese::new_always_calculating());
-            let result_code = chinese.month().code.0;
-            let expected_code = case.expected_code.to_string();
-            assert_eq!(
-                expected_code, result_code,
-                "Month codes did not match for test case: {case:?}"
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese = iso.to_calendar(chinese);
+                    let result_code = chinese.month().code.0;
+                    let expected_code = case.expected_code.to_string();
+                    assert_eq!(
+                        expected_code, result_code,
+                        "[{calendar_type}] Month codes did not match for test case: {case:?}"
+                    );
+                },
             );
         }
     }
@@ -908,14 +982,23 @@ mod test {
 
     #[test]
     fn test_iso_chinese_roundtrip() {
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
+
         for i in -1000..=1000 {
             let year = i;
             let month = i as u8 % 12 + 1;
             let day = i as u8 % 28 + 1;
             let iso = Date::try_new_iso_date(year, month, day).unwrap();
-            let chinese = iso.to_calendar(Chinese::new_always_calculating());
-            let result = chinese.to_calendar(Iso);
-            assert_eq!(iso, result, "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese = iso.to_calendar(chinese);
+                    let result = chinese.to_calendar(Iso);
+                    assert_eq!(iso, result, "[{calendar_type}] ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
+                },
+            );
         }
     }
 
@@ -1010,31 +1093,41 @@ mod test {
             },
         ];
 
+        let chinese_calculating = Chinese::new_always_calculating();
+        let chinese_cached = Chinese::new();
+
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let chinese = iso.to_calendar(Chinese::new_always_calculating());
-            let chinese_rel_iso = chinese.year().related_iso;
-            let chinese_cyclic = chinese.year().cyclic;
-            let chinese_month = chinese.month().ordinal;
-            let chinese_day = chinese.day_of_month().0;
 
-            assert_eq!(
-                chinese_rel_iso,
-                Some(case.expected_rel_iso),
-                "Related ISO failed for test case: {case:?}"
-            );
-            assert_eq!(
-                chinese_cyclic.unwrap().get(),
-                case.expected_cyclic,
-                "Cyclic year failed for test case: {case:?}"
-            );
-            assert_eq!(
-                chinese_month, case.expected_month,
-                "Month failed for test case: {case:?}"
-            );
-            assert_eq!(
-                chinese_day, case.expected_day,
-                "Day failed for test case: {case:?}"
+            do_twice(
+                &chinese_calculating,
+                &chinese_cached,
+                |chinese, calendar_type| {
+                    let chinese = iso.to_calendar(chinese);
+                    let chinese_rel_iso = chinese.year().related_iso;
+                    let chinese_cyclic = chinese.year().cyclic;
+                    let chinese_month = chinese.month().ordinal;
+                    let chinese_day = chinese.day_of_month().0;
+
+                    assert_eq!(
+                        chinese_rel_iso,
+                        Some(case.expected_rel_iso),
+                        "[{calendar_type}] Related ISO failed for test case: {case:?}"
+                    );
+                    assert_eq!(
+                        chinese_cyclic.unwrap().get(),
+                        case.expected_cyclic,
+                        "[{calendar_type}] Cyclic year failed for test case: {case:?}"
+                    );
+                    assert_eq!(
+                        chinese_month, case.expected_month,
+                        "[{calendar_type}] Month failed for test case: {case:?}"
+                    );
+                    assert_eq!(
+                        chinese_day, case.expected_day,
+                        "[{calendar_type}] Day failed for test case: {case:?}"
+                    );
+                },
             );
         }
     }

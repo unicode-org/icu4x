@@ -418,6 +418,16 @@ mod test {
     use crate::chinese::Chinese;
     use calendrical_calculations::rata_die::RataDie;
 
+    /// Run a test twice, with two calendars
+    fn do_twice(
+        dangi_calculating: &Dangi,
+        dangi_cached: &Dangi,
+        test: impl Fn(crate::Ref<Dangi>, &'static str),
+    ) {
+        test(crate::Ref(dangi_calculating), "calculating");
+        test(crate::Ref(dangi_cached), "cached");
+    }
+
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
         let chinese = iso.to_calendar(Chinese::new_always_calculating());
@@ -457,15 +467,20 @@ mod test {
         let max_fixed = 1963020;
         let mut iters = 0;
         let max_iters = 560;
+        let dangi_calculating = Dangi::new_always_calculating();
+        let dangi_cached = Dangi::new();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let korean = iso.to_calendar(Dangi::new_always_calculating());
-            let result = korean.to_calendar(Iso);
-            assert_eq!(
-                iso, result,
-                "Failed roundtrip ISO -> Dangi -> ISO for fixed: {fixed}"
-            );
+            do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
+                let korean = iso.to_calendar(dangi);
+                let result = korean.to_calendar(Iso);
+                assert_eq!(
+                    iso, result,
+                    "[{calendar_type}] Failed roundtrip ISO -> Dangi -> ISO for fixed: {fixed}"
+                );
+            });
+
             fixed += 7043;
             iters += 1;
         }
@@ -978,32 +993,37 @@ mod test {
             },
         ];
 
+        let dangi_calculating = Dangi::new_always_calculating();
+        let dangi_cached = Dangi::new();
+
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let dangi = iso.to_calendar(Dangi::new_always_calculating());
-            let dangi_rel_iso = dangi.year().related_iso;
-            let dangi_cyclic = dangi.year().cyclic;
-            let dangi_month = dangi.month().ordinal;
-            let dangi_day = dangi.day_of_month().0;
+            do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
+                let dangi = iso.to_calendar(dangi);
+                let dangi_rel_iso = dangi.year().related_iso;
+                let dangi_cyclic = dangi.year().cyclic;
+                let dangi_month = dangi.month().ordinal;
+                let dangi_day = dangi.day_of_month().0;
 
-            assert_eq!(
-                dangi_rel_iso,
-                Some(case.expected_rel_iso),
-                "Related ISO failed for test case: {case:?}"
-            );
-            assert_eq!(
-                dangi_cyclic.unwrap().get(),
-                case.expected_cyclic,
-                "Cyclic year failed for test case: {case:?}"
-            );
-            assert_eq!(
-                dangi_month, case.expected_month,
-                "Month failed for test case: {case:?}"
-            );
-            assert_eq!(
-                dangi_day, case.expected_day,
-                "Day failed for test case: {case:?}"
-            );
+                assert_eq!(
+                    dangi_rel_iso,
+                    Some(case.expected_rel_iso),
+                    "[{calendar_type}] Related ISO failed for test case: {case:?}"
+                );
+                assert_eq!(
+                    dangi_cyclic.unwrap().get(),
+                    case.expected_cyclic,
+                    "[{calendar_type}] Cyclic year failed for test case: {case:?}"
+                );
+                assert_eq!(
+                    dangi_month, case.expected_month,
+                    "[{calendar_type}] Month failed for test case: {case:?}"
+                );
+                assert_eq!(
+                    dangi_day, case.expected_day,
+                    "[{calendar_type}] Day failed for test case: {case:?}"
+                );
+            });
         }
     }
 }
