@@ -145,10 +145,9 @@ impl<'data> ChineseBasedCacheV1<'data> {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ULE)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
+    derive(databake::Bake),
     databake(path = icu_calendar::provider),
 )]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(packed)]
 pub struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
 
@@ -215,7 +214,7 @@ impl PackedChineseBasedYearInfo {
     }
 
     // Whether a particular month has 30 days (month is 1-indexed)
-    #[cfg(test)]
+    #[cfg(any(test, feature = "datagen"))]
     pub(crate) fn month_has_30_days(self, month: u8) -> bool {
         let months = u16::from_le_bytes([self.0, self.1]);
         months & (1 << (month - 1) as u16) != 0
@@ -250,5 +249,75 @@ impl AsULE for PackedChineseBasedYearInfo {
     }
     fn from_unaligned(other: Self) -> Self {
         other
+    }
+}
+
+#[cfg(feature = "serde")]
+mod serialization {
+    use super::*;
+
+    #[cfg(feature = "datagen")]
+    use serde::{ser, Serialize};
+    use serde::{Deserialize, Deserializer};
+
+    #[derive(Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(Serialize))]
+    struct SerdePackedChineseBasedYearInfo {
+        ny_offset: u8,
+        month_has_30_days: [bool; 13],
+        leap_month_idx: Option<NonZeroU8>,
+    }
+
+    impl<'de> Deserialize<'de> for PackedChineseBasedYearInfo {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            if deserializer.is_human_readable() {
+                SerdePackedChineseBasedYearInfo::deserialize(deserializer).map(Into::into)
+            } else {
+                let data = <(u8, u8, u8)>::deserialize(deserializer)?;
+                Ok(PackedChineseBasedYearInfo(data.0, data.1, data.2))
+            }
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    impl Serialize for PackedChineseBasedYearInfo {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: ser::Serializer,
+        {
+            if serializer.is_human_readable() {
+                SerdePackedChineseBasedYearInfo::from(*self).serialize(serializer)
+            } else {
+                (self.0, self.1, self.2).serialize(serializer)
+            }
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    impl From<PackedChineseBasedYearInfo> for SerdePackedChineseBasedYearInfo {
+        fn from(other: PackedChineseBasedYearInfo) -> Self {
+            let mut month_has_30_days = [false; 13];
+            for (i, month) in month_has_30_days.iter_mut().enumerate() {
+                *month = other.month_has_30_days(i as u8 + 1)
+            }
+            Self {
+                ny_offset: other.ny_offset(),
+                month_has_30_days,
+                leap_month_idx: other.leap_month_idx(),
+            }
+        }
+    }
+
+    impl From<SerdePackedChineseBasedYearInfo> for PackedChineseBasedYearInfo {
+        fn from(other: SerdePackedChineseBasedYearInfo) -> Self {
+            Self::new(
+                other.month_has_30_days,
+                other.leap_month_idx,
+                other.ny_offset,
+            )
+        }
     }
 }
