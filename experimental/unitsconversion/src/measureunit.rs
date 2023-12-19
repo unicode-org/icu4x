@@ -118,7 +118,7 @@ impl<'data> MeasureUnitParser<'data> {
     pub fn try_from_identifier(
         &self,
         identifier: &'data str,
-    ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
+    ) -> Result<MeasureUnit, ConversionError> {
         if identifier.starts_with('-') {
             return Err(ConversionError::InvalidUnit);
         }
@@ -132,7 +132,9 @@ impl<'data> MeasureUnitParser<'data> {
 
         self.analyze_identifier_part(num_part, 1, &mut measure_unit_items)?;
         self.analyze_identifier_part(den_part, -1, &mut measure_unit_items)?;
-        Ok(measure_unit_items)
+        Ok(MeasureUnit {
+            contained_units: measure_unit_items.into(),
+        })
     }
 }
 

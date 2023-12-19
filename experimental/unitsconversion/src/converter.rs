@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use litemap::LiteMap;
+use smallvec::SmallVec;
 
 use crate::{
-    measureunit::MeasureUnitParser,
+    measureunit::{MeasureUnit, MeasureUnitParser},
     provider::{MeasureUnitItem, UnitsInfoV1},
     ConversionError,
 };
@@ -29,23 +30,27 @@ pub enum Convertibility {
 /// Also, it can check the convertibility between two units.
 pub struct ConverterFactory<'data> {
     /// Contains the necessary data for the conversion factory.
-    payload: UnitsInfoV1<'data>,
+    payload: &'data UnitsInfoV1<'data>,
 }
 
-impl ConverterFactory<'_> {
-    fn parser(&self) -> MeasureUnitParser<'_> {
+impl<'data> ConverterFactory<'data> {
+    #[cfg(feature = "datagen")]
+    pub fn from_payload(payload: &'data UnitsInfoV1<'data>) -> Self {
+        Self { payload }
+    }
+
+    pub fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::from_payload(&self.payload.units_conversion_trie)
     }
 
     /// Extract the convertibility from the given units in the form of CLDR identifiers.
     pub fn extract_convertibility(
         &self,
-        unit1: &str,
-        unit2: &str,
+        unit1: &MeasureUnit,
+        unit2: &MeasureUnit,
     ) -> Result<Convertibility, ConversionError> {
-        let parser = self.parser();
-        let unit1 = parser.try_from_identifier(unit1)?;
-        let unit2 = parser.try_from_identifier(unit2)?;
+        let unit1 = &unit1.contained_units;
+        let unit2 = &unit2.contained_units;
 
         struct DetermineConvertibility {
             convertible: i16,
@@ -53,20 +58,20 @@ impl ConverterFactory<'_> {
         }
 
         fn insert_units_powers(
-            unit_items: &Vec<MeasureUnitItem>,
+            unit_items: &[MeasureUnitItem],
             sign: i8,
             map: &mut LiteMap<u16, DetermineConvertibility>,
         ) {
             for item in unit_items {
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
                     determine_convertibility.convertible += (item.power * sign) as i16;
-                    determine_convertibility.reciprocal += (item.power * sign) as i16;
+                    determine_convertibility.reciprocal += item.power as i16;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
                             convertible: (item.power * sign) as i16,
-                            reciprocal: (item.power * sign) as i16,
+                            reciprocal: item.power as i16,
                         },
                     );
                 }

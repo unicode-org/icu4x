@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_unitsconversion::measureunit::MeasureUnitParser;
+use icu_unitsconversion::{
+    converter::{ConverterFactory, Convertibility},
+    measureunit::MeasureUnitParser,
+};
 use num::BigRational;
 use std::collections::HashSet;
 
@@ -76,9 +79,10 @@ fn test_conversion() {
         })
         .collect();
 
-    let parser = MeasureUnitParser::from_payload(
-        &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1.units_conversion_trie,
+    let converter_factory = ConverterFactory::from_payload(
+        &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
     );
+    let parser = converter_factory.parser();
 
     // TODO(#4461): Those units must be parsable.
     let non_parsable_units: HashSet<&str> = [
@@ -141,10 +145,14 @@ fn test_conversion() {
         {
             continue;
         }
-        let input_unit = parser.try_from_identifier(test.input_unit.as_str());
-        let output_unit = parser.try_from_identifier(test.output_unit.as_str());
+        let input_unit = parser.try_from_identifier(test.input_unit.as_str()).unwrap();
+        let output_unit = parser.try_from_identifier(test.output_unit.as_str()).unwrap();
 
-        assert!(input_unit.is_ok());
-        assert!(output_unit.is_ok());
+        let convertablity = converter_factory.extract_convertibility(&input_unit, &output_unit).unwrap();
+
+        match convertablity {
+            Convertibility::Convertible | Convertibility::Reciprocal => (),
+            _ => panic!("Units are not convertible or reciprocal"),
+        }
     }
 }
