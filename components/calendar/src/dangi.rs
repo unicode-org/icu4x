@@ -45,13 +45,16 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
+use crate::provider::chinese_based::DangiCacheV1Marker;
 use crate::AsCalendar;
 use crate::{
     chinese_based::ChineseBasedDateInner,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
+use core::cmp::Ordering;
 use core::num::NonZeroU8;
+use icu_provider::prelude::*;
 use tinystr::tinystr;
 
 /// The Dangi Calendar
@@ -93,9 +96,11 @@ use tinystr::tinystr;
 ///
 /// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
 /// as leap month codes `"M01L" - "M12L"`.
-#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Debug, Default)]
 #[non_exhaustive] // we'll be adding precompiled data to this
-pub struct Dangi;
+pub struct Dangi {
+    data: Option<DataPayload<DangiCacheV1Marker>>,
+}
 
 /// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -111,14 +116,66 @@ impl Clone for DangiDateInner {
     }
 }
 
-impl Dangi {
-    /// Construct a new [`Dangi`] without any precomputed calendrical calculations.
-    ///
-    /// This is the only mode currently possible, but once precomputing is available (#3933)
-    /// there will be additional constructors that load from data providers.
-    pub fn new_always_calculating() -> Self {
-        Dangi
+// These impls just make custom derives on types containing C
+// work. They're basically no-ops
+impl PartialEq for Dangi {
+    fn eq(&self, _: &Self) -> bool {
+        true
     }
+}
+impl Eq for Dangi {}
+impl PartialOrd for Dangi {
+    fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
+        Some(Ordering::Equal)
+    }
+}
+
+impl Ord for Dangi {
+    fn cmp(&self, _: &Self) -> Ordering {
+        Ordering::Equal
+    }
+}
+
+impl Dangi {
+    /// Creates a new [`Dangi`] using only modern eras (post-meiji) from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            data: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_CALENDAR_DANGICACHE_V1,
+            )),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<D: DataProvider<DangiCacheV1Marker> + ?Sized>(
+        provider: &D,
+    ) -> Result<Self, CalendarError> {
+        Ok(Self {
+            data: Some(provider.load(Default::default())?.take_payload()?),
+        })
+    }
+
+    /// Construct a new [`Dangi`] without any precomputed calendrical calculations.
+    pub fn new_always_calculating() -> Self {
+        Dangi { data: None }
+    }
+
+    pub(crate) const DEBUG_NAME: &'static str = "Dangi";
 }
 
 impl Calendar for Dangi {
@@ -194,7 +251,7 @@ impl Calendar for Dangi {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Dangi"
+        Self::DEBUG_NAME
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
@@ -322,7 +379,7 @@ type DangiCB = calendrical_calculations::chinese_based::Dangi;
 impl ChineseBasedWithDataLoading for Dangi {
     type CB = DangiCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
-        Default::default()
+        ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
     }
 }
 

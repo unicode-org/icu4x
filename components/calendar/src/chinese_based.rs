@@ -28,6 +28,7 @@ use crate::{
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
 use calendrical_calculations::rata_die::RataDie;
+use core::marker::PhantomData;
 use core::num::NonZeroU8;
 use tinystr::tinystr;
 
@@ -58,7 +59,7 @@ impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
 #[derive(Default)]
 pub(crate) struct ChineseBasedPrecomputedData<'a, CB: ChineseBased> {
     data: Option<&'a ChineseBasedCacheV1<'a>>,
-    _cb: CB, // this is zero-sized
+    _cb: PhantomData<CB>,
 }
 
 /// Compute ChineseBasedYearInfo for a given extended year
@@ -136,6 +137,12 @@ impl<'b, CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
 }
 
 impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
+    pub(crate) fn new(data: Option<&'b ChineseBasedCacheV1<'b>>) -> Self {
+        Self {
+            data,
+            _cb: PhantomData,
+        }
+    }
     /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the ChineseBasedYearInfo and extended year for that date, loading
     /// from cache or computing.
     fn load_or_compute_info_for_iso(

@@ -47,10 +47,13 @@ use crate::chinese_based::{
     ChineseBasedPrecomputedData, ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
 use crate::iso::Iso;
+use crate::provider::chinese_based::ChineseCacheV1Marker;
 use crate::types::{Era, FormattableYear};
 use crate::AsCalendar;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use core::cmp::Ordering;
 use core::num::NonZeroU8;
+use icu_provider::prelude::*;
 use tinystr::tinystr;
 
 /// The Chinese Calendar
@@ -101,9 +104,10 @@ use tinystr::tinystr;
 ///
 /// This calendar is currently in a preview state: formatting for this calendar is not
 /// going to be perfect.
-#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[non_exhaustive] // we'll be adding precompiled data to this
-pub struct Chinese;
+#[derive(Clone, Debug, Default)]
+pub struct Chinese {
+    data: Option<DataPayload<ChineseCacheV1Marker>>,
+}
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -119,14 +123,66 @@ impl Clone for ChineseDateInner {
     }
 }
 
-impl Chinese {
-    /// Construct a new [`Chinese`] without any precomputed calendrical calculations.
-    ///
-    /// This is the only mode currently possible, but once precomputing is available (#3933)
-    /// there will be additional constructors that load from data providers.
-    pub fn new_always_calculating() -> Self {
-        Chinese
+// These impls just make custom derives on types containing C
+// work. They're basically no-ops
+impl PartialEq for Chinese {
+    fn eq(&self, _: &Self) -> bool {
+        true
     }
+}
+impl Eq for Chinese {}
+impl PartialOrd for Chinese {
+    fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
+        Some(Ordering::Equal)
+    }
+}
+
+impl Ord for Chinese {
+    fn cmp(&self, _: &Self) -> Ordering {
+        Ordering::Equal
+    }
+}
+
+impl Chinese {
+    /// Creates a new [`Chinese`] using only modern eras (post-meiji) from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            data: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_CALENDAR_CHINESECACHE_V1,
+            )),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<D: DataProvider<ChineseCacheV1Marker> + ?Sized>(
+        provider: &D,
+    ) -> Result<Self, CalendarError> {
+        Ok(Self {
+            data: Some(provider.load(Default::default())?.take_payload()?),
+        })
+    }
+
+    /// Construct a new [`Chinese`] without any precomputed calendrical calculations.
+    pub fn new_always_calculating() -> Self {
+        Chinese { data: None }
+    }
+
+    pub(crate) const DEBUG_NAME: &'static str = "Chinese";
 }
 
 impl Calendar for Chinese {
@@ -211,7 +267,7 @@ impl Calendar for Chinese {
 
     /// Obtain a name for the calendar for debug printing
     fn debug_name(&self) -> &'static str {
-        "Chinese"
+        Self::DEBUG_NAME
     }
 
     /// The calendar-specific year represented by `date`
@@ -347,7 +403,7 @@ type ChineseCB = calendrical_calculations::chinese_based::Chinese;
 impl ChineseBasedWithDataLoading for Chinese {
     type CB = ChineseCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
-        Default::default()
+        ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
     }
 }
 
