@@ -9,7 +9,6 @@ use icu_locid::{
     extensions::unicode::{key, value},
     Locale,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;

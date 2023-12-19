@@ -10,7 +10,6 @@ use crate::{CollationHanDatabase, CoverageLevel};
 use elsa::sync::FrozenMap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;

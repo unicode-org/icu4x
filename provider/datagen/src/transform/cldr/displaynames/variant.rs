@@ -7,7 +7,6 @@ use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_displaynames::provider::*;
 use icu_locid::{subtags::Variant, ParserError};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::str::FromStr;

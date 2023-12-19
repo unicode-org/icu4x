@@ -9,7 +9,6 @@ use crate::provider::IterableDataProviderInternal;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;

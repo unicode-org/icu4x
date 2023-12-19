@@ -6,7 +6,6 @@ use std::borrow::Borrow;
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_relativetime::provider::*;
 use once_cell::sync::OnceCell;

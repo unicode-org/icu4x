@@ -6,7 +6,6 @@ use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_list::provider::*;
 use icu_locid::subtags::language;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::borrow::Cow;

@@ -9,7 +9,6 @@ use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 

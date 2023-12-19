@@ -13,7 +13,6 @@ use icu_locid::extensions::unicode::Value;
 use icu_locid::subtags::language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::str::FromStr;

@@ -8,7 +8,6 @@ use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 

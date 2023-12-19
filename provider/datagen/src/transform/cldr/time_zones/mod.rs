@@ -10,7 +10,6 @@ use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_timezone::provider::*;
 use std::collections::BTreeMap;
