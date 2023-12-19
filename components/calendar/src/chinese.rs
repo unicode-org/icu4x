@@ -531,12 +531,11 @@ mod test {
             },
         ];
 
-        let chinese = Chinese;
+        let chinese = Chinese::new_always_calculating();
         for case in cases {
             let rata_die = RataDie::new(case.fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let chinese =
-                Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.year().number);
+            let chinese = Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
             assert_eq!(
                 case.expected_year, chinese.0.year,
                 "Chinese from fixed failed for case: {case:?}"
@@ -596,12 +595,11 @@ mod test {
         let max_fixed = 1963020;
         let mut iters = 0;
         let max_iters = 560;
-        let chinese = Chinese;
+        let chinese = Chinese::new_always_calculating();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let chinese =
-                Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.year().number);
+            let chinese = Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
             let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
@@ -613,7 +611,7 @@ mod test {
     #[test]
     fn test_chinese_epoch() {
         let iso = Date::try_new_iso_date(-2636, 2, 15).unwrap();
-        let chinese = iso.to_calendar(Chinese);
+        let chinese = iso.to_calendar(Chinese::new_always_calculating());
         assert_eq!(chinese.year().number, 1);
         assert_eq!(chinese.month().ordinal, 1);
         assert_eq!(chinese.month().code.0, "M01");
@@ -655,7 +653,7 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let chinese = iso.to_calendar(Chinese);
+            let chinese = iso.to_calendar(Chinese::new_always_calculating());
             assert_eq!(
                 case.expected_year,
                 chinese.year().number,
@@ -688,7 +686,7 @@ mod test {
             let year = case.0;
             let expected_month = case.1;
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
-            let chinese_date = iso.to_calendar(Chinese);
+            let chinese_date = iso.to_calendar(Chinese::new_always_calculating());
             assert!(chinese_date.is_in_leap_year());
             let new_year = chinese_date.inner.0.new_year();
             assert_eq!(
@@ -835,7 +833,7 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso_date(case.year, case.month, case.day).unwrap();
-            let chinese = iso.to_calendar(Chinese);
+            let chinese = iso.to_calendar(Chinese::new_always_calculating());
             let result_code = chinese.month().code.0;
             let expected_code = case.expected_code.to_string();
             assert_eq!(
@@ -915,7 +913,7 @@ mod test {
             let month = i as u8 % 12 + 1;
             let day = i as u8 % 28 + 1;
             let iso = Date::try_new_iso_date(year, month, day).unwrap();
-            let chinese = iso.to_calendar(Chinese);
+            let chinese = iso.to_calendar(Chinese::new_always_calculating());
             let result = chinese.to_calendar(Iso);
             assert_eq!(iso, result, "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
         }
@@ -1014,7 +1012,7 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let chinese = iso.to_calendar(Chinese);
+            let chinese = iso.to_calendar(Chinese::new_always_calculating());
             let chinese_rel_iso = chinese.year().related_iso;
             let chinese_cyclic = chinese.year().cyclic;
             let chinese_month = chinese.month().ordinal;

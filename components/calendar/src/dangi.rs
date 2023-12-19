@@ -420,8 +420,8 @@ mod test {
 
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
-        let chinese = iso.to_calendar(Chinese);
-        let dangi = iso.to_calendar(Dangi);
+        let chinese = iso.to_calendar(Chinese::new_always_calculating());
+        let dangi = iso.to_calendar(Dangi::new_always_calculating());
         let chinese_year = chinese.year().cyclic;
         let korean_year = dangi.year().cyclic;
         assert_eq!(
@@ -460,7 +460,7 @@ mod test {
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let korean = iso.to_calendar(Dangi);
+            let korean = iso.to_calendar(Dangi::new_always_calculating());
             let result = korean.to_calendar(Iso);
             assert_eq!(
                 iso, result,
@@ -980,7 +980,7 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let dangi = iso.to_calendar(Dangi);
+            let dangi = iso.to_calendar(Dangi::new_always_calculating());
             let dangi_rel_iso = dangi.year().related_iso;
             let dangi_cyclic = dangi.year().cyclic;
             let dangi_month = dangi.month().ordinal;
