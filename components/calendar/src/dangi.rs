@@ -8,7 +8,7 @@
 //! use icu::calendar::dangi::Dangi;
 //! use icu::calendar::{Date, DateTime, Ref};
 //!
-//! let dangi = Dangi::new_always_calculating();
+//! let dangi = Dangi::new();
 //! let dangi = Ref(&dangi); // to avoid cloning
 //!
 //! // `Date` type
@@ -74,15 +74,15 @@ use tinystr::tinystr;
 /// use tinystr::tinystr;
 ///
 /// let iso_a = Date::try_new_iso_date(2012, 4, 23).unwrap();
-/// let dangi_a = iso_a.to_calendar(Dangi::new_always_calculating());
-/// let chinese_a = iso_a.to_calendar(Chinese::new_always_calculating());
+/// let dangi_a = iso_a.to_calendar(Dangi::new());
+/// let chinese_a = iso_a.to_calendar(Chinese::new());
 ///
 /// assert_eq!(dangi_a.month().code.0, tinystr!(4, "M03L"));
 /// assert_eq!(chinese_a.month().code.0, tinystr!(4, "M04"));
 ///
 /// let iso_b = Date::try_new_iso_date(2012, 5, 23).unwrap();
-/// let dangi_b = iso_b.to_calendar(Dangi::new_always_calculating());
-/// let chinese_b = iso_b.to_calendar(Chinese::new_always_calculating());
+/// let dangi_b = iso_b.to_calendar(Dangi::new());
+/// let chinese_b = iso_b.to_calendar(Chinese::new());
 ///
 /// assert_eq!(dangi_b.month().code.0, tinystr!(4, "M04"));
 /// assert_eq!(chinese_b.month().code.0, tinystr!(4, "M04L"));
@@ -97,7 +97,6 @@ use tinystr::tinystr;
 /// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
 /// as leap month codes `"M01L" - "M12L"`.
 #[derive(Clone, Debug, Default)]
-#[non_exhaustive] // we'll be adding precompiled data to this
 pub struct Dangi {
     data: Option<DataPayload<DangiCacheV1Marker>>,
 }
@@ -124,6 +123,7 @@ impl PartialEq for Dangi {
     }
 }
 impl Eq for Dangi {}
+#[allow(clippy::non_canonical_partial_ord_impl)] // this is intentional
 impl PartialOrd for Dangi {
     fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
         Some(Ordering::Equal)
@@ -304,7 +304,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// use icu::calendar::dangi::Dangi;
     /// use icu::calendar::Date;
     ///
-    /// let dangi = Dangi::new_always_calculating();
+    /// let dangi = Dangi::new();
     ///
     /// let date_dangi = Date::try_new_dangi_date_with_calendar(4356, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
@@ -343,7 +343,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// use icu::calendar::dangi::Dangi;
     /// use icu::calendar::DateTime;
     ///
-    /// let dangi = Dangi::new_always_calculating();
+    /// let dangi = Dangi::new();
     ///
     /// let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(
     ///     4356, 6, 6, 13, 1, 0, dangi,

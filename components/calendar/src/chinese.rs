@@ -7,7 +7,7 @@
 //! ```rust
 //! use icu::calendar::{chinese::Chinese, Date, DateTime, Ref};
 //!
-//! let chinese = Chinese::new_always_calculating();
+//! let chinese = Chinese::new();
 //! let chinese = Ref(&chinese); // to avoid cloning
 //!
 //! // `Date` type
@@ -131,6 +131,7 @@ impl PartialEq for Chinese {
     }
 }
 impl Eq for Chinese {}
+#[allow(clippy::non_canonical_partial_ord_impl)] // this is intentional
 impl PartialOrd for Chinese {
     fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
         Some(Ordering::Equal)
@@ -551,7 +552,7 @@ mod test {
                 &chinese_cached,
                 |chinese, calendar_type| {
                     let chinese =
-                        Inner::chinese_based_date_from_fixed(&chinese.0, rata_die, iso.inner.0);
+                        Inner::chinese_based_date_from_fixed(chinese.0, rata_die, iso.inner.0);
                     assert_eq!(
                         case.expected_year, chinese.0.year,
                         "[{calendar_type}] Chinese from fixed failed, case: {case:?}"

@@ -10,7 +10,7 @@
 //!
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
 //! let chinese_date =
-//!     Date::new_from_iso(iso_date, Chinese::new_always_calculating());
+//!     Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
@@ -39,7 +39,7 @@ pub(crate) trait ChineseBasedWithDataLoading: Calendar {
     type CB: ChineseBased;
     /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year
     /// does not correspond to any compiled data.
-    fn get_precomputed_data<'a>(&'a self) -> ChineseBasedPrecomputedData<'a, Self::CB>;
+    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<'_, Self::CB>;
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
