@@ -17,11 +17,13 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::RwLock;
+use std::sync::RwLockReadGuard;
 use zip::ZipArchive;
 
 pub(crate) struct SerdeCache {
     pub(crate) root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
+    list_cache: RwLock<Option<HashSet<String>>>,
 }
 
 impl Debug for SerdeCache {
@@ -38,6 +40,7 @@ impl SerdeCache {
         Self {
             root,
             cache: FrozenMap::new(),
+            list_cache: Default::default(),
         }
     }
 
@@ -84,11 +87,39 @@ impl SerdeCache {
     }
 
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
-        self.root.list(path)
+        let hash_set = self
+            .list_cache
+            .read()
+            .expect("poison")
+            .as_ref()
+            .unwrap()
+            .iter()
+            .filter_map(|p| p.strip_prefix(path))
+            .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+            .map(String::from)
+            .collect::<HashSet<_>>();
+        Ok(hash_set.into_iter())
     }
 
     pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
-        self.root.file_exists(path)
+        self.populate_list_cache();
+        let file_exists = self
+            .list_cache
+            .read()
+            .expect("poison")
+            .as_ref()
+            .unwrap()
+            .contains(path);
+        Ok(file_exists)
+    }
+
+    fn populate_list_cache(&self) -> Result<(), DataError> {
+        let mut list_cache = self.list_cache.write().expect("poison");
+        if list_cache.is_none() {
+            let list = self.root.list_all()?;
+            list_cache.replace(list);
+        }
+        Ok(())
     }
 }
 
@@ -262,5 +293,121 @@ impl AbstractFs {
                 .contains(path),
             Self::Memory(map) => map.contains_key(path),
         })
+    }
+
+    fn list_all(&self) -> Result<HashSet<String>, DataError> {
+        self.init()?;
+        Ok(match self {
+            Self::Fs(root) => fs_readdir_recursive(root)?
+                .into_iter()
+                .map(|path| {
+                    path.strip_prefix(root)
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned()
+                })
+                .collect(),
+            Self::Zip(zip) => zip
+                .read()
+                .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap()
+                .file_list
+                .iter()
+                .filter(|path| !path.ends_with('/'))
+                .map(|s| s.to_string())
+                .collect(),
+            Self::Memory(map) => map.keys().copied().map(String::from).collect(),
+        })
+    }
+}
+
+fn fs_readdir_recursive(root: &Path) -> Result<HashSet<PathBuf>, DataError> {
+    let mut all_files = HashSet::new();
+    let mut entries =
+        std::fs::read_dir(root).map_err(|e| DataError::from(e).with_debug_context(root))?;
+    for entry in entries {
+        let entry = entry?;
+        if entry.file_type()?.is_dir() {
+            all_files.extend(fs_readdir_recursive(&entry.path())?);
+        } else {
+            all_files.insert(entry.path());
+        }
+    }
+    Ok(all_files)
+}
+
+#[cfg(test)]
+#[cfg(feature = "networking")]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_list_all() {
+        for abstract_fs in [get_zip_fs(), get_fs_fs(), get_memory_fs()] {
+            let list_all = abstract_fs.list_all().unwrap();
+            // Convert to a Vec and sort for testing purposes.
+            // Also selectively drop files not in the test fs.
+            let mut list_all = list_all
+                .into_iter()
+                .filter(|file_name| {
+                    !file_name.contains("variables")
+                        && !file_name.contains("weights.npy")
+                        && !file_name.contains("saved_model.pb")
+                        && !file_name.contains("keras")
+                        && !file_name.contains("model5")
+                        && !file_name.contains("model7")
+                        && !file_name.contains("genvec")
+                        && !file_name.contains("Burmese_graphclust")
+                })
+                .collect::<Vec<_>>();
+            list_all.sort();
+            list_all.truncate(5);
+            assert_eq!(
+                &[
+                    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    "Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    "Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    "Thai_graphclust_model4_heavy/weights.json"
+                ],
+                &*list_all
+            );
+        }
+    }
+
+    fn get_memory_fs() -> AbstractFs {
+        AbstractFs::Memory(
+            [
+                (
+                    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    b"".as_slice(),
+                ),
+                (
+                    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    b"".as_slice(),
+                ),
+                (
+                    "Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    b"".as_slice(),
+                ),
+                (
+                    "Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    b"".as_slice(),
+                ),
+                ("Thai_graphclust_model4_heavy/weights.json", b"".as_slice()),
+            ]
+            .into_iter()
+            .collect(),
+        )
+    }
+
+    fn get_zip_fs() -> AbstractFs {
+        AbstractFs::new_from_url("https://github.com/unicode-org/lstm_word_segmentation/releases/download/v0.1.0/models.zip".to_string())
+    }
+
+    fn get_fs_fs() -> AbstractFs {
+        AbstractFs::new("tests/data/lstm".to_string()).unwrap()
     }
 }
