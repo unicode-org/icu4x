@@ -7,7 +7,7 @@ use icu_calendar::provider::chinese_based::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
-const YEARS: i32 = 200;
+const YEARS: i32 = 250;
 const ISO_START: i32 = 1900;
 
 fn load<CB: ChineseBased>() -> ChineseBasedCacheV1<'static> {
