@@ -34,7 +34,7 @@ pub struct ConverterFactory<'data> {
 
 impl ConverterFactory<'_> {
     fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::new(&self.payload.units_conversion_trie)
+        MeasureUnitParser::from_payload(&self.payload.units_conversion_trie)
     }
 
     /// Extract the convertibility from the given units in the form of CLDR identifiers.
