@@ -1,5 +1,9 @@
 # Changelog
 
+## icu4x 1.4.x
+ - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
+   - `icu_datagen@1.4.1`
+
 ## icu4x 1.4 (Nov 16, 2023)
 
 - General
