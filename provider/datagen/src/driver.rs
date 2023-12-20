@@ -410,12 +410,13 @@ impl DatagenDriver {
                 }
                 FallbackMode::Hybrid | FallbackMode::Preresolved => locales_to_export
                     .into_par_iter()
-                    .map(|locale| {
+                    .filter_map(|locale| {
                         let instant2 = Instant::now();
-                        load_with_fallback(key, &locale)
-                            .transpose()?
-                            .map(|payload| sink.put_payload(key, &locale, &payload))
-                            .unwrap_or(Ok(()))
+                        let result = load_with_fallback(key, &locale)?;
+                        let result = result
+                            .and_then(|payload| sink.put_payload(key, &locale, &payload))
+                            // Note: in Hybrid mode the elapsed time includes sink.put_payload.
+                            // In Runtime mode the elapsed time is only load_with_fallback.
                             .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
                             .map_err(|e| {
                                 e.with_req(
@@ -425,7 +426,8 @@ impl DatagenDriver {
                                         metadata: Default::default(),
                                     },
                                 )
-                            })
+                            });
+                        Some(result)
                     })
                     .collect::<Result<Vec<_>, DataError>>()?
                     .into_iter()
