@@ -5,13 +5,15 @@
 use core::marker::PhantomData;
 
 use crate::calendar::CldrCalendar;
+use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
+use crate::options::length;
 use crate::pattern::runtime;
+use crate::provider::neo::*;
+use crate::Error;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
-use crate::provider::neo::*;
-use crate::format::neo::*;
 
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
@@ -24,7 +26,7 @@ pub(crate) enum DatePatternSelectionData {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum DatePatternDataBorrowed<'a> {
-    Resolved(&'a DatePatternV1<'a>)
+    Resolved(&'a DatePatternV1<'a>),
 }
 
 #[derive(Debug)]
@@ -40,7 +42,7 @@ pub(crate) enum TimePatternSelectionData {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum TimePatternDataBorrowed<'a> {
-    Resolved(&'a TimePatternV1<'a>)
+    Resolved(&'a TimePatternV1<'a>),
 }
 
 #[derive(Debug)]
@@ -57,7 +59,7 @@ pub(crate) enum DateTimePatternSelectionData {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
         glue: DataPayload<DateTimePatternV1Marker>,
-    }
+    },
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -68,13 +70,44 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
         glue: &'a DateTimePatternV1<'a>,
-    }
+    },
 }
 
 #[derive(Debug)]
 pub(crate) struct RawNeoDateTimeFormatter {
     names: RawDateTimeNames,
     selection: DateTimePatternSelectionData,
+}
+
+impl DatePatternSelectionData {
+    pub(crate) fn try_new_with_length<M, P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: DataProvider<M> + ?Sized,
+        M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+    {
+        let mut locale = locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+            match length {
+                length::Date::Full => aux::PatternLength::Full,
+                length::Date::Long => aux::PatternLength::Long,
+                length::Date::Medium => aux::PatternLength::Medium,
+                length::Date::Short => aux::PatternLength::Short,
+            },
+            None, // no hour cycle for date patterns
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        Ok(Self::SingleDate(payload))
+    }
 }
 
 pub(crate) enum Foo1<'data> {
@@ -95,14 +128,29 @@ mod tests {
 
     #[test]
     fn test_sizes() {
-        assert_eq!(48, core::mem::size_of::<DataPayload<ErasedDatePatternV1Marker>>());
+        assert_eq!(
+            48,
+            core::mem::size_of::<DataPayload<ErasedDatePatternV1Marker>>()
+        );
         assert_eq!(80, core::mem::size_of::<DataLocale>());
         assert_eq!(216, core::mem::size_of::<FixedDecimalFormatter>());
         assert_eq!(2, core::mem::size_of::<WeekCalculator>());
-        assert_eq!(72, core::mem::size_of::<DataPayload<ErasedYearNamesV1Marker>>());
-        assert_eq!(56, core::mem::size_of::<DataPayload<ErasedMonthNamesV1Marker>>());
-        assert_eq!(40, core::mem::size_of::<DataPayload<WeekdayNamesV1Marker>>());
-        assert_eq!(40, core::mem::size_of::<DataPayload<DayPeriodNamesV1Marker>>());
+        assert_eq!(
+            72,
+            core::mem::size_of::<DataPayload<ErasedYearNamesV1Marker>>()
+        );
+        assert_eq!(
+            56,
+            core::mem::size_of::<DataPayload<ErasedMonthNamesV1Marker>>()
+        );
+        assert_eq!(
+            40,
+            core::mem::size_of::<DataPayload<WeekdayNamesV1Marker>>()
+        );
+        assert_eq!(
+            40,
+            core::mem::size_of::<DataPayload<DayPeriodNamesV1Marker>>()
+        );
         assert_eq!(640, core::mem::size_of::<RawNeoDateTimeFormatter>());
 
         assert_eq!(32, core::mem::size_of::<DatePatternV1>());

@@ -25,66 +25,15 @@ enum CustomDateTimePatternInner {
 }
 
 #[derive(Debug)]
-pub struct CustomTypedDateTimePattern<C: CldrCalendar> {
+pub struct CustomDateTimePattern {
     inner: CustomDateTimePatternInner,
-    _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar> CustomTypedDateTimePattern<C> {
+impl CustomDateTimePattern {
     pub fn try_from_pattern_str(pattern_str: &str) -> Result<Self, PatternError> {
         let pattern = runtime::Pattern::from_str(pattern_str)?;
         Ok(Self {
             inner: CustomDateTimePatternInner::Custom(pattern),
-            _calendar: PhantomData,
-        })
-    }
-
-    /// Loads a [`TypedDateTimePattern`] for a date length.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::pattern::neo::TypedDateTimePattern;
-    /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
-    ///
-    /// let expected_pattern = TypedDateTimePattern::<Gregorian>::try_from_pattern_str("d MMM y").unwrap();
-    /// let actual_pattern = TypedDateTimePattern::<Gregorian>::try_new_date_with_length_unstable(
-    ///     &icu::datetime::provider::Baked,
-    ///     &locale!("fr").into(),
-    ///     length::Date::Medium,
-    /// ).unwrap();
-    ///
-    /// assert_eq!(expected_pattern, actual_pattern);
-    /// ```
-    pub fn try_new_date_with_length_unstable<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, Error>
-    where
-        P: DataProvider<C::DatePatternV1Marker> + ?Sized,
-    {
-        let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            match length {
-                length::Date::Full => aux::PatternLength::Full,
-                length::Date::Long => aux::PatternLength::Long,
-                length::Date::Medium => aux::PatternLength::Medium,
-                length::Date::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
-        let payload = provider
-            .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        Ok(Self {
-            inner: CustomDateTimePatternInner::Date(payload.cast()),
-            _calendar: PhantomData,
         })
     }
 
@@ -115,7 +64,7 @@ impl<C: CldrCalendar> CustomTypedDateTimePattern<C> {
     }
 }
 
-impl<C: CldrCalendar> FromStr for CustomTypedDateTimePattern<C> {
+impl FromStr for CustomDateTimePattern {
     type Err = PatternError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::try_from_pattern_str(s)
@@ -124,13 +73,13 @@ impl<C: CldrCalendar> FromStr for CustomTypedDateTimePattern<C> {
 
 // Check equality on the borrowed variant since it flattens the difference
 // between the three `Single`` pattern variants, which is not public-facing
-impl<C: CldrCalendar> PartialEq for CustomTypedDateTimePattern<C> {
+impl PartialEq for CustomDateTimePattern {
     fn eq(&self, other: &Self) -> bool {
         self.as_borrowed().eq(&other.as_borrowed())
     }
 }
 
-impl<C: CldrCalendar> Eq for CustomTypedDateTimePattern<C> {}
+impl Eq for CustomDateTimePattern {}
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum CustomDateTimePatternBorrowedInner<'a> {
