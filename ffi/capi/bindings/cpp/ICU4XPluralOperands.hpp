@@ -39,7 +39,7 @@ class ICU4XPluralOperands {
   static diplomat::result<ICU4XPluralOperands, ICU4XError> create_from_string(const std::string_view s);
   inline const capi::ICU4XPluralOperands* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPluralOperands* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XPluralOperands(capi::ICU4XPluralOperands* i) : inner(i) {}
+  inline explicit ICU4XPluralOperands(capi::ICU4XPluralOperands* i) : inner(i) {}
   ICU4XPluralOperands() = default;
   ICU4XPluralOperands(ICU4XPluralOperands&&) noexcept = default;
   ICU4XPluralOperands& operator=(ICU4XPluralOperands&& other) noexcept = default;

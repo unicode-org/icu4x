@@ -57,7 +57,7 @@ class ICU4XBidiInfo {
   uint8_t level_at(size_t pos) const;
   inline const capi::ICU4XBidiInfo* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBidiInfo* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XBidiInfo(capi::ICU4XBidiInfo* i) : inner(i) {}
+  inline explicit ICU4XBidiInfo(capi::ICU4XBidiInfo* i) : inner(i) {}
   ICU4XBidiInfo() = default;
   ICU4XBidiInfo(ICU4XBidiInfo&&) noexcept = default;
   ICU4XBidiInfo& operator=(ICU4XBidiInfo&& other) noexcept = default;

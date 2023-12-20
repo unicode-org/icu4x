@@ -63,7 +63,7 @@ class ICU4XLocaleExpander {
   ICU4XTransformResult minimize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleExpander* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleExpander* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLocaleExpander(capi::ICU4XLocaleExpander* i) : inner(i) {}
+  inline explicit ICU4XLocaleExpander(capi::ICU4XLocaleExpander* i) : inner(i) {}
   ICU4XLocaleExpander() = default;
   ICU4XLocaleExpander(ICU4XLocaleExpander&&) noexcept = default;
   ICU4XLocaleExpander& operator=(ICU4XLocaleExpander&& other) noexcept = default;

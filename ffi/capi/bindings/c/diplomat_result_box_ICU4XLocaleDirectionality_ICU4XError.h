@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XLocaleDirectionality ICU4XLocaleDirectionality;
+#include "ICU4XLocaleDirectionality.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

@@ -50,7 +50,7 @@ class ICU4XCanonicalComposition {
   char32_t compose(char32_t starter, char32_t second) const;
   inline const capi::ICU4XCanonicalComposition* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCanonicalComposition* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCanonicalComposition(capi::ICU4XCanonicalComposition* i) : inner(i) {}
+  inline explicit ICU4XCanonicalComposition(capi::ICU4XCanonicalComposition* i) : inner(i) {}
   ICU4XCanonicalComposition() = default;
   ICU4XCanonicalComposition(ICU4XCanonicalComposition&&) noexcept = default;
   ICU4XCanonicalComposition& operator=(ICU4XCanonicalComposition&& other) noexcept = default;

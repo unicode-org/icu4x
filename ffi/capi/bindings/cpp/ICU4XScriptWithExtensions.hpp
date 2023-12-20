@@ -72,7 +72,7 @@ class ICU4XScriptWithExtensions {
   CodePointRangeIterator iter_ranges_for_script(uint16_t script) const;
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensions* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XScriptWithExtensions(capi::ICU4XScriptWithExtensions* i) : inner(i) {}
+  inline explicit ICU4XScriptWithExtensions(capi::ICU4XScriptWithExtensions* i) : inner(i) {}
   ICU4XScriptWithExtensions() = default;
   ICU4XScriptWithExtensions(ICU4XScriptWithExtensions&&) noexcept = default;
   ICU4XScriptWithExtensions& operator=(ICU4XScriptWithExtensions&& other) noexcept = default;

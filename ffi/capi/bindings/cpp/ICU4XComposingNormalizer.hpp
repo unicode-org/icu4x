@@ -75,7 +75,7 @@ class ICU4XComposingNormalizer {
   bool is_normalized(const std::string_view s) const;
   inline const capi::ICU4XComposingNormalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XComposingNormalizer* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XComposingNormalizer(capi::ICU4XComposingNormalizer* i) : inner(i) {}
+  inline explicit ICU4XComposingNormalizer(capi::ICU4XComposingNormalizer* i) : inner(i) {}
   ICU4XComposingNormalizer() = default;
   ICU4XComposingNormalizer(ICU4XComposingNormalizer&&) noexcept = default;
   ICU4XComposingNormalizer& operator=(ICU4XComposingNormalizer&& other) noexcept = default;
