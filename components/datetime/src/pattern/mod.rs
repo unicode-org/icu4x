@@ -6,8 +6,6 @@ mod common;
 mod error;
 pub mod hour_cycle;
 mod item;
-#[cfg(feature = "experimental")]
-pub mod neo;
 pub mod reference;
 pub mod runtime;
 

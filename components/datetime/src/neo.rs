@@ -9,6 +9,7 @@ use crate::format::neo::*;
 use crate::input::DateTimeInput;
 use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
+use crate::neo_pattern::DateTimePattern;
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -20,9 +21,6 @@ use icu_calendar::week::WeekCalculator;
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use writeable::Writeable;
-
-// Re-exports
-pub use crate::pattern::neo::CustomDateTimePattern;
 
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -243,7 +241,7 @@ impl<'a> FormattedNeoDateTime<'a> {
     ///
     /// assert_eq!(expected_pattern, actual_pattern);
     /// ```
-    pub fn pattern(&self) -> CustomDateTimePattern {
+    pub fn pattern(&self) -> DateTimePattern {
         let pattern = match self.pattern {
             DateTimePatternDataBorrowed::Date(DatePatternDataBorrowed::Resolved(data)) => {
                 &data.pattern
@@ -253,6 +251,6 @@ impl<'a> FormattedNeoDateTime<'a> {
             }
             DateTimePatternDataBorrowed::DateTime { .. } => todo!(),
         };
-        CustomDateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
+        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
     }
 }
