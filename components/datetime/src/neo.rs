@@ -29,7 +29,7 @@ pub struct TypedNeoDateFormatter<C: CldrCalendar> {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct FormattedNeoDate<'a> {
     pattern: DatePatternDataBorrowed<'a>,
     datetime: ExtractedDateTimeInput,
@@ -54,7 +54,7 @@ pub struct TypedNeoTimeFormatter<C: CldrCalendar> {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct FormattedNeoTime<'a> {
     pattern: TimePatternDataBorrowed<'a>,
     datetime: ExtractedDateTimeInput,
@@ -79,7 +79,7 @@ pub struct TypedNeoDateTimeFormatter<C: CldrCalendar> {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct FormattedNeoDateTime<'a> {
     pattern: DateTimePatternDataBorrowed<'a>,
     datetime: ExtractedDateTimeInput,
