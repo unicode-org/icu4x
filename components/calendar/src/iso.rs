@@ -286,6 +286,15 @@ impl DateTime<Iso> {
         })
     }
 
+    /// Constructs an ISO datetime representing the UNIX epoch on January 1, 1970
+    /// at midnight.
+    pub fn local_unix_epoch() -> Self {
+        DateTime {
+            date: Date::unix_epoch(),
+            time: types::Time::midnight(),
+        }
+    }
+
     /// Minute count representation of calendars starting from 00:00:00 on Jan 1st, 1970.
     ///
     /// ```rust
