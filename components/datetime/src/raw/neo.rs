@@ -4,6 +4,7 @@
 
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
+use crate::neo_pattern::DateTimePatternBorrowed;
 use crate::options::length;
 use crate::pattern::runtime;
 use crate::provider::neo::*;
@@ -108,11 +109,15 @@ impl DatePatternSelectionData {
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
-    pub(crate) fn pattern_for_data_loading(&self) -> &runtime::Pattern {
+    pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
         match self {
-            DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern,
+            DatePatternSelectionData::SingleDate(payload) => {
+                DateTimePatternBorrowed(&payload.get().pattern)
+            }
             // Assumption: with_era has all the fields of without_era
-            DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern,
+            DatePatternSelectionData::OptionalEra { with_era, .. } => {
+                DateTimePatternBorrowed(&with_era.get().pattern)
+            }
         }
     }
 
@@ -129,9 +134,11 @@ impl DatePatternSelectionData {
 
 impl TimePatternSelectionData {
     /// Borrows a pattern containing all of the fields that need to be loaded.
-    pub(crate) fn pattern_for_data_loading(&self) -> &runtime::Pattern {
+    pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
         match self {
-            TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern,
+            TimePatternSelectionData::SingleTime(payload) => {
+                DateTimePatternBorrowed(&payload.get().pattern)
+            }
         }
     }
 
@@ -147,7 +154,7 @@ impl TimePatternSelectionData {
 
 impl DateTimePatternSelectionData {
     /// Borrows a pattern containing all of the fields that need to be loaded.
-    pub(crate) fn pattern_for_data_loading(&self) -> &runtime::Pattern {
+    pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
         match self {
             DateTimePatternSelectionData::Date(date) => date.pattern_for_data_loading(),
             DateTimePatternSelectionData::Time(time) => time.pattern_for_data_loading(),

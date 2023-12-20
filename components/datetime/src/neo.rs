@@ -214,33 +214,6 @@ writeable::impl_display_with_writeable!(FormattedNeoDateTime<'_>);
 
 impl<'a> FormattedNeoDateTime<'a> {
     /// Gets the pattern used in this [`FormattedNeoDateTime`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::CustomDateTimePattern;
-    /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
-    /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
-    ///
-    /// let expected_pattern =
-    ///     CustomDateTimePattern::try_from_pattern_str("d MMM y").unwrap();
-    ///
-    /// let actual_pattern =
-    ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_date_with_length(
-    ///         &locale!("fr").into(),
-    ///         length::Date::Medium,
-    ///     )
-    ///     .unwrap()
-    ///     // The pattern can depend on the datetime being formatted.
-    ///     // For this example, we'll choose the local Unix epoch.
-    ///     .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
-    ///     .pattern();
-    ///
-    /// assert_eq!(expected_pattern, actual_pattern);
-    /// ```
     pub fn pattern(&self) -> DateTimePattern {
         let pattern = match self.pattern {
             DateTimePatternDataBorrowed::Date(DatePatternDataBorrowed::Resolved(data)) => {
