@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XPropertyValueNameToEnumMapper ICU4XPropertyValueNameToEnumMapper;
+#include "ICU4XPropertyValueNameToEnumMapper.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

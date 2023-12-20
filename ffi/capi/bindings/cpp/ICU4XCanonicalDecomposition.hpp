@@ -50,7 +50,7 @@ class ICU4XCanonicalDecomposition {
   ICU4XDecomposed decompose(char32_t c) const;
   inline const capi::ICU4XCanonicalDecomposition* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCanonicalDecomposition* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCanonicalDecomposition(capi::ICU4XCanonicalDecomposition* i) : inner(i) {}
+  inline explicit ICU4XCanonicalDecomposition(capi::ICU4XCanonicalDecomposition* i) : inner(i) {}
   ICU4XCanonicalDecomposition() = default;
   ICU4XCanonicalDecomposition(ICU4XCanonicalDecomposition&&) noexcept = default;
   ICU4XCanonicalDecomposition& operator=(ICU4XCanonicalDecomposition&& other) noexcept = default;

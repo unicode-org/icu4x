@@ -54,7 +54,7 @@ class ICU4XLocaleDisplayNamesFormatter {
   diplomat::result<std::string, ICU4XError> of(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleDisplayNamesFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleDisplayNamesFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLocaleDisplayNamesFormatter(capi::ICU4XLocaleDisplayNamesFormatter* i) : inner(i) {}
+  inline explicit ICU4XLocaleDisplayNamesFormatter(capi::ICU4XLocaleDisplayNamesFormatter* i) : inner(i) {}
   ICU4XLocaleDisplayNamesFormatter() = default;
   ICU4XLocaleDisplayNamesFormatter(ICU4XLocaleDisplayNamesFormatter&&) noexcept = default;
   ICU4XLocaleDisplayNamesFormatter& operator=(ICU4XLocaleDisplayNamesFormatter&& other) noexcept = default;
