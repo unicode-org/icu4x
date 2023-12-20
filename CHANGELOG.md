@@ -11,6 +11,10 @@
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
+      - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
+    - C++
+      - Fixed a bug where a result header defines a struct that shadows the class' name  (https://github.com/rust-diplomat/diplomat/pull/394)
+      - Add `expclicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
 
 ## icu4x 1.4 (Nov 16, 2023)
 
