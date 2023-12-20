@@ -2,14 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
 use core::str::FromStr;
 
 use super::{runtime, PatternError};
-use crate::options::length;
 use crate::provider::neo::*;
-use crate::CldrCalendar;
-use crate::Error;
 use icu_provider::prelude::*;
 
 #[derive(Debug)]

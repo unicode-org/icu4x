@@ -16,7 +16,6 @@ use crate::pattern::runtime::Pattern;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
-use crate::raw::neo::{DatePatternSelectionData, DateTimePatternSelectionData};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV1Marker;
@@ -103,14 +102,15 @@ where
     }
 }
 
-pub(crate) struct EmptyProvider {
+/// Helper for type resolution with optional DataProvider arguments
+pub(crate) struct PhantomProvider {
     _not_constructible: core::convert::Infallible,
 }
 
-impl<M: KeyedDataMarker> DataProvider<M> for EmptyProvider {
+impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
     #[inline]
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        unreachable!()
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        unreachable!() // not constructible
     }
 }
 
@@ -202,12 +202,12 @@ pub(crate) struct RawDateTimeNames {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawDateTimeNamesBorrowed<'l> {
-    year_names: OptionalNames<(), &'l YearNamesV1<'l>>,
-    month_names: OptionalNames<fields::Month, &'l MonthNamesV1<'l>>,
-    weekday_names: OptionalNames<fields::Weekday, &'l LinearNamesV1<'l>>,
-    dayperiod_names: OptionalNames<(), &'l LinearNamesV1<'l>>,
-    fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
-    week_calculator: Option<&'l WeekCalculator>,
+    pub(crate) year_names: OptionalNames<(), &'l YearNamesV1<'l>>,
+    pub(crate) month_names: OptionalNames<fields::Month, &'l MonthNamesV1<'l>>,
+    pub(crate) weekday_names: OptionalNames<fields::Weekday, &'l LinearNamesV1<'l>>,
+    pub(crate) dayperiod_names: OptionalNames<(), &'l LinearNamesV1<'l>>,
+    pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
+    pub(crate) week_calculator: Option<&'l WeekCalculator>,
 }
 
 impl<C: CldrCalendar> TypedDateTimeNames<C> {
@@ -544,8 +544,9 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         self
     }
 
+    // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
     #[inline]
-    pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, Error>
+    fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, Error>
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
@@ -555,8 +556,9 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         Ok(self)
     }
 
+    // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
     #[inline]
-    pub fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
+    fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
         self.inner.load_fixed_decimal_formatter(|options| {
             FixedDecimalFormatter::try_new(&self.locale, options)
         })?;
@@ -687,7 +689,7 @@ impl RawDateTimeNames {
         }
     }
 
-    fn as_borrowed(&self) -> RawDateTimeNamesBorrowed {
+    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed {
         RawDateTimeNamesBorrowed {
             year_names: self.year_symbols.as_borrowed(),
             month_names: self.month_symbols.as_borrowed(),
@@ -1016,43 +1018,6 @@ impl RawDateTimeNames {
 
         Ok(self.with_pattern(pattern))
     }
-
-    pub(crate) fn try_new_for_date_selection<YearMarker, MonthMarker>(
-        year_provider: Option<&(impl DataProvider<YearMarker> + ?Sized)>,
-        month_provider: Option<&(impl DataProvider<MonthMarker> + ?Sized)>,
-        weekday_provider: Option<&(impl DataProvider<WeekdayNamesV1Marker> + ?Sized)>,
-        locale: &DataLocale,
-        selection: &DatePatternSelectionData,
-        fixed_decimal_formatter_loader: impl FnOnce(
-            FixedDecimalFormatterOptions,
-        ) -> Result<
-            FixedDecimalFormatter,
-            icu_decimal::DecimalError,
-        >,
-        week_calculator_loader: impl FnOnce() -> Result<WeekCalculator, icu_calendar::CalendarError>,
-    ) -> Result<Self, Error>
-    where
-        YearMarker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
-        MonthMarker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
-    {
-        let mut inner = Self::new_without_fixed_decimal_formatter();
-        let pattern = match selection {
-            DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern,
-            // Assumption: with_era has all the fields of without_era
-            DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern,
-        };
-        inner.load_for_pattern::<YearMarker, MonthMarker>(
-            year_provider,
-            month_provider,
-            weekday_provider,
-            None::<&EmptyProvider>, // day period
-            locale,
-            pattern,
-            fixed_decimal_formatter_loader,
-            week_calculator_loader,
-        )?;
-        Ok(inner)
-    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -1075,9 +1040,6 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     where
         T: DateTimeInput<Calendar = C>,
     {
-        // DISCUSS: Should this return `'a` or a new lifetime `'l: 'a`?
-        // When returning `'l`, the intermediate type needs to be anchored,
-        // so for now I made it return `'a`.
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
             datetime: ExtractedDateTimeInput::extract_from(datetime),
@@ -1241,11 +1203,7 @@ impl<'a> Writeable for FormattedDateTimePattern<'a> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'a> fmt::Display for FormattedDateTimePattern<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
+writeable::impl_display_with_writeable!(FormattedDateTimePattern<'_>);
 
 impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
     fn get_symbol_for_month(

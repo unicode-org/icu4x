@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
-
-use crate::calendar::CldrCalendar;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::options::length;
@@ -18,6 +15,7 @@ use zerovec::ZeroMap;
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
     SingleDate(DataPayload<ErasedDatePatternV1Marker>),
+    #[allow(dead_code)] // TODO(#4478)
     OptionalEra {
         with_era: DataPayload<ErasedDatePatternV1Marker>,
         without_era: DataPayload<ErasedDatePatternV1Marker>,
@@ -107,6 +105,67 @@ impl DatePatternSelectionData {
             .take_payload()?
             .cast();
         Ok(Self::SingleDate(payload))
+    }
+
+    /// Borrows a pattern containing all of the fields that need to be loaded.
+    pub(crate) fn pattern_for_data_loading(&self) -> &runtime::Pattern {
+        match self {
+            DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern,
+            // Assumption: with_era has all the fields of without_era
+            DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern,
+        }
+    }
+
+    /// Borrows a resolved pattern based on the given datetime
+    pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
+        match self {
+            DatePatternSelectionData::SingleDate(payload) => {
+                DatePatternDataBorrowed::Resolved(payload.get())
+            }
+            DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
+        }
+    }
+}
+
+impl TimePatternSelectionData {
+    /// Borrows a pattern containing all of the fields that need to be loaded.
+    pub(crate) fn pattern_for_data_loading(&self) -> &runtime::Pattern {
+        match self {
+            TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern,
+        }
+    }
+
+    /// Borrows a resolved pattern based on the given datetime
+    pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> TimePatternDataBorrowed {
+        match self {
+            TimePatternSelectionData::SingleTime(payload) => {
+                TimePatternDataBorrowed::Resolved(payload.get())
+            }
+        }
+    }
+}
+
+impl DateTimePatternSelectionData {
+    /// Borrows a pattern containing all of the fields that need to be loaded.
+    pub(crate) fn pattern_for_data_loading(&self) -> &runtime::Pattern {
+        match self {
+            DateTimePatternSelectionData::Date(date) => date.pattern_for_data_loading(),
+            DateTimePatternSelectionData::Time(time) => time.pattern_for_data_loading(),
+            DateTimePatternSelectionData::DateTime { date, time, glue } => todo!(),
+        }
+    }
+
+    /// Borrows a resolved pattern based on the given datetime
+    pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> DateTimePatternDataBorrowed {
+        match self {
+            DateTimePatternSelectionData::Date(date) => {
+                DateTimePatternDataBorrowed::Date(date.select(datetime))
+            }
+            DateTimePatternSelectionData::Time(time) => {
+                DateTimePatternDataBorrowed::Time(time.select(datetime))
+            }
+            DateTimePatternSelectionData::DateTime { date, time, glue } => todo!(),
+        }
     }
 }
 
