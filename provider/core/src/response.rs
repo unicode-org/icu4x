@@ -11,6 +11,7 @@ use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use core::ops::Deref;
+use yoke::cartable_ptr::CartableOptionPointer;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
@@ -74,14 +75,21 @@ pub struct DataResponseMetadata {
 pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 
 pub(crate) enum DataPayloadInner<M: DataMarker> {
-    Yoke(Yoke<M::Yokeable, Option<Cart>>),
+    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
     StaticRef(&'static M::Yokeable),
 }
 
-/// The type of the "cart" that is used by `DataPayload`.
+/// The type of the "cart" that is used by [`DataPayload`].
+///
+/// This type is public but the inner cart type is private. To create a
+/// [`Yoke`] with this cart, use [`Cart::try_make_yoke`]. Then, convert
+/// it to a [`DataPayload`] with [`DataPayload::from_yoked_buffer`].
 #[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
-pub struct Cart(SelectedRc<Box<[u8]>>);
+pub struct Cart(CartInner);
+
+/// The actual cart type (private typedef).
+pub(crate) type CartInner = SelectedRc<Box<[u8]>>;
 
 impl Deref for Cart {
     type Target = Box<[u8]>;
@@ -105,6 +113,17 @@ impl Cart {
             // Safe because the cart is only wrapped
             .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)
+    }
+
+    /// Helper function to convert `Yoke<Y, Option<Cart>>` to `Yoke<Y, Option<CartInner>>`.
+    #[inline]
+    pub(crate) fn unwrap_cart<Y>(yoke: Yoke<Y, Option<Cart>>) -> Yoke<Y, Option<CartInner>>
+    where
+        for<'a> Y: Yokeable<'a>,
+    {
+        // Safety: `Cart` has one field and we are removing it from the newtype,
+        // and we are preserving it in the new cart, unwrapping it from the newtype.
+        unsafe { yoke.replace_cart(|option_cart| option_cart.map(|cart| cart.0)) }
     }
 }
 
@@ -194,8 +213,10 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub const fn from_owned(data: M::Yokeable) -> Self {
-        Self(DataPayloadInner::Yoke(Yoke::new_owned(data)))
+    pub fn from_owned(data: M::Yokeable) -> Self {
+        Self(DataPayloadInner::Yoke(
+            Yoke::new_owned(data).convert_cart_into_option_pointer(),
+        ))
     }
 
     #[doc(hidden)]
@@ -255,7 +276,10 @@ where
         M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
     {
         if let DataPayloadInner::StaticRef(r) = self.0 {
-            self.0 = DataPayloadInner::Yoke(Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r)));
+            self.0 = DataPayloadInner::Yoke(
+                Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r))
+                    .convert_cart_into_option_pointer(),
+            );
         }
         match &mut self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.with_mut(f),
@@ -341,7 +365,8 @@ where
         DataPayload(DataPayloadInner::Yoke(
             match self.0 {
                 DataPayloadInner::Yoke(yoke) => yoke,
-                DataPayloadInner::StaticRef(r) => Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r)),
+                DataPayloadInner::StaticRef(r) => Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r))
+                    .convert_cart_into_option_pointer(),
             }
             .map_project(f),
         ))
@@ -394,7 +419,7 @@ where
                 // we're going from 'static to 'static, however in a generic context it's not
                 // clear to the compiler that that is the case. We have to use the unsafe make API to do this.
                 let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
-                Yoke::new_owned(yokeable)
+                Yoke::new_owned(yokeable).convert_cart_into_option_pointer()
             }
         }))
     }
@@ -448,7 +473,8 @@ where
         Ok(DataPayload(DataPayloadInner::Yoke(
             match self.0 {
                 DataPayloadInner::Yoke(yoke) => yoke,
-                DataPayloadInner::StaticRef(r) => Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r)),
+                DataPayloadInner::StaticRef(r) => Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r))
+                    .convert_cart_into_option_pointer(),
             }
             .try_map_project(f)?,
         )))
@@ -509,6 +535,7 @@ where
                     f(Yokeable::transform(*r), PhantomData)?;
                 // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
                 Yoke::new_owned(unsafe { M2::Yokeable::make(output) })
+                    .convert_cart_into_option_pointer()
             }
         })))
     }
@@ -619,20 +646,25 @@ where
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
-        let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b);
-        // Safe because cart is wrapped
-        let yoke = unsafe { yoke.replace_cart(|b| Some(Cart(b))) };
+        let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b)
+            .wrap_cart_in_option()
+            .convert_cart_into_option_pointer();
         Self(DataPayloadInner::Yoke(yoke))
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
-        Self(DataPayloadInner::Yoke(yoke))
+        let yoke = Cart::unwrap_cart(yoke);
+        Self(DataPayloadInner::Yoke(
+            yoke.convert_cart_into_option_pointer(),
+        ))
     }
 
     /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
-        Self(DataPayloadInner::Yoke(Yoke::new_owned(buffer)))
+        Self(DataPayloadInner::Yoke(
+            Yoke::new_owned(buffer).convert_cart_into_option_pointer(),
+        ))
     }
 }
 

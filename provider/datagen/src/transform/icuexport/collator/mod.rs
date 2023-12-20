@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
+use crate::provider::IterableDataProviderInternal;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_locid::extensions::unicode::key;
@@ -12,7 +13,6 @@ use icu_locid::extensions::unicode::Value;
 use icu_locid::subtags::language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::str::FromStr;
@@ -137,8 +137,8 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+                fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(

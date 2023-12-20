@@ -4,8 +4,8 @@
 
 use std::borrow::Borrow;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_relativetime::provider::*;
 use once_cell::sync::OnceCell;
@@ -94,8 +94,8 @@ macro_rules! make_data_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+                fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")

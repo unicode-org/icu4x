@@ -921,9 +921,9 @@ checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
 name = "elsa"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "714f766f3556b44e7e4776ad133fcc3445a489517c25c704ace411bb14790194"
+checksum = "d98e71ae4df57d214182a2e5cb90230c0192c6ddfcaa05c36453d46a54713e10"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -1085,15 +1085,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a62bc1cf6f830c2ec14a513a9fb124d0a213a629668a4186f329db21fe045652"
 dependencies = [
  "percent-encoding",
-]
-
-[[package]]
-name = "fraction"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59a78dd758a47a7305478e0e054f9fde4e983b9f9eccda162bf7ca03b79e9d40"
-dependencies = [
- "num",
 ]
 
 [[package]]
@@ -1420,22 +1411,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_capi_cdylib"
-version = "1.4.0"
-dependencies = [
- "icu_capi",
- "icu_provider",
-]
-
-[[package]]
-name = "icu_capi_staticlib"
-version = "1.4.0"
-dependencies = [
- "icu_capi",
- "icu_provider",
-]
-
-[[package]]
 name = "icu_casemap"
 version = "1.4.0"
 dependencies = [
@@ -1546,6 +1521,7 @@ version = "1.4.0"
 name = "icu_datagen"
 version = "1.4.0"
 dependencies = [
+ "calendrical_calculations",
  "clap 4.2.1",
  "crlify",
  "databake",
@@ -1553,7 +1529,6 @@ dependencies = [
  "either",
  "elsa",
  "eyre",
- "fraction",
  "icu",
  "icu_calendar",
  "icu_casemap",
@@ -1585,6 +1560,7 @@ dependencies = [
  "memchr",
  "ndarray",
  "num-bigint",
+ "num-rational",
  "once_cell",
  "postcard",
  "proc-macro2",
@@ -2106,6 +2082,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "icu_unitsconversion_data",
+ "num",
  "serde",
  "smallvec",
  "zerotrie",
@@ -2460,6 +2437,7 @@ version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05180d69e3da0e530ba2a1dae5110317e49e3b7f3d41be227dc5f92e49ee7af"
 dependencies = [
+ "num-bigint",
  "num-complex",
  "num-integer",
  "num-iter",
@@ -2515,6 +2493,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
+ "num-bigint",
  "num-integer",
  "num-traits",
 ]

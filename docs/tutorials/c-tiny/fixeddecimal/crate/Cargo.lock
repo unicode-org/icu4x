@@ -30,7 +30,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -41,12 +41,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -693,14 +693,6 @@ name = "icu_benchmark_macros"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_capi_cdylib"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_capi_staticlib"
-version = "1.4.0"
-
-[[patch.unused]]
 name = "icu_codepointtrie_builder"
 version = "0.3.7"
 
@@ -715,6 +707,10 @@ version = "1.4.0"
 [[patch.unused]]
 name = "icu_datagen"
 version = "1.4.0"
+
+[[patch.unused]]
+name = "icu_dimension"
+version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_freertos"
@@ -747,10 +743,6 @@ version = "0.1.4"
 [[patch.unused]]
 name = "icu_relativetime_data"
 version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_singlenumberformatter"
-version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_transliterate"

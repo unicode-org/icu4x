@@ -2931,14 +2931,6 @@ name = "icu_capi"
 version = "1.4.0"
 
 [[patch.unused]]
-name = "icu_capi_cdylib"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_capi_staticlib"
-version = "1.4.0"
-
-[[patch.unused]]
 name = "icu_dimension"
 version = "0.0.0"
 
