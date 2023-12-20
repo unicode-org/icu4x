@@ -189,7 +189,7 @@ pub(crate) struct RawDateTimeNames {
 }
 
 #[derive(Debug, Copy, Clone)]
-struct RawDateTimeNamesBorrowed<'l> {
+pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     year_names: OptionalNames<(), &'l YearNamesV1<'l>>,
     month_names: OptionalNames<fields::Month, &'l MonthNamesV1<'l>>,
     weekday_names: OptionalNames<fields::Weekday, &'l LinearNamesV1<'l>>,
@@ -1101,13 +1101,13 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
 #[derive(Debug)]
-pub struct FormattedDateTimePattern<'l> {
-    pattern: &'l Pattern<'l>,
+pub struct FormattedDateTimePattern<'a> {
+    pattern: &'a Pattern<'a>,
     datetime: ExtractedDateTimeInput,
-    names: RawDateTimeNamesBorrowed<'l>,
+    names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'l> Writeable for FormattedDateTimePattern<'l> {
+impl<'a> Writeable for FormattedDateTimePattern<'a> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let loc_datetime =
             DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
@@ -1128,7 +1128,7 @@ impl<'l> Writeable for FormattedDateTimePattern<'l> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl<'l> fmt::Display for FormattedDateTimePattern<'l> {
+impl<'a> fmt::Display for FormattedDateTimePattern<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.write_to(f)
     }

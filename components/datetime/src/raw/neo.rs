@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar::CldrCalendar;
+use crate::input::ExtractedDateTimeInput;
 use crate::pattern::runtime;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
@@ -18,6 +19,78 @@ pub(crate) enum DatePatternSelectionData {
     },
 }
 
+#[derive(Debug, Copy, Clone)]
+pub(crate) enum DatePatternDataBorrowed<'a> {
+    Resolved(&'a DatePatternV1<'a>)
+}
+
+pub(crate) struct RawNeoDateFormatter {
+    names: RawDateTimeNames,
+    selection: DatePatternSelectionData,
+}
+
+pub(crate) struct FormattedNeoDate<'a> {
+    pattern: DatePatternDataBorrowed<'a>,
+    datetime: ExtractedDateTimeInput,
+    names: RawDateTimeNamesBorrowed<'a>,
+}
+
+pub(crate) enum TimePatternSelectionData {
+    SingleTime(DataPayload<TimePatternV1Marker>),
+}
+
+#[derive(Debug, Copy, Clone)]
+pub(crate) enum TimePatternDataBorrowed<'a> {
+    Resolved(&'a TimePatternV1<'a>)
+}
+
+pub(crate) struct RawNeoTimeFormatter {
+    names: RawDateTimeNames,
+    selection: TimePatternSelectionData,
+}
+
+pub(crate) struct FormattedNeoTime<'a> {
+    pattern: TimePatternDataBorrowed<'a>,
+    datetime: ExtractedDateTimeInput,
+    names: RawDateTimeNamesBorrowed<'a>,
+}
+
+pub(crate) enum DateTimePatternSelectionData {
+    Date(DatePatternSelectionData),
+    Time(TimePatternSelectionData),
+    DateTime {
+        date: DatePatternSelectionData,
+        time: TimePatternSelectionData,
+        glue: DataPayload<DateTimePatternV1Marker>,
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+pub(crate) enum DateTimePatternDataBorrowed<'a> {
+    Date(DatePatternDataBorrowed<'a>),
+    Time(TimePatternDataBorrowed<'a>),
+    DateTime {
+        date: DatePatternDataBorrowed<'a>,
+        time: TimePatternDataBorrowed<'a>,
+        glue: &'a DateTimePatternV1<'a>,
+    }
+}
+
+pub(crate) struct RawNeoDateTimeFormatter {
+    names: RawDateTimeNames,
+    selection: DateTimePatternSelectionData,
+}
+
+pub(crate) struct FormattedNeoDateTime<'a> {
+    pattern: DateTimePatternDataBorrowed<'a>,
+    datetime: ExtractedDateTimeInput,
+    names: RawDateTimeNamesBorrowed<'a>,
+}
+
+pub(crate) struct TypedNeoDateTimeFormatter<C: CldrCalendar> {
+    names: TypedDateTimeNames<C>,
+}
+
 pub(crate) enum Foo1<'data> {
     SingleDate(runtime::Pattern<'data>),
     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
@@ -25,25 +98,6 @@ pub(crate) enum Foo1<'data> {
 
 pub(crate) struct Foo2<'data> {
     map: ZeroMap<'data, PluralCategory, runtime::PatternULE>,
-}
-
-pub(crate) enum TimePatternData {
-    SingleTime(DataPayload<TimePatternV1Marker>),
-}
-
-pub(crate) enum DateTimePatternSelectionData {
-    Date(DatePatternSelectionData),
-    Time(TimePatternData),
-    Glue(DataPayload<DateTimePatternV1Marker>),
-}
-
-pub(crate) struct TypedNeoDateTimeFormatter<C: CldrCalendar> {
-    names: TypedDateTimeNames<C>,
-}
-
-pub(crate) struct RawNeoDateTimeFormatter {
-    names: RawDateTimeNames,
-    selection: DateTimePatternSelectionData,
 }
 
 #[cfg(test)]
