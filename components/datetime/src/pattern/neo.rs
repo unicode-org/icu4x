@@ -33,6 +33,13 @@ impl CustomDateTimePattern {
         })
     }
 
+    #[doc(hidden)] // TODO(#4467): Internal API
+    pub fn from_runtime_pattern(pattern: runtime::Pattern<'static>) -> Self {
+        Self {
+            inner: CustomDateTimePatternInner::Custom(pattern),
+        }
+    }
+
     pub(crate) fn as_borrowed(&self) -> CustomDateTimePatternBorrowed {
         let borrowed_inner = match self.inner {
             CustomDateTimePatternInner::Custom(ref pattern) => {
