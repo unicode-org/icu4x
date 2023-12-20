@@ -93,20 +93,27 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::calendar::DateTime;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedNeoDateTimeFormatter::<Gregorian>::try_new_date_with_length(
-    ///     &locale!("fr").into(),
-    ///     length::Date::Medium,
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_date_with_length(
+    ///         &locale!("fr").into(),
+    ///         length::Date::Medium,
+    ///     )
+    ///     .unwrap();
     ///
-    /// assert_writeable_eq!(formatter.format(&DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 28, 20).unwrap()), "20 déc. 2023");
+    /// assert_writeable_eq!(
+    ///     formatter.format(
+    ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 28, 20)
+    ///             .unwrap()
+    ///     ),
+    ///     "20 déc. 2023"
+    /// );
     /// ```
     pub fn try_new_date_with_length(
         locale: &DataLocale,
@@ -180,8 +187,12 @@ impl<'a> Writeable for FormattedNeoDateTime<'a> {
             return Err(core::fmt::Error);
         };
         let pattern = match self.pattern {
-            DateTimePatternDataBorrowed::Date(DatePatternDataBorrowed::Resolved(data)) => &data.pattern,
-            DateTimePatternDataBorrowed::Time(TimePatternDataBorrowed::Resolved(data)) => &data.pattern,
+            DateTimePatternDataBorrowed::Date(DatePatternDataBorrowed::Resolved(data)) => {
+                &data.pattern
+            }
+            DateTimePatternDataBorrowed::Time(TimePatternDataBorrowed::Resolved(data)) => {
+                &data.pattern
+            }
             DateTimePatternDataBorrowed::DateTime { .. } => todo!(),
         };
         write_pattern(

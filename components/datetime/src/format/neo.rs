@@ -273,10 +273,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use icu::locid::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(
-    ///         &locale!("und").into(),
-    ///     )
-    ///     .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///         .unwrap();
     ///
     /// // First length is successful:
     /// names.include_year_names(FieldLength::Wide).unwrap();
@@ -329,10 +327,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use icu::locid::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(
-    ///         &locale!("und").into(),
-    ///     )
-    ///     .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Month::Format;
     /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
     ///
@@ -352,8 +348,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     ///     Err(DateTimeError::DuplicateField(_))
     /// ));
     /// assert!(matches!(
-    ///     names
-    ///         .include_month_names(field_symbol, FieldLength::Abbreviated),
+    ///     names.include_month_names(field_symbol, FieldLength::Abbreviated),
     ///     Err(DateTimeError::DuplicateField(_))
     /// ));
     /// ```
@@ -399,20 +394,14 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use icu::locid::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(
-    ///         &locale!("und").into(),
-    ///     )
-    ///     .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names
-    ///     .include_day_period_names(FieldLength::Wide)
-    ///     .unwrap();
+    /// names.include_day_period_names(FieldLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names
-    ///     .include_day_period_names(FieldLength::Wide)
-    ///     .unwrap();
+    /// names.include_day_period_names(FieldLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
@@ -462,10 +451,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use icu::locid::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(
-    ///         &locale!("und").into(),
-    ///     )
-    ///     .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Weekday::Format;
     /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
     ///
@@ -485,8 +472,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     ///     Err(DateTimeError::DuplicateField(_))
     /// ));
     /// assert!(matches!(
-    ///     names
-    ///         .include_weekday_names(field_symbol, FieldLength::Abbreviated),
+    ///     names.include_weekday_names(field_symbol, FieldLength::Abbreviated),
     ///     Err(DateTimeError::DuplicateField(_))
     /// ));
     /// ```
@@ -507,24 +493,21 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// # Examples
     ///
     /// ```
+    /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::week::WeekCalculator;
     /// use icu::datetime::pattern;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(
-    ///         &locale!("en").into(),
-    ///     )
-    ///     .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///         .unwrap();
     ///
     /// // Load the week calculator and set it here:
-    /// let mut week_calculator = WeekCalculator::try_new(
-    ///     &locale!("en").into()
-    /// ).unwrap();
+    /// let mut week_calculator =
+    ///     WeekCalculator::try_new(&locale!("en").into()).unwrap();
     /// names.set_week_calculator(week_calculator);
     ///
     /// // Format a pattern needing week data:
@@ -628,10 +611,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(
-    ///         &locale!("en").into(),
-    ///     )
-    ///     .unwrap();
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "EEEE 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
@@ -640,9 +621,13 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
     ///
     /// // Load data for the pattern and format:
-    /// let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
     /// assert_writeable_eq!(
-    ///     names.include_for_pattern(&pattern).unwrap().format(&datetime),
+    ///     names
+    ///         .include_for_pattern(&pattern)
+    ///         .unwrap()
+    ///         .format(&datetime),
     ///     "Tuesday on week 49 of 2023 AD (Dec 5) at 5:43 PM"
     /// );
     /// ```
@@ -1063,8 +1048,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
@@ -1116,8 +1100,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US").into())
-    ///         .unwrap();
+    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();
