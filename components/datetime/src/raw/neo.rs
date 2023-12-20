@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::marker::PhantomData;
+
 use crate::calendar::CldrCalendar;
 use crate::input::ExtractedDateTimeInput;
 use crate::pattern::runtime;
@@ -11,6 +13,7 @@ use zerovec::ZeroMap;
 use crate::provider::neo::*;
 use crate::format::neo::*;
 
+#[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
     SingleDate(DataPayload<ErasedDatePatternV1Marker>),
     OptionalEra {
@@ -24,17 +27,13 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
     Resolved(&'a DatePatternV1<'a>)
 }
 
+#[derive(Debug)]
 pub(crate) struct RawNeoDateFormatter {
     names: RawDateTimeNames,
     selection: DatePatternSelectionData,
 }
 
-pub(crate) struct FormattedNeoDate<'a> {
-    pattern: DatePatternDataBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
-    names: RawDateTimeNamesBorrowed<'a>,
-}
-
+#[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
     SingleTime(DataPayload<TimePatternV1Marker>),
 }
@@ -44,17 +43,13 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
     Resolved(&'a TimePatternV1<'a>)
 }
 
+#[derive(Debug)]
 pub(crate) struct RawNeoTimeFormatter {
     names: RawDateTimeNames,
     selection: TimePatternSelectionData,
 }
 
-pub(crate) struct FormattedNeoTime<'a> {
-    pattern: TimePatternDataBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
-    names: RawDateTimeNamesBorrowed<'a>,
-}
-
+#[derive(Debug)]
 pub(crate) enum DateTimePatternSelectionData {
     Date(DatePatternSelectionData),
     Time(TimePatternSelectionData),
@@ -76,19 +71,10 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
     }
 }
 
+#[derive(Debug)]
 pub(crate) struct RawNeoDateTimeFormatter {
     names: RawDateTimeNames,
     selection: DateTimePatternSelectionData,
-}
-
-pub(crate) struct FormattedNeoDateTime<'a> {
-    pattern: DateTimePatternDataBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
-    names: RawDateTimeNamesBorrowed<'a>,
-}
-
-pub(crate) struct TypedNeoDateTimeFormatter<C: CldrCalendar> {
-    names: TypedDateTimeNames<C>,
 }
 
 pub(crate) enum Foo1<'data> {

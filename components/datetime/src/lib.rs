@@ -137,6 +137,8 @@ mod error;
 pub mod fields;
 mod format;
 pub mod input;
+#[cfg(feature = "experimental")]
+pub mod neo;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
