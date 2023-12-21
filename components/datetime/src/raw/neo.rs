@@ -181,6 +181,43 @@ impl TimePatternSelectionData {
 }
 
 impl DateTimePatternSelectionData {
+    pub(crate) fn try_new_with_lengths<M, P>(
+        provider: &P,
+        locale: &DataLocale,
+        date_length: length::Date,
+        time_length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: DataProvider<M>
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DateTimePatternV1Marker>
+            + ?Sized,
+        M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+    {
+        let date =
+            DatePatternSelectionData::try_new_with_length::<M, _>(provider, locale, date_length)?;
+        let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
+        let mut locale = locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+            // According to UTS 35, use the date length here: use the glue
+            // pattern "whose type matches the type of the date pattern"
+            match date_length {
+                length::Date::Full => aux::PatternLength::Full,
+                length::Date::Long => aux::PatternLength::Long,
+                length::Date::Medium => aux::PatternLength::Medium,
+                length::Date::Short => aux::PatternLength::Short,
+            },
+            None, // no hour cycle for date patterns
+        )));
+        let glue = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        Ok(Self::DateTime { date, time, glue })
+    }
+
     /// Borrows a pattern containing all of the fields that need to be loaded.
     pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
         match self {
