@@ -48,13 +48,14 @@ fn generate_json_and_verify_postcard() {
         ),
     });
 
-    let stubdata_out = Box::new(
-        BakedStubdataExporter(baked_exporter::BakedExporter::new("tests/data/stub".into(), {
+    let stubdata_out = Box::new(BakedStubdataExporter(
+        baked_exporter::BakedExporter::new("tests/data/stub".into(), {
             let mut options = baked_exporter::Options::default();
             options.overwrite = true;
             options
-        }).unwrap())
-    );
+        })
+        .unwrap(),
+    ));
 
     DatagenDriver::new()
         .with_keys(crate::all_keys())
@@ -70,15 +71,25 @@ fn generate_json_and_verify_postcard() {
         .unwrap();
 }
 
+/// Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
+/// for faster development and debugging. For example, put the following in
+/// VSCode settings.json:
+///
+/// ```javascript
+/// "rust-analyzer.cargo.extraEnv": {
+///   // Relative to provider/baked/x/src
+///   "ICU4X_DATA_DIR": "../../../datagen/tests/data/stub"
+/// },
+/// ```
 struct BakedStubdataExporter(BakedExporter);
 
 impl DataExporter for BakedStubdataExporter {
     fn put_payload(
-            &self,
-            _key: DataKey,
-            _locale: &DataLocale,
-            _payload: &DataPayload<ExportMarker>,
-        ) -> Result<(), DataError> {
+        &self,
+        _key: DataKey,
+        _locale: &DataLocale,
+        _payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
         // do not put any payloads in stubdata!
         Ok(())
     }
