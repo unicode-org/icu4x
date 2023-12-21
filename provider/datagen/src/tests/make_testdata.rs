@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::baked_exporter;
-use crate::baked_exporter::BakedExporter;
 use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
@@ -81,7 +80,7 @@ fn generate_json_and_verify_postcard() {
 ///   "ICU4X_DATA_DIR": "../../../datagen/tests/data/stub"
 /// },
 /// ```
-struct BakedStubdataExporter(BakedExporter);
+struct BakedStubdataExporter(baked_exporter::BakedExporter);
 
 impl DataExporter for BakedStubdataExporter {
     fn put_payload(
