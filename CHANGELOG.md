@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Components
+  - `icu_calendar`
+    - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
 - Data model and providers
