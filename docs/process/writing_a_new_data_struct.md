@@ -64,9 +64,8 @@ Examples of source data providers include:
 
 Source data providers must implement the following traits:
 
-- `DataProvider<M>` or `DynamicDataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
-- `IterableDataProvider<M>`, required for the data exporter (see below)
-- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
+- `DataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
+- `IterableDataProviderInternal<M>`, which automatically results in a cached impl of `IterableDataProvider<M>`
 
 Source data providers are often complex to write. Rules of thumb:
 
