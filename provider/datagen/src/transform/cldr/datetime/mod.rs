@@ -12,6 +12,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 mod neo;
 mod patterns;
@@ -208,8 +209,8 @@ macro_rules! impl_data_provider {
         }
 
         impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
-                let mut r = Vec::new();
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+                let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {

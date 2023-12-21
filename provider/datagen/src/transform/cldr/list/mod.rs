@@ -9,6 +9,7 @@ use icu_locid::subtags::language;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::borrow::Cow;
+use std::collections::HashSet;
 
 fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     selff: &crate::DatagenProvider,
@@ -126,7 +127,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

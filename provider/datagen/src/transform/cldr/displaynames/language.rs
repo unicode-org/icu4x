@@ -8,7 +8,7 @@ use core::convert::TryFrom;
 use icu_displaynames::provider::*;
 use icu_locid::subtags::Language;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
@@ -59,7 +59,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -78,7 +78,7 @@ impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for crate::Datag
 }
 
 impl IterableDataProviderInternal<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()

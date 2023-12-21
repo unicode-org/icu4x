@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl IterableDataProviderInternal<WeekDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
