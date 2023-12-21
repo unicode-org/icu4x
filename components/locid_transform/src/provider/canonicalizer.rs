@@ -87,7 +87,7 @@ impl<'data> From<AliasesV2<'data>> for AliasesV1<'data> {
             .language_variants
             .iter()
             .map(zerofrom::ZeroFrom::zero_from)
-            .map(|v: StrStrStrPair| {
+            .map(|v: LanguageStrStrPair| {
                 let langid = alloc::format!("{0}-{1}", v.0, v.1);
                 StrStrPair(langid.into(), v.2)
             })
@@ -120,14 +120,14 @@ impl<'data> TryFrom<AliasesV1<'data>> for AliasesV2<'data> {
             .language_variants
             .iter()
             .map(zerofrom::ZeroFrom::zero_from)
-            .map(|v: StrStrPair| -> Result<StrStrStrPair, DataError> {
+            .map(|v: StrStrPair| -> Result<LanguageStrStrPair, DataError> {
                 let (lang, variant) =
                     v.0.split_once('-')
                         .ok_or_else(|| DataError::custom("Each pair should be language-variant"))?;
                 let lang: Language = lang
                     .parse()
                     .map_err(|_| DataError::custom("Language should be a valid language subtag"))?;
-                Ok(StrStrStrPair(lang, variant.to_owned().into(), v.1))
+                Ok(LanguageStrStrPair(lang, variant.to_owned().into(), v.1))
             })
             .collect::<Result<alloc::vec::Vec<_>, _>>()?;
 

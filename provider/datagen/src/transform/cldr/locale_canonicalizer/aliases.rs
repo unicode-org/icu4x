@@ -220,7 +220,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
         let language_variants = language_variants
             .iter()
             .map(|(from, to)| {
-                StrStrStrPair(
+                LanguageStrStrPair(
                     from.language,
                     from.variants.to_string().into(),
                     to.to_string().into(),

@@ -518,7 +518,7 @@ impl LocaleCanonicalizer {
 
     fn canonicalize_language_variant_fallbacks(&self, lid: &mut LanguageIdentifier) -> bool {
         // These language/variant comibnations have around 20 rules
-        for StrStrStrPair(lang, raw_variants, raw_to) in self
+        for LanguageStrStrPair(lang, raw_variants, raw_to) in self
             .aliases
             .get()
             .language_variants

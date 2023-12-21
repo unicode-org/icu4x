@@ -87,7 +87,7 @@ type SemivalidatedSubdivision = TinyAsciiStr<7>;
 // to store strs and parse when needed.
 type UnvalidatedLanguageIdentifier = str;
 type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
-type UnvalidatedLanguageVariantsPair = StrStrStrPairVarULE;
+type UnvalidatedLanguageVariantsPair = LanguageStrStrPairVarULE;
 
 #[zerovec::make_varule(StrStrPairVarULE)]
 #[zerovec::derive(Debug)]
@@ -115,7 +115,7 @@ pub struct StrStrPair<'a>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );
 
-#[zerovec::make_varule(StrStrStrPairVarULE)]
+#[zerovec::make_varule(LanguageStrStrPairVarULE)]
 #[zerovec::derive(Debug)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
@@ -130,7 +130,7 @@ pub struct StrStrPair<'a>(
     databake(path = icu_locid_transform::provider),
 )]
 /// A triplet of strings with a EncodeAsVarULE implementation.
-pub struct StrStrStrPair<'a>(
+pub struct LanguageStrStrPair<'a>(
     pub Language,
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
