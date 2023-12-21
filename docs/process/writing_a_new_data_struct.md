@@ -54,15 +54,7 @@ $ cargo make download-repo-sources
 
 "Source data providers" read from a source data file, deserialize it, and transform it to an ICU4X data struct. This corresponds to steps 2 and 3 above.
 
-Although they may share common code, source data providers are implemented specific to their data source. There are therefore many source data providers in ICU4X.
-
-Examples of source data providers include:
-
-- [`NumbersProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
-- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
-- [&hellip; more examples](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/transform/index.html)
-
-Source data providers must implement the following traits:
+To add a new source data provider, implement the following traits on [`DatagenProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/struct.DatagenProvider.html) for your data marker(s):
 
 - `DataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
 - `IterableDataProviderInternal<M>`, which automatically results in a cached impl of `IterableDataProvider<M>`
@@ -236,16 +228,13 @@ impl DataProvider<FooV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProvider<FooV1Marker> for FooProvider {
-    fn supported_locales(
+impl IterableDataProviderInternal<FooV1Marker> for FooProvider {
+    fn supported_locales_impl(
         &self,
-    ) -> Result<Vec<DataLocale>, DataError> {
+    ) -> Result<HashSet<DataLocale>, DataError> {
         // This should list all supported locales.
     }
 }
-
-// Once we have DataProvider and IterableDataProvider, we can apply this macro:
-icu_provider::make_exportable_provider!(FooProvider, [FooV1Marker,]);
 ```
 
 The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
