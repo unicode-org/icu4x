@@ -101,7 +101,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_date_with_length(
     ///         &locale!("fr").into(),
-    ///         length::Date::Medium,
+    ///         length::Date::Full,
     ///     )
     ///     .unwrap();
     ///
@@ -110,7 +110,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 28, 20)
     ///             .unwrap()
     ///     ),
-    ///     "20 déc. 2023"
+    ///     "mercredi 20 décembre 2023"
     /// );
     /// ```
     pub fn try_new_date_with_length(
@@ -130,9 +130,9 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            Some(&crate::provider::Baked),
-            Some(&crate::provider::Baked),
-            Some(&crate::provider::Baked),
+            Some(&crate::provider::Baked), // year
+            Some(&crate::provider::Baked), // month
+            Some(&crate::provider::Baked), // weekday
             None::<&PhantomProvider>, // day period
             locale,
             selection.pattern_for_data_loading(),
@@ -141,6 +141,66 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Date(selection),
+            names,
+            _calendar: PhantomData,
+        })
+    }
+
+    /// Creates a [`TypedNeoDateTimeFormatter`] for a date length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
+    /// use icu::datetime::options::length;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter =
+    ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_time_with_length(
+    ///         &locale!("fr").into(),
+    ///         length::Time::Medium,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(
+    ///         &DateTime::try_new_gregorian_datetime(2023, 12, 21, 14, 48, 58)
+    ///             .unwrap()
+    ///     ),
+    ///     "14:48:58"
+    /// );
+    /// ```
+    pub fn try_new_time_with_length(
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>,
+    {
+        let selection = TimePatternSelectionData::try_new_with_length(
+            &crate::provider::Baked,
+            locale,
+            length,
+        )?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
+            None::<&PhantomProvider>, // year
+            None::<&PhantomProvider>, // month
+            None::<&PhantomProvider>, // weekday
+            Some(&crate::provider::Baked), // day period
+            locale,
+            selection.pattern_for_data_loading(),
+            |options| FixedDecimalFormatter::try_new(locale, options),
+            || WeekCalculator::try_new(locale),
+        )?;
+        Ok(Self {
+            selection: DateTimePatternSelectionData::Time(selection),
             names,
             _calendar: PhantomData,
         })

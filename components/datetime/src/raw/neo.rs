@@ -133,6 +133,34 @@ impl DatePatternSelectionData {
 }
 
 impl TimePatternSelectionData {
+    pub(crate) fn try_new_with_length<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: DataProvider<TimePatternV1Marker> + ?Sized,
+    {
+        let mut locale = locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+            match length {
+                length::Time::Full => aux::PatternLength::Full,
+                length::Time::Long => aux::PatternLength::Long,
+                length::Time::Medium => aux::PatternLength::Medium,
+                length::Time::Short => aux::PatternLength::Short,
+            },
+            None, // no hour cycle for date patterns
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        Ok(Self::SingleTime(payload))
+    }
+
     /// Borrows a pattern containing all of the fields that need to be loaded.
     pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
         match self {
