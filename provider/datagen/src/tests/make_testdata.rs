@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::baked_exporter;
+use crate::baked_exporter::BakedExporter;
 use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
@@ -46,6 +48,14 @@ fn generate_json_and_verify_postcard() {
         ),
     });
 
+    let stubdata_out = Box::new(
+        BakedStubdataExporter(baked_exporter::BakedExporter::new("tests/data/stub".into(), {
+            let mut options = baked_exporter::Options::default();
+            options.overwrite = true;
+            options
+        }).unwrap())
+    );
+
     DatagenDriver::new()
         .with_keys(crate::all_keys())
         .with_locales(LOCALES.iter().cloned())
@@ -55,9 +65,51 @@ fn generate_json_and_verify_postcard() {
         ])
         .export(
             &DatagenProvider::new_testing(),
-            MultiExporter::new(vec![json_out, postcard_out]),
+            MultiExporter::new(vec![json_out, postcard_out, stubdata_out]),
         )
         .unwrap();
+}
+
+struct BakedStubdataExporter(BakedExporter);
+
+impl DataExporter for BakedStubdataExporter {
+    fn put_payload(
+            &self,
+            _key: DataKey,
+            _locale: &DataLocale,
+            _payload: &DataPayload<ExportMarker>,
+        ) -> Result<(), DataError> {
+        // do not put any payloads in stubdata!
+        Ok(())
+    }
+
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0.flush_singleton(key, payload)
+    }
+
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.0.flush(key)
+    }
+
+    fn flush_with_built_in_fallback(
+        &self,
+        key: DataKey,
+        fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
+        self.0.flush_with_built_in_fallback(key, fallback_mode)
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.0.close()
+    }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        self.0.supports_built_in_fallback()
+    }
 }
 
 struct PostcardTestingExporter {
