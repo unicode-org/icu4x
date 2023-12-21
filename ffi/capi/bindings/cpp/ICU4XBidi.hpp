@@ -99,7 +99,7 @@ class ICU4XBidi {
   static uint8_t level_ltr();
   inline const capi::ICU4XBidi* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBidi* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XBidi(capi::ICU4XBidi* i) : inner(i) {}
+  inline explicit ICU4XBidi(capi::ICU4XBidi* i) : inner(i) {}
   ICU4XBidi() = default;
   ICU4XBidi(ICU4XBidi&&) noexcept = default;
   ICU4XBidi& operator=(ICU4XBidi&& other) noexcept = default;

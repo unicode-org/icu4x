@@ -80,7 +80,7 @@ class ICU4XCollator {
   ICU4XCollatorResolvedOptionsV1 resolved_options() const;
   inline const capi::ICU4XCollator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCollator* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
+  inline explicit ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
   ICU4XCollator() = default;
   ICU4XCollator(ICU4XCollator&&) noexcept = default;
   ICU4XCollator& operator=(ICU4XCollator&& other) noexcept = default;

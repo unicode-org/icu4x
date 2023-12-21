@@ -15,6 +15,9 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+pub mod chinese_based;
+pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
+
 use crate::types::IsoWeekday;
 use core::str::FromStr;
 use icu_provider::prelude::*;
@@ -39,6 +42,8 @@ const _: () = {
         pub use icu_locid_transform as locid_transform;
     }
     icu_calendar_data::make_provider!(Baked);
+    icu_calendar_data::impl_calendar_chinesecache_v1!(Baked);
+    icu_calendar_data::impl_calendar_dangicache_v1!(Baked);
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);
     icu_calendar_data::impl_calendar_japanext_v1!(Baked);
     icu_calendar_data::impl_datetime_week_data_v1!(Baked);
@@ -47,6 +52,8 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
 pub const KEYS: &[DataKey] = &[
+    ChineseCacheV1Marker::KEY,
+    DangiCacheV1Marker::KEY,
     JapaneseErasV1Marker::KEY,
     JapaneseExtendedErasV1Marker::KEY,
     WeekDataV1Marker::KEY,

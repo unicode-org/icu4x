@@ -374,6 +374,7 @@ impl From<Locale> for LanguageIdentifier {
 }
 
 impl AsRef<LanguageIdentifier> for Locale {
+    #[inline(always)]
     fn as_ref(&self) -> &LanguageIdentifier {
         &self.id
     }

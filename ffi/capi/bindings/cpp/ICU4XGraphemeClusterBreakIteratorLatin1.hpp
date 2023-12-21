@@ -36,7 +36,7 @@ class ICU4XGraphemeClusterBreakIteratorLatin1 {
   int32_t next();
   inline const capi::ICU4XGraphemeClusterBreakIteratorLatin1* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGraphemeClusterBreakIteratorLatin1* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XGraphemeClusterBreakIteratorLatin1(capi::ICU4XGraphemeClusterBreakIteratorLatin1* i) : inner(i) {}
+  inline explicit ICU4XGraphemeClusterBreakIteratorLatin1(capi::ICU4XGraphemeClusterBreakIteratorLatin1* i) : inner(i) {}
   ICU4XGraphemeClusterBreakIteratorLatin1() = default;
   ICU4XGraphemeClusterBreakIteratorLatin1(ICU4XGraphemeClusterBreakIteratorLatin1&&) noexcept = default;
   ICU4XGraphemeClusterBreakIteratorLatin1& operator=(ICU4XGraphemeClusterBreakIteratorLatin1&& other) noexcept = default;

@@ -73,7 +73,7 @@ class ICU4XGregorianZonedDateTimeFormatter {
   diplomat::result<std::string, ICU4XError> format_iso_datetime_with_custom_time_zone(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const;
   inline const capi::ICU4XGregorianZonedDateTimeFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGregorianZonedDateTimeFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XGregorianZonedDateTimeFormatter(capi::ICU4XGregorianZonedDateTimeFormatter* i) : inner(i) {}
+  inline explicit ICU4XGregorianZonedDateTimeFormatter(capi::ICU4XGregorianZonedDateTimeFormatter* i) : inner(i) {}
   ICU4XGregorianZonedDateTimeFormatter() = default;
   ICU4XGregorianZonedDateTimeFormatter(ICU4XGregorianZonedDateTimeFormatter&&) noexcept = default;
   ICU4XGregorianZonedDateTimeFormatter& operator=(ICU4XGregorianZonedDateTimeFormatter&& other) noexcept = default;

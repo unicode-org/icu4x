@@ -401,6 +401,7 @@ impl LanguageIdentifier {
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {
+    #[inline(always)]
     fn as_ref(&self) -> &Self {
         self
     }

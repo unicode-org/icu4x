@@ -59,7 +59,7 @@ class ICU4XGregorianDateTimeFormatter {
   diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XGregorianDateTimeFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGregorianDateTimeFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XGregorianDateTimeFormatter(capi::ICU4XGregorianDateTimeFormatter* i) : inner(i) {}
+  inline explicit ICU4XGregorianDateTimeFormatter(capi::ICU4XGregorianDateTimeFormatter* i) : inner(i) {}
   ICU4XGregorianDateTimeFormatter() = default;
   ICU4XGregorianDateTimeFormatter(ICU4XGregorianDateTimeFormatter&&) noexcept = default;
   ICU4XGregorianDateTimeFormatter& operator=(ICU4XGregorianDateTimeFormatter&& other) noexcept = default;

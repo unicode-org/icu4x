@@ -57,7 +57,7 @@ class ICU4XCaseMapCloser {
   bool add_string_case_closure_to(const std::string_view s, ICU4XCodePointSetBuilder& builder) const;
   inline const capi::ICU4XCaseMapCloser* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCaseMapCloser* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCaseMapCloser(capi::ICU4XCaseMapCloser* i) : inner(i) {}
+  inline explicit ICU4XCaseMapCloser(capi::ICU4XCaseMapCloser* i) : inner(i) {}
   ICU4XCaseMapCloser() = default;
   ICU4XCaseMapCloser(ICU4XCaseMapCloser&&) noexcept = default;
   ICU4XCaseMapCloser& operator=(ICU4XCaseMapCloser&& other) noexcept = default;

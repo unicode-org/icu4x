@@ -38,7 +38,7 @@ let mut get_hello_world_formatter = |loc: &DataLocale| {
     // Note: This assumes data is split by language subtag, which may or may not be the best
     // strategy for all use cases.
     let path_buf = 
-        Path::new("../../../provider/adapters/tests/data/langtest")
+        Path::new("../../provider/adapters/tests/data/langtest")
         .join(loc.language().as_str());
     let lang_provider = match FsDataProvider::try_new(&path_buf) {
         Ok(p) => p,

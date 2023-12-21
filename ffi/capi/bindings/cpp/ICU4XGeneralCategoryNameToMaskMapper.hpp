@@ -54,7 +54,7 @@ class ICU4XGeneralCategoryNameToMaskMapper {
   static diplomat::result<ICU4XGeneralCategoryNameToMaskMapper, ICU4XError> load(const ICU4XDataProvider& provider);
   inline const capi::ICU4XGeneralCategoryNameToMaskMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGeneralCategoryNameToMaskMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XGeneralCategoryNameToMaskMapper(capi::ICU4XGeneralCategoryNameToMaskMapper* i) : inner(i) {}
+  inline explicit ICU4XGeneralCategoryNameToMaskMapper(capi::ICU4XGeneralCategoryNameToMaskMapper* i) : inner(i) {}
   ICU4XGeneralCategoryNameToMaskMapper() = default;
   ICU4XGeneralCategoryNameToMaskMapper(ICU4XGeneralCategoryNameToMaskMapper&&) noexcept = default;
   ICU4XGeneralCategoryNameToMaskMapper& operator=(ICU4XGeneralCategoryNameToMaskMapper&& other) noexcept = default;

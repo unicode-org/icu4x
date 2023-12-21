@@ -56,7 +56,7 @@ class ICU4XReorderedIndexMap {
   size_t get(size_t index) const;
   inline const capi::ICU4XReorderedIndexMap* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XReorderedIndexMap* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XReorderedIndexMap(capi::ICU4XReorderedIndexMap* i) : inner(i) {}
+  inline explicit ICU4XReorderedIndexMap(capi::ICU4XReorderedIndexMap* i) : inner(i) {}
   ICU4XReorderedIndexMap() = default;
   ICU4XReorderedIndexMap(ICU4XReorderedIndexMap&&) noexcept = default;
   ICU4XReorderedIndexMap& operator=(ICU4XReorderedIndexMap&& other) noexcept = default;

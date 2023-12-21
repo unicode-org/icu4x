@@ -143,7 +143,7 @@ class ICU4XCodePointMapData8 {
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_sentence_break(const ICU4XDataProvider& provider);
   inline const capi::ICU4XCodePointMapData8* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointMapData8* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCodePointMapData8(capi::ICU4XCodePointMapData8* i) : inner(i) {}
+  inline explicit ICU4XCodePointMapData8(capi::ICU4XCodePointMapData8* i) : inner(i) {}
   ICU4XCodePointMapData8() = default;
   ICU4XCodePointMapData8(ICU4XCodePointMapData8&&) noexcept = default;
   ICU4XCodePointMapData8& operator=(ICU4XCodePointMapData8&& other) noexcept = default;

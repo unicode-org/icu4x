@@ -111,7 +111,7 @@ class ICU4XDateFormatter {
   diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XDateFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDateFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDateFormatter(capi::ICU4XDateFormatter* i) : inner(i) {}
+  inline explicit ICU4XDateFormatter(capi::ICU4XDateFormatter* i) : inner(i) {}
   ICU4XDateFormatter() = default;
   ICU4XDateFormatter(ICU4XDateFormatter&&) noexcept = default;
   ICU4XDateFormatter& operator=(ICU4XDateFormatter&& other) noexcept = default;
