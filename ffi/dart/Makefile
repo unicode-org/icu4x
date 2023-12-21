@@ -9,13 +9,13 @@ lib/src/lib.g.dart:
 	rm -rf lib/src
 	cp -r ../capi/bindings/dart lib/src
 
-../../target/release/libicu_capi_cdylib.so: FORCE
-	cargo build -p icu_capi_cdylib --release
+../../target/release/libicu_capi.so: FORCE
+	cargo rustc -p icu_capi --release --crate-type=cdylib
 
-test/libicu_capi_cdylib.so: ../../target/release/libicu_capi_cdylib.so
-	cp ../../target/release/libicu_capi_cdylib.so test/libicu_capi_cdylib.so
+test/libicu_capi.so: ../../target/release/libicu_capi.so
+	cp ../../target/release/libicu_capi.so test/libicu_capi.so
 
-build: lib/src/lib.g.dart test/libicu_capi_cdylib.so
+build: lib/src/lib.g.dart test/libicu_capi.so
 	
 test: build
 	dart test

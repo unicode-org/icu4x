@@ -31,6 +31,8 @@ diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_create(int32_t 
 
 ICU4XIsoDateTime* ICU4XIsoDateTime_crate_from_date_and_time(const ICU4XIsoDate* date, const ICU4XTime* time);
 
+ICU4XIsoDateTime* ICU4XIsoDateTime_local_unix_epoch();
+
 ICU4XIsoDateTime* ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(int32_t minutes);
 
 ICU4XIsoDate* ICU4XIsoDateTime_date(const ICU4XIsoDateTime* self);

@@ -249,7 +249,7 @@ dependencies = [
     # Get a coffee
     "ci-job-test",
     "ci-job-test-docs",
-    "ci-job-check-tutorials-cratesio",
+    "ci-job-test-tutorials-cratesio",
     "ci-job-diplomat",
     "ci-job-testdata",
     "ci-job-msrv-features",

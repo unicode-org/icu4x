@@ -88,7 +88,7 @@ class ICU4XZonedDateTimeFormatter {
   diplomat::result<std::string, ICU4XError> format_iso_datetime_with_custom_time_zone(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const;
   inline const capi::ICU4XZonedDateTimeFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XZonedDateTimeFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XZonedDateTimeFormatter(capi::ICU4XZonedDateTimeFormatter* i) : inner(i) {}
+  inline explicit ICU4XZonedDateTimeFormatter(capi::ICU4XZonedDateTimeFormatter* i) : inner(i) {}
   ICU4XZonedDateTimeFormatter() = default;
   ICU4XZonedDateTimeFormatter(ICU4XZonedDateTimeFormatter&&) noexcept = default;
   ICU4XZonedDateTimeFormatter& operator=(ICU4XZonedDateTimeFormatter&& other) noexcept = default;

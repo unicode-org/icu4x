@@ -45,34 +45,37 @@ class ICU4XDecomposingNormalizer {
   static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfkd(const ICU4XDataProvider& provider);
 
   /**
-   * Normalize a (potentially ill-formed) UTF8 string
+   * Normalize a string
    * 
-   * Errors are mapped to REPLACEMENT CHARACTER
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> normalize_to_writeable(const std::string_view s, W& write) const;
 
   /**
-   * Normalize a (potentially ill-formed) UTF8 string
+   * Normalize a string
    * 
-   * Errors are mapped to REPLACEMENT CHARACTER
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
   diplomat::result<std::string, ICU4XError> normalize(const std::string_view s) const;
 
   /**
-   * Check if a (potentially ill-formed) UTF8 string is normalized
+   * Check if a string is normalized
    * 
-   * Errors are mapped to REPLACEMENT CHARACTER
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8) for more information.
    */
   bool is_normalized(const std::string_view s) const;
   inline const capi::ICU4XDecomposingNormalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDecomposingNormalizer* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDecomposingNormalizer(capi::ICU4XDecomposingNormalizer* i) : inner(i) {}
+  inline explicit ICU4XDecomposingNormalizer(capi::ICU4XDecomposingNormalizer* i) : inner(i) {}
   ICU4XDecomposingNormalizer() = default;
   ICU4XDecomposingNormalizer(ICU4XDecomposingNormalizer&&) noexcept = default;
   ICU4XDecomposingNormalizer& operator=(ICU4XDecomposingNormalizer&& other) noexcept = default;

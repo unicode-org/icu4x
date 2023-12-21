@@ -40,8 +40,8 @@ final class List implements ffi.Finalizable {
 
   /// Push a string to the list
   ///
-  /// For C++ users, potentially invalid UTF8 will be handled via
-  /// REPLACEMENT CHARACTERs
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
   void push(String val) {
     final temp = ffi2.Arena();
     final valView = val.utf8View;

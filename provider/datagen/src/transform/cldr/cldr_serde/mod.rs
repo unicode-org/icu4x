@@ -31,7 +31,7 @@ pub mod plurals;
 pub mod time_zones;
 #[cfg(feature = "icu_transliterate")]
 pub mod transforms;
-#[cfg(test)] // keep as test until baked data is needed
+#[cfg(feature = "icu_unitsconversion")]
 pub mod units;
 pub mod week_data;
 

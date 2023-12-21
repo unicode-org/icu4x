@@ -63,7 +63,7 @@ class ICU4XScriptWithExtensionsBorrowed {
   ICU4XCodePointSetData get_script_extensions_set(uint16_t script) const;
   inline const capi::ICU4XScriptWithExtensionsBorrowed* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensionsBorrowed* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensionsBorrowed* i) : inner(i) {}
+  inline explicit ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensionsBorrowed* i) : inner(i) {}
   ICU4XScriptWithExtensionsBorrowed() = default;
   ICU4XScriptWithExtensionsBorrowed(ICU4XScriptWithExtensionsBorrowed&&) noexcept = default;
   ICU4XScriptWithExtensionsBorrowed& operator=(ICU4XScriptWithExtensionsBorrowed&& other) noexcept = default;

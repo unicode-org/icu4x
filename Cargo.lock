@@ -198,6 +198,7 @@ version = "1.4.0"
 dependencies = [
  "icu",
  "icu_datagen",
+ "icu_unitsconversion",
  "log",
  "simple_logger",
 ]
@@ -796,7 +797,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -814,7 +815,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "log",
 ]
@@ -822,7 +823,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -842,7 +843,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "displaydoc",
  "lazy_static",
@@ -920,9 +921,9 @@ checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
 name = "elsa"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "714f766f3556b44e7e4776ad133fcc3445a489517c25c704ace411bb14790194"
+checksum = "d98e71ae4df57d214182a2e5cb90230c0192c6ddfcaa05c36453d46a54713e10"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -1084,15 +1085,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a62bc1cf6f830c2ec14a513a9fb124d0a213a629668a4186f329db21fe045652"
 dependencies = [
  "percent-encoding",
-]
-
-[[package]]
-name = "fraction"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59a78dd758a47a7305478e0e054f9fde4e983b9f9eccda162bf7ca03b79e9d40"
-dependencies = [
- "num",
 ]
 
 [[package]]
@@ -1419,22 +1411,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_capi_cdylib"
-version = "1.4.0"
-dependencies = [
- "icu_capi",
- "icu_provider",
-]
-
-[[package]]
-name = "icu_capi_staticlib"
-version = "1.4.0"
-dependencies = [
- "icu_capi",
- "icu_provider",
-]
-
-[[package]]
 name = "icu_casemap"
 version = "1.4.0"
 dependencies = [
@@ -1545,6 +1521,7 @@ version = "1.4.0"
 name = "icu_datagen"
 version = "1.4.0"
 dependencies = [
+ "calendrical_calculations",
  "clap 4.2.1",
  "crlify",
  "databake",
@@ -1552,7 +1529,6 @@ dependencies = [
  "either",
  "elsa",
  "eyre",
- "fraction",
  "icu",
  "icu_calendar",
  "icu_casemap",
@@ -1562,6 +1538,7 @@ dependencies = [
  "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
+ "icu_dimension",
  "icu_displaynames",
  "icu_list",
  "icu_locid",
@@ -1575,7 +1552,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
- "icu_singlenumberformatter",
  "icu_timezone",
  "icu_transliterate",
  "icu_unitsconversion",
@@ -1584,6 +1560,7 @@ dependencies = [
  "memchr",
  "ndarray",
  "num-bigint",
+ "num-rational",
  "once_cell",
  "postcard",
  "proc-macro2",
@@ -1667,6 +1644,19 @@ version = "1.4.0"
 [[package]]
 name = "icu_depcheck"
 version = "0.1.0"
+
+[[package]]
+name = "icu_dimension"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
 
 [[package]]
 name = "icu_displaynames"
@@ -1882,6 +1872,7 @@ name = "icu_provider"
 version = "1.4.0"
 dependencies = [
  "bincode",
+ "criterion",
  "databake",
  "displaydoc",
  "erased-serde",
@@ -2012,19 +2003,6 @@ name = "icu_segmenter_data"
 version = "1.4.0"
 
 [[package]]
-name = "icu_singlenumberformatter"
-version = "0.0.0"
-dependencies = [
- "databake",
- "displaydoc",
- "icu_locid",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
 name = "icu_testdata_scripts"
 version = "0.0.0"
 dependencies = [
@@ -2103,11 +2081,17 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
+ "icu_unitsconversion_data",
+ "num",
  "serde",
  "smallvec",
  "zerotrie",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_unitsconversion_data"
+version = "1.4.0"
 
 [[package]]
 name = "ident_case"
@@ -2280,6 +2264,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "lru"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6e8aaa3f231bb4bd57b84b2d5dc3ae7f350265df8aa96492e0bc394a1571909"
+dependencies = [
+ "hashbrown 0.12.3",
+]
+
+[[package]]
 name = "mach"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2296,6 +2289,28 @@ checksum = "7574c1cf36da4798ab73da5b215bbf444f50718207754cb522201d78d1cd0ff2"
 dependencies = [
  "autocfg",
  "rawpointer",
+]
+
+[[package]]
+name = "md-tests"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_datagen",
+ "icu_provider",
+ "icu_provider_adapters",
+ "icu_provider_blob",
+ "icu_provider_fs",
+ "itertools",
+ "litemap",
+ "lru",
+ "serde",
+ "serde-aux",
+ "time 0.3.17",
+ "tinystr",
+ "writeable",
 ]
 
 [[package]]
@@ -2422,6 +2437,7 @@ version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05180d69e3da0e530ba2a1dae5110317e49e3b7f3d41be227dc5f92e49ee7af"
 dependencies = [
+ "num-bigint",
  "num-complex",
  "num-integer",
  "num-iter",
@@ -2477,6 +2493,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
+ "num-bigint",
  "num-integer",
  "num-traits",
 ]

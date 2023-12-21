@@ -34,14 +34,15 @@ class ICU4XDataStruct {
   /**
    * Construct a new DecimalSymbolsV1 data struct.
    * 
-   * C++ users: All string arguments must be valid UTF8
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
    */
   static diplomat::result<ICU4XDataStruct, ICU4XError> create_decimal_symbols_v1(const std::string_view plus_sign_prefix, const std::string_view plus_sign_suffix, const std::string_view minus_sign_prefix, const std::string_view minus_sign_suffix, const std::string_view decimal_separator, const std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, const diplomat::span<const char32_t> digits);
   inline const capi::ICU4XDataStruct* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDataStruct* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDataStruct(capi::ICU4XDataStruct* i) : inner(i) {}
+  inline explicit ICU4XDataStruct(capi::ICU4XDataStruct* i) : inner(i) {}
   ICU4XDataStruct() = default;
   ICU4XDataStruct(ICU4XDataStruct&&) noexcept = default;
   ICU4XDataStruct& operator=(ICU4XDataStruct&& other) noexcept = default;

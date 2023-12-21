@@ -85,7 +85,10 @@ class ICU4XLineSegmenter {
   static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
   /**
-   * Segments a (potentially ill-formed) UTF-8 string.
+   * Segments a string.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
    * 
@@ -94,7 +97,10 @@ class ICU4XLineSegmenter {
   ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
   /**
-   * Segments a UTF-16 string.
+   * Segments a string.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
    * 
@@ -112,7 +118,7 @@ class ICU4XLineSegmenter {
   ICU4XLineBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XLineSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLineSegmenter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLineSegmenter(capi::ICU4XLineSegmenter* i) : inner(i) {}
+  inline explicit ICU4XLineSegmenter(capi::ICU4XLineSegmenter* i) : inner(i) {}
   ICU4XLineSegmenter() = default;
   ICU4XLineSegmenter(ICU4XLineSegmenter&&) noexcept = default;
   ICU4XLineSegmenter& operator=(ICU4XLineSegmenter&& other) noexcept = default;

@@ -1,5 +1,5 @@
-import cfg from '../diplomat.config.js';
-import {readString8} from './diplomat-runtime.js'
+import cfg from '../diplomat.config.mjs';
+import {readString8} from './diplomat-runtime.mjs'
 
 let wasm;
 

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XPluralRules ICU4XPluralRules;
+#include "ICU4XPluralRules.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

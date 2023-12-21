@@ -42,7 +42,8 @@ impl PatternMetadata {
     }
 
     #[inline]
-    pub(crate) const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
+    #[doc(hidden)] // databake
+    pub const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
         Self(time_granularity.ordinal())
     }
 

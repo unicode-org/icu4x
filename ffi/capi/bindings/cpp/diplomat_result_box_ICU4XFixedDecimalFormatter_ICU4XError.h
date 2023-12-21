@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XFixedDecimalFormatter ICU4XFixedDecimalFormatter;
+#include "ICU4XFixedDecimalFormatter.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

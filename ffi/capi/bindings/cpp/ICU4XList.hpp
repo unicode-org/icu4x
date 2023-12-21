@@ -42,8 +42,8 @@ class ICU4XList {
   /**
    * Push a string to the list
    * 
-   * For C++ users, potentially invalid UTF8 will be handled via
-   * REPLACEMENT CHARACTERs
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    */
   void push(const std::string_view val);
 
@@ -58,7 +58,7 @@ class ICU4XList {
   bool is_empty() const;
   inline const capi::ICU4XList* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XList* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XList(capi::ICU4XList* i) : inner(i) {}
+  inline explicit ICU4XList(capi::ICU4XList* i) : inner(i) {}
   ICU4XList() = default;
   ICU4XList(ICU4XList&&) noexcept = default;
   ICU4XList& operator=(ICU4XList&& other) noexcept = default;

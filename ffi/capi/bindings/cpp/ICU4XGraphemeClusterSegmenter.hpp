@@ -44,7 +44,10 @@ class ICU4XGraphemeClusterSegmenter {
   static diplomat::result<ICU4XGraphemeClusterSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
-   * Segments a (potentially ill-formed) UTF-8 string.
+   * Segments a string.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8) for more information.
    * 
@@ -53,7 +56,10 @@ class ICU4XGraphemeClusterSegmenter {
   ICU4XGraphemeClusterBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
   /**
-   * Segments a UTF-16 string.
+   * Segments a string.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16) for more information.
    * 
@@ -71,7 +77,7 @@ class ICU4XGraphemeClusterSegmenter {
   ICU4XGraphemeClusterBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XGraphemeClusterSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGraphemeClusterSegmenter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XGraphemeClusterSegmenter(capi::ICU4XGraphemeClusterSegmenter* i) : inner(i) {}
+  inline explicit ICU4XGraphemeClusterSegmenter(capi::ICU4XGraphemeClusterSegmenter* i) : inner(i) {}
   ICU4XGraphemeClusterSegmenter() = default;
   ICU4XGraphemeClusterSegmenter(ICU4XGraphemeClusterSegmenter&&) noexcept = default;
   ICU4XGraphemeClusterSegmenter& operator=(ICU4XGraphemeClusterSegmenter&& other) noexcept = default;

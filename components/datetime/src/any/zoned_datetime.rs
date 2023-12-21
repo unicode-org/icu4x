@@ -13,7 +13,8 @@ use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    WeekDataV1Marker,
 };
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -234,10 +235,12 @@ impl ZonedDateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
@@ -386,10 +389,12 @@ impl ZonedDateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>

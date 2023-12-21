@@ -66,7 +66,10 @@ class ICU4XWordSegmenter {
   static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
 
   /**
-   * Segments a (potentially ill-formed) UTF-8 string.
+   * Segments a string.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf8) for more information.
    * 
@@ -75,7 +78,10 @@ class ICU4XWordSegmenter {
   ICU4XWordBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
   /**
-   * Segments a UTF-16 string.
+   * Segments a string.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
    * 
@@ -93,7 +99,7 @@ class ICU4XWordSegmenter {
   ICU4XWordBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XWordSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XWordSegmenter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XWordSegmenter(capi::ICU4XWordSegmenter* i) : inner(i) {}
+  inline explicit ICU4XWordSegmenter(capi::ICU4XWordSegmenter* i) : inner(i) {}
   ICU4XWordSegmenter() = default;
   ICU4XWordSegmenter(ICU4XWordSegmenter&&) noexcept = default;
   ICU4XWordSegmenter& operator=(ICU4XWordSegmenter&& other) noexcept = default;

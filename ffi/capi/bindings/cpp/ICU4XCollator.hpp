@@ -41,10 +41,9 @@ class ICU4XCollator {
   static diplomat::result<ICU4XCollator, ICU4XError> create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options);
 
   /**
-   * Compare potentially ill-formed UTF-8 strings.
+   * Compare two strings.
    * 
-   * Ill-formed input is compared
-   * as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
    * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `compare_utf8`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
@@ -52,25 +51,26 @@ class ICU4XCollator {
   ICU4XOrdering compare(const std::string_view left, const std::string_view right) const;
 
   /**
-   * Compare guaranteed well-formed UTF-8 strings.
-   * 
-   * Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
-   * (and may be memory-unsafe to do so, too).
+   * Compare two strings.
    * 
    * See the [Rust documentation for `compare`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   ICU4XOrdering compare_valid_utf8(const std::string_view left, const std::string_view right) const;
 
   /**
-   * Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
-   * compared as REPLACEMENT CHARACTER.
+   * Compare two strings.
+   * 
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
    */
   ICU4XOrdering compare_utf16(const std::u16string_view left, const std::u16string_view right) const;
   inline const capi::ICU4XCollator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCollator* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
+  inline explicit ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
   ICU4XCollator() = default;
   ICU4XCollator(ICU4XCollator&&) noexcept = default;
   ICU4XCollator& operator=(ICU4XCollator&& other) noexcept = default;
