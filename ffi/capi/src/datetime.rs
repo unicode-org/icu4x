@@ -57,8 +57,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XIsoDateTime`] of midnight on January 1, 1970
         #[diplomat::rust_link(icu::calendar::DateTime::local_unix_epoch, FnInStruct)]
-        pub fn local_unix_epoch(
-        ) -> Box<ICU4XIsoDateTime> {
+        pub fn local_unix_epoch() -> Box<ICU4XIsoDateTime> {
             let dt = DateTime::local_unix_epoch();
             Box::new(ICU4XIsoDateTime(dt))
         }
