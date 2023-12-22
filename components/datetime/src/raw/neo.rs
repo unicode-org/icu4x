@@ -2,8 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt;
+
+use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
-use crate::input::ExtractedDateTimeInput;
+use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
+use crate::neo_pattern::DateTimePattern;
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
@@ -82,6 +86,18 @@ pub(crate) struct RawNeoDateTimeFormatter {
     selection: DateTimePatternSelectionData,
 }
 
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct DateTimeWriter<'a, 'b, I>
+where
+    I: Iterator<Item = PatternItem> + 'b,
+    'a: 'b,
+{
+    pub(crate) datetime: &'b ExtractedDateTimeInput,
+    pub(crate) names: RawDateTimeNamesBorrowed<'a>,
+    pub(crate) pattern_items: I,
+    pub(crate) pattern_metadata: PatternMetadata,
+}
+
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_length<M, P>(
         provider: &P,
@@ -133,6 +149,28 @@ impl DatePatternSelectionData {
             }
             DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
         }
+    }
+}
+
+impl<'a> DatePatternDataBorrowed<'a> {
+    #[inline]
+    pub(crate) fn metadata(&self) -> PatternMetadata {
+        match self {
+            Self::Resolved(data) => data.pattern.metadata,
+        }
+    }
+
+    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        match self {
+            Self::Resolved(data) => data.pattern.items.iter(),
+        }
+    }
+
+    pub(crate) fn to_pattern(&self) -> DateTimePattern {
+        let pattern = match self {
+            Self::Resolved(data) => &data.pattern,
+        };
+        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
     }
 }
 
@@ -330,6 +368,44 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
                 },
             )
             .map(|unaligned| PatternItem::from_unaligned(*unaligned))
+    }
+
+    pub(crate) fn to_pattern(&self) -> DateTimePattern {
+        let pattern = match self {
+            Self::Date(DatePatternDataBorrowed::Resolved(data)) => &data.pattern,
+            Self::Time(TimePatternDataBorrowed::Resolved(data)) => &data.pattern,
+            Self::DateTimeGlue { .. } => todo!(),
+        };
+        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
+    }
+}
+
+impl<'a, 'b, I> DateTimeWriter<'a, 'b, I>
+where
+    I: Iterator<Item = PatternItem> + 'b,
+    'a: 'b,
+{
+    pub(crate) fn write_to<W: fmt::Write + ?Sized>(self, sink: &mut W) -> fmt::Result {
+        let loc_datetime =
+            DateTimeInputWithWeekConfig::new(self.datetime, self.names.week_calculator);
+        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
+            // TODO(#4340): Make the FixedDecimalFormatter optional
+            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
+            return Err(core::fmt::Error);
+        };
+        write_pattern(
+            self.pattern_items,
+            self.pattern_metadata,
+            Some(&self.names),
+            Some(&self.names),
+            &loc_datetime,
+            fixed_decimal_formatter,
+            sink,
+        )
+        .map_err(|_e| {
+            icu_provider::_internal::log::warn!("{_e:?}");
+            core::fmt::Error
+        })
     }
 }
 

@@ -6,6 +6,7 @@
 
 use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
+use crate::input::DateInput;
 use crate::input::DateTimeInput;
 use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
@@ -30,8 +31,83 @@ use writeable::Writeable;
 /// </div>
 #[derive(Debug)]
 pub struct TypedNeoDateFormatter<C: CldrCalendar> {
-    inner: RawNeoDateFormatter,
+    selection: DatePatternSelectionData,
+    names: RawDateTimeNames,
     _calendar: PhantomData<C>,
+}
+
+impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
+    /// Creates a [`TypedNeoDateTimeFormatter`] for a date length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoDateFormatter;
+    /// use icu::datetime::options::length;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter =
+    ///     TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
+    ///         &locale!("es-MX").into(),
+    ///         length::Date::Full,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(
+    ///         &Date::try_new_gregorian_date(2023, 12, 20)
+    ///             .unwrap()
+    ///     ),
+    ///     "miércoles, 20 de diciembre de 2023"
+    /// );
+    /// ```
+    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error>
+    where
+        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>,
+    {
+        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
+            &crate::provider::Baked,
+            locale,
+            length,
+        )?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
+            Some(&crate::provider::Baked), // year
+            Some(&crate::provider::Baked), // month
+            Some(&crate::provider::Baked), // weekday
+            None::<&PhantomProvider>,      // day period
+            locale,
+            selection.pattern_items_for_data_loading(),
+            |options| FixedDecimalFormatter::try_new(locale, options),
+            || WeekCalculator::try_new(locale),
+        )?;
+        Ok(Self {
+            selection,
+            names,
+            _calendar: PhantomData,
+        })
+    }
+
+    /// Formats a date.
+    ///
+    /// For an example, see [`TypedNeoDateFormatter`].
+    pub fn format<T>(&self, date: &T) -> FormattedNeoDate
+    where
+        T: DateInput<Calendar = C>,
+    {
+        let datetime = ExtractedDateTimeInput::extract_from_date(date);
+        FormattedNeoDate {
+            pattern: self.selection.select(&datetime),
+            datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
 }
 
 /// <div class="stab unstable">
@@ -45,6 +121,29 @@ pub struct FormattedNeoDate<'a> {
     pattern: DatePatternDataBorrowed<'a>,
     datetime: ExtractedDateTimeInput,
     names: RawDateTimeNamesBorrowed<'a>,
+}
+
+impl<'a> Writeable for FormattedNeoDate<'a> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        DateTimeWriter {
+            datetime: &self.datetime,
+            names: self.names,
+            pattern_items: self.pattern.iter_items(),
+            pattern_metadata: self.pattern.metadata(),
+        }
+        .write_to(sink)
+    }
+
+    // TODO(#489): Implement writeable_length_hint
+}
+
+writeable::impl_display_with_writeable!(FormattedNeoDate<'_>);
+
+impl<'a> FormattedNeoDate<'a> {
+    /// Gets the pattern used in this formatted value.
+    pub fn pattern(&self) -> DateTimePattern {
+        self.pattern.to_pattern()
+    }
 }
 
 /// <div class="stab unstable">
@@ -296,28 +395,13 @@ pub struct FormattedNeoDateTime<'a> {
 
 impl<'a> Writeable for FormattedNeoDateTime<'a> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let loc_datetime =
-            DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
-        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
-            // TODO(#4340): Make the FixedDecimalFormatter optional
-            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
-            return Err(core::fmt::Error);
-        };
-        let pattern_items = self.pattern.iter_items();
-        let pattern_metadata = self.pattern.metadata();
-        write_pattern(
-            pattern_items,
-            pattern_metadata,
-            Some(&self.names),
-            Some(&self.names),
-            &loc_datetime,
-            fixed_decimal_formatter,
-            sink,
-        )
-        .map_err(|_e| {
-            icu_provider::_internal::log::warn!("{_e:?}");
-            core::fmt::Error
-        })
+        DateTimeWriter {
+            datetime: &self.datetime,
+            names: self.names,
+            pattern_items: self.pattern.iter_items(),
+            pattern_metadata: self.pattern.metadata(),
+        }
+        .write_to(sink)
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -326,17 +410,8 @@ impl<'a> Writeable for FormattedNeoDateTime<'a> {
 writeable::impl_display_with_writeable!(FormattedNeoDateTime<'_>);
 
 impl<'a> FormattedNeoDateTime<'a> {
-    /// Gets the pattern used in this [`FormattedNeoDateTime`].
+    /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
-        let pattern = match self.pattern {
-            DateTimePatternDataBorrowed::Date(DatePatternDataBorrowed::Resolved(data)) => {
-                &data.pattern
-            }
-            DateTimePatternDataBorrowed::Time(TimePatternDataBorrowed::Resolved(data)) => {
-                &data.pattern
-            }
-            DateTimePatternDataBorrowed::DateTimeGlue { .. } => todo!(),
-        };
-        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
+        self.pattern.to_pattern()
     }
 }

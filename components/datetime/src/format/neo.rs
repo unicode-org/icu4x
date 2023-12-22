@@ -639,8 +639,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
             + DataProvider<DayPeriodNamesV1Marker>,
     {
         let locale = &self.locale;
-        self
-            .inner
+        self.inner
             .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
