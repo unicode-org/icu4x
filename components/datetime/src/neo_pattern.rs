@@ -6,7 +6,7 @@
 
 use core::str::FromStr;
 
-use crate::pattern::{runtime, PatternError};
+use crate::pattern::{runtime, PatternError, PatternItem};
 
 /// A pattern for formatting a datetime in a calendar.
 ///
@@ -66,6 +66,10 @@ impl DateTimePattern {
         Self { pattern }
     }
 
+    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        self.pattern.items.iter()
+    }
+
     pub(crate) fn as_borrowed(&self) -> DateTimePatternBorrowed {
         DateTimePatternBorrowed(&self.pattern)
     }
@@ -91,3 +95,9 @@ impl Eq for DateTimePattern {}
 // Not clear if this needs to be public. For now, make it private.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub(crate) struct DateTimePatternBorrowed<'a>(pub(crate) &'a runtime::Pattern<'a>);
+
+impl<'a> DateTimePatternBorrowed<'a> {
+    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        self.0.items.iter()
+    }
+}

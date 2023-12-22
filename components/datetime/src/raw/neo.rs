@@ -6,7 +6,7 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePatternBorrowed;
 use crate::options::length;
-use crate::pattern::runtime;
+use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
 use crate::Error;
 use icu_plurals::PluralCategory;
@@ -54,11 +54,14 @@ pub(crate) struct RawNeoTimeFormatter {
 pub(crate) enum DateTimePatternSelectionData {
     Date(DatePatternSelectionData),
     Time(TimePatternSelectionData),
-    DateTime {
-        date: DatePatternSelectionData,
-        time: TimePatternSelectionData,
-        glue: DataPayload<DateTimePatternV1Marker>,
-    },
+    DateTimeGlue(DateTimeGluePatternSelectionData),
+}
+
+#[derive(Debug)]
+pub(crate) struct DateTimeGluePatternSelectionData {
+    date: DatePatternSelectionData,
+    time: TimePatternSelectionData,
+    glue: DataPayload<DateTimePatternV1Marker>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -109,16 +112,16 @@ impl DatePatternSelectionData {
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
-    pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
+    #[inline]
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         match self {
-            DatePatternSelectionData::SingleDate(payload) => {
-                DateTimePatternBorrowed(&payload.get().pattern)
-            }
+            DatePatternSelectionData::SingleDate(payload) => payload.get(),
             // Assumption: with_era has all the fields of without_era
-            DatePatternSelectionData::OptionalEra { with_era, .. } => {
-                DateTimePatternBorrowed(&with_era.get().pattern)
-            }
+            DatePatternSelectionData::OptionalEra { with_era, .. } => with_era.get(),
         }
+        .pattern
+        .items
+        .iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -162,12 +165,14 @@ impl TimePatternSelectionData {
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
-    pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
+    #[inline]
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         match self {
-            TimePatternSelectionData::SingleTime(payload) => {
-                DateTimePatternBorrowed(&payload.get().pattern)
-            }
+            TimePatternSelectionData::SingleTime(payload) => payload.get(),
         }
+        .pattern
+        .items
+        .iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -180,7 +185,7 @@ impl TimePatternSelectionData {
     }
 }
 
-impl DateTimePatternSelectionData {
+impl DateTimeGluePatternSelectionData {
     pub(crate) fn try_new_with_lengths<M, P>(
         provider: &P,
         locale: &DataLocale,
@@ -215,18 +220,19 @@ impl DateTimePatternSelectionData {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        Ok(Self::DateTime { date, time, glue })
+        Ok(Self { date, time, glue })
     }
 
-    /// Borrows a pattern containing all of the fields that need to be loaded.
-    pub(crate) fn pattern_for_data_loading(&self) -> DateTimePatternBorrowed {
-        match self {
-            DateTimePatternSelectionData::Date(date) => date.pattern_for_data_loading(),
-            DateTimePatternSelectionData::Time(time) => time.pattern_for_data_loading(),
-            DateTimePatternSelectionData::DateTime { date, time, glue } => todo!(),
-        }
+    /// Returns an iterator over the pattern items that may need to be loaded.
+    #[inline]
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        let date_items = self.date.pattern_items_for_data_loading();
+        let time_items = self.time.pattern_items_for_data_loading();
+        date_items.chain(time_items)
     }
+}
 
+impl DateTimePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> DateTimePatternDataBorrowed {
         match self {
@@ -236,7 +242,7 @@ impl DateTimePatternSelectionData {
             DateTimePatternSelectionData::Time(time) => {
                 DateTimePatternDataBorrowed::Time(time.select(datetime))
             }
-            DateTimePatternSelectionData::DateTime { date, time, glue } => todo!(),
+            DateTimePatternSelectionData::DateTimeGlue(date_time_glue) => todo!(),
         }
     }
 }

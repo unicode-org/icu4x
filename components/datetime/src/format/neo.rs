@@ -576,20 +576,19 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
             + ?Sized,
     {
         let locale = &self.locale;
-        let inner = self
-            .inner
+        self.inner
             .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
                 Some(provider),
                 Some(provider),
                 Some(provider),
                 Some(provider),
                 locale,
-                pattern.as_borrowed(),
+                pattern.iter_items(),
                 |options| FixedDecimalFormatter::try_new_unstable(provider, locale, options),
                 || WeekCalculator::try_new_unstable(provider, locale),
             )?;
         Ok(DateTimePatternFormatter {
-            inner,
+            inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
         })
     }
@@ -648,12 +647,12 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
                 locale,
-                pattern.as_borrowed(),
+                pattern.iter_items(),
                 |options| FixedDecimalFormatter::try_new(locale, options),
                 || WeekCalculator::try_new(locale),
             )?;
         Ok(DateTimePatternFormatter {
-            inner,
+            inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
         })
     }
@@ -908,7 +907,7 @@ impl RawDateTimeNames {
         weekday_provider: Option<&(impl DataProvider<WeekdayNamesV1Marker> + ?Sized)>,
         dayperiod_provider: Option<&(impl DataProvider<DayPeriodNamesV1Marker> + ?Sized)>,
         locale: &DataLocale,
-        pattern: DateTimePatternBorrowed<'l>,
+        pattern_items: impl Iterator<Item = PatternItem>,
         fixed_decimal_formatter_loader: impl FnOnce(
             FixedDecimalFormatterOptions,
         ) -> Result<
@@ -916,12 +915,12 @@ impl RawDateTimeNames {
             icu_decimal::DecimalError,
         >,
         week_calculator_loader: impl FnOnce() -> Result<WeekCalculator, icu_calendar::CalendarError>,
-    ) -> Result<RawDateTimePatternFormatter<'l>, Error>
+    ) -> Result<(), Error>
     where
         YearMarker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
         MonthMarker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
     {
-        let fields = pattern.0.items.iter().filter_map(|p| match p {
+        let fields = pattern_items.filter_map(|p| match p {
             PatternItem::Field(field) => Some(field),
             _ => None,
         });
@@ -998,7 +997,7 @@ impl RawDateTimeNames {
             self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader)?;
         }
 
-        Ok(self.with_pattern(pattern))
+        Ok(())
     }
 }
 

@@ -10,6 +10,7 @@ use crate::input::DateTimeInput;
 use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
+use crate::neo_pattern::DateTimePatternBorrowed;
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -135,7 +136,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // weekday
             None::<&PhantomProvider>,      // day period
             locale,
-            selection.pattern_for_data_loading(),
+            selection.pattern_items_for_data_loading(),
             |options| FixedDecimalFormatter::try_new(locale, options),
             || WeekCalculator::try_new(locale),
         )?;
@@ -190,7 +191,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             None::<&PhantomProvider>,      // weekday
             Some(&crate::provider::Baked), // day period
             locale,
-            selection.pattern_for_data_loading(),
+            selection.pattern_items_for_data_loading(),
             |options| FixedDecimalFormatter::try_new(locale, options),
             || WeekCalculator::try_new(locale),
         )?;
@@ -243,7 +244,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
     {
-        let selection = DateTimePatternSelectionData::try_new_with_lengths::<
+        let selection = DateTimeGluePatternSelectionData::try_new_with_lengths::<
             C::DatePatternV1Marker,
             _,
         >(&crate::provider::Baked, locale, date_length, time_length)?;
@@ -254,12 +255,12 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // weekday
             Some(&crate::provider::Baked), // day period
             locale,
-            selection.pattern_for_data_loading(),
+            selection.pattern_items_for_data_loading(),
             |options| FixedDecimalFormatter::try_new(locale, options),
             || WeekCalculator::try_new(locale),
         )?;
         Ok(Self {
-            selection,
+            selection: DateTimePatternSelectionData::DateTimeGlue(selection),
             names,
             _calendar: PhantomData,
         })
