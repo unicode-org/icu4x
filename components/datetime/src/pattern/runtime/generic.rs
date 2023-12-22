@@ -10,7 +10,7 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_provider::prelude::*;
-use zerovec::ZeroVec;
+use zerovec::{ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -22,6 +22,16 @@ use zerovec::ZeroVec;
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
+
+/// A ZeroSlice containing a 0 and a 1 placeholder
+pub(crate) const ZERO_ONE_SLICE: &ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
+    GenericPatternItem;
+    GenericPatternItem::to_unaligned_const;
+    [
+        GenericPatternItem::Placeholder(0),
+        GenericPatternItem::Placeholder(1),
+    ]
+);
 
 impl<'data> GenericPattern<'data> {
     /// The function allows for creation of new DTF pattern from a generic pattern

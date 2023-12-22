@@ -1162,7 +1162,8 @@ impl<'a> Writeable for FormattedDateTimePattern<'a> {
             return Err(core::fmt::Error);
         };
         write_pattern(
-            self.pattern.0,
+            self.pattern.0.items.iter(),
+            self.pattern.0.metadata,
             Some(&self.names),
             Some(&self.names),
             &loc_datetime,

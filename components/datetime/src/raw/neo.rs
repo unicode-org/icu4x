@@ -4,13 +4,14 @@
 
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
-use crate::neo_pattern::DateTimePatternBorrowed;
 use crate::options::length;
-use crate::pattern::{runtime, PatternItem};
+use crate::pattern::runtime::PatternMetadata;
+use crate::pattern::{runtime, GenericPatternItem, PatternItem};
 use crate::provider::neo::*;
 use crate::Error;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
+use zerovec::ule::AsULE;
 use zerovec::ZeroMap;
 
 #[derive(Debug)]
@@ -68,7 +69,7 @@ pub(crate) struct DateTimeGluePatternSelectionData {
 pub(crate) enum DateTimePatternDataBorrowed<'a> {
     Date(DatePatternDataBorrowed<'a>),
     Time(TimePatternDataBorrowed<'a>),
-    DateTime {
+    DateTimeGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
         glue: &'a DateTimePatternV1<'a>,
@@ -242,8 +243,93 @@ impl DateTimePatternSelectionData {
             DateTimePatternSelectionData::Time(time) => {
                 DateTimePatternDataBorrowed::Time(time.select(datetime))
             }
-            DateTimePatternSelectionData::DateTimeGlue(date_time_glue) => todo!(),
+            DateTimePatternSelectionData::DateTimeGlue(DateTimeGluePatternSelectionData {
+                date,
+                time,
+                glue,
+            }) => DateTimePatternDataBorrowed::DateTimeGlue {
+                date: date.select(datetime),
+                time: time.select(datetime),
+                glue: glue.get(),
+            },
         }
+    }
+}
+
+impl<'a> DateTimePatternDataBorrowed<'a> {
+    #[inline]
+    fn date_pattern(&self) -> Option<DatePatternDataBorrowed<'a>> {
+        match self {
+            Self::Date(date) => Some(*date),
+            Self::Time(_) => None,
+            Self::DateTimeGlue { date, .. } => Some(*date),
+        }
+    }
+
+    #[inline]
+    fn time_pattern(&self) -> Option<TimePatternDataBorrowed<'a>> {
+        match self {
+            Self::Date(_) => None,
+            Self::Time(time) => Some(*time),
+            Self::DateTimeGlue { time, .. } => Some(*time),
+        }
+    }
+
+    #[inline]
+    fn glue_pattern(&self) -> Option<&'a DateTimePatternV1<'a>> {
+        match self {
+            Self::Date(_) => None,
+            Self::Time(_) => None,
+            Self::DateTimeGlue { glue, .. } => Some(glue),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn metadata(&self) -> PatternMetadata {
+        match self {
+            Self::Date(DatePatternDataBorrowed::Resolved(data)) => data.pattern.metadata,
+            Self::Time(TimePatternDataBorrowed::Resolved(data)) => data.pattern.metadata,
+            Self::DateTimeGlue {
+                date: DatePatternDataBorrowed::Resolved(date),
+                time: TimePatternDataBorrowed::Resolved(time),
+                ..
+            } => PatternMetadata::merge_date_and_time_metadata(
+                date.pattern.metadata,
+                time.pattern.metadata,
+            ),
+        }
+    }
+
+    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        let glue_pattern_slice = match self.glue_pattern() {
+            Some(glue) => &glue.pattern.items.as_ule_slice(),
+            None => runtime::ZERO_ONE_SLICE.as_ule_slice(),
+        };
+        glue_pattern_slice
+            .iter()
+            .flat_map(
+                |generic_item_ule| match generic_item_ule.to_pattern_item_ule() {
+                    Ok(pattern_item_ule) => core::slice::from_ref(pattern_item_ule),
+                    Err(0) => self
+                        .date_pattern()
+                        .map(|data| match data {
+                            DatePatternDataBorrowed::Resolved(pattern) => {
+                                pattern.pattern.items.as_ule_slice()
+                            }
+                        })
+                        .unwrap_or(&[]),
+                    Err(1) => self
+                        .time_pattern()
+                        .map(|data| match data {
+                            TimePatternDataBorrowed::Resolved(pattern) => {
+                                pattern.pattern.items.as_ule_slice()
+                            }
+                        })
+                        .unwrap_or(&[]),
+                    _ => &[],
+                },
+            )
+            .map(|unaligned| PatternItem::from_unaligned(*unaligned))
     }
 }
 

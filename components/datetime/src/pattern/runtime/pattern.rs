@@ -41,6 +41,16 @@ impl PatternMetadata {
         Self::from_time_granularity(time_granularity)
     }
 
+    /// Merges the metadata from a date pattern and a time pattern into one.
+    #[inline]
+    pub(crate) fn merge_date_and_time_metadata(
+        _date: PatternMetadata,
+        time: PatternMetadata,
+    ) -> PatternMetadata {
+        // Currently we only have time granularity so we ignore the date metadata.
+        time
+    }
+
     #[inline]
     #[doc(hidden)] // databake
     pub const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {

@@ -10,7 +10,6 @@ use crate::input::DateTimeInput;
 use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_pattern::DateTimePatternBorrowed;
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -227,7 +226,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
     ///     ),
-    ///     "14:48:58"
+    ///     "14:48:58, mercredi 20 décembre 2023"
     /// );
     /// ```
     pub fn try_new_with_lengths(
@@ -304,17 +303,11 @@ impl<'a> Writeable for FormattedNeoDateTime<'a> {
             icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
             return Err(core::fmt::Error);
         };
-        let pattern = match self.pattern {
-            DateTimePatternDataBorrowed::Date(DatePatternDataBorrowed::Resolved(data)) => {
-                &data.pattern
-            }
-            DateTimePatternDataBorrowed::Time(TimePatternDataBorrowed::Resolved(data)) => {
-                &data.pattern
-            }
-            DateTimePatternDataBorrowed::DateTime { .. } => todo!(),
-        };
+        let pattern_items = self.pattern.iter_items();
+        let pattern_metadata = self.pattern.metadata();
         write_pattern(
-            pattern,
+            pattern_items,
+            pattern_metadata,
             Some(&self.names),
             Some(&self.names),
             &loc_datetime,
@@ -342,7 +335,7 @@ impl<'a> FormattedNeoDateTime<'a> {
             DateTimePatternDataBorrowed::Time(TimePatternDataBorrowed::Resolved(data)) => {
                 &data.pattern
             }
-            DateTimePatternDataBorrowed::DateTime { .. } => todo!(),
+            DateTimePatternDataBorrowed::DateTimeGlue { .. } => todo!(),
         };
         DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
     }
