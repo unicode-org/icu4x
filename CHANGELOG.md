@@ -21,6 +21,8 @@
       - Fixed a bug where a result header defines a struct that shadows the class' name  (https://github.com/rust-diplomat/diplomat/pull/394)
       - Add `expclicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
 - Utilities
+    - `calendrical_calculations`:
+        - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar.
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
         - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)
