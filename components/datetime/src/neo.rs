@@ -12,6 +12,7 @@ use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
+use crate::DateTimeFormatterOptions;
 use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
@@ -195,10 +196,7 @@ impl NeoTimeFormatter {
             |options| FixedDecimalFormatter::try_new(locale, options),
             || WeekCalculator::try_new(locale),
         )?;
-        Ok(Self {
-            selection,
-            names,
-        })
+        Ok(Self { selection, names })
     }
 
     /// Formats a time of day.
@@ -420,6 +418,35 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             names,
             _calendar: PhantomData,
         })
+    }
+
+    /// Creates a [`TypedNeoDateTimeFormatter`] from [`DateTimeFormatterOptions`].
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(locale: &DataLocale, options: DateTimeFormatterOptions) -> Result<Self, Error>
+    where
+        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DateTimePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>,
+    {
+        match options {
+            DateTimeFormatterOptions::Length(length::Bag {
+                date: Some(date),
+                time: Some(time),
+            }) => Self::try_new_with_lengths(locale, date, time),
+            DateTimeFormatterOptions::Length(length::Bag {
+                date: Some(date),
+                time: None,
+            }) => Self::try_new_with_date_length(locale, date),
+            DateTimeFormatterOptions::Length(length::Bag {
+                date: None,
+                time: Some(time),
+            }) => Self::try_new_with_time_length(locale, time),
+            _ => Err(Error::UnsupportedOptions),
+        }
     }
 
     /// Formats a date and time of day.
