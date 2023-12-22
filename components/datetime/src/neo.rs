@@ -222,25 +222,10 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>,
     {
-        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
-            &crate::provider::Baked,
-            locale,
-            length,
-        )?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            Some(&crate::provider::Baked), // year
-            Some(&crate::provider::Baked), // month
-            Some(&crate::provider::Baked), // weekday
-            None::<&PhantomProvider>,      // day period
-            locale,
-            selection.pattern_items_for_data_loading(),
-            |options| FixedDecimalFormatter::try_new(locale, options),
-            || WeekCalculator::try_new(locale),
-        )?;
+        let date_formatter = TypedNeoDateFormatter::<C>::try_new_with_length(locale, length)?;
         Ok(Self {
-            selection: DateTimePatternSelectionData::Date(selection),
-            names,
+            selection: DateTimePatternSelectionData::Date(date_formatter.selection),
+            names: date_formatter.names,
             _calendar: PhantomData,
         })
     }
