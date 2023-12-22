@@ -6,10 +6,8 @@
 
 use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
-use crate::input::DateInput;
-use crate::input::DateTimeInput;
-use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
+use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_pattern::DateTimePattern;
 use crate::options::length;
 use crate::provider::neo::*;
@@ -37,7 +35,7 @@ pub struct TypedNeoDateFormatter<C: CldrCalendar> {
 }
 
 impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
-    /// Creates a [`TypedNeoDateTimeFormatter`] for a date length.
+    /// Creates a [`TypedNeoDateFormatter`] for a date length.
     ///
     /// # Examples
     ///
@@ -49,18 +47,14 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter =
-    ///     TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
-    ///         &locale!("es-MX").into(),
-    ///         length::Date::Full,
-    ///     )
-    ///     .unwrap();
+    /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
+    ///     &locale!("es-MX").into(),
+    ///     length::Date::Full,
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format(
-    ///         &Date::try_new_gregorian_date(2023, 12, 20)
-    ///             .unwrap()
-    ///     ),
+    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
     ///     "miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
@@ -154,8 +148,74 @@ impl<'a> FormattedNeoDate<'a> {
 /// </div>
 #[derive(Debug)]
 pub struct TypedNeoTimeFormatter<C: CldrCalendar> {
-    inner: RawNeoTimeFormatter,
+    selection: TimePatternSelectionData,
+    names: RawDateTimeNames,
     _calendar: PhantomData<C>,
+}
+
+impl<C: CldrCalendar> TypedNeoTimeFormatter<C> {
+    /// Creates a [`TypedNeoTimeFormatter`] for a time length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Time;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoTimeFormatter;
+    /// use icu::datetime::options::length;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = TypedNeoTimeFormatter::<Gregorian>::try_new_with_length(
+    ///     &locale!("es-MX").into(),
+    ///     length::Time::Medium,
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(14, 48, 58, 0).unwrap()),
+    ///     "2:48:58 p.m."
+    /// );
+    /// ```
+    pub fn try_new_with_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error>
+    where
+        crate::provider::Baked:
+            DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
+    {
+        let selection =
+            TimePatternSelectionData::try_new_with_length(&crate::provider::Baked, locale, length)?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
+            None::<&PhantomProvider>,      // year
+            None::<&PhantomProvider>,      // month
+            None::<&PhantomProvider>,      // weekday
+            Some(&crate::provider::Baked), // day period
+            locale,
+            selection.pattern_items_for_data_loading(),
+            |options| FixedDecimalFormatter::try_new(locale, options),
+            || WeekCalculator::try_new(locale),
+        )?;
+        Ok(Self {
+            selection,
+            names,
+            _calendar: PhantomData,
+        })
+    }
+
+    /// Formats a time of day.
+    ///
+    /// For an example, see [`TypedNeoTimeFormatter`].
+    pub fn format<T>(&self, time: &T) -> FormattedNeoTime
+    where
+        T: IsoTimeInput,
+    {
+        let datetime = ExtractedDateTimeInput::extract_from_time(time);
+        FormattedNeoTime {
+            pattern: self.selection.select(&datetime),
+            datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
 }
 
 /// <div class="stab unstable">
@@ -169,6 +229,29 @@ pub struct FormattedNeoTime<'a> {
     pattern: TimePatternDataBorrowed<'a>,
     datetime: ExtractedDateTimeInput,
     names: RawDateTimeNamesBorrowed<'a>,
+}
+
+impl<'a> Writeable for FormattedNeoTime<'a> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        DateTimeWriter {
+            datetime: &self.datetime,
+            names: self.names,
+            pattern_items: self.pattern.iter_items(),
+            pattern_metadata: self.pattern.metadata(),
+        }
+        .write_to(sink)
+    }
+
+    // TODO(#489): Implement writeable_length_hint
+}
+
+writeable::impl_display_with_writeable!(FormattedNeoTime<'_>);
+
+impl<'a> FormattedNeoTime<'a> {
+    /// Gets the pattern used in this formatted value.
+    pub fn pattern(&self) -> DateTimePattern {
+        self.pattern.to_pattern()
+    }
 }
 
 /// <div class="stab unstable">
@@ -265,22 +348,10 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         crate::provider::Baked:
             DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
     {
-        let selection =
-            TimePatternSelectionData::try_new_with_length(&crate::provider::Baked, locale, length)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            None::<&PhantomProvider>,      // year
-            None::<&PhantomProvider>,      // month
-            None::<&PhantomProvider>,      // weekday
-            Some(&crate::provider::Baked), // day period
-            locale,
-            selection.pattern_items_for_data_loading(),
-            |options| FixedDecimalFormatter::try_new(locale, options),
-            || WeekCalculator::try_new(locale),
-        )?;
+        let time_formatter = TypedNeoTimeFormatter::<C>::try_new_with_length(locale, length)?;
         Ok(Self {
-            selection: DateTimePatternSelectionData::Time(selection),
-            names,
+            selection: DateTimePatternSelectionData::Time(time_formatter.selection),
+            names: time_formatter.names,
             _calendar: PhantomData,
         })
     }

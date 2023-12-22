@@ -25,8 +25,8 @@ use crate::pattern::{runtime, PatternError, PatternItem};
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
+/// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::options::length;
 /// use icu::locid::locale;
 ///

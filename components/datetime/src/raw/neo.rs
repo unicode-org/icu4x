@@ -160,12 +160,14 @@ impl<'a> DatePatternDataBorrowed<'a> {
         }
     }
 
+    #[inline]
     pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
         match self {
             Self::Resolved(data) => data.pattern.items.iter(),
         }
     }
 
+    #[inline]
     pub(crate) fn to_pattern(&self) -> DateTimePattern {
         let pattern = match self {
             Self::Resolved(data) => &data.pattern,
@@ -221,6 +223,30 @@ impl TimePatternSelectionData {
                 TimePatternDataBorrowed::Resolved(payload.get())
             }
         }
+    }
+}
+
+impl<'a> TimePatternDataBorrowed<'a> {
+    #[inline]
+    pub(crate) fn metadata(&self) -> PatternMetadata {
+        match self {
+            Self::Resolved(data) => data.pattern.metadata,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        match self {
+            Self::Resolved(data) => data.pattern.items.iter(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_pattern(&self) -> DateTimePattern {
+        let pattern = match self {
+            Self::Resolved(data) => &data.pattern,
+        };
+        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
     }
 }
 
