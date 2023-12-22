@@ -1259,7 +1259,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
             .weekday_names
             .get_with_length(field_symbol, field_length)
             .ok_or(Error::MissingNames(field))?;
-        let day_usize = day as usize;
+        let day_usize = (day as usize) % 7;
         weekday_symbols
             .symbols
             .get(day_usize)
