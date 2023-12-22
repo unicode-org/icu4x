@@ -42,6 +42,7 @@ impl PatternMetadata {
     }
 
     /// Merges the metadata from a date pattern and a time pattern into one.
+    #[cfg(feature = "experimental")]
     #[inline]
     pub(crate) fn merge_date_and_time_metadata(
         _date: PatternMetadata,
@@ -57,6 +58,8 @@ impl PatternMetadata {
         Self(time_granularity.ordinal())
     }
 
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    #[inline]
     pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
         self.0 = time_granularity.ordinal();
     }

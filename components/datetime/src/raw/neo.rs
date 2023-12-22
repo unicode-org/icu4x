@@ -10,13 +10,11 @@ use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
-use crate::pattern::{runtime, GenericPatternItem, PatternItem};
+use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
 use crate::Error;
-use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
-use zerovec::ZeroMap;
 
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
@@ -34,12 +32,6 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 }
 
 #[derive(Debug)]
-pub(crate) struct RawNeoDateFormatter {
-    names: RawDateTimeNames,
-    selection: DatePatternSelectionData,
-}
-
-#[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
     SingleTime(DataPayload<TimePatternV1Marker>),
 }
@@ -47,12 +39,6 @@ pub(crate) enum TimePatternSelectionData {
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum TimePatternDataBorrowed<'a> {
     Resolved(&'a TimePatternV1<'a>),
-}
-
-#[derive(Debug)]
-pub(crate) struct RawNeoTimeFormatter {
-    names: RawDateTimeNames,
-    selection: TimePatternSelectionData,
 }
 
 #[derive(Debug)]
@@ -78,12 +64,6 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
         time: TimePatternDataBorrowed<'a>,
         glue: &'a DateTimePatternV1<'a>,
     },
-}
-
-#[derive(Debug)]
-pub(crate) struct RawNeoDateTimeFormatter {
-    names: RawDateTimeNames,
-    selection: DateTimePatternSelectionData,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -433,15 +413,6 @@ where
             core::fmt::Error
         })
     }
-}
-
-pub(crate) enum Foo1<'data> {
-    SingleDate(runtime::Pattern<'data>),
-    WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
-}
-
-pub(crate) struct Foo2<'data> {
-    map: ZeroMap<'data, PluralCategory, runtime::PatternULE>,
 }
 
 #[cfg(test)]

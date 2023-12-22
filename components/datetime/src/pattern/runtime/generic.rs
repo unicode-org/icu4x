@@ -10,7 +10,7 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_provider::prelude::*;
-use zerovec::{ZeroSlice, ZeroVec};
+use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -24,7 +24,8 @@ pub struct GenericPattern<'data> {
 }
 
 /// A ZeroSlice containing a 0 and a 1 placeholder
-pub(crate) const ZERO_ONE_SLICE: &ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
+#[cfg(feature = "experimental")]
+pub(crate) const ZERO_ONE_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
     GenericPatternItem;
     GenericPatternItem::to_unaligned_const;
     [

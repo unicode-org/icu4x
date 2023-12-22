@@ -536,6 +536,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     }
 
     // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
+    #[cfg(feature = "compiled_data")]
     #[inline]
     fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
         self.inner.load_fixed_decimal_formatter(|options| {

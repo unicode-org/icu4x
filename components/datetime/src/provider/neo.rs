@@ -461,6 +461,12 @@ pub struct DatePatternV1<'data> {
     pub pattern: runtime::Pattern<'data>,
 }
 
+// TODO: We may need to support plural forms here. Something like
+// pub enum NeoPatternPlurals<'data> {
+//     SingleDate(runtime::Pattern<'data>),
+//     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
+// }
+
 /// The default per-length patterns associated with times
 ///
 /// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.

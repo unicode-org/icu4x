@@ -4,7 +4,6 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
@@ -58,6 +57,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     ///     "miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error>
     where
         crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
@@ -177,6 +177,7 @@ impl<C: CldrCalendar> TypedNeoTimeFormatter<C> {
     ///     "2:48:58 p.m."
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error>
     where
         crate::provider::Baked:
@@ -295,6 +296,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///     "miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_date_length(
         locale: &DataLocale,
         length: length::Date,
@@ -340,6 +342,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///     "2:48:58 p.m."
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_time_length(
         locale: &DataLocale,
         length: length::Time,
@@ -384,6 +387,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///     "2:48:58 p.m., miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new_with_lengths(
         locale: &DataLocale,
         date_length: length::Date,
