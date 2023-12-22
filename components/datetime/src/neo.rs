@@ -100,7 +100,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_date_length(
-    ///         &locale!("fr").into(),
+    ///         &locale!("es-MX").into(),
     ///         length::Date::Full,
     ///     )
     ///     .unwrap();
@@ -110,7 +110,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
     ///     ),
-    ///     "mercredi 20 décembre 2023"
+    ///     "miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
     pub fn try_new_with_date_length(
@@ -160,7 +160,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_time_length(
-    ///         &locale!("fr").into(),
+    ///         &locale!("es-MX").into(),
     ///         length::Time::Medium,
     ///     )
     ///     .unwrap();
@@ -170,7 +170,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
     ///     ),
-    ///     "14:48:58"
+    ///     "2:48:58 p.m."
     /// );
     /// ```
     pub fn try_new_with_time_length(
@@ -215,7 +215,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_lengths(
-    ///         &locale!("fr").into(),
+    ///         &locale!("es-MX").into(),
     ///         length::Date::Full,
     ///         length::Time::Medium,
     ///     )
@@ -226,7 +226,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
     ///     ),
-    ///     "14:48:58, mercredi 20 décembre 2023"
+    ///     "2:48:58 p.m., miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
     pub fn try_new_with_lengths(

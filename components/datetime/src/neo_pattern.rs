@@ -34,8 +34,8 @@ use crate::pattern::{runtime, PatternError, PatternItem};
 ///     DateTimePattern::try_from_pattern_str("d MMM y").unwrap();
 ///
 /// let data_pattern =
-///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_date_with_length(
-///         &locale!("fr").into(),
+///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_date_length(
+///         &locale!("es-MX").into(),
 ///         length::Date::Medium,
 ///     )
 ///     .unwrap()
@@ -95,9 +95,3 @@ impl Eq for DateTimePattern {}
 // Not clear if this needs to be public. For now, make it private.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub(crate) struct DateTimePatternBorrowed<'a>(pub(crate) &'a runtime::Pattern<'a>);
-
-impl<'a> DateTimePatternBorrowed<'a> {
-    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        self.0.items.iter()
-    }
-}
