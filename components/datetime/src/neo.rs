@@ -147,26 +147,24 @@ impl<'a> FormattedNeoDate<'a> {
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
 #[derive(Debug)]
-pub struct TypedNeoTimeFormatter<C: CldrCalendar> {
+pub struct NeoTimeFormatter {
     selection: TimePatternSelectionData,
     names: RawDateTimeNames,
-    _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar> TypedNeoTimeFormatter<C> {
-    /// Creates a [`TypedNeoTimeFormatter`] for a time length.
+impl NeoTimeFormatter {
+    /// Creates a [`NeoTimeFormatter`] for a time length.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::types::Time;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoTimeFormatter;
+    /// use icu::datetime::neo::NeoTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedNeoTimeFormatter::<Gregorian>::try_new_with_length(
+    /// let formatter = NeoTimeFormatter::try_new_with_length(
     ///     &locale!("es-MX").into(),
     ///     length::Time::Medium,
     /// )
@@ -186,7 +184,8 @@ impl<C: CldrCalendar> TypedNeoTimeFormatter<C> {
         let selection =
             TimePatternSelectionData::try_new_with_length(&crate::provider::Baked, locale, length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
+        // NOTE: The Gregorian types below are placeholders only. They are not actually linked.
+        names.load_for_pattern::<GregorianYearNamesV1Marker, GregorianMonthNamesV1Marker>(
             None::<&PhantomProvider>,      // year
             None::<&PhantomProvider>,      // month
             None::<&PhantomProvider>,      // weekday
@@ -199,7 +198,6 @@ impl<C: CldrCalendar> TypedNeoTimeFormatter<C> {
         Ok(Self {
             selection,
             names,
-            _calendar: PhantomData,
         })
     }
 
@@ -351,7 +349,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         crate::provider::Baked:
             DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
     {
-        let time_formatter = TypedNeoTimeFormatter::<C>::try_new_with_length(locale, length)?;
+        let time_formatter = NeoTimeFormatter::try_new_with_length(locale, length)?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Time(time_formatter.selection),
             names: time_formatter.names,
