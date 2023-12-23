@@ -42,7 +42,7 @@ class ICU4XMetazoneCalculator {
   static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider);
   inline const capi::ICU4XMetazoneCalculator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XMetazoneCalculator* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XMetazoneCalculator(capi::ICU4XMetazoneCalculator* i) : inner(i) {}
+  inline explicit ICU4XMetazoneCalculator(capi::ICU4XMetazoneCalculator* i) : inner(i) {}
   ICU4XMetazoneCalculator() = default;
   ICU4XMetazoneCalculator(ICU4XMetazoneCalculator&&) noexcept = default;
   ICU4XMetazoneCalculator& operator=(ICU4XMetazoneCalculator&& other) noexcept = default;

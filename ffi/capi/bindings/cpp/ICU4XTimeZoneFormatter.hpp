@@ -125,7 +125,7 @@ class ICU4XTimeZoneFormatter {
   diplomat::result<std::string, ICU4XError> format_custom_time_zone(const ICU4XCustomTimeZone& value) const;
   inline const capi::ICU4XTimeZoneFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XTimeZoneFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XTimeZoneFormatter(capi::ICU4XTimeZoneFormatter* i) : inner(i) {}
+  inline explicit ICU4XTimeZoneFormatter(capi::ICU4XTimeZoneFormatter* i) : inner(i) {}
   ICU4XTimeZoneFormatter() = default;
   ICU4XTimeZoneFormatter(ICU4XTimeZoneFormatter&&) noexcept = default;
   ICU4XTimeZoneFormatter& operator=(ICU4XTimeZoneFormatter&& other) noexcept = default;

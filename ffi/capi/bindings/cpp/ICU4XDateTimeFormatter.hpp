@@ -78,7 +78,7 @@ class ICU4XDateTimeFormatter {
   diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XDateTimeFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDateTimeFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDateTimeFormatter(capi::ICU4XDateTimeFormatter* i) : inner(i) {}
+  inline explicit ICU4XDateTimeFormatter(capi::ICU4XDateTimeFormatter* i) : inner(i) {}
   ICU4XDateTimeFormatter() = default;
   ICU4XDateTimeFormatter(ICU4XDateTimeFormatter&&) noexcept = default;
   ICU4XDateTimeFormatter& operator=(ICU4XDateTimeFormatter&& other) noexcept = default;

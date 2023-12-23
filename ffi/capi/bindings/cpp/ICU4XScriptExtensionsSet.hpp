@@ -51,7 +51,7 @@ class ICU4XScriptExtensionsSet {
   diplomat::result<uint16_t, std::monostate> script_at(size_t index) const;
   inline const capi::ICU4XScriptExtensionsSet* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptExtensionsSet* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XScriptExtensionsSet(capi::ICU4XScriptExtensionsSet* i) : inner(i) {}
+  inline explicit ICU4XScriptExtensionsSet(capi::ICU4XScriptExtensionsSet* i) : inner(i) {}
   ICU4XScriptExtensionsSet() = default;
   ICU4XScriptExtensionsSet(ICU4XScriptExtensionsSet&&) noexcept = default;
   ICU4XScriptExtensionsSet& operator=(ICU4XScriptExtensionsSet&& other) noexcept = default;

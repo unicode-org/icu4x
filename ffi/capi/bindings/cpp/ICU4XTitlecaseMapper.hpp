@@ -58,7 +58,7 @@ class ICU4XTitlecaseMapper {
   diplomat::result<std::string, ICU4XError> titlecase_segment_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
   inline const capi::ICU4XTitlecaseMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XTitlecaseMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XTitlecaseMapper(capi::ICU4XTitlecaseMapper* i) : inner(i) {}
+  inline explicit ICU4XTitlecaseMapper(capi::ICU4XTitlecaseMapper* i) : inner(i) {}
   ICU4XTitlecaseMapper() = default;
   ICU4XTitlecaseMapper(ICU4XTitlecaseMapper&&) noexcept = default;
   ICU4XTitlecaseMapper& operator=(ICU4XTitlecaseMapper&& other) noexcept = default;

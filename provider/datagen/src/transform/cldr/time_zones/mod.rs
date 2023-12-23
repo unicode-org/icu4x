@@ -13,6 +13,7 @@ use icu_datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_provider::prelude::*;
 use icu_timezone::provider::*;
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 mod convert;
 mod names;
@@ -70,10 +71,10 @@ macro_rules! impl_data_provider {
             }
 
             impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     if <$marker>::KEY == MetazonePeriodV1Marker::KEY {
                         // MetazonePeriodV1 does not require localized time zone data
-                        Ok(vec![Default::default()])
+                        Ok([Default::default()].into_iter().collect())
                     } else {
                         Ok(self
                             .cldr()?

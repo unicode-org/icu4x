@@ -74,7 +74,7 @@ class ICU4XTime {
   uint32_t nanosecond() const;
   inline const capi::ICU4XTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XTime* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XTime(capi::ICU4XTime* i) : inner(i) {}
+  inline explicit ICU4XTime(capi::ICU4XTime* i) : inner(i) {}
   ICU4XTime() = default;
   ICU4XTime(ICU4XTime&&) noexcept = default;
   ICU4XTime& operator=(ICU4XTime&& other) noexcept = default;

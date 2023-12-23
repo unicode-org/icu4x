@@ -1290,20 +1290,20 @@ mod tests {
             .load_month_names(
                 &crate::provider::Baked,
                 fields::Month::Format,
-                FieldLength::Abbreviated,
+                fields::FieldLength::Wide,
             )
             .unwrap()
             .load_weekday_names(
                 &crate::provider::Baked,
                 fields::Weekday::Format,
-                FieldLength::Wide,
+                fields::FieldLength::Abbreviated,
             )
             .unwrap()
             .load_year_names(&crate::provider::Baked, FieldLength::Narrow)
             .unwrap()
             .load_day_period_names(&crate::provider::Baked, FieldLength::Abbreviated)
             .unwrap();
-        let reference_pattern: reference::Pattern = "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'"
+        let reference_pattern: reference::Pattern = "'It is' E, MMMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
             .unwrap();
         let pattern: Pattern = (&reference_pattern).into();
@@ -1312,7 +1312,7 @@ mod tests {
 
         assert_writeable_eq!(
             formatted_pattern,
-            "It is Wednesday, Oct 25, 2023 A at 03:00 PM!"
+            "It is Wed, October 25, 2023 A at 03:00 PM!"
         );
     }
 

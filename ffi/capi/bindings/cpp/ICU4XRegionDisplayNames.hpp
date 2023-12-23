@@ -57,7 +57,7 @@ class ICU4XRegionDisplayNames {
   diplomat::result<std::string, ICU4XError> of(const std::string_view region) const;
   inline const capi::ICU4XRegionDisplayNames* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XRegionDisplayNames* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XRegionDisplayNames(capi::ICU4XRegionDisplayNames* i) : inner(i) {}
+  inline explicit ICU4XRegionDisplayNames(capi::ICU4XRegionDisplayNames* i) : inner(i) {}
   ICU4XRegionDisplayNames() = default;
   ICU4XRegionDisplayNames(ICU4XRegionDisplayNames&&) noexcept = default;
   ICU4XRegionDisplayNames& operator=(ICU4XRegionDisplayNames&& other) noexcept = default;
