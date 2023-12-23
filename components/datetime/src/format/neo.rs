@@ -1336,20 +1336,20 @@ mod tests {
             .load_month_names(
                 &crate::provider::Baked,
                 fields::Month::Format,
-                FieldLength::Abbreviated,
+                fields::FieldLength::Wide,
             )
             .unwrap()
             .load_weekday_names(
                 &crate::provider::Baked,
                 fields::Weekday::Format,
-                FieldLength::Wide,
+                fields::FieldLength::Abbreviated,
             )
             .unwrap()
             .load_year_names(&crate::provider::Baked, FieldLength::Narrow)
             .unwrap()
             .load_day_period_names(&crate::provider::Baked, FieldLength::Abbreviated)
             .unwrap();
-        let pattern: DateTimePattern = "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'"
+        let pattern: DateTimePattern = "'It is' E, MMMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
             .unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
@@ -1357,7 +1357,7 @@ mod tests {
 
         assert_writeable_eq!(
             formatted_pattern,
-            "It is Wednesday, Oct 25, 2023 A at 03:00 PM!"
+            "It is Wed, October 25, 2023 A at 03:00 PM!"
         );
     }
 

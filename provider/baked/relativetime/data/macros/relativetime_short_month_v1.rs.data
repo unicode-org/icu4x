@@ -1152,6 +1152,9 @@ macro_rules! __impl_relativetime_short_month_v1 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
+                        }
                         fallback_iterator.step();
                     }
                 };
