@@ -197,9 +197,9 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<WeekDataV2Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        IterableDataProvider::<WeekDataV1Marker>::supported_locales(self)
+impl IterableDataProviderInternal<WeekDataV2Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        IterableDataProviderInternal::<WeekDataV1Marker>::supported_locales_impl(self)
     }
 }
 

@@ -35,6 +35,9 @@ macro_rules! __impl_datetime_week_data_v2 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::calendar::provider::WeekDataV2Marker as icu_provider::KeyedDataMarker>::KEY, req));
+                        }
                         fallback_iterator.step();
                     }
                 };
