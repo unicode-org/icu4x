@@ -115,28 +115,29 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// ```
 /// use core::mem::size_of;
-/// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
 /// const W: usize = size_of::<usize>();
 ///
-/// // HelloWorldV1 is 3 words:
-/// assert_eq!(W * 3, size_of::<HelloWorldV1>());
+/// // SampleStruct is 3 words:
+/// # #[icu_provider::data_struct(SampleStructMarker)]
+/// # pub struct SampleStruct<'data>(usize, usize, &'data ());
+/// assert_eq!(W * 3, size_of::<SampleStruct>());
 ///
 /// // DataPayload adds a word for a total of 4 words:
-/// assert_eq!(W * 4, size_of::<DataPayload<HelloWorldV1Marker>>());
+/// assert_eq!(W * 4, size_of::<DataPayload<SampleStructMarker>>());
 ///
 /// // Option<DataPayload> balloons to 5 words:
-/// assert_eq!(W * 5, size_of::<Option<DataPayload<HelloWorldV1Marker>>>());
+/// assert_eq!(W * 5, size_of::<Option<DataPayload<SampleStructMarker>>>());
 ///
 /// // But, using DataPayloadOr is the same size as DataPayload:
-/// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, ()>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, ()>>());
 ///
 /// // The largest optimized Other type is two words smaller than the DataPayload:
-/// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 1]>>());
-/// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 2]>>());
-/// assert_eq!(W * 5, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 3]>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, [usize; 1]>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, [usize; 2]>>());
+/// assert_eq!(W * 5, size_of::<DataPayloadOr<SampleStructMarker, [usize; 3]>>());
 /// ```
 #[doc(hidden)] // TODO(#4467): establish this as an internal API
 pub struct DataPayloadOr<M: DataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);

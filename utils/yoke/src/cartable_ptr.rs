@@ -357,7 +357,6 @@ unsafe impl<C> Sync for CartableOptionPointer<C> where C: Send + CartablePointer
 mod tests {
     use super::*;
     use crate::Yoke;
-    use alloc::borrow::Cow;
     use core::mem::size_of;
 
     const SAMPLE_BYTES: &[u8] = b"abCDEfg";
@@ -365,21 +364,21 @@ mod tests {
 
     #[test]
     fn test_sizes() {
-        assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, &&[u8]>>());
-        assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, Option<&&[u8]>>>());
+        assert_eq!(W * 4, size_of::<Yoke<[usize; 3], &&[u8]>>());
+        assert_eq!(W * 4, size_of::<Yoke<[usize; 3], Option<&&[u8]>>>());
         assert_eq!(
             W * 4,
-            size_of::<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>()
+            size_of::<Yoke<[usize; 3], CartableOptionPointer<&&[u8]>>>()
         );
 
-        assert_eq!(W * 4, size_of::<Option<Yoke<Cow<'static, str>, &&[u8]>>>());
+        assert_eq!(W * 4, size_of::<Option<Yoke<[usize; 3], &&[u8]>>>());
         assert_eq!(
             W * 5,
-            size_of::<Option<Yoke<Cow<'static, str>, Option<&&[u8]>>>>()
+            size_of::<Option<Yoke<[usize; 3], Option<&&[u8]>>>>()
         );
         assert_eq!(
             W * 4,
-            size_of::<Option<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>>()
+            size_of::<Option<Yoke<[usize; 3], CartableOptionPointer<&&[u8]>>>>()
         );
     }
 
