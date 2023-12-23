@@ -8,8 +8,11 @@
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
 - Data model and providers
-    - `icu_provider`
-        - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456) 
+  - `icu_datagen`
+    - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
+    - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
+  - `icu_provider`
+    - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456) 
 - FFI:
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
