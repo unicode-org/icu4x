@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
-use core::ptr;
+use core::ptr::{self, NonNull};
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -127,7 +127,7 @@ struct EyepatchHackVector<U> {
     /// Pointer to data
     /// This pointer is *always* valid, the reason it is represented as a raw pointer
     /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
-    buf: *mut [U],
+    buf: NonNull<[U]>,
     /// Borrowed if zero. Capacity of buffer above if not
     capacity: usize,
 }
@@ -136,12 +136,12 @@ impl<U> EyepatchHackVector<U> {
     // Return a slice to the inner data for an arbitrary caller-specified lifetime
     #[inline]
     unsafe fn as_arbitrary_slice<'a>(&self) -> &'a [U] {
-        &*self.buf
+        self.buf.as_ref()
     }
     // Return a slice to the inner data
     #[inline]
     const fn as_slice<'a>(&'a self) -> &'a [U] {
-        unsafe { &*(self.buf as *const [U]) }
+        unsafe { self.buf.as_ref() }
     }
 
     /// Return this type as a vector
@@ -158,7 +158,7 @@ impl<U> EyepatchHackVector<U> {
         let len = slice.len();
         // Safety: we are assuming owned, and in owned cases
         // this always represents a valid vector
-        Vec::from_raw_parts(self.buf as *mut U, len, self.capacity)
+        Vec::from_raw_parts(self.buf.as_ptr() as *mut U, len, self.capacity)
     }
 }
 
@@ -312,10 +312,14 @@ where
         let capacity = vec.capacity();
         let len = vec.len();
         let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
+        // Note: starting in 1.70 we can use NonNull::slice_from_raw_parts
         let slice = ptr::slice_from_raw_parts_mut(ptr, len);
         Self {
             vector: EyepatchHackVector {
-                buf: slice,
+                // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
+                // "Returns an unsafe mutable pointer to the vector’s buffer,
+                // or a dangling raw pointer valid for zero sized reads"
+                buf: unsafe { NonNull::new_unchecked(slice) },
                 capacity,
             },
             marker: PhantomData,
@@ -326,7 +330,8 @@ where
     /// backing buffer
     #[inline]
     pub const fn new_borrowed(slice: &'a [T::ULE]) -> Self {
-        let slice = slice as *const [_] as *mut [_];
+        // Note: there is an impl From<&T> for NonNull<T> but it is not const
+        let slice = unsafe { NonNull::new_unchecked(slice as *const [T::ULE] as *mut [T::ULE]) };
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
@@ -902,7 +907,7 @@ where
             let slice = self.vector.as_slice();
             *self = ZeroVec::new_owned(slice.into());
         }
-        unsafe { &mut *self.vector.buf }
+        unsafe { self.vector.buf.as_mut() }
     }
     /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
     pub fn clear(&mut self) {
