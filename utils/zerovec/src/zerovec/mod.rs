@@ -141,7 +141,8 @@ impl<U> EyepatchHackVector<U> {
     // Return a slice to the inner data
     #[inline]
     const fn as_slice<'a>(&'a self) -> &'a [U] {
-        unsafe { self.buf.as_ref() }
+        // Note: self.buf.as_ref() is not const until 1.73
+        unsafe { &*(self.buf.as_ptr() as *const [U]) }
     }
 
     /// Return this type as a vector
