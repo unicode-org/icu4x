@@ -331,8 +331,9 @@ where
     /// backing buffer
     #[inline]
     pub const fn new_borrowed(slice: &'a [T::ULE]) -> Self {
-        // Note: there is an impl From<&T> for NonNull<T> but it is not const
-        let slice = unsafe { NonNull::new_unchecked(slice as *const [T::ULE] as *mut [T::ULE]) };
+        // Safety: references in Rust cannot be null.
+        // The safe function `impl From<&T> for NonNull<T>` is not const.
+        let slice = unsafe { NonNull::new_unchecked(slice as *const [_] as *mut [_]) };
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
