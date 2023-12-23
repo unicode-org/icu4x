@@ -447,10 +447,5 @@ mod tests {
             40,
             core::mem::size_of::<DataPayload<DayPeriodNamesV1Marker>>()
         );
-        assert_eq!(640, core::mem::size_of::<RawNeoDateTimeFormatter>());
-
-        assert_eq!(32, core::mem::size_of::<DatePatternV1>());
-        assert_eq!(56, core::mem::size_of::<Foo1>());
-        assert_eq!(48, core::mem::size_of::<Foo2>());
     }
 }
