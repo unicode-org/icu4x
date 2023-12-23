@@ -372,10 +372,7 @@ mod tests {
         );
 
         assert_eq!(W * 4, size_of::<Option<Yoke<[usize; 3], &&[u8]>>>());
-        assert_eq!(
-            W * 5,
-            size_of::<Option<Yoke<[usize; 3], Option<&&[u8]>>>>()
-        );
+        assert_eq!(W * 5, size_of::<Option<Yoke<[usize; 3], Option<&&[u8]>>>>());
         assert_eq!(
             W * 4,
             size_of::<Option<Yoke<[usize; 3], CartableOptionPointer<&&[u8]>>>>()
