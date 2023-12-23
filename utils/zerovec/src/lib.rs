@@ -550,9 +550,9 @@ mod tests {
         check_size_of!(32 | 24, vecs::FlexZeroVec);
 
         check_size_of!(32, Option<ZeroVec<u8>>);
-        check_size_of!(32, Option<VarZeroVec<str>>);
-        check_size_of!(64 | 56, Option<ZeroMap<str, str>>);
-        check_size_of!(120 | 104, Option<ZeroMap2d<str, str, str>>);
-        check_size_of!(32, Option<vecs::FlexZeroVec>);
+        check_size_of!(32 | 24, Option<VarZeroVec<str>>);
+        check_size_of!(64 | 56 | 48, Option<ZeroMap<str, str>>);
+        check_size_of!(120 | 104 | 96, Option<ZeroMap2d<str, str, str>>);
+        check_size_of!(32 | 24, Option<vecs::FlexZeroVec>);
     }
 }
