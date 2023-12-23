@@ -354,7 +354,7 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
             .flat_map(
                 |generic_item_ule| match generic_item_ule.to_pattern_item_ule() {
                     Ok(pattern_item_ule) => core::slice::from_ref(pattern_item_ule),
-                    Err(0) => self
+                    Err(1) => self
                         .date_pattern()
                         .map(|data| match data {
                             DatePatternDataBorrowed::Resolved(pattern) => {
@@ -362,7 +362,7 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
                             }
                         })
                         .unwrap_or(&[]),
-                    Err(1) => self
+                    Err(0) => self
                         .time_pattern()
                         .map(|data| match data {
                             TimePatternDataBorrowed::Resolved(pattern) => {

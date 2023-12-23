@@ -380,7 +380,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
     ///     ),
-    ///     "2:48:58 p.m., miércoles, 20 de diciembre de 2023"
+    ///     "miércoles, 20 de diciembre de 2023, 2:48:58 p.m."
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
