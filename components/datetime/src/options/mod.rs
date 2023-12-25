@@ -29,10 +29,6 @@
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod components;
 pub mod length;
-
-#[cfg(any(feature = "datagen", feature = "experimental"))]
-pub mod preferences;
-#[cfg(not(any(feature = "datagen", feature = "experimental")))]
 pub mod preferences;
 
 /// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how

@@ -18,7 +18,7 @@ macro_rules! preferences {
         }
 
         #[non_exhaustive]
-        #[derive(Clone, Debug)]
+        #[derive(Debug, Clone)]
         pub struct $resolved_name {
             pub lid: icu_locid::LanguageIdentifier,
 
@@ -27,8 +27,8 @@ macro_rules! preferences {
             )*
         }
 
-        impl From<(LanguageIdentifier, &$resolved_name)> for $resolved_name {
-            fn from(input: (LanguageIdentifier, &$resolved_name)) -> Self {
+        impl From<(LanguageIdentifier, $resolved_name)> for $resolved_name {
+            fn from(input: (LanguageIdentifier, $resolved_name)) -> Self {
                 Self {
                     lid: input.0,
                     $(
@@ -79,7 +79,7 @@ macro_rules! preferences {
         }
 
         impl $resolved_name {
-            pub fn extend(&mut self, prefs: &$name) {
+            pub fn extend(&mut self, prefs: $name) {
                 $(
                     if let Some(v) = prefs.$key {
                         self.$key = v;

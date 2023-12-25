@@ -5,7 +5,7 @@
 use icu_locid::{extensions::unicode, extensions_unicode_value};
 use tinystr::TinyStr8;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Calendar {
     Gregory,
     Buddhist,
@@ -23,7 +23,7 @@ impl TryFrom<&unicode::Value> for Calendar {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct NumberingSystem(pub TinyStr8);
 
 impl TryFrom<&unicode::Value> for NumberingSystem {

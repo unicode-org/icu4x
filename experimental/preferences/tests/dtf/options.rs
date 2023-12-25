@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum DayPeriod {
     Short,
 }
@@ -13,7 +13,7 @@ impl Default for DayPeriod {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum LocaleMatcher {
     BestFit,
 }

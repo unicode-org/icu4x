@@ -22,7 +22,7 @@ fn dtf_default() {
 
     let dtf = DateTimeFormat::new(loc.into(), Default::default());
 
-    assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H12);
+    assert_eq!(dtf.resolved_preferences().hour_cycle, HourCycle::H12);
 }
 
 // In this scenario, we resolve the locale, and then apply the regional
@@ -33,7 +33,7 @@ fn dtf_uext() {
     let loc: Locale = "en-US-u-hc-h11".parse().unwrap();
     let dtf = DateTimeFormat::new(loc.into(), Default::default());
 
-    assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H11);
+    assert_eq!(dtf.resolved_preferences().hour_cycle, HourCycle::H11);
 }
 
 // In this scenario, we will take the preferences bag, and extend
@@ -51,9 +51,9 @@ fn dtf_prefs() {
     prefs.extend(bag);
 
     let dtf = DateTimeFormat::new(prefs, Default::default());
-    assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H24);
+    assert_eq!(dtf.resolved_preferences().hour_cycle, HourCycle::H24);
     assert_eq!(
-        dtf.resolved_options().calendar,
+        dtf.resolved_preferences().calendar,
         dtf::preferences::Calendar::Gregory,
     );
 }
@@ -72,9 +72,9 @@ fn dtf_prefs_with_ca() {
     prefs.extend(bag);
 
     let dtf = DateTimeFormat::new(prefs, Default::default());
-    assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H24);
+    assert_eq!(dtf.resolved_preferences().hour_cycle, HourCycle::H24);
     assert_eq!(
-        dtf.resolved_options().calendar,
+        dtf.resolved_preferences().calendar,
         dtf::preferences::Calendar::Buddhist,
     );
 }
@@ -84,7 +84,34 @@ fn dtf_prefs_with_ca() {
 fn dtf_prefs_default_region() {
     let loc: Locale = "en-u-hc-h12".parse().unwrap();
     let dtf = DateTimeFormat::new(loc.into(), Default::default());
-    assert_eq!(dtf.resolved_options().lid.language, language!("en"));
-    assert_eq!(dtf.resolved_options().lid.region, Some(region!("US")));
-    assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H12);
+    assert_eq!(dtf.resolved_preferences().lid.language, language!("en"));
+    assert_eq!(dtf.resolved_preferences().lid.region, Some(region!("US")));
+    assert_eq!(dtf.resolved_preferences().hour_cycle, HourCycle::H12);
+}
+
+#[test]
+fn dtf_options_default() {
+    use icu_datetime::options::length;
+
+    let loc: Locale = "en".parse().unwrap();
+
+    let options = DateTimeFormatOptions {
+        ..Default::default()
+    };
+    let dtf = DateTimeFormat::new(loc.into(), options);
+    assert_eq!(dtf.resolved_options().date_length, length::Date::Short);
+}
+
+#[test]
+fn dtf_options_manual() {
+    use icu_datetime::options::length;
+
+    let loc: Locale = "en".parse().unwrap();
+
+    let options = DateTimeFormatOptions {
+        date_length: Some(length::Date::Medium),
+        ..Default::default()
+    };
+    let dtf = DateTimeFormat::new(loc.into(), options);
+    assert_eq!(dtf.resolved_options().date_length, length::Date::Medium);
 }

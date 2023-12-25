@@ -42,7 +42,7 @@
 //!         let mut resolved_prefs = get_defaults(&prefs.lid);
 //!
 //!         // Resolve them against provided preferences.
-//!         resolved_prefs.extend(&prefs);
+//!         resolved_prefs.extend(prefs);
 //!
 //!         Self { resolved_prefs }
 //!     }
@@ -52,4 +52,6 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`Locale`]: icu_locid::Locale
 #[macro_use]
-mod macros;
+mod preferences;
+#[macro_use]
+mod options;

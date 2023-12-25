@@ -27,7 +27,7 @@ const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     }],
 };
 
-pub fn get_defaults(lid: &Option<LanguageIdentifier>) -> DateTimeFormatResolvedPreferences {
+pub fn get_default_prefs(lid: &Option<LanguageIdentifier>) -> DateTimeFormatResolvedPreferences {
     lid.as_ref()
         .and_then(|lid| {
             DEFAULT_PREFS
@@ -37,4 +37,14 @@ pub fn get_defaults(lid: &Option<LanguageIdentifier>) -> DateTimeFormatResolvedP
         })
         .cloned()
         .unwrap_or(DEFAULT_PREFS.und)
+}
+
+pub fn resolve_options(options: &DateTimeFormatOptions) -> DateTimeFormatResolvedOptions {
+    DateTimeFormatResolvedOptions {
+        date_length: options.date_length.unwrap_or(length::Date::Short),
+        time_length: options.time_length.unwrap_or(length::Time::Short),
+        day_period: DayPeriod::Short,
+        locale_matcher: LocaleMatcher::BestFit,
+        time_zone: options.time_zone.unwrap_or(false),
+    }
 }

@@ -6,11 +6,11 @@ mod data_provider;
 mod options;
 pub mod preferences;
 
-use data_provider::get_defaults;
+use data_provider::{get_default_prefs, resolve_options};
 use icu_datetime::options::length;
 use icu_datetime::options::preferences::HourCycle;
 use icu_locid::{extensions_unicode_key, LanguageIdentifier, Locale};
-use icu_preferences::preferences;
+use icu_preferences::{options, preferences};
 use options::{DayPeriod, LocaleMatcher};
 use preferences::{Calendar, NumberingSystem};
 
@@ -24,33 +24,40 @@ preferences!(
     }
 );
 
-#[derive(Default)]
-pub struct DateTimeFormatOptions {
-    pub date_length: Option<length::Date>,
-    pub time_length: Option<length::Time>,
-    pub day_period: Option<DayPeriod>,
-    pub locale_matcher: Option<LocaleMatcher>,
-    pub time_zone: Option<bool>,
-}
+options!(
+    DateTimeFormatOptions,
+    DateTimeFormatResolvedOptions,
+    {
+        date_length => Option<length::Date>, length::Date,
+        time_length => Option<length::Time>, length::Time,
+        day_period => Option<DayPeriod>, DayPeriod,
+        locale_matcher => Option<LocaleMatcher>, LocaleMatcher,
+        time_zone => Option<bool>, bool
+    }
+);
 
 pub struct DateTimeFormat {
     prefs: DateTimeFormatResolvedPreferences,
-    _options: DateTimeFormatOptions,
+    options: DateTimeFormatResolvedOptions,
 }
 
 impl DateTimeFormat {
     pub fn new(prefs: DateTimeFormatPreferences, options: DateTimeFormatOptions) -> Self {
-        let mut resolved = get_defaults(&prefs.lid);
+        let mut resolved = get_default_prefs(&prefs.lid);
 
-        resolved.extend(&prefs);
+        resolved.extend(prefs);
 
         Self {
             prefs: resolved,
-            _options: options,
+            options: resolve_options(&options),
         }
     }
 
-    pub fn resolved_options(&self) -> &DateTimeFormatResolvedPreferences {
+    pub fn resolved_preferences(&self) -> &DateTimeFormatResolvedPreferences {
         &self.prefs
+    }
+
+    pub fn resolved_options(&self) -> &DateTimeFormatResolvedOptions {
+        &self.options
     }
 }
