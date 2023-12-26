@@ -18,7 +18,7 @@ use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols
 use crate::provider::neo::*;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::provider::WeekDataV1Marker;
+use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
@@ -573,7 +573,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<WeekDataV1Marker>
+            + DataProvider<WeekDataV2Marker>
             + ?Sized,
     {
         let locale = &self.locale;
