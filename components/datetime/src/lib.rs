@@ -136,6 +136,8 @@ mod datetime;
 mod error;
 pub mod fields;
 mod format;
+#[macro_use]
+pub(crate) mod helpers;
 pub mod input;
 pub mod options;
 #[doc(hidden)]
