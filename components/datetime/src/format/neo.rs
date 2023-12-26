@@ -22,12 +22,51 @@ use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
+use icu_calendar::CalendarError;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::{DecimalError, FixedDecimalFormatter};
 use icu_provider::prelude::*;
 use writeable::Writeable;
+
+/// Trait for loading a FixedDecimalFormatter. Blanked implemented on closures
+/// with the same signature as this trait's only associated function.
+pub(crate) trait FixedDecimalFormatterLoader {
+    fn load(
+        self,
+        options: FixedDecimalFormatterOptions,
+    ) -> Result<FixedDecimalFormatter, DecimalError>;
+}
+
+impl<F> FixedDecimalFormatterLoader for F
+where
+    F: FnOnce(FixedDecimalFormatterOptions) -> Result<FixedDecimalFormatter, DecimalError>,
+{
+    #[inline]
+    fn load(
+        self,
+        options: FixedDecimalFormatterOptions,
+    ) -> Result<FixedDecimalFormatter, DecimalError> {
+        self(options)
+    }
+}
+
+/// Trait for loading a WeekCalculator. Blanked implemented on closures
+/// with the same signature as this trait's only associated function.
+pub(crate) trait WeekCalculatorLoader {
+    fn load(self) -> Result<WeekCalculator, CalendarError>;
+}
+
+impl<F> WeekCalculatorLoader for F
+where
+    F: FnOnce() -> Result<WeekCalculator, CalendarError>,
+{
+    #[inline]
+    fn load(self) -> Result<WeekCalculator, CalendarError> {
+        self()
+    }
+}
 
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
@@ -877,13 +916,11 @@ impl RawDateTimeNames {
 
     pub(crate) fn load_fixed_decimal_formatter(
         &mut self,
-        loader: impl FnOnce(
-            FixedDecimalFormatterOptions,
-        ) -> Result<FixedDecimalFormatter, icu_decimal::DecimalError>,
+        loader: impl FixedDecimalFormatterLoader,
     ) -> Result<(), Error> {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(loader(fixed_decimal_format_options)?);
+        self.fixed_decimal_formatter = Some(loader.load(fixed_decimal_format_options)?);
         Ok(())
     }
 
@@ -913,13 +950,8 @@ impl RawDateTimeNames {
         dayperiod_provider: Option<&(impl DataProvider<DayPeriodNamesV1Marker> + ?Sized)>,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = PatternItem>,
-        fixed_decimal_formatter_loader: impl FnOnce(
-            FixedDecimalFormatterOptions,
-        ) -> Result<
-            FixedDecimalFormatter,
-            icu_decimal::DecimalError,
-        >,
-        week_calculator_loader: impl FnOnce() -> Result<WeekCalculator, icu_calendar::CalendarError>,
+        fixed_decimal_formatter_loader: impl FixedDecimalFormatterLoader,
+        week_calculator_loader: impl WeekCalculatorLoader,
     ) -> Result<(), Error>
     where
         YearMarker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
@@ -995,7 +1027,7 @@ impl RawDateTimeNames {
         }
 
         if has_weeks {
-            self.set_week_calculator(week_calculator_loader()?);
+            self.set_week_calculator(week_calculator_loader.load()?);
         }
 
         if has_numeric || has_weeks {

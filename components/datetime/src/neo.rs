@@ -16,7 +16,9 @@ use crate::DateTimeFormatterOptions;
 use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
+use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::week::WeekCalculator;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use writeable::Writeable;
@@ -66,21 +68,106 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>,
     {
-        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
+        Self::try_new_internal(
             &crate::provider::Baked,
             locale,
             length,
+            |options| FixedDecimalFormatter::try_new(locale, options),
+            || WeekCalculator::try_new(locale),
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_length)]
+    pub fn try_new_with_length_with_any_provider<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: AnyProvider + ?Sized,
+    {
+        Self::try_new_internal(
+            &provider.as_downcasting(),
+            locale,
+            length,
+            |options| {
+                FixedDecimalFormatter::try_new_with_any_provider(provider, locale, options)
+            },
+            || WeekCalculator::try_new_with_any_provider(provider, locale),
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_length)]
+    pub fn try_new_with_length_with_buffer_provider<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: BufferProvider + ?Sized,
+    {
+        Self::try_new_internal(
+            &provider.as_deserializing(),
+            locale,
+            length,
+            |options| {
+                FixedDecimalFormatter::try_new_with_buffer_provider(provider, locale, options)
+            },
+            || WeekCalculator::try_new_with_buffer_provider(provider, locale),
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    pub fn try_new_with_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<C::DatePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_internal(
+            provider,
+            locale,
+            length,
+            |options| FixedDecimalFormatter::try_new_unstable(provider, locale, options),
+            || WeekCalculator::try_new_unstable(provider, locale),
+        )
+    }
+
+    fn try_new_internal<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+        fixed_decimal_formatter_loader: impl FixedDecimalFormatterLoader,
+        week_calculator_loader: impl WeekCalculatorLoader,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<C::DatePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>,
+    {
+        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
+            provider, locale, length,
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            Some(&crate::provider::Baked), // year
-            Some(&crate::provider::Baked), // month
-            Some(&crate::provider::Baked), // weekday
-            None::<&PhantomProvider>,      // day period
+            Some(provider),           // year
+            Some(provider),           // month
+            Some(provider),           // weekday
+            None::<&PhantomProvider>, // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            |options| FixedDecimalFormatter::try_new(locale, options),
-            || WeekCalculator::try_new(locale),
+            fixed_decimal_formatter_loader,
+            week_calculator_loader,
         )?;
         Ok(Self {
             selection,
