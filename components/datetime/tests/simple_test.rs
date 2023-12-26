@@ -104,18 +104,12 @@ fn neo_date_lengths() {
         length::Date::Short,
     ] {
         for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
-            let formatter = TypedNeoDateTimeFormatter::try_new_with_date_length(
-                &(&langid).into(),
-                date_length,
-            )
-            .unwrap();
+            let formatter =
+                TypedNeoDateTimeFormatter::try_new_with_date_length(&(&langid).into(), date_length)
+                    .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_writeable_eq!(
-                formatted,
-                *expected,
-                "{date_length:?} {langid:?}"
-            );
+            assert_writeable_eq!(formatted, *expected, "{date_length:?} {langid:?}");
         }
     }
 }
@@ -165,18 +159,12 @@ fn old_date_lengths() {
         for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
             let formatter = TypedDateTimeFormatter::try_new(
                 &(&langid).into(),
-                DateTimeFormatterOptions::Length(length::Bag::from_date_style(
-                    date_length,
-                )),
+                DateTimeFormatterOptions::Length(length::Bag::from_date_style(date_length)),
             )
             .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_writeable_eq!(
-                formatted,
-                *expected,
-                "{date_length:?} {langid:?}"
-            );
+            assert_writeable_eq!(formatted, *expected, "{date_length:?} {langid:?}");
         }
-}
+    }
 }
