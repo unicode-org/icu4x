@@ -9,7 +9,7 @@ use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
 use icu_locid::langid;
 use writeable::assert_writeable_eq;
 
-const EXPECTED: &[&str] = &[
+const EXPECTED_DATETIME: &[&str] = &[
     "Friday, December 22, 2023, 9:22:53 PM",
     "vendredi 22 décembre 2023, 21:22:53",
     "2023年12月22日星期五 21:22:53",
@@ -44,10 +44,29 @@ const EXPECTED: &[&str] = &[
     "22/12/23, 9:22 pm",
 ];
 
+const EXPECTED_DATE: &[&str] = &[
+    "Friday, December 22, 2023",
+    "vendredi 22 décembre 2023",
+    "2023年12月22日星期五",
+    "शुक्रवार, 22 दिसंबर 2023",
+    "December 22, 2023",
+    "22 décembre 2023",
+    "2023年12月22日",
+    "22 दिसंबर 2023",
+    "Dec 22, 2023",
+    "22 déc. 2023",
+    "2023年12月22日",
+    "22 दिस॰ 2023",
+    "12/22/23",
+    "22/12/2023",
+    "2023/12/22",
+    "22/12/23",
+];
+
 #[test]
 fn neo_datetime_lengths() {
     let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
-    let mut expected_iter = EXPECTED.iter();
+    let mut expected_iter = EXPECTED_DATETIME.iter();
     for date_length in [
         length::Date::Full,
         length::Date::Long,
@@ -75,9 +94,36 @@ fn neo_datetime_lengths() {
 }
 
 #[test]
+fn neo_date_lengths() {
+    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
+    let mut expected_iter = EXPECTED_DATE.iter();
+    for date_length in [
+        length::Date::Full,
+        length::Date::Long,
+        length::Date::Medium,
+        length::Date::Short,
+    ] {
+        for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
+            let formatter = TypedNeoDateTimeFormatter::try_new_with_date_length(
+                &(&langid).into(),
+                date_length,
+            )
+            .unwrap();
+            let formatted = formatter.format(&datetime);
+            let expected = expected_iter.next().unwrap();
+            assert_writeable_eq!(
+                formatted,
+                *expected,
+                "{date_length:?} {langid:?}"
+            );
+        }
+    }
+}
+
+#[test]
 fn old_datetime_lengths() {
     let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
-    let mut expected_iter = EXPECTED.iter();
+    let mut expected_iter = EXPECTED_DATETIME.iter();
     for date_length in [
         length::Date::Full,
         length::Date::Long,
@@ -104,4 +150,33 @@ fn old_datetime_lengths() {
             }
         }
     }
+}
+
+#[test]
+fn old_date_lengths() {
+    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
+    let mut expected_iter = EXPECTED_DATE.iter();
+    for date_length in [
+        length::Date::Full,
+        length::Date::Long,
+        length::Date::Medium,
+        length::Date::Short,
+    ] {
+        for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
+            let formatter = TypedDateTimeFormatter::try_new(
+                &(&langid).into(),
+                DateTimeFormatterOptions::Length(length::Bag::from_date_style(
+                    date_length,
+                )),
+            )
+            .unwrap();
+            let formatted = formatter.format(&datetime);
+            let expected = expected_iter.next().unwrap();
+            assert_writeable_eq!(
+                formatted,
+                *expected,
+                "{date_length:?} {langid:?}"
+            );
+        }
+}
 }
