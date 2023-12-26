@@ -900,8 +900,13 @@ impl RawDateTimeNames {
         }
     }
 
-    pub(crate) fn load_for_pattern<'l, YearMarker, MonthMarker>(
-        &'l mut self,
+    /// Loads all data required for formatting the given [`PatternItem`]s.
+    ///
+    /// This function has a lot of arguments because many of the arguments are generic,
+    /// and pulling them out to an options struct would be cumbersome.
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn load_for_pattern<YearMarker, MonthMarker>(
+        &mut self,
         year_provider: Option<&(impl DataProvider<YearMarker> + ?Sized)>,
         month_provider: Option<&(impl DataProvider<MonthMarker> + ?Sized)>,
         weekday_provider: Option<&(impl DataProvider<WeekdayNamesV1Marker> + ?Sized)>,

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::exhaustive_structs)] // part of data struct and internal API
+
 use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::vec::Vec;
 use core::str::FromStr;
@@ -14,7 +16,6 @@ use zerovec::ZeroVec;
     derive(databake::Bake),
     databake(path = icu_datetime::pattern::runtime),
 )]
-#[allow(clippy::exhaustive_structs)] // part of data struct
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::skip_derive(Ord)]
 pub struct Pattern<'data> {

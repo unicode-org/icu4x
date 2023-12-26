@@ -220,7 +220,7 @@ impl GenericPatternItemULE {
     /// (if a Literal) or returns the placeholder value.
     #[cfg(feature = "experimental")]
     #[inline]
-    pub(crate) fn to_pattern_item_ule(&self) -> Result<&PatternItemULE, u8> {
+    pub(crate) fn as_pattern_item_ule(&self) -> Result<&PatternItemULE, u8> {
         if Self::determine_field_from_u8(self.0[0]) {
             Err(self.0[2])
         } else {

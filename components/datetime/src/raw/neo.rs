@@ -134,21 +134,21 @@ impl DatePatternSelectionData {
 
 impl<'a> DatePatternDataBorrowed<'a> {
     #[inline]
-    pub(crate) fn metadata(&self) -> PatternMetadata {
+    pub(crate) fn metadata(self) -> PatternMetadata {
         match self {
             Self::Resolved(data) => data.pattern.metadata,
         }
     }
 
     #[inline]
-    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         match self {
             Self::Resolved(data) => data.pattern.items.iter(),
         }
     }
 
     #[inline]
-    pub(crate) fn to_pattern(&self) -> DateTimePattern {
+    pub(crate) fn to_pattern(self) -> DateTimePattern {
         let pattern = match self {
             Self::Resolved(data) => &data.pattern,
         };
@@ -208,21 +208,21 @@ impl TimePatternSelectionData {
 
 impl<'a> TimePatternDataBorrowed<'a> {
     #[inline]
-    pub(crate) fn metadata(&self) -> PatternMetadata {
+    pub(crate) fn metadata(self) -> PatternMetadata {
         match self {
             Self::Resolved(data) => data.pattern.metadata,
         }
     }
 
     #[inline]
-    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         match self {
             Self::Resolved(data) => data.pattern.items.iter(),
         }
     }
 
     #[inline]
-    pub(crate) fn to_pattern(&self) -> DateTimePattern {
+    pub(crate) fn to_pattern(self) -> DateTimePattern {
         let pattern = match self {
             Self::Resolved(data) => &data.pattern,
         };
@@ -302,25 +302,25 @@ impl DateTimePatternSelectionData {
 
 impl<'a> DateTimePatternDataBorrowed<'a> {
     #[inline]
-    fn date_pattern(&self) -> Option<DatePatternDataBorrowed<'a>> {
+    fn date_pattern(self) -> Option<DatePatternDataBorrowed<'a>> {
         match self {
-            Self::Date(date) => Some(*date),
+            Self::Date(date) => Some(date),
             Self::Time(_) => None,
-            Self::DateTimeGlue { date, .. } => Some(*date),
+            Self::DateTimeGlue { date, .. } => Some(date),
         }
     }
 
     #[inline]
-    fn time_pattern(&self) -> Option<TimePatternDataBorrowed<'a>> {
+    fn time_pattern(self) -> Option<TimePatternDataBorrowed<'a>> {
         match self {
             Self::Date(_) => None,
-            Self::Time(time) => Some(*time),
-            Self::DateTimeGlue { time, .. } => Some(*time),
+            Self::Time(time) => Some(time),
+            Self::DateTimeGlue { time, .. } => Some(time),
         }
     }
 
     #[inline]
-    fn glue_pattern(&self) -> Option<&'a DateTimePatternV1<'a>> {
+    fn glue_pattern(self) -> Option<&'a DateTimePatternV1<'a>> {
         match self {
             Self::Date(_) => None,
             Self::Time(_) => None,
@@ -329,7 +329,7 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
     }
 
     #[inline]
-    pub(crate) fn metadata(&self) -> PatternMetadata {
+    pub(crate) fn metadata(self) -> PatternMetadata {
         match self {
             Self::Date(DatePatternDataBorrowed::Resolved(data)) => data.pattern.metadata,
             Self::Time(TimePatternDataBorrowed::Resolved(data)) => data.pattern.metadata,
@@ -344,15 +344,15 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
         }
     }
 
-    pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
+    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         let glue_pattern_slice = match self.glue_pattern() {
-            Some(glue) => &glue.pattern.items.as_ule_slice(),
+            Some(glue) => glue.pattern.items.as_ule_slice(),
             None => runtime::ZERO_ONE_SLICE.as_ule_slice(),
         };
         glue_pattern_slice
             .iter()
             .flat_map(
-                |generic_item_ule| match generic_item_ule.to_pattern_item_ule() {
+                move |generic_item_ule| match generic_item_ule.as_pattern_item_ule() {
                     Ok(pattern_item_ule) => core::slice::from_ref(pattern_item_ule),
                     Err(1) => self
                         .date_pattern()
@@ -376,7 +376,7 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
             .map(|unaligned| PatternItem::from_unaligned(*unaligned))
     }
 
-    pub(crate) fn to_pattern(&self) -> DateTimePattern {
+    pub(crate) fn to_pattern(self) -> DateTimePattern {
         let pattern = match self {
             Self::Date(DatePatternDataBorrowed::Resolved(data)) => &data.pattern,
             Self::Time(TimePatternDataBorrowed::Resolved(data)) => &data.pattern,
