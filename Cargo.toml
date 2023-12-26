@@ -254,3 +254,8 @@ debug-assertions = false
 lto = true
 debug = true
 debug-assertions = false
+
+[profile.memory]
+inherits = "release"
+lto = true
+debug = true
