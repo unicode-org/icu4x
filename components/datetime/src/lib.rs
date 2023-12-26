@@ -134,6 +134,7 @@ mod any;
 mod calendar;
 mod datetime;
 mod error;
+mod external_loaders;
 pub mod fields;
 mod format;
 pub mod input;

@@ -5,6 +5,9 @@
 use super::datetime::write_pattern;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
+use crate::external_loaders::{
+    DataProviderMarker, FixedDecimalFormatterLoader, WeekCalculatorLoader,
+};
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::input;
 use crate::input::DateInput;
@@ -22,51 +25,12 @@ use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
-use icu_calendar::CalendarError;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_decimal::{DecimalError, FixedDecimalFormatter};
+use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use writeable::Writeable;
-
-/// Trait for loading a FixedDecimalFormatter. Blanked implemented on closures
-/// with the same signature as this trait's only associated function.
-pub(crate) trait FixedDecimalFormatterLoader {
-    fn load(
-        self,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DecimalError>;
-}
-
-impl<F> FixedDecimalFormatterLoader for F
-where
-    F: FnOnce(FixedDecimalFormatterOptions) -> Result<FixedDecimalFormatter, DecimalError>,
-{
-    #[inline]
-    fn load(
-        self,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DecimalError> {
-        self(options)
-    }
-}
-
-/// Trait for loading a WeekCalculator. Blanked implemented on closures
-/// with the same signature as this trait's only associated function.
-pub(crate) trait WeekCalculatorLoader {
-    fn load(self) -> Result<WeekCalculator, CalendarError>;
-}
-
-impl<F> WeekCalculatorLoader for F
-where
-    F: FnOnce() -> Result<WeekCalculator, CalendarError>,
-{
-    #[inline]
-    fn load(self) -> Result<WeekCalculator, CalendarError> {
-        self()
-    }
-}
 
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
@@ -568,9 +532,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        self.inner.load_fixed_decimal_formatter(|options| {
-            FixedDecimalFormatter::try_new_unstable(provider, &self.locale, options)
-        })?;
+        self.inner
+            .load_fixed_decimal_formatter((provider, &self.locale, DataProviderMarker))?;
         Ok(self)
     }
 
@@ -578,9 +541,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     #[cfg(feature = "compiled_data")]
     #[inline]
     fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
-        self.inner.load_fixed_decimal_formatter(|options| {
-            FixedDecimalFormatter::try_new(&self.locale, options)
-        })?;
+        self.inner.load_fixed_decimal_formatter((&self.locale,))?;
         Ok(self)
     }
 
@@ -624,8 +585,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(provider),
                 locale,
                 pattern.iter_items(),
-                |options| FixedDecimalFormatter::try_new_unstable(provider, locale, options),
-                || WeekCalculator::try_new_unstable(provider, locale),
+                (provider, locale, DataProviderMarker),
+                (provider, locale, DataProviderMarker),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -687,8 +648,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(&crate::provider::Baked),
                 locale,
                 pattern.iter_items(),
-                |options| FixedDecimalFormatter::try_new(locale, options),
-                || WeekCalculator::try_new(locale),
+                (locale,),
+                (locale,),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),

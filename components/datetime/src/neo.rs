@@ -4,6 +4,10 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+use crate::external_loaders::{
+    AnyProviderMarker, BufferProviderMarker, DataProviderMarker, FixedDecimalFormatterLoader,
+    WeekCalculatorLoader,
+};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
@@ -17,9 +21,7 @@ use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
-use icu_calendar::week::WeekCalculator;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -72,8 +74,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &crate::provider::Baked,
             locale,
             length,
-            |options| FixedDecimalFormatter::try_new(locale, options),
-            || WeekCalculator::try_new(locale),
+            (locale,),
+            (locale,),
         )
     }
 
@@ -90,10 +92,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &provider.as_downcasting(),
             locale,
             length,
-            |options| {
-                FixedDecimalFormatter::try_new_with_any_provider(provider, locale, options)
-            },
-            || WeekCalculator::try_new_with_any_provider(provider, locale),
+            (provider, locale, AnyProviderMarker),
+            (provider, locale, AnyProviderMarker),
         )
     }
 
@@ -110,10 +110,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &provider.as_deserializing(),
             locale,
             length,
-            |options| {
-                FixedDecimalFormatter::try_new_with_buffer_provider(provider, locale, options)
-            },
-            || WeekCalculator::try_new_with_buffer_provider(provider, locale),
+            (provider, locale, BufferProviderMarker),
+            (provider, locale, BufferProviderMarker),
         )
     }
 
@@ -136,8 +134,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             provider,
             locale,
             length,
-            |options| FixedDecimalFormatter::try_new_unstable(provider, locale, options),
-            || WeekCalculator::try_new_unstable(provider, locale),
+            (provider, locale, DataProviderMarker),
+            (provider, locale, DataProviderMarker),
         )
     }
 
@@ -280,8 +278,8 @@ impl NeoTimeFormatter {
             Some(&crate::provider::Baked), // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            |options| FixedDecimalFormatter::try_new(locale, options),
-            || WeekCalculator::try_new(locale),
+            (locale,),
+            (locale,),
         )?;
         Ok(Self { selection, names })
     }
@@ -497,8 +495,8 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            |options| FixedDecimalFormatter::try_new(locale, options),
-            || WeekCalculator::try_new(locale),
+            (locale,),
+            (locale,),
         )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::DateTimeGlue(selection),
