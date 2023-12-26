@@ -201,7 +201,7 @@ impl NeoTimeFormatter {
 
     /// Formats a time of day.
     ///
-    /// For an example, see [`TypedNeoTimeFormatter`].
+    /// For an example, see [`NeoTimeFormatter`].
     pub fn format<T>(&self, time: &T) -> FormattedNeoTime
     where
         T: IsoTimeInput,

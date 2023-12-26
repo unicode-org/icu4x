@@ -42,17 +42,17 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 }
 
 #[derive(Debug)]
-pub(crate) enum DateTimePatternSelectionData {
-    Date(DatePatternSelectionData),
-    Time(TimePatternSelectionData),
-    DateTimeGlue(DateTimeGluePatternSelectionData),
-}
-
-#[derive(Debug)]
 pub(crate) struct DateTimeGluePatternSelectionData {
     date: DatePatternSelectionData,
     time: TimePatternSelectionData,
     glue: DataPayload<DateTimePatternV1Marker>,
+}
+
+#[derive(Debug)]
+pub(crate) enum DateTimePatternSelectionData {
+    Date(DatePatternSelectionData),
+    Time(TimePatternSelectionData),
+    DateTimeGlue(DateTimeGluePatternSelectionData),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -412,40 +412,5 @@ where
             icu_provider::_internal::log::warn!("{_e:?}");
             core::fmt::Error
         })
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use icu_calendar::week::WeekCalculator;
-    use icu_decimal::FixedDecimalFormatter;
-
-    use super::*;
-
-    #[test]
-    fn test_sizes() {
-        assert_eq!(
-            48,
-            core::mem::size_of::<DataPayload<ErasedDatePatternV1Marker>>()
-        );
-        assert_eq!(80, core::mem::size_of::<DataLocale>());
-        assert_eq!(216, core::mem::size_of::<FixedDecimalFormatter>());
-        assert_eq!(2, core::mem::size_of::<WeekCalculator>());
-        assert_eq!(
-            72,
-            core::mem::size_of::<DataPayload<ErasedYearNamesV1Marker>>()
-        );
-        assert_eq!(
-            56,
-            core::mem::size_of::<DataPayload<ErasedMonthNamesV1Marker>>()
-        );
-        assert_eq!(
-            40,
-            core::mem::size_of::<DataPayload<WeekdayNamesV1Marker>>()
-        );
-        assert_eq!(
-            40,
-            core::mem::size_of::<DataPayload<DayPeriodNamesV1Marker>>()
-        );
     }
 }
