@@ -589,7 +589,6 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 locale,
                 pattern.iter_items(),
                 ExternalLoaderUnstable(provider, locale),
-                ExternalLoaderUnstable(provider, locale),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -653,7 +652,6 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(&crate::provider::Baked),
                 locale,
                 pattern.iter_items(),
-                ExternalLoaderCompiledData(locale),
                 ExternalLoaderCompiledData(locale),
             )?;
         Ok(DateTimePatternFormatter {
@@ -884,9 +882,9 @@ impl RawDateTimeNames {
         &mut self,
         loader: impl FixedDecimalFormatterLoader,
     ) -> Result<(), Error> {
-        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
-        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(loader.load(fixed_decimal_format_options)?);
+        let mut options = FixedDecimalFormatterOptions::default();
+        options.grouping_strategy = GroupingStrategy::Never;
+        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(&loader, options)?);
         Ok(())
     }
 
@@ -916,8 +914,7 @@ impl RawDateTimeNames {
         dayperiod_provider: Option<&(impl DataProvider<DayPeriodNamesV1Marker> + ?Sized)>,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = PatternItem>,
-        fixed_decimal_formatter_loader: impl FixedDecimalFormatterLoader,
-        week_calculator_loader: impl WeekCalculatorLoader,
+        loader: impl FixedDecimalFormatterLoader + WeekCalculatorLoader,
     ) -> Result<(), Error>
     where
         YearMarker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
@@ -993,11 +990,11 @@ impl RawDateTimeNames {
         }
 
         if has_weeks {
-            self.set_week_calculator(week_calculator_loader.load()?);
+            self.set_week_calculator(WeekCalculatorLoader::load(&loader)?);
         }
 
         if has_numeric || has_weeks {
-            self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader)?;
+            self.load_fixed_decimal_formatter(loader)?;
         }
 
         Ok(())

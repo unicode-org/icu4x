@@ -72,7 +72,6 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             locale,
             length,
             ExternalLoaderCompiledData(locale),
-            ExternalLoaderCompiledData(locale),
         )
     }
 
@@ -90,7 +89,6 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             locale,
             length,
             ExternalLoaderAny(provider, locale),
-            ExternalLoaderAny(provider, locale),
         )
     }
 
@@ -107,7 +105,6 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &provider.as_deserializing(),
             locale,
             length,
-            ExternalLoaderBuffer(provider, locale),
             ExternalLoaderBuffer(provider, locale),
         )
     }
@@ -132,7 +129,6 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             locale,
             length,
             ExternalLoaderUnstable(provider, locale),
-            ExternalLoaderUnstable(provider, locale),
         )
     }
 
@@ -140,8 +136,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         provider: &P,
         locale: &DataLocale,
         length: length::Date,
-        fixed_decimal_formatter_loader: impl FixedDecimalFormatterLoader,
-        week_calculator_loader: impl WeekCalculatorLoader,
+        loader: impl FixedDecimalFormatterLoader + WeekCalculatorLoader,
     ) -> Result<Self, Error>
     where
         P: ?Sized
@@ -161,8 +156,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             None::<&PhantomProvider>, // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            fixed_decimal_formatter_loader,
-            week_calculator_loader,
+            loader,
         )?;
         Ok(Self {
             selection,
@@ -275,7 +269,6 @@ impl NeoTimeFormatter {
             Some(&crate::provider::Baked), // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            ExternalLoaderCompiledData(locale),
             ExternalLoaderCompiledData(locale),
         )?;
         Ok(Self { selection, names })
@@ -492,7 +485,6 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            ExternalLoaderCompiledData(locale),
             ExternalLoaderCompiledData(locale),
         )?;
         Ok(Self {

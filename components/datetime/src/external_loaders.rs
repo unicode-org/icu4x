@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait FixedDecimalFormatterLoader {
     fn load(
-        self,
+        &self,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError>;
 }
@@ -26,7 +26,7 @@ pub(crate) trait FixedDecimalFormatterLoader {
 ///
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait WeekCalculatorLoader {
-    fn load(self) -> Result<WeekCalculator, CalendarError>;
+    fn load(&self) -> Result<WeekCalculator, CalendarError>;
 }
 
 /// Loader for types from other crates using compiled data.
@@ -35,7 +35,7 @@ pub(crate) struct ExternalLoaderCompiledData<'a>(pub &'a DataLocale);
 impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData<'_> {
     #[inline]
     fn load(
-        self,
+        &self,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
         FixedDecimalFormatter::try_new(self.0, options)
@@ -44,7 +44,7 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData<'_> {
 
 impl WeekCalculatorLoader for ExternalLoaderCompiledData<'_> {
     #[inline]
-    fn load(self) -> Result<WeekCalculator, CalendarError> {
+    fn load(&self) -> Result<WeekCalculator, CalendarError> {
         WeekCalculator::try_new(self.0)
     }
 }
@@ -58,7 +58,7 @@ where
 {
     #[inline]
     fn load(
-        self,
+        &self,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
         FixedDecimalFormatter::try_new_with_any_provider(self.0, self.1, options)
@@ -70,7 +70,7 @@ where
     P: ?Sized + AnyProvider,
 {
     #[inline]
-    fn load(self) -> Result<WeekCalculator, CalendarError> {
+    fn load(&self) -> Result<WeekCalculator, CalendarError> {
         WeekCalculator::try_new_with_any_provider(self.0, self.1)
     }
 }
@@ -84,7 +84,7 @@ where
 {
     #[inline]
     fn load(
-        self,
+        &self,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
         FixedDecimalFormatter::try_new_with_buffer_provider(self.0, self.1, options)
@@ -96,7 +96,7 @@ where
     P: ?Sized + BufferProvider,
 {
     #[inline]
-    fn load(self) -> Result<WeekCalculator, CalendarError> {
+    fn load(&self) -> Result<WeekCalculator, CalendarError> {
         WeekCalculator::try_new_with_buffer_provider(self.0, self.1)
     }
 }
@@ -108,8 +108,9 @@ impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
     P: ?Sized + DataProvider<DecimalSymbolsV1Marker>,
 {
+    #[inline]
     fn load(
-        self,
+        &self,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
         FixedDecimalFormatter::try_new_unstable(self.0, self.1, options)
@@ -121,7 +122,7 @@ where
     P: ?Sized + DataProvider<WeekDataV2Marker>,
 {
     #[inline]
-    fn load(self) -> Result<WeekCalculator, CalendarError> {
+    fn load(&self) -> Result<WeekCalculator, CalendarError> {
         WeekCalculator::try_new_unstable(self.0, self.1)
     }
 }
