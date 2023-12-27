@@ -451,7 +451,88 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>,
     {
-        let date_formatter = TypedNeoDateFormatter::<C>::try_new_with_length(locale, length)?;
+        Self::try_new_with_date_length_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            length,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_date_length)]
+    pub fn try_new_with_date_length_with_any_provider<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: AnyProvider + ?Sized,
+    {
+        Self::try_new_with_date_length_internal(
+            &provider.as_downcasting(),
+            &ExternalLoaderAny(provider),
+            locale,
+            length,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_date_length)]
+    pub fn try_new_with_date_length_with_buffer_provider<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: BufferProvider + ?Sized,
+    {
+        Self::try_new_with_date_length_internal(
+            &provider.as_deserializing(),
+            &ExternalLoaderBuffer(provider),
+            locale,
+            length,
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_date_length)]
+    pub fn try_new_with_date_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<C::DatePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_with_date_length_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            length,
+        )
+    }
+
+    fn try_new_with_date_length_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<C::DatePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>,
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
+    {
+        let date_formatter = TypedNeoDateFormatter::<C>::try_new_with_length_internal(
+            provider, loader, locale, length,
+        )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Date(date_formatter.selection),
             names: date_formatter.names,
