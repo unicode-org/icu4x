@@ -215,6 +215,28 @@ impl GenericPatternItemULE {
             char::try_from(u).is_ok()
         }
     }
+
+    /// Converts this [`GenericPatternItemULE`] to a [`PatternItemULE`]
+    /// (if a Literal) or returns the placeholder value.
+    #[allow(dead_code)] // #4415
+    #[inline]
+    pub(crate) fn as_pattern_item_ule(&self) -> Result<&PatternItemULE, u8> {
+        if Self::determine_field_from_u8(self.0[0]) {
+            Err(self.0[2])
+        } else {
+            if cfg!(debug_assertions) {
+                let GenericPatternItem::Literal(c) = GenericPatternItem::from_unaligned(*self)
+                else {
+                    unreachable!("expected a literal!")
+                };
+                let pattern_item_ule = PatternItem::Literal(c).to_unaligned();
+                debug_assert_eq!(self.0, pattern_item_ule.0);
+            }
+            // Safety: when a Literal, the two ULEs have the same repr,
+            // as shown in the above assertion (and the class docs).
+            Ok(unsafe { core::mem::transmute(self) })
+        }
+    }
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -242,11 +264,9 @@ unsafe impl ULE for GenericPatternItemULE {
     }
 }
 
-impl AsULE for GenericPatternItem {
-    type ULE = GenericPatternItemULE;
-
+impl GenericPatternItem {
     #[inline]
-    fn to_unaligned(self) -> Self::ULE {
+    pub(crate) const fn to_unaligned_const(self) -> <Self as AsULE>::ULE {
         match self {
             Self::Placeholder(idx) => GenericPatternItemULE([0b1000_0000, 0x00, idx]),
             Self::Literal(ch) => {
@@ -255,6 +275,15 @@ impl AsULE for GenericPatternItem {
                 GenericPatternItemULE([bytes[1], bytes[2], bytes[3]])
             }
         }
+    }
+}
+
+impl AsULE for GenericPatternItem {
+    type ULE = GenericPatternItemULE;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self.to_unaligned_const()
     }
 
     #[inline]
