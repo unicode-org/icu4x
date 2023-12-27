@@ -22,6 +22,44 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
+/// Helper macro for generating any/buffer constructors in this file.
+macro_rules! gen_any_buffer_constructors_with_external_loader {
+    ($compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
+        pub fn $any_fn<P>(
+            provider: &P,
+            locale: &DataLocale,
+            $($arg: $ty),+
+        ) -> Result<Self, Error>
+        where
+            P: AnyProvider + ?Sized,
+        {
+            Self::$internal_fn(
+                &provider.as_downcasting(),
+                &ExternalLoaderAny(provider),
+                locale,
+                $($arg),+
+            )
+        }
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+        pub fn $buffer_fn<P>(
+            provider: &P,
+            locale: &DataLocale,
+            $($arg: $ty),+
+        ) -> Result<Self, Error>
+        where
+            P: BufferProvider + ?Sized,
+        {
+            Self::$internal_fn(
+                &provider.as_deserializing(),
+                &ExternalLoaderBuffer(provider),
+                locale,
+                $($arg),+
+            )
+        }
+    };
+}
+
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -75,39 +113,13 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_length)]
-    pub fn try_new_with_length_with_any_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, Error>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        Self::try_new_with_length_internal(
-            &provider.as_downcasting(),
-            &ExternalLoaderAny(provider),
-            locale,
-            length,
-        )
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_length)]
-    pub fn try_new_with_length_with_buffer_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, Error>
-    where
-        P: BufferProvider + ?Sized,
-    {
-        Self::try_new_with_length_internal(
-            &provider.as_deserializing(),
-            &ExternalLoaderBuffer(provider),
-            locale,
-            length,
-        )
-    }
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_length,
+        try_new_with_length_with_any_provider,
+        try_new_with_length_with_buffer_provider,
+        try_new_with_length_internal,
+        length: length::Date
+    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<P>(
@@ -267,39 +279,13 @@ impl NeoTimeFormatter {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_length)]
-    pub fn try_new_with_length_with_any_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Time,
-    ) -> Result<Self, Error>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        Self::try_new_with_length_internal(
-            &provider.as_downcasting(),
-            &ExternalLoaderAny(provider),
-            locale,
-            length,
-        )
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_length)]
-    pub fn try_new_with_length_with_buffer_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Time,
-    ) -> Result<Self, Error>
-    where
-        P: BufferProvider + ?Sized,
-    {
-        Self::try_new_with_length_internal(
-            &provider.as_deserializing(),
-            &ExternalLoaderBuffer(provider),
-            locale,
-            length,
-        )
-    }
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_length,
+        try_new_with_length_with_any_provider,
+        try_new_with_length_with_buffer_provider,
+        try_new_with_length_internal,
+        length: length::Time
+    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<P>(
@@ -459,39 +445,13 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_date_length)]
-    pub fn try_new_with_date_length_with_any_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, Error>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        Self::try_new_with_date_length_internal(
-            &provider.as_downcasting(),
-            &ExternalLoaderAny(provider),
-            locale,
-            length,
-        )
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_date_length)]
-    pub fn try_new_with_date_length_with_buffer_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, Error>
-    where
-        P: BufferProvider + ?Sized,
-    {
-        Self::try_new_with_date_length_internal(
-            &provider.as_deserializing(),
-            &ExternalLoaderBuffer(provider),
-            locale,
-            length,
-        )
-    }
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_date_length,
+        try_new_with_date_length_with_any_provider,
+        try_new_with_date_length_with_buffer_provider,
+        try_new_with_date_length_internal,
+        length: length::Date
+    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_date_length)]
     pub fn try_new_with_date_length_unstable<P>(
