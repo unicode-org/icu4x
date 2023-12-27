@@ -69,9 +69,9 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
             locale,
             length,
-            &ExternalLoaderCompiledData(locale),
         )
     }
 
@@ -86,9 +86,9 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         Self::try_new_with_length_internal(
             &provider.as_downcasting(),
+            &ExternalLoaderAny(provider),
             locale,
             length,
-            &ExternalLoaderAny(provider, locale),
         )
     }
 
@@ -103,9 +103,9 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         Self::try_new_with_length_internal(
             &provider.as_deserializing(),
+            &ExternalLoaderBuffer(provider),
             locale,
             length,
-            &ExternalLoaderBuffer(provider, locale),
         )
     }
 
@@ -126,17 +126,17 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         Self::try_new_with_length_internal(
             provider,
+            &ExternalLoaderUnstable(provider),
             locale,
             length,
-            &ExternalLoaderUnstable(provider, locale),
         )
     }
 
-    fn try_new_with_length_internal<P>(
+    fn try_new_with_length_internal<P, L>(
         provider: &P,
+        loader: &L,
         locale: &DataLocale,
         length: length::Date,
-        loader: &(impl FixedDecimalFormatterLoader + WeekCalculatorLoader),
     ) -> Result<Self, Error>
     where
         P: ?Sized
@@ -144,6 +144,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>,
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
         let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
             provider, locale, length,
@@ -260,9 +261,9 @@ impl NeoTimeFormatter {
     {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
             locale,
             length,
-            &ExternalLoaderCompiledData(locale),
         )
     }
 
@@ -277,9 +278,9 @@ impl NeoTimeFormatter {
     {
         Self::try_new_with_length_internal(
             &provider.as_downcasting(),
+            &ExternalLoaderAny(provider),
             locale,
             length,
-            &ExternalLoaderAny(provider, locale),
         )
     }
 
@@ -294,9 +295,9 @@ impl NeoTimeFormatter {
     {
         Self::try_new_with_length_internal(
             &provider.as_deserializing(),
+            &ExternalLoaderBuffer(provider),
             locale,
             length,
-            &ExternalLoaderBuffer(provider, locale),
         )
     }
 
@@ -314,20 +315,21 @@ impl NeoTimeFormatter {
     {
         Self::try_new_with_length_internal(
             provider,
+            &ExternalLoaderUnstable(provider),
             locale,
             length,
-            &ExternalLoaderUnstable(provider, locale),
         )
     }
 
-    fn try_new_with_length_internal<P>(
+    fn try_new_with_length_internal<P, L>(
         provider: &P,
+        loader: &L,
         locale: &DataLocale,
         length: length::Time,
-        loader: &impl FixedDecimalFormatterLoader,
     ) -> Result<Self, Error>
     where
         P: ?Sized + DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
+        L: FixedDecimalFormatterLoader,
     {
         let selection = TimePatternSelectionData::try_new_with_length(provider, locale, length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -554,8 +556,8 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // month
             Some(&crate::provider::Baked), // weekday
             Some(&crate::provider::Baked), // day period
-            Some(&ExternalLoaderCompiledData(locale)),
-            Some(&ExternalLoaderCompiledData(locale)),
+            Some(&ExternalLoaderCompiledData),
+            Some(&ExternalLoaderCompiledData),
             locale,
             selection.pattern_items_for_data_loading(),
         )?;

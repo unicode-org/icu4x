@@ -5,9 +5,7 @@
 use super::datetime::write_pattern;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
-use crate::external_loaders::{
-    ExternalLoaderUnstable, FixedDecimalFormatterLoader, WeekCalculatorLoader,
-};
+use crate::external_loaders::*;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::input;
 use crate::input::DateInput;
@@ -533,7 +531,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         self.inner
-            .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider, &self.locale))?;
+            .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider), &self.locale)?;
         Ok(self)
     }
 
@@ -541,10 +539,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     #[cfg(feature = "compiled_data")]
     #[inline]
     fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
-        use crate::external_loaders::ExternalLoaderCompiledData;
-
         self.inner
-            .load_fixed_decimal_formatter(&ExternalLoaderCompiledData(&self.locale))?;
+            .load_fixed_decimal_formatter(&ExternalLoaderCompiledData, &self.locale)?;
         Ok(self)
     }
 
@@ -586,8 +582,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(provider),
                 Some(provider),
                 Some(provider),
-                Some(&ExternalLoaderUnstable(provider, locale)),
-                Some(&ExternalLoaderUnstable(provider, locale)),
+                Some(&ExternalLoaderUnstable(provider)),
+                Some(&ExternalLoaderUnstable(provider)),
                 locale,
                 pattern.iter_items(),
             )?;
@@ -642,8 +638,6 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
     {
-        use crate::external_loaders::ExternalLoaderCompiledData;
-
         let locale = &self.locale;
         self.inner
             .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
@@ -651,8 +645,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
-                Some(&ExternalLoaderCompiledData(locale)),
-                Some(&ExternalLoaderCompiledData(locale)),
+                Some(&ExternalLoaderCompiledData),
+                Some(&ExternalLoaderCompiledData),
                 locale,
                 pattern.iter_items(),
             )?;
@@ -883,10 +877,12 @@ impl RawDateTimeNames {
     pub(crate) fn load_fixed_decimal_formatter(
         &mut self,
         loader: &impl FixedDecimalFormatterLoader,
+        locale: &DataLocale,
     ) -> Result<(), Error> {
         let mut options = FixedDecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(loader, options)?);
+        self.fixed_decimal_formatter =
+            Some(FixedDecimalFormatterLoader::load(loader, locale, options)?);
         Ok(())
     }
 
@@ -995,12 +991,14 @@ impl RawDateTimeNames {
         if let Some(field) = week_field {
             self.set_week_calculator(WeekCalculatorLoader::load(
                 week_calculator_loader.ok_or(Error::MissingNames(field))?,
+                locale,
             )?);
         }
 
         if let Some(field) = numeric_field.and(week_field) {
             self.load_fixed_decimal_formatter(
                 fixed_decimal_formatter_loader.ok_or(Error::MissingNames(field))?,
+                locale,
             )?;
         }
 

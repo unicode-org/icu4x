@@ -18,6 +18,7 @@ use icu_provider::prelude::*;
 pub(crate) trait FixedDecimalFormatterLoader {
     fn load(
         &self,
+        locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError>;
 }
@@ -26,7 +27,7 @@ pub(crate) trait FixedDecimalFormatterLoader {
 ///
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait WeekCalculatorLoader {
-    fn load(&self) -> Result<WeekCalculator, CalendarError>;
+    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, CalendarError>;
 }
 
 /// Helper for type resolution with optional loader arguments
@@ -37,6 +38,7 @@ pub(crate) struct PhantomLoader {
 impl FixedDecimalFormatterLoader for PhantomLoader {
     fn load(
         &self,
+        _locale: &DataLocale,
         _options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
         unreachable!() // not constructible
@@ -45,33 +47,34 @@ impl FixedDecimalFormatterLoader for PhantomLoader {
 
 impl WeekCalculatorLoader for PhantomLoader {
     #[inline]
-    fn load(&self) -> Result<WeekCalculator, CalendarError> {
+    fn load(&self, _locale: &DataLocale) -> Result<WeekCalculator, CalendarError> {
         unreachable!() // not constructible
     }
 }
 
 /// Loader for types from other crates using compiled data.
-pub(crate) struct ExternalLoaderCompiledData<'a>(pub &'a DataLocale);
+pub(crate) struct ExternalLoaderCompiledData;
 
-impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData<'_> {
+impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(
         &self,
+        locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
-        FixedDecimalFormatter::try_new(self.0, options)
+        FixedDecimalFormatter::try_new(locale, options)
     }
 }
 
-impl WeekCalculatorLoader for ExternalLoaderCompiledData<'_> {
+impl WeekCalculatorLoader for ExternalLoaderCompiledData {
     #[inline]
-    fn load(&self) -> Result<WeekCalculator, CalendarError> {
-        WeekCalculator::try_new(self.0)
+    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, CalendarError> {
+        WeekCalculator::try_new(locale)
     }
 }
 
 /// Loader for types from other crates using [`AnyProvider`].
-pub(crate) struct ExternalLoaderAny<'a, P: ?Sized>(pub &'a P, pub &'a DataLocale);
+pub(crate) struct ExternalLoaderAny<'a, P: ?Sized>(pub &'a P);
 
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderAny<'_, P>
 where
@@ -80,9 +83,10 @@ where
     #[inline]
     fn load(
         &self,
+        locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
-        FixedDecimalFormatter::try_new_with_any_provider(self.0, self.1, options)
+        FixedDecimalFormatter::try_new_with_any_provider(self.0, locale, options)
     }
 }
 
@@ -91,13 +95,13 @@ where
     P: ?Sized + AnyProvider,
 {
     #[inline]
-    fn load(&self) -> Result<WeekCalculator, CalendarError> {
-        WeekCalculator::try_new_with_any_provider(self.0, self.1)
+    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, CalendarError> {
+        WeekCalculator::try_new_with_any_provider(self.0, locale)
     }
 }
 
 /// Loader for types from other crates using [`BufferProvider`].
-pub(crate) struct ExternalLoaderBuffer<'a, P: ?Sized>(pub &'a P, pub &'a DataLocale);
+pub(crate) struct ExternalLoaderBuffer<'a, P: ?Sized>(pub &'a P);
 
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderBuffer<'_, P>
 where
@@ -106,9 +110,10 @@ where
     #[inline]
     fn load(
         &self,
+        locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
-        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, self.1, options)
+        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, locale, options)
     }
 }
 
@@ -117,13 +122,13 @@ where
     P: ?Sized + BufferProvider,
 {
     #[inline]
-    fn load(&self) -> Result<WeekCalculator, CalendarError> {
-        WeekCalculator::try_new_with_buffer_provider(self.0, self.1)
+    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, CalendarError> {
+        WeekCalculator::try_new_with_buffer_provider(self.0, locale)
     }
 }
 
 /// Loader for types from other crates using [`DataProvider`].
-pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P, pub &'a DataLocale);
+pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
@@ -132,9 +137,10 @@ where
     #[inline]
     fn load(
         &self,
+        locale: &DataLocale,
         options: FixedDecimalFormatterOptions,
     ) -> Result<FixedDecimalFormatter, DecimalError> {
-        FixedDecimalFormatter::try_new_unstable(self.0, self.1, options)
+        FixedDecimalFormatter::try_new_unstable(self.0, locale, options)
     }
 }
 
@@ -143,7 +149,7 @@ where
     P: ?Sized + DataProvider<WeekDataV2Marker>,
 {
     #[inline]
-    fn load(&self) -> Result<WeekCalculator, CalendarError> {
-        WeekCalculator::try_new_unstable(self.0, self.1)
+    fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, CalendarError> {
+        WeekCalculator::try_new_unstable(self.0, locale)
     }
 }
