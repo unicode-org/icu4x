@@ -53,8 +53,10 @@ impl WeekCalculatorLoader for PhantomLoader {
 }
 
 /// Loader for types from other crates using compiled data.
+#[cfg(feature = "compiled_data")]
 pub(crate) struct ExternalLoaderCompiledData;
 
+#[cfg(feature = "compiled_data")]
 impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(
@@ -66,6 +68,7 @@ impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
     }
 }
 
+#[cfg(feature = "compiled_data")]
 impl WeekCalculatorLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, locale: &DataLocale) -> Result<WeekCalculator, CalendarError> {
@@ -101,8 +104,10 @@ where
 }
 
 /// Loader for types from other crates using [`BufferProvider`].
+#[cfg(feature = "serde")]
 pub(crate) struct ExternalLoaderBuffer<'a, P: ?Sized>(pub &'a P);
 
+#[cfg(feature = "serde")]
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderBuffer<'_, P>
 where
     P: ?Sized + BufferProvider,
@@ -117,6 +122,7 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
 impl<P> WeekCalculatorLoader for ExternalLoaderBuffer<'_, P>
 where
     P: ?Sized + BufferProvider,

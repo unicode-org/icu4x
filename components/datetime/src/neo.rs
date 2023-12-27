@@ -13,7 +13,6 @@ use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
-use crate::DateTimeFormatterOptions;
 use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
@@ -42,6 +41,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+        #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
             locale: &DataLocale,
@@ -721,8 +721,20 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     }
 
     /// Creates a [`TypedNeoDateTimeFormatter`] from [`DateTimeFormatterOptions`].
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: DateTimeFormatterOptions) -> Result<Self, Error>
+    ///
+    /// Experimental because DateTimeFormatterOptions might go away or be changed.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
+    /// </div>
+    #[cfg(all(feature = "compiled_data", feature = "experimental"))]
+    pub fn try_new(
+        locale: &DataLocale,
+        options: crate::DateTimeFormatterOptions,
+    ) -> Result<Self, Error>
     where
         crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
             + DataProvider<TimePatternV1Marker>
@@ -732,6 +744,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
     {
+        use crate::DateTimeFormatterOptions;
         match options {
             DateTimeFormatterOptions::Length(length::Bag {
                 date: Some(date),
