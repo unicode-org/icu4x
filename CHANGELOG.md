@@ -26,7 +26,9 @@
 - Utilities
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
-        - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)
+        - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
+    - `zerotrie`
+        - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
 
 ## icu4x 1.4.x
  - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
