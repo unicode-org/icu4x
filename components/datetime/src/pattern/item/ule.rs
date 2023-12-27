@@ -25,7 +25,8 @@ use zerovec::ule::{AsULE, ZeroVecError, ULE};
 ///
 /// If the discriminant is not set, the bottom three bits of the first byte,
 /// together with the next two bytes, contain all 21 bits required to encode
-/// any [`Unicode Code Point`].
+/// any [`Unicode Code Point`]. By design, the representation of a code point
+/// is the same between [`PatternItemULE`] and [`GenericPatternItemULE`].
 ///
 /// # Diagram
 ///
@@ -160,7 +161,8 @@ impl AsULE for PatternItem {
 ///
 /// If the discriminant is not set, the bottom three bits of the first byte,
 /// together with the next two bytes, contain all 21 bits required to encode
-/// any [`Unicode Code Point`].
+/// any [`Unicode Code Point`]. By design, the representation of a code point
+/// is the same between [`PatternItemULE`] and [`GenericPatternItemULE`].
 ///
 /// # Diagram
 ///
