@@ -145,10 +145,21 @@ fn test_conversion() {
         {
             continue;
         }
-        let input_unit = parser.try_from_identifier(test.input_unit.as_str()).unwrap();
-        let output_unit = parser.try_from_identifier(test.output_unit.as_str()).unwrap();
+        let input_unit = parser
+            .try_from_identifier(test.input_unit.as_str())
+            .unwrap();
+        let output_unit = parser
+            .try_from_identifier(test.output_unit.as_str())
+            .unwrap();
 
-        let convertablity = converter_factory.extract_convertibility(&input_unit, &output_unit).unwrap();
+        println!("input_unit identifier: {:?}", test.input_unit);
+        println!("input_unit: {:?}", input_unit);
+        println!("output_unit identifier: {:?}", test.output_unit);
+        println!("output_unit: {:?}", output_unit);
+
+        let convertablity = converter_factory
+            .extract_convertibility(&input_unit, &output_unit)
+            .unwrap();
 
         match convertablity {
             Convertibility::Convertible | Convertibility::Reciprocal => (),

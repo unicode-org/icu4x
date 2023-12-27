@@ -4,10 +4,11 @@
 
 use litemap::LiteMap;
 use smallvec::SmallVec;
+use zerovec::ZeroSlice;
 
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{MeasureUnitItem, UnitsInfoV1},
+    provider::{ConversionInfo, MeasureUnitItem, UnitsInfoV1},
     ConversionError,
 };
 
@@ -57,21 +58,41 @@ impl<'data> ConverterFactory<'data> {
             reciprocal: i16,
         }
 
-        fn insert_units_powers(
+        fn insert_units_powers_not_essential(
+            factory: &ConverterFactory,
             unit_items: &[MeasureUnitItem],
             sign: i8,
             map: &mut LiteMap<u16, DetermineConvertibility>,
         ) {
             for item in unit_items {
+                let items_from_item = factory
+                    .payload
+                    .convert_infos
+                    .get(item.unit_id as usize)
+                    .unwrap()
+                    .basic_units();
+
+                insert_units_powers(items_from_item, item.power, sign, map);
+            }
+        }
+
+        fn insert_units_powers(
+            unit_items: &ZeroSlice<MeasureUnitItem>,
+            upper_power: i8,
+            sign: i8,
+            map: &mut LiteMap<u16, DetermineConvertibility>,
+        ) {
+            for item in unit_items.iter() {
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.convertible += (item.power * sign) as i16;
-                    determine_convertibility.reciprocal += item.power as i16;
+                    determine_convertibility.convertible +=
+                        (item.power * upper_power * sign) as i16;
+                    determine_convertibility.reciprocal += (item.power * upper_power) as i16;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
-                            convertible: (item.power * sign) as i16,
-                            reciprocal: item.power as i16,
+                            convertible: (item.power * upper_power * sign) as i16,
+                            reciprocal: (item.power * upper_power) as i16,
                         },
                     );
                 }
@@ -79,8 +100,8 @@ impl<'data> ConverterFactory<'data> {
         }
 
         let mut map = LiteMap::<u16, DetermineConvertibility>::new();
-        insert_units_powers(&unit1, 1, &mut map);
-        insert_units_powers(&unit2, -1, &mut map);
+        insert_units_powers_not_essential(&self, &unit1, 1, &mut map);
+        insert_units_powers_not_essential(&self, &unit2, -1, &mut map);
 
         let (convertible_sum, reciprocal_sum) = map.iter_values().fold(
             (0, 0),

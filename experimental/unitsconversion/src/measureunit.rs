@@ -139,6 +139,7 @@ impl<'data> MeasureUnitParser<'data> {
 }
 
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
+#[derive(Debug)]
 pub struct MeasureUnit {
     /// Contains the processed units.
     pub contained_units: SmallVec<[MeasureUnitItem; 8]>,
