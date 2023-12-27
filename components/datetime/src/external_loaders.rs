@@ -29,6 +29,27 @@ pub(crate) trait WeekCalculatorLoader {
     fn load(&self) -> Result<WeekCalculator, CalendarError>;
 }
 
+/// Helper for type resolution with optional loader arguments
+pub(crate) struct PhantomLoader {
+    _not_constructible: core::convert::Infallible,
+}
+
+impl FixedDecimalFormatterLoader for PhantomLoader {
+    fn load(
+        &self,
+        _options: FixedDecimalFormatterOptions,
+    ) -> Result<FixedDecimalFormatter, DecimalError> {
+        unreachable!() // not constructible
+    }
+}
+
+impl WeekCalculatorLoader for PhantomLoader {
+    #[inline]
+    fn load(&self) -> Result<WeekCalculator, CalendarError> {
+        unreachable!() // not constructible
+    }
+}
+
 /// Loader for types from other crates using compiled data.
 pub(crate) struct ExternalLoaderCompiledData<'a>(pub &'a DataLocale);
 

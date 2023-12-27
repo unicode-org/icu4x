@@ -533,7 +533,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         self.inner
-            .load_fixed_decimal_formatter(ExternalLoaderUnstable(provider, &self.locale))?;
+            .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider, &self.locale))?;
         Ok(self)
     }
 
@@ -544,7 +544,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         use crate::external_loaders::ExternalLoaderCompiledData;
 
         self.inner
-            .load_fixed_decimal_formatter(ExternalLoaderCompiledData(&self.locale))?;
+            .load_fixed_decimal_formatter(&ExternalLoaderCompiledData(&self.locale))?;
         Ok(self)
     }
 
@@ -586,9 +586,10 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(provider),
                 Some(provider),
                 Some(provider),
+                Some(&ExternalLoaderUnstable(provider, locale)),
+                Some(&ExternalLoaderUnstable(provider, locale)),
                 locale,
                 pattern.iter_items(),
-                ExternalLoaderUnstable(provider, locale),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -650,9 +651,10 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
+                Some(&ExternalLoaderCompiledData(locale)),
+                Some(&ExternalLoaderCompiledData(locale)),
                 locale,
                 pattern.iter_items(),
-                ExternalLoaderCompiledData(locale),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -880,11 +882,11 @@ impl RawDateTimeNames {
 
     pub(crate) fn load_fixed_decimal_formatter(
         &mut self,
-        loader: impl FixedDecimalFormatterLoader,
+        loader: &impl FixedDecimalFormatterLoader,
     ) -> Result<(), Error> {
         let mut options = FixedDecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(&loader, options)?);
+        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(loader, options)?);
         Ok(())
     }
 
@@ -912,9 +914,10 @@ impl RawDateTimeNames {
         month_provider: Option<&(impl DataProvider<MonthMarker> + ?Sized)>,
         weekday_provider: Option<&(impl DataProvider<WeekdayNamesV1Marker> + ?Sized)>,
         dayperiod_provider: Option<&(impl DataProvider<DayPeriodNamesV1Marker> + ?Sized)>,
+        fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
+        week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = PatternItem>,
-        loader: impl FixedDecimalFormatterLoader + WeekCalculatorLoader,
     ) -> Result<(), Error>
     where
         YearMarker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
@@ -925,8 +928,8 @@ impl RawDateTimeNames {
             _ => None,
         });
 
-        let mut has_numeric = false;
-        let mut has_weeks = false;
+        let mut numeric_field = None;
+        let mut week_field = None;
         for field in fields {
             match field.symbol {
                 ///// Textual symbols /////
@@ -938,8 +941,8 @@ impl RawDateTimeNames {
                     )?;
                 }
                 FieldSymbol::Month(symbol) => match field.length {
-                    FieldLength::One => has_numeric = true,
-                    FieldLength::TwoDigit => has_numeric = true,
+                    FieldLength::One => numeric_field = Some(field),
+                    FieldLength::TwoDigit => numeric_field = Some(field),
                     _ => {
                         self.load_month_names(
                             month_provider.ok_or(Error::MissingNames(field))?,
@@ -955,7 +958,7 @@ impl RawDateTimeNames {
                     FieldLength::One | FieldLength::TwoDigit
                         if !matches!(symbol, fields::Weekday::Format) =>
                     {
-                        has_numeric = true
+                        numeric_field = Some(field)
                     }
                     _ => {
                         self.load_weekday_names(
@@ -975,13 +978,13 @@ impl RawDateTimeNames {
                 }
 
                 ///// Numeric symbols /////
-                FieldSymbol::Year(fields::Year::WeekOf) => has_weeks = true,
-                FieldSymbol::Year(_) => has_numeric = true,
-                FieldSymbol::Week(_) => has_weeks = true,
-                FieldSymbol::Day(_) => has_numeric = true,
-                FieldSymbol::Hour(_) => has_numeric = true,
-                FieldSymbol::Minute => has_numeric = true,
-                FieldSymbol::Second(_) => has_numeric = true,
+                FieldSymbol::Year(fields::Year::WeekOf) => week_field = Some(field),
+                FieldSymbol::Year(_) => numeric_field = Some(field),
+                FieldSymbol::Week(_) => week_field = Some(field),
+                FieldSymbol::Day(_) => numeric_field = Some(field),
+                FieldSymbol::Hour(_) => numeric_field = Some(field),
+                FieldSymbol::Minute => numeric_field = Some(field),
+                FieldSymbol::Second(_) => numeric_field = Some(field),
                 FieldSymbol::TimeZone(_) => {
                     // TODO: Consider whether time zones are supported here.
                     return Err(Error::UnsupportedField(field.symbol));
@@ -989,12 +992,16 @@ impl RawDateTimeNames {
             };
         }
 
-        if has_weeks {
-            self.set_week_calculator(WeekCalculatorLoader::load(&loader)?);
+        if let Some(field) = week_field {
+            self.set_week_calculator(WeekCalculatorLoader::load(
+                week_calculator_loader.ok_or(Error::MissingNames(field))?,
+            )?);
         }
 
-        if has_numeric || has_weeks {
-            self.load_fixed_decimal_formatter(loader)?;
+        if let Some(field) = numeric_field.and(week_field) {
+            self.load_fixed_decimal_formatter(
+                fixed_decimal_formatter_loader.ok_or(Error::MissingNames(field))?,
+            )?;
         }
 
         Ok(())

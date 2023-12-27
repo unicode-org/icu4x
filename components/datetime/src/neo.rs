@@ -67,11 +67,11 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<C::MonthNamesV1Marker>
             + DataProvider<WeekdayNamesV1Marker>,
     {
-        Self::try_new_internal(
+        Self::try_new_with_length_internal(
             &crate::provider::Baked,
             locale,
             length,
-            ExternalLoaderCompiledData(locale),
+            &ExternalLoaderCompiledData(locale),
         )
     }
 
@@ -84,11 +84,11 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     where
         P: AnyProvider + ?Sized,
     {
-        Self::try_new_internal(
+        Self::try_new_with_length_internal(
             &provider.as_downcasting(),
             locale,
             length,
-            ExternalLoaderAny(provider, locale),
+            &ExternalLoaderAny(provider, locale),
         )
     }
 
@@ -101,11 +101,11 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     where
         P: BufferProvider + ?Sized,
     {
-        Self::try_new_internal(
+        Self::try_new_with_length_internal(
             &provider.as_deserializing(),
             locale,
             length,
-            ExternalLoaderBuffer(provider, locale),
+            &ExternalLoaderBuffer(provider, locale),
         )
     }
 
@@ -124,19 +124,19 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<WeekDataV2Marker>,
     {
-        Self::try_new_internal(
+        Self::try_new_with_length_internal(
             provider,
             locale,
             length,
-            ExternalLoaderUnstable(provider, locale),
+            &ExternalLoaderUnstable(provider, locale),
         )
     }
 
-    fn try_new_internal<P>(
+    fn try_new_with_length_internal<P>(
         provider: &P,
         locale: &DataLocale,
         length: length::Date,
-        loader: impl FixedDecimalFormatterLoader + WeekCalculatorLoader,
+        loader: &(impl FixedDecimalFormatterLoader + WeekCalculatorLoader),
     ) -> Result<Self, Error>
     where
         P: ?Sized
@@ -154,9 +154,10 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             Some(provider),           // month
             Some(provider),           // weekday
             None::<&PhantomProvider>, // day period
+            Some(loader),             // fixed decimal formatter
+            Some(loader),             // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
-            loader,
         )?;
         Ok(Self {
             selection,
@@ -255,21 +256,91 @@ impl NeoTimeFormatter {
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error>
     where
-        crate::provider::Baked:
-            DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
+        crate::provider::Baked: DataProvider<TimePatternV1Marker>,
     {
-        let selection =
-            TimePatternSelectionData::try_new_with_length(&crate::provider::Baked, locale, length)?;
+        Self::try_new_with_length_internal(
+            &crate::provider::Baked,
+            locale,
+            length,
+            &ExternalLoaderCompiledData(locale),
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_length)]
+    pub fn try_new_with_length_with_any_provider<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: AnyProvider + ?Sized,
+    {
+        Self::try_new_with_length_internal(
+            &provider.as_downcasting(),
+            locale,
+            length,
+            &ExternalLoaderAny(provider, locale),
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_length)]
+    pub fn try_new_with_length_with_buffer_provider<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: BufferProvider + ?Sized,
+    {
+        Self::try_new_with_length_internal(
+            &provider.as_deserializing(),
+            locale,
+            length,
+            &ExternalLoaderBuffer(provider, locale),
+        )
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    pub fn try_new_with_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>,
+    {
+        Self::try_new_with_length_internal(
+            provider,
+            locale,
+            length,
+            &ExternalLoaderUnstable(provider, locale),
+        )
+    }
+
+    fn try_new_with_length_internal<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+        loader: &impl FixedDecimalFormatterLoader,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized + DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
+    {
+        let selection = TimePatternSelectionData::try_new_with_length(provider, locale, length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         // NOTE: The Gregorian types below are placeholders only. They are not actually linked.
         names.load_for_pattern::<GregorianYearNamesV1Marker, GregorianMonthNamesV1Marker>(
-            None::<&PhantomProvider>,      // year
-            None::<&PhantomProvider>,      // month
-            None::<&PhantomProvider>,      // weekday
-            Some(&crate::provider::Baked), // day period
+            None::<&PhantomProvider>, // year
+            None::<&PhantomProvider>, // month
+            None::<&PhantomProvider>, // weekday
+            Some(provider),           // day period
+            Some(loader),             // fixed decimal formatter
+            None::<&PhantomLoader>,   // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
-            ExternalLoaderCompiledData(locale),
         )?;
         Ok(Self { selection, names })
     }
@@ -483,9 +554,10 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // month
             Some(&crate::provider::Baked), // weekday
             Some(&crate::provider::Baked), // day period
+            Some(&ExternalLoaderCompiledData(locale)),
+            Some(&ExternalLoaderCompiledData(locale)),
             locale,
             selection.pattern_items_for_data_loading(),
-            ExternalLoaderCompiledData(locale),
         )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::DateTimeGlue(selection),
