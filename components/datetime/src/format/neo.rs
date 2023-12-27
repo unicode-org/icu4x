@@ -995,7 +995,7 @@ impl RawDateTimeNames {
             )?);
         }
 
-        if let Some(field) = numeric_field.and(week_field) {
+        if let Some(field) = numeric_field.or(week_field) {
             self.load_fixed_decimal_formatter(
                 fixed_decimal_formatter_loader.ok_or(Error::MissingNames(field))?,
                 locale,
