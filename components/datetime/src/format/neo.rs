@@ -6,7 +6,7 @@ use super::datetime::write_pattern;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::{
-    DataProviderMarker, FixedDecimalFormatterLoader, WeekCalculatorLoader,
+    ExternalLoaderUnstable, FixedDecimalFormatterLoader, WeekCalculatorLoader,
 };
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::input;
@@ -533,7 +533,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         self.inner
-            .load_fixed_decimal_formatter((provider, &self.locale, DataProviderMarker))?;
+            .load_fixed_decimal_formatter(ExternalLoaderUnstable(provider, &self.locale))?;
         Ok(self)
     }
 
@@ -541,7 +541,10 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     #[cfg(feature = "compiled_data")]
     #[inline]
     fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
-        self.inner.load_fixed_decimal_formatter((&self.locale,))?;
+        use crate::external_loaders::ExternalLoaderCompiledData;
+
+        self.inner
+            .load_fixed_decimal_formatter(ExternalLoaderCompiledData(&self.locale))?;
         Ok(self)
     }
 
@@ -585,8 +588,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(provider),
                 locale,
                 pattern.iter_items(),
-                (provider, locale, DataProviderMarker),
-                (provider, locale, DataProviderMarker),
+                ExternalLoaderUnstable(provider, locale),
+                ExternalLoaderUnstable(provider, locale),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -639,6 +642,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
     {
+        use crate::external_loaders::ExternalLoaderCompiledData;
+
         let locale = &self.locale;
         self.inner
             .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
@@ -648,8 +653,8 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
                 Some(&crate::provider::Baked),
                 locale,
                 pattern.iter_items(),
-                (locale,),
-                (locale,),
+                ExternalLoaderCompiledData(locale),
+                ExternalLoaderCompiledData(locale),
             )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),

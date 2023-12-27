@@ -4,10 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::external_loaders::{
-    AnyProviderMarker, BufferProviderMarker, DataProviderMarker, FixedDecimalFormatterLoader,
-    WeekCalculatorLoader,
-};
+use crate::external_loaders::*;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
@@ -74,8 +71,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &crate::provider::Baked,
             locale,
             length,
-            (locale,),
-            (locale,),
+            ExternalLoaderCompiledData(locale),
+            ExternalLoaderCompiledData(locale),
         )
     }
 
@@ -92,8 +89,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &provider.as_downcasting(),
             locale,
             length,
-            (provider, locale, AnyProviderMarker),
-            (provider, locale, AnyProviderMarker),
+            ExternalLoaderAny(provider, locale),
+            ExternalLoaderAny(provider, locale),
         )
     }
 
@@ -110,8 +107,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             &provider.as_deserializing(),
             locale,
             length,
-            (provider, locale, BufferProviderMarker),
-            (provider, locale, BufferProviderMarker),
+            ExternalLoaderBuffer(provider, locale),
+            ExternalLoaderBuffer(provider, locale),
         )
     }
 
@@ -134,8 +131,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             provider,
             locale,
             length,
-            (provider, locale, DataProviderMarker),
-            (provider, locale, DataProviderMarker),
+            ExternalLoaderUnstable(provider, locale),
+            ExternalLoaderUnstable(provider, locale),
         )
     }
 
@@ -278,8 +275,8 @@ impl NeoTimeFormatter {
             Some(&crate::provider::Baked), // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            (locale,),
-            (locale,),
+            ExternalLoaderCompiledData(locale),
+            ExternalLoaderCompiledData(locale),
         )?;
         Ok(Self { selection, names })
     }
@@ -495,8 +492,8 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             Some(&crate::provider::Baked), // day period
             locale,
             selection.pattern_items_for_data_loading(),
-            (locale,),
-            (locale,),
+            ExternalLoaderCompiledData(locale),
+            ExternalLoaderCompiledData(locale),
         )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::DateTimeGlue(selection),
