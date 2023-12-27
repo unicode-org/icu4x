@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use litemap::LiteMap;
-use smallvec::SmallVec;
+
 use zerovec::ZeroSlice;
 
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{ConversionInfo, MeasureUnitItem, UnitsInfoV1},
+    provider::{MeasureUnitItem, UnitsInfoV1},
     ConversionError,
 };
 
@@ -100,8 +100,8 @@ impl<'data> ConverterFactory<'data> {
         }
 
         let mut map = LiteMap::<u16, DetermineConvertibility>::new();
-        insert_units_powers_not_essential(&self, &unit1, 1, &mut map);
-        insert_units_powers_not_essential(&self, &unit2, -1, &mut map);
+        insert_units_powers_not_essential(self, unit1, 1, &mut map);
+        insert_units_powers_not_essential(self, unit2, -1, &mut map);
 
         let (convertible_sum, reciprocal_sum) = map.iter_values().fold(
             (0, 0),

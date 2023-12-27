@@ -5,7 +5,6 @@
 use core::str::FromStr;
 use icu_unitsconversion::{
     converter::{ConverterFactory, Convertibility},
-    measureunit::MeasureUnitParser,
 };
 use num::BigRational;
 use std::collections::HashSet;
@@ -80,7 +79,7 @@ fn test_conversion() {
         .collect();
 
     let converter_factory = ConverterFactory::from_payload(
-        &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
     );
     let parser = converter_factory.parser();
 
