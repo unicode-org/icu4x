@@ -16,7 +16,9 @@
     - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
     - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
   - `icu_provider`
-    - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456) 
+    - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
+  - `icu_provider_blob`
+    - Blob v2 no longer allocates (https://github.com/unicode-org/icu4x/pull/4383)
 - FFI:
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
@@ -33,6 +35,7 @@
         - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
     - `zerotrie`
         - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
+        - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
 
 ## icu4x 1.4.x
  - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
