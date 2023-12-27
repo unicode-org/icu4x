@@ -264,9 +264,11 @@ unsafe impl ULE for GenericPatternItemULE {
     }
 }
 
-impl GenericPatternItem {
+impl AsULE for GenericPatternItem {
+    type ULE = GenericPatternItemULE;
+
     #[inline]
-    pub(crate) const fn to_unaligned_const(self) -> <Self as AsULE>::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         match self {
             Self::Placeholder(idx) => GenericPatternItemULE([0b1000_0000, 0x00, idx]),
             Self::Literal(ch) => {
@@ -275,15 +277,6 @@ impl GenericPatternItem {
                 GenericPatternItemULE([bytes[1], bytes[2], bytes[3]])
             }
         }
-    }
-}
-
-impl AsULE for GenericPatternItem {
-    type ULE = GenericPatternItemULE;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self.to_unaligned_const()
     }
 
     #[inline]
