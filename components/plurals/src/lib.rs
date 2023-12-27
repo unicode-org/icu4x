@@ -151,10 +151,10 @@ pub enum PluralRuleType {
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
-                                   // but at a cadence slower than the ICU4X release cycle
 #[repr(u8)]
 #[zerovec::make_ule(PluralCategoryULE)]
+#[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
+                                   // but at a cadence slower than the ICU4X release cycle
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
