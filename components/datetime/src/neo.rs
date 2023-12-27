@@ -634,18 +634,82 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>,
     {
+        Self::try_new_with_lengths_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            date_length,
+            time_length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_lengths,
+        try_new_with_lengths_with_any_provider,
+        try_new_with_lengths_with_buffer_provider,
+        try_new_with_lengths_internal,
+        date_length: length::Date,
+        time_length: length::Time
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_lengths)]
+    pub fn try_new_with_lengths_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        date_length: length::Date,
+        time_length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<C::DatePatternV1Marker>
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DateTimePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_with_lengths_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            date_length,
+            time_length,
+        )
+    }
+
+    fn try_new_with_lengths_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        date_length: length::Date,
+        time_length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<C::DatePatternV1Marker>
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DateTimePatternV1Marker>
+            + DataProvider<C::YearNamesV1Marker>
+            + DataProvider<C::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>,
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
+    {
         let selection = DateTimeGluePatternSelectionData::try_new_with_lengths::<
             C::DatePatternV1Marker,
             _,
-        >(&crate::provider::Baked, locale, date_length, time_length)?;
+        >(provider, locale, date_length, time_length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            Some(&crate::provider::Baked), // year
-            Some(&crate::provider::Baked), // month
-            Some(&crate::provider::Baked), // weekday
-            Some(&crate::provider::Baked), // day period
-            Some(&ExternalLoaderCompiledData),
-            Some(&ExternalLoaderCompiledData),
+            Some(provider), // year
+            Some(provider), // month
+            Some(provider), // weekday
+            Some(provider), // day period
+            Some(loader),   // fixed decimal formatter
+            Some(loader),   // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
