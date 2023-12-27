@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Components
+  - `icu_datetime`
+    - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
   - `icu_calendar`
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
   - `icu_properties`
