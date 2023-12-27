@@ -536,7 +536,54 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         crate::provider::Baked:
             DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
     {
-        let time_formatter = NeoTimeFormatter::try_new_with_length(locale, length)?;
+        Self::try_new_with_time_length_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_time_length,
+        try_new_with_time_length_with_any_provider,
+        try_new_with_time_length_with_buffer_provider,
+        try_new_with_time_length_internal,
+        length: length::Time
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_time_length)]
+    pub fn try_new_with_time_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>,
+    {
+        Self::try_new_with_time_length_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            length,
+        )
+    }
+
+    fn try_new_with_time_length_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized + DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
+        L: FixedDecimalFormatterLoader,
+    {
+        let time_formatter =
+            NeoTimeFormatter::try_new_with_length_internal(provider, loader, locale, length)?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Time(time_formatter.selection),
             names: time_formatter.names,
