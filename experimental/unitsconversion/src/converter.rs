@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: we do not want to use `std`
-use std::collections::HashMap;
-
-use num::BigRational;
+use num_bigint::BigInt;
+use num_rational::Ratio;
 
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
@@ -30,15 +28,13 @@ pub enum Convertibility {
     NotConvertible,
 }
 
-
 /// A converter for converting between two units.
 /// For example, converting between `meter` and `foot`.
 pub struct Converter {
-    conversion_rate: BigRational,
-    offset: BigRational,
+    conversion_rate: Ratio<BigInt>,
+    offset: Ratio<BigInt>,
     convertibility: Convertibility,
 }
-
 
 /// A factory for creating a converter.
 /// Also, it can check the convertibility between two units.
@@ -47,17 +43,14 @@ pub struct ConverterFactory<'data> {
     payload: &'data UnitsInfoV1<'data>,
 }
 
-
-
 impl<'data> ConverterFactory<'data> {
+    /// Creates a new ConverterFactory from a UnitsInfoV1 payload.
+    pub fn from_payload(payload: &'data UnitsInfoV1<'data>) -> Self {
+        Self { payload }
+    }
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::from_payload(&self.payload.units_conversion_trie)
-    }
-
-impl ConverterFactory<'_> {
-    fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::new(&self.payload.units_conversion_trie)
     }
 
     /// Extract the convertibility from the given units in the form of CLDR identifiers.
@@ -160,8 +153,8 @@ impl ConverterFactory<'_> {
 }
 
 impl Converter {
-    pub fn convert(&self, value: &BigRational) -> BigRational {
-        let mut result: BigRational = value * &self.conversion_rate + &self.offset;
+    pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+        let mut result: Ratio<BigInt> = value * &self.conversion_rate + &self.offset;
         if let Convertibility::Reciprocal = self.convertibility {
             result = result.recip();
         }
