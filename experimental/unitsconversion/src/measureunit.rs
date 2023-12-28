@@ -23,7 +23,6 @@ pub struct MeasureUnitParser<'data> {
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    #[cfg(feature = "datagen")]
     pub fn from_payload(payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
         Self { payload }
     }
