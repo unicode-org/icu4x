@@ -24,4 +24,7 @@ pub enum ConversionError {
     /// This can happen if the units are not compatible.
     /// For example, `meter` and `foot` are compatible, but `meter` and `second` are not.
     InvalidConversion,
+
+    /// The conversion is not possible due to an internal error.
+    InternalError,
 }

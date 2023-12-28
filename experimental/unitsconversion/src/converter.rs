@@ -63,17 +63,18 @@ impl<'data> ConverterFactory<'data> {
             unit_items: &[MeasureUnitItem],
             sign: i8,
             map: &mut LiteMap<u16, DetermineConvertibility>,
-        ) {
+        ) -> Result<(), ConversionError> {
             for item in unit_items {
                 let items_from_item = factory
                     .payload
                     .convert_infos
                     .get(item.unit_id as usize)
-                    .unwrap()
-                    .basic_units();
+                    .ok_or(ConversionError::InternalError)?;
 
-                insert_units_powers(items_from_item, item.power, sign, map);
+                insert_units_powers(items_from_item.basic_units(), item.power, sign, map);
             }
+
+            Ok(())
         }
 
         fn insert_units_powers(
@@ -100,8 +101,8 @@ impl<'data> ConverterFactory<'data> {
         }
 
         let mut map = LiteMap::<u16, DetermineConvertibility>::new();
-        insert_units_powers_not_essential(self, unit1, 1, &mut map);
-        insert_units_powers_not_essential(self, unit2, -1, &mut map);
+        insert_units_powers_not_essential(self, unit1, 1, &mut map)?;
+        insert_units_powers_not_essential(self, unit2, -1, &mut map)?;
 
         let (convertible_sum, reciprocal_sum) = map.iter_values().fold(
             (0, 0),

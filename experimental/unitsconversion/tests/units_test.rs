@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_unitsconversion::{
-    converter::{ConverterFactory, Convertibility},
-};
+use icu_unitsconversion::converter::{ConverterFactory, Convertibility};
 use num::BigRational;
 use std::collections::HashSet;
 
