@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use litemap::LiteMap;
-use zerovec::ZeroSlice;
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
     provider::{MeasureUnitItem, UnitsInfoV1},
     ConversionError,
 };
+use litemap::LiteMap;
+use zerovec::ZeroSlice;
 
 /// Represents the possible cases for the convertibility between two units.
 pub enum Convertibility {
