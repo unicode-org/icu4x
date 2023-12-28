@@ -2,12 +2,38 @@
 
 ## Unreleased
 
+- Components
+  - `icu_calendar`
+    - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+  - `icu_properties`
+    - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
+- Data model and providers
+  - `icu_datagen`
+    - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
+    - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
+  - `icu_provider`
+    - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456) 
 - FFI:
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
+      - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
+    - C++
+      - Fixed a bug where a result header defines a struct that shadows the class' name  (https://github.com/rust-diplomat/diplomat/pull/394)
+      - Add `expclicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
+- Utilities
+    - `calendrical_calculations`:
+        - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar.
+    - `yoke`
+        - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
+        - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)
+
+## icu4x 1.4.x
+ - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
+   - `icu_datagen@1.4.1`
+
 
 ## icu4x 1.4 (Nov 16, 2023)
 

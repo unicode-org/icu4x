@@ -495,7 +495,7 @@ where
                         .datetime()
                         .hour()
                         .ok_or(Error::MissingInputField(Some("hour")))?,
-                    pattern.time_granularity.is_top_of_hour(
+                    pattern.metadata.time_granularity().is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                         datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
@@ -591,6 +591,7 @@ pub fn analyze_patterns(
 
 #[cfg(test)]
 #[allow(unused_imports)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};

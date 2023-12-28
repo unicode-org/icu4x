@@ -3,15 +3,18 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
 use icu_plurals::{PluralRuleType, PluralRules};
 
 fn pluralrules(c: &mut Criterion) {
-    let plurals_data = helpers::get_plurals_data();
-    let numbers_data = helpers::get_numbers_data();
+    let plurals_data =
+        serde_json::from_str::<fixtures::PluralsFixture>(include_str!("fixtures/plurals.json"))
+            .expect("Failed to read a fixture");
+    let numbers_data =
+        serde_json::from_str::<fixtures::NumbersFixture>(include_str!("fixtures/numbers.json"))
+            .expect("Failed to read a fixture");
 
     c.bench_function("plurals/pluralrules/overview", |b| {
         b.iter(|| {

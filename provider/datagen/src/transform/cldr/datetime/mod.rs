@@ -2,16 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{
     extensions::unicode::{key, value},
     Locale,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 mod neo;
 mod patterns;
@@ -207,9 +208,9 @@ macro_rules! impl_data_provider {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                let mut r = Vec::new();
+        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+                let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {

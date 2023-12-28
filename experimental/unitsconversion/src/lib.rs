@@ -13,6 +13,7 @@ pub mod provider;
 pub mod si_prefix;
 
 /// Represents the possible errors that can occur during the measurement unit operations.
+#[derive(Debug)]
 pub enum ConversionError {
     /// The unit is not valid.
     /// This can happen if the unit id is not following the CLDR specification.
@@ -23,4 +24,7 @@ pub enum ConversionError {
     /// This can happen if the units are not compatible.
     /// For example, `meter` and `foot` are compatible, but `meter` and `second` are not.
     InvalidConversion,
+
+    /// The conversion is not possible due to an internal error.
+    InternalError,
 }

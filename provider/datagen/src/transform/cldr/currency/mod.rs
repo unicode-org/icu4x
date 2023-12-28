@@ -2,21 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_dimension::ule::MAX_PLACE_HOLDER_INDEX;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
-use icu_singlenumberformatter::ule::MAX_PLACE_HOLDER_INDEX;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use crate::DatagenProvider;
-use icu_provider::datagen::IterableDataProvider;
+use icu_dimension::provider::*;
 use icu_provider::prelude::*;
-use icu_singlenumberformatter::provider::*;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use tinystr::tinystr;
 
 /// Returns the pattern selection for a currency.
@@ -95,8 +96,8 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -315,8 +316,8 @@ fn test_basic() {
         (short_place_holder, narrow_place_holder)
     }
 
+    use icu_dimension::provider::*;
     use icu_locid::locale;
-    use icu_singlenumberformatter::provider::*;
 
     let provider = crate::DatagenProvider::new_testing();
 

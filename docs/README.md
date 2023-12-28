@@ -13,8 +13,8 @@ User-facing tutorials are listed in [index.md](tutorials/index.md). The followin
 
 Document | Summary
 ---------|---------
-[markdown_tips.md](tutorials/markdown_tips.md) | According to bylaws.md, designs should make their way to GitHub Markdown files somewhat early in the process. However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice. This document contains tips on the workflow.
-[writing_a_new_data_struct.md](tutorials/writing_a_new_data_struct.md) | Tutorial for ICU4X contributors on how to add locale data to the data provider pipeline.
+[markdown_tips.md](process/markdown_tips.md) | According to bylaws.md, designs should make their way to GitHub Markdown files somewhat early in the process. However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice. This document contains tips on the workflow.
+[writing_a_new_data_struct.md](process/writing_a_new_data_struct.md) | Tutorial for ICU4X contributors on how to add locale data to the data provider pipeline.
 
 ## Process
 

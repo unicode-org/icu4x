@@ -46,11 +46,8 @@ use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
 use icu_timezone::{CustomTimeZone, ZoneVariant};
 use patterns::{
-    get_dayperiod_tests, get_time_zone_tests,
-    structs::{
-        dayperiods::DayPeriodExpectation,
-        time_zones::{TimeZoneConfig, TimeZoneExpectation},
-    },
+    dayperiods::{DayPeriodExpectation, DayPeriodTests},
+    time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneTests},
 };
 use std::str::FromStr;
 use tinystr::tinystr;
@@ -58,8 +55,8 @@ use writeable::{assert_writeable_eq, Writeable};
 
 mod mock;
 
-fn test_fixture(fixture_name: &str) {
-    for fx in fixtures::get_fixture(fixture_name)
+fn test_fixture(fixture_name: &str, file: &str) {
+    for fx in serde_json::from_str::<fixtures::Fixture>(file)
         .expect("Unable to get fixture.")
         .0
     {
@@ -74,9 +71,9 @@ fn test_fixture(fixture_name: &str) {
         };
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese::new_always_calculating());
+        let input_chinese = input_value.to_calendar(Chinese::new());
         let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi::new_always_calculating());
+        let input_dangi = input_value.to_calendar(Dangi::new());
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
@@ -335,8 +332,8 @@ fn assert_fixture_element<A>(
     }
 }
 
-fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
-    for fx in fixtures::get_fixture(fixture_name)
+fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZoneConfig) {
+    for fx in serde_json::from_str::<fixtures::Fixture>(file)
         .expect("Unable to get fixture.")
         .0
     {
@@ -392,7 +389,11 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
 
 #[test]
 fn test_dayperiod_patterns() {
-    for test in get_dayperiod_tests("dayperiods").unwrap().0 {
+    for test in
+        serde_json::from_str::<DayPeriodTests>(include_str!("patterns/tests/dayperiods.json"))
+            .unwrap()
+            .0
+    {
         let mut locale: Locale = test.locale.parse().unwrap();
         locale
             .extensions
@@ -515,7 +516,11 @@ fn test_dayperiod_patterns() {
 
 #[test]
 fn test_time_zone_format_configs() {
-    for test in get_time_zone_tests("time_zones").unwrap().0 {
+    for test in
+        serde_json::from_str::<TimeZoneTests>(include_str!("patterns/tests/time_zones.json"))
+            .unwrap()
+            .0
+    {
         let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
         let mut config = test.config;
         let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
@@ -583,7 +588,11 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
 
 #[test]
 fn test_time_zone_patterns() {
-    for test in get_time_zone_tests("time_zones").unwrap().0 {
+    for test in
+        serde_json::from_str::<TimeZoneTests>(include_str!("patterns/tests/time_zones.json"))
+            .unwrap()
+            .0
+    {
         let mut locale: Locale = test.locale.parse().unwrap();
         locale
             .extensions
@@ -761,11 +770,15 @@ fn test_time_zone_patterns() {
 
 #[test]
 fn test_length_fixtures() {
-    // components/datetime/tests/fixtures/tests/lengths.json
-    test_fixture("lengths");
-    test_fixture_with_time_zones("lengths_with_zones", TimeZoneConfig::default());
+    test_fixture("lengths", include_str!("fixtures/tests/lengths.json"));
+    test_fixture_with_time_zones(
+        "lengths_with_zones",
+        include_str!("fixtures/tests/lengths_with_zones.json"),
+        TimeZoneConfig::default(),
+    );
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
+        include_str!("fixtures/tests/lengths_with_zones_from_pdt.json"),
         TimeZoneConfig {
             metazone_id: Some(tinystr!(4, "ampa")),
             zone_variant: Some(tinystr!(2, "dt")),
@@ -776,62 +789,75 @@ fn test_length_fixtures() {
 
 #[test]
 fn test_japanese() {
-    // components/datetime/tests/fixtures/tests/japanese.json
-    test_fixture("japanese");
+    test_fixture("japanese", include_str!("fixtures/tests/japanese.json"));
 }
 
 #[test]
 fn test_lengths_with_preferences() {
-    // components/datetime/tests/fixtures/tests/lengths_with_preferences.json
-    test_fixture("lengths_with_preferences");
+    test_fixture(
+        "lengths_with_preferences",
+        include_str!("fixtures/tests/lengths_with_preferences.json"),
+    );
 }
 
 /// Tests simple component::Bag.
 #[test]
 fn test_components() {
-    // components/datetime/tests/fixtures/tests/components.json
-    test_fixture("components");
+    test_fixture("components", include_str!("fixtures/tests/components.json"));
 }
 
 /// Tests component::Bag configurations that have exact matches to CLDR skeletons.
 #[test]
 fn test_components_exact_matches() {
-    // components/datetime/tests/fixtures/tests/components-exact-matches.json
-    test_fixture("components-exact-matches");
+    test_fixture(
+        "components-exact-matches",
+        include_str!("fixtures/tests/components-exact-matches.json"),
+    );
 }
 
 #[test]
 fn test_components_hour_cycle() {
-    // components/datetime/tests/fixtures/tests/components_hour_cycle.json
-    test_fixture("components_hour_cycle");
+    test_fixture(
+        "components_hour_cycle",
+        include_str!("fixtures/tests/components_hour_cycle.json"),
+    );
 }
 
 /// Tests that time zones are included, which rely on the append items mechanism.
 #[test]
 fn test_components_with_zones() {
-    // components/datetime/tests/fixtures/tests/components_with_zones.json
-    test_fixture_with_time_zones("components_with_zones", TimeZoneConfig::default());
+    test_fixture_with_time_zones(
+        "components_with_zones",
+        include_str!("fixtures/tests/components_with_zones.json"),
+        TimeZoneConfig::default(),
+    );
 }
 
 /// Tests that component::Bags can adjust for width differences in the final pattern.
 #[test]
 fn test_components_width_differences() {
-    // components/datetime/tests/fixtures/tests/components-exact-matches.json
-    test_fixture("components-width-differences");
+    test_fixture(
+        "components-width-differences",
+        include_str!("fixtures/tests/components-width-differences.json"),
+    );
 }
 
 /// Tests that combine component::Bags options that don't exactly match a pattern.
 #[test]
 fn test_components_partial_matches() {
-    // components/datetime/tests/fixtures/tests/components-partial-matches.json
-    test_fixture("components-partial-matches");
+    test_fixture(
+        "components-partial-matches",
+        include_str!("fixtures/tests/components-partial-matches.json"),
+    );
 }
 
 /// Tests that component::Bags can combine a date skeleton, and a time skeleton.
 #[test]
 fn test_components_combine_datetime() {
-    // components/datetime/tests/fixtures/tests/components-combine-datetime.json
-    test_fixture("components-combine-datetime");
+    test_fixture(
+        "components-combine-datetime",
+        include_str!("fixtures/tests/components-combine-datetime.json"),
+    );
 }
 
 #[test]

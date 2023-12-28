@@ -9,7 +9,11 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use icu_datetime::pattern::reference::Pattern;
 
 fn pattern_benches(c: &mut Criterion) {
-    let patterns: Vec<String> = fixtures::get_patterns_fixture().unwrap().0;
+    let patterns = serde_json::from_str::<fixtures::PatternsFixture>(include_str!(
+        "fixtures/tests/patterns.json"
+    ))
+    .unwrap()
+    .0;
 
     {
         let mut group = c.benchmark_group("pattern");

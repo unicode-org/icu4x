@@ -8,10 +8,12 @@ use std::collections::HashMap;
 use num::BigRational;
 
 use crate::{
-    measureunit::MeasureUnitParser,
+    measureunit::{MeasureUnit, MeasureUnitParser},
     provider::{MeasureUnitItem, UnitsInfoV1},
     ConversionError,
 };
+use litemap::LiteMap;
+use zerovec::ZeroSlice;
 
 /// Represents the possible cases for the convertibility between two units.
 pub enum Convertibility {
@@ -28,12 +30,6 @@ pub enum Convertibility {
     NotConvertible,
 }
 
-/// A factory for creating a converter.
-/// Also, it can check the convertibility between two units.
-pub struct ConverterFactory<'data> {
-    /// Contains the necessary data for the conversion factory.
-    payload: UnitsInfoV1<'data>,
-}
 
 /// A converter for converting between two units.
 /// For example, converting between `meter` and `foot`.
@@ -43,6 +39,22 @@ pub struct Converter {
     convertibility: Convertibility,
 }
 
+
+/// A factory for creating a converter.
+/// Also, it can check the convertibility between two units.
+pub struct ConverterFactory<'data> {
+    /// Contains the necessary data for the conversion factory.
+    payload: &'data UnitsInfoV1<'data>,
+}
+
+
+
+impl<'data> ConverterFactory<'data> {
+
+    pub fn parser(&self) -> MeasureUnitParser<'_> {
+        MeasureUnitParser::from_payload(&self.payload.units_conversion_trie)
+    }
+
 impl ConverterFactory<'_> {
     fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::new(&self.payload.units_conversion_trie)
@@ -51,44 +63,74 @@ impl ConverterFactory<'_> {
     /// Extract the convertibility from the given units in the form of CLDR identifiers.
     pub fn extract_convertibility(
         &self,
-        unit1: &str,
-        unit2: &str,
+        unit1: &MeasureUnit,
+        unit2: &MeasureUnit,
     ) -> Result<Convertibility, ConversionError> {
-        let parser = self.parser();
-        let unit1 = parser.try_from_identifier(unit1)?;
-        let unit2 = parser.try_from_identifier(unit2)?;
+        let unit1 = &unit1.contained_units;
+        let unit2 = &unit2.contained_units;
 
         struct DetermineConvertibility {
             convertible: i16,
             reciprocal: i16,
         }
 
-        fn insert_units_powers(
-            unit_items: &Vec<MeasureUnitItem>,
+        /// Inserting the non basic units into the map.
+        /// Thus means that from the given unis
+        fn insert_non_basic_units(
+            factory: &ConverterFactory,
+            units: &[MeasureUnitItem],
             sign: i8,
-            map: &mut HashMap<u16, DetermineConvertibility>,
-        ) {
-            for item in unit_items {
+            map: &mut LiteMap<u16, DetermineConvertibility>,
+        ) -> Result<(), ConversionError> {
+            for item in units {
+                let items_from_item = factory
+                    .payload
+                    .convert_infos
+                    .get(item.unit_id as usize)
+                    .ok_or(ConversionError::InternalError)?;
+
+                insert_units_powers(items_from_item.basic_units(), item.power, sign, map)?;
+            }
+
+            Ok(())
+        }
+
+        fn insert_units_powers(
+            basic_units: &ZeroSlice<MeasureUnitItem>,
+            original_power: i8,
+            sign: i8,
+            map: &mut LiteMap<u16, DetermineConvertibility>,
+        ) -> Result<(), ConversionError> {
+            for item in basic_units.iter() {
+                let item_power = item
+                    .power
+                    .checked_mul(original_power)
+                    .ok_or(ConversionError::InternalError)?;
+                let item_power_signed = item_power
+                    .checked_mul(sign)
+                    .ok_or(ConversionError::InternalError)?;
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.convertible += (item.power * sign) as i16;
-                    determine_convertibility.reciprocal += (item.power * sign) as i16;
+                    determine_convertibility.convertible += (item_power_signed) as i16;
+                    determine_convertibility.reciprocal += (item_power) as i16;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
-                            convertible: (item.power * sign) as i16,
-                            reciprocal: (item.power * sign) as i16,
+                            convertible: (item_power_signed) as i16,
+                            reciprocal: (item_power) as i16,
                         },
                     );
                 }
             }
+
+            Ok(())
         }
 
-        let mut map = HashMap::<u16, DetermineConvertibility>::new();
-        insert_units_powers(&unit1, 1, &mut map);
-        insert_units_powers(&unit2, -1, &mut map);
+        let mut map = LiteMap::<u16, DetermineConvertibility>::new();
+        insert_non_basic_units(self, unit1, 1, &mut map)?;
+        insert_non_basic_units(self, unit2, -1, &mut map)?;
 
-        let (convertible_sum, reciprocal_sum) = map.values().fold(
+        let (convertible_sum, reciprocal_sum) = map.iter_values().fold(
             (0, 0),
             |(convertible_sum, reciprocal_sum), determine_convertibility| {
                 (
