@@ -53,6 +53,7 @@ icu_transliterate = { workspace = true, features = ["datagen"], optional = true 
 icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true }
 
 # ICU infrastructure
+calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
@@ -72,7 +73,7 @@ proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = "1.9"
+elsa = "1.10"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"

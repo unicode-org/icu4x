@@ -1,18 +1,18 @@
 // @generated
-/// Implement `DataProvider<AliasesV1Marker>` on the given struct using the data
+/// Implement `DataProvider<AliasesV2Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_locid_transform_aliases_v1 {
+macro_rules! __impl_locid_transform_aliases_v2 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.67"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.67"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LOCID_TRANSFORM_ALIASES_V1: &'static <icu::locid_transform::provider::AliasesV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::AliasesV1 {
-                language_variants: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x13\0\0\0\0\0\x17\x000\0J\0c\0z\0\x92\0\xBB\0\xD1\0\xE8\0\xFF\0\x1B\x015\x01O\x01h\x01\x80\x01\x99\x01\xB3\x01\xCB\x01\x02\0\0\0\0\0\0\0\x08\0\0\0aa-saahossy\x02\0\0\0\0\0\0\0\n\0\0\0art-lojbanjbo\x02\0\0\0\0\0\0\0\x0B\0\0\0cel-gaulishxtg\x02\0\0\0\0\0\0\0\n\0\0\0hy-arevmdahyw\x02\0\0\0\0\0\0\0\t\0\0\0no-bokmalnb\x02\0\0\0\0\0\0\0\n\0\0\0no-nynorsknn\x02\0\0\0\0\0\0\0\x12\0\0\0und-hepburn-heplocund-alalc97\x02\0\0\0\0\0\0\0\x08\0\0\0zh-guoyuzh\x02\0\0\0\0\0\0\0\x08\0\0\0zh-hakkahak\x02\0\0\0\0\0\0\0\x08\0\0\0zh-xianghsn\x02\0\0\0\0\0\0\0\n\0\0\0und-aalandund-AX\x02\0\0\0\0\0\0\0\x0B\0\0\0und-arevelaund\x02\0\0\0\0\0\0\0\x0B\0\0\0und-arevmdaund\x02\0\0\0\0\0\0\0\n\0\0\0und-bokmalund\x02\0\0\0\0\0\0\0\t\0\0\0und-hakkaund\x02\0\0\0\0\0\0\0\n\0\0\0und-lojbanund\x02\0\0\0\0\0\0\0\x0B\0\0\0und-nynorskund\x02\0\0\0\0\0\0\0\t\0\0\0und-saahound\x02\0\0\0\0\0\0\0\t\0\0\0und-xiangund") },
+            pub const SINGLETON_LOCID_TRANSFORM_ALIASES_V2: &'static <icu::locid_transform::provider::AliasesV2Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::AliasesV2 {
+                language_variants: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x13\0\0\0\0\0\x17\0/\0H\0a\0x\0\x90\0\xB8\0\xCE\0\xE5\0\xFC\0\x17\x010\x01I\x01a\x01x\x01\x90\x01\xA9\x01\xC0\x01aa\0\x02\0\0\0\0\0\0\0\x05\0\0\0saahossyart\x02\0\0\0\0\0\0\0\x06\0\0\0lojbanjbocel\x02\0\0\0\0\0\0\0\x07\0\0\0gaulishxtghy\0\x02\0\0\0\0\0\0\0\x07\0\0\0arevmdahywno\0\x02\0\0\0\0\0\0\0\x06\0\0\0bokmalnbno\0\x02\0\0\0\0\0\0\0\x07\0\0\0nynorsknnund\x02\0\0\0\0\0\0\0\x0E\0\0\0hepburn-heplocund-alalc97zh\0\x02\0\0\0\0\0\0\0\x05\0\0\0guoyuzhzh\0\x02\0\0\0\0\0\0\0\x05\0\0\0hakkahakzh\0\x02\0\0\0\0\0\0\0\x05\0\0\0xianghsnund\x02\0\0\0\0\0\0\0\x06\0\0\0aalandund-AXund\x02\0\0\0\0\0\0\0\x07\0\0\0arevelaundund\x02\0\0\0\0\0\0\0\x07\0\0\0arevmdaundund\x02\0\0\0\0\0\0\0\x06\0\0\0bokmalundund\x02\0\0\0\0\0\0\0\x05\0\0\0hakkaundund\x02\0\0\0\0\0\0\0\x06\0\0\0lojbanundund\x02\0\0\0\0\0\0\0\x07\0\0\0nynorskundund\x02\0\0\0\0\0\0\0\x05\0\0\0saahoundund\x02\0\0\0\0\0\0\0\x05\0\0\0xiangund") },
                 sgn_region: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BR\0CO\0DE\0DK\0ES\0FR\0GB\0GR\0IE\0IT\0JP\0MX\0NI\0NL\0NO\0PT\0SE\0US\0ZA\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"bzscsngsgdslsspfslbfigssisgisejslmfsncsdsensipsrswlasesfs") })
@@ -53,12 +53,12 @@ macro_rules! __impl_locid_transform_aliases_v1 {
             };
         }
         #[clippy::msrv = "1.67"]
-        impl icu_provider::DataProvider<icu::locid_transform::provider::AliasesV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locid_transform::provider::AliasesV1Marker>, icu_provider::DataError> {
+        impl icu_provider::DataProvider<icu::locid_transform::provider::AliasesV2Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locid_transform::provider::AliasesV2Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {
-                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V1)), metadata: Default::default() })
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V2)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locid_transform::provider::AliasesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locid_transform::provider::AliasesV2Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

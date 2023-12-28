@@ -3192,6 +3192,9 @@ macro_rules! __impl_datetime_persian_datesymbols_v1 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::PersianDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
+                        }
                         fallback_iterator.step();
                     }
                 };

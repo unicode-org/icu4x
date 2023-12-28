@@ -25,7 +25,8 @@ use zerovec::ule::{AsULE, ZeroVecError, ULE};
 ///
 /// If the discriminant is not set, the bottom three bits of the first byte,
 /// together with the next two bytes, contain all 21 bits required to encode
-/// any [`Unicode Code Point`].
+/// any [`Unicode Code Point`]. By design, the representation of a code point
+/// is the same between [`PatternItemULE`] and [`GenericPatternItemULE`].
 ///
 /// # Diagram
 ///
@@ -160,7 +161,8 @@ impl AsULE for PatternItem {
 ///
 /// If the discriminant is not set, the bottom three bits of the first byte,
 /// together with the next two bytes, contain all 21 bits required to encode
-/// any [`Unicode Code Point`].
+/// any [`Unicode Code Point`]. By design, the representation of a code point
+/// is the same between [`PatternItemULE`] and [`GenericPatternItemULE`].
 ///
 /// # Diagram
 ///
@@ -213,6 +215,28 @@ impl GenericPatternItemULE {
         } else {
             let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
             char::try_from(u).is_ok()
+        }
+    }
+
+    /// Converts this [`GenericPatternItemULE`] to a [`PatternItemULE`]
+    /// (if a Literal) or returns the placeholder value.
+    #[allow(dead_code)] // #4415
+    #[inline]
+    pub(crate) fn as_pattern_item_ule(&self) -> Result<&PatternItemULE, u8> {
+        if Self::determine_field_from_u8(self.0[0]) {
+            Err(self.0[2])
+        } else {
+            if cfg!(debug_assertions) {
+                let GenericPatternItem::Literal(c) = GenericPatternItem::from_unaligned(*self)
+                else {
+                    unreachable!("expected a literal!")
+                };
+                let pattern_item_ule = PatternItem::Literal(c).to_unaligned();
+                debug_assert_eq!(self.0, pattern_item_ule.0);
+            }
+            // Safety: when a Literal, the two ULEs have the same repr,
+            // as shown in the above assertion (and the class docs).
+            Ok(unsafe { core::mem::transmute(self) })
         }
     }
 }

@@ -62,7 +62,7 @@ class ICU4XWeekCalculator {
   uint8_t min_week_days() const;
   inline const capi::ICU4XWeekCalculator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XWeekCalculator* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XWeekCalculator(capi::ICU4XWeekCalculator* i) : inner(i) {}
+  inline explicit ICU4XWeekCalculator(capi::ICU4XWeekCalculator* i) : inner(i) {}
   ICU4XWeekCalculator() = default;
   ICU4XWeekCalculator(ICU4XWeekCalculator&&) noexcept = default;
   ICU4XWeekCalculator& operator=(ICU4XWeekCalculator&& other) noexcept = default;

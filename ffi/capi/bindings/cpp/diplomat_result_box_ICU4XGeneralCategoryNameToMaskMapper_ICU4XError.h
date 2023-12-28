@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XGeneralCategoryNameToMaskMapper ICU4XGeneralCategoryNameToMaskMapper;
+#include "ICU4XGeneralCategoryNameToMaskMapper.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

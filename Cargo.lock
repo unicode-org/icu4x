@@ -797,7 +797,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -815,7 +815,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "log",
 ]
@@ -823,7 +823,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -843,7 +843,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "displaydoc",
  "lazy_static",
@@ -921,9 +921,9 @@ checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
 name = "elsa"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "714f766f3556b44e7e4776ad133fcc3445a489517c25c704ace411bb14790194"
+checksum = "d98e71ae4df57d214182a2e5cb90230c0192c6ddfcaa05c36453d46a54713e10"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -1521,6 +1521,7 @@ version = "1.4.0"
 name = "icu_datagen"
 version = "1.4.0"
 dependencies = [
+ "calendrical_calculations",
  "clap 4.2.1",
  "crlify",
  "databake",

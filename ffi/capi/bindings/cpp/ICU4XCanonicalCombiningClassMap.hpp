@@ -54,7 +54,7 @@ class ICU4XCanonicalCombiningClassMap {
   uint8_t get32(uint32_t ch) const;
   inline const capi::ICU4XCanonicalCombiningClassMap* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCanonicalCombiningClassMap* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCanonicalCombiningClassMap(capi::ICU4XCanonicalCombiningClassMap* i) : inner(i) {}
+  inline explicit ICU4XCanonicalCombiningClassMap(capi::ICU4XCanonicalCombiningClassMap* i) : inner(i) {}
   ICU4XCanonicalCombiningClassMap() = default;
   ICU4XCanonicalCombiningClassMap(ICU4XCanonicalCombiningClassMap&&) noexcept = default;
   ICU4XCanonicalCombiningClassMap& operator=(ICU4XCanonicalCombiningClassMap&& other) noexcept = default;

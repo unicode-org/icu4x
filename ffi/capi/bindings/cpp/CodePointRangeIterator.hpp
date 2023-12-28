@@ -37,7 +37,7 @@ class CodePointRangeIterator {
   CodePointRangeIteratorResult next();
   inline const capi::CodePointRangeIterator* AsFFI() const { return this->inner.get(); }
   inline capi::CodePointRangeIterator* AsFFIMut() { return this->inner.get(); }
-  inline CodePointRangeIterator(capi::CodePointRangeIterator* i) : inner(i) {}
+  inline explicit CodePointRangeIterator(capi::CodePointRangeIterator* i) : inner(i) {}
   CodePointRangeIterator() = default;
   CodePointRangeIterator(CodePointRangeIterator&&) noexcept = default;
   CodePointRangeIterator& operator=(CodePointRangeIterator&& other) noexcept = default;
