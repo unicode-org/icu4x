@@ -158,4 +158,6 @@ fn tes_cldr_unit_tests() {
             _ => panic!("Units are not convertible or reciprocal"),
         }
     }
+
+    // TODO: add more test cases for the NonConvertible units.
 }
