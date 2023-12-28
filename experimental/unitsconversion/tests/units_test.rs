@@ -7,6 +7,7 @@ use icu_unitsconversion::converter::{ConverterFactory, Convertibility};
 use num::BigRational;
 use std::collections::HashSet;
 
+// TODO: use Ration<BigInt> instead of BigRational as in the DataGen.
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
     let mut components = decimal.split('.');
@@ -27,6 +28,7 @@ fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
     Some(integer_component)
 }
 
+// TODO: use Ration<BigInt> instead of BigRational as in the DataGen.
 /// Convert a scientific notation string to a BigRational.
 pub fn get_rational(rational: &str) -> Option<BigRational> {
     // remove all the commas
@@ -49,9 +51,7 @@ pub fn get_rational(rational: &str) -> Option<BigRational> {
 }
 
 #[test]
-fn test_conversion() {
-    // let provider = icu_unitsconversion::provider::UnitsInfoV1;
-
+fn tes_cldr_unit_tests() {
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
