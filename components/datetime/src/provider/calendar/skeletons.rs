@@ -10,6 +10,8 @@ use core::convert::TryFrom;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
+check_size!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
+
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
 // #[icu_provider::data_struct(marker(
 //     DateSkeletonPatternsV1Marker,
@@ -19,6 +21,8 @@ use litemap::LiteMap;
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
+///
+#[doc = date_skeleton_patterns_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
