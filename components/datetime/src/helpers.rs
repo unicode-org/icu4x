@@ -12,6 +12,7 @@ macro_rules! check_size {
             };
         }
         #[test]
+        #[cfg_attr(not(icu4x_check_sizes = "true"), ignore)]
         fn $id() {
             let size = core::mem::size_of::<$ty>();
             assert!(
