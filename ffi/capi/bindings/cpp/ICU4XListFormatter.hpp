@@ -65,7 +65,7 @@ class ICU4XListFormatter {
   diplomat::result<std::string, ICU4XError> format(const ICU4XList& list) const;
   inline const capi::ICU4XListFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XListFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XListFormatter(capi::ICU4XListFormatter* i) : inner(i) {}
+  inline explicit ICU4XListFormatter(capi::ICU4XListFormatter* i) : inner(i) {}
   ICU4XListFormatter() = default;
   ICU4XListFormatter(ICU4XListFormatter&&) noexcept = default;
   ICU4XListFormatter& operator=(ICU4XListFormatter&& other) noexcept = default;

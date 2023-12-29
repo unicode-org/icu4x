@@ -553,8 +553,8 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// // The data struct is 6 words:
     /// # #[derive(yoke::Yokeable)]
     /// # struct MyDataStruct<'a> {
-    /// #     s1: Cow<'a, str>,
-    /// #     s2: Cow<'a, str>,
+    /// #     _s: (usize, usize, usize, usize),
+    /// #     _p: &'a str,
     /// # }
     /// const W: usize = core::mem::size_of::<usize>();
     /// assert_eq!(W * 6, size_of::<MyDataStruct>());

@@ -65,7 +65,7 @@ class ICU4XPluralRules {
   ICU4XPluralCategories categories() const;
   inline const capi::ICU4XPluralRules* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPluralRules* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XPluralRules(capi::ICU4XPluralRules* i) : inner(i) {}
+  inline explicit ICU4XPluralRules(capi::ICU4XPluralRules* i) : inner(i) {}
   ICU4XPluralRules() = default;
   ICU4XPluralRules(ICU4XPluralRules&&) noexcept = default;
   ICU4XPluralRules& operator=(ICU4XPluralRules&& other) noexcept = default;

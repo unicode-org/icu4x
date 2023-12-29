@@ -191,7 +191,7 @@ class ICU4XCaseMapper {
   char32_t simple_fold_turkic(char32_t ch) const;
   inline const capi::ICU4XCaseMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCaseMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCaseMapper(capi::ICU4XCaseMapper* i) : inner(i) {}
+  inline explicit ICU4XCaseMapper(capi::ICU4XCaseMapper* i) : inner(i) {}
   ICU4XCaseMapper() = default;
   ICU4XCaseMapper(ICU4XCaseMapper&&) noexcept = default;
   ICU4XCaseMapper& operator=(ICU4XCaseMapper&& other) noexcept = default;

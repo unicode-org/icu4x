@@ -36,7 +36,7 @@ class ICU4XSentenceBreakIteratorUtf16 {
   int32_t next();
   inline const capi::ICU4XSentenceBreakIteratorUtf16* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XSentenceBreakIteratorUtf16* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XSentenceBreakIteratorUtf16(capi::ICU4XSentenceBreakIteratorUtf16* i) : inner(i) {}
+  inline explicit ICU4XSentenceBreakIteratorUtf16(capi::ICU4XSentenceBreakIteratorUtf16* i) : inner(i) {}
   ICU4XSentenceBreakIteratorUtf16() = default;
   ICU4XSentenceBreakIteratorUtf16(ICU4XSentenceBreakIteratorUtf16&&) noexcept = default;
   ICU4XSentenceBreakIteratorUtf16& operator=(ICU4XSentenceBreakIteratorUtf16&& other) noexcept = default;

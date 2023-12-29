@@ -177,7 +177,7 @@ class ICU4XDate {
   ICU4XCalendar calendar() const;
   inline const capi::ICU4XDate* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDate* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDate(capi::ICU4XDate* i) : inner(i) {}
+  inline explicit ICU4XDate(capi::ICU4XDate* i) : inner(i) {}
   ICU4XDate() = default;
   ICU4XDate(ICU4XDate&&) noexcept = default;
   ICU4XDate& operator=(ICU4XDate&& other) noexcept = default;

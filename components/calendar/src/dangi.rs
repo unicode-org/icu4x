@@ -8,7 +8,7 @@
 //! use icu::calendar::dangi::Dangi;
 //! use icu::calendar::{Date, DateTime, Ref};
 //!
-//! let dangi = Dangi::new_always_calculating();
+//! let dangi = Dangi::new();
 //! let dangi = Ref(&dangi); // to avoid cloning
 //!
 //! // `Date` type
@@ -45,13 +45,16 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
+use crate::provider::chinese_based::DangiCacheV1Marker;
 use crate::AsCalendar;
 use crate::{
     chinese_based::ChineseBasedDateInner,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
+use core::cmp::Ordering;
 use core::num::NonZeroU8;
+use icu_provider::prelude::*;
 use tinystr::tinystr;
 
 /// The Dangi Calendar
@@ -71,15 +74,15 @@ use tinystr::tinystr;
 /// use tinystr::tinystr;
 ///
 /// let iso_a = Date::try_new_iso_date(2012, 4, 23).unwrap();
-/// let dangi_a = iso_a.to_calendar(Dangi::new_always_calculating());
-/// let chinese_a = iso_a.to_calendar(Chinese::new_always_calculating());
+/// let dangi_a = iso_a.to_calendar(Dangi::new());
+/// let chinese_a = iso_a.to_calendar(Chinese::new());
 ///
 /// assert_eq!(dangi_a.month().code.0, tinystr!(4, "M03L"));
 /// assert_eq!(chinese_a.month().code.0, tinystr!(4, "M04"));
 ///
 /// let iso_b = Date::try_new_iso_date(2012, 5, 23).unwrap();
-/// let dangi_b = iso_b.to_calendar(Dangi::new_always_calculating());
-/// let chinese_b = iso_b.to_calendar(Chinese::new_always_calculating());
+/// let dangi_b = iso_b.to_calendar(Dangi::new());
+/// let chinese_b = iso_b.to_calendar(Chinese::new());
 ///
 /// assert_eq!(dangi_b.month().code.0, tinystr!(4, "M04"));
 /// assert_eq!(chinese_b.month().code.0, tinystr!(4, "M04L"));
@@ -93,9 +96,10 @@ use tinystr::tinystr;
 ///
 /// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
 /// as leap month codes `"M01L" - "M12L"`.
-#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[non_exhaustive] // we'll be adding precompiled data to this
-pub struct Dangi;
+#[derive(Clone, Debug, Default)]
+pub struct Dangi {
+    data: Option<DataPayload<DangiCacheV1Marker>>,
+}
 
 /// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -111,14 +115,67 @@ impl Clone for DangiDateInner {
     }
 }
 
-impl Dangi {
-    /// Construct a new [`Dangi`] without any precomputed calendrical calculations.
-    ///
-    /// This is the only mode currently possible, but once precomputing is available (#3933)
-    /// there will be additional constructors that load from data providers.
-    pub fn new_always_calculating() -> Self {
-        Dangi
+// These impls just make custom derives on types containing C
+// work. They're basically no-ops
+impl PartialEq for Dangi {
+    fn eq(&self, _: &Self) -> bool {
+        true
     }
+}
+impl Eq for Dangi {}
+#[allow(clippy::non_canonical_partial_ord_impl)] // this is intentional
+impl PartialOrd for Dangi {
+    fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
+        Some(Ordering::Equal)
+    }
+}
+
+impl Ord for Dangi {
+    fn cmp(&self, _: &Self) -> Ordering {
+        Ordering::Equal
+    }
+}
+
+impl Dangi {
+    /// Creates a new [`Dangi`] with some precomputed calendrical calculations.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            data: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_CALENDAR_DANGICACHE_V1,
+            )),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<D: DataProvider<DangiCacheV1Marker> + ?Sized>(
+        provider: &D,
+    ) -> Result<Self, CalendarError> {
+        Ok(Self {
+            data: Some(provider.load(Default::default())?.take_payload()?),
+        })
+    }
+
+    /// Construct a new [`Dangi`] without any precomputed calendrical calculations.
+    pub fn new_always_calculating() -> Self {
+        Dangi { data: None }
+    }
+
+    pub(crate) const DEBUG_NAME: &'static str = "Dangi";
 }
 
 impl Calendar for Dangi {
@@ -157,7 +214,7 @@ impl Calendar for Dangi {
         DangiDateInner(Inner::chinese_based_date_from_fixed(
             self,
             fixed,
-            iso.year().number,
+            iso.inner.0,
         ))
     }
 
@@ -194,7 +251,7 @@ impl Calendar for Dangi {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Dangi"
+        Self::DEBUG_NAME
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
@@ -247,7 +304,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// use icu::calendar::dangi::Dangi;
     /// use icu::calendar::Date;
     ///
-    /// let dangi = Dangi::new_always_calculating();
+    /// let dangi = Dangi::new();
     ///
     /// let date_dangi = Date::try_new_dangi_date_with_calendar(4356, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
@@ -286,7 +343,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// use icu::calendar::dangi::Dangi;
     /// use icu::calendar::DateTime;
     ///
-    /// let dangi = Dangi::new_always_calculating();
+    /// let dangi = Dangi::new();
     ///
     /// let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(
     ///     4356, 6, 6, 13, 1, 0, dangi,
@@ -322,7 +379,7 @@ type DangiCB = calendrical_calculations::chinese_based::Dangi;
 impl ChineseBasedWithDataLoading for Dangi {
     type CB = DangiCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
-        Default::default()
+        ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
     }
 }
 
@@ -361,10 +418,20 @@ mod test {
     use crate::chinese::Chinese;
     use calendrical_calculations::rata_die::RataDie;
 
+    /// Run a test twice, with two calendars
+    fn do_twice(
+        dangi_calculating: &Dangi,
+        dangi_cached: &Dangi,
+        test: impl Fn(crate::Ref<Dangi>, &'static str),
+    ) {
+        test(crate::Ref(dangi_calculating), "calculating");
+        test(crate::Ref(dangi_cached), "cached");
+    }
+
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
-        let chinese = iso.to_calendar(Chinese);
-        let dangi = iso.to_calendar(Dangi);
+        let chinese = iso.to_calendar(Chinese::new_always_calculating());
+        let dangi = iso.to_calendar(Dangi::new_always_calculating());
         let chinese_year = chinese.year().cyclic;
         let korean_year = dangi.year().cyclic;
         assert_eq!(
@@ -400,15 +467,20 @@ mod test {
         let max_fixed = 1963020;
         let mut iters = 0;
         let max_iters = 560;
+        let dangi_calculating = Dangi::new_always_calculating();
+        let dangi_cached = Dangi::new();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let korean = iso.to_calendar(Dangi);
-            let result = korean.to_calendar(Iso);
-            assert_eq!(
-                iso, result,
-                "Failed roundtrip ISO -> Dangi -> ISO for fixed: {fixed}"
-            );
+            do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
+                let korean = iso.to_calendar(dangi);
+                let result = korean.to_calendar(Iso);
+                assert_eq!(
+                    iso, result,
+                    "[{calendar_type}] Failed roundtrip ISO -> Dangi -> ISO for fixed: {fixed}"
+                );
+            });
+
             fixed += 7043;
             iters += 1;
         }
@@ -921,32 +993,37 @@ mod test {
             },
         ];
 
+        let dangi_calculating = Dangi::new_always_calculating();
+        let dangi_cached = Dangi::new();
+
         for case in cases {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let dangi = iso.to_calendar(Dangi);
-            let dangi_rel_iso = dangi.year().related_iso;
-            let dangi_cyclic = dangi.year().cyclic;
-            let dangi_month = dangi.month().ordinal;
-            let dangi_day = dangi.day_of_month().0;
+            do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
+                let dangi = iso.to_calendar(dangi);
+                let dangi_rel_iso = dangi.year().related_iso;
+                let dangi_cyclic = dangi.year().cyclic;
+                let dangi_month = dangi.month().ordinal;
+                let dangi_day = dangi.day_of_month().0;
 
-            assert_eq!(
-                dangi_rel_iso,
-                Some(case.expected_rel_iso),
-                "Related ISO failed for test case: {case:?}"
-            );
-            assert_eq!(
-                dangi_cyclic.unwrap().get(),
-                case.expected_cyclic,
-                "Cyclic year failed for test case: {case:?}"
-            );
-            assert_eq!(
-                dangi_month, case.expected_month,
-                "Month failed for test case: {case:?}"
-            );
-            assert_eq!(
-                dangi_day, case.expected_day,
-                "Day failed for test case: {case:?}"
-            );
+                assert_eq!(
+                    dangi_rel_iso,
+                    Some(case.expected_rel_iso),
+                    "[{calendar_type}] Related ISO failed for test case: {case:?}"
+                );
+                assert_eq!(
+                    dangi_cyclic.unwrap().get(),
+                    case.expected_cyclic,
+                    "[{calendar_type}] Cyclic year failed for test case: {case:?}"
+                );
+                assert_eq!(
+                    dangi_month, case.expected_month,
+                    "[{calendar_type}] Month failed for test case: {case:?}"
+                );
+                assert_eq!(
+                    dangi_day, case.expected_day,
+                    "[{calendar_type}] Day failed for test case: {case:?}"
+                );
+            });
         }
     }
 }

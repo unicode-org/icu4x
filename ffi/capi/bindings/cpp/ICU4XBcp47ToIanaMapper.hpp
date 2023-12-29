@@ -52,7 +52,7 @@ class ICU4XBcp47ToIanaMapper {
   diplomat::result<std::string, ICU4XError> get(const std::string_view value) const;
   inline const capi::ICU4XBcp47ToIanaMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBcp47ToIanaMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XBcp47ToIanaMapper(capi::ICU4XBcp47ToIanaMapper* i) : inner(i) {}
+  inline explicit ICU4XBcp47ToIanaMapper(capi::ICU4XBcp47ToIanaMapper* i) : inner(i) {}
   ICU4XBcp47ToIanaMapper() = default;
   ICU4XBcp47ToIanaMapper(ICU4XBcp47ToIanaMapper&&) noexcept = default;
   ICU4XBcp47ToIanaMapper& operator=(ICU4XBcp47ToIanaMapper&& other) noexcept = default;

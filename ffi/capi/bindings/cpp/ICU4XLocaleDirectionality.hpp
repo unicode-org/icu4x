@@ -63,7 +63,7 @@ class ICU4XLocaleDirectionality {
   bool is_right_to_left(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleDirectionality* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleDirectionality* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLocaleDirectionality(capi::ICU4XLocaleDirectionality* i) : inner(i) {}
+  inline explicit ICU4XLocaleDirectionality(capi::ICU4XLocaleDirectionality* i) : inner(i) {}
   ICU4XLocaleDirectionality() = default;
   ICU4XLocaleDirectionality(ICU4XLocaleDirectionality&&) noexcept = default;
   ICU4XLocaleDirectionality& operator=(ICU4XLocaleDirectionality&& other) noexcept = default;

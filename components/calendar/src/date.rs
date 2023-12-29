@@ -258,6 +258,7 @@ impl<A: AsCalendar> Date<A> {
         let config = WeekCalculator {
             first_weekday,
             min_week_days: 0, // ignored
+            weekend: None,
         };
         config.week_of_month(self.day_of_month(), self.day_of_week())
     }

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
+#include "ICU4XCustomTimeZone.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

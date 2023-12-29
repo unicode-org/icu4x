@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XSentenceSegmenter ICU4XSentenceSegmenter;
+#include "ICU4XSentenceSegmenter.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

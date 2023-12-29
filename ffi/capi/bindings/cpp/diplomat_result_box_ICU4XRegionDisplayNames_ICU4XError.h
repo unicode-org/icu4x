@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XRegionDisplayNames ICU4XRegionDisplayNames;
+#include "ICU4XRegionDisplayNames.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

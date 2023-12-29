@@ -306,7 +306,7 @@ class ICU4XCustomTimeZone {
   void maybe_calculate_metazone(const ICU4XMetazoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime);
   inline const capi::ICU4XCustomTimeZone* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCustomTimeZone* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone* i) : inner(i) {}
+  inline explicit ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone* i) : inner(i) {}
   ICU4XCustomTimeZone() = default;
   ICU4XCustomTimeZone(ICU4XCustomTimeZone&&) noexcept = default;
   ICU4XCustomTimeZone& operator=(ICU4XCustomTimeZone&& other) noexcept = default;

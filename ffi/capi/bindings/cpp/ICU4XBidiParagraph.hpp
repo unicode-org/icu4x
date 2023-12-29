@@ -90,7 +90,7 @@ class ICU4XBidiParagraph {
   uint8_t level_at(size_t pos) const;
   inline const capi::ICU4XBidiParagraph* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBidiParagraph* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XBidiParagraph(capi::ICU4XBidiParagraph* i) : inner(i) {}
+  inline explicit ICU4XBidiParagraph(capi::ICU4XBidiParagraph* i) : inner(i) {}
   ICU4XBidiParagraph() = default;
   ICU4XBidiParagraph(ICU4XBidiParagraph&&) noexcept = default;
   ICU4XBidiParagraph& operator=(ICU4XBidiParagraph&& other) noexcept = default;
