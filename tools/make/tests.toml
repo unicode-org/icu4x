@@ -11,7 +11,7 @@ install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-f
 install_crate_args = ["--version", "^1.10"]
 env = { RUSTFLAGS = "-Dwarnings" }
 command = "cargo"
-args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}", "]
+args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
 [tasks.check-all-features]
 description = "Build all permutations of all features"
