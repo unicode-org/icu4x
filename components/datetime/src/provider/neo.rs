@@ -214,7 +214,7 @@ pub mod aux {
     }
 }
 
-check_size!(YearNamesV1, year_names_v1_size, 64 | 56 | 48);
+check_size!(YearNamesV1, year_names_v1_size, 56);
 
 /// Symbols used for representing the year name
 ///
@@ -267,7 +267,7 @@ pub enum YearNamesV1<'data> {
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
-check_size!(MonthNamesV1, month_names_v1_size, 40 | 32);
+check_size!(MonthNamesV1, month_names_v1_size, 40);
 
 /// Symbols used for representing the month name
 ///
@@ -365,7 +365,7 @@ impl SimpleSubstitutionPattern<'_> {
     }
 }
 
-check_size!(LinearNamesV1, linear_names_v1_size, 32 | 24);
+check_size!(LinearNamesV1, linear_names_v1_size, 24);
 
 /// Symbols that can be stored as a simple linear array.
 ///
