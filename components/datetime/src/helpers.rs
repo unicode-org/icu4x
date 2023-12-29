@@ -14,7 +14,7 @@ macro_rules! check_size {
     ($ty:ty, $id:ident, $sizes:pat) => {
         macro_rules! $id {
             () => {
-                concat!("📏 This item has a stack size of ", stringify!($sizes), " bytes")
+                concat!("📏 This item has a stack size of <b>", stringify!($sizes), " bytes</b> in the default ICU4X Rust toolchain.")
             };
         }
         #[test]
