@@ -229,7 +229,7 @@ check_size!(YearNamesV1, year_names_v1_size, 64 | 56 | 48);
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
 ///
-#[doc = doc_size!(year_names_v1_size)]
+#[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -274,7 +274,7 @@ check_size!(MonthNamesV1, month_names_v1_size, 40 | 32);
 /// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
 /// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
 ///
-#[doc = doc_size!(month_names_v1_size)]
+#[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -376,7 +376,7 @@ check_size!(LinearNamesV1, linear_names_v1_size, 32 | 24);
 ///
 /// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
 ///
-#[doc = doc_size!(linear_names_v1_size)]
+#[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -440,7 +440,7 @@ check_size!(DatePatternV1, date_pattern_v1_size, 32);
 /// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
 /// "full", "long", "medium", or "short".
 ///
-#[doc = doc_size!(date_pattern_v1_size)]
+#[doc = date_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -488,7 +488,7 @@ check_size!(TimePatternV1, time_pattern_v1_size, 32);
 /// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
 /// (`-x-fk` for full, non-default, 23/24 hours)
 ///
-#[doc = doc_size!(time_pattern_v1_size)]
+#[doc = time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -516,7 +516,7 @@ check_size!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 ///
 /// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
 ///
-#[doc = doc_size!(date_time_pattern_v1_size)]
+#[doc = date_time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,

@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 /// Generates a test that checks the stack size of an item and a macro
-/// that should be used with [`doc_size!`] to document it.
+/// that should be used with `#[doc]` to document it.
 macro_rules! check_size {
     ($ty:ty, $id:ident, $sizes:pat) => {
         macro_rules! $id {
             () => {
-                stringify!($sizes)
+                concat!("📏 This item has a stack size of ", stringify!($sizes), " bytes")
             };
         }
         #[test]
@@ -22,12 +22,5 @@ macro_rules! check_size {
                 size
             );
         }
-    };
-}
-
-/// Documents the stack size for an item tested with [`check_size!`].
-macro_rules! doc_size {
-    ($id:ident) => {
-        concat!("📏 This item has a stack size of ", $id!(), " bytes")
     };
 }
