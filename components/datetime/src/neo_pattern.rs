@@ -56,6 +56,9 @@ pub struct DateTimePattern {
 
 impl DateTimePattern {
     /// Creates a [`DateTimePattern`] from a pattern string.
+    ///
+    /// For more details on the syntax, see UTS 35:
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns>
     pub fn try_from_pattern_str(pattern_str: &str) -> Result<Self, PatternError> {
         let pattern = runtime::Pattern::from_str(pattern_str)?;
         Ok(Self { pattern })
