@@ -31,7 +31,7 @@ impl<'data> MeasureUnitParser<'data> {
     /// Get the unit id.
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
-    ///    if the unit id is not found, the function will return None.
+    ///    if the unit id is not found, the function will return an error.
     fn get_unit_id<'a>(&'a self, part: &'a str) -> Result<(u16, &str), ConversionError> {
         let mut cursor = self.payload.cursor();
         let mut longest_match = Err(ConversionError::InvalidUnit);
