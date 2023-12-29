@@ -47,6 +47,7 @@ impl PatternMetadata {
         Self(time_granularity.ordinal())
     }
 
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
         self.0 = time_granularity.ordinal();
     }
