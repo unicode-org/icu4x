@@ -4,6 +4,12 @@
 
 /// Generates a test that checks the stack size of an item and a macro
 /// that should be used with `#[doc]` to document it.
+///
+/// The size should correspond to the Rust version in rust-toolchain.toml.
+///
+/// The test is ignored by default but runs in CI. To run the test locally,
+/// either set `RUSTFLAGS=--cfg=icu4x_check_sizes="true"` or run `cargo test`
+/// with `-- --include-ignored`.
 macro_rules! check_size {
     ($ty:ty, $id:ident, $sizes:pat) => {
         macro_rules! $id {
