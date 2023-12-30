@@ -11,7 +11,12 @@ use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::{ule::UnvalidatedStr, ZeroMap};
 
-check_size!(DateSymbolsV1, date_symbols_v1_size, pinned = 3896, nightly = 3792);
+check_size!(
+    DateSymbolsV1,
+    date_symbols_v1_size,
+    pinned = 3896,
+    nightly = 3792
+);
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
@@ -68,7 +73,12 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
-check_size!(TimeSymbolsV1, time_symbols_v1_size, pinned = 896, nightly = 768);
+check_size!(
+    TimeSymbolsV1,
+    time_symbols_v1_size,
+    pinned = 896,
+    nightly = 768
+);
 
 /// Symbol data for the day periods needed to format a time.
 ///
