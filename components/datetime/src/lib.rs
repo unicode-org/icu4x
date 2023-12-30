@@ -134,11 +134,16 @@ mod any;
 mod calendar;
 mod datetime;
 mod error;
+mod external_loaders;
 pub mod fields;
 mod format;
 #[macro_use]
 pub(crate) mod helpers;
 pub mod input;
+#[cfg(feature = "experimental")]
+pub mod neo;
+#[cfg(feature = "experimental")]
+pub mod neo_pattern;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
