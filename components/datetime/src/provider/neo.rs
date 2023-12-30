@@ -214,7 +214,7 @@ pub mod aux {
     }
 }
 
-check_size!(YearNamesV1, year_names_v1_size, 56);
+check_size!(YearNamesV1, year_names_v1_size, pinned = 56, nightly = 48);
 
 /// Symbols used for representing the year name
 ///
@@ -267,7 +267,7 @@ pub enum YearNamesV1<'data> {
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
-check_size!(MonthNamesV1, month_names_v1_size, 40);
+check_size!(MonthNamesV1, month_names_v1_size, pinned = 40, nightly = 32);
 
 /// Symbols used for representing the month name
 ///
