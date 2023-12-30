@@ -119,6 +119,10 @@ name = "resolved_components"
 required-features = ["experimental", "compiled_data"]
 
 [[test]]
+name = "simple_test"
+required-features = ["compiled_data"]
+
+[[test]]
 name = "skeleton_serialization"
 required-features = ["experimental"]
 
