@@ -10,7 +10,7 @@ use core::convert::TryFrom;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
-check_size!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
+size_test!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
 // #[icu_provider::data_struct(marker(

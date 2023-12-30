@@ -23,7 +23,7 @@
 ///
 /// The test is ignored by default but runs in CI. To run the test locally,
 /// run `cargo test -- --include-ignored`
-macro_rules! check_size {
+macro_rules! size_test {
     ($ty:ty, $id:ident, pinned = $pinned:literal, nightly = $nightly:literal) => {
         macro_rules! $id {
             () => {
@@ -37,10 +37,10 @@ macro_rules! check_size {
             };
         }
         #[test]
-        #[cfg_attr(not(icu4x_check_sizes = "true"), ignore)]
+        #[cfg_attr(not(icu4x_run_size_tests), ignore)]
         fn $id() {
             let size = core::mem::size_of::<$ty>();
-            let success = if cfg!(not(icu4x_check_sizes = "true")) {
+            let success = if cfg!(not(icu4x_run_size_tests)) {
                 // Manual invocation: match either size
                 matches!(size, $pinned | $nightly)
             } else if option_env!("ICU4X_BUILDING_WITH_FORCED_NIGHTLY").is_some() {
@@ -69,7 +69,7 @@ macro_rules! check_size {
             };
         }
         #[test]
-        #[cfg_attr(not(icu4x_check_sizes = "true"), ignore)]
+        #[cfg_attr(not(icu4x_run_size_tests), ignore)]
         fn $id() {
             let size = core::mem::size_of::<$ty>();
             let expected = $size;

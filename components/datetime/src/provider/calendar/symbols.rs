@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::{ule::UnvalidatedStr, ZeroMap};
 
-check_size!(
+size_test!(
     DateSymbolsV1,
     date_symbols_v1_size,
     pinned = 3896,
@@ -73,7 +73,7 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
-check_size!(
+size_test!(
     TimeSymbolsV1,
     time_symbols_v1_size,
     pinned = 896,

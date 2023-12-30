@@ -34,7 +34,7 @@ description = "Run all Rust tests with all features and targets"
 category = "ICU4X Development"
 # This might be required if Windows runs out of disk again
 # env = { RUSTFLAGS = "-Cdebuginfo=none -Cdebug-assertions=true", condition = { platforms = ["windows"] } }
-env = { RUSTFLAGS = "--cfg=icu4x_check_sizes=\"true\"" }
+env = { RUSTFLAGS = "--cfg=icu4x_run_size_tests=\"1\"" }
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 

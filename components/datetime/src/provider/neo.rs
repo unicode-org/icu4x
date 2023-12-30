@@ -214,7 +214,7 @@ pub mod aux {
     }
 }
 
-check_size!(YearNamesV1, year_names_v1_size, pinned = 56, nightly = 48);
+size_test!(YearNamesV1, year_names_v1_size, pinned = 56, nightly = 48);
 
 /// Symbols used for representing the year name
 ///
@@ -267,7 +267,7 @@ pub enum YearNamesV1<'data> {
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
-check_size!(MonthNamesV1, month_names_v1_size, pinned = 40, nightly = 32);
+size_test!(MonthNamesV1, month_names_v1_size, pinned = 40, nightly = 32);
 
 /// Symbols used for representing the month name
 ///
@@ -365,7 +365,7 @@ impl SimpleSubstitutionPattern<'_> {
     }
 }
 
-check_size!(LinearNamesV1, linear_names_v1_size, 24);
+size_test!(LinearNamesV1, linear_names_v1_size, 24);
 
 /// Symbols that can be stored as a simple linear array.
 ///
@@ -433,7 +433,7 @@ impl<'data> LinearNamesV1<'data> {
     }
 }
 
-check_size!(DatePatternV1, date_pattern_v1_size, 32);
+size_test!(DatePatternV1, date_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with dates
 ///
@@ -477,7 +477,7 @@ pub struct DatePatternV1<'data> {
     pub pattern: runtime::Pattern<'data>,
 }
 
-check_size!(TimePatternV1, time_pattern_v1_size, 32);
+size_test!(TimePatternV1, time_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with times
 ///
@@ -510,7 +510,7 @@ pub struct TimePatternV1<'data> {
     pub pattern: runtime::Pattern<'data>,
 }
 
-check_size!(DateTimePatternV1, date_time_pattern_v1_size, 24);
+size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates and times into datetimes
 ///

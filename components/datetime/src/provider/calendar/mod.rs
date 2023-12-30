@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 pub use skeletons::*;
 pub use symbols::*;
 
-check_size!(DateLengthsV1, date_lengths_v1_size, 224);
+size_test!(DateLengthsV1, date_lengths_v1_size, 224);
 
 /// Pattern data for dates.
 ///
@@ -63,7 +63,7 @@ impl DataMarker for ErasedDateLengthsV1Marker {
     type Yokeable = DateLengthsV1<'static>;
 }
 
-check_size!(TimeLengthsV1, time_lengths_v1_size, 264);
+size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
 
 /// Pattern data for times.
 ///
