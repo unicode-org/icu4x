@@ -4,7 +4,9 @@
 
 use core::str::FromStr;
 use icu_unitsconversion::converter::{ConverterFactory, Convertibility};
-use num::BigRational;
+use num::{BigRational, Signed};
+use num_bigint::BigInt;
+use num_rational::Ratio;
 use std::collections::HashSet;
 
 // TODO: use Ration<BigInt> instead of BigRational as in the DataGen.
@@ -55,10 +57,10 @@ fn tes_cldr_unit_tests() {
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
-        _category: String,
+        category: String,
         input_unit: String,
         output_unit: String,
-        _result: BigRational,
+        result: BigRational,
     }
 
     let data = std::fs::read_to_string("tests/data/unitsTest.txt").unwrap();
@@ -68,10 +70,10 @@ fn tes_cldr_unit_tests() {
         .map(|line| {
             let parts: Vec<&str> = line.split(';').map(|s| s.trim()).collect();
             UnitsTest {
-                _category: parts[0].to_string(),
+                category: parts[0].to_string(),
                 input_unit: parts[1].to_string(),
                 output_unit: parts[2].to_string(),
-                _result: get_rational(parts[4]).unwrap(),
+                result: get_rational(parts[4]).unwrap(),
             }
         })
         .collect();
@@ -142,6 +144,7 @@ fn tes_cldr_unit_tests() {
         {
             continue;
         }
+
         let input_unit = parser
             .try_from_identifier(test.input_unit.as_str())
             .unwrap();
@@ -157,6 +160,22 @@ fn tes_cldr_unit_tests() {
             Convertibility::Convertible | Convertibility::Reciprocal => (),
             _ => panic!("Units are not convertible or reciprocal"),
         }
+
+        let converter = converter_factory
+            .converter(&input_unit, &output_unit)
+            .unwrap();
+
+        let input = BigRational::from_str("1000").unwrap();
+        let output = converter.convert(&input);
+        let expected_output = test.result;
+        let diff = ((output.clone() - expected_output.clone()) / expected_output.clone()).abs();
+
+        // TODO: fix the offsets.
+        if test.category == "temperature" {
+            continue;
+        }
+
+        assert!(diff < Ratio::<BigInt>::from_float(0.000001).unwrap());
     }
 
     // TODO: add more test cases for the NonConvertible units.
