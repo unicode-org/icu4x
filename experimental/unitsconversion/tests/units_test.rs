@@ -170,13 +170,9 @@ fn tes_cldr_unit_tests() {
         let expected_output = test.result;
         let diff = ((output.clone() - expected_output.clone()) / expected_output.clone()).abs();
 
-        // TODO: fix the offsets.
-        if test.category == "temperature" {
-            continue;
-        }
-
         assert!(diff < Ratio::<BigInt>::from_float(0.000001).unwrap());
     }
 
     // TODO: add more test cases for the NonConvertible units.
+    // TODO: add more test cases to test offsets.
 }

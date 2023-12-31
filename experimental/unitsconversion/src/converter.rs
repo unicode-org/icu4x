@@ -173,7 +173,6 @@ impl<'data> ConverterFactory<'data> {
         unit_item: &MeasureUnitItem,
         sign: i8,
         conversion_rate: &mut Ratio<BigInt>,
-        _offset: &mut Ratio<BigInt>,
     ) -> Result<(), ConversionError> {
         let conversion_info = self
             .payload
@@ -202,6 +201,75 @@ impl<'data> ConverterFactory<'data> {
         Ok(())
     }
 
+    fn get_offset(
+        &self,
+        input_unit: &MeasureUnitItem,
+        output_unit: &MeasureUnitItem,
+    ) -> Result<Ratio<BigInt>, ConversionError> {
+        let input_conversion_info = self
+            .payload
+            .convert_infos
+            .get(input_unit.unit_id as usize)
+            .ok_or(ConversionError::InternalError)?;
+
+        let output_conversion_info = self
+            .payload
+            .convert_infos
+            .get(output_unit.unit_id as usize)
+            .ok_or(ConversionError::InternalError)?;
+
+        let input_offset_sign = match Sign::from_unaligned(input_conversion_info.offset_sign) {
+            Sign::Positive => num_bigint::Sign::Plus,
+            Sign::Negative => num_bigint::Sign::Minus,
+        };
+
+        let input_offset = Ratio::<BigInt>::new(
+            BigInt::from_bytes_le(
+                input_offset_sign,
+                input_conversion_info.offset_num().as_ule_slice(),
+            ),
+            BigInt::from_bytes_le(
+                num_bigint::Sign::Plus,
+                input_conversion_info.offset_den().as_ule_slice(),
+            ),
+        );
+
+        let output_offset_sign = match Sign::from_unaligned(output_conversion_info.offset_sign) {
+            Sign::Positive => num_bigint::Sign::Plus,
+            Sign::Negative => num_bigint::Sign::Minus,
+        };
+
+        let output_offset = Ratio::<BigInt>::new(
+            BigInt::from_bytes_le(
+                output_offset_sign,
+                output_conversion_info.offset_num().as_ule_slice(),
+            ),
+            BigInt::from_bytes_le(
+                num_bigint::Sign::Plus,
+                output_conversion_info.offset_den().as_ule_slice(),
+            ),
+        );
+
+        let output_conversion_sign = match Sign::from_unaligned(output_conversion_info.factor_sign)
+        {
+            Sign::Positive => num_bigint::Sign::Plus,
+            Sign::Negative => num_bigint::Sign::Minus,
+        };
+
+        let output_conversion_rate = Ratio::<BigInt>::new(
+            BigInt::from_bytes_le(
+                output_conversion_sign,
+                output_conversion_info.factor_num().as_ule_slice(),
+            ),
+            BigInt::from_bytes_le(
+                num_bigint::Sign::Plus,
+                output_conversion_info.factor_den().as_ule_slice(),
+            ),
+        );
+
+        Ok((input_offset - output_offset) * output_conversion_rate)
+    }
+
     /// Creates a converter for converting between two units in the form of CLDR identifiers.
     pub fn converter(
         &self,
@@ -217,7 +285,7 @@ impl<'data> ConverterFactory<'data> {
         }
 
         for input_item in input_unit.contained_units.iter() {
-            Self::add_term(self, input_item, 1, &mut conversion_rate, &mut offset)?;
+            Self::add_term(self, input_item, 1, &mut conversion_rate)?;
         }
 
         let sign = match convertibility {
@@ -227,7 +295,21 @@ impl<'data> ConverterFactory<'data> {
         };
 
         for output_item in output_unit.contained_units.iter() {
-            Self::add_term(self, output_item, sign, &mut conversion_rate, &mut offset)?;
+            Self::add_term(self, output_item, sign, &mut conversion_rate)?;
+        }
+
+        if input_unit.contained_units.len() == 1
+            && output_unit.contained_units.len() == 1
+            && input_unit.contained_units[0].power == 1
+            && output_unit.contained_units[0].power == 1
+            && input_unit.contained_units[0].si_prefix.power == 0
+            && output_unit.contained_units[0].si_prefix.power == 0
+        {
+            offset = Self::get_offset(
+                self,
+                &input_unit.contained_units[0],
+                &output_unit.contained_units[0],
+            )?;
         }
 
         Ok(Converter {
