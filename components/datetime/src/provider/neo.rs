@@ -461,6 +461,12 @@ pub struct DatePatternV1<'data> {
     pub pattern: runtime::Pattern<'data>,
 }
 
+// TODO: We may need to support plural forms here. Something like
+// pub enum NeoPatternPlurals<'data> {
+//     SingleDate(runtime::Pattern<'data>),
+//     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
+// }
+
 /// The default per-length patterns associated with times
 ///
 /// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
@@ -527,9 +533,4 @@ impl DataMarker for ErasedMonthNamesV1Marker {
 pub(crate) struct ErasedDatePatternV1Marker;
 impl DataMarker for ErasedDatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
-}
-
-pub(crate) struct ErasedTimePatternV1Marker;
-impl DataMarker for ErasedTimePatternV1Marker {
-    type Yokeable = TimePatternV1<'static>;
 }
