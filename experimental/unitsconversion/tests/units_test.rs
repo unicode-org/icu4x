@@ -57,7 +57,7 @@ fn tes_cldr_unit_tests() {
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
-        category: String,
+        _category: String,
         input_unit: String,
         output_unit: String,
         result: BigRational,
@@ -70,7 +70,7 @@ fn tes_cldr_unit_tests() {
         .map(|line| {
             let parts: Vec<&str> = line.split(';').map(|s| s.trim()).collect();
             UnitsTest {
-                category: parts[0].to_string(),
+                _category: parts[0].to_string(),
                 input_unit: parts[1].to_string(),
                 output_unit: parts[2].to_string(),
                 result: get_rational(parts[4]).unwrap(),

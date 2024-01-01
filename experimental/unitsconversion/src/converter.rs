@@ -267,7 +267,7 @@ impl<'data> ConverterFactory<'data> {
             ),
         );
 
-        Ok((input_offset - output_offset) * output_conversion_rate)
+        Ok(input_offset * output_conversion_rate.recip() - output_offset)
     }
 
     /// Creates a converter for converting between two units in the form of CLDR identifiers.
