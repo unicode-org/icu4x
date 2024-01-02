@@ -7,7 +7,9 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+use crate::helpers::i64_to_i32;
 use crate::rata_die::RataDie;
+use core::cmp::Ordering;
 
 // The algorithms in this file are rather well-published in multiple places,
 // though the resource that was primarily used was
@@ -98,6 +100,9 @@ const MOLAD_BEHERAD_OFFSET: i32 = ḥal!(2 - 5 - 204);
 /// From Adjler Appendix A
 const HEBREW_LUNATION_TIME: i32 = ḥal!(0-indexed 29-12-793);
 
+/// From Reingold (ch 8.2, in implementation for fixed-from-hebrew)
+const HEBREW_APPROX_YEAR_LENGTH: f64 = 35975351.0 / 98496.0;
+
 /// The number of ḥalakim in a week
 ///
 /// (This is 181440)
@@ -113,6 +118,7 @@ const HEBREW_CALENDAR_EPOCH: RataDie = crate::julian::fixed_from_julian_book_ver
 ///
 /// - The number of weeks since the week of Beharad (Oct 6, 3761 BCE Julian)
 /// - The number of ḥalakim since the start of the week (Hebrew Sunday, starting on Saturday at 18:00)
+#[inline]
 fn molad_details(h_year: i32) -> (i64, i32) {
     let months_preceding = months_preceding_molad(h_year);
 
@@ -159,6 +165,51 @@ impl YearInfo {
         Self {
             keviyah,
             weeks_since_beharad,
+        }
+    }
+
+    /// Returns the YearInfo and h_year for the year containing `date`
+    pub fn year_containing_rd(date: RataDie) -> (Self, i32) {
+        let days_since_epoch = (date - HEBREW_CALENDAR_EPOCH) as f64;
+        let maybe_approx =
+            i64_to_i32(1 + days_since_epoch.div_euclid(HEBREW_APPROX_YEAR_LENGTH) as i64);
+        let approx = maybe_approx.unwrap_or_else(|e| e.saturate());
+
+        let yi = Self::compute_for(approx);
+
+        // compute if yi ⩼ rd
+        let cmp = yi.compare(date);
+
+        let (yi, h_year) = match cmp {
+            // The approx year is a year greater. Go one year down
+            Ordering::Greater => (Self::compute_for(approx - 1), approx - 1),
+            // Bullseye
+            Ordering::Equal => (yi, approx),
+            // The approx year is a year lower. Go one year up.
+            Ordering::Less => (Self::compute_for(approx + 1), approx + 1),
+        };
+
+        debug_assert!(yi.compare(date).is_eq() || maybe_approx.is_err(), // The data will be incorrect if we saturate, and that's expected
+                      "Date {date:?} calculated approximately to Hebrew Year {approx} (comparison: {cmp:?}), \
+                       should be contained in adjacent year {h_year} but that year is still {:?} it", yi.compare(date));
+
+        (yi, h_year)
+    }
+
+    /// Compare this year against a date. Returns Ordering::Greater
+    /// when this year is after the given date
+    ///
+    /// i.e. this is computing self ⩼ rd
+    fn compare(self, rd: RataDie) -> Ordering {
+        let ny = self.new_year();
+        let len = self.keviyah.year_length();
+
+        if rd < ny {
+            Ordering::Greater
+        } else if rd >= ny + len.into() {
+            Ordering::Less
+        } else {
+            Ordering::Equal
         }
     }
 
@@ -233,11 +284,11 @@ pub enum Keviyah {
 #[allow(clippy::exhaustive_enums)] // This is intrinsic to the calendar
 pub enum YearType {
     /// חסרה: both Ḥesvan and Kislev have 29 days
-    Deficient,
+    Deficient = -1,
     /// כסדרה: Ḥesvan has 29, Kislev has 30
-    Regular,
+    Regular = 0,
     /// שלמה: both Ḥesvan and Kislev have 30 days
-    Complete,
+    Complete = 1,
 }
 
 /// The day of the new year. Only these four days are permitted.
@@ -309,6 +360,29 @@ impl Keviyah {
         self >= Self::בחה
     }
 
+    /// Given the hebrew year for this Keviyah, calculate the YearInfo
+    pub fn year_info(self, h_year: i32) -> YearInfo {
+        let (mut weeks_since_beharad, ḥalakim) = molad_details(h_year);
+
+        // The last six hours of Hebrew Saturday (i.e. after noon on Regular Saturday)
+        // get unconditionally postponed to Monday according to the Four Gates table. This
+        // puts us in a new week!
+        if ḥalakim > ḥal!(7 - 18 - 0) {
+            weeks_since_beharad += 1;
+        }
+
+        YearInfo {
+            keviyah: self,
+            weeks_since_beharad,
+        }
+    }
+
+    /// How many days are in this year
+    pub fn year_length(self) -> u16 {
+        let base_year_length = if self.is_leap() { 384 } else { 354 };
+
+        (base_year_length + self.year_type() as i16) as u16
+    }
     /// Construct this from an integer between 0 and 13
     ///
     /// Potentially useful for bitpacking
@@ -506,13 +580,15 @@ mod test {
 
     #[test]
     fn test_book_parity() {
+        let mut last_year = None;
         for h_year in (1..100).chain(5600..5900).chain(10000..10100) {
             let book_date = BookHebrew::from_civil_date(h_year, 1, 1);
             let book_ny = BookHebrew::fixed_from_book_hebrew(book_date);
             let kv_yearinfo = YearInfo::compute_for(h_year);
+            let kv_ny = kv_yearinfo.new_year();
             assert_eq!(
                 book_ny,
-                kv_yearinfo.new_year(),
+                kv_ny,
                 "Book and Keviyah-based years should match for Hebrew Year {h_year}. Got YearInfo {kv_yearinfo:?}"
             );
             let book_is_leap = BookHebrew::is_hebrew_leap_year(h_year);
@@ -534,6 +610,31 @@ mod test {
                 kv_yearinfo.keviyah.year_type(),
                 "Book and Keviyah-based years should match for Hebrew Year {h_year}. Got YearInfo {kv_yearinfo:?}"
             );
+
+            let kv_recomputed_yearinfo = kv_yearinfo.keviyah.year_info(h_year);
+            assert_eq!(
+                kv_recomputed_yearinfo,
+                kv_yearinfo,
+                "Recomputed YearInfo should match for Hebrew Year {h_year}. Got YearInfo {kv_yearinfo:?}"
+            );
+
+            let year_len = kv_yearinfo.keviyah.year_length();
+
+            for offset in [0, 1, 100, year_len - 100, year_len - 2, year_len - 1] {
+                let offset_date = kv_ny + offset.into();
+                let (offset_yearinfo, offset_h_year) = YearInfo::year_containing_rd(offset_date);
+
+                assert_eq!(offset_h_year, h_year, "Backcomputed h_year should be same for date {offset_date:?} in Hebrew Year {h_year} (offset from ny {offset})");
+                assert_eq!(offset_yearinfo, kv_yearinfo, "Backcomputed YearInfo should be same for date {offset_date:?} in Hebrew Year {h_year} (offset from ny {offset})");
+            }
+
+            if let Some((last_h_year, predicted_ny)) = last_year {
+                if last_h_year + 1 == h_year {
+                    assert_eq!(predicted_ny, kv_ny, "{last_h_year}'s YearInfo predicts New Year {predicted_ny:?}, which does not match current new year. Got YearInfo {kv_yearinfo:?}");
+                }
+            }
+
+            last_year = Some((h_year, kv_ny + year_len.into()))
         }
     }
 }
