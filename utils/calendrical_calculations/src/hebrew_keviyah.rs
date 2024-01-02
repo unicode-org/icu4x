@@ -114,6 +114,23 @@ const ḤALAKIM_IN_WEEK: i64 = 1080 * 24 * 7;
 /// (note that the molad Beherad occurs on standard Sunday, but because it happens after 6PM it is still Hebrew Monday)
 const HEBREW_CALENDAR_EPOCH: RataDie = crate::julian::fixed_from_julian_book_version(-3761, 10, 7);
 
+// Month lengths (ref: https://en.wikipedia.org/wiki/Hebrew_calendar#Months)
+const TISHREI_LEN: u8 = 30;
+// except in Complete years
+const ḤESVAN_DEFAULT_LEN: u8 = 29;
+// Except in Deficient years
+const KISLEV_DEFAULT_LEN: u8 = 30;
+const TEVET_LEN: u8 = 29;
+const SHEVAT_LEN: u8 = 30;
+const ADARI_LEN: u8 = 30;
+const ADAR_LEN: u8 = 29;
+const NISAN_LEN: u8 = 30;
+const IYAR_LEN: u8 = 29;
+const SIVAN_LEN: u8 = 30;
+const TAMMUZ_LEN: u8 = 29;
+const AV_LEN: u8 = 30;
+const ELUL_LEN: u8 = 29;
+
 /// Given a Hebrew Year, returns its molad specified as:
 ///
 /// - The number of weeks since the week of Beharad (Oct 6, 3761 BCE Julian)
@@ -170,6 +187,7 @@ impl YearInfo {
 
     /// Returns the YearInfo and h_year for the year containing `date`
     pub fn year_containing_rd(date: RataDie) -> (Self, i32) {
+        use core_maths::*;
         let days_since_epoch = (date - HEBREW_CALENDAR_EPOCH) as f64;
         let maybe_approx =
             i64_to_i32(1 + days_since_epoch.div_euclid(HEBREW_APPROX_YEAR_LENGTH) as i64);
@@ -350,6 +368,160 @@ impl Keviyah {
             Self::זחג => StartOfYear::Saturday,
             Self::זשה => StartOfYear::Saturday,
         }
+    }
+
+    /// Normalize the ordinal month to the "month number" in the year (ignoring
+    /// leap months), i.e. Adar and Adar II are both represented by 6.
+    ///
+    /// Returns None if given the index of Adar I (6 in a leap year)
+    fn normalized_ordinal_month(self, ordinal_month: u8) -> Option<u8> {
+        if self.is_leap() {
+            if ordinal_month == 6 {
+                // Adar 1
+                None
+            } else if ordinal_month < 6 {
+                Some(ordinal_month)
+            } else {
+                Some(ordinal_month - 1)
+            }
+        } else {
+            Some(ordinal_month)
+        }
+    }
+
+    /// Given an ordinal, civil month (1-indexed month starting at Tishrei)
+    /// return its length
+    pub fn month_len(self, ordinal_month: u8) -> u8 {
+        // Normalize it to the month number
+        let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
+            return 30;
+        };
+        debug_assert!(normalized_ordinal_month <= 12 && normalized_ordinal_month > 0);
+        match normalized_ordinal_month {
+            // Tishrei
+            1 => TISHREI_LEN,
+            // Ḥesvan
+            2 => {
+                if self.year_type() == YearType::Complete {
+                    ḤESVAN_DEFAULT_LEN + 1
+                } else {
+                    ḤESVAN_DEFAULT_LEN
+                }
+            }
+            // Kislev
+            3 => {
+                if self.year_type() == YearType::Deficient {
+                    KISLEV_DEFAULT_LEN - 1
+                } else {
+                    KISLEV_DEFAULT_LEN
+                }
+            }
+            // Tevet
+            4 => TEVET_LEN,
+            // Shevat
+            5 => SHEVAT_LEN,
+            // Adar & Adar II
+            6 => ADAR_LEN,
+            // Nisan
+            7 => NISAN_LEN,
+            // Iyar
+            8 => IYAR_LEN,
+            // Sivan
+            9 => SIVAN_LEN,
+            // Tammuz
+            10 => TAMMUZ_LEN,
+            // Av
+            11 => AV_LEN,
+            // Elul
+            12 => ELUL_LEN,
+            _ => {
+                debug_assert!(false, "Got unknown month index {ordinal_month}");
+                30
+            }
+        }
+    }
+
+    /// Get the number of days preceding this month
+    pub fn days_preceding(self, ordinal_month: u8) -> u16 {
+        let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
+            let month_lengths: u16 = u16::from(TISHREI_LEN)
+                + u16::from(ḤESVAN_DEFAULT_LEN)
+                + u16::from(KISLEV_DEFAULT_LEN)
+                + u16::from(TEVET_LEN)
+                + u16::from(SHEVAT_LEN);
+            let corrected = month_lengths as i16 + self.year_type() as i16;
+            return u16::try_from(corrected).unwrap_or(month_lengths);
+        };
+        debug_assert!(normalized_ordinal_month <= 12 && normalized_ordinal_month > 0);
+
+        let mut days = 0u16;
+        if normalized_ordinal_month == 1 {
+            return days;
+        }
+        days += u16::from(TISHREI_LEN);
+
+        if normalized_ordinal_month == 2 {
+            return days;
+        }
+        days += u16::from(ḤESVAN_DEFAULT_LEN);
+        let year_type = self.year_type();
+        if year_type == YearType::Complete {
+            days += 1;
+        }
+
+        if normalized_ordinal_month == 3 {
+            return days;
+        }
+        days += u16::from(KISLEV_DEFAULT_LEN);
+        let year_type = self.year_type();
+        if year_type == YearType::Deficient {
+            days -= 1;
+        }
+
+        if normalized_ordinal_month == 4 {
+            return days;
+        }
+        days += u16::from(TEVET_LEN);
+
+        if normalized_ordinal_month == 5 {
+            return days;
+        }
+        days += u16::from(SHEVAT_LEN);
+
+        if self.is_leap() {
+            days += u16::from(ADARI_LEN);
+        }
+        if normalized_ordinal_month == 6 {
+            return days;
+        }
+        days += u16::from(ADAR_LEN);
+
+        if normalized_ordinal_month == 7 {
+            return days;
+        }
+        days += u16::from(NISAN_LEN);
+
+        if normalized_ordinal_month == 8 {
+            return days;
+        }
+        days += u16::from(IYAR_LEN);
+
+        if normalized_ordinal_month == 9 {
+            return days;
+        }
+        days += u16::from(SIVAN_LEN);
+
+        if normalized_ordinal_month == 10 {
+            return days;
+        }
+        days += u16::from(TAMMUZ_LEN);
+
+        if normalized_ordinal_month == 11 {
+            return days;
+        }
+        days += u16::from(AV_LEN);
+
+        return days;
     }
 
     /// Whether this year is a leap year
@@ -619,6 +791,25 @@ mod test {
             );
 
             let year_len = kv_yearinfo.keviyah.year_length();
+
+            let month_range = if kv_yearinfo.keviyah.is_leap() {
+                1..14
+            } else {
+                1..13
+            };
+
+            let mut days_preceding = 0;
+
+            for month in month_range {
+                let kv_month_len = kv_yearinfo.keviyah.month_len(month);
+                let book_date = BookHebrew::from_civil_date(h_year, month, 1);
+                let book_month_len =
+                    BookHebrew::last_day_of_book_hebrew_month(book_date.year, book_date.month);
+                assert_eq!(kv_month_len, book_month_len, "Month lengths should be same for ordinal hebrew month {month} in year {h_year}. Got YearInfo {kv_yearinfo:?}");
+
+                assert_eq!(days_preceding, kv_yearinfo.keviyah.days_preceding(month), "Days preceding should be the sum of preceding days for ordinal hebrew month {month} in year {h_year}. Got YearInfo {kv_yearinfo:?}");
+                days_preceding += u16::from(kv_month_len);
+            }
 
             for offset in [0, 1, 100, year_len - 100, year_len - 2, year_len - 1] {
                 let offset_date = kv_ny + offset.into();
