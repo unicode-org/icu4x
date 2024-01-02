@@ -382,14 +382,25 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     where
         C: CalendarArithmetic<YearInfo = ()>,
     {
-        let max_month = C::months_for_every_year(year, ());
+        Self::new_from_ordinals_with_info(year, month, day, ())
+    }
+
+    /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
+    /// the month and day
+    pub fn new_from_ordinals_with_info(
+        year: i32,
+        month: u8,
+        day: u8,
+        info: C::YearInfo,
+    ) -> Result<Self, CalendarError> {
+        let max_month = C::months_for_every_year(year, info);
         if month > max_month {
             return Err(CalendarError::Overflow {
                 field: "month",
                 max: max_month as usize,
             });
         }
-        let max_day = C::month_days(year, month, ());
+        let max_day = C::month_days(year, month, info);
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -397,7 +408,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             });
         }
 
-        Ok(Self::new_unchecked(year, month, day))
+        Ok(Self::new_unchecked_with_info(year, month, day, info))
     }
 }
 
