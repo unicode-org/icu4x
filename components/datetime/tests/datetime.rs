@@ -62,7 +62,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
     {
         let japanese = Japanese::new();
         let japanext = JapaneseExtended::new();
-        let options_base = match fixtures::get_options(&fx.input.options) {
+        let options = match fixtures::get_options(&fx.input.options) {
             Some(o) => o,
             #[cfg(feature = "experimental")]
             None => unreachable!(),
@@ -99,7 +99,6 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
@@ -271,13 +270,9 @@ fn assert_fixture_element<A>(
     #[cfg(feature = "experimental")]
     let (dtf, any_dtf) = {
         (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(
-                &locale.into(),
-                options.clone(),
-            )
-            .expect(description),
-            DateTimeFormatter::try_new_experimental(&locale.into(), options.clone())
+            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(&locale.into(), options)
                 .expect(description),
+            DateTimeFormatter::try_new_experimental(&locale.into(), options).expect(description),
         )
     };
     #[cfg(not(feature = "experimental"))]
@@ -363,7 +358,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
             let dtf = {
                 TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
                     &locale.into(),
-                    options.clone(),
+                    options,
                     TimeZoneFormatterOptions::default(),
                 )
                 .unwrap()
