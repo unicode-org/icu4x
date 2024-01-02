@@ -56,6 +56,7 @@ use core::cmp::Ordering;
 // However, the time in the week that the molad occurs is sufficient to know when it gets postponed to.
 
 /// Calculate the number of months preceding the molad Tishri for a given hebrew year (Tishri is the first month)
+#[inline]
 fn months_preceding_molad(h_year: i32) -> i32 {
     // Ft = INT((235N + 1 / 19))
     // Where N = h_year - 1 (number of elapsed years since epoch)
@@ -165,6 +166,7 @@ pub struct YearInfo {
 
 impl YearInfo {
     /// Compute the YearInfo for a given year
+    #[inline]
     pub fn compute_for(h_year: i32) -> Self {
         let (mut weeks_since_beharad, ḥalakim) = molad_details(h_year);
 
@@ -186,6 +188,7 @@ impl YearInfo {
     }
 
     /// Returns the YearInfo and h_year for the year containing `date`
+    #[inline]
     pub fn year_containing_rd(date: RataDie) -> (Self, i32) {
         use core_maths::*;
         let days_since_epoch = (date - HEBREW_CALENDAR_EPOCH) as f64;
@@ -232,6 +235,7 @@ impl YearInfo {
     }
 
     /// Compute the date of New Year's Day
+    #[inline]
     pub fn new_year(self) -> RataDie {
         // Beharad started on Monday
         const BEHARAD_START_OF_YEAR: StartOfYear = StartOfYear::Monday;
@@ -329,6 +333,7 @@ impl Keviyah {
     ///
     /// Comes from the second letter in this Keviyah:
     /// ח = D, כ = R, ש = C
+    #[inline]
     pub fn year_type(self) -> YearType {
         match self {
             Self::בחג => YearType::Deficient,
@@ -351,6 +356,7 @@ impl Keviyah {
     ///
     /// Comes from the first letter in this Keviyah:
     /// ב = 2 = Monday, ג = 3 = Tuesday, ה = 5 = Thursday, ז = 7 = Saturday
+    #[inline]
     pub fn start_of_year(self) -> StartOfYear {
         match self {
             Self::בחג => StartOfYear::Monday,
@@ -374,6 +380,7 @@ impl Keviyah {
     /// leap months), i.e. Adar and Adar II are both represented by 6.
     ///
     /// Returns None if given the index of Adar I (6 in a leap year)
+    #[inline]
     fn normalized_ordinal_month(self, ordinal_month: u8) -> Option<u8> {
         if self.is_leap() {
             if ordinal_month == 6 {
@@ -391,6 +398,7 @@ impl Keviyah {
 
     /// Given an ordinal, civil month (1-indexed month starting at Tishrei)
     /// return its length
+    #[inline]
     pub fn month_len(self, ordinal_month: u8) -> u8 {
         // Normalize it to the month number
         let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
@@ -442,6 +450,7 @@ impl Keviyah {
     }
 
     /// Get the number of days preceding this month
+    #[inline]
     pub fn days_preceding(self, ordinal_month: u8) -> u16 {
         let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
             let month_lengths: u16 = u16::from(TISHREI_LEN)
@@ -525,6 +534,7 @@ impl Keviyah {
     }
 
     /// Whether this year is a leap year
+    #[inline]
     pub fn is_leap(self) -> bool {
         debug_assert_eq!(Self::בחה as u8, 7, "Representation of keviyot changed!");
         // Because we have arranged our keviyot such that all leap keviyot come after
@@ -533,6 +543,7 @@ impl Keviyah {
     }
 
     /// Given the hebrew year for this Keviyah, calculate the YearInfo
+    #[inline]
     pub fn year_info(self, h_year: i32) -> YearInfo {
         let (mut weeks_since_beharad, ḥalakim) = molad_details(h_year);
 
@@ -550,6 +561,7 @@ impl Keviyah {
     }
 
     /// How many days are in this year
+    #[inline]
     pub fn year_length(self) -> u16 {
         let base_year_length = if self.is_leap() { 384 } else { 354 };
 
@@ -558,6 +570,7 @@ impl Keviyah {
     /// Construct this from an integer between 0 and 13
     ///
     /// Potentially useful for bitpacking
+    #[inline]
     pub fn from_integer(integer: u8) -> Self {
         debug_assert!(
             integer < 14,
@@ -674,6 +687,7 @@ const FOUR_GATES_LEAP: [i32; 7] = [
 
 /// Perform the four gates calculation, giving you the Keviyah for a given year type and
 /// the ḥalakim-since-beginning-of-week of its molad Tishri
+#[inline]
 fn keviyah_for(year_type: MetonicCycleType, ḥalakim: i32) -> Keviyah {
     let gate = match year_type {
         MetonicCycleType::LMinusOne => FOUR_GATES_LMINUSONE,
