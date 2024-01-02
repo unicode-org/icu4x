@@ -389,8 +389,11 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
             f,
-            "Date({:?}, for calendar {})",
-            self.inner,
+            "Date({}-{}-{}, {} era, for calendar {})",
+            self.year().number,
+            self.month().ordinal,
+            self.day_of_month().0,
+            self.year().era.0,
             self.calendar.as_calendar().debug_name()
         )
     }
