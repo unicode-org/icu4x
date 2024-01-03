@@ -75,6 +75,15 @@ fn convert_benches(c: &mut Criterion) {
         icu::calendar::gregorian::Gregorian,
     );
 
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/hebrew",
+        icu::calendar::hebrew::Hebrew::new_always_calculating(),
+    );
+
+
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
