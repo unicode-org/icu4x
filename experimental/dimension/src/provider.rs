@@ -16,7 +16,10 @@ use zerovec::{VarZeroVec, ZeroMap};
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[CurrencyEssentialsV1Marker::KEY];
+pub const KEYS: &[DataKey] = &[
+    CurrencyEssentialsV1Marker::KEY,
+    PercentEssentialsV1Marker::KEY,
+];
 
 /// This type contains all of the essential data for currency formatting.
 ///
@@ -113,4 +116,18 @@ pub struct CurrencyPatterns {
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is `None`, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: Option<PlaceholderValue>,
+}
+
+#[icu_provider::data_struct(PercentEssentialsV1Marker = "percent/essentials@1")]
+#[derive(Default, Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_dimension::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct PercentEssentialsV1<'data> {
+    /// Represents the standard pattern.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub standard: Cow<'data, str>,
 }
