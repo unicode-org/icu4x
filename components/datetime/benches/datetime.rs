@@ -8,6 +8,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
 use icu_calendar::{DateTime, Gregorian};
+#[cfg(feature = "experimental")]
 use icu_datetime::neo::TypedNeoDateTimeFormatter;
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
