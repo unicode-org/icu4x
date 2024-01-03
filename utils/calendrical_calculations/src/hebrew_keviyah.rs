@@ -190,6 +190,7 @@ impl YearInfo {
     /// Returns the YearInfo and h_year for the year containing `date`
     #[inline]
     pub fn year_containing_rd(date: RataDie) -> (Self, i32) {
+        #[allow(unused_imports)]
         use core_maths::*;
         let days_since_epoch = (date - HEBREW_CALENDAR_EPOCH) as f64;
         let maybe_approx =
@@ -383,13 +384,11 @@ impl Keviyah {
     #[inline]
     fn normalized_ordinal_month(self, ordinal_month: u8) -> Option<u8> {
         if self.is_leap() {
-            if ordinal_month == 6 {
-                // Adar 1
-                None
-            } else if ordinal_month < 6 {
-                Some(ordinal_month)
-            } else {
-                Some(ordinal_month - 1)
+            match ordinal_month.cmp(&6) {
+                // Adar I
+                Ordering::Equal => None,
+                Ordering::Less => Some(ordinal_month),
+                Ordering::Greater => Some(ordinal_month - 1),
             }
         } else {
             Some(ordinal_month)
@@ -530,7 +529,7 @@ impl Keviyah {
         }
         days += u16::from(AV_LEN);
 
-        return days;
+        days
     }
 
     /// Whether this year is a leap year

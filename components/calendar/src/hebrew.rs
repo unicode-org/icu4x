@@ -243,9 +243,9 @@ impl Calendar for Hebrew {
             day -= i64::from(month_len);
         }
         debug_assert!(false, "Attempted to get Hebrew date for {fixed_iso:?}, in year {h_year}, didn't have enough days in the year");
-        return HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
+        HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
             h_year, 13, 29, year_info,
-        ));
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
