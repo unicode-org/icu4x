@@ -70,9 +70,6 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct Hebrew;
 
-/// The inner date type used for representing [`Date`]s of [`BookHebrew`]. See [`Date`] and [`BookHebrew`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-struct BookHebrewDateInner;
 /// The inner date type used for representing [`Date`]s of [`Hebrew`]. See [`Date`] and [`Hebrew`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
@@ -438,7 +435,8 @@ impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
 mod tests {
 
     use super::*;
-    use calendrical_calculations::hebrew::*;
+    use crate::types::MonthCode;
+    use calendrical_calculations::hebrew_keviyah::*;
 
     #[test]
     fn test_conversions() {
@@ -493,7 +491,13 @@ mod tests {
             Date::try_new_iso_date(2022, 12, 25).unwrap(),
         ];
 
-        let book_hebrew_dates: [(u8, u8, i32); 48] = [
+        // Sentinel value for Adar I
+        // We're using normalized month values here so that we can use constants. These do not
+        // distinguish between the different Adars. We add an out-of-range sentinel value of 13 to
+        // specifically talk about Adar I in a leap year
+        const ADARI: u8 = 13;
+
+        let hebrew_dates: [(u8, u8, i32); 48] = [
             (26, TEVET, 5781),
             (12, SHEVAT, 5781),
             (28, SHEVAT, 5781),
@@ -501,8 +505,8 @@ mod tests {
             (26, ADAR, 5781),
             (12, NISAN, 5781),
             (28, NISAN, 5781),
-            (13, IYYAR, 5781),
-            (28, IYYAR, 5781),
+            (13, IYAR, 5781),
+            (28, IYAR, 5781),
             (14, SIVAN, 5781),
             (30, SIVAN, 5781),
             (15, TAMMUZ, 5781),
@@ -510,24 +514,24 @@ mod tests {
             (16, AV, 5781),
             (2, ELUL, 5781),
             (17, ELUL, 5781),
-            (4, TISHRI, 5782),
-            (19, TISHRI, 5782),
-            (4, MARHESHVAN, 5782),
-            (19, MARHESHVAN, 5782),
+            (4, TISHREI, 5782),
+            (19, TISHREI, 5782),
+            (4, ḤESVAN, 5782),
+            (19, ḤESVAN, 5782),
             (6, KISLEV, 5782),
             (21, KISLEV, 5782),
             (6, TEVET, 5782),
             (21, TEVET, 5782),
             (8, SHEVAT, 5782),
             (23, SHEVAT, 5782),
-            (9, ADAR, 5782),
-            (24, ADAR, 5782),
-            (7, ADARII, 5782),
-            (22, ADARII, 5782),
+            (9, ADARI, 5782),
+            (24, ADARI, 5782),
+            (7, ADAR, 5782),
+            (22, ADAR, 5782),
             (9, NISAN, 5782),
             (24, NISAN, 5782),
-            (9, IYYAR, 5782),
-            (24, IYYAR, 5782),
+            (9, IYAR, 5782),
+            (24, IYAR, 5782),
             (11, SIVAN, 5782),
             (26, SIVAN, 5782),
             (11, TAMMUZ, 5782),
@@ -536,30 +540,22 @@ mod tests {
             (28, AV, 5782),
             (14, ELUL, 5782),
             (29, ELUL, 5782),
-            (15, TISHRI, 5783),
-            (30, TISHRI, 5783),
-            (16, MARHESHVAN, 5783),
+            (15, TISHREI, 5783),
+            (30, TISHREI, 5783),
+            (16, ḤESVAN, 5783),
             (1, KISLEV, 5783),
             (16, KISLEV, 5783),
             (1, TEVET, 5783),
         ];
 
-        for (iso_date, book_date_nums) in iso_dates.iter().zip(book_hebrew_dates.iter()) {
-            // This just checks the integrity of the test data
-            let book_date = BookHebrew {
-                year: book_date_nums.2,
-                month: book_date_nums.1,
-                day: book_date_nums.0,
+        for (iso_date, (d, m, y)) in iso_dates.iter().zip(hebrew_dates.into_iter()) {
+            let m = if m == ADARI {
+                MonthCode(tinystr!(4, "M05L"))
+            } else {
+                MonthCode::new_normal(m).unwrap()
             };
-
-            let (y, m, d) = book_date.to_civil_date();
-            // let book_from_civil = BookHebrew::from_civil_date(civil_date_nums.2, civil_date_nums.1, civil_date_nums.1);
-            // assert_eq!(book_date, book_from_civil);
-
-            let hy = HebrewYearInfo::compute(y);
-            let hebrew_date: HebrewDateInner =
-                HebrewDateInner(ArithmeticDate::new_unchecked_with_info(y, m, d, hy));
-            let hebrew_date = Date::from_raw(hebrew_date, Hebrew);
+            let hebrew_date = Date::try_new_from_codes(tinystr!(16, "am").into(), y, m, d, Hebrew)
+                .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
@@ -578,6 +574,7 @@ mod tests {
 
     #[test]
     fn test_icu_bug_22441() {
-        assert_eq!(BookHebrew::days_in_book_hebrew_year(88369), 383);
+        let yi = YearInfo::compute_for(88369);
+        assert_eq!(yi.keviyah.year_length(), 383);
     }
 }
