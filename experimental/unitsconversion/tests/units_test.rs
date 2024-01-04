@@ -87,13 +87,7 @@ fn test_conversion() {
     let parser = MeasureUnitParser::from_payload(&payload);
 
     // TODO(#4461): Those units must be parsable.
-    let non_parsable_units: HashSet<&str> = [
-        "kilogram-force",
-        "decade",
-    ]
-    .iter()
-    .cloned()
-    .collect();
+    let non_parsable_units: HashSet<&str> = ["kilogram-force", "decade"].iter().cloned().collect();
     for test in tests {
         // TODO(#4461): remove this line after fixing the parser.
         if non_parsable_units.contains(test.input_unit.as_str())
