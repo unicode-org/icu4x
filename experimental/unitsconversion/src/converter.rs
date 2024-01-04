@@ -102,14 +102,14 @@ impl<'data> ConverterFactory<'data> {
                 let item_power = (item.power as i16) * original_power;
                 let signed_item_power = item_power * sign;
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.subtractions += (signed_item_power) as i16;
-                    determine_convertibility.sums += (item_power) as i16;
+                    determine_convertibility.subtractions += signed_item_power;
+                    determine_convertibility.sums += item_power;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
-                            subtractions: (signed_item_power) as i16,
-                            sums: (item_power) as i16,
+                            subtractions: (signed_item_power),
+                            sums: (item_power),
                         },
                     );
                 }
