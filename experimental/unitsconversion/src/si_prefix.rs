@@ -51,7 +51,7 @@ const DECIMAL_PREFIXES_TRIE: ZeroTrieSimpleAscii<[u8; 167]> =
 fn get_si_prefix_base_ten(part: &str) -> (i8, &str) {
     let mut cursor = DECIMAL_PREFIXES_TRIE.cursor();
 
-    let mut longest_match = (0 as i8, part);
+    let mut longest_match = (0_i8, part);
     for (i, b) in part.bytes().enumerate() {
         cursor.step(b);
         if cursor.is_empty() {

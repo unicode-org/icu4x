@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use smallvec::SmallVec;
-use zerotrie::{ZeroTrie, ZeroTrieSimpleAscii, ZeroTrieSimpleAsciiCursor};
+use zerotrie::{ZeroTrieSimpleAscii};
 use zerovec::ZeroVec;
 
 use crate::{
     power::get_power,
-    provider::{Base, MeasureUnitItem, SiPrefix},
+    provider::{MeasureUnitItem, SiPrefix},
     si_prefix::get_si_prefix,
     ConversionError,
 };
@@ -54,7 +54,7 @@ impl<'data> MeasureUnitParser<'data> {
             return Ok((power, part));
         }
 
-        if part_without_power.starts_with("-") {
+        if part_without_power.starts_with('-') {
             return Ok((power, &part_without_power[1..]));
         }
 
@@ -67,7 +67,7 @@ impl<'data> MeasureUnitParser<'data> {
             return (si_prefix, part);
         }
 
-        if part_without_si_prefix.starts_with("-") {
+        if part_without_si_prefix.starts_with('-') {
             return (si_prefix, &part_without_si_prefix[1..]);
         }
 

@@ -6,7 +6,7 @@ use core::str::FromStr;
 use icu_unitsconversion::measureunit::MeasureUnitParser;
 use num::BigRational;
 use std::collections::HashSet;
-use zerotrie::{ZeroTrie, ZeroTrieSimpleAscii};
+use zerotrie::{ZeroTrieSimpleAscii};
 
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
