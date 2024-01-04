@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerotrie::{ZeroTrieSimpleAscii};
+use zerotrie::ZeroTrieSimpleAscii;
 
 /// A trie that contains the powers.
 const POWERS_TRIE: ZeroTrieSimpleAscii<[u8; 64]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[

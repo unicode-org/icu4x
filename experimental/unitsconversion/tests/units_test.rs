@@ -6,7 +6,7 @@ use core::str::FromStr;
 use icu_unitsconversion::measureunit::MeasureUnitParser;
 use num::BigRational;
 use std::collections::HashSet;
-use zerotrie::{ZeroTrieSimpleAscii};
+use zerotrie::{ZeroTrie, ZeroTrieSimpleAscii};
 
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
@@ -86,15 +86,7 @@ fn test_conversion() {
     let payload = ZeroTrieSimpleAscii::from_store(store);
     let parser = MeasureUnitParser::from_payload(&payload);
 
-    // TODO(#4461): Those units must be parsable.
-    let non_parsable_units: HashSet<&str> = ["kilogram-force", "decade"].iter().cloned().collect();
     for test in tests {
-        // TODO(#4461): remove this line after fixing the parser.
-        if non_parsable_units.contains(test.input_unit.as_str())
-            || non_parsable_units.contains(test.output_unit.as_str())
-        {
-            continue;
-        }
         let input_unit = parser.try_from_identifier(test.input_unit.as_str());
         let output_unit = parser.try_from_identifier(test.output_unit.as_str());
 

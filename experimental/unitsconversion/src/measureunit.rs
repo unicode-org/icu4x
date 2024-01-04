@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use smallvec::SmallVec;
-use zerotrie::{ZeroTrieSimpleAscii};
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
 use crate::{
     power::get_power,
-    provider::{MeasureUnitItem, SiPrefix},
+    provider::{Base, MeasureUnitItem, SiPrefix},
     si_prefix::get_si_prefix,
     ConversionError,
 };
@@ -86,10 +86,16 @@ impl<'data> MeasureUnitParser<'data> {
         let mut identifier_part = identifier_part;
         while !identifier_part.is_empty() {
             let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
-            let (si_prefix, identifier_part_without_si_prefix) =
-                self.get_si_prefix(identifier_part_without_power);
-            let (unit_id, identifier_part_without_unit_id) =
-                self.get_unit_id(identifier_part_without_si_prefix)?;
+            let (si_prefix, unit_id, identifier_part_without_unit_id) = match self.get_unit_id(identifier_part_without_power) {
+                Ok((unit_id, identifier_part_without_unit_id)) => {
+                    (SiPrefix { power: 0, base: Base::Decimal }, unit_id, identifier_part_without_unit_id)
+                }
+                Err(_) => {
+                    let (si_prefix, identifier_part_without_si_prefix) = self.get_si_prefix(identifier_part_without_power);
+                    let (unit_id, identifier_part_without_unit_id) = self.get_unit_id(identifier_part_without_si_prefix)?;
+                    (si_prefix, unit_id, identifier_part_without_unit_id)
+                }
+            };
 
             result.push(MeasureUnitItem {
                 power: sign * power as i8,
