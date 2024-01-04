@@ -118,7 +118,7 @@ const HEBREW_CALENDAR_EPOCH: RataDie = crate::julian::fixed_from_julian_book_ver
 // Month lengths (ref: https://en.wikipedia.org/wiki/Hebrew_calendar#Months)
 const TISHREI_LEN: u8 = 30;
 // except in Complete years
-const ḤESVAN_DEFAULT_LEN: u8 = 29;
+const ḤESHVAN_DEFAULT_LEN: u8 = 29;
 // Except in Deficient years
 const KISLEV_DEFAULT_LEN: u8 = 30;
 const TEVET_LEN: u8 = 29;
@@ -126,7 +126,7 @@ const SHEVAT_LEN: u8 = 30;
 const ADARI_LEN: u8 = 30;
 const ADAR_LEN: u8 = 29;
 const NISAN_LEN: u8 = 30;
-const IYAR_LEN: u8 = 29;
+const IYYAR_LEN: u8 = 29;
 const SIVAN_LEN: u8 = 30;
 const TAMMUZ_LEN: u8 = 29;
 const AV_LEN: u8 = 30;
@@ -138,7 +138,7 @@ const ELUL_LEN: u8 = 29;
 /// Adar, Adar I and Adar II all normalize to 6
 pub const TISHREI: u8 = 1;
 /// Normalized month constant (see [`TISHREI`])
-pub const ḤESVAN: u8 = 2;
+pub const ḤESHVAN: u8 = 2;
 /// Normalized month constant (see [`TISHREI`])
 pub const KISLEV: u8 = 3;
 /// Normalized month constant (see [`TISHREI`])
@@ -150,7 +150,7 @@ pub const ADAR: u8 = 6;
 /// Normalized month constant (see [`TISHREI`])
 pub const NISAN: u8 = 7;
 /// Normalized month constant (see [`TISHREI`])
-pub const IYAR: u8 = 8;
+pub const IYYAR: u8 = 8;
 /// Normalized month constant (see [`TISHREI`])
 pub const SIVAN: u8 = 9;
 /// Normalized month constant (see [`TISHREI`])
@@ -360,11 +360,11 @@ pub enum Keviyah {
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[allow(clippy::exhaustive_enums)] // This is intrinsic to the calendar
 pub enum YearType {
-    /// חסרה: both Ḥesvan and Kislev have 29 days
+    /// חסרה: both Ḥeshvan and Kislev have 29 days
     Deficient = -1,
-    /// כסדרה: Ḥesvan has 29, Kislev has 30
+    /// כסדרה: Ḥeshvan has 29, Kislev has 30
     Regular = 0,
-    /// שלמה: both Ḥesvan and Kislev have 30 days
+    /// שלמה: both Ḥeshvan and Kislev have 30 days
     Complete = 1,
 }
 
@@ -374,12 +374,12 @@ impl YearType {
         self as i8
     }
 
-    /// The length of Ḥesvan
-    fn ḥesvan_length(self) -> u8 {
+    /// The length of Ḥeshvan
+    fn ḥeshvan_length(self) -> u8 {
         if self == Self::Complete {
-            ḤESVAN_DEFAULT_LEN + 1
+            ḤESHVAN_DEFAULT_LEN + 1
         } else {
-            ḤESVAN_DEFAULT_LEN
+            ḤESHVAN_DEFAULT_LEN
         }
     }
 
@@ -500,13 +500,13 @@ impl Keviyah {
         debug_assert!(normalized_ordinal_month <= 12 && normalized_ordinal_month > 0);
         match normalized_ordinal_month {
             TISHREI => TISHREI_LEN,
-            ḤESVAN => self.year_type().ḥesvan_length(),
+            ḤESHVAN => self.year_type().ḥeshvan_length(),
             KISLEV => self.year_type().kislev_length(),
             TEVET => TEVET_LEN,
             SHEVAT => SHEVAT_LEN,
             ADAR => ADAR_LEN,
             NISAN => NISAN_LEN,
-            IYAR => IYAR_LEN,
+            IYYAR => IYYAR_LEN,
             SIVAN => SIVAN_LEN,
             TAMMUZ => TAMMUZ_LEN,
             AV => AV_LEN,
@@ -524,7 +524,7 @@ impl Keviyah {
         // convenience constant to keep the additions smallish
         // Number of days before (any) Adar in a regular year
         const BEFORE_ADAR_DEFAULT_LEN: u16 = u16_cvt!(
-            TISHREI_LEN + ḤESVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN + TEVET_LEN + SHEVAT_LEN
+            TISHREI_LEN + ḤESHVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN + TEVET_LEN + SHEVAT_LEN
         );
 
         let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
@@ -539,26 +539,26 @@ impl Keviyah {
 
         let mut days = match normalized_ordinal_month {
             TISHREI => 0,
-            ḤESVAN => u16_cvt!(TISHREI_LEN),
-            KISLEV => u16_cvt!(TISHREI_LEN) + u16::from(year_type.ḥesvan_length()),
+            ḤESHVAN => u16_cvt!(TISHREI_LEN),
+            KISLEV => u16_cvt!(TISHREI_LEN) + u16::from(year_type.ḥeshvan_length()),
             // Use default lengths after this, we'll apply the correction later
             // (This helps optimize this into a simple jump table)
-            TEVET => u16_cvt!(TISHREI_LEN + ḤESVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN),
-            SHEVAT => u16_cvt!(TISHREI_LEN + ḤESVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN + TEVET_LEN),
+            TEVET => u16_cvt!(TISHREI_LEN + ḤESHVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN),
+            SHEVAT => u16_cvt!(TISHREI_LEN + ḤESHVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN + TEVET_LEN),
             ADAR => BEFORE_ADAR_DEFAULT_LEN,
             NISAN => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN),
-            IYAR => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN),
-            SIVAN => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN),
+            IYYAR => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN),
+            SIVAN => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYYAR_LEN),
             TAMMUZ => {
-                u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN + SIVAN_LEN)
+                u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYYAR_LEN + SIVAN_LEN)
             }
             #[rustfmt::skip]
-            AV => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN + SIVAN_LEN + TAMMUZ_LEN),
+            AV => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYYAR_LEN + SIVAN_LEN + TAMMUZ_LEN),
             #[rustfmt::skip]
-            _ => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN + SIVAN_LEN + TAMMUZ_LEN + AV_LEN),
+            _ => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYYAR_LEN + SIVAN_LEN + TAMMUZ_LEN + AV_LEN),
         };
 
-        // If it is after Kislev and Ḥesvan, we should add the year correction
+        // If it is after Kislev and Ḥeshvan, we should add the year correction
         if normalized_ordinal_month > KISLEV {
             // Ensure the casts are fine
             debug_assert!(days > 1 && year_type.length_correction().abs() <= 1);
