@@ -438,7 +438,9 @@ impl DatagenDriver {
 
             let transform_duration = instant1.elapsed();
 
-            if fallback == FallbackMode::Runtime {
+            // segmenter uses hardcoded locales internally, so fallback is not necessary.
+            // TODO(#4511): Use auxiliary keys for segmenter
+            if fallback == FallbackMode::Runtime && !key.path().get().starts_with("segmenter") {
                 sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
             } else {
                 sink.flush(key)
