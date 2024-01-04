@@ -54,11 +54,10 @@ impl<'data> MeasureUnitParser<'data> {
             return Ok((power, part));
         }
 
-        if part_without_power.starts_with('-') {
-            return Ok((power, &part_without_power[1..]));
+        match part_without_power.strip_prefix('-') {
+            Some(part_without_power) => Ok((power, part_without_power)),
+            None => Err(ConversionError::InvalidUnit),
         }
-
-        Err(ConversionError::InvalidUnit)
     }
 
     fn get_si_prefix<'a>(&'a self, part: &'a str) -> (SiPrefix, &str) {
@@ -67,11 +66,12 @@ impl<'data> MeasureUnitParser<'data> {
             return (si_prefix, part);
         }
 
-        if part_without_si_prefix.starts_with('-') {
-            return (si_prefix, &part_without_si_prefix[1..]);
-        }
-
-        (si_prefix, part_without_si_prefix)
+        (
+            si_prefix,
+            part_without_si_prefix
+                .strip_prefix('-')
+                .unwrap_or(part_without_si_prefix),
+        )
     }
 
     /// Process a part of an identifier.
@@ -86,16 +86,24 @@ impl<'data> MeasureUnitParser<'data> {
         let mut identifier_part = identifier_part;
         while !identifier_part.is_empty() {
             let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
-            let (si_prefix, unit_id, identifier_part_without_unit_id) = match self.get_unit_id(identifier_part_without_power) {
-                Ok((unit_id, identifier_part_without_unit_id)) => {
-                    (SiPrefix { power: 0, base: Base::Decimal }, unit_id, identifier_part_without_unit_id)
-                }
-                Err(_) => {
-                    let (si_prefix, identifier_part_without_si_prefix) = self.get_si_prefix(identifier_part_without_power);
-                    let (unit_id, identifier_part_without_unit_id) = self.get_unit_id(identifier_part_without_si_prefix)?;
-                    (si_prefix, unit_id, identifier_part_without_unit_id)
-                }
-            };
+            let (si_prefix, unit_id, identifier_part_without_unit_id) =
+                match self.get_unit_id(identifier_part_without_power) {
+                    Ok((unit_id, identifier_part_without_unit_id)) => (
+                        SiPrefix {
+                            power: 0,
+                            base: Base::Decimal,
+                        },
+                        unit_id,
+                        identifier_part_without_unit_id,
+                    ),
+                    Err(_) => {
+                        let (si_prefix, identifier_part_without_si_prefix) =
+                            self.get_si_prefix(identifier_part_without_power);
+                        let (unit_id, identifier_part_without_unit_id) =
+                            self.get_unit_id(identifier_part_without_si_prefix)?;
+                        (si_prefix, unit_id, identifier_part_without_unit_id)
+                    }
+                };
 
             result.push(MeasureUnitItem {
                 power: sign * power as i8,
