@@ -532,6 +532,32 @@ impl Keviyah {
         days
     }
 
+    /// Given a day of the year, return the ordinal month and day as (month, day).
+    pub fn month_day_for(self, mut day: u16) -> (u8, u8) {
+        for month in 1..14 {
+            let month_len = self.month_len(month);
+            if let Ok(day) = u8::try_from(day) {
+                if day <= month_len {
+                    return (month, day);
+                }
+            }
+            day -= u16::from(month_len);
+        }
+        debug_assert!(false, "Attempted to get Hebrew date for {day:?}, in keviyah {self:?}, didn't have enough days in the year");
+        self.last_month_day_in_year()
+    }
+
+    /// Return the last ordinal month and day in this year as (month, day)
+    #[inline]
+    pub fn last_month_day_in_year(self) -> (u8, u8) {
+        // Elul is always the last month of the year
+        if self.is_leap() {
+            (13, ELUL_LEN)
+        } else {
+            (12, ELUL_LEN)
+        }
+    }
+
     /// Whether this year is a leap year
     #[inline]
     pub fn is_leap(self) -> bool {

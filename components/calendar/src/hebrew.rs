@@ -138,11 +138,8 @@ impl CalendarArithmetic for Hebrew {
         info.keviyah.is_leap()
     }
 
-    fn last_month_day_in_year(h_year: i32, info: HebrewYearInfo) -> (u8, u8) {
-        // Calculate the index of the last month (Elul)
-        let last_month = Self::months_for_every_year(h_year, info);
-        // Elul always has 29 days
-        (last_month, 29)
+    fn last_month_day_in_year(_h_year: i32, info: HebrewYearInfo) -> (u8, u8) {
+        info.keviyah.last_month_day_in_year()
     }
 }
 
@@ -228,24 +225,14 @@ impl Calendar for Hebrew {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
         let (year_info, h_year) = YearInfo::year_containing_rd(fixed_iso);
         // Obtaining a 1-indexed day-in-year value
-        let mut day = fixed_iso - year_info.new_year() + 1;
+        let day = fixed_iso - year_info.new_year() + 1;
+        let day = u16::try_from(day).unwrap_or(u16::MAX);
 
         let year_info = HebrewYearInfo::compute_with_keviyah(year_info.keviyah, h_year);
-        for month in 1..14 {
-            let month_len = year_info.keviyah.month_len(month);
-            if let Ok(day) = u8::try_from(day) {
-                if day <= month_len {
-                    return HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
-                        h_year, month, day, year_info,
-                    ));
-                }
-            }
-            day -= i64::from(month_len);
-        }
-        debug_assert!(false, "Attempted to get Hebrew date for {fixed_iso:?}, in year {h_year}, didn't have enough days in the year");
-        HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
-            h_year, 13, 29, year_info,
-        ))
+        let (month, day) = year_info.keviyah.month_day_for(day);
+        return HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
+            h_year, month, day, year_info,
+        ));
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
