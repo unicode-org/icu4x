@@ -57,13 +57,13 @@ use core::cmp::Ordering;
 
 /// Calculate the number of months preceding the molad Tishri for a given hebrew year (Tishri is the first month)
 #[inline]
-fn months_preceding_molad(h_year: i32) -> i32 {
+fn months_preceding_molad(h_year: i32) -> i64 {
     // Ft = INT((235N + 1 / 19))
     // Where N = h_year - 1 (number of elapsed years since epoch)
     // This math essentially comes from the Metonic cycle of 19 years containing
     // 235 months: 12 months per year, plus an extra month for each of the 7 leap years.
 
-    (235 * (h_year - 1) + 1) / 19
+    (235 * (i64::from(h_year) - 1) + 1) / 19
 }
 
 /// Conveniently create a constant for a ḥalakim (by default in 1-indexed notation). Produces a constant
@@ -132,6 +132,18 @@ const TAMMUZ_LEN: u8 = 29;
 const AV_LEN: u8 = 30;
 const ELUL_LEN: u8 = 29;
 
+/// The minumum hebrew year supported by this code (this is the minimum value for i32)
+pub const HEBREW_MIN_YEAR: i32 = i32::min_value();
+/// The minumum R.D. supported by this code (this code will clamp outside of it)
+// (this constant is verified by tests)
+pub const HEBREW_MIN_RD: RataDie = RataDie::new(-784362951949);
+/// The maximum hebrew year supported by this code (this is the maximum alue for i32)
+// (this constant is verified by tests)
+pub const HEBREW_MAX_YEAR: i32 = i32::max_value();
+/// The maximum R.D. supported by this code (this is the last day in [`HEBREW_MAX_YEAR`])
+// (this constant is verified by tests)
+pub const HEBREW_MAX_RD: RataDie = RataDie::new(784360204356);
+
 /// Given a Hebrew Year, returns its molad specified as:
 ///
 /// - The number of weeks since the week of Beharad (Oct 6, 3761 BCE Julian)
@@ -142,7 +154,7 @@ fn molad_details(h_year: i32) -> (i64, i32) {
 
     // The molad tishri expressed in parts since the beginning of the week containing Molad of Beharad
     // Formula from Adjler Appendix A
-    let molad = MOLAD_BEHERAD_OFFSET as i64 + months_preceding as i64 * HEBREW_LUNATION_TIME as i64;
+    let molad = MOLAD_BEHERAD_OFFSET as i64 + months_preceding * HEBREW_LUNATION_TIME as i64;
 
     // Split into quotient and remainder
     let weeks_since_beharad = molad.div_euclid(ḤALAKIM_IN_WEEK);
@@ -188,13 +200,21 @@ impl YearInfo {
     }
 
     /// Returns the YearInfo and h_year for the year containing `date`
+    ///
+    /// This will clamp the R.D. such that the hebrew year is within range for i32
     #[inline]
     pub fn year_containing_rd(date: RataDie) -> (Self, i32) {
         #[allow(unused_imports)]
         use core_maths::*;
+
+        let date = date.clamp(HEBREW_MIN_RD, HEBREW_MAX_RD);
+
         let days_since_epoch = (date - HEBREW_CALENDAR_EPOCH) as f64;
         let maybe_approx =
             i64_to_i32(1 + days_since_epoch.div_euclid(HEBREW_APPROX_YEAR_LENGTH) as i64);
+        debug_assert!(maybe_approx.is_ok(),
+                     "year_containing_rd should have clamped {date:?} between {HEBREW_MIN_RD:?} and {HEBREW_MAX_RD:?} \
+                      and thus be well in bounds for year calculation math");
         let approx = maybe_approx.unwrap_or_else(|e| e.saturate());
 
         let yi = Self::compute_for(approx);
@@ -217,7 +237,7 @@ impl YearInfo {
             }
         };
 
-        debug_assert!(yi.compare(date).is_eq() || maybe_approx.is_err(), // The data will be incorrect if we saturate, and that's expected
+        debug_assert!(yi.compare(date).is_eq(),
                       "Date {date:?} calculated approximately to Hebrew Year {approx} (comparison: {cmp:?}), \
                        should be contained in adjacent year {h_year} but that year is still {:?} it", yi.compare(date));
 
@@ -658,15 +678,22 @@ enum MetonicCycleType {
 
 impl MetonicCycleType {
     fn for_h_year(h_year: i32) -> Self {
-        // The -1 is because h_year is 1-indexed
-        // The +1 is because our match statement is also 1-indexed
-        // and we want to have this match statement match resources that list
-        // these year types (both Adjler and Wikipedia).
-        match ((h_year - 1) % 19) + 1 {
+        // h_year is 1-indexed, and our metonic cycle year numberings
+        // are 1-indexed, so we really need to do `(h_year - 1) % 19 + 1`
+        //
+        // However, that is equivalent to `h_year % 19` provided you handle the
+        // fact that that operation will produce 0 instead of 19.
+        // Both numbers end up in our wildcard leap year arm so that's fine.
+        let remainder = h_year.rem_euclid(19);
+        match remainder {
+            // These numbers are 1-indexed
             2 | 5 | 10 | 13 | 16 => Self::LMinusOne,
             1 | 4 | 9 | 12 | 15 => Self::LPlusOne,
             7 | 18 => Self::LPlusMinusOne,
-            _ => Self::Leap,
+            _ => {
+                debug_assert!(matches!(remainder, 3 | 6 | 8 | 11 | 14 | 17 | 0 | 19));
+                Self::Leap
+            }
         }
     }
 }
@@ -908,5 +935,25 @@ mod test {
 
             last_year = Some((h_year, kv_ny + year_len.into()))
         }
+    }
+    #[test]
+    fn test_minmax() {
+        let min = YearInfo::compute_for(HEBREW_MIN_YEAR);
+        let min_ny = min.new_year();
+        assert_eq!(min_ny, HEBREW_MIN_RD);
+
+        let (recomputed_yi, recomputed_y) = YearInfo::year_containing_rd(min_ny);
+        assert_eq!(recomputed_y, HEBREW_MIN_YEAR);
+        assert_eq!(recomputed_yi, min);
+
+        let max = YearInfo::compute_for(HEBREW_MAX_YEAR);
+        let max_ny = max.new_year();
+        // -1 since max_ny is also a part of the year
+        let max_last = max_ny + i64::from(max.keviyah.year_length()) - 1;
+        assert_eq!(max_last, HEBREW_MAX_RD);
+
+        let (recomputed_yi, recomputed_y) = YearInfo::year_containing_rd(max_last);
+        assert_eq!(recomputed_y, HEBREW_MAX_YEAR);
+        assert_eq!(recomputed_yi, max);
     }
 }
