@@ -288,7 +288,7 @@ fn explicit_hybrid() {
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([
-                langid!("arc"), // Aramaic, not in CLDR
+                langid!("arc"), // Aramaic, not in supported list
                 langid!("ar-EG"),
                 langid!("en-GB"),
                 langid!("es"),
@@ -354,7 +354,7 @@ fn explicit_runtime() {
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([
-                langid!("arc"), // Aramaic, not in CLDR
+                langid!("arc"), // Aramaic, not in supported list
                 langid!("ar-EG"),
                 langid!("en-GB"),
                 langid!("es"),
@@ -409,7 +409,7 @@ fn explicit_runtime() {
     ];
 
     // Should return the expanded then deduplicated explicit locales set above.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales,);
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
 }
 
 #[test]
@@ -418,7 +418,7 @@ fn explicit_preresolved() {
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([
-                langid!("arc"), // Aramaic, not in CLDR
+                langid!("arc"), // Aramaic, not in supported list
                 langid!("ar-EG"),
                 langid!("en-GB"),
                 langid!("es"),
@@ -465,5 +465,5 @@ fn explicit_preresolved() {
     ];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales,);
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
 }
