@@ -314,6 +314,30 @@ pub enum YearType {
     Complete = 1,
 }
 
+impl YearType {
+    /// The length correction from a regular year (354/385)
+    fn length_correction(self) -> i8 {
+        self as i8
+    }
+
+    /// The length of Ḥesvan
+    fn ḥesvan_length(self) -> u8 {
+        if self == Self::Complete {
+            ḤESVAN_DEFAULT_LEN + 1
+        } else {
+            ḤESVAN_DEFAULT_LEN + 0
+        }
+    }
+
+    /// The length correction of Kislev
+    fn kislev_length(self) -> u8 {
+        if self == Self::Deficient {
+            KISLEV_DEFAULT_LEN - 1
+        } else {
+            KISLEV_DEFAULT_LEN + 0
+        }
+    }
+}
 /// The day of the new year. Only these four days are permitted.
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[allow(clippy::exhaustive_enums)] // This is intrinsic to the calendar
@@ -408,21 +432,9 @@ impl Keviyah {
             // Tishrei
             1 => TISHREI_LEN,
             // Ḥesvan
-            2 => {
-                if self.year_type() == YearType::Complete {
-                    ḤESVAN_DEFAULT_LEN + 1
-                } else {
-                    ḤESVAN_DEFAULT_LEN
-                }
-            }
+            2 => self.year_type().ḥesvan_length(),
             // Kislev
-            3 => {
-                if self.year_type() == YearType::Deficient {
-                    KISLEV_DEFAULT_LEN - 1
-                } else {
-                    KISLEV_DEFAULT_LEN
-                }
-            }
+            3 => self.year_type().kislev_length(),
             // Tevet
             4 => TEVET_LEN,
             // Shevat
@@ -457,7 +469,7 @@ impl Keviyah {
                 + u16::from(KISLEV_DEFAULT_LEN)
                 + u16::from(TEVET_LEN)
                 + u16::from(SHEVAT_LEN);
-            let corrected = month_lengths as i16 + self.year_type() as i16;
+            let corrected = month_lengths as i16 + i16::from(self.year_type().length_correction());
             return u16::try_from(corrected).unwrap_or(month_lengths);
         };
         debug_assert!(normalized_ordinal_month <= 12 && normalized_ordinal_month > 0);
@@ -471,20 +483,14 @@ impl Keviyah {
         if normalized_ordinal_month == 2 {
             return days;
         }
-        days += u16::from(ḤESVAN_DEFAULT_LEN);
+
         let year_type = self.year_type();
-        if year_type == YearType::Complete {
-            days += 1;
-        }
+        days += u16::from(year_type.ḥesvan_length());
 
         if normalized_ordinal_month == 3 {
             return days;
         }
-        days += u16::from(KISLEV_DEFAULT_LEN);
-        let year_type = self.year_type();
-        if year_type == YearType::Deficient {
-            days -= 1;
-        }
+        days += u16::from(year_type.kislev_length());
 
         if normalized_ordinal_month == 4 {
             return days;
@@ -590,7 +596,7 @@ impl Keviyah {
     pub fn year_length(self) -> u16 {
         let base_year_length = if self.is_leap() { 384 } else { 354 };
 
-        (base_year_length + self.year_type() as i16) as u16
+        (base_year_length + i16::from(self.year_type().length_correction())) as u16
     }
     /// Construct this from an integer between 0 and 13
     ///
