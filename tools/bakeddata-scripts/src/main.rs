@@ -131,18 +131,14 @@ fn main() {
             .unwrap();
         }
 
-        if component == "segmenter" {
-            // segmenter uses hardcoded locales internally, so fallback is not necessary.
-            driver.clone().with_fallback_mode(FallbackMode::Hybrid)
-        } else {
-            driver.clone()
-        }
-        .with_keys(keys.iter().copied())
-        .export(
-            &source,
-            BakedExporter::new(path.join("data"), options).unwrap(),
-        )
-        .unwrap();
+        driver
+            .clone()
+            .with_keys(keys.iter().copied())
+            .export(
+                &source,
+                BakedExporter::new(path.join("data"), options).unwrap(),
+            )
+            .unwrap();
 
         for file in ["data/any.rs", "data/mod.rs"] {
             std::fs::remove_file(path.join(file)).unwrap();
