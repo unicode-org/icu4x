@@ -130,13 +130,9 @@ fn main() {
             )
             .unwrap();
         }
-
-        if component == "segmenter" {
-            // segmenter uses hardcoded locales internally, so fallback is not necessary.
-            driver.clone().with_fallback_mode(FallbackMode::Hybrid)
-        } else {
-            driver.clone()
-        }
+        
+        driver
+        .clone()
         .with_keys(keys.iter().copied())
         .export(
             &source,

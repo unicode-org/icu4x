@@ -438,7 +438,7 @@ impl DatagenDriver {
 
             let transform_duration = instant1.elapsed();
 
-            if fallback == FallbackMode::Runtime {
+            if fallback == FallbackMode::Runtime && !key.path().get().starts_with("segmenter") {
                 sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
             } else {
                 sink.flush(key)
