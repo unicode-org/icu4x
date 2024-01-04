@@ -22,6 +22,8 @@ pub struct Symbols {
     pub minus_sign: String,
     #[serde(rename = "plusSign")]
     pub plus_sign: String,
+    #[serde(rename = "percentSign")]
+    pub percent_sign: String,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
