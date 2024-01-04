@@ -50,10 +50,13 @@ impl<'data> MeasureUnitParser<'data> {
 
     fn get_power<'a>(&'a self, part: &'a str) -> Result<(u8, &str), ConversionError> {
         let (power, part_without_power) = get_power(part);
+
+        // If the power is not found, return the part as it is.
         if part_without_power.len() == part.len() {
             return Ok((power, part));
         }
 
+        // If the power is found, this means that the part must start with the `-` sign.
         match part_without_power.strip_prefix('-') {
             Some(part_without_power) => Ok((power, part_without_power)),
             None => Err(ConversionError::InvalidUnit),
@@ -66,12 +69,10 @@ impl<'data> MeasureUnitParser<'data> {
             return (si_prefix, part);
         }
 
-        (
-            si_prefix,
-            part_without_si_prefix
-                .strip_prefix('-')
-                .unwrap_or(part_without_si_prefix),
-        )
+        match part_without_si_prefix.strip_prefix('-') {
+            Some(part_without_dash) => (si_prefix, part_without_dash),
+            None => (si_prefix, part_without_si_prefix),
+        }
     }
 
     /// Process a part of an identifier.
