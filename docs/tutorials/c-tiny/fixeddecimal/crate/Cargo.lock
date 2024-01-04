@@ -23,14 +23,15 @@ dependencies = [
 name = "crate"
 version = "0.0.0"
 dependencies = [
- "dlmalloc",
  "icu_capi",
+ "libc_alloc",
+ "panic-halt",
 ]
 
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -41,12 +42,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -66,15 +67,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "dlmalloc"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "203540e710bfadb90e5e29930baf5d10270cec1f43ab34f46f78b147b2de715a"
-dependencies = [
- "libc",
 ]
 
 [[package]]
@@ -423,10 +415,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
-name = "libc"
-version = "0.2.147"
+name = "libc_alloc"
+version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
+checksum = "2a835c038b748123287f9fb1743d565e7c635879997f43c345a18a026690364e"
 
 [[package]]
 name = "libm"
@@ -443,6 +435,12 @@ name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
+
+[[package]]
+name = "panic-halt"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de96540e0ebde571dc55c73d60ef407c653844e6f9a1e2fdbd40c07b9252d812"
 
 [[package]]
 name = "proc-macro2"

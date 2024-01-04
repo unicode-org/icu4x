@@ -7,12 +7,7 @@ name = "crate"
 publish = false
 version = "0.0.0"
 
-[lib]
-crate-type = ["staticlib"]
-
 [dependencies]
 icu_capi = { version = "1.4", default-features = false, features = ["compiled_data", "icu_segmenter"] }
-dlmalloc = { version = "0.2", features = ["global"] }
-
-[features]
-std = []
+libc_alloc = { version = "1.0.6", features = ["global"] }
+panic-halt = "0.2"

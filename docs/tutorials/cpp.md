@@ -110,19 +110,12 @@ Users wishing to use ICU4X on a `no_std` platform will need to write their own c
 ```rust
 #![no_std]
 
-// Expose icu_capi symbols
 extern crate icu_capi;
-
-#[global_allocator]
-static ALLOCATOR: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
-
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
+extern crate libc_alloc;
+extern crate panic_never;
 ```
 
-This can then be compiled with `cargo +nightly build --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort` for a minimal build.
+This can then be compiled with `cargo +nightly rustc --crate-type staticlib --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort` for a minimal build.
 
 ## Tips
 
