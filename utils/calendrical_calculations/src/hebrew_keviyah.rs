@@ -379,6 +379,22 @@ pub enum StartOfYear {
     Saturday = 7,
 }
 
+// Given a constant expression of the type FOO + BAR + BAZ convert
+// every element into a u16 and return
+macro_rules! u16_cvt(
+    // the $first / $rest pattern is needed since
+    // macros cannot use `+` as a separator in repetition
+    ($first:ident $(+ $rest:ident)*) => {
+        {
+            // make sure it is constant
+            // we use as here because it works in consts and in this context
+            // overflow will panic anyway
+            const COMPUTED: u16 = $first as u16 $(+ $rest as u16)*;
+            COMPUTED
+        }
+    };
+);
+
 impl Keviyah {
     /// Get the type of year for this Keviyah.
     ///
@@ -489,77 +505,53 @@ impl Keviyah {
     /// Get the number of days preceding this month
     #[inline]
     pub fn days_preceding(self, ordinal_month: u8) -> u16 {
+        // convenience constant to keep the additions smallish
+        // Number of days before (any) Adar in a regular year
+        const BEFORE_ADAR_DEFAULT_LEN: u16 = u16_cvt!(
+            TISHREI_LEN + ḤESVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN + TEVET_LEN + SHEVAT_LEN
+        );
+
         let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
-            let month_lengths: u16 = u16::from(TISHREI_LEN)
-                + u16::from(ḤESVAN_DEFAULT_LEN)
-                + u16::from(KISLEV_DEFAULT_LEN)
-                + u16::from(TEVET_LEN)
-                + u16::from(SHEVAT_LEN);
-            let corrected = month_lengths as i16 + i16::from(self.year_type().length_correction());
-            return u16::try_from(corrected).unwrap_or(month_lengths);
+            // Get Adar I out of the way
+            let corrected =
+                BEFORE_ADAR_DEFAULT_LEN as i16 + i16::from(self.year_type().length_correction());
+            return corrected as u16;
         };
         debug_assert!(normalized_ordinal_month <= 12 && normalized_ordinal_month > 0);
 
-        let mut days = 0u16;
-        if normalized_ordinal_month == 1 {
-            return days;
-        }
-        days += u16::from(TISHREI_LEN);
-
-        if normalized_ordinal_month == 2 {
-            return days;
-        }
-
         let year_type = self.year_type();
-        days += u16::from(year_type.ḥesvan_length());
 
-        if normalized_ordinal_month == 3 {
-            return days;
+        let mut days = match normalized_ordinal_month {
+            1 => 0,
+            2 => u16_cvt!(TISHREI_LEN),
+            3 => u16_cvt!(TISHREI_LEN) + u16::from(year_type.ḥesvan_length()),
+            // Use default lengths after this, we'll apply the correction later
+            // (This helps optimize this into a simple jump table)
+            4 => u16_cvt!(TISHREI_LEN + ḤESVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN),
+            5 => u16_cvt!(TISHREI_LEN + ḤESVAN_DEFAULT_LEN + KISLEV_DEFAULT_LEN + TEVET_LEN),
+            6 => BEFORE_ADAR_DEFAULT_LEN,
+            7 => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN),
+            8 => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN),
+            9 => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN),
+            10 => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN + SIVAN_LEN),
+            #[rustfmt::skip]
+            11 => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN + SIVAN_LEN + TAMMUZ_LEN),
+            #[rustfmt::skip]
+            _ => u16_cvt!(BEFORE_ADAR_DEFAULT_LEN + ADAR_LEN + NISAN_LEN + IYAR_LEN + SIVAN_LEN + TAMMUZ_LEN + AV_LEN),
+        };
+
+        // If it is after Kislev and Ḥesvan, we should add the year correction
+        if normalized_ordinal_month >= 4 {
+            // Ensure the casts are fine
+            debug_assert!(days > 1 && year_type.length_correction().abs() <= 1);
+            days = (days as i16 + year_type.length_correction() as i16) as u16;
         }
-        days += u16::from(year_type.kislev_length());
 
-        if normalized_ordinal_month == 4 {
-            return days;
-        }
-        days += u16::from(TEVET_LEN);
-
-        if normalized_ordinal_month == 5 {
-            return days;
-        }
-        days += u16::from(SHEVAT_LEN);
-
-        if self.is_leap() {
+        // In a leap year, after Adar (and including Adar II), we should add
+        // the length of Adar 1
+        if normalized_ordinal_month >= 6 && self.is_leap() {
             days += u16::from(ADARI_LEN);
         }
-        if normalized_ordinal_month == 6 {
-            return days;
-        }
-        days += u16::from(ADAR_LEN);
-
-        if normalized_ordinal_month == 7 {
-            return days;
-        }
-        days += u16::from(NISAN_LEN);
-
-        if normalized_ordinal_month == 8 {
-            return days;
-        }
-        days += u16::from(IYAR_LEN);
-
-        if normalized_ordinal_month == 9 {
-            return days;
-        }
-        days += u16::from(SIVAN_LEN);
-
-        if normalized_ordinal_month == 10 {
-            return days;
-        }
-        days += u16::from(TAMMUZ_LEN);
-
-        if normalized_ordinal_month == 11 {
-            return days;
-        }
-        days += u16::from(AV_LEN);
 
         days
     }
