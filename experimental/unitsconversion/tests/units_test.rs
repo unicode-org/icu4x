@@ -7,7 +7,7 @@ use icu_unitsconversion::converter::{ConverterFactory, Convertibility};
 use num::BigRational;
 use std::collections::HashSet;
 
-// TODO: use Ration<BigInt> instead of BigRational as in the DataGen.
+// TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
     let mut components = decimal.split('.');
@@ -28,7 +28,7 @@ fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
     Some(integer_component)
 }
 
-// TODO: use Ration<BigInt> instead of BigRational as in the DataGen.
+// TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a scientific notation string to a BigRational.
 pub fn get_rational(rational: &str) -> Option<BigRational> {
     // remove all the commas
@@ -51,7 +51,7 @@ pub fn get_rational(rational: &str) -> Option<BigRational> {
 }
 
 #[test]
-fn tes_cldr_unit_tests() {
+fn test_cldr_unit_tests() {
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
@@ -149,12 +149,10 @@ fn tes_cldr_unit_tests() {
             .try_from_identifier(test.output_unit.as_str())
             .unwrap();
 
-        let convertablity = converter_factory
-            .extract_convertibility(&input_unit, &output_unit)
-            .unwrap();
+        let convertablity = converter_factory.extract_convertibility(&input_unit, &output_unit);
 
         match convertablity {
-            Convertibility::Convertible | Convertibility::Reciprocal => (),
+            Convertibility::Convertible => (),
             _ => panic!("Units are not convertible or reciprocal"),
         }
     }

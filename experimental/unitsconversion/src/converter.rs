@@ -17,7 +17,7 @@ pub enum Convertibility {
     Convertible,
 
     /// The units are reciprocal.
-    /// For example, `meter-per-second` and `second-per-meter` are reciprocal.
+    /// For example, `gallon-per-mile` and `100-kilometer-per-liter` are reciprocal.
     Reciprocal,
 
     /// The units are not convertible.
@@ -42,26 +42,36 @@ impl<'data> ConverterFactory<'data> {
         MeasureUnitParser::from_payload(&self.payload.units_conversion_trie)
     }
 
+    // TODO(#4512): the need needs to be bikeshedded.
     /// Extract the convertibility from the given units in the form of CLDR identifiers.
     pub fn extract_convertibility(
         &self,
         unit1: &MeasureUnit,
         unit2: &MeasureUnit,
-    ) -> Result<Convertibility, ConversionError> {
-        let unit1 = &unit1.contained_units;
-        let unit2 = &unit2.contained_units;
-
+    ) -> Convertibility {
+        /// A struct that contains the sums and subtractions of base unit powers.
+        /// For example:
+        ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
+        ///     For the output unit `foot-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
+        ///     The subtractions are: meter: 1 - 1 = 0, second: -1 - (-1) = 0.
+        ///     The sums are: meter: 1 + 1 = 2, second: -1 + (-1) = -2.
+        ///     If all the sums are zeros, then the units are reciprocal.
+        ///     If all the subtractions are zeros, then the units are convertible.
+        ///     This means the result for the example is convertible.
+        #[derive(Debug)]
         struct DetermineConvertibility {
-            convertible: i16,
-            reciprocal: i16,
+            subtractions: i16,
+            sums: i16,
         }
 
-        /// Inserting the non basic units into the map.
-        /// Thus means that from the given unis
+        /// Inserting the units item into the map.
+        /// NOTE:
+        ///     This will require to go through the basic units of the given unit items.
+        ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
         fn insert_non_basic_units(
             factory: &ConverterFactory,
             units: &[MeasureUnitItem],
-            sign: i8,
+            sign: i16,
             map: &mut LiteMap<u16, DetermineConvertibility>,
         ) -> Result<(), ConversionError> {
             for item in units {
@@ -69,37 +79,37 @@ impl<'data> ConverterFactory<'data> {
                     .payload
                     .convert_infos
                     .get(item.unit_id as usize)
-                    .ok_or(ConversionError::InternalError)?;
+                    .ok_or(ConversionError::DataNotFoundError)?;
 
-                insert_units_powers(items_from_item.basic_units(), item.power, sign, map)?;
+                insert_units_powers(items_from_item.basic_units(), item.power as i16, sign, map)?;
             }
 
             Ok(())
         }
 
+        /// Inserting the basic units into the map.
+        /// NOTE:   
+        ///     The basic units should be multiplied by the original power.
+        ///     For example, `square-foot` , the base unit is `meter` with power 1.
+        ///     Thus, the inserted power should be `1 * 2 = 2`.
         fn insert_units_powers(
             basic_units: &ZeroSlice<MeasureUnitItem>,
-            original_power: i8,
-            sign: i8,
+            original_power: i16,
+            sign: i16,
             map: &mut LiteMap<u16, DetermineConvertibility>,
         ) -> Result<(), ConversionError> {
             for item in basic_units.iter() {
-                let item_power = item
-                    .power
-                    .checked_mul(original_power)
-                    .ok_or(ConversionError::InternalError)?;
-                let item_power_signed = item_power
-                    .checked_mul(sign)
-                    .ok_or(ConversionError::InternalError)?;
+                let item_power = (item.power as i16) * original_power;
+                let signed_item_power = item_power * sign;
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.convertible += (item_power_signed) as i16;
-                    determine_convertibility.reciprocal += (item_power) as i16;
+                    determine_convertibility.subtractions += (signed_item_power) as i16;
+                    determine_convertibility.sums += (item_power) as i16;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
-                            convertible: (item_power_signed) as i16,
-                            reciprocal: (item_power) as i16,
+                            subtractions: (signed_item_power) as i16,
+                            sums: (item_power) as i16,
                         },
                     );
                 }
@@ -108,26 +118,36 @@ impl<'data> ConverterFactory<'data> {
             Ok(())
         }
 
-        let mut map = LiteMap::<u16, DetermineConvertibility>::new();
-        insert_non_basic_units(self, unit1, 1, &mut map)?;
-        insert_non_basic_units(self, unit2, -1, &mut map)?;
+        let unit1 = &unit1.contained_units;
+        let unit2 = &unit2.contained_units;
 
-        let (convertible_sum, reciprocal_sum) = map.iter_values().fold(
-            (0, 0),
-            |(convertible_sum, reciprocal_sum), determine_convertibility| {
+        let mut map = LiteMap::new();
+        let first_insert_result = insert_non_basic_units(self, unit1, 1, &mut map);
+        let second_insert_result = insert_non_basic_units(self, unit2, -1, &mut map);
+
+        debug_assert!(first_insert_result.is_ok());
+        debug_assert!(second_insert_result.is_ok());
+
+        if first_insert_result.is_err() || second_insert_result.is_err() {
+            return Convertibility::NotConvertible;
+        }
+
+        let (sums_are_zeros, subtractions_are_zeros) = map.iter().fold(
+            (true, true),
+            |(sums, subs), (_, determine_convertibility)| {
                 (
-                    convertible_sum + determine_convertibility.convertible,
-                    reciprocal_sum + determine_convertibility.reciprocal,
+                    sums && determine_convertibility.sums == 0,
+                    subs && determine_convertibility.subtractions == 0,
                 )
             },
         );
 
-        if convertible_sum == 0 {
-            Ok(Convertibility::Convertible)
-        } else if reciprocal_sum == 0 {
-            Ok(Convertibility::Reciprocal)
+        if subtractions_are_zeros {
+            Convertibility::Convertible
+        } else if sums_are_zeros {
+            Convertibility::Reciprocal
         } else {
-            Ok(Convertibility::NotConvertible)
+            Convertibility::NotConvertible
         }
     }
 }

@@ -1601,7 +1601,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_timezone",
- "litemap 0.7.2",
+ "litemap",
  "serde",
  "serde_json",
  "smallvec",
@@ -1744,7 +1744,7 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
- "litemap 0.7.2",
+ "litemap",
  "postcard",
  "serde",
  "serde_json",
@@ -1818,7 +1818,7 @@ dependencies = [
  "databake",
  "icu_locid",
  "icu_provider",
- "litemap 0.7.2",
+ "litemap",
  "serde",
  "zerovec",
 ]
@@ -2054,7 +2054,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_unicodeset_parse",
- "litemap 0.7.2",
+ "litemap",
  "log",
  "serde",
  "writeable",
@@ -2082,7 +2082,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "icu_unitsconversion_data",
- "litemap 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "litemap",
  "num",
  "serde",
  "smallvec",
@@ -2228,12 +2228,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "litemap"
-version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9d642685b028806386b2b6e75685faadd3eb65a85fff7df711ce18446a422da"
-
-[[package]]
 name = "lock_api"
 version = "0.4.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2311,7 +2305,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_fs",
  "itertools",
- "litemap 0.7.2",
+ "litemap",
  "lru",
  "serde",
  "serde-aux",
@@ -4447,7 +4441,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locid",
- "litemap 0.7.2",
+ "litemap",
  "postcard",
  "rand",
  "rand_pcg",

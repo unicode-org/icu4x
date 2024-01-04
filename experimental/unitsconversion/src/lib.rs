@@ -25,6 +25,6 @@ pub enum ConversionError {
     /// For example, `meter` and `foot` are compatible, but `meter` and `second` are not.
     InvalidConversion,
 
-    /// The conversion is not possible due to an internal error.
-    InternalError,
+    /// The needed data is not found.
+    DataNotFoundError,
 }
