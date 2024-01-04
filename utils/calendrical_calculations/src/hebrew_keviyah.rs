@@ -401,7 +401,7 @@ impl Keviyah {
     pub fn month_len(self, ordinal_month: u8) -> u8 {
         // Normalize it to the month number
         let Some(normalized_ordinal_month) = self.normalized_ordinal_month(ordinal_month) else {
-            return 30;
+            return ADARI_LEN;
         };
         debug_assert!(normalized_ordinal_month <= 12 && normalized_ordinal_month > 0);
         match normalized_ordinal_month {
