@@ -204,11 +204,17 @@ impl YearInfo {
 
         let (yi, h_year) = match cmp {
             // The approx year is a year greater. Go one year down
-            Ordering::Greater => (Self::compute_for(approx - 1), approx - 1),
+            Ordering::Greater => {
+                let prev = approx.saturating_sub(1);
+                (Self::compute_for(prev), prev)
+            }
             // Bullseye
             Ordering::Equal => (yi, approx),
             // The approx year is a year lower. Go one year up.
-            Ordering::Less => (Self::compute_for(approx + 1), approx + 1),
+            Ordering::Less => {
+                let next = approx.saturating_add(1);
+                (Self::compute_for(next), next)
+            }
         };
 
         debug_assert!(yi.compare(date).is_eq() || maybe_approx.is_err(), // The data will be incorrect if we saturate, and that's expected
