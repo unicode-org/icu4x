@@ -351,7 +351,7 @@ impl YearType {
         if self == Self::Complete {
             ḤESVAN_DEFAULT_LEN + 1
         } else {
-            ḤESVAN_DEFAULT_LEN + 0
+            ḤESVAN_DEFAULT_LEN
         }
     }
 
@@ -360,7 +360,7 @@ impl YearType {
         if self == Self::Deficient {
             KISLEV_DEFAULT_LEN - 1
         } else {
-            KISLEV_DEFAULT_LEN + 0
+            KISLEV_DEFAULT_LEN
         }
     }
 }
