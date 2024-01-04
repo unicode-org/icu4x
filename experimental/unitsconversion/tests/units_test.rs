@@ -51,8 +51,6 @@ pub fn get_rational(rational: &str) -> Option<BigRational> {
 
 #[test]
 fn test_conversion() {
-    // let provider = icu_unitsconversion::provider::UnitsInfoV1;
-
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
@@ -92,5 +90,29 @@ fn test_conversion() {
 
         assert!(input_unit.is_ok());
         assert!(output_unit.is_ok());
+    }
+}
+
+#[test]
+fn test_units_not_parsable() {
+    let unparsable_units = [
+        "garbage-unit-dafdsafdsafdsaf",
+        "meter-per-second-",
+        "meter-per-second-per-second",
+        "-meter-per-second-per-second",
+        "kilo-squared-meter",
+    ];
+
+    for unit in unparsable_units.iter() {
+        let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+            .units_conversion_trie
+            .clone() // cheap since store is a borrowed ZeroVec
+            .take_store();
+
+        let payload = ZeroTrieSimpleAscii::from_store(store);
+        let parser = MeasureUnitParser::from_payload(&payload);
+
+        let result = parser.try_from_identifier(unit);
+        assert!(result.is_err());
     }
 }

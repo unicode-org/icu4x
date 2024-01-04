@@ -130,7 +130,7 @@ impl<'data> MeasureUnitParser<'data> {
         &self,
         identifier: &'data str,
     ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
-        if identifier.starts_with('-') {
+        if identifier.starts_with('-') || identifier.ends_with('-') {
             return Err(ConversionError::InvalidUnit);
         }
 
