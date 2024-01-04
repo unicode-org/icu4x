@@ -790,6 +790,36 @@ mod test {
     }
 
     #[test]
+    fn test_roundtrip_days() {
+        for h_year in (1..10).chain(5775..5795).chain(10000..10010) {
+            let year_info = YearInfo::compute_for(h_year);
+            let ny = year_info.new_year();
+            for day in 1..=year_info.keviyah.year_length() {
+                let offset_date = ny + i64::from(day) - 1;
+                let (offset_yearinfo, offset_h_year) = YearInfo::year_containing_rd(offset_date);
+
+                assert_eq!(
+                    offset_h_year, h_year,
+                    "Backcomputed h_year should be same for day {day} in Hebrew Year {h_year}"
+                );
+                assert_eq!(
+                    offset_yearinfo, year_info,
+                    "Backcomputed YearInfo should be same for day {day} in Hebrew Year {h_year}"
+                );
+
+                let (month, day2) = year_info.keviyah.month_day_for(day);
+
+                let days_preceding = year_info.keviyah.days_preceding(month);
+
+                assert_eq!(
+                    days_preceding + u16::from(day2),
+                    day,
+                    "{h_year}-{month}-{day2} should round trip for day-of-year {day}"
+                )
+            }
+        }
+    }
+    #[test]
     fn test_book_parity() {
         let mut last_year = None;
         for h_year in (1..100).chain(5600..5900).chain(10000..10100) {
