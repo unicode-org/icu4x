@@ -230,9 +230,9 @@ impl Calendar for Hebrew {
 
         let year_info = HebrewYearInfo::compute_with_keviyah(year_info.keviyah, h_year);
         let (month, day) = year_info.keviyah.month_day_for(day);
-        return HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
+        HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
             h_year, month, day, year_info,
-        ));
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
