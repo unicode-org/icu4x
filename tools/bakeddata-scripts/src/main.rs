@@ -130,15 +130,15 @@ fn main() {
             )
             .unwrap();
         }
-        
+
         driver
-        .clone()
-        .with_keys(keys.iter().copied())
-        .export(
-            &source,
-            BakedExporter::new(path.join("data"), options).unwrap(),
-        )
-        .unwrap();
+            .clone()
+            .with_keys(keys.iter().copied())
+            .export(
+                &source,
+                BakedExporter::new(path.join("data"), options).unwrap(),
+            )
+            .unwrap();
 
         for file in ["data/any.rs", "data/mod.rs"] {
             std::fs::remove_file(path.join(file)).unwrap();
