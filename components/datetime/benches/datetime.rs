@@ -40,17 +40,14 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = {
                             TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
                                 &locale.into(),
-                                options.clone(),
+                                options,
                             )
                             .expect("Failed to create TypedDateTimeFormatter.")
                         };
                         #[cfg(not(feature = "experimental"))]
                         let dtf = {
-                            TypedDateTimeFormatter::<Gregorian>::try_new(
-                                &locale.into(),
-                                options.clone(),
-                            )
-                            .expect("Failed to create TypedDateTimeFormatter.")
+                            TypedDateTimeFormatter::<Gregorian>::try_new(&locale.into(), options)
+                                .expect("Failed to create TypedDateTimeFormatter.")
                         };
 
                         let mut result = String::new();

@@ -214,6 +214,8 @@ pub mod aux {
     }
 }
 
+size_test!(YearNamesV1, year_names_v1_size, pinned = 56, nightly = 48);
+
 /// Symbols used for representing the year name
 ///
 /// This uses an auxiliary subtag for length. The subtag is simply the number of
@@ -226,6 +228,8 @@ pub mod aux {
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
+///
+#[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -263,10 +267,14 @@ pub enum YearNamesV1<'data> {
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
+size_test!(MonthNamesV1, month_names_v1_size, pinned = 40, nightly = 32);
+
 /// Symbols used for representing the month name
 ///
 /// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
 /// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
+///
+#[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -357,6 +365,8 @@ impl SimpleSubstitutionPattern<'_> {
     }
 }
 
+size_test!(LinearNamesV1, linear_names_v1_size, 24);
+
 /// Symbols that can be stored as a simple linear array.
 ///
 /// - For weekdays, element 0 is Sunday
@@ -365,6 +375,8 @@ impl SimpleSubstitutionPattern<'_> {
 /// - For day names element 0 is the first day of the month
 ///
 /// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
+///
+#[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -421,10 +433,14 @@ impl<'data> LinearNamesV1<'data> {
     }
 }
 
+size_test!(DatePatternV1, date_pattern_v1_size, 32);
+
 /// The default per-length patterns associated with dates
 ///
 /// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
 /// "full", "long", "medium", or "short".
+///
+#[doc = date_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -467,6 +483,8 @@ pub struct DatePatternV1<'data> {
 //     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
 // }
 
+size_test!(TimePatternV1, time_pattern_v1_size, 32);
+
 /// The default per-length patterns associated with times
 ///
 /// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
@@ -475,6 +493,8 @@ pub struct DatePatternV1<'data> {
 /// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
 /// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
 /// (`-x-fk` for full, non-default, 23/24 hours)
+///
+#[doc = time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -496,9 +516,13 @@ pub struct TimePatternV1<'data> {
     pub pattern: runtime::Pattern<'data>,
 }
 
+size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
+
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
 /// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
+///
+#[doc = date_time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
