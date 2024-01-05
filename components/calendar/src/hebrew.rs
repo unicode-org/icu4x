@@ -449,6 +449,7 @@ mod tests {
     /// (iso, hebrew) pairs of testcases. If any of the years here
     /// are leap years please add them to LEAP_YEARS_IN_TESTS (we have this manually
     /// so we don't end up exercising potentially buggy codepaths to test this)
+    #[allow(clippy::type_complexity)]
     const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, u8, u8)); 48] = [
         ((2021, 1, 10), (5781, TEVET, 26)),
         ((2021, 1, 25), (5781, SHEVAT, 12)),
