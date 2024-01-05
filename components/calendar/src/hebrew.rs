@@ -438,117 +438,67 @@ mod tests {
     use crate::types::MonthCode;
     use calendrical_calculations::hebrew_keviyah::*;
 
+    // Sentinel value for Adar I
+    // We're using normalized month values here so that we can use constants. These do not
+    // distinguish between the different Adars. We add an out-of-range sentinel value of 13 to
+    // specifically talk about Adar I in a leap year
+    const ADARI: u8 = 13;
+
+    const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (u8, u8, i32)); 48] = [
+        ((2021, 1, 10), (26, TEVET, 5781)),
+        ((2021, 1, 25), (12, SHEVAT, 5781)),
+        ((2021, 2, 10), (28, SHEVAT, 5781)),
+        ((2021, 2, 25), (13, ADAR, 5781)),
+        ((2021, 3, 10), (26, ADAR, 5781)),
+        ((2021, 3, 25), (12, NISAN, 5781)),
+        ((2021, 4, 10), (28, NISAN, 5781)),
+        ((2021, 4, 25), (13, IYYAR, 5781)),
+        ((2021, 5, 10), (28, IYYAR, 5781)),
+        ((2021, 5, 25), (14, SIVAN, 5781)),
+        ((2021, 6, 10), (30, SIVAN, 5781)),
+        ((2021, 6, 25), (15, TAMMUZ, 5781)),
+        ((2021, 7, 10), (1, AV, 5781)),
+        ((2021, 7, 25), (16, AV, 5781)),
+        ((2021, 8, 10), (2, ELUL, 5781)),
+        ((2021, 8, 25), (17, ELUL, 5781)),
+        ((2021, 9, 10), (4, TISHREI, 5782)),
+        ((2021, 9, 25), (19, TISHREI, 5782)),
+        ((2021, 10, 10), (4, ḤESHVAN, 5782)),
+        ((2021, 10, 25), (19, ḤESHVAN, 5782)),
+        ((2021, 11, 10), (6, KISLEV, 5782)),
+        ((2021, 11, 25), (21, KISLEV, 5782)),
+        ((2021, 12, 10), (6, TEVET, 5782)),
+        ((2021, 12, 25), (21, TEVET, 5782)),
+        ((2022, 1, 10), (8, SHEVAT, 5782)),
+        ((2022, 1, 25), (23, SHEVAT, 5782)),
+        ((2022, 2, 10), (9, ADARI, 5782)),
+        ((2022, 2, 25), (24, ADARI, 5782)),
+        ((2022, 3, 10), (7, ADAR, 5782)),
+        ((2022, 3, 25), (22, ADAR, 5782)),
+        ((2022, 4, 10), (9, NISAN, 5782)),
+        ((2022, 4, 25), (24, NISAN, 5782)),
+        ((2022, 5, 10), (9, IYYAR, 5782)),
+        ((2022, 5, 25), (24, IYYAR, 5782)),
+        ((2022, 6, 10), (11, SIVAN, 5782)),
+        ((2022, 6, 25), (26, SIVAN, 5782)),
+        ((2022, 7, 10), (11, TAMMUZ, 5782)),
+        ((2022, 7, 25), (26, TAMMUZ, 5782)),
+        ((2022, 8, 10), (13, AV, 5782)),
+        ((2022, 8, 25), (28, AV, 5782)),
+        ((2022, 9, 10), (14, ELUL, 5782)),
+        ((2022, 9, 25), (29, ELUL, 5782)),
+        ((2022, 10, 10), (15, TISHREI, 5783)),
+        ((2022, 10, 25), (30, TISHREI, 5783)),
+        ((2022, 11, 10), (16, ḤESHVAN, 5783)),
+        ((2022, 11, 25), (1, KISLEV, 5783)),
+        ((2022, 12, 10), (16, KISLEV, 5783)),
+        ((2022, 12, 25), (1, TEVET, 5783)),
+    ];
+
     #[test]
     fn test_conversions() {
-        let iso_dates: [Date<Iso>; 48] = [
-            Date::try_new_iso_date(2021, 1, 10).unwrap(),
-            Date::try_new_iso_date(2021, 1, 25).unwrap(),
-            Date::try_new_iso_date(2021, 2, 10).unwrap(),
-            Date::try_new_iso_date(2021, 2, 25).unwrap(),
-            Date::try_new_iso_date(2021, 3, 10).unwrap(),
-            Date::try_new_iso_date(2021, 3, 25).unwrap(),
-            Date::try_new_iso_date(2021, 4, 10).unwrap(),
-            Date::try_new_iso_date(2021, 4, 25).unwrap(),
-            Date::try_new_iso_date(2021, 5, 10).unwrap(),
-            Date::try_new_iso_date(2021, 5, 25).unwrap(),
-            Date::try_new_iso_date(2021, 6, 10).unwrap(),
-            Date::try_new_iso_date(2021, 6, 25).unwrap(),
-            Date::try_new_iso_date(2021, 7, 10).unwrap(),
-            Date::try_new_iso_date(2021, 7, 25).unwrap(),
-            Date::try_new_iso_date(2021, 8, 10).unwrap(),
-            Date::try_new_iso_date(2021, 8, 25).unwrap(),
-            Date::try_new_iso_date(2021, 9, 10).unwrap(),
-            Date::try_new_iso_date(2021, 9, 25).unwrap(),
-            Date::try_new_iso_date(2021, 10, 10).unwrap(),
-            Date::try_new_iso_date(2021, 10, 25).unwrap(),
-            Date::try_new_iso_date(2021, 11, 10).unwrap(),
-            Date::try_new_iso_date(2021, 11, 25).unwrap(),
-            Date::try_new_iso_date(2021, 12, 10).unwrap(),
-            Date::try_new_iso_date(2021, 12, 25).unwrap(),
-            Date::try_new_iso_date(2022, 1, 10).unwrap(),
-            Date::try_new_iso_date(2022, 1, 25).unwrap(),
-            Date::try_new_iso_date(2022, 2, 10).unwrap(),
-            Date::try_new_iso_date(2022, 2, 25).unwrap(),
-            Date::try_new_iso_date(2022, 3, 10).unwrap(),
-            Date::try_new_iso_date(2022, 3, 25).unwrap(),
-            Date::try_new_iso_date(2022, 4, 10).unwrap(),
-            Date::try_new_iso_date(2022, 4, 25).unwrap(),
-            Date::try_new_iso_date(2022, 5, 10).unwrap(),
-            Date::try_new_iso_date(2022, 5, 25).unwrap(),
-            Date::try_new_iso_date(2022, 6, 10).unwrap(),
-            Date::try_new_iso_date(2022, 6, 25).unwrap(),
-            Date::try_new_iso_date(2022, 7, 10).unwrap(),
-            Date::try_new_iso_date(2022, 7, 25).unwrap(),
-            Date::try_new_iso_date(2022, 8, 10).unwrap(),
-            Date::try_new_iso_date(2022, 8, 25).unwrap(),
-            Date::try_new_iso_date(2022, 9, 10).unwrap(),
-            Date::try_new_iso_date(2022, 9, 25).unwrap(),
-            Date::try_new_iso_date(2022, 10, 10).unwrap(),
-            Date::try_new_iso_date(2022, 10, 25).unwrap(),
-            Date::try_new_iso_date(2022, 11, 10).unwrap(),
-            Date::try_new_iso_date(2022, 11, 25).unwrap(),
-            Date::try_new_iso_date(2022, 12, 10).unwrap(),
-            Date::try_new_iso_date(2022, 12, 25).unwrap(),
-        ];
-
-        // Sentinel value for Adar I
-        // We're using normalized month values here so that we can use constants. These do not
-        // distinguish between the different Adars. We add an out-of-range sentinel value of 13 to
-        // specifically talk about Adar I in a leap year
-        const ADARI: u8 = 13;
-
-        let hebrew_dates: [(u8, u8, i32); 48] = [
-            (26, TEVET, 5781),
-            (12, SHEVAT, 5781),
-            (28, SHEVAT, 5781),
-            (13, ADAR, 5781),
-            (26, ADAR, 5781),
-            (12, NISAN, 5781),
-            (28, NISAN, 5781),
-            (13, IYYAR, 5781),
-            (28, IYYAR, 5781),
-            (14, SIVAN, 5781),
-            (30, SIVAN, 5781),
-            (15, TAMMUZ, 5781),
-            (1, AV, 5781),
-            (16, AV, 5781),
-            (2, ELUL, 5781),
-            (17, ELUL, 5781),
-            (4, TISHREI, 5782),
-            (19, TISHREI, 5782),
-            (4, ḤESHVAN, 5782),
-            (19, ḤESHVAN, 5782),
-            (6, KISLEV, 5782),
-            (21, KISLEV, 5782),
-            (6, TEVET, 5782),
-            (21, TEVET, 5782),
-            (8, SHEVAT, 5782),
-            (23, SHEVAT, 5782),
-            (9, ADARI, 5782),
-            (24, ADARI, 5782),
-            (7, ADAR, 5782),
-            (22, ADAR, 5782),
-            (9, NISAN, 5782),
-            (24, NISAN, 5782),
-            (9, IYYAR, 5782),
-            (24, IYYAR, 5782),
-            (11, SIVAN, 5782),
-            (26, SIVAN, 5782),
-            (11, TAMMUZ, 5782),
-            (26, TAMMUZ, 5782),
-            (13, AV, 5782),
-            (28, AV, 5782),
-            (14, ELUL, 5782),
-            (29, ELUL, 5782),
-            (15, TISHREI, 5783),
-            (30, TISHREI, 5783),
-            (16, ḤESHVAN, 5783),
-            (1, KISLEV, 5783),
-            (16, KISLEV, 5783),
-            (1, TEVET, 5783),
-        ];
-
-        for (iso_date, (d, m, y)) in iso_dates.iter().zip(hebrew_dates.into_iter()) {
+        for ((iso_y, iso_m, iso_d), (d, m, y)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
+            let iso_date = Date::try_new_iso_date(iso_y, iso_m, iso_d).unwrap();
             let m = if m == ADARI {
                 MonthCode(tinystr!(4, "M05L"))
             } else {
@@ -562,7 +512,7 @@ mod tests {
             let hebrew_to_iso = hebrew_date.to_calendar(Iso);
 
             assert_eq!(
-                hebrew_to_iso, *iso_date,
+                hebrew_to_iso, iso_date,
                 "Failed comparing to-ISO value for {hebrew_date:?} => {iso_date:?}"
             );
             assert_eq!(
