@@ -8,7 +8,8 @@ use crate::{
     ConversionError,
 };
 use litemap::LiteMap;
-use zerovec::ZeroSlice;
+use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::{ZeroSlice, ZeroVec};
 
 /// Represents the possible cases for the convertibility between two units.
 pub enum Convertibility {
@@ -30,16 +31,23 @@ pub enum Convertibility {
 pub struct ConverterFactory<'data> {
     /// Contains the necessary data for the conversion factory.
     payload: &'data UnitsInfoV1<'data>,
+    payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
 impl<'data> ConverterFactory<'data> {
     #[cfg(feature = "datagen")]
-    pub fn from_payload(payload: &'data UnitsInfoV1<'data>) -> Self {
-        Self { payload }
+    pub fn from_payload(
+        payload: &'data UnitsInfoV1<'data>,
+        payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    ) -> Self {
+        Self {
+            payload,
+            payload_store,
+        }
     }
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(&self.payload.units_conversion_trie)
+        MeasureUnitParser::from_payload(&self.payload_store)
     }
 
     // TODO(#4512): the need needs to be bikeshedded.

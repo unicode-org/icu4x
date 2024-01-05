@@ -77,17 +77,20 @@ fn test_cldr_unit_tests() {
         })
         .collect();
 
-    // TODO: how to convert from `&ZeroTrie<ZeroVec<'_, u8>>` to &ZeroTrieSimpleAscii<Vec<u8>>?
     let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
         .units_conversion_trie
         .clone() // cheap since store is a borrowed ZeroVec
         .take_store();
 
-    let payload = ZeroTrieSimpleAscii::from_store(store);
-    let parser = MeasureUnitParser::from_payload(&payload);
+    let payload_store = &ZeroTrieSimpleAscii::from_store(store);
+    let converter_factory = ConverterFactory::from_payload(
+        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        payload_store,
+    );
+    let parser = converter_factory.parser();
 
     for test in tests {
-let input_unit = parser
+        let input_unit = parser
             .try_from_identifier(test.input_unit.as_str())
             .unwrap();
         let output_unit = parser
@@ -96,8 +99,6 @@ let input_unit = parser
 
         let convertablity = converter_factory.extract_convertibility(&input_unit, &output_unit);
 
-
-        
         match convertablity {
             Convertibility::Convertible => (),
             _ => panic!("Units are not convertible or reciprocal"),
@@ -117,15 +118,19 @@ fn test_units_not_parsable() {
         "kilo-squared-meter",
     ];
 
+    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+        .units_conversion_trie
+        .clone() // cheap since store is a borrowed ZeroVec
+        .take_store();
+
+    let payload_store = &ZeroTrieSimpleAscii::from_store(store);
+    let converter_factory = ConverterFactory::from_payload(
+        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        payload_store,
+    );
+    let parser = converter_factory.parser();
+
     for unit in unparsable_units.iter() {
-        let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
-            .units_conversion_trie
-            .clone() // cheap since store is a borrowed ZeroVec
-            .take_store();
-
-        let payload = ZeroTrieSimpleAscii::from_store(store);
-        let parser = MeasureUnitParser::from_payload(&payload);
-
         let result = parser.try_from_identifier(unit);
         assert!(result.is_err());
     }

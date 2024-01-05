@@ -23,7 +23,7 @@ pub struct MeasureUnitParser<'data> {
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    pub fn from_payload(payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
+    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<ZeroVec<u8>>) -> Self {
         Self { payload }
     }
 
@@ -128,7 +128,7 @@ impl<'data> MeasureUnitParser<'data> {
     pub fn try_from_identifier(
         &self,
         identifier: &'data str,
-    ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
+    ) -> Result<MeasureUnit, ConversionError> {
         if identifier.starts_with('-') || identifier.ends_with('-') {
             return Err(ConversionError::InvalidUnit);
         }
