@@ -147,10 +147,10 @@ pub mod ffi {
             self.0.array_len()
         }
 
-        /// Get script at index, returning an error if out of bounds
+        /// Get script at index
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
-        pub fn script_at(&self, index: usize) -> Result<u16, ()> {
-            self.0.array_get(index).map(|x| x.0).ok_or(())
+        pub fn script_at(&self, index: usize) -> Option<u16> {
+            self.0.array_get(index).map(|x| x.0)
         }
     }
 }
