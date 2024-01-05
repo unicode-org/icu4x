@@ -11,9 +11,18 @@ use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::{ule::UnvalidatedStr, ZeroMap};
 
+size_test!(
+    DateSymbolsV1,
+    date_symbols_v1_size,
+    pinned = 3896,
+    nightly = 3792
+);
+
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+#[doc = date_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -64,9 +73,18 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
+size_test!(
+    TimeSymbolsV1,
+    time_symbols_v1_size,
+    pinned = 896,
+    nightly = 768
+);
+
 /// Symbol data for the day periods needed to format a time.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+#[doc = time_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
