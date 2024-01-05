@@ -141,7 +141,8 @@ impl MonthCode {
     /// Construct a "normal" month code given a number ("Mxx").
     ///
     /// Returns an error for months greater than 99
-    pub fn new_normal(number: u8) -> Option<Self> {
+    #[cfg(test)] // Only used in tests for now. Could be made public if people need it.
+    pub(crate) fn new_normal(number: u8) -> Option<Self> {
         let tens = number / 10;
         let ones = number % 10;
         if tens > 9 {
