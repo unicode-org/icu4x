@@ -444,6 +444,8 @@ mod tests {
     // specifically talk about Adar I in a leap year
     const ADARI: u8 = 13;
 
+    // The leap years used in the tests below
+    const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
     const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (u8, u8, i32)); 48] = [
         ((2021, 1, 10), (26, TEVET, 5781)),
         ((2021, 1, 25), (12, SHEVAT, 5781)),
@@ -499,13 +501,14 @@ mod tests {
     fn test_conversions() {
         for ((iso_y, iso_m, iso_d), (d, m, y)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
             let iso_date = Date::try_new_iso_date(iso_y, iso_m, iso_d).unwrap();
-            let m = if m == ADARI {
+            let month_code = if m == ADARI {
                 MonthCode(tinystr!(4, "M05L"))
             } else {
                 MonthCode::new_normal(m).unwrap()
             };
-            let hebrew_date = Date::try_new_from_codes(tinystr!(16, "am").into(), y, m, d, Hebrew)
-                .expect("Date should parse");
+            let hebrew_date =
+                Date::try_new_from_codes(tinystr!(16, "am").into(), y, month_code, d, Hebrew)
+                    .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
@@ -519,6 +522,25 @@ mod tests {
                 iso_to_hebrew, hebrew_date,
                 "Failed comparing to-hebrew value for {iso_date:?} => {hebrew_date:?}"
             );
+
+            let ordinal_month = if LEAP_YEARS_IN_TESTS.contains(&y) {
+                if m == ADARI {
+                    ADAR
+                } else if m >= ADAR {
+                    m + 1
+                } else {
+                    m
+                }
+            } else {
+                assert!(m != ADARI);
+                m
+            };
+
+            let ordinal_hebrew_date =
+                Date::try_new_hebrew_date_with_calendar(y, ordinal_month, d, Hebrew)
+                    .expect("Construction of date must succeed");
+
+            assert_eq!(ordinal_hebrew_date, hebrew_date, "Hebrew date construction from codes and ordinals should work the same for {hebrew_date:?}");
         }
     }
 
