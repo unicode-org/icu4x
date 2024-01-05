@@ -7,6 +7,8 @@
     - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
   - `icu_calendar`
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+  - `icu_datetime`
+    - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
   - `icu_segmenter`
