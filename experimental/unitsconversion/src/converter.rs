@@ -47,7 +47,7 @@ impl<'data> ConverterFactory<'data> {
     }
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(&self.payload_store)
+        MeasureUnitParser::from_payload(self.payload_store)
     }
 
     // TODO(#4512): the need needs to be bikeshedded.
