@@ -5,7 +5,8 @@
 use core::str::FromStr;
 use icu_unitsconversion::measureunit::MeasureUnitParser;
 use num::BigRational;
-use std::collections::HashSet;
+
+use zerotrie::ZeroTrieSimpleAscii;
 
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
@@ -50,8 +51,6 @@ pub fn get_rational(rational: &str) -> Option<BigRational> {
 
 #[test]
 fn test_conversion() {
-    // let provider = icu_unitsconversion::provider::UnitsInfoV1;
-
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
@@ -76,75 +75,44 @@ fn test_conversion() {
         })
         .collect();
 
-    let parser = MeasureUnitParser::from_payload(
-        &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1.units_conversion_trie,
-    );
+    // TODO: how to convert from `&ZeroTrie<ZeroVec<'_, u8>>` to &ZeroTrieSimpleAscii<Vec<u8>>?
+    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+        .units_conversion_trie
+        .clone() // cheap since store is a borrowed ZeroVec
+        .take_store();
 
-    // TODO(#4461): Those units must be parsable.
-    let non_parsable_units: HashSet<&str> = [
-        "g-force",
-        "arc-second",
-        "arc-minute",
-        "bu-jp",
-        "se-jp",
-        "liter-per-100-kilometer",
-        "mile-per-gallon-imperial",
-        "day-person",
-        "week-person",
-        "pound-force-foot",
-        "calorie-it",
-        "british-thermal-unit",
-        "british-thermal-unit-it",
-        "therm-us",
-        "pound-force",
-        "kilogram-force",
-        "kilowatt-hour-per-100-kilometer",
-        "shaku-length",
-        "shaku-cloth",
-        "jo-jp",
-        "ri-jp",
-        "nautical-mile",
-        "mile-scandinavian",
-        "100-kilometer",
-        "earth-radius",
-        "solar-radius",
-        "astronomical-unit",
-        "light-year",
-        "ounce-troy",
-        "earth-mass",
-        "solar-mass",
-        "solar-luminosity",
-        "pound-force-per-square-inch",
-        "gasoline-energy-density",
-        "dessert-spoon",
-        "dessert-spoon-imperial",
-        "fluid-ounce-imperial",
-        "fluid-ounce",
-        "cup-jp",
-        "cup-metric",
-        "pint-metric",
-        "pint-imperial",
-        "quart-imperial",
-        "gallon-imperial",
-        "to-jp",
-        "month-person",
-        "year-person",
-        "decade",
-    ]
-    .iter()
-    .cloned()
-    .collect();
+    let payload = ZeroTrieSimpleAscii::from_store(store);
+    let parser = MeasureUnitParser::from_payload(&payload);
+
     for test in tests {
-        // TODO(#4461): remove this line after fixing the parser.
-        if non_parsable_units.contains(test.input_unit.as_str())
-            || non_parsable_units.contains(test.output_unit.as_str())
-        {
-            continue;
-        }
         let input_unit = parser.try_from_identifier(test.input_unit.as_str());
         let output_unit = parser.try_from_identifier(test.output_unit.as_str());
 
         assert!(input_unit.is_ok());
         assert!(output_unit.is_ok());
+    }
+}
+
+#[test]
+fn test_units_not_parsable() {
+    let unparsable_units = [
+        "garbage-unit-dafdsafdsafdsaf",
+        "meter-per-second-",
+        "meter-per-second-per-second",
+        "-meter-per-second-per-second",
+        "kilo-squared-meter",
+    ];
+
+    for unit in unparsable_units.iter() {
+        let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+            .units_conversion_trie
+            .clone() // cheap since store is a borrowed ZeroVec
+            .take_store();
+
+        let payload = ZeroTrieSimpleAscii::from_store(store);
+        let parser = MeasureUnitParser::from_payload(&payload);
+
+        let result = parser.try_from_identifier(unit);
+        assert!(result.is_err());
     }
 }
