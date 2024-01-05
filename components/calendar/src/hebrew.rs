@@ -35,6 +35,7 @@
 //! assert_eq!(hebrew_datetime.time.second.number(), 0);
 //! ```
 
+use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::types::FormattableMonth;
 use crate::AnyCalendarKind;
@@ -42,8 +43,7 @@ use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
-use calendrical_calculations::hebrew::BookHebrew;
-use calendrical_calculations::rata_die::RataDie;
+use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 
 /// The Civil Hebrew Calendar
 ///
@@ -70,9 +70,6 @@ use calendrical_calculations::rata_die::RataDie;
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct Hebrew;
 
-/// The inner date type used for representing [`Date`]s of [`BookHebrew`]. See [`Date`] and [`BookHebrew`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-struct BookHebrewDateInner;
 /// The inner date type used for representing [`Date`]s of [`Hebrew`]. See [`Date`] and [`Hebrew`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
@@ -87,33 +84,65 @@ impl Hebrew {
     }
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) struct HebrewYearInfo {
+    keviyah: Keviyah,
+    prev_keviyah: Keviyah,
+}
+
+impl HebrewYearInfo {
+    /// Convenience method to compute for a given year. Don't use this if you actually need
+    /// a YearInfo that you want to call .new_year() on.
+    ///
+    /// This can potentially be optimized with adjacent-year knowledge, but it's complex
+    #[inline]
+    fn compute(h_year: i32) -> Self {
+        let keviyah = YearInfo::compute_for(h_year).keviyah;
+        Self::compute_with_keviyah(keviyah, h_year)
+    }
+    /// Compute for a given year when the keviyah is already known
+    #[inline]
+    fn compute_with_keviyah(keviyah: Keviyah, h_year: i32) -> Self {
+        let prev_keviyah = YearInfo::compute_for(h_year - 1).keviyah;
+        Self {
+            keviyah,
+            prev_keviyah,
+        }
+    }
+}
 //  HEBREW CALENDAR
 
 impl CalendarArithmetic for Hebrew {
-    type YearInfo = ();
+    type YearInfo = HebrewYearInfo;
 
-    fn month_days(civil_year: i32, civil_month: u8, _data: ()) -> u8 {
-        Self::last_day_of_civil_hebrew_month(civil_year, civil_month)
+    fn month_days(_h_year: i32, ordinal_month: u8, info: HebrewYearInfo) -> u8 {
+        info.keviyah.month_len(ordinal_month)
     }
 
-    fn months_for_every_year(civil_year: i32, _data: ()) -> u8 {
-        Self::last_month_of_civil_hebrew_year(civil_year)
+    fn months_for_every_year(_h_year: i32, info: HebrewYearInfo) -> u8 {
+        if info.keviyah.is_leap() {
+            13
+        } else {
+            12
+        }
     }
 
-    fn days_in_provided_year(civil_year: i32, _data: ()) -> u16 {
-        BookHebrew::days_in_book_hebrew_year(civil_year) // number of days don't change between BookHebrew and Civil Hebrew
+    fn days_in_provided_year(_h_year: i32, info: HebrewYearInfo) -> u16 {
+        info.keviyah.year_length()
     }
 
-    fn is_leap_year(civil_year: i32, _data: ()) -> bool {
-        // civil and book years are the same
-        BookHebrew::is_hebrew_leap_year(civil_year)
+    fn is_leap_year(_h_year: i32, info: HebrewYearInfo) -> bool {
+        info.keviyah.is_leap()
     }
 
-    fn last_month_day_in_year(civil_year: i32, _data: ()) -> (u8, u8) {
-        let civil_month = Self::last_month_of_civil_hebrew_year(civil_year);
-        let civil_day = Self::last_day_of_civil_hebrew_month(civil_year, civil_month);
+    fn last_month_day_in_year(_h_year: i32, info: HebrewYearInfo) -> (u8, u8) {
+        info.keviyah.last_month_day_in_year()
+    }
+}
 
-        (civil_month, civil_day)
+impl PrecomputedDataSource<HebrewYearInfo> for () {
+    fn load_or_compute_info(&self, h_year: i32) -> HebrewYearInfo {
+        HebrewYearInfo::compute(h_year)
     }
 }
 
@@ -127,12 +156,15 @@ impl Calendar for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let is_leap_year = Self::is_leap_year(year, ());
         let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
+
+        let year_info = HebrewYearInfo::compute(year);
+
+        let is_leap_year = year_info.keviyah.is_leap();
 
         let month_code_str = month_code.0.as_str();
 
@@ -182,17 +214,32 @@ impl Calendar for Hebrew {
             }
         };
 
-        ArithmeticDate::new_from_ordinals(year, month_ordinal, day).map(HebrewDateInner)
+        ArithmeticDate::new_from_ordinals_with_info(year, month_ordinal, day, year_info)
+            .map(HebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
-        Self::civil_hebrew_from_fixed(fixed_iso).inner
+        let (year_info, h_year) = YearInfo::year_containing_rd(fixed_iso);
+        // Obtaining a 1-indexed day-in-year value
+        let day = fixed_iso - year_info.new_year() + 1;
+        let day = u16::try_from(day).unwrap_or(u16::MAX);
+
+        let year_info = HebrewYearInfo::compute_with_keviyah(year_info.keviyah, h_year);
+        let (month, day) = year_info.keviyah.month_day_for(day);
+        HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
+            h_year, month, day, year_info,
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_hebrew = Self::fixed_from_civil_hebrew(*date);
-        Iso::iso_from_fixed(fixed_hebrew)
+        let year_info = date.0.year_info.keviyah.year_info(date.0.year);
+
+        let ny = year_info.new_year();
+        let days_preceding = year_info.keviyah.days_preceding(date.0.month);
+
+        // Need to subtract 1 since the new year is itself in this year
+        Iso::iso_from_fixed(ny + i64::from(days_preceding) + i64::from(date.0.day) - 1)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -231,12 +278,12 @@ impl Calendar for Hebrew {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::is_leap_year(date.0.year, date.0.year_info)
     }
 
     fn month(&self, date: &Self::DateInner) -> FormattableMonth {
         let mut ordinal = date.0.month;
-        let is_leap_year = Self::is_leap_year(date.0.year, ());
+        let is_leap_year = Self::is_leap_year(date.0.year, date.0.year_info);
 
         if is_leap_year {
             if ordinal == 6 {
@@ -289,7 +336,7 @@ impl Calendar for Hebrew {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_hebrew(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
+            days_in_prev_year: date.0.year_info.prev_keviyah.year_length(),
             next_year: Self::year_as_hebrew(next_year),
         }
     }
@@ -299,45 +346,6 @@ impl Calendar for Hebrew {
 }
 
 impl Hebrew {
-    // Converts a Biblical Hebrew Date to a Civil Hebrew Date
-    fn biblical_to_civil_date(biblical_date: BookHebrew) -> HebrewDateInner {
-        let (y, m, d) = biblical_date.to_civil_date();
-
-        debug_assert!(ArithmeticDate::<Hebrew>::new_from_ordinals(y, m, d,).is_ok());
-        HebrewDateInner(ArithmeticDate::new_unchecked(y, m, d))
-    }
-
-    // Converts a Civil Hebrew Date to a Biblical Hebrew Date
-    fn civil_to_biblical_date(civil_date: HebrewDateInner) -> BookHebrew {
-        BookHebrew::from_civil_date(civil_date.0.year, civil_date.0.month, civil_date.0.day)
-    }
-
-    fn last_month_of_civil_hebrew_year(civil_year: i32) -> u8 {
-        if Self::is_leap_year(civil_year, ()) {
-            13 // there are 13 months in a leap year
-        } else {
-            12
-        }
-    }
-
-    fn last_day_of_civil_hebrew_month(civil_year: i32, civil_month: u8) -> u8 {
-        let book_date = Hebrew::civil_to_biblical_date(HebrewDateInner(
-            ArithmeticDate::new_unchecked(civil_year, civil_month, 1),
-        ));
-        BookHebrew::last_day_of_book_hebrew_month(book_date.year, book_date.month)
-    }
-
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    fn fixed_from_civil_hebrew(date: HebrewDateInner) -> RataDie {
-        let book_date = Hebrew::civil_to_biblical_date(date);
-        BookHebrew::fixed_from_book_hebrew(book_date)
-    }
-
-    fn civil_hebrew_from_fixed(date: RataDie) -> Date<Hebrew> {
-        let book_hebrew = BookHebrew::book_hebrew_from_fixed(date);
-        Date::from_raw(Hebrew::biblical_to_civil_date(book_hebrew), Hebrew)
-    }
-
     fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "hebrew")),
@@ -375,7 +383,9 @@ impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        let year_info = HebrewYearInfo::compute(year);
+
+        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -425,197 +435,122 @@ impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
 mod tests {
 
     use super::*;
-    use calendrical_calculations::hebrew::*;
+    use crate::types::MonthCode;
+    use calendrical_calculations::hebrew_keviyah::*;
+
+    // Sentinel value for Adar I
+    // We're using normalized month values here so that we can use constants. These do not
+    // distinguish between the different Adars. We add an out-of-range sentinel value of 13 to
+    // specifically talk about Adar I in a leap year
+    const ADARI: u8 = 13;
+
+    /// The leap years used in the tests below
+    const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
+    /// (iso, hebrew) pairs of testcases. If any of the years here
+    /// are leap years please add them to LEAP_YEARS_IN_TESTS (we have this manually
+    /// so we don't end up exercising potentially buggy codepaths to test this)
+    #[allow(clippy::type_complexity)]
+    const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, u8, u8)); 48] = [
+        ((2021, 1, 10), (5781, TEVET, 26)),
+        ((2021, 1, 25), (5781, SHEVAT, 12)),
+        ((2021, 2, 10), (5781, SHEVAT, 28)),
+        ((2021, 2, 25), (5781, ADAR, 13)),
+        ((2021, 3, 10), (5781, ADAR, 26)),
+        ((2021, 3, 25), (5781, NISAN, 12)),
+        ((2021, 4, 10), (5781, NISAN, 28)),
+        ((2021, 4, 25), (5781, IYYAR, 13)),
+        ((2021, 5, 10), (5781, IYYAR, 28)),
+        ((2021, 5, 25), (5781, SIVAN, 14)),
+        ((2021, 6, 10), (5781, SIVAN, 30)),
+        ((2021, 6, 25), (5781, TAMMUZ, 15)),
+        ((2021, 7, 10), (5781, AV, 1)),
+        ((2021, 7, 25), (5781, AV, 16)),
+        ((2021, 8, 10), (5781, ELUL, 2)),
+        ((2021, 8, 25), (5781, ELUL, 17)),
+        ((2021, 9, 10), (5782, TISHREI, 4)),
+        ((2021, 9, 25), (5782, TISHREI, 19)),
+        ((2021, 10, 10), (5782, ḤESHVAN, 4)),
+        ((2021, 10, 25), (5782, ḤESHVAN, 19)),
+        ((2021, 11, 10), (5782, KISLEV, 6)),
+        ((2021, 11, 25), (5782, KISLEV, 21)),
+        ((2021, 12, 10), (5782, TEVET, 6)),
+        ((2021, 12, 25), (5782, TEVET, 21)),
+        ((2022, 1, 10), (5782, SHEVAT, 8)),
+        ((2022, 1, 25), (5782, SHEVAT, 23)),
+        ((2022, 2, 10), (5782, ADARI, 9)),
+        ((2022, 2, 25), (5782, ADARI, 24)),
+        ((2022, 3, 10), (5782, ADAR, 7)),
+        ((2022, 3, 25), (5782, ADAR, 22)),
+        ((2022, 4, 10), (5782, NISAN, 9)),
+        ((2022, 4, 25), (5782, NISAN, 24)),
+        ((2022, 5, 10), (5782, IYYAR, 9)),
+        ((2022, 5, 25), (5782, IYYAR, 24)),
+        ((2022, 6, 10), (5782, SIVAN, 11)),
+        ((2022, 6, 25), (5782, SIVAN, 26)),
+        ((2022, 7, 10), (5782, TAMMUZ, 11)),
+        ((2022, 7, 25), (5782, TAMMUZ, 26)),
+        ((2022, 8, 10), (5782, AV, 13)),
+        ((2022, 8, 25), (5782, AV, 28)),
+        ((2022, 9, 10), (5782, ELUL, 14)),
+        ((2022, 9, 25), (5782, ELUL, 29)),
+        ((2022, 10, 10), (5783, TISHREI, 15)),
+        ((2022, 10, 25), (5783, TISHREI, 30)),
+        ((2022, 11, 10), (5783, ḤESHVAN, 16)),
+        ((2022, 11, 25), (5783, KISLEV, 1)),
+        ((2022, 12, 10), (5783, KISLEV, 16)),
+        ((2022, 12, 25), (5783, TEVET, 1)),
+    ];
 
     #[test]
     fn test_conversions() {
-        let iso_dates: [Date<Iso>; 48] = [
-            Date::try_new_iso_date(2021, 1, 10).unwrap(),
-            Date::try_new_iso_date(2021, 1, 25).unwrap(),
-            Date::try_new_iso_date(2021, 2, 10).unwrap(),
-            Date::try_new_iso_date(2021, 2, 25).unwrap(),
-            Date::try_new_iso_date(2021, 3, 10).unwrap(),
-            Date::try_new_iso_date(2021, 3, 25).unwrap(),
-            Date::try_new_iso_date(2021, 4, 10).unwrap(),
-            Date::try_new_iso_date(2021, 4, 25).unwrap(),
-            Date::try_new_iso_date(2021, 5, 10).unwrap(),
-            Date::try_new_iso_date(2021, 5, 25).unwrap(),
-            Date::try_new_iso_date(2021, 6, 10).unwrap(),
-            Date::try_new_iso_date(2021, 6, 25).unwrap(),
-            Date::try_new_iso_date(2021, 7, 10).unwrap(),
-            Date::try_new_iso_date(2021, 7, 25).unwrap(),
-            Date::try_new_iso_date(2021, 8, 10).unwrap(),
-            Date::try_new_iso_date(2021, 8, 25).unwrap(),
-            Date::try_new_iso_date(2021, 9, 10).unwrap(),
-            Date::try_new_iso_date(2021, 9, 25).unwrap(),
-            Date::try_new_iso_date(2021, 10, 10).unwrap(),
-            Date::try_new_iso_date(2021, 10, 25).unwrap(),
-            Date::try_new_iso_date(2021, 11, 10).unwrap(),
-            Date::try_new_iso_date(2021, 11, 25).unwrap(),
-            Date::try_new_iso_date(2021, 12, 10).unwrap(),
-            Date::try_new_iso_date(2021, 12, 25).unwrap(),
-            Date::try_new_iso_date(2022, 1, 10).unwrap(),
-            Date::try_new_iso_date(2022, 1, 25).unwrap(),
-            Date::try_new_iso_date(2022, 2, 10).unwrap(),
-            Date::try_new_iso_date(2022, 2, 25).unwrap(),
-            Date::try_new_iso_date(2022, 3, 10).unwrap(),
-            Date::try_new_iso_date(2022, 3, 25).unwrap(),
-            Date::try_new_iso_date(2022, 4, 10).unwrap(),
-            Date::try_new_iso_date(2022, 4, 25).unwrap(),
-            Date::try_new_iso_date(2022, 5, 10).unwrap(),
-            Date::try_new_iso_date(2022, 5, 25).unwrap(),
-            Date::try_new_iso_date(2022, 6, 10).unwrap(),
-            Date::try_new_iso_date(2022, 6, 25).unwrap(),
-            Date::try_new_iso_date(2022, 7, 10).unwrap(),
-            Date::try_new_iso_date(2022, 7, 25).unwrap(),
-            Date::try_new_iso_date(2022, 8, 10).unwrap(),
-            Date::try_new_iso_date(2022, 8, 25).unwrap(),
-            Date::try_new_iso_date(2022, 9, 10).unwrap(),
-            Date::try_new_iso_date(2022, 9, 25).unwrap(),
-            Date::try_new_iso_date(2022, 10, 10).unwrap(),
-            Date::try_new_iso_date(2022, 10, 25).unwrap(),
-            Date::try_new_iso_date(2022, 11, 10).unwrap(),
-            Date::try_new_iso_date(2022, 11, 25).unwrap(),
-            Date::try_new_iso_date(2022, 12, 10).unwrap(),
-            Date::try_new_iso_date(2022, 12, 25).unwrap(),
-        ];
-
-        let book_hebrew_dates: [(u8, u8, i32); 48] = [
-            (26, TEVET, 5781),
-            (12, SHEVAT, 5781),
-            (28, SHEVAT, 5781),
-            (13, ADAR, 5781),
-            (26, ADAR, 5781),
-            (12, NISAN, 5781),
-            (28, NISAN, 5781),
-            (13, IYYAR, 5781),
-            (28, IYYAR, 5781),
-            (14, SIVAN, 5781),
-            (30, SIVAN, 5781),
-            (15, TAMMUZ, 5781),
-            (1, AV, 5781),
-            (16, AV, 5781),
-            (2, ELUL, 5781),
-            (17, ELUL, 5781),
-            (4, TISHRI, 5782),
-            (19, TISHRI, 5782),
-            (4, MARHESHVAN, 5782),
-            (19, MARHESHVAN, 5782),
-            (6, KISLEV, 5782),
-            (21, KISLEV, 5782),
-            (6, TEVET, 5782),
-            (21, TEVET, 5782),
-            (8, SHEVAT, 5782),
-            (23, SHEVAT, 5782),
-            (9, ADAR, 5782),
-            (24, ADAR, 5782),
-            (7, ADARII, 5782),
-            (22, ADARII, 5782),
-            (9, NISAN, 5782),
-            (24, NISAN, 5782),
-            (9, IYYAR, 5782),
-            (24, IYYAR, 5782),
-            (11, SIVAN, 5782),
-            (26, SIVAN, 5782),
-            (11, TAMMUZ, 5782),
-            (26, TAMMUZ, 5782),
-            (13, AV, 5782),
-            (28, AV, 5782),
-            (14, ELUL, 5782),
-            (29, ELUL, 5782),
-            (15, TISHRI, 5783),
-            (30, TISHRI, 5783),
-            (16, MARHESHVAN, 5783),
-            (1, KISLEV, 5783),
-            (16, KISLEV, 5783),
-            (1, TEVET, 5783),
-        ];
-
-        let civil_hebrew_dates: [(u8, u8, i32); 48] = [
-            (26, 4, 5781),
-            (12, 5, 5781),
-            (28, 5, 5781),
-            (13, 6, 5781),
-            (26, 6, 5781),
-            (12, 7, 5781),
-            (28, 7, 5781),
-            (13, 8, 5781),
-            (28, 8, 5781),
-            (14, 9, 5781),
-            (30, 9, 5781),
-            (15, 10, 5781),
-            (1, 11, 5781),
-            (16, 11, 5781),
-            (2, 12, 5781),
-            (17, 12, 5781),
-            (4, 1, 5782),
-            (19, 1, 5782),
-            (4, 2, 5782),
-            (19, 2, 5782),
-            (6, 3, 5782),
-            (21, 3, 5782),
-            (6, 4, 5782),
-            (21, 4, 5782),
-            (8, 5, 5782),
-            (23, 5, 5782),
-            (9, 6, 5782),
-            (24, 6, 5782),
-            (7, 7, 5782),
-            (22, 7, 5782),
-            (9, 8, 5782),
-            (24, 8, 5782),
-            (9, 9, 5782),
-            (24, 9, 5782),
-            (11, 10, 5782),
-            (26, 10, 5782),
-            (11, 11, 5782),
-            (26, 11, 5782),
-            (13, 12, 5782),
-            (28, 12, 5782),
-            (14, 13, 5782),
-            (29, 13, 5782),
-            (15, 1, 5783),
-            (30, 1, 5783),
-            (16, 2, 5783),
-            (1, 3, 5783),
-            (16, 3, 5783),
-            (1, 4, 5783),
-        ];
-
-        for (iso_date, (book_date_nums, civil_date_nums)) in iso_dates
-            .iter()
-            .zip(book_hebrew_dates.iter().zip(civil_hebrew_dates.iter()))
-        {
-            let book_date = BookHebrew {
-                year: book_date_nums.2,
-                month: book_date_nums.1,
-                day: book_date_nums.0,
+        for ((iso_y, iso_m, iso_d), (y, m, d)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
+            let iso_date = Date::try_new_iso_date(iso_y, iso_m, iso_d).unwrap();
+            let month_code = if m == ADARI {
+                MonthCode(tinystr!(4, "M05L"))
+            } else {
+                MonthCode::new_normal(m).unwrap()
             };
-            let civil_date: HebrewDateInner = HebrewDateInner(ArithmeticDate::new_unchecked(
-                civil_date_nums.2,
-                civil_date_nums.1,
-                civil_date_nums.0,
-            ));
+            let hebrew_date =
+                Date::try_new_from_codes(tinystr!(16, "am").into(), y, month_code, d, Hebrew)
+                    .expect("Date should parse");
 
-            let book_to_civil = Hebrew::biblical_to_civil_date(book_date);
-            let civil_to_book = Hebrew::civil_to_biblical_date(civil_date);
+            let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
-            assert_eq!(civil_date, book_to_civil);
-            assert_eq!(book_date, civil_to_book);
+            let hebrew_to_iso = hebrew_date.to_calendar(Iso);
 
-            let iso_to_fixed = Iso::fixed_from_iso(iso_date.inner);
-            let fixed_to_hebrew = Hebrew::civil_hebrew_from_fixed(iso_to_fixed);
+            assert_eq!(
+                hebrew_to_iso, iso_date,
+                "Failed comparing to-ISO value for {hebrew_date:?} => {iso_date:?}"
+            );
+            assert_eq!(
+                iso_to_hebrew, hebrew_date,
+                "Failed comparing to-hebrew value for {iso_date:?} => {hebrew_date:?}"
+            );
 
-            let hebrew_to_fixed = Hebrew::fixed_from_civil_hebrew(civil_date);
-            let fixed_to_iso = Iso::iso_from_fixed(hebrew_to_fixed);
+            let ordinal_month = if LEAP_YEARS_IN_TESTS.contains(&y) {
+                if m == ADARI {
+                    ADAR
+                } else if m >= ADAR {
+                    m + 1
+                } else {
+                    m
+                }
+            } else {
+                assert!(m != ADARI);
+                m
+            };
 
-            assert_eq!(fixed_to_hebrew.inner, civil_date);
-            assert_eq!(fixed_to_iso.inner, iso_date.inner);
+            let ordinal_hebrew_date =
+                Date::try_new_hebrew_date_with_calendar(y, ordinal_month, d, Hebrew)
+                    .expect("Construction of date must succeed");
+
+            assert_eq!(ordinal_hebrew_date, hebrew_date, "Hebrew date construction from codes and ordinals should work the same for {hebrew_date:?}");
         }
     }
 
     #[test]
     fn test_icu_bug_22441() {
-        assert_eq!(BookHebrew::days_in_book_hebrew_year(88369), 383);
+        let yi = YearInfo::compute_for(88369);
+        assert_eq!(yi.keviyah.year_length(), 383);
     }
 }
