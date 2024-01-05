@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use smallvec::SmallVec;
-use zerotrie::ZeroTrie;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
 use crate::{
     power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
-    si_prefix::{get_si_prefix_base_ten, get_si_prefix_base_two},
+    si_prefix::get_si_prefix,
     ConversionError,
 };
 
@@ -17,7 +17,7 @@ use crate::{
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
     /// Contains the payload.
-    payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
+    payload: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
 impl<'data> MeasureUnitParser<'data> {
@@ -27,50 +27,51 @@ impl<'data> MeasureUnitParser<'data> {
         Self { payload }
     }
 
-    // TODO: complete all the cases for the prefixes.
-    // TODO: consider using a trie for the prefixes.
-    /// Extracts the SI prefix.
-    /// NOTE:
-    ///    if the prefix is found, the function will return (SiPrefix, part without the prefix string).
-    ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
-    fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
-        let (si_prefix_base_10, part) = get_si_prefix_base_ten(part);
-        if si_prefix_base_10 != 0 {
-            return (
-                SiPrefix {
-                    power: si_prefix_base_10,
-                    base: Base::Decimal,
-                },
-                part,
-            );
-        }
-
-        let (si_prefix_base_2, part) = get_si_prefix_base_two(part);
-        if si_prefix_base_2 != 0 {
-            return (
-                SiPrefix {
-                    power: si_prefix_base_2,
-                    base: Base::Binary,
-                },
-                part,
-            );
-        }
-
-        (
-            SiPrefix {
-                power: 0,
-                base: Base::Decimal,
-            },
-            part,
-        )
-    }
-
     /// Get the unit id.
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
-    ///    if the unit id is not found, the function will return None.
-    fn get_unit_id(&self, part: &'data str) -> Option<usize> {
-        self.payload.get(part.as_bytes())
+    ///    if the unit id is not found, the function will return an error.
+    fn get_unit_id<'a>(&'a self, part: &'a str) -> Result<(u16, &str), ConversionError> {
+        let mut cursor = self.payload.cursor();
+        let mut longest_match = Err(ConversionError::InvalidUnit);
+
+        for (i, byte) in part.bytes().enumerate() {
+            cursor.step(byte);
+            if cursor.is_empty() {
+                break;
+            }
+            if let Some(value) = cursor.take_value() {
+                longest_match = Ok((value as u16, &part[i + 1..]));
+            }
+        }
+        longest_match
+    }
+
+    fn get_power<'a>(&'a self, part: &'a str) -> Result<(u8, &str), ConversionError> {
+        let (power, part_without_power) = get_power(part);
+
+        // If the power is not found, return the part as it is.
+        if part_without_power.len() == part.len() {
+            return Ok((power, part));
+        }
+
+        // If the power is found, this means that the part must start with the `-` sign.
+        match part_without_power.strip_prefix('-') {
+            Some(part_without_power) => Ok((power, part_without_power)),
+            None => Err(ConversionError::InvalidUnit),
+        }
+    }
+
+    fn get_si_prefix<'a>(&'a self, part: &'a str) -> (SiPrefix, &str) {
+        let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
+        if part_without_si_prefix.len() == part.len() {
+            return (si_prefix, part);
+        }
+
+        match part_without_si_prefix.strip_prefix('-') {
+            Some(part_without_dash) => (si_prefix, part_without_dash),
+            None => (si_prefix, part_without_si_prefix),
+        }
     }
 
     /// Process a part of an identifier.
@@ -82,31 +83,41 @@ impl<'data> MeasureUnitParser<'data> {
         sign: i8,
         result: &mut Vec<MeasureUnitItem>,
     ) -> Result<(), ConversionError> {
-        if identifier_part.is_empty() {
-            return Ok(());
-        }
-        let mut identifier_split = identifier_part.split('-');
-        while let Some(mut part) = identifier_split.next() {
-            let power = match get_power(part) {
-                Some(power) => {
-                    part = identifier_split
-                        .next()
-                        .ok_or(ConversionError::InvalidUnit)?;
-                    power
-                }
-                None => 1,
-            };
-
-            let (si_prefix, identifier_after_si) = Self::get_si_prefix(part);
-            let unit_id = self
-                .get_unit_id(identifier_after_si)
-                .ok_or(ConversionError::InvalidUnit)?;
+        let mut identifier_part = identifier_part;
+        while !identifier_part.is_empty() {
+            let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
+            let (si_prefix, unit_id, identifier_part_without_unit_id) =
+                match self.get_unit_id(identifier_part_without_power) {
+                    Ok((unit_id, identifier_part_without_unit_id)) => (
+                        SiPrefix {
+                            power: 0,
+                            base: Base::Decimal,
+                        },
+                        unit_id,
+                        identifier_part_without_unit_id,
+                    ),
+                    Err(_) => {
+                        let (si_prefix, identifier_part_without_si_prefix) =
+                            self.get_si_prefix(identifier_part_without_power);
+                        let (unit_id, identifier_part_without_unit_id) =
+                            self.get_unit_id(identifier_part_without_si_prefix)?;
+                        (si_prefix, unit_id, identifier_part_without_unit_id)
+                    }
+                };
 
             result.push(MeasureUnitItem {
-                power: sign * power,
+                power: sign * power as i8,
                 si_prefix,
-                unit_id: unit_id as u16,
+                unit_id,
             });
+
+            identifier_part = match identifier_part_without_unit_id.len() {
+                0 => identifier_part_without_unit_id,
+                _ if identifier_part_without_unit_id.starts_with('-') => {
+                    &identifier_part_without_unit_id[1..]
+                }
+                _ => return Err(ConversionError::InvalidUnit),
+            };
         }
 
         Ok(())
@@ -117,8 +128,8 @@ impl<'data> MeasureUnitParser<'data> {
     pub fn try_from_identifier(
         &self,
         identifier: &'data str,
-    ) -> Result<MeasureUnit, ConversionError> {
-        if identifier.starts_with('-') {
+    ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
+        if identifier.starts_with('-') || identifier.ends_with('-') {
             return Err(ConversionError::InvalidUnit);
         }
 
