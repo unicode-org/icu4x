@@ -83,3 +83,5 @@ macro_rules! size_test {
         }
     };
 }
+
+pub(crate) use size_test;
