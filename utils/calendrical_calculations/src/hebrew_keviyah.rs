@@ -7,10 +7,6 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::i64_to_i32;
-use crate::rata_die::RataDie;
-use core::cmp::Ordering;
-
 // The algorithms in this file are rather well-published in multiple places,
 // though the resource that was primarily used was
 // J Jean Adler's _A Short History of the Jewish Fixed Calendar_, found
@@ -18,6 +14,76 @@ use core::cmp::Ordering;
 // at <https://www.hakirah.org/vol20AjdlerAppendices.pdf>.
 // Most of the math can be found on Wikipedia as well,
 // at <https://en.wikipedia.org/wiki/Hebrew_calendar#The_four_gates>
+
+//! Alternate, more efficient structures for working with the Hebrew Calendar
+//! using the keviyah and Four Gates system
+//!
+//! The main entry point for this code is [`YearInfo::compute_for()`] and [`YearInfo::year_containing_rd()`],
+//! which will efficiently calculate certain information about a Hebrew year, given the Hebrew year
+//! or a date that falls within it, and produce it as a [`YearInfo`].
+//!
+//! From there, you can compute additional information via [`YearInfo::new_year()`] and by accessing
+//! the methods on [`YearInfo::keviyah`].
+//!
+//!
+//! # How this code works:
+//!
+//! ## How the Hebrew Calendar works
+//!
+//! The Hebrew calendar is a lunisolar calendar following a Metonic cycle: every 19 years, the pattern of
+//! leap years repeats. However, the precise month lengths vary from cycle to cycle: There are a handful of
+//! corrections performed to ensure that:
+//!
+//! - The lunar conjunction happens on or before the first day of the month
+//! - Yom Kippur is not before or after the Sabbath
+//! - Hoshana Rabbah is not on the Sabbath
+//!
+//! These corrections can be done using systematic calculations, which this code attempts to efficiently perform.
+//!
+//! ## Molad
+//!
+//! A molad is the time of a conjunction, the moment when the new moon occurs. The "Molad Tishrei" is
+//! the conjunction corresponding to the month Tishrei, the first month, so it is the molad that starts the new year.
+//! In this file we'll typically use "molad" to refer to the molad Tishrei of a year.
+//!
+//! The Hebrew calendar does not always start on the day of the molad Tishrei: it may be postponed one or two days.
+//! However, the time in the week that the molad occurs is sufficient to know when it gets postponed to.
+//!
+//! ## Keviyah
+//!
+//! See also: the [`Keviyah`] type.
+//!
+//! This is the core concept being used here. Everything you need to know about the characteristics
+//! of a hebrew year can be boiled down to a notion called the "keviyah" of a year. This
+//! encapsulates three bits of information:
+//!
+//! - What day of the week the year starts on
+//! - What the month lengths are
+//! - What day of the week Passover starts on.
+//!
+//! While this seems like many possible combinations, only fourteen of them are possible.
+//!
+//! Knowing the Keviyah of the year you can understand exactly what the lengths of each month are.
+//! Furthermore, if you know the week the year falls in, you can additionally understand what
+//! the precise day of the new year is.
+//!
+//! [`YearInfo`] encapsulates these two pieces of information: the [`Keviyah`] and the number of weeks
+//! since the epoch of the Hebrew calendar.
+//!
+//! ## The Four Gates table
+//!
+//! This is an efficient lookup based way of calculating the [`Keviyah`] for a year. In the Metonic cycle,
+//! there are four broad types of year: leap years, years preceding leap years, years succeeding leap years,
+//! and years sandwiched between leap years. For each of these year types, there is a partitioning
+//! of the week into seven segments, and the [`Keviyah`] of that year depends on which segment the molad falls
+//! in.
+//!
+//! So to calculate the [`Keviyah`] of a year, we can calculate its molad, pick the right partitioning based on the
+//! year type, and see where the molad falls in that table.
+
+use crate::helpers::i64_to_i32;
+use crate::rata_die::RataDie;
+use core::cmp::Ordering;
 
 // A note on time notation
 //
@@ -50,12 +116,7 @@ use core::cmp::Ordering;
 // resources seem to universally 1-index in the dashes notation. This file will only use
 // zero-indexed notation when explicitly disambiguated, usually when talking about intervals.
 
-// Molads: A molad is the time of a conjunction, the moment when the new moon occurs.
-//
-// The Hebrew calendar does not always start on the day of the molad: it may be postponed one or two days.
-// However, the time in the week that the molad occurs is sufficient to know when it gets postponed to.
-
-/// Calculate the number of months preceding the molad Tishri for a given hebrew year (Tishri is the first month)
+/// Calculate the number of months preceding the molad Tishrei for a given hebrew year (Tishrei is the first month)
 #[inline]
 fn months_preceding_molad(h_year: i32) -> i64 {
     // Ft = INT((235N + 1 / 19))
@@ -114,51 +175,6 @@ const ḤALAKIM_IN_WEEK: i64 = 1080 * 24 * 7;
 ///
 /// (note that the molad Beherad occurs on standard Sunday, but because it happens after 6PM it is still Hebrew Monday)
 const HEBREW_CALENDAR_EPOCH: RataDie = crate::julian::fixed_from_julian_book_version(-3761, 10, 7);
-
-// Month lengths (ref: https://en.wikipedia.org/wiki/Hebrew_calendar#Months)
-const TISHREI_LEN: u8 = 30;
-// except in Complete years
-const ḤESHVAN_DEFAULT_LEN: u8 = 29;
-// Except in Deficient years
-const KISLEV_DEFAULT_LEN: u8 = 30;
-const TEVET_LEN: u8 = 29;
-const SHEVAT_LEN: u8 = 30;
-const ADARI_LEN: u8 = 30;
-const ADAR_LEN: u8 = 29;
-const NISAN_LEN: u8 = 30;
-const IYYAR_LEN: u8 = 29;
-const SIVAN_LEN: u8 = 30;
-const TAMMUZ_LEN: u8 = 29;
-const AV_LEN: u8 = 30;
-const ELUL_LEN: u8 = 29;
-
-/// Normalized month constant for Tishrei
-///
-/// These are not ordinal months, rather these are the month number in a regular year
-/// Adar, Adar I and Adar II all normalize to 6
-pub const TISHREI: u8 = 1;
-/// Normalized month constant (see [`TISHREI`])
-pub const ḤESHVAN: u8 = 2;
-/// Normalized month constant (see [`TISHREI`])
-pub const KISLEV: u8 = 3;
-/// Normalized month constant (see [`TISHREI`])
-pub const TEVET: u8 = 4;
-/// Normalized month constant (see [`TISHREI`])
-pub const SHEVAT: u8 = 5;
-/// Normalized month constant (see [`TISHREI`])
-pub const ADAR: u8 = 6;
-/// Normalized month constant (see [`TISHREI`])
-pub const NISAN: u8 = 7;
-/// Normalized month constant (see [`TISHREI`])
-pub const IYYAR: u8 = 8;
-/// Normalized month constant (see [`TISHREI`])
-pub const SIVAN: u8 = 9;
-/// Normalized month constant (see [`TISHREI`])
-pub const TAMMUZ: u8 = 10;
-/// Normalized month constant (see [`TISHREI`])
-pub const AV: u8 = 11;
-/// Normalized month constant (see [`TISHREI`])
-pub const ELUL: u8 = 12;
 
 /// The minumum hebrew year supported by this code (this is the minimum value for i32)
 pub const HEBREW_MIN_YEAR: i32 = i32::min_value();
@@ -422,6 +438,51 @@ macro_rules! u16_cvt(
         }
     };
 );
+
+// Month lengths (ref: https://en.wikipedia.org/wiki/Hebrew_calendar#Months)
+const TISHREI_LEN: u8 = 30;
+// except in Complete years
+const ḤESHVAN_DEFAULT_LEN: u8 = 29;
+// Except in Deficient years
+const KISLEV_DEFAULT_LEN: u8 = 30;
+const TEVET_LEN: u8 = 29;
+const SHEVAT_LEN: u8 = 30;
+const ADARI_LEN: u8 = 30;
+const ADAR_LEN: u8 = 29;
+const NISAN_LEN: u8 = 30;
+const IYYAR_LEN: u8 = 29;
+const SIVAN_LEN: u8 = 30;
+const TAMMUZ_LEN: u8 = 29;
+const AV_LEN: u8 = 30;
+const ELUL_LEN: u8 = 29;
+
+/// Normalized month constant for Tishrei
+///
+/// These are not ordinal months, rather these are the month number in a regular year
+/// Adar, Adar I and Adar II all normalize to 6
+pub const TISHREI: u8 = 1;
+/// Normalized month constant (see [`TISHREI`])
+pub const ḤESHVAN: u8 = 2;
+/// Normalized month constant (see [`TISHREI`])
+pub const KISLEV: u8 = 3;
+/// Normalized month constant (see [`TISHREI`])
+pub const TEVET: u8 = 4;
+/// Normalized month constant (see [`TISHREI`])
+pub const SHEVAT: u8 = 5;
+/// Normalized month constant (see [`TISHREI`])
+pub const ADAR: u8 = 6;
+/// Normalized month constant (see [`TISHREI`])
+pub const NISAN: u8 = 7;
+/// Normalized month constant (see [`TISHREI`])
+pub const IYYAR: u8 = 8;
+/// Normalized month constant (see [`TISHREI`])
+pub const SIVAN: u8 = 9;
+/// Normalized month constant (see [`TISHREI`])
+pub const TAMMUZ: u8 = 10;
+/// Normalized month constant (see [`TISHREI`])
+pub const AV: u8 = 11;
+/// Normalized month constant (see [`TISHREI`])
+pub const ELUL: u8 = 12;
 
 impl Keviyah {
     /// Get the type of year for this Keviyah.
