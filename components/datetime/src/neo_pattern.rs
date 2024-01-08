@@ -6,7 +6,10 @@
 
 use core::str::FromStr;
 
+use crate::helpers::size_test;
 use crate::pattern::{runtime, PatternError, PatternItem};
+
+size_test!(DateTimePattern, date_time_pattern_size, 32);
 
 /// A pattern for formatting a datetime in a calendar.
 ///
@@ -17,6 +20,8 @@ use crate::pattern::{runtime, PatternError, PatternItem};
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
+///
+#[doc = date_time_pattern_size!()]
 ///
 /// # Examples
 ///

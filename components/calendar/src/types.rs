@@ -137,6 +137,21 @@ impl MonthCode {
         }
         None
     }
+
+    /// Construct a "normal" month code given a number ("Mxx").
+    ///
+    /// Returns an error for months greater than 99
+    #[cfg(test)] // Only used in tests for now. Could be made public if people need it.
+    pub(crate) fn new_normal(number: u8) -> Option<Self> {
+        let tens = number / 10;
+        let ones = number % 10;
+        if tens > 9 {
+            return None;
+        }
+
+        let bytes = [b'M', b'0' + tens, b'0' + ones, 0];
+        Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
+    }
 }
 
 #[test]
