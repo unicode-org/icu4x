@@ -60,6 +60,20 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
     };
 }
 
+size_test!(
+    TypedNeoDateFormatter<icu_calendar::Gregorian>,
+    typed_neo_date_formatter_size,
+    pinned = 512,
+    nightly = 496
+);
+
+/// [`TypedNeoDateFormatter`] can format dates from a calendar selected at compile time.
+///
+/// For the difference between this and [`DateFormatter`](crate::DateFormatter), please
+/// read the [crate root docs][crate].
+///
+#[doc = typed_neo_date_formatter_size!()]
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -231,6 +245,18 @@ impl<'a> FormattedNeoDate<'a> {
     }
 }
 
+size_test!(
+    NeoTimeFormatter,
+    neo_time_formatter_size,
+    pinned = 464,
+    nightly = 448
+);
+
+/// [`NeoTimeFormatter`] can format times of day.
+/// It supports both 12-hour and 24-hour formats.
+///
+#[doc = neo_time_formatter_size!()]
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -385,6 +411,21 @@ impl<'a> FormattedNeoTime<'a> {
     }
 }
 
+size_test!(
+    TypedNeoDateTimeFormatter<icu_calendar::Gregorian>,
+    neo_date_time_formatter_size,
+    pinned = 584,
+    nightly = 568
+);
+
+/// [`TypedNeoDateTimeFormatter`] can format dates with times of day. The dates must be in
+/// a calendar system determined at compile time.
+///
+/// For the difference between this and [`DateTimeFormatter`](crate::DateTimeFormatter), please
+/// read the [crate root docs][crate].
+///
+#[doc = neo_date_time_formatter_size!()]
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature

@@ -23,7 +23,7 @@ use crate::ZonedDateTimeFormatter;
 
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved
 /// as an output from [`ZonedDateTimeFormatter`].
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct FormattedZonedDateTime<'l> {
     pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormatter,
     pub(crate) datetime: ExtractedDateTimeInput,
