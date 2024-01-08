@@ -48,6 +48,19 @@ final class IsoDateTime implements ffi.Finalizable {
     _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_crate_from_date_and_time')
       .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
+  /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
+  ///
+  /// See the [Rust documentation for `local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.local_unix_epoch) for more information.
+  factory IsoDateTime.localUnixEpoch() {
+    final result = _ICU4XIsoDateTime_local_unix_epoch();
+    return IsoDateTime._(result);
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_local_unix_epoch =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>('ICU4XIsoDateTime_local_unix_epoch')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
+
   /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
   ///
   /// See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.

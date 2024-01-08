@@ -47,7 +47,7 @@ macro_rules! exemplar_chars_impls {
         }
 
         impl IterableDataProviderInternal<$data_marker_name> for crate::DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

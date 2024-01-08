@@ -8,7 +8,7 @@ use core::convert::TryFrom;
 use icu_displaynames::provider::*;
 use icu_locid::{subtags::Variant, ParserError};
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
 
 impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
@@ -36,7 +36,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProviderInternal<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()

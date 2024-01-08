@@ -9,6 +9,7 @@ description = "Build all permutations of all features for the provided chunk ind
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
+env = { RUSTFLAGS = "-Dwarnings" }
 command = "cargo"
 args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
@@ -33,6 +34,7 @@ description = "Run all Rust tests with all features and targets"
 category = "ICU4X Development"
 # This might be required if Windows runs out of disk again
 # env = { RUSTFLAGS = "-Cdebuginfo=none -Cdebug-assertions=true", condition = { platforms = ["windows"] } }
+env = { RUSTFLAGS = "--cfg=icu4x_run_size_tests" }
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 

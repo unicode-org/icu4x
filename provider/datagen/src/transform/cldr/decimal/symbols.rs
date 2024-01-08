@@ -8,6 +8,7 @@ use icu_decimal::provider::*;
 use icu_locid::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use tinystr::TinyAsciiStr;
 
@@ -48,8 +49,8 @@ impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProviderInternal<DecimalSymbolsV1Marker> for crate::DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales()
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        self.supported_locales_for_numbers()
     }
 }
 

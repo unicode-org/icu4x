@@ -49,3 +49,8 @@ pub use __impl_calendar_japanext_v1 as impl_calendar_japanext_v1;
 mod datetime_week_data_v1;
 #[doc(inline)]
 pub use __impl_datetime_week_data_v1 as impl_datetime_week_data_v1;
+#[macro_use]
+#[path = "macros/datetime_week_data_v2.rs.data"]
+mod datetime_week_data_v2;
+#[doc(inline)]
+pub use __impl_datetime_week_data_v2 as impl_datetime_week_data_v2;
