@@ -76,15 +76,11 @@ pub trait CldrCalendar: InternalCldrCalendar {
 
 /// Check if the provided value is of the form `islamic-{subcal}`
 fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
-    let slice = value.as_tinystr_slice();
-    if slice.len() > 2 {
-        return false;
+    if let &[first, second] = value.as_tinystr_slice() {
+        first == "islamic" && second == subcal
+    } else {
+        false
     }
-    if let (Some(first), Some(second)) = (slice.get(0), slice.get(1)) {
-        return *first == tinystr!(8, "islamic") && *second == subcal;
-    }
-
-    false
 }
 
 impl CldrCalendar for Buddhist {
