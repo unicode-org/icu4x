@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_unitsconversion::converter::{ConverterFactory, Convertibility};
+use icu_unitsconversion::converter::ConverterFactory;
 use num::BigRational;
 
 use zerotrie::ZeroTrieSimpleAscii;
@@ -97,12 +97,9 @@ fn test_cldr_unit_tests() {
             .try_from_identifier(test.output_unit.as_str())
             .unwrap();
 
-        let convertablity = converter_factory.extract_convertibility(&input_unit, &output_unit);
+        let converter = converter_factory.converter(&input_unit, &output_unit);
 
-        match convertablity {
-            Convertibility::Convertible => (),
-            _ => panic!("Units are not convertible or reciprocal"),
-        }
+        assert!(converter.is_some());
     }
 
     // TODO: add more test cases for the NonConvertible units.

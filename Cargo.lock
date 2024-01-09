@@ -2084,6 +2084,7 @@ dependencies = [
  "icu_unitsconversion_data",
  "litemap",
  "num",
+ "num-bigint",
  "serde",
  "smallvec",
  "zerotrie",
