@@ -40,7 +40,7 @@ fn test_plural_ranges_full() {
     let ranges =
         PluralRulesWithRanges::try_new(&locale!("sl").into(), PluralRuleType::Cardinal).unwrap();
     let start: PluralOperands = "0.5".parse().unwrap(); // PluralCategory::Other
-    let end: PluralOperands = PluralOperands::try_from(1).unwrap(); // PluralCategory::One
+    let end: PluralOperands = PluralOperands::from(1); // PluralCategory::One
 
     assert_eq!(ranges.category_for_range(start, end), PluralCategory::Few)
 }
