@@ -128,7 +128,7 @@ pub struct CurrencyPatterns {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PercentEssentialsV1<'data> {
     /// The index of the number placeholder in the standard pattern.
-    pub number_index: u16,
+    pub number_index: u8,
 
     /// Prefix and suffix to apply to a percent sign when needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -139,7 +139,7 @@ pub struct PercentEssentialsV1<'data> {
     pub percent_sign_symbol: Cow<'data, str>,
 
     /// The index of the percent symbol in the standard pattern.
-    pub percent_symbol_index: u16,
+    pub percent_symbol_index: u8,
 
     /// Represents the standard pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]

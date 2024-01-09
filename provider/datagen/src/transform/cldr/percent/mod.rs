@@ -95,8 +95,8 @@ fn extract_percent_essentials<'data>(
     Ok(PercentEssentialsV1 {
         standard: standard_pattern.to_owned().into(),
         percent_sign_symbol: symbols.percent_sign.to_owned().into(),
-        percent_symbol_index: percent_sign_index as u16,
-        number_index: first_num_index as u16,
+        percent_symbol_index: percent_sign_index as u8,
+        number_index: first_num_index as u8,
         percent_sign_affixes: PercentAffixesV1 {
             prefix: percent_prefix.to_owned().into(),
             suffix: percent_suffix.to_owned().into(),
