@@ -310,7 +310,7 @@ impl<'data> ConverterFactory<'data> {
         }
 
         for input_item in input_unit.contained_units.iter() {
-            if let Err(_) = Self::add_term(self, input_item, 1, &mut conversion_rate) {
+            if Self::add_term(self, input_item, 1, &mut conversion_rate).is_err() {
                 return None;
             }
         }
@@ -322,7 +322,7 @@ impl<'data> ConverterFactory<'data> {
         };
 
         for output_item in output_unit.contained_units.iter() {
-            if let Err(_) = Self::add_term(self, output_item, sign, &mut conversion_rate) {
+            if Self::add_term(self, output_item, sign, &mut conversion_rate).is_err() {
                 return None;
             }
         }
