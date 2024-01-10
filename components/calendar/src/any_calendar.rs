@@ -942,46 +942,39 @@ impl AnyCalendarKind {
     /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        let slice = x.as_tinystr_slice();
-
-        if slice.len() <= 2 {
-            if let Some(first) = slice.get(0) {
-                if let Some(second) = slice.get(1) {
-                    if first == "islamic" {
-                        match second.as_str() {
-                            "civil" => return Some(AnyCalendarKind::IslamicCivil),
-                            "tbla" => return Some(AnyCalendarKind::IslamicTabular),
-                            "umalqura" => return Some(AnyCalendarKind::IslamicUmmAlQura),
-                            _ => (),
-                        }
-                    }
-                } else {
-                    match first.as_str() {
-                        "buddhist" => return Some(AnyCalendarKind::Buddhist),
-                        "chinese" => return Some(AnyCalendarKind::Chinese),
-                        "coptic" => return Some(AnyCalendarKind::Coptic),
-                        "dangi" => return Some(AnyCalendarKind::Dangi),
-                        "ethioaa" => return Some(AnyCalendarKind::EthiopianAmeteAlem),
-                        "ethiopic" => return Some(AnyCalendarKind::Ethiopian),
-                        "gregory" => return Some(AnyCalendarKind::Gregorian),
-                        "hebrew" => return Some(AnyCalendarKind::Hebrew),
-                        "indian" => return Some(AnyCalendarKind::Indian),
-                        "islamic" => return Some(AnyCalendarKind::IslamicObservational),
-                        "islamicc" => return Some(AnyCalendarKind::IslamicCivil),
-                        "iso" => return Some(AnyCalendarKind::Iso),
-                        "japanese" => return Some(AnyCalendarKind::Japanese),
-                        "japanext" => return Some(AnyCalendarKind::JapaneseExtended),
-                        "persian" => return Some(AnyCalendarKind::Persian),
-                        "roc" => return Some(AnyCalendarKind::Roc),
-                        _ => (),
-                    }
-                }
+        match *x.as_tinystr_slice() {
+            [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
+            [first] if first == "chinese" => Some(AnyCalendarKind::Chinese),
+            [first] if first == "coptic" => Some(AnyCalendarKind::Coptic),
+            [first] if first == "dangi" => Some(AnyCalendarKind::Dangi),
+            [first] if first == "ethioaa" => Some(AnyCalendarKind::EthiopianAmeteAlem),
+            [first] if first == "ethiopic" => Some(AnyCalendarKind::Ethiopian),
+            [first] if first == "gregory" => Some(AnyCalendarKind::Gregorian),
+            [first] if first == "hebrew" => Some(AnyCalendarKind::Hebrew),
+            [first] if first == "indian" => Some(AnyCalendarKind::Indian),
+            [first] if first == "islamic" => Some(AnyCalendarKind::IslamicObservational),
+            [first] if first == "islamicc" => Some(AnyCalendarKind::IslamicCivil),
+            [first, second] if first == "islamic" && second == "civil" => {
+                Some(AnyCalendarKind::IslamicCivil)
+            }
+            [first, second] if first == "islamic" && second == "tbla" => {
+                Some(AnyCalendarKind::IslamicTabular)
+            }
+            [first, second] if first == "islamic" && second == "umalqura" => {
+                Some(AnyCalendarKind::IslamicUmmAlQura)
+            }
+            [first] if first == "iso" => Some(AnyCalendarKind::Iso),
+            [first] if first == "japanese" => Some(AnyCalendarKind::Japanese),
+            [first] if first == "japanext" => Some(AnyCalendarKind::JapaneseExtended),
+            [first] if first == "persian" => Some(AnyCalendarKind::Persian),
+            [first] if first == "roc" => Some(AnyCalendarKind::Roc),
+            _ => {
+                // Log a warning when a calendar value is passed in but doesn't match any calendars
+                DataError::custom("bcp47_value did not match any calendars")
+                    .with_display_context(x);
+                None
             }
         }
-
-        // Log a warning when a calendar value is passed in but doesn't match any calendars
-        DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
-        None
     }
 
     /// Convert to a BCP-47 string

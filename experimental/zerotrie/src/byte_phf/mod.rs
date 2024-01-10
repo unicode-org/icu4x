@@ -56,8 +56,6 @@ mod builder;
 mod cached_owned;
 
 #[cfg(feature = "alloc")]
-pub use builder::find;
-#[cfg(feature = "alloc")]
 pub use cached_owned::PerfectByteHashMapCacheOwned;
 
 /// The cutoff for the fast version of [`f1`].
