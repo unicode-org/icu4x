@@ -3,11 +3,11 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "crate"
-publish = false
+name = "unused"
 version = "0.0.0"
 
+[lib]
+path = "unused"
+
 [dependencies]
-icu_capi = { version = "1.4", default-features = false, features = ["compiled_data", "icu_segmenter"] }
-libc_alloc = { version = "1.0.6", features = ["global"] }
-panic-halt = "0.2"
+icu_capi = { version = "1.4", default-features = false }

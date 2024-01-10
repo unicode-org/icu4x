@@ -25,20 +25,24 @@ version = "0.0.0"
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false, features = ["default"] }
+icu_capi = { version = "1.4", default-features = false }
 ```
 
-Some of the keys are required by the parser, but won't be used by us. The `features` array can be used to enable additional functionality:
+Some of the keys are required by the parser, but won't be used by us. 
 
+`icu_capi` supports a list of option features:
+
+- `default` enables a default set of features
+- `std` \[default\] set this when building for a target with a Rust standard library, otherwise see below
 - `compiled_data` \[default\] to include data (`ICU4XDataProvider::create_compiled()`)
 - `simple_logger` \[default\] enable basic stdout logging of error metadata. Further loggers can be added on request.
 - `default_components` \[default\] activate all stable ICU4X components. For smaller builds, this can be disabled, and components can be added with features like `icu_list`.
 - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
 
-You can now build the library:
+You can now set features using the `--features icu_capi/<feature>` syntax to build the library:
 
 ```shell
-cargo rustc --release -p icu_capi --crate-type staticlib
+cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default,icu_capi/buffer_provider
 ```
 
 - Be sure to pass `--release` to get an optimized build
@@ -105,17 +109,11 @@ C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and a panic hook, similar to what we do in our [example](c-tiny/fixeddecimal/crate/src/lib.rs):
+Users wishing to use ICU4X on a `no_std` platform will need to provide an allocator and a panic hook in order to build a linkable library. The `icu_capi` crate can provide a looping panic handler, and a `malloc`-backed allocator, under the `panic-handler` and `libc-alloc` features, respectively.
 
-```rust
-#![no_std]
-
-extern crate icu_capi;
-extern crate libc_alloc;
-extern crate panic_never;
 ```
-
-This can then be compiled with `cargo +nightly rustc --crate-type staticlib --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort` for a minimal build.
+cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default_components,icu_capi/buffer_provider,icu_capi/panic-handler,icu_capi/libc-alloc
+```
 
 ## Tips
 

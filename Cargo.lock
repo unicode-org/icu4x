@@ -1402,6 +1402,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_timezone",
+ "libc_alloc",
  "log",
  "serde",
  "simple_logger",
@@ -2186,6 +2187,12 @@ name = "libc"
 version = "0.2.148"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
+
+[[package]]
+name = "libc_alloc"
+version = "1.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a835c038b748123287f9fb1743d565e7c635879997f43c345a18a026690364e"
 
 [[package]]
 name = "libloading"

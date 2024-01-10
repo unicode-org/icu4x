@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -46,7 +46,15 @@
 #[cfg(target_arch = "wasm32")]
 extern crate std as rust_std;
 
+#[cfg(feature = "panic-handler")]
+#[panic_handler]
+fn panic(_info: &core::panic::PanicInfo) -> ! {
+    loop {}
+}
+
 extern crate alloc;
+#[cfg(feature = "libc-alloc")]
+extern crate libc_alloc;
 
 // Common modules
 
