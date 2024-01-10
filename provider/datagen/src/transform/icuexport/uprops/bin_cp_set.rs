@@ -20,7 +20,7 @@ impl crate::DatagenProvider {
                 key
             ))?
             .binary_property
-            .get(0)
+            .first()
             .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
     }
 }

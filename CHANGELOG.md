@@ -7,6 +7,8 @@
     - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
   - `icu_calendar`
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+  - `icu_datetime`
+    - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
   - `icu_segmenter`
@@ -15,6 +17,7 @@
   - `icu_datagen`
     - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
     - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
+    - Never use fallback for baked segmentation data (https://github.com/unicode-org/icu4x/pull/4510)
   - `icu_provider`
     - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
   - `icu_provider_blob`
@@ -28,7 +31,7 @@
       - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
     - C++
       - Fixed a bug where a result header defines a struct that shadows the class' name  (https://github.com/rust-diplomat/diplomat/pull/394)
-      - Add `expclicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
+      - Add `explicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
 - Utilities
     - `calendrical_calculations`:
         - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar.

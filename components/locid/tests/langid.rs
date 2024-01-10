@@ -111,7 +111,7 @@ fn test_langid_subtag_variant() {
 fn test_langid_subtag_variants() {
     let variant: subtags::Variant = "macos".parse().expect("Failed to parse a variant.");
     let mut variants = subtags::Variants::from_vec_unchecked(vec![variant]);
-    assert_eq!(variants.get(0), Some(&variant));
+    assert_eq!(variants.first(), Some(&variant));
     variants.clear();
     assert_eq!(variants.len(), 0);
 }

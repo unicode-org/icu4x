@@ -7,6 +7,7 @@ use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;
 use crate::fields::{self, FieldLength, FieldSymbol};
+use crate::helpers::size_test;
 use crate::input;
 use crate::input::DateInput;
 use crate::input::DateTimeInput;
@@ -115,7 +116,17 @@ impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
     }
 }
 
+size_test!(
+    TypedDateTimeNames<icu_calendar::Gregorian>,
+    typed_date_time_names_size,
+    pinned = 504,
+    nightly = 488
+);
+
 /// A low-level type that formats datetime patterns with localized symbols.
+/// The calendar should be chosen at compile time.
+///
+#[doc = typed_date_time_names_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
