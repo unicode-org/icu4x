@@ -4,8 +4,9 @@
 
 use core::str::FromStr;
 use icu_unitsconversion::converter::ConverterFactory;
-use num::BigRational;
+use num::{rational::Ratio, BigRational, Signed};
 
+use num_bigint::BigInt;
 use zerotrie::ZeroTrieSimpleAscii;
 
 // TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
@@ -56,10 +57,10 @@ fn test_cldr_unit_tests() {
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
-        _category: String,
+        category: String,
         input_unit: String,
         output_unit: String,
-        _result: BigRational,
+        result: BigRational,
     }
 
     let data = std::fs::read_to_string("tests/data/unitsTest.txt").unwrap();
@@ -69,10 +70,10 @@ fn test_cldr_unit_tests() {
         .map(|line| {
             let parts: Vec<&str> = line.split(';').map(|s| s.trim()).collect();
             UnitsTest {
-                _category: parts[0].to_string(),
+                category: parts[0].to_string(),
                 input_unit: parts[1].to_string(),
                 output_unit: parts[2].to_string(),
-                _result: get_rational(parts[4]).unwrap(),
+                result: get_rational(parts[4]).unwrap(),
             }
         })
         .collect();
@@ -100,6 +101,17 @@ fn test_cldr_unit_tests() {
         let converter = converter_factory.converter(&input_unit, &output_unit);
 
         assert!(converter.is_some());
+
+        let converter = converter.unwrap();
+        let result = converter.convert(&Ratio::from_integer(1000.into()));
+        let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
+
+        if diff_ratio >  Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
+            panic!(
+                "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
+                test.category, test.input_unit, test.output_unit, result, test.result
+            );
+        }
     }
 
     // TODO: add more test cases for the NonConvertible units.

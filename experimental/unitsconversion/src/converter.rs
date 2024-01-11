@@ -8,7 +8,7 @@ use crate::{
     ConversionError,
 };
 use litemap::LiteMap;
-use num::{rational::Ratio, BigInt};
+use num::{rational::Ratio, BigInt, Zero};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
@@ -108,7 +108,7 @@ impl<'data> ConverterFactory<'data> {
                     .get(item.unit_id as usize)
                     .ok_or(ConversionError::DataNotFoundError)?;
 
-                insert_units_powers(items_from_item.basic_units(), item.power as i16, sign, map)?;
+                insert_base_units(items_from_item.basic_units(), item.power as i16, sign, map)?;
             }
 
             Ok(())
@@ -116,10 +116,10 @@ impl<'data> ConverterFactory<'data> {
 
         /// Inserting the basic units into the map.
         /// NOTE:   
-        ///     The basic units should be multiplied by the original power.
+        ///     The base units should be multiplied by the original power.
         ///     For example, `square-foot` , the base unit is `meter` with power 1.
         ///     Thus, the inserted power should be `1 * 2 = 2`.
-        fn insert_units_powers(
+        fn insert_base_units(
             basic_units: &ZeroSlice<MeasureUnitItem>,
             original_power: i16,
             sign: i16,
@@ -228,19 +228,34 @@ impl<'data> ConverterFactory<'data> {
 
     fn get_offset(
         &self,
-        input_unit: &MeasureUnitItem,
-        output_unit: &MeasureUnitItem,
+        input_unit: &MeasureUnit,
+        output_unit: &MeasureUnit,
     ) -> Result<Ratio<BigInt>, ConversionError> {
+        // In order to have an offset, the input and output units should be simple.
+        // This means, the input and output units should have only one unit item with power 1 and si prefix 0.
+        // For example:
+        //           1 - `meter` and `foot` are simple units.
+        //           2 - `meter-per-second` and `foot-per-second` are not simple units.
+        if !(input_unit.contained_units.len() == 1
+            && output_unit.contained_units.len() == 1
+            && input_unit.contained_units[0].power == 1
+            && output_unit.contained_units[0].power == 1
+            && input_unit.contained_units[0].si_prefix.power == 0
+            && output_unit.contained_units[0].si_prefix.power == 0)
+        {
+            return Ok(Ratio::<BigInt>::from_integer(0.into()));
+        }
+
         let input_conversion_info = self
             .payload
             .convert_infos
-            .get(input_unit.unit_id as usize)
+            .get(input_unit.contained_units[0].unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
 
         let output_conversion_info = self
             .payload
             .convert_infos
-            .get(output_unit.unit_id as usize)
+            .get(output_unit.contained_units[0].unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
 
         let input_offset_sign = match Sign::from_unaligned(input_conversion_info.offset_sign) {
@@ -275,6 +290,10 @@ impl<'data> ConverterFactory<'data> {
             ),
         );
 
+        if input_offset.is_zero() && output_offset.is_zero() {
+            return Ok(Ratio::<BigInt>::from_integer(0.into()));
+        }
+
         let output_conversion_sign = match Sign::from_unaligned(output_conversion_info.factor_sign)
         {
             Sign::Positive => num_bigint::Sign::Plus,
@@ -302,7 +321,6 @@ impl<'data> ConverterFactory<'data> {
         output_unit: &MeasureUnit,
     ) -> Option<Converter> {
         let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
-        let mut offset = Ratio::<BigInt>::from_integer(0.into());
         let convertibility = self.extract_convertibility(input_unit, output_unit);
 
         if convertibility == Convertibility::NotConvertible {
@@ -327,22 +345,10 @@ impl<'data> ConverterFactory<'data> {
             }
         }
 
-        if input_unit.contained_units.len() == 1
-            && output_unit.contained_units.len() == 1
-            && input_unit.contained_units[0].power == 1
-            && output_unit.contained_units[0].power == 1
-            && input_unit.contained_units[0].si_prefix.power == 0
-            && output_unit.contained_units[0].si_prefix.power == 0
-        {
-            offset = match Self::get_offset(
-                self,
-                &input_unit.contained_units[0],
-                &output_unit.contained_units[0],
-            ) {
-                Ok(val) => val,
-                Err(_) => return None,
-            };
-        }
+        let offset = match Self::get_offset(self, &input_unit, &output_unit) {
+            Ok(val) => val,
+            Err(_) => return None,
+        };
 
         Some(Converter {
             conversion_rate,
