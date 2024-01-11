@@ -345,7 +345,7 @@ impl<'data> ConverterFactory<'data> {
             }
         }
 
-        let offset = match Self::get_offset(self, &input_unit, &output_unit) {
+        let offset = match Self::get_offset(self, input_unit, output_unit) {
             Ok(val) => val,
             Err(_) => return None,
         };
