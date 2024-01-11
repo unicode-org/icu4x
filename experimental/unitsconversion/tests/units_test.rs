@@ -106,7 +106,7 @@ fn test_cldr_unit_tests() {
         let result = converter.convert(&Ratio::from_integer(1000.into()));
         let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
 
-        if diff_ratio >  Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
+        if diff_ratio > Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
                 test.category, test.input_unit, test.output_unit, result, test.result
