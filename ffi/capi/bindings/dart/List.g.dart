@@ -13,7 +13,7 @@ final class List implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XList_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XList_destroy));
 
   /// Create a new list of strings
   factory List() {
@@ -21,22 +21,12 @@ final class List implements ffi.Finalizable {
     return List._(result);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XList_create =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>('ICU4XList_create')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
-
   /// Create a new list of strings with preallocated space to hold
   /// at least `capacity` elements
   factory List.withCapacity(int capacity) {
     final result = _ICU4XList_create_with_capacity(capacity);
     return List._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XList_create_with_capacity =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>('ICU4XList_create_with_capacity')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
 
   /// Push a string to the list
   ///
@@ -49,30 +39,39 @@ final class List implements ffi.Finalizable {
     temp.releaseAll();
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XList_push =
-    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XList_push')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
-
   /// The number of elements in this list
   int get length {
     final result = _ICU4XList_len(_underlying);
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XList_len =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XList_len')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Whether this list is empty
   bool get isEmpty {
     final result = _ICU4XList_is_empty(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XList_is_empty =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XList_is_empty')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XList_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XList_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XList_create')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XList_create();
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(isLeaf: true, symbol: 'ICU4XList_create_with_capacity')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XList_create_with_capacity(int capacity);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XList_push')
+// ignore: non_constant_identifier_names
+external void _ICU4XList_push(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valData, int valLength);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XList_len')
+// ignore: non_constant_identifier_names
+external int _ICU4XList_len(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XList_is_empty')
+// ignore: non_constant_identifier_names
+external bool _ICU4XList_is_empty(ffi.Pointer<ffi.Opaque> self);

@@ -21,7 +21,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCodePointMapData8_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointMapData8_destroy));
 
   /// Gets the value for a code point.
   ///
@@ -30,11 +30,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     final result = _ICU4XCodePointMapData8_get(_underlying, cp);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_get =
-    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData8_get')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Converts a general category to its corresponding mask value
   ///
@@ -46,11 +41,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_general_category_to_mask =
-    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Uint8)>>('ICU4XCodePointMapData8_general_category_to_mask')
-      .asFunction<int Function(int)>(isLeaf: true);
-
   /// Produces an iterator over ranges of code points that map to `value`
   ///
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
@@ -59,11 +49,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_iter_ranges_for_value =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>>('ICU4XCodePointMapData8_iter_ranges_for_value')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// Produces an iterator over ranges of code points that do not map to `value`
   ///
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
@@ -71,11 +56,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     final result = _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(_underlying, value);
     return CodePointRangeIterator._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_iter_ranges_for_value_complemented =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>>('ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
   /// whose property values are contained in the mask.
@@ -92,11 +72,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_iter_ranges_for_mask =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData8_iter_ranges_for_mask')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
@@ -104,11 +79,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     final result = _ICU4XCodePointMapData8_get_set_for_value(_underlying, value);
     return CodePointSetData._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_get_set_for_value =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>>('ICU4XCodePointMapData8_get_set_for_value')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
   ///
@@ -121,11 +91,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_general_category =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_general_category')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
   ///
   /// Throws [Error] on failure.
@@ -136,11 +101,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
     return CodePointMapData8._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_bidi_class =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_bidi_class')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
   ///
@@ -153,11 +113,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_east_asian_width =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_east_asian_width')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
   ///
   /// Throws [Error] on failure.
@@ -168,11 +123,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
     return CodePointMapData8._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_indic_syllabic_category =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_indic_syllabic_category')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
   ///
@@ -185,11 +135,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_line_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_line_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
   ///
   /// Throws [Error] on failure.
@@ -200,11 +145,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
     return CodePointMapData8._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_try_grapheme_cluster_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_try_grapheme_cluster_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
   ///
@@ -217,11 +157,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_word_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_word_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
   ///
   /// Throws [Error] on failure.
@@ -232,9 +167,64 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
     return CodePointMapData8._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_load_sentence_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData8_load_sentence_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XCodePointMapData8_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_get')
+// ignore: non_constant_identifier_names
+external int _ICU4XCodePointMapData8_get(ffi.Pointer<ffi.Opaque> self, Rune cp);
+
+@ffi.Native<ffi.Uint32 Function(ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_general_category_to_mask')
+// ignore: non_constant_identifier_names
+external int _ICU4XCodePointMapData8_general_category_to_mask(int gc);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_value')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_value(ffi.Pointer<ffi.Opaque> self, int value);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(ffi.Pointer<ffi.Opaque> self, int value);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_mask')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_mask(ffi.Pointer<ffi.Opaque> self, int mask);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_get_set_for_value')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_get_set_for_value(ffi.Pointer<ffi.Opaque> self, int value);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_general_category')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_general_category(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_bidi_class')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_bidi_class(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_east_asian_width')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_east_asian_width(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_indic_syllabic_category')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_indic_syllabic_category(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_line_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_line_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_try_grapheme_cluster_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_try_grapheme_cluster_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_word_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_word_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_sentence_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_sentence_break(ffi.Pointer<ffi.Opaque> provider);

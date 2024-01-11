@@ -1,9 +1,8 @@
 import 'package:icu/icu.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  init(path.absolute('test/libicu_capi.so'));
+  Logger.initSimpleLogger();
 
   test('FixedDecimal.toString', () {
     final x = FixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);
@@ -54,5 +53,12 @@ void main() {
 
     Rune upperA = CaseMapper(DataProvider.compiled()).simpleUppercase(a);
     expect(String.fromCharCode(upperA), 'A');
+  });
+
+  test('ListFormatter', () {
+    final formatter = ListFormatter.andWithLength(DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
+    final list = List()..push('España')..push('Francia')..push('Suiza')..push('Italia');
+
+    expect(formatter.format(list), 'España, Francia, Suiza e Italia');
   });
 }

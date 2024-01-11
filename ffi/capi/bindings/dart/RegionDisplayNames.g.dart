@@ -13,7 +13,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XRegionDisplayNames_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XRegionDisplayNames_destroy));
 
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
   ///
@@ -27,11 +27,6 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
     return RegionDisplayNames._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XRegionDisplayNames_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the locale specific display name of a region.
   /// Note that the funtion returns an empty string in case the display name for a given
@@ -51,9 +46,16 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
     return writeable.finalize();
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XRegionDisplayNames_of =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_of')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XRegionDisplayNames_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XRegionDisplayNames_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_of')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> writeable);

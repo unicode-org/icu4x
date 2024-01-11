@@ -15,7 +15,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleFallbacker_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbacker_destroy));
 
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
@@ -30,11 +30,6 @@ final class LocaleFallbacker implements ffi.Finalizable {
     return LocaleFallbacker._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleFallbacker_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbacker_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
@@ -42,11 +37,6 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _ICU4XLocaleFallbacker_create_without_data();
     return LocaleFallbacker._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleFallbacker_create_without_data =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>('ICU4XLocaleFallbacker_create_without_data')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
@@ -60,9 +50,20 @@ final class LocaleFallbacker implements ffi.Finalizable {
     }
     return LocaleFallbackerWithConfig._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleFallbacker_for_config =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>>('ICU4XLocaleFallbacker_for_config')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XLocaleFallbacker_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_create(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create_without_data')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbacker_create_without_data();
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_for_config')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_for_config(ffi.Pointer<ffi.Opaque> self, _LocaleFallbackConfigFfi config);

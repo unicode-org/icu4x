@@ -15,7 +15,7 @@ final class PluralRules implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XPluralRules_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralRules_destroy));
 
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers
   ///
@@ -30,11 +30,6 @@ final class PluralRules implements ffi.Finalizable {
     return PluralRules._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_create_cardinal =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_cardinal')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Construct an [`PluralRules`] for the given locale, for ordinal numbers
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
@@ -48,11 +43,6 @@ final class PluralRules implements ffi.Finalizable {
     return PluralRules._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_create_ordinal =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_ordinal')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Get the category for a given number represented as operands
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
@@ -61,11 +51,6 @@ final class PluralRules implements ffi.Finalizable {
     return PluralCategory.values[result];
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_category_for =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_category_for')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
@@ -73,9 +58,24 @@ final class PluralRules implements ffi.Finalizable {
     final result = _ICU4XPluralRules_categories(_underlying);
     return PluralCategories._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_categories =
-    _capi<ffi.NativeFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_categories')
-      .asFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralRules_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XPluralRules_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_create_cardinal')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPluralRules_create_cardinal(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_create_ordinal')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPluralRules_create_ordinal(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_category_for')
+// ignore: non_constant_identifier_names
+external int _ICU4XPluralRules_category_for(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> op);
+
+@ffi.Native<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_categories')
+// ignore: non_constant_identifier_names
+external _PluralCategoriesFfi _ICU4XPluralRules_categories(ffi.Pointer<ffi.Opaque> self);

@@ -17,7 +17,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleFallbackerWithConfig_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackerWithConfig_destroy));
 
   /// Creates an iterator from a locale with each step of fallback.
   ///
@@ -26,9 +26,12 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
     final result = _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(_underlying, locale._underlying);
     return LocaleFallbackIterator._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleFallbackerWithConfig_fallback_for_locale =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbackerWithConfig_fallback_for_locale')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackerWithConfig_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XLocaleFallbackerWithConfig_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackerWithConfig_fallback_for_locale')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

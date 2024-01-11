@@ -527,6 +527,8 @@ jobs:
 
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 3.3.0-279.1.beta
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`

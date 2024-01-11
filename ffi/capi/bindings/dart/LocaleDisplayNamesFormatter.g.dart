@@ -13,7 +13,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleDisplayNamesFormatter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleDisplayNamesFormatter_destroy));
 
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
   ///
@@ -28,11 +28,6 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     return LocaleDisplayNamesFormatter._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleDisplayNamesFormatter_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>>('ICU4XLocaleDisplayNamesFormatter_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>(isLeaf: true);
-
   /// Returns the locale-specific display name of a locale.
   ///
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
@@ -46,9 +41,16 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     }
     return writeable.finalize();
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleDisplayNamesFormatter_of =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDisplayNamesFormatter_of')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XLocaleDisplayNamesFormatter_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XLocaleDisplayNamesFormatter_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsV1Ffi options);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_of')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XLocaleDisplayNamesFormatter_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);

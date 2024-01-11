@@ -13,7 +13,7 @@ final class WordBreakIteratorUtf8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XWordBreakIteratorUtf8_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWordBreakIteratorUtf8_destroy));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
@@ -24,11 +24,6 @@ final class WordBreakIteratorUtf8 implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordBreakIteratorUtf8_next =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordBreakIteratorUtf8_next')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
@@ -37,11 +32,6 @@ final class WordBreakIteratorUtf8 implements ffi.Finalizable {
     return SegmenterWordType.values[result];
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordBreakIteratorUtf8_word_type =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordBreakIteratorUtf8_word_type')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Return true when break boundary is word-like such as letter/number/CJK
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
@@ -49,9 +39,20 @@ final class WordBreakIteratorUtf8 implements ffi.Finalizable {
     final result = _ICU4XWordBreakIteratorUtf8_is_word_like(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordBreakIteratorUtf8_is_word_like =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordBreakIteratorUtf8_is_word_like')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf8_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XWordBreakIteratorUtf8_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf8_next')
+// ignore: non_constant_identifier_names
+external int _ICU4XWordBreakIteratorUtf8_next(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf8_word_type')
+// ignore: non_constant_identifier_names
+external int _ICU4XWordBreakIteratorUtf8_word_type(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf8_is_word_like')
+// ignore: non_constant_identifier_names
+external bool _ICU4XWordBreakIteratorUtf8_is_word_like(ffi.Pointer<ffi.Opaque> self);

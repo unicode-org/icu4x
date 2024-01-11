@@ -17,7 +17,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCanonicalDecomposition_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalDecomposition_destroy));
 
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC
   ///
@@ -32,11 +32,6 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     return CanonicalDecomposition._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalDecomposition_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalDecomposition_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Performs non-recursive canonical decomposition (including for Hangul).
   ///
   /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
@@ -44,9 +39,16 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     final result = _ICU4XCanonicalDecomposition_decompose(_underlying, c);
     return Decomposed._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalDecomposition_decompose =
-    _capi<ffi.NativeFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
-      .asFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XCanonicalDecomposition_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCanonicalDecomposition_create(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_decompose')
+// ignore: non_constant_identifier_names
+external _DecomposedFfi _ICU4XCanonicalDecomposition_decompose(ffi.Pointer<ffi.Opaque> self, Rune c);
