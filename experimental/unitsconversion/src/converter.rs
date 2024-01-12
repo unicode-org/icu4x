@@ -4,7 +4,7 @@
 
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{Base, MeasureUnitItem, SiPrefix, Sign, UnitsInfoV1},
+    provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1},
     ConversionError,
 };
 use litemap::LiteMap;
@@ -205,17 +205,10 @@ impl<'data> ConverterFactory<'data> {
             .get(unit_item.unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
 
-        let factor_sign = match Sign::from_unaligned(conversion_info.factor_sign) {
-            Sign::Positive => num_bigint::Sign::Plus,
-            Sign::Negative => num_bigint::Sign::Minus,
-        };
-
-        let mut conversion_info_factor = Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(factor_sign, conversion_info.factor_num().as_ule_slice()),
-            BigInt::from_bytes_le(
-                num_bigint::Sign::Plus,
-                conversion_info.factor_den().as_ule_slice(),
-            ),
+        let mut conversion_info_factor = Self::extract_ratio_from_unaligned(
+            &conversion_info.factor_sign,
+            &conversion_info.factor_num(),
+            &conversion_info.factor_den(),
         );
 
         Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
@@ -224,6 +217,22 @@ impl<'data> ConverterFactory<'data> {
         *conversion_rate *= conversion_info_factor;
 
         Ok(())
+    }
+
+    fn extract_ratio_from_unaligned(
+        sign_ule: &SignULE,
+        num_ule: &ZeroSlice<u8>,
+        den_ule: &ZeroSlice<u8>,
+    ) -> Ratio<BigInt> {
+        let sign = match Sign::from_unaligned(*sign_ule) {
+            Sign::Positive => num_bigint::Sign::Plus,
+            Sign::Negative => num_bigint::Sign::Minus,
+        };
+
+        Ratio::<BigInt>::new(
+            BigInt::from_bytes_le(sign, num_ule.as_ule_slice()),
+            BigInt::from_bytes_le(num_bigint::Sign::Plus, den_ule.as_ule_slice()),
+        )
     }
 
     fn get_offset(
@@ -258,57 +267,26 @@ impl<'data> ConverterFactory<'data> {
             .get(output_unit.contained_units[0].unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
 
-        let input_offset_sign = match Sign::from_unaligned(input_conversion_info.offset_sign) {
-            Sign::Positive => num_bigint::Sign::Plus,
-            Sign::Negative => num_bigint::Sign::Minus,
-        };
-
-        let input_offset = Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(
-                input_offset_sign,
-                input_conversion_info.offset_num().as_ule_slice(),
-            ),
-            BigInt::from_bytes_le(
-                num_bigint::Sign::Plus,
-                input_conversion_info.offset_den().as_ule_slice(),
-            ),
+        let input_offset = Self::extract_ratio_from_unaligned(
+            &input_conversion_info.offset_sign,
+            &input_conversion_info.offset_num(),
+            &input_conversion_info.offset_den(),
         );
 
-        let output_offset_sign = match Sign::from_unaligned(output_conversion_info.offset_sign) {
-            Sign::Positive => num_bigint::Sign::Plus,
-            Sign::Negative => num_bigint::Sign::Minus,
-        };
-
-        let output_offset = Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(
-                output_offset_sign,
-                output_conversion_info.offset_num().as_ule_slice(),
-            ),
-            BigInt::from_bytes_le(
-                num_bigint::Sign::Plus,
-                output_conversion_info.offset_den().as_ule_slice(),
-            ),
+        let output_offset = Self::extract_ratio_from_unaligned(
+            &output_conversion_info.offset_sign,
+            &output_conversion_info.offset_num(),
+            &output_conversion_info.offset_den(),
         );
 
         if input_offset.is_zero() && output_offset.is_zero() {
             return Ok(Ratio::<BigInt>::from_integer(0.into()));
         }
 
-        let output_conversion_sign = match Sign::from_unaligned(output_conversion_info.factor_sign)
-        {
-            Sign::Positive => num_bigint::Sign::Plus,
-            Sign::Negative => num_bigint::Sign::Minus,
-        };
-
-        let output_conversion_rate = Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(
-                output_conversion_sign,
-                output_conversion_info.factor_num().as_ule_slice(),
-            ),
-            BigInt::from_bytes_le(
-                num_bigint::Sign::Plus,
-                output_conversion_info.factor_den().as_ule_slice(),
-            ),
+        let output_conversion_rate = Self::extract_ratio_from_unaligned(
+            &output_conversion_info.factor_sign,
+            &output_conversion_info.factor_num(),
+            &output_conversion_info.factor_den(),
         );
 
         Ok((input_offset - output_offset) * output_conversion_rate.recip())
@@ -323,9 +301,13 @@ impl<'data> ConverterFactory<'data> {
         let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
         let convertibility = self.extract_convertibility(input_unit, output_unit);
 
-        if convertibility == Convertibility::NotConvertible {
-            return None;
-        }
+        let calculation_sign = match convertibility {
+            Convertibility::Convertible => -1,
+            Convertibility::Reciprocal => 1,
+            Convertibility::NotConvertible => {
+                return None;
+            }
+        };
 
         for input_item in input_unit.contained_units.iter() {
             if Self::add_term(self, input_item, 1, &mut conversion_rate).is_err() {
@@ -333,14 +315,8 @@ impl<'data> ConverterFactory<'data> {
             }
         }
 
-        let sign = match convertibility {
-            Convertibility::Convertible => -1,
-            Convertibility::Reciprocal => 1,
-            Convertibility::NotConvertible => unreachable!(),
-        };
-
         for output_item in output_unit.contained_units.iter() {
-            if Self::add_term(self, output_item, sign, &mut conversion_rate).is_err() {
+            if Self::add_term(self, output_item, calculation_sign, &mut conversion_rate).is_err() {
                 return None;
             }
         }
@@ -359,6 +335,7 @@ impl<'data> ConverterFactory<'data> {
 }
 
 impl Converter {
+    /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
         let mut result: Ratio<BigInt> = value * &self.conversion_rate + &self.offset;
         if self.reciprocal {
