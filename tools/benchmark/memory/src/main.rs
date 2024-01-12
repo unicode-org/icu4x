@@ -55,9 +55,9 @@ fn parse_dhat_log(dhat_log: &[String]) -> (u64, u64, u64) {
     );
 
     (
-        extract_bytes_from_log_line("dhat: Total:", dhat_log.get(0).unwrap()),
-        extract_bytes_from_log_line("dhat: At t-gmax:", dhat_log.get(1).unwrap()),
-        extract_bytes_from_log_line("dhat: At t-end:", dhat_log.get(2).unwrap()),
+        extract_bytes_from_log_line("dhat: Total:", &dhat_log[0]),
+        extract_bytes_from_log_line("dhat: At t-gmax:", &dhat_log[1]),
+        extract_bytes_from_log_line("dhat: At t-end:", &dhat_log[2]),
     )
 }
 
