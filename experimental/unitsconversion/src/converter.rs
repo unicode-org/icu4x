@@ -207,8 +207,8 @@ impl<'data> ConverterFactory<'data> {
 
         let mut conversion_info_factor = Self::extract_ratio_from_unaligned(
             &conversion_info.factor_sign,
-            &conversion_info.factor_num(),
-            &conversion_info.factor_den(),
+            conversion_info.factor_num(),
+            conversion_info.factor_den(),
         );
 
         Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
@@ -269,14 +269,14 @@ impl<'data> ConverterFactory<'data> {
 
         let input_offset = Self::extract_ratio_from_unaligned(
             &input_conversion_info.offset_sign,
-            &input_conversion_info.offset_num(),
-            &input_conversion_info.offset_den(),
+            input_conversion_info.offset_num(),
+            input_conversion_info.offset_den(),
         );
 
         let output_offset = Self::extract_ratio_from_unaligned(
             &output_conversion_info.offset_sign,
-            &output_conversion_info.offset_num(),
-            &output_conversion_info.offset_den(),
+            output_conversion_info.offset_num(),
+            output_conversion_info.offset_den(),
         );
 
         if input_offset.is_zero() && output_offset.is_zero() {
@@ -285,8 +285,8 @@ impl<'data> ConverterFactory<'data> {
 
         let output_conversion_rate = Self::extract_ratio_from_unaligned(
             &output_conversion_info.factor_sign,
-            &output_conversion_info.factor_num(),
-            &output_conversion_info.factor_den(),
+            output_conversion_info.factor_num(),
+            output_conversion_info.factor_den(),
         );
 
         Ok((input_offset - output_offset) * output_conversion_rate.recip())
