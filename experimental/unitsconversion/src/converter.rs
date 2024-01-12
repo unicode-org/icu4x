@@ -51,7 +51,7 @@ pub struct Converter {
 /// A factory for creating a converter.
 /// Also, it can check the convertibility between two units.
 pub struct ConverterFactory<'data> {
-    // TODO: Make the converter factory owns the data.
+    // TODO(#4522): Make the converter factory owns the data.
     /// Contains the necessary data for the conversion factory.
     payload: &'data UnitsInfoV1<'data>,
     payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
@@ -311,19 +311,24 @@ impl<'data> ConverterFactory<'data> {
 
         for input_item in input_unit.contained_units.iter() {
             if Self::add_term(self, input_item, 1, &mut conversion_rate).is_err() {
+                debug_assert!(false, "Failed to add input_item");
                 return None;
             }
         }
 
         for output_item in output_unit.contained_units.iter() {
             if Self::add_term(self, output_item, calculation_sign, &mut conversion_rate).is_err() {
+                debug_assert!(false, "Failed to add output_item");
                 return None;
             }
         }
 
         let offset = match Self::get_offset(self, input_unit, output_unit) {
             Ok(val) => val,
-            Err(_) => return None,
+            Err(_) => {
+                debug_assert!(false, "Failed to get offset");
+                return None;
+            }
         };
 
         Some(Converter {
