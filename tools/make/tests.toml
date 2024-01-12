@@ -146,4 +146,4 @@ description = "Ensure ICU4X builds on no-std"
 category = "ICU4X Development"
 dependencies = ["install-cortex-7"]
 command = "cargo"
-args = ["check", "--package", "icu", "--target", "thumbv7m-none-eabi"]
+args = ["check", "--package", "icu_capi", "--target", "thumbv7m-none-eabi", "--no-default-features", "--features=buffer_provider"]

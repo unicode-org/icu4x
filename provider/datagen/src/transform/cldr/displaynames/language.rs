@@ -4,7 +4,7 @@
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use core::convert::TryFrom;
+
 use icu_displaynames::provider::*;
 use icu_locid::subtags::Language;
 use icu_provider::prelude::*;
@@ -26,11 +26,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                LanguageDisplayNamesV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for LanguageDisplayNames").with_display_context(&e)
-                })?,
-            )),
+            payload: Some(DataPayload::from_owned(LanguageDisplayNamesV1::from(data))),
         })
     }
 }
@@ -49,11 +45,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                LocaleDisplayNamesV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for LocaleDisplayNames").with_display_context(&e)
-                })?,
-            )),
+            payload: Some(DataPayload::from_owned(LocaleDisplayNamesV1::from(data))),
         })
     }
 }
