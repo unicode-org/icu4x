@@ -106,9 +106,9 @@ compiled_data = [
 
 std = []
 # Adds a looping panic handler (useful for no_std targets)
-panic-handler = []
+looping_panic_handler = []
 # Uses malloc as the global allocator (useful for no_std targets)
-libc-alloc = ["dep:libc_alloc"]
+libc_alloc = ["dep:libc_alloc"]
 
 [dependencies]
 # Mandatory ICU4X components and utils

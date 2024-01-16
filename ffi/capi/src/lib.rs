@@ -46,14 +46,14 @@
 #[cfg(target_arch = "wasm32")]
 extern crate std as rust_std;
 
-#[cfg(all(not(feature = "std"), feature = "panic-handler"))]
+#[cfg(all(not(feature = "std"), feature = "looping_panic_handler"))]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 
 extern crate alloc;
-#[cfg(all(not(feature = "std"), feature = "libc-alloc"))]
+#[cfg(all(not(feature = "std"), feature = "libc_alloc"))]
 extern crate libc_alloc;
 
 // Common modules

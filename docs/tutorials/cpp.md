@@ -109,10 +109,10 @@ C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to provide an allocator and a panic hook in order to build a linkable library. The `icu_capi` crate can provide a looping panic handler, and a `malloc`-backed allocator, under the `panic-handler` and `libc-alloc` features, respectively.
+Users wishing to use ICU4X on a `no_std` platform will need to provide an allocator and a panic hook in order to build a linkable library. The `icu_capi` crate can provide a looping panic handler, and a `malloc`-backed allocator, under the `looping_panic_handler` and `libc_alloc` features, respectively.
 
 ```
-cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default_components,icu_capi/buffer_provider,icu_capi/panic-handler,icu_capi/libc-alloc
+cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default_components,icu_capi/buffer_provider,icu_capi/looping_panic_handler,icu_capi/libc_alloc
 ```
 
 ## Tips
