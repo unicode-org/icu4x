@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class DataProvider implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  DataProvider._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  DataProvider._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDataProvider_destroy));
@@ -25,7 +27,7 @@ final class DataProvider implements ffi.Finalizable {
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
   factory DataProvider.compiled() {
     final result = _ICU4XDataProvider_create_compiled();
-    return DataProvider._(result);
+    return DataProvider._(result, true);
   }
 
   /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
@@ -41,7 +43,7 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return DataProvider._(result.union.ok);
+    return DataProvider._(result.union.ok, true);
   }
 
   /// Constructs an empty [`DataProvider`].
@@ -49,7 +51,7 @@ final class DataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
   factory DataProvider.empty() {
     final result = _ICU4XDataProvider_create_empty();
-    return DataProvider._(result);
+    return DataProvider._(result, true);
   }
 
   /// Creates a provider that tries the current provider and then, if the current provider

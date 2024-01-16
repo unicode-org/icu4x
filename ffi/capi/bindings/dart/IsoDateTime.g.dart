@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class IsoDateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  IsoDateTime._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  IsoDateTime._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XIsoDateTime_destroy));
@@ -27,7 +29,7 @@ final class IsoDateTime implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return IsoDateTime._(result.union.ok);
+    return IsoDateTime._(result.union.ok, true);
   }
 
   /// Creates a new [`IsoDateTime`] from an [`IsoDate`] and [`Time`] object
@@ -35,7 +37,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
   factory IsoDateTime.fromDateAndTime(IsoDate date, Time time) {
     final result = _ICU4XIsoDateTime_crate_from_date_and_time(date._underlying, time._underlying);
-    return IsoDateTime._(result);
+    return IsoDateTime._(result, true);
   }
 
   /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
@@ -43,7 +45,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.local_unix_epoch) for more information.
   factory IsoDateTime.localUnixEpoch() {
     final result = _ICU4XIsoDateTime_local_unix_epoch();
-    return IsoDateTime._(result);
+    return IsoDateTime._(result, true);
   }
 
   /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
@@ -51,7 +53,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
   factory IsoDateTime.fromMinutesSinceLocalUnixEpoch(int minutes) {
     final result = _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes);
-    return IsoDateTime._(result);
+    return IsoDateTime._(result, true);
   }
 
   /// Gets the date contained in this object
@@ -59,7 +61,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
   IsoDate get date {
     final result = _ICU4XIsoDateTime_date(_underlying);
-    return IsoDate._(result);
+    return IsoDate._(result, true);
   }
 
   /// Gets the time contained in this object
@@ -67,7 +69,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
   Time get time {
     final result = _ICU4XIsoDateTime_time(_underlying);
-    return Time._(result);
+    return Time._(result, true);
   }
 
   /// Converts this to an [`DateTime`] capable of being mixed with dates of
@@ -76,7 +78,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_any) for more information.
   DateTime toAny() {
     final result = _ICU4XIsoDateTime_to_any(_underlying);
-    return DateTime._(result);
+    return DateTime._(result, true);
   }
 
   /// Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
@@ -92,7 +94,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
   DateTime toCalendar(Calendar calendar) {
     final result = _ICU4XIsoDateTime_to_calendar(_underlying, calendar._underlying);
-    return DateTime._(result);
+    return DateTime._(result, true);
   }
 
   /// Returns the hour in this time

@@ -13,8 +13,10 @@ part of 'lib.g.dart';
 final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  PropertyValueNameToEnumMapper._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  PropertyValueNameToEnumMapper._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPropertyValueNameToEnumMapper_destroy));
@@ -53,7 +55,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
@@ -64,7 +66,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
@@ -75,7 +77,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
@@ -86,7 +88,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
@@ -97,7 +99,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
@@ -108,7 +110,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
@@ -119,7 +121,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
@@ -130,7 +132,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
@@ -141,7 +143,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PropertyValueNameToEnumMapper._(result.union.ok);
+    return PropertyValueNameToEnumMapper._(result.union.ok, true);
   }
 }
 

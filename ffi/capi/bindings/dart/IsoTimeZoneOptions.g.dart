@@ -15,43 +15,38 @@ final class _IsoTimeZoneOptionsFfi extends ffi.Struct {
 }
 
 final class IsoTimeZoneOptions {
-  final _IsoTimeZoneOptionsFfi _underlying;
+  IsoTimeZoneFormat format;
+  IsoTimeZoneMinuteDisplay minutes;
+  IsoTimeZoneSecondDisplay seconds;
 
-  IsoTimeZoneOptions._(this._underlying);
+  IsoTimeZoneOptions({required this.format, required this.minutes, required this.seconds});
 
-  factory IsoTimeZoneOptions() {
-    final pointer = ffi2.calloc<_IsoTimeZoneOptionsFfi>();
-    final result = IsoTimeZoneOptions._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
+  // ignore: unused_element
+  IsoTimeZoneOptions._(_IsoTimeZoneOptionsFfi underlying) :
+    format = IsoTimeZoneFormat.values[underlying.format],
+    minutes = IsoTimeZoneMinuteDisplay.values[underlying.minutes],
+    seconds = IsoTimeZoneSecondDisplay.values[underlying.seconds];
 
-  IsoTimeZoneFormat get format => IsoTimeZoneFormat.values[_underlying.format];
-  set format(IsoTimeZoneFormat format) {
-    _underlying.format = format.index;
-  }
-
-  IsoTimeZoneMinuteDisplay get minutes => IsoTimeZoneMinuteDisplay.values[_underlying.minutes];
-  set minutes(IsoTimeZoneMinuteDisplay minutes) {
-    _underlying.minutes = minutes.index;
-  }
-
-  IsoTimeZoneSecondDisplay get seconds => IsoTimeZoneSecondDisplay.values[_underlying.seconds];
-  set seconds(IsoTimeZoneSecondDisplay seconds) {
-    _underlying.seconds = seconds.index;
+  // ignore: unused_element
+  _IsoTimeZoneOptionsFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_IsoTimeZoneOptionsFfi>();
+    pointer.ref.format = format.index;
+    pointer.ref.minutes = minutes.index;
+    pointer.ref.seconds = seconds.index;
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is IsoTimeZoneOptions &&
-      other._underlying.format == _underlying.format &&
-      other._underlying.minutes == _underlying.minutes &&
-      other._underlying.seconds == _underlying.seconds;
+      other.format == this.format &&
+      other.minutes == this.minutes &&
+      other.seconds == this.seconds;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.format,
-        _underlying.minutes,
-        _underlying.seconds,
+        this.format,
+        this.minutes,
+        this.seconds,
       ]);
 }

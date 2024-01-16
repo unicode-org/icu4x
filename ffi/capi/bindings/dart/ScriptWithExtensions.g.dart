@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class ScriptWithExtensions implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ScriptWithExtensions._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ScriptWithExtensions._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptWithExtensions_destroy));
@@ -25,7 +27,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ScriptWithExtensions._(result.union.ok);
+    return ScriptWithExtensions._(result.union.ok, true);
   }
 
   /// Get the Script property value for a code point
@@ -49,7 +51,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
   ScriptWithExtensionsBorrowed get asBorrowed {
     final result = _ICU4XScriptWithExtensions_as_borrowed(_underlying);
-    return ScriptWithExtensionsBorrowed._(result);
+    return ScriptWithExtensionsBorrowed._(result, true);
   }
 
   /// Get a list of ranges of code points that contain this script in their Script_Extensions values
@@ -57,7 +59,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
   CodePointRangeIterator iterRangesForScript(int script) {
     final result = _ICU4XScriptWithExtensions_iter_ranges_for_script(_underlying, script);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
 }
 

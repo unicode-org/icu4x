@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class CodePointSetBuilder implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CodePointSetBuilder._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CodePointSetBuilder._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointSetBuilder_destroy));
@@ -20,7 +22,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
   factory CodePointSetBuilder() {
     final result = _ICU4XCodePointSetBuilder_create();
-    return CodePointSetBuilder._(result);
+    return CodePointSetBuilder._(result, true);
   }
 
   /// Build this into a set
@@ -30,7 +32,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// See the [Rust documentation for `build`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.build) for more information.
   CodePointSetData build() {
     final result = _ICU4XCodePointSetBuilder_build(_underlying);
-    return CodePointSetData._(result);
+    return CodePointSetData._(result, true);
   }
 
   /// Complements this set

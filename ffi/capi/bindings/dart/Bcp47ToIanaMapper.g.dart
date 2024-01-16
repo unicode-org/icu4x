@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class Bcp47ToIanaMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Bcp47ToIanaMapper._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  Bcp47ToIanaMapper._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBcp47ToIanaMapper_destroy));
@@ -25,7 +27,7 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Bcp47ToIanaMapper._(result.union.ok);
+    return Bcp47ToIanaMapper._(result.union.ok, true);
   }
 
   /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.

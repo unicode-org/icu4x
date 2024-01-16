@@ -13,8 +13,10 @@ part of 'lib.g.dart';
 final class CanonicalComposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CanonicalComposition._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CanonicalComposition._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalComposition_destroy));
@@ -29,7 +31,7 @@ final class CanonicalComposition implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CanonicalComposition._(result.union.ok);
+    return CanonicalComposition._(result.union.ok, true);
   }
 
   /// Performs canonical composition (including Hangul) on a pair of characters

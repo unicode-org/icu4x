@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class Bidi implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Bidi._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  Bidi._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidi_destroy));
@@ -27,7 +29,7 @@ final class Bidi implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Bidi._(result.union.ok);
+    return Bidi._(result.union.ok, true);
   }
 
   /// Use the data loaded in this object to process a string and calculate bidi information
@@ -40,7 +42,7 @@ final class Bidi implements ffi.Finalizable {
     final textView = text.utf8View;
     final result = _ICU4XBidi_for_text(_underlying, textView.pointer(temp), textView.length, defaultLevel);
     temp.releaseAll();
-    return BidiInfo._(result);
+    return BidiInfo._(result, true);
   }
 
   /// Utility function for producing reorderings given a list of levels
@@ -58,7 +60,7 @@ final class Bidi implements ffi.Finalizable {
     final levelsView = levels.uint8View;
     final result = _ICU4XBidi_reorder_visual(_underlying, levelsView.pointer(temp), levelsView.length);
     temp.releaseAll();
-    return ReorderedIndexMap._(result);
+    return ReorderedIndexMap._(result, true);
   }
 
   /// Check if a Level returned by level_at is an RTL level.

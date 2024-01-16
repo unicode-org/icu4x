@@ -10,8 +10,10 @@ part of 'lib.g.dart';
 final class CodePointRangeIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CodePointRangeIterator._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CodePointRangeIterator._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_CodePointRangeIterator_destroy));

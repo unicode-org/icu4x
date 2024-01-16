@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class List implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  List._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  List._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XList_destroy));
@@ -18,14 +20,14 @@ final class List implements ffi.Finalizable {
   /// Create a new list of strings
   factory List() {
     final result = _ICU4XList_create();
-    return List._(result);
+    return List._(result, true);
   }
 
   /// Create a new list of strings with preallocated space to hold
   /// at least `capacity` elements
   factory List.withCapacity(int capacity) {
     final result = _ICU4XList_create_with_capacity(capacity);
-    return List._(result);
+    return List._(result, true);
   }
 
   /// Push a string to the list

@@ -13,8 +13,10 @@ part of 'lib.g.dart';
 final class CanonicalDecomposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CanonicalDecomposition._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CanonicalDecomposition._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalDecomposition_destroy));
@@ -29,7 +31,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CanonicalDecomposition._(result.union.ok);
+    return CanonicalDecomposition._(result.union.ok, true);
   }
 
   /// Performs non-recursive canonical decomposition (including for Hangul).

@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class CaseMapCloser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CaseMapCloser._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CaseMapCloser._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
@@ -25,7 +27,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CaseMapCloser._(result.union.ok);
+    return CaseMapCloser._(result.union.ok, true);
   }
 
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.

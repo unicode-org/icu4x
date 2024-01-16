@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class CaseMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CaseMapper._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CaseMapper._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapper_destroy));
@@ -25,7 +27,7 @@ final class CaseMapper implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CaseMapper._(result.union.ok);
+    return CaseMapper._(result.union.ok, true);
   }
 
   /// Returns the full lowercase mapping of the given string
@@ -71,11 +73,11 @@ final class CaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
   ///
   /// Throws [Error] on failure.
-  String titlecaseSegmentWithOnlyCaseDataV1(String s, Locale locale, TitlecaseOptionsV1 options) {
+  String titlecase_segment_with_only_case_data(String s, Locale locale, TitlecaseOptions options) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_underlying, sView.pointer(temp), sView.length, locale._underlying, options._underlying, writeable._underlying);
+    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_underlying, sView.pointer(temp), sView.length, locale._underlying, options._pointer(temp), writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -210,9 +212,9 @@ external _ResultVoidInt32 _ICU4XCaseMapper_lowercase(ffi.Pointer<ffi.Opaque> sel
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XCaseMapper_uppercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);
 
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsV1Ffi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsV1Ffi options, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> writeable);
 
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_fold')
 // ignore: non_constant_identifier_names

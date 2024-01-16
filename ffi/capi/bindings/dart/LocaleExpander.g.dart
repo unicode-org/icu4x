@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleExpander._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  LocaleExpander._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleExpander_destroy));
@@ -27,7 +29,7 @@ final class LocaleExpander implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleExpander._(result.union.ok);
+    return LocaleExpander._(result.union.ok, true);
   }
 
   /// Create a new [`LocaleExpander`] with extended data.
@@ -40,7 +42,7 @@ final class LocaleExpander implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleExpander._(result.union.ok);
+    return LocaleExpander._(result.union.ok, true);
   }
 
   /// FFI version of `LocaleExpander::maximize()`.

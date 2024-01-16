@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class LocaleDirectionality implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleDirectionality._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  LocaleDirectionality._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleDirectionality_destroy));
@@ -25,7 +27,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleDirectionality._(result.union.ok);
+    return LocaleDirectionality._(result.union.ok, true);
   }
 
   /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
@@ -38,7 +40,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleDirectionality._(result.union.ok);
+    return LocaleDirectionality._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.get) for more information.

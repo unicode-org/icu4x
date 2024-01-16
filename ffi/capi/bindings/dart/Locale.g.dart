@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class Locale implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Locale._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  Locale._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocale_destroy));
@@ -34,7 +36,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Locale._(result.union.ok);
+    return Locale._(result.union.ok, true);
   }
 
   /// Construct a default undefined [`Locale`] "und".
@@ -42,7 +44,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
   factory Locale.und() {
     final result = _ICU4XLocale_create_und();
-    return Locale._(result);
+    return Locale._(result, true);
   }
 
   /// Clones the [`Locale`].
@@ -50,7 +52,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
   Locale clone() {
     final result = _ICU4XLocale_clone(_underlying);
-    return Locale._(result);
+    return Locale._(result, true);
   }
 
   /// Write a string representation of the `LanguageIdentifier` part of

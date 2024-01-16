@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class Collator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Collator._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  Collator._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCollator_destroy));
@@ -20,12 +22,14 @@ final class Collator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Collator.v1(DataProvider provider, Locale locale, CollatorOptionsV1 options) {
-    final result = _ICU4XCollator_create_v1(provider._underlying, locale._underlying, options._underlying);
+  factory Collator(DataProvider provider, Locale locale, CollatorOptions options) {
+    final temp = ffi2.Arena();
+    final result = _ICU4XCollator_create_v1(provider._underlying, locale._underlying, options._pointer(temp));
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Collator._(result.union.ok);
+    return Collator._(result.union.ok, true);
   }
 
   /// Compare two strings.
@@ -48,9 +52,9 @@ final class Collator implements ffi.Finalizable {
   /// will have `Auto` as the value.
   ///
   /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options) for more information.
-  CollatorResolvedOptionsV1 get resolvedOptions {
+  ResolvedCollatorOptions get resolvedOptions {
     final result = _ICU4XCollator_resolved_options(_underlying);
-    return CollatorResolvedOptionsV1._(result);
+    return ResolvedCollatorOptions._(result);
   }
 }
 
@@ -58,14 +62,14 @@ final class Collator implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XCollator_destroy(ffi.Pointer<ffi.Void> self);
 
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true, symbol: 'ICU4XCollator_create_v1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsFfi)>(isLeaf: true, symbol: 'ICU4XCollator_create_v1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCollator_create_v1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsV1Ffi options);
+external _ResultOpaqueInt32 _ICU4XCollator_create_v1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCollator_compare_utf16')
 // ignore: non_constant_identifier_names
 external int _ICU4XCollator_compare_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> leftData, int leftLength, ffi.Pointer<ffi.Uint16> rightData, int rightLength);
 
-@ffi.Native<_CollatorResolvedOptionsV1Ffi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCollator_resolved_options')
+@ffi.Native<_ResolvedCollatorOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCollator_resolved_options')
 // ignore: non_constant_identifier_names
-external _CollatorResolvedOptionsV1Ffi _ICU4XCollator_resolved_options(ffi.Pointer<ffi.Opaque> self);
+external _ResolvedCollatorOptionsFfi _ICU4XCollator_resolved_options(ffi.Pointer<ffi.Opaque> self);

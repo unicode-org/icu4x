@@ -14,6 +14,7 @@ pub mod ffi {
     /// and `done` will be true if the iterator has already finished. The last contentful
     /// iteration will NOT produce a range done=true, in other words `start` and `end` are useful
     /// values if and only if `done=false`.
+    #[diplomat::out]
     pub struct CodePointRangeIteratorResult {
         pub start: u32,
         pub end: u32,

@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ScriptWithExtensionsBorrowed._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ScriptWithExtensionsBorrowed._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptWithExtensionsBorrowed_destroy));
@@ -30,7 +32,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
   ScriptExtensionsSet getScriptExtensionsVal(int codePoint) {
     final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(_underlying, codePoint);
-    return ScriptExtensionsSet._(result);
+    return ScriptExtensionsSet._(result, true);
   }
 
   /// Check if the Script_Extensions property of the given code point covers the given script
@@ -47,7 +49,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   /// See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
   CodePointSetData getScriptExtensionsSet(int script) {
     final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(_underlying, script);
-    return CodePointSetData._(result);
+    return CodePointSetData._(result, true);
   }
 }
 

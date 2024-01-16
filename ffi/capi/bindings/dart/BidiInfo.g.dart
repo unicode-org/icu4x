@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class BidiInfo implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  BidiInfo._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  BidiInfo._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiInfo_destroy));
@@ -26,7 +28,7 @@ final class BidiInfo implements ffi.Finalizable {
   /// Get the nth paragraph, returning `None` if out of bounds
   BidiParagraph? paragraphAt(int n) {
     final result = _ICU4XBidiInfo_paragraph_at(_underlying, n);
-    return result.address == 0 ? null : BidiParagraph._(result);
+    return result.address == 0 ? null : BidiParagraph._(result, true);
   }
 
   /// The number of bytes in this full text

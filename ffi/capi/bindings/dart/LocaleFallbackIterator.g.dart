@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class LocaleFallbackIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleFallbackIterator._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  LocaleFallbackIterator._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackIterator_destroy));
@@ -22,7 +24,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
   Locale get get {
     final result = _ICU4XLocaleFallbackIterator_get(_underlying);
-    return Locale._(result);
+    return Locale._(result, true);
   }
 
   /// Performs one step of the fallback algorithm, mutating the locale.

@@ -17,46 +17,40 @@ final class _LocaleFallbackConfigFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html) for more information.
 final class LocaleFallbackConfig {
-  final _LocaleFallbackConfigFfi _underlying;
+  LocaleFallbackPriority priority;
+  String extensionKey;
+  LocaleFallbackSupplement fallbackSupplement;
 
-  LocaleFallbackConfig._(this._underlying);
+  LocaleFallbackConfig({required this.priority, required this.extensionKey, required this.fallbackSupplement});
 
-  factory LocaleFallbackConfig() {
-    final pointer = ffi2.calloc<_LocaleFallbackConfigFfi>();
-    final result = LocaleFallbackConfig._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
+  // ignore: unused_element
+  LocaleFallbackConfig._(_LocaleFallbackConfigFfi underlying) :
+    priority = LocaleFallbackPriority.values[underlying.priority],
+    extensionKey = Utf8Decoder().convert(underlying.extensionKey._pointer.asTypedList(underlying.extensionKey._length)),
+    fallbackSupplement = LocaleFallbackSupplement.values[underlying.fallbackSupplement];
 
-  LocaleFallbackPriority get priority => LocaleFallbackPriority.values[_underlying.priority];
-  set priority(LocaleFallbackPriority priority) {
-    _underlying.priority = priority.index;
-  }
-
-  String get extensionKey => Utf8Decoder().convert(_underlying.extensionKey._pointer.asTypedList(_underlying.extensionKey._length));
-  set extensionKey(String extensionKey) {
-    ffi2.calloc.free(_underlying.extensionKey._pointer);
+  // ignore: unused_element
+  _LocaleFallbackConfigFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_LocaleFallbackConfigFfi>();
+    pointer.ref.priority = priority.index;
     final extensionKeyView = extensionKey.utf8View;
-    _underlying.extensionKey._pointer = extensionKeyView.pointer(ffi2.calloc);
-    _underlying.extensionKey._length = extensionKeyView.length;
-  }
-
-  LocaleFallbackSupplement get fallbackSupplement => LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
-  set fallbackSupplement(LocaleFallbackSupplement fallbackSupplement) {
-    _underlying.fallbackSupplement = fallbackSupplement.index;
+    pointer.ref.extensionKey._pointer = extensionKeyView.pointer(temp);
+    pointer.ref.extensionKey._length = extensionKeyView.length;
+    pointer.ref.fallbackSupplement = fallbackSupplement.index;
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is LocaleFallbackConfig &&
-      other._underlying.priority == _underlying.priority &&
-      other._underlying.extensionKey == _underlying.extensionKey &&
-      other._underlying.fallbackSupplement == _underlying.fallbackSupplement;
+      other.priority == this.priority &&
+      other.extensionKey == this.extensionKey &&
+      other.fallbackSupplement == this.fallbackSupplement;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.priority,
-        _underlying.extensionKey,
-        _underlying.fallbackSupplement,
+        this.priority,
+        this.extensionKey,
+        this.fallbackSupplement,
       ]);
 }

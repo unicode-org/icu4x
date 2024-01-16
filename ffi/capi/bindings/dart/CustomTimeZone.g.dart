@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class CustomTimeZone implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CustomTimeZone._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CustomTimeZone._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCustomTimeZone_destroy));
@@ -28,7 +30,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CustomTimeZone._(result.union.ok);
+    return CustomTimeZone._(result.union.ok, true);
   }
 
   /// Creates a time zone with no information.
@@ -36,7 +38,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
   factory CustomTimeZone.empty() {
     final result = _ICU4XCustomTimeZone_create_empty();
-    return CustomTimeZone._(result);
+    return CustomTimeZone._(result, true);
   }
 
   /// Creates a time zone for UTC.
@@ -44,7 +46,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
   factory CustomTimeZone.utc() {
     final result = _ICU4XCustomTimeZone_create_utc();
-    return CustomTimeZone._(result);
+    return CustomTimeZone._(result, true);
   }
 
   /// Sets the `gmt_offset` field from offset seconds.
