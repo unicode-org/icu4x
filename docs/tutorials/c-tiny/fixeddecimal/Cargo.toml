@@ -11,3 +11,7 @@ path = "unused"
 
 [dependencies]
 icu_capi = { version = "1.4", default-features = false }
+
+[build-dependencies]
+# Required to bring icu_datagen into the crate graph
+icu_datagen = { version = "1.4", optional = true }
