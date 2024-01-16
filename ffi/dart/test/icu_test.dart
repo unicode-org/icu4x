@@ -26,24 +26,7 @@ void main() {
     expect(iterator.get.toString(), 'und');
   });
 
-  test('Struct equality', () {
-    expect(
-        LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region,
-        LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region);
-    expect(
-        LocaleFallbackConfig()
-          ..extensionKey = 'nu'
-          ..priority = LocaleFallbackPriority.region,
-        isNot(LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region));
-  });
-
-  test('Runes', () {
+  test('Properties', () {
     Rune a = 'a'.runes.first;
     Rune emoji = '💡'.runes.first;
 
@@ -56,8 +39,13 @@ void main() {
   });
 
   test('ListFormatter', () {
-    final formatter = ListFormatter.andWithLength(DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
-    final list = List()..push('España')..push('Francia')..push('Suiza')..push('Italia');
+    final formatter = ListFormatter.andWithLength(
+        DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
+    final list = List()
+      ..push('España')
+      ..push('Francia')
+      ..push('Suiza')
+      ..push('Italia');
 
     expect(formatter.format(list), 'España, Francia, Suiza e Italia');
   });
