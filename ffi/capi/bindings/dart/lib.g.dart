@@ -35,6 +35,7 @@ part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
 part 'CollatorNumeric.g.dart';
 part 'CollatorOptionsV1.g.dart';
+part 'CollatorResolvedOptionsV1.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'CustomTimeZone.g.dart';
