@@ -21,7 +21,7 @@ use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
+use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
@@ -245,6 +245,12 @@ impl Collator {
             tables,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
+    }
+
+    /// The resolved options showing how the default options, the requested options,
+    /// and the options from locale data were combined.
+    pub fn resolved_options(&self) -> ResolvedCollatorOptions {
+        self.options.into()
     }
 
     /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates

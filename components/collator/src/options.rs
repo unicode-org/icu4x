@@ -351,6 +351,73 @@ impl CollatorOptions {
     }
 }
 
+// Make it possible to easily copy the resolved options of
+// one collator into another collator.
+impl From<ResolvedCollatorOptions> for CollatorOptions {
+    /// Convenience conversion for copying the options from an
+    /// existing collator into a new one (overriding any locale-provided
+    /// defaults of the new one!).
+    fn from(options: ResolvedCollatorOptions) -> CollatorOptions {
+        Self {
+            strength: Some(options.strength),
+            alternate_handling: Some(options.alternate_handling),
+            case_first: Some(options.case_first),
+            max_variable: Some(options.max_variable),
+            case_level: Some(options.case_level),
+            numeric: Some(options.numeric),
+            backward_second_level: Some(options.backward_second_level),
+        }
+    }
+}
+
+/// The resolved (actually used) options used by the collator.
+///
+/// See the documentation of `CollatorOptions`.
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone)]
+pub struct ResolvedCollatorOptions {
+    /// Resolved strength collation option.
+    pub strength: Strength,
+    /// Resolved alternate handling collation option.
+    pub alternate_handling: AlternateHandling,
+    /// Resolved case first collation option.
+    pub case_first: CaseFirst,
+    /// Resolved max variable collation option.
+    pub max_variable: MaxVariable,
+    /// Resolved case level collation option.
+    pub case_level: CaseLevel,
+    /// Resolved numeric collation option.
+    pub numeric: Numeric,
+    /// Resolved backward second level collation option.
+    pub backward_second_level: BackwardSecondLevel,
+}
+
+impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
+    fn from(options: CollatorOptionsBitField) -> ResolvedCollatorOptions {
+        Self {
+            strength: options.strength(),
+            alternate_handling: options.alternate_handling(),
+            case_first: options.case_first(),
+            max_variable: options.max_variable(),
+            case_level: if options.case_level() {
+                CaseLevel::On
+            } else {
+                CaseLevel::Off
+            },
+            numeric: if options.numeric() {
+                Numeric::On
+            } else {
+                Numeric::Off
+            },
+            backward_second_level: if options.backward_second_level() {
+                BackwardSecondLevel::On
+            } else {
+                BackwardSecondLevel::Off
+            },
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct CollatorOptionsBitField(u32);
 
@@ -510,6 +577,18 @@ impl CollatorOptionsBitField {
                 self.set_case_level(Some(false));
             }
             _ => self.set_case_level(None),
+        }
+    }
+
+    fn case_first(&self) -> CaseFirst {
+        if (self.0 & CollatorOptionsBitField::CASE_FIRST_MASK) != 0 {
+            if (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0 {
+                CaseFirst::UpperFirst
+            } else {
+                CaseFirst::LowerFirst
+            }
+        } else {
+            CaseFirst::Off
         }
     }
 
