@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
 final class _CollatorResolvedOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int strength;
@@ -23,6 +22,7 @@ final class _CollatorResolvedOptionsV1Ffi extends ffi.Struct {
   external int backwardSecondLevel;
 }
 
+/// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
 final class CollatorResolvedOptionsV1 {
   final _CollatorResolvedOptionsV1Ffi _underlying;
 

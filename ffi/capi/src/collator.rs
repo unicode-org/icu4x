@@ -43,7 +43,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::Strength, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorStrength {
         Auto = 0,
         Primary = 1,
@@ -54,7 +54,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::AlternateHandling, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorAlternateHandling {
         Auto = 0,
         NonIgnorable = 1,
@@ -62,7 +62,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorCaseFirst {
         Auto = 0,
         Off = 1,
@@ -71,7 +71,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorMaxVariable {
         Auto = 0,
         Space = 1,
@@ -81,7 +81,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CaseLevel, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorCaseLevel {
         Auto = 0,
         Off = 1,
@@ -89,7 +89,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::Numeric, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorNumeric {
         Auto = 0,
         Off = 1,
@@ -97,7 +97,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::BackwardSecondLevel, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorBackwardSecondLevel {
         Auto = 0,
         Off = 1,

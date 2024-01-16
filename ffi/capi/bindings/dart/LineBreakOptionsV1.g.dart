@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 final class _LineBreakOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int strictness;
@@ -15,6 +14,7 @@ final class _LineBreakOptionsV1Ffi extends ffi.Struct {
   external bool jaZh;
 }
 
+/// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 final class LineBreakOptionsV1 {
   final _LineBreakOptionsV1Ffi _underlying;
 

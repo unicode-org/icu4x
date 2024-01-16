@@ -91,7 +91,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_from_byte_slice(
-            blob: &'static [u8],
+            blob: &'static [DiplomatByte],
         ) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)?,
