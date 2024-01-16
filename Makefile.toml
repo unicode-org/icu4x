@@ -72,13 +72,6 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-test-windows]
-description = "Run all tests for the CI 'test' job (with special changes to reduce Windows disk space)"
-category = "CI"
-dependencies = [
-    "test-all-features-windows",
-]
-
 [tasks.ci-job-test-tutorials-local]
 description = "Run all checks for the CI 'test-tutorials' job"
 category = "CI"
@@ -135,7 +128,7 @@ dependencies = [
 description = "Run all tests for the CI 'test-js' job"
 category = "CI"
 dependencies = [
-    "test-js",
+    "test-npm",
     "test-tinywasm",
 ]
 
@@ -256,7 +249,7 @@ dependencies = [
     # Get a coffee
     "ci-job-test",
     "ci-job-test-docs",
-    "ci-job-check-tutorials-cratesio",
+    "ci-job-test-tutorials-cratesio",
     "ci-job-diplomat",
     "ci-job-testdata",
     "ci-job-msrv-features",

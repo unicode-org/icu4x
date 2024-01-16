@@ -8,6 +8,8 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
 use icu_calendar::{DateTime, Gregorian};
+#[cfg(feature = "experimental")]
+use icu_datetime::neo::TypedNeoDateTimeFormatter;
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu_locid::Locale;
@@ -19,8 +21,8 @@ mod mock;
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
 
-    let mut bench_datetime_with_fixture = |name| {
-        let fxs = fixtures::get_fixture(name).expect("Failed to get fixture.");
+    let mut bench_datetime_with_fixture = |name, file| {
+        let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
         group.bench_function(&format!("datetime_{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
@@ -38,17 +40,14 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = {
                             TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
                                 &locale.into(),
-                                options.clone(),
+                                options,
                             )
                             .expect("Failed to create TypedDateTimeFormatter.")
                         };
                         #[cfg(not(feature = "experimental"))]
                         let dtf = {
-                            TypedDateTimeFormatter::<Gregorian>::try_new(
-                                &locale.into(),
-                                options.clone(),
-                            )
-                            .expect("Failed to create TypedDateTimeFormatter.")
+                            TypedDateTimeFormatter::<Gregorian>::try_new(&locale.into(), options)
+                                .expect("Failed to create TypedDateTimeFormatter.")
                         };
 
                         let mut result = String::new();
@@ -64,12 +63,52 @@ fn datetime_benches(c: &mut Criterion) {
         });
     };
 
-    bench_datetime_with_fixture("lengths");
+    bench_datetime_with_fixture("lengths", include_str!("fixtures/tests/lengths.json"));
 
     #[cfg(feature = "experimental")]
-    bench_datetime_with_fixture("components");
+    bench_datetime_with_fixture("components", include_str!("fixtures/tests/components.json"));
 
-    let fxs = fixtures::get_fixture("lengths_with_zones").unwrap();
+    #[cfg(feature = "experimental")]
+    let mut bench_neo_datetime_with_fixture = |name, file| {
+        let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
+        group.bench_function(&format!("neo/datetime_{name}"), |b| {
+            b.iter(|| {
+                for fx in &fxs.0 {
+                    let datetimes: Vec<DateTime<Gregorian>> = fx
+                        .values
+                        .iter()
+                        .map(|value| {
+                            mock::parse_gregorian_from_str(value).expect("Failed to parse value.")
+                        })
+                        .collect();
+                    for setup in &fx.setups {
+                        let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
+                        let options = fixtures::get_options(&setup.options).unwrap();
+                        let dtf = {
+                            TypedNeoDateTimeFormatter::<Gregorian>::try_new(&locale.into(), options)
+                                .expect("Failed to create TypedNeoDateTimeFormatter.")
+                        };
+
+                        let mut result = String::new();
+
+                        for dt in &datetimes {
+                            let fdt = dtf.format(dt);
+                            write!(result, "{fdt}").expect("Failed to write to date time format.");
+                            result.clear();
+                        }
+                    }
+                }
+            })
+        });
+    };
+
+    #[cfg(feature = "experimental")]
+    bench_neo_datetime_with_fixture("lengths", include_str!("fixtures/tests/lengths.json"));
+
+    let fxs = serde_json::from_str::<fixtures::Fixture>(include_str!(
+        "fixtures/tests/lengths_with_zones.json"
+    ))
+    .unwrap();
     group.bench_function("zoned_datetime_overview", |b| {
         b.iter(|| {
             for fx in &fxs.0 {
@@ -108,7 +147,9 @@ fn datetime_benches(c: &mut Criterion) {
 
         let mut group = c.benchmark_group("datetime");
 
-        let fxs = fixtures::get_fixture("lengths").unwrap();
+        let fxs =
+            serde_json::from_str::<fixtures::Fixture>(include_str!("fixtures/tests/lengths.json"))
+                .unwrap();
         group.bench_function("TypedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
@@ -238,7 +279,10 @@ fn datetime_benches(c: &mut Criterion) {
             })
         });
 
-        let fxs = fixtures::get_fixture("lengths_with_zones").unwrap();
+        let fxs = serde_json::from_str::<fixtures::Fixture>(include_str!(
+            "fixtures/tests/lengths_with_zones.json"
+        ))
+        .unwrap();
         group.bench_function("TypedZonedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {

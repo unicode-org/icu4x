@@ -129,11 +129,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
-      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
-    - name: Run `cargo make ci-job-test-windows`
-      if: matrix.os == 'windows-latest'
-      run: cargo make ci-job-test-windows
 
   # ci-job-test-docs
   test-docs:
@@ -415,6 +411,9 @@ jobs:
     - name: Install GCC 11
       run: |
         apt-get install -y gcc-11 g++-11
+    - name: Install jq
+      run: |
+        apt-get install -y jq
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
@@ -480,6 +479,9 @@ jobs:
     - name: Install lld-15
       run: |
         apt-get install -y lld-15
+    - name: Install jq
+      run: |
+        apt-get install -y jq
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
@@ -595,11 +597,6 @@ jobs:
       run: cargo make set-nightly-version-for-ci
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    - uses: dart-lang/setup-dart@v1
-      with:
-        sdk: 3.1.5
 
     # Actual job
     - name: Run `cargo make ci-job-diplomat`

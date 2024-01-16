@@ -1,5 +1,5 @@
 // @generated
-/// Implement `DataProvider<IndianYearSymbolsV1Marker>` on the given struct using the data
+/// Implement `DataProvider<IndianYearNamesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
@@ -9,159 +9,159 @@ macro_rules! __impl_datetime_symbols_indian_years_v1 {
         #[clippy::msrv = "1.67"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.67"]
-        impl icu_provider::DataProvider<icu::datetime::provider::neo::IndianYearSymbolsV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::IndianYearSymbolsV1Marker>, icu_provider::DataError> {
-                static FY_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::IndianYearNamesV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::IndianYearNamesV1Marker>, icu_provider::DataError> {
+                static FY_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0SAKA") })
                 });
-                static ES_419_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static ES_419_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka") })
                 });
-                static FI_X_5: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static FI_X_5: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka-ajanlaskua") })
                 });
-                static SV_X_5: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static SV_X_5: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0Saka-eran") })
                 });
-                static FR_X_5: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static FR_X_5: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC3\xA8re Saka") })
                 });
-                static CS_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static CS_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA0aka") })
                 });
-                static EL_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static EL_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xCE\xA3\xCE\xAC\xCE\xBA\xCE\xB1") })
                 });
-                static BS_CYRL_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static BS_CYRL_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xA1\xD0\x90\xD0\x9A\xD0\x90") })
                 });
-                static MK_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static MK_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xA1\xD0\xB0\xD0\xBA\xD0\xB0") })
                 });
-                static HE_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static HE_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD7\xA1\xD7\x90\xD7\xA7\xD7\x90") })
                 });
-                static FA_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static FA_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xAA\xD9\x82\xD9\x88\xDB\x8C\xD9\x85 \xD8\xB3\xD8\xA7\xDA\xA9\xD8\xA7") })
                 });
-                static KS_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static KS_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xB3\xD8\xA7\xDA\xA9\xD8\xA7") })
                 });
-                static SD_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static SD_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xB3\xD8\xA7\xDA\xAA\xD8\xA7") })
                 });
-                static HI_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static HI_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB6\xE0\xA4\x95") })
                 });
-                static NE_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static NE_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\x95") })
                 });
-                static BRX_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static BRX_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\x95\xE0\xA4\xBE") })
                 });
-                static AS_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static AS_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\xB6\xE0\xA6\x95") })
                 });
-                static BN_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static BN_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB2") })
                 });
-                static PA_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static PA_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA8\xB8\xE0\xA8\xBE\xE0\xA8\x95\xE0\xA8\xBE") })
                 });
-                static GU_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static GU_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\xB6\xE0\xAA\x95") })
                 });
-                static GU_X_5: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static GU_X_5: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\xB8\xE0\xAA\xBE\xE0\xAA\x95\xE0\xAA\xBE") })
                 });
-                static OR_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static OR_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAC\xB8\xE0\xAC\xBE\xE0\xAC\x95\xE0\xAC\xBE") })
                 });
-                static TA_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static TA_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAE\x9A\xE0\xAE\xBE\xE0\xAE\x95\xE0\xAE\xBE") })
                 });
-                static TE_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static TE_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB0\xB6\xE0\xB0\x95") })
                 });
-                static KN_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static KN_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB2\xB6\xE0\xB2\x95") })
                 });
-                static ML_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static ML_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB4\xB6\xE0\xB4\x95") })
                 });
-                static TH_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static TH_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB8\xA1.\xE0\xB8\xA8.") })
                 });
-                static LO_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static LO_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xBA\xA1.\xE0\xBA\xAA.") })
                 });
-                static JA_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static JA_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE3\x82\xB5\xE3\x82\xAB") })
                 });
-                static YUE_HANS_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static YUE_HANS_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x8D\xB0\xE5\xBA\xA6\xE5\x8E\x86") })
                 });
-                static YUE_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static YUE_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE5\x8D\xB0\xE5\xBA\xA6\xE6\x9B\x86") })
                 });
-                static FF_ADLM_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static FF_ADLM_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xF0\x9E\xA4\x85\xF0\x9E\xA4\xA2\xF0\x9E\xA4\xB3\xF0\x9E\xA4\xA2") })
                 });
-                static SC_X_5: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static SC_X_5: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0era Saka") })
                 });
-                static ES_X_3: <icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
+                static ES_X_3: <icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") })
                 });
-                static VALUES: [&<icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable; 208usize] = [&AS_X_3, &AS_X_3, &AS_X_3, &BN_X_3, &BN_X_3, &BN_X_3, &BRX_X_3, &BRX_X_3, &BRX_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &CS_X_3, &CS_X_3, &CS_X_3, &EL_X_3, &EL_X_3, &EL_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &FA_X_3, &FA_X_3, &FA_X_3, &FF_ADLM_X_3, &FF_ADLM_X_3, &FF_ADLM_X_3, &FI_X_5, &ES_419_X_3, &FR_X_5, &FY_X_3, &FY_X_3, &FY_X_3, &GU_X_3, &GU_X_3, &GU_X_5, &HE_X_3, &HE_X_3, &HE_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &FY_X_3, &FY_X_3, &FY_X_3, &JA_X_3, &JA_X_3, &JA_X_3, &KN_X_3, &KN_X_3, &KN_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &KS_X_3, &KS_X_3, &KS_X_3, &LO_X_3, &LO_X_3, &LO_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &MK_X_3, &MK_X_3, &MK_X_3, &ML_X_3, &ML_X_3, &ML_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &NE_X_3, &NE_X_3, &NE_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &OR_X_3, &OR_X_3, &OR_X_3, &PA_X_3, &PA_X_3, &PA_X_3, &KS_X_3, &KS_X_3, &KS_X_3, &MK_X_3, &MK_X_3, &MK_X_3, &SC_X_5, &SD_X_3, &SD_X_3, &SD_X_3, &CS_X_3, &CS_X_3, &CS_X_3, &FY_X_3, &FY_X_3, &FY_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &FY_X_3, &FY_X_3, &SV_X_5, &TA_X_3, &TA_X_3, &TA_X_3, &TE_X_3, &TE_X_3, &TE_X_3, &TH_X_3, &TH_X_3, &TH_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &KS_X_3, &KS_X_3, &KS_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3];
+                static VALUES: [&<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::DataMarker>::Yokeable; 208usize] = [&AS_X_3, &AS_X_3, &AS_X_3, &BN_X_3, &BN_X_3, &BN_X_3, &BRX_X_3, &BRX_X_3, &BRX_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &CS_X_3, &CS_X_3, &CS_X_3, &EL_X_3, &EL_X_3, &EL_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &FA_X_3, &FA_X_3, &FA_X_3, &FF_ADLM_X_3, &FF_ADLM_X_3, &FF_ADLM_X_3, &FI_X_5, &ES_419_X_3, &FR_X_5, &FY_X_3, &FY_X_3, &FY_X_3, &GU_X_3, &GU_X_3, &GU_X_5, &HE_X_3, &HE_X_3, &HE_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &FY_X_3, &FY_X_3, &FY_X_3, &JA_X_3, &JA_X_3, &JA_X_3, &KN_X_3, &KN_X_3, &KN_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &KS_X_3, &KS_X_3, &KS_X_3, &LO_X_3, &LO_X_3, &LO_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &MK_X_3, &MK_X_3, &MK_X_3, &ML_X_3, &ML_X_3, &ML_X_3, &HI_X_3, &HI_X_3, &HI_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &NE_X_3, &NE_X_3, &NE_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &ES_X_3, &OR_X_3, &OR_X_3, &OR_X_3, &PA_X_3, &PA_X_3, &PA_X_3, &KS_X_3, &KS_X_3, &KS_X_3, &MK_X_3, &MK_X_3, &MK_X_3, &SC_X_5, &SD_X_3, &SD_X_3, &SD_X_3, &CS_X_3, &CS_X_3, &CS_X_3, &FY_X_3, &FY_X_3, &FY_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &BS_CYRL_X_3, &FY_X_3, &FY_X_3, &SV_X_5, &TA_X_3, &TA_X_3, &TA_X_3, &TE_X_3, &TE_X_3, &TE_X_3, &TH_X_3, &TH_X_3, &TH_X_3, &ES_419_X_3, &ES_419_X_3, &ES_419_X_3, &KS_X_3, &KS_X_3, &KS_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3, &YUE_HANS_X_3];
                 static KEYS: [&str; 208usize] = ["as-x-3", "as-x-4", "as-x-5", "bn-x-3", "bn-x-4", "bn-x-5", "brx-x-3", "brx-x-4", "brx-x-5", "bs-Cyrl-x-3", "bs-Cyrl-x-4", "bs-Cyrl-x-5", "cs-x-3", "cs-x-4", "cs-x-5", "el-x-3", "el-x-4", "el-x-5", "es-419-x-3", "es-419-x-4", "es-419-x-5", "es-AR-x-3", "es-AR-x-4", "es-AR-x-5", "es-BO-x-3", "es-BO-x-4", "es-BO-x-5", "es-BR-x-3", "es-BR-x-4", "es-BR-x-5", "es-BZ-x-3", "es-BZ-x-4", "es-BZ-x-5", "es-CL-x-3", "es-CL-x-4", "es-CL-x-5", "es-CO-x-3", "es-CO-x-4", "es-CO-x-5", "es-CR-x-3", "es-CR-x-4", "es-CR-x-5", "es-CU-x-3", "es-CU-x-4", "es-CU-x-5", "es-DO-x-3", "es-DO-x-4", "es-DO-x-5", "es-EC-x-3", "es-EC-x-4", "es-EC-x-5", "es-GT-x-3", "es-GT-x-4", "es-GT-x-5", "es-HN-x-3", "es-HN-x-4", "es-HN-x-5", "es-MX-x-3", "es-MX-x-4", "es-MX-x-5", "es-NI-x-3", "es-NI-x-4", "es-NI-x-5", "es-PA-x-3", "es-PA-x-4", "es-PA-x-5", "es-PE-x-3", "es-PE-x-4", "es-PE-x-5", "es-PR-x-3", "es-PR-x-4", "es-PR-x-5", "es-PY-x-3", "es-PY-x-4", "es-PY-x-5", "es-SV-x-3", "es-SV-x-4", "es-SV-x-5", "es-US-x-3", "es-US-x-4", "es-US-x-5", "es-UY-x-3", "es-UY-x-4", "es-UY-x-5", "es-VE-x-3", "es-VE-x-4", "es-VE-x-5", "es-x-3", "es-x-4", "es-x-5", "fa-x-3", "fa-x-4", "fa-x-5", "ff-Adlm-x-3", "ff-Adlm-x-4", "ff-Adlm-x-5", "fi-x-5", "fr-CA-x-5", "fr-x-5", "fy-x-3", "fy-x-4", "fy-x-5", "gu-x-3", "gu-x-4", "gu-x-5", "he-x-3", "he-x-4", "he-x-5", "hi-x-3", "hi-x-4", "hi-x-5", "id-x-3", "id-x-4", "id-x-5", "ja-x-3", "ja-x-4", "ja-x-5", "kn-x-3", "kn-x-4", "kn-x-5", "kok-x-3", "kok-x-4", "kok-x-5", "ks-x-3", "ks-x-4", "ks-x-5", "lo-x-3", "lo-x-4", "lo-x-5", "mai-x-3", "mai-x-4", "mai-x-5", "mk-x-3", "mk-x-4", "mk-x-5", "ml-x-3", "ml-x-4", "ml-x-5", "mr-x-3", "mr-x-4", "mr-x-5", "nb-x-3", "nb-x-4", "nb-x-5", "ne-x-3", "ne-x-4", "ne-x-5", "nn-x-3", "nn-x-4", "nn-x-5", "no-x-3", "no-x-4", "no-x-5", "or-x-3", "or-x-4", "or-x-5", "pa-x-3", "pa-x-4", "pa-x-5", "ps-x-3", "ps-x-4", "ps-x-5", "ru-x-3", "ru-x-4", "ru-x-5", "sc-x-5", "sd-x-3", "sd-x-4", "sd-x-5", "sk-x-3", "sk-x-4", "sk-x-5", "sr-Latn-x-3", "sr-Latn-x-4", "sr-Latn-x-5", "sr-x-3", "sr-x-4", "sr-x-5", "sv-x-3", "sv-x-4", "sv-x-5", "ta-x-3", "ta-x-4", "ta-x-5", "te-x-3", "te-x-4", "te-x-5", "th-x-3", "th-x-4", "th-x-5", "und-x-3", "und-x-4", "und-x-5", "ur-x-3", "ur-x-4", "ur-x-5", "yue-Hans-x-3", "yue-Hans-x-4", "yue-Hans-x-5", "yue-x-3", "yue-x-4", "yue-x-5", "zh-Hant-x-3", "zh-Hant-x-4", "zh-Hant-x-5", "zh-x-3", "zh-x-4", "zh-x-5"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if fallback_iterator.get().is_und() {
-                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::IndianYearSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
-                        }
                         if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::IndianYearNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
                         }
                         fallback_iterator.step();
                     }

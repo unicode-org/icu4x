@@ -57,8 +57,15 @@ fn convert_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
-        "calendar/chinese",
+        "calendar/chinese_calculating",
         icu::calendar::chinese::Chinese::new_always_calculating(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/chinese_cached",
+        icu::calendar::chinese::Chinese::new(),
     );
 
     #[cfg(feature = "bench")]
@@ -66,6 +73,13 @@ fn convert_benches(c: &mut Criterion) {
         &mut group,
         "calendar/gregorian",
         icu::calendar::gregorian::Gregorian,
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/hebrew",
+        icu::calendar::hebrew::Hebrew::new_always_calculating(),
     );
 
     #[cfg(feature = "bench")]

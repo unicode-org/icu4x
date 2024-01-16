@@ -730,12 +730,8 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by running
-    // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
-    const BYTES: &[u8] = include_bytes!("../tests/data/tutorial_buffer.wasm");
-
     assert_eq!(
-        keys_from_bin_inner(BYTES),
+        keys_from_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,

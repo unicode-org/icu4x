@@ -9,9 +9,29 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerotrie::ZeroTrie;
+use zerovec::{VarZeroVec, ZeroVec};
+
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as unitsconversion;
+    }
+    icu_unitsconversion_data::make_provider!(Baked);
+    icu_unitsconversion_data::impl_units_info_v1!(Baked);
+};
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
@@ -34,86 +54,14 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsInfoV1<'data> {
-    // TODO(#4313).
-    /// Maps from unit name (e.g. foot) to the index of the unit in the `unit_quantity` vector.
+    /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_info: ZeroMap<'data, str, UnitsInfoIndex>,
-
-    /// Contains the dimensions information for the units.
-    /// For example, the dimension for the unit `foot` is `length`.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_dimensions: VarZeroVec<'data, DimensionULE>,
+    pub units_conversion_trie: ZeroTrie<ZeroVec<'data, u8>>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub convert_infos: VarZeroVec<'data, ConversionInfoULE>,
-}
-
-#[zerovec::make_ule(UnitsInfoIndexULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-pub struct UnitsInfoIndex {
-    // TODO(#4313).
-    /// Contains the index of the dimension in the `unit_dimensions` vector.
-    /// If the unit does not have a quantity, this field is `None`.
-    pub dimension: Option<u16>,
-
-    // TODO(#4313).
-    /// Contains the index of the conversion info in the `convert_infos` vector.
-    /// If the unit does not have a convert unit, this field is `None`.
-    pub convert_info: Option<u16>,
-}
-
-/// Specifies if the unit is a base unit or a derived unit.
-/// If derived, this means each unit is derived from a base unit.
-/// For example: "foot-per-second" is derived from "meter" and "second".
-#[zerovec::make_ule(DerivationSpecifierULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[repr(u8)]
-pub enum DerivationSpecifier {
-    #[default]
-    Base = 0,
-    Derived = 1,
-}
-
-#[zerovec::make_varule(DimensionULE)]
-#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[zerovec::derive(Debug)]
-pub struct Dimension<'data> {
-    /// Contains the quantity name.
-    // TODO(#4173): Consider using an enum for the quantity name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub quantity: Cow<'data, str>,
-
-    /// Represents the simplicity of the quantity.
-    pub specifier: DerivationSpecifier,
 }
 
 /// Represents the conversion information for a unit.
@@ -137,9 +85,9 @@ pub struct Dimension<'data> {
 )]
 #[zerovec::derive(Debug)]
 pub struct ConversionInfo<'data> {
-    /// Contains the base unit which the unit is converted to.
+    /// Contains the base unit (after parsing) which what the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub base_unit: Cow<'data, str>,
+    pub basic_units: ZeroVec<'data, MeasureUnitItem>,
 
     /// Represents the numerator of the conversion factor.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -199,4 +147,63 @@ pub enum Exactness {
     #[default]
     Exact = 0,
     Approximate = 1,
+}
+
+#[zerovec::make_ule(BaseULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum Base {
+    /// The base of the si prefix is 10.
+    #[default]
+    Decimal = 0,
+
+    /// The base of the si prefix is 2.
+    Binary = 1,
+}
+
+/// Represents an Item of a MeasureUnit.
+/// For example, the MeasureUnit `kilometer-per-square-second` contains two items:
+///    1. `kilometer` with power 1 and prefix 3 with base 10.
+///    2. `second` with power -2 and prefix `NotExist`.
+#[zerovec::make_ule(MeasureUnitItemULE)]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct MeasureUnitItem {
+    /// The power of the unit.
+    pub power: i8,
+
+    /// The si base of the unit.
+    pub si_prefix: SiPrefix,
+
+    /// The id of the unit.
+    pub unit_id: u16,
+}
+
+// TODO: Consider reducing the size of this struct while implementing the ULE.
+/// Represents the SI prefix.
+#[zerovec::make_ule(SiPrefixULE)]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SiPrefix {
+    /// The absolute value of the power of the si prefix.
+    pub power: i8,
+
+    /// The base of the si prefix.
+    pub base: Base,
 }

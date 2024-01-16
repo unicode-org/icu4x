@@ -27,8 +27,10 @@ exit_on_error true
 # Check files matching these patterns.
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
 
+files = exec --fail-on-error git ls-files --cached --others --exclude-standard
+
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*" "ffi/capi/**/docs/**/*" "**/node_modules/**/*" "**/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/capi/c/examples/fixeddecimal_tiny/baked_data/**/*"
+glob_skip_pattern_array = array "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
 
 blank_line = set ""
 
@@ -136,7 +138,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-glob_skip_pattern = array "ffi/gn/**/*" "ffi/capi/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*" "provider/baked/_template_/Cargo.toml"
+glob_skip_pattern = array "ffi/gn/**/*" "ffi/capi/tests/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*" "provider/baked/_template_/Cargo.toml"
 
 cargo_list = exec cargo --list
 if not contains ${cargo_list.stdout} "rdme"
@@ -206,7 +208,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/capi/c/examples" "docs/" "utils/calendrical_calculations"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/capi/tests/c/" "docs/" "utils/calendrical_calculations"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -234,7 +236,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/capi/c/examples" "docs/" "utils/calendrical_calculations"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/capi/tests/" "docs/" "utils/calendrical_calculations"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}

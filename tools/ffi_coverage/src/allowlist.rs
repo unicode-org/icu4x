@@ -399,6 +399,9 @@ lazy_static::lazy_static! {
         "icu::timezone::Error",
         "icu::transliterator::Error",
 
+        // ULE types that are not in provider modules
+        "icu::plurals::PluralCategoryULE",
+
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
         // Rust-specific calendar wrapper stuff
