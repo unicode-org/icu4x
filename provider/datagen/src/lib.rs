@@ -156,37 +156,6 @@ pub use icu_provider_blob::export as blob_exporter;
 #[cfg(feature = "fs_exporter")]
 pub use icu_provider_fs::export as fs_exporter;
 
-#[cfg(tbd)]
-mod precomputed {
-    use icu_provider::datagen::*;
-    use icu_provider::prelude::*;
-    use icu_provider_blob::BlobDataProvider;
-    use serde::Deserialize;
-    use yoke::{trait_hack::YokeTraitHack, Yokeable};
-
-    pub struct ReexportableBlobDataProvider(pub BlobDataProvider);
-
-    impl<M: KeyedDataMarker> DataProvider<M> for ReexportableBlobDataProvider
-    where
-        for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
-    {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-            self.0.as_deserializing().load(req)
-        }
-    }
-
-    impl<M: KeyedDataMarker> IterableDataProvider<M> for ReexportableBlobDataProvider
-    where
-        for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
-    {
-        fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-            self.0.supported_locales_for_key(M::KEY)
-        }
-    }
-
-    super::registry::make_exportable_provider!(ReexportableBlobDataProvider);
-}
-
 /// A prelude for using the datagen API
 pub mod prelude {
     #[doc(no_inline)]

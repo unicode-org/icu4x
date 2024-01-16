@@ -1,0 +1,39 @@
+[package]
+name = "precompiled_datagen"
+
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+icu_provider_blob = { workspace = true, features = ["export"] }
+icu_provider = { workspace = true, features = ["datagen"] }
+icu_datagen.workspace = true
+
+eyre = "0.6.11"
+clap = { version = "4.4.17", features = ["derive"] }
+serde = "1.0.195"
+
+# These are required to make the make_exportable_provider macro work
+icu_calendar.workspace = true
+icu_casemap.workspace = true
+icu_collator.workspace = true
+icu_datetime.workspace = true
+icu_decimal.workspace = true
+icu_list.workspace = true
+icu_locid_transform.workspace = true
+icu_normalizer.workspace = true
+icu_plurals.workspace = true
+icu_properties.workspace = true
+icu_segmenter.workspace = true
+icu_timezone.workspace = true
+
+[build-dependencies]
+icu_datagen = { workspace = true, features = ["networking", "use_wasm"] }
+icu_provider_blob = { workspace = true, features = ["export"] }
