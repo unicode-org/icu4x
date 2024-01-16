@@ -27,8 +27,8 @@ final class ReorderedIndexMap implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XReorderedIndexMap_as_slice =
-    _capi<ffi.NativeFunction<_SliceSize Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
-      .asFunction<_SliceSize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
+      .asFunction<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
   int get length {
