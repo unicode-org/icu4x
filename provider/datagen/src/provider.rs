@@ -29,6 +29,8 @@ pub struct DatagenProvider {
     pub source: SourceData,
 }
 
+crate::registry::make_exportable_provider!(DatagenProvider);
+
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "44.0.0";

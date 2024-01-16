@@ -114,25 +114,31 @@ impl<T> ExportableProvider for T where
 /// [`BakedDataProvider`]: ../../icu_datagen/index.html
 #[macro_export]
 macro_rules! make_exportable_provider {
-    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ] $(, $bounds:tt)?) => {
+    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ]) => {
         $crate::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
             $crate::datagen::ExportMarker
-            $(, $bounds)?
         );
         $crate::impl_dynamic_data_provider!(
             $provider,
             [ $($(#[$cfg])? $struct_m),+, ],
             $crate::any::AnyMarker
-            $(, $bounds)?
         );
-        $crate::impl_dynamic_iterable_provider!(
-            $provider,
-            [ $($(#[$cfg])? $struct_m),+, ],
-            $crate::datagen::ExportMarker
-            $(, $bounds)?
-        );
+
+        impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
+            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
+                match key.hashed() {
+                    $(
+                        $(#[$cfg])?
+                        h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
+                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
+                        }
+                    )+,
+                    _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))
+                }
+            }
+        }
     };
 }
 

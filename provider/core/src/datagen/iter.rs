@@ -33,23 +33,3 @@ where
         (**self).supported_locales_for_key(key)
     }
 }
-
-#[macro_export]
-/// TODO
-macro_rules! impl_dynamic_iterable_provider {
-    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $marker:ty $(: $bounds:tt)?) => {
-        impl$(<$bounds>)? $crate::datagen::IterableDynamicDataProvider<$marker> for $provider {
-            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
-                match key.hashed() {
-                    $(
-                        $(#[$cfg])?
-                        h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
-                        }
-                    )+,
-                    _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))
-                }
-            }
-        }
-    };
-}
