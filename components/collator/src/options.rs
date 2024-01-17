@@ -22,7 +22,9 @@ use crate::elements::{CASE_MASK, TERTIARY_MASK};
 #[non_exhaustive]
 pub enum Strength {
     /// Compare only on the level of base letters. This level
-    /// corresponds to the ECMA-402 sensitivity "base".
+    /// corresponds to the ECMA-402 sensitivity "base" with
+    /// [`CaseLevel::Off`] (the default for [`CaseLevel`]) and
+    /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
     /// use icu_collator::*;
@@ -228,6 +230,9 @@ pub enum CaseLevel {
     Off = 0,
     /// Turn on the case level option, thereby making a separate level for case
     /// differences, positioned between secondary and tertiary.
+    ///
+    /// When used together with [`Strength::Primary`], this corresponds to the
+    /// ECMA-402 sensitivity "case".
     On = 1,
 }
 
@@ -273,53 +278,53 @@ pub enum BackwardSecondLevel {
 ///
 /// ## ECMA-402 Sensitivity
 ///
-/// ECMA-402 `sensitivity` maps to a combination of `Strength` and `CaseLevel` as follows:
+/// ECMA-402 `sensitivity` maps to a combination of [`Strength`] and [`CaseLevel`] as follows:
 ///
 /// <dl>
 /// <dt><code>sensitivity: "base"</code></dt>
-/// <dd><code>Strength::Primary</code></dd>
+/// <dd><a href="enum.Strength.html#variant.Primary"><code>Strength::Primary</code></a></dd>
 /// <dt><code>sensitivity: "accent"</code></dt>
-/// <dd><code>Strength::Secondary</code></dd>
+/// <dd><a href="enum.Strength.html#variant.Secondary"><code>Strength::Secondary</code></a></dd>
 /// <dt><code>sensitivity: "case"</code></dt>
-/// <dd><code>Strength::Primary</code> and <code>CaseLevel::On</code></dd>
+/// <dd><a href="enum.Strength.html#variant.Primary"><code>Strength::Primary</code></a> and <a href="enum.CaseLevel.html#variant.On"><code>CaseLevel::On</code></a></dd>
 /// <dt><code>sensitivity: "variant"</code></dt>
-/// <dd><code>Strength::Tertiary</code></dd>
+/// <dd><a href="enum.Strength.html#variant.Tertiary"><code>Strength::Tertiary</code></a></dd>
 /// </dl>
 ///
 /// ## Strength
 ///
-/// This is the BCP47 key `ks`. The default is `Strength::Tertiary`.
+/// This is the BCP47 key `ks`. The default is [`Strength::Tertiary`].
 ///
 /// ## Alternate Handling
 ///
 /// This is the BCP47 key `ka`. Note that `AlternateHandling::ShiftTrimmed` and
 /// `AlternateHandling::Blanked` are unimplemented. The default is
-/// `AlternateHandling::NonIgnorable`, except
-/// for Thai, whose default is `AlternateHandling::Shifted`.
+/// [`AlternateHandling::NonIgnorable`], except
+/// for Thai, whose default is [`AlternateHandling::Shifted`].
 ///
 /// ## Case Level
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
-/// This is the BCP47 key `kc`. The default is `CaseLevel::Off`.
+/// This is the BCP47 key `kc`. The default is [`CaseLevel::Off`].
 ///
 /// ## Case First
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
-/// This is the BCP47 key `kf`. Three possibilities: `CaseFirst::Off` (default,
-/// except for Danish and Maltese), `CaseFirst::Lower`, and `CaseFirst::Upper`
+/// This is the BCP47 key `kf`. Three possibilities: [`CaseFirst::Off`] (default,
+/// except for Danish and Maltese), [`CaseFirst::LowerFirst`], and [`CaseFirst::UpperFirst`]
 /// (default for Danish and Maltese).
 ///
 /// ## Backward second level
 ///
 /// Compare the second level in backward order. This is the BCP47 key `kb`. `kb`
-/// is prohibited by ECMA-402. The default is `BackwardSecondLevel::Off`, except
+/// is prohibited by ECMA-402. The default is [`BackwardSecondLevel::Off`], except
 /// for Canadian French.
 ///
 /// ## Numeric
 ///
-/// This is the BCP47 key `kn`. When set to `Numeric::On`, any sequence of decimal
+/// This is the BCP47 key `kn`. When set to [`Numeric::On`], any sequence of decimal
 /// digits (General_Category = Nd) is sorted at the primary level according to the
-/// numeric value. The default is `Numeric::Off`.
+/// numeric value. The default is [`Numeric::Off`].
 ///
 /// # Unsupported BCP47 options
 ///
@@ -341,12 +346,13 @@ pub enum BackwardSecondLevel {
 /// ECMA-402 `usage: "search"` is represented as `-u-co-search` as part of the
 /// locale in ICU4X. However, neither ECMA-402 nor ICU4X provides prefix matching
 /// or substring matching API surface. This makes the utility of search collations
-/// very narrow: With `-u-co-search`, `Strength::Primary`, and observing whether
-/// comparison output is `Ordering::Equal` (making no distinction between
-/// `Ordering::Less` and `Ordering::Greater`), it is possible to check if a set
-/// of human-readable strings contains a full-string fuzzy match of a user-entered
-/// string, where "fuzzy" means case-insensitive and accent-insentive for scripts
-/// that have such concepts and something roughly similar for other scripts.
+/// very narrow: With `-u-co-search`, [`Strength::Primary`], and observing whether
+/// comparison output is [`core::cmp::Ordering::Equal`] (making no distinction between
+/// [`core::cmp::Ordering::Less`] and [`core::cmp::Ordering::Greater`]), it is
+/// possible to check if a set of human-readable strings contains a full-string
+/// fuzzy match of a user-entered string, where "fuzzy" means case-insensitive and
+/// accent-insentive for scripts that have such concepts and something roughly
+/// similar for other scripts.
 ///
 /// Due to the very limited utility, ICU4X data does not include search collations
 /// by default.
