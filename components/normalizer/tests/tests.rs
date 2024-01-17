@@ -1311,8 +1311,14 @@ fn test_utf16_basic() {
 #[test]
 fn test_accented_digraph() {
     let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
-    assert_eq!(normalizer.normalize("\u{01C4}\u{0323}"), "DZ\u{0323}\u{030C}");
-    assert_eq!(normalizer.normalize("DZ\u{030C}\u{0323}"), "DZ\u{0323}\u{030C}");
+    assert_eq!(
+        normalizer.normalize("\u{01C4}\u{0323}"),
+        "DZ\u{0323}\u{030C}"
+    );
+    assert_eq!(
+        normalizer.normalize("DZ\u{030C}\u{0323}"),
+        "DZ\u{0323}\u{030C}"
+    );
 }
 
 #[test]
