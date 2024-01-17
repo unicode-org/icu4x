@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 final class _TitlecaseOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int leadingAdjustment;
@@ -13,6 +12,7 @@ final class _TitlecaseOptionsV1Ffi extends ffi.Struct {
   external int trailingCase;
 }
 
+/// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 final class TitlecaseOptionsV1 {
   final _TitlecaseOptionsV1Ffi _underlying;
 

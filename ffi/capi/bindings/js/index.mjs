@@ -25,6 +25,7 @@ export { ICU4XCollatorCaseLevel } from './ICU4XCollatorCaseLevel.mjs';
 export { ICU4XCollatorMaxVariable } from './ICU4XCollatorMaxVariable.mjs';
 export { ICU4XCollatorNumeric } from './ICU4XCollatorNumeric.mjs';
 export { ICU4XCollatorOptionsV1 } from './ICU4XCollatorOptionsV1.mjs';
+export { ICU4XCollatorResolvedOptionsV1 } from './ICU4XCollatorResolvedOptionsV1.mjs';
 export { ICU4XCollatorStrength } from './ICU4XCollatorStrength.mjs';
 export { ICU4XComposingNormalizer } from './ICU4XComposingNormalizer.mjs';
 export { ICU4XCustomTimeZone } from './ICU4XCustomTimeZone.mjs';

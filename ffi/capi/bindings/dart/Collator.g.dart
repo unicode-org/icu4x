@@ -52,4 +52,19 @@ final class Collator implements ffi.Finalizable {
   static final _ICU4XCollator_compare_utf16 =
     _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XCollator_compare_utf16')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
+
+  /// The resolved options showing how the default options, the requested options,
+  /// and the options from locale data were combined. None of the struct fields
+  /// will have `Auto` as the value.
+  ///
+  /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options) for more information.
+  CollatorResolvedOptionsV1 get resolvedOptions {
+    final result = _ICU4XCollator_resolved_options(_underlying);
+    return CollatorResolvedOptionsV1._(result);
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_resolved_options =
+    _capi<ffi.NativeFunction<_CollatorResolvedOptionsV1Ffi Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCollator_resolved_options')
+      .asFunction<_CollatorResolvedOptionsV1Ffi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

@@ -3,16 +3,15 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "crate"
-publish = false
+name = "unused"
 version = "0.0.0"
 
 [lib]
-crate-type = ["staticlib"]
+path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false, features = ["compiled_data", "icu_decimal"] }
-dlmalloc = { version = "0.2", features = ["global"] }
+icu_capi = { version = "1.4", default-features = false }
 
-[features]
-std = []
+[build-dependencies]
+# Required to bring icu_datagen into the crate graph
+icu_datagen = { version = "1.4", optional = true }

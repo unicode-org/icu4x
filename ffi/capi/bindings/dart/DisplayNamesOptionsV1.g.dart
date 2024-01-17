@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 final class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int style;
@@ -15,6 +14,7 @@ final class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
   external int languageDisplay;
 }
 
+/// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 final class DisplayNamesOptionsV1 {
   final _DisplayNamesOptionsV1Ffi _underlying;
 
