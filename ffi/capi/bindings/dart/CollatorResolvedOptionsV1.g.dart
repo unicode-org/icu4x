@@ -5,7 +5,7 @@
 
 part of 'lib.g.dart';
 
-final class _CollatorOptionsV1Ffi extends ffi.Struct {
+final class _CollatorResolvedOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int strength;
   @ffi.Int32()
@@ -22,15 +22,15 @@ final class _CollatorOptionsV1Ffi extends ffi.Struct {
   external int backwardSecondLevel;
 }
 
-/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
-final class CollatorOptionsV1 {
-  final _CollatorOptionsV1Ffi _underlying;
+/// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
+final class CollatorResolvedOptionsV1 {
+  final _CollatorResolvedOptionsV1Ffi _underlying;
 
-  CollatorOptionsV1._(this._underlying);
+  CollatorResolvedOptionsV1._(this._underlying);
 
-  factory CollatorOptionsV1() {
-    final pointer = ffi2.calloc<_CollatorOptionsV1Ffi>();
-    final result = CollatorOptionsV1._(pointer.ref);
+  factory CollatorResolvedOptionsV1() {
+    final pointer = ffi2.calloc<_CollatorResolvedOptionsV1Ffi>();
+    final result = CollatorResolvedOptionsV1._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
@@ -72,7 +72,7 @@ final class CollatorOptionsV1 {
 
   @override
   bool operator ==(Object other) =>
-      other is CollatorOptionsV1 &&
+      other is CollatorResolvedOptionsV1 &&
       other._underlying.strength == _underlying.strength &&
       other._underlying.alternateHandling == _underlying.alternateHandling &&
       other._underlying.caseFirst == _underlying.caseFirst &&

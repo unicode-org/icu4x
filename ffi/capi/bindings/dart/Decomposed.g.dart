@@ -5,11 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// The outcome of non-recursive canonical decomposition of a character.
-/// `second` will be NUL when the decomposition expands to a single character
-/// (which may or may not be the original one)
-///
-/// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class _DecomposedFfi extends ffi.Struct {
   @ffi.Uint32()
   external Rune first;
@@ -17,6 +12,11 @@ final class _DecomposedFfi extends ffi.Struct {
   external Rune second;
 }
 
+/// The outcome of non-recursive canonical decomposition of a character.
+/// `second` will be NUL when the decomposition expands to a single character
+/// (which may or may not be the original one)
+///
+/// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class Decomposed {
   final _DecomposedFfi _underlying;
 

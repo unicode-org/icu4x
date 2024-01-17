@@ -63,9 +63,9 @@ final class Bidi implements ffi.Finalizable {
   /// but is still safe.
   ///
   /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
-  ReorderedIndexMap reorderVisual(Uint8List levels) {
+  ReorderedIndexMap reorderVisual(core.List<int> levels) {
     final temp = ffi2.Arena();
-    final levelsView = levels;
+    final levelsView = levels.uint8View;
     final result = _ICU4XBidi_reorder_visual(_underlying, levelsView.pointer(temp), levelsView.length);
     temp.releaseAll();
     return ReorderedIndexMap._(result);

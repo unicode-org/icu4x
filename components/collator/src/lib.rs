@@ -294,6 +294,7 @@ pub use options::CaseLevel;
 pub use options::CollatorOptions;
 pub use options::MaxVariable;
 pub use options::Numeric;
+pub use options::ResolvedCollatorOptions;
 pub use options::Strength;
 
 #[doc(no_inline)]

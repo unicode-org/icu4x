@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 final class _WeekOfFfi extends ffi.Struct {
   @ffi.Uint16()
   external int week;
@@ -13,6 +12,7 @@ final class _WeekOfFfi extends ffi.Struct {
   external int unit;
 }
 
+/// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 final class WeekOf {
   final _WeekOfFfi _underlying;
 

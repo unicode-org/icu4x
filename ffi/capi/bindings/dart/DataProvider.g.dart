@@ -38,7 +38,7 @@ final class DataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DataProvider.fromByteSlice(Uint8List blob) {
+  factory DataProvider.fromByteSlice(ByteBuffer blob) {
     final temp = ffi2.Arena();
     final blobView = blob;
     final result = _ICU4XDataProvider_create_from_byte_slice(blobView.pointer(temp), blobView.length);
