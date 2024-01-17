@@ -268,6 +268,21 @@ pub enum BackwardSecondLevel {
 ///
 /// Examples for using the different options below can be found in the [crate-level docs](crate).
 ///
+/// ## ECMA-402 Sensitivity
+///
+/// ECMA-402 `sensitivity` maps to a combination of `Strength` and `CaseLevel` as follows:
+///
+/// <dl>
+/// <dt><code>sensitivity: "base"</code></dt>
+/// <dd><code>Strength::Primary</code></dd>
+/// <dt><code>sensitivity: "accent"</code></dt>
+/// <dd><code>Strength::Secondary</code></dd>
+/// <dt><code>sensitivity: "case"</code></dt>
+/// <dd><code>Strength::Primary</code> and <code>CaseLevel::On</code></dd>
+/// <dt><code>sensitivity: "variant"</code></dt>
+/// <dd><code>Strength::Tertiary</code></dd>
+/// </dl>
+///
 /// ## Strength
 ///
 /// This is the BCP47 key `ks`. The default is `Strength::Tertiary`.
@@ -282,7 +297,7 @@ pub enum BackwardSecondLevel {
 /// ## Case Level
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
-/// This is the BCP47 key `kc`. The default is `false` (off).
+/// This is the BCP47 key `kc`. The default is `CaseLevel::Off`.
 ///
 /// ## Case First
 ///
@@ -294,29 +309,44 @@ pub enum BackwardSecondLevel {
 /// ## Backward second level
 ///
 /// Compare the second level in backward order. This is the BCP47 key `kb`. `kb`
-/// is prohibited by ECMA 402. The default is `false` (off), except for Canadian
-/// French.
+/// is prohibited by ECMA-402. The default is `BackwardSecondLevel::Off`, except
+/// for Canadian French.
 ///
 /// ## Numeric
 ///
-/// This is the BCP47 key `kn`. When set to `true` (on), any sequence of decimal
-/// digits (General_Category = Nd) is sorted at a primary level according to the
-/// numeric value. The default is `false` (off).
+/// This is the BCP47 key `kn`. When set to `Numeric::On`, any sequence of decimal
+/// digits (General_Category = Nd) is sorted at the primary level according to the
+/// numeric value. The default is `Numeric::Off`.
 ///
 /// # Unsupported BCP47 options
 ///
 /// Reordering (BCP47 `kr`) currently cannot be set via the API and is implied
-/// by the locale of the collation. `kr` is prohibited by ECMA 402.
+/// by the locale of the collation. `kr` is prohibited by ECMA-402.
 ///
 /// Normalization is always enabled and cannot be turned off. Therefore, there
-/// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA 402.
+/// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA-402.
 ///
 /// Hiragana quaternary handling is part of the strength for the Japanese
 /// tailoring. The BCP47 key `kh` is unsupported. `kh` is deprecated and
-/// prohibited by ECMA 402.
+/// prohibited by ECMA-402.
 ///
 /// Variable top (BCP47 `vt`) is unsupported (use Max Variable instead). `vt`
-/// is deprecated and prohibited by ECMA 402.
+/// is deprecated and prohibited by ECMA-402.
+///
+/// ## ECMA-402 Usage
+///
+/// ECMA-402 `usage: "search"` is represented as `-u-co-search` as part of the
+/// locale in ICU4X. However, neither ECMA-402 nor ICU4X provides prefix matching
+/// or substring matching API surface. This makes the utility of search collations
+/// very narrow: With `-u-co-search`, `Strength::Primary`, and observing whether
+/// comparison output is `Ordering::Equal` (making no distinction between
+/// `Ordering::Less` and `Ordering::Greater`), it is possible to check if a set
+/// of human-readable strings contains a full-string fuzzy match of a user-entered
+/// string, where "fuzzy" means case-insensitive and accent-insentive for scripts
+/// that have such concepts and something roughly similar for other scripts.
+///
+/// Due to the very limited utility, ICU4X data does not include search collations
+/// by default.
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone)]
 pub struct CollatorOptions {
