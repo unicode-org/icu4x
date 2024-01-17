@@ -4,9 +4,14 @@
 
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1},
+    provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1, UnitsInfoV1Marker},
     ConversionError,
 };
+use icu_locid::locale;
+use icu_provider::DataError;
+use icu_provider::DataPayload;
+use icu_provider::DataProvider;
+use icu_provider::DataRequest;
 use litemap::LiteMap;
 use num::{rational::Ratio, BigInt, Zero};
 use zerotrie::ZeroTrieSimpleAscii;
@@ -50,27 +55,44 @@ pub struct Converter {
 
 /// A factory for creating a converter.
 /// Also, it can check the convertibility between two units.
-pub struct ConverterFactory<'data> {
+pub struct ConverterFactory {
     // TODO(#4522): Make the converter factory owns the data.
     /// Contains the necessary data for the conversion factory.
-    payload: &'data UnitsInfoV1<'data>,
-    payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    /// DataPayload<ErasedPluralRulesV1Marker>
+    data: DataPayload<UnitsInfoV1Marker>,
+    payload_store: ZeroTrieSimpleAscii<ZeroVec<'static, u8>>,
 }
 
-impl<'data> ConverterFactory<'data> {
+impl ConverterFactory {
     #[cfg(feature = "datagen")]
-    pub fn from_payload(
-        payload: &'data UnitsInfoV1<'data>,
-        payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
-    ) -> Self {
-        Self {
-            payload,
-            payload_store,
-        }
+    pub fn trey_new(
+        data: &(impl DataProvider<UnitsInfoV1Marker> + ?Sized),
+    ) -> Result<Self, DataError> {
+        let data = data
+            .load(DataRequest {
+                locale: &locale!("und").into(),
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+
+        let store: &UnitsInfoV1<'static> = data.get();
+        let store = store.units_conversion_trie.clone().take_store();
+        Ok(Self {
+            data,
+            payload_store: ZeroTrieSimpleAscii::from_store(store),
+        })
     }
 
-    pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(self.payload_store)
+    pub fn parser<'data>(&'data self) -> MeasureUnitParser<'data> {
+        // let store = &self.data.get().units_conversion_trie.clone().take_store();
+
+        // // .units_conversion_trie
+        // // .clone() // cheap since store is a borrowed ZeroVec
+        // // .take_store();
+
+        // let payload_store = ZeroTrieSimpleAscii::from_store(store.clone().into_owned());
+        MeasureUnitParser::from_payload(&self.payload_store)
     }
 
     // TODO(#4512): the need needs to be bikeshedded.
@@ -103,7 +125,8 @@ impl<'data> ConverterFactory<'data> {
         ) -> Result<(), ConversionError> {
             for item in units {
                 let items_from_item = factory
-                    .payload
+                    .data
+                    .get()
                     .convert_infos
                     .get(item.unit_id as usize)
                     .ok_or(ConversionError::DataNotFoundError)?;
@@ -200,7 +223,8 @@ impl<'data> ConverterFactory<'data> {
         conversion_rate: &mut Ratio<BigInt>,
     ) -> Result<(), ConversionError> {
         let conversion_info = self
-            .payload
+            .data
+            .get()
             .convert_infos
             .get(unit_item.unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
@@ -256,13 +280,15 @@ impl<'data> ConverterFactory<'data> {
         }
 
         let input_conversion_info = self
-            .payload
+            .data
+            .get()
             .convert_infos
             .get(input_unit.contained_units[0].unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
 
         let output_conversion_info = self
-            .payload
+            .data
+            .get()
             .convert_infos
             .get(output_unit.contained_units[0].unit_id as usize)
             .ok_or(ConversionError::DataNotFoundError)?;
