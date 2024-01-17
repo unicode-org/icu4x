@@ -261,7 +261,7 @@ pub enum BackwardSecondLevel {
 /// Options settable by the user of the API.
 ///
 /// With the exception of reordering (BCP47 `kr`), options that can by implied by locale are
-/// also settable via the API.
+/// also settable via [`CollatorOptions`].
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options).
 ///
