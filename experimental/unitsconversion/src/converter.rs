@@ -189,12 +189,11 @@ impl<'data> ConverterFactory<'data> {
         }
     }
 
-    fn add_term(
+    fn compute_conversion_term(
         &self,
         unit_item: &MeasureUnitItem,
         sign: i8,
-        conversion_rate: &mut Ratio<BigInt>,
-    ) -> Result<(), ConversionError> {
+    ) -> Result<Ratio<BigInt>, ConversionError> {
         let conversion_info = self
             .payload
             .convert_infos
@@ -210,10 +209,7 @@ impl<'data> ConverterFactory<'data> {
         Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
         // Apply power.
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
-
-        *conversion_rate *= conversion_info_factor;
-
-        Ok(())
+        Ok(conversion_info_factor)
     }
 
     fn extract_ratio_from_unaligned(
@@ -232,7 +228,7 @@ impl<'data> ConverterFactory<'data> {
         )
     }
 
-    fn get_offset(
+    fn compute_offset(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
@@ -298,7 +294,7 @@ impl<'data> ConverterFactory<'data> {
         let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
         let convertibility = self.extract_convertibility(input_unit, output_unit);
 
-        let calculation_sign = match convertibility {
+        let direction_sign = match convertibility {
             Convertibility::Convertible => -1,
             Convertibility::Reciprocal => 1,
             Convertibility::NotConvertible => {
@@ -307,20 +303,26 @@ impl<'data> ConverterFactory<'data> {
         };
 
         for input_item in input_unit.contained_units.iter() {
-            if Self::add_term(self, input_item, 1, &mut conversion_rate).is_err() {
-                debug_assert!(false, "Failed to add input_item");
-                return None;
+            match Self::compute_conversion_term(self, input_item, 1) {
+                Ok(term) => conversion_rate *= term,
+                Err(_) => {
+                    debug_assert!(false, "Failed to add input_item");
+                    return None;
+                }
             }
         }
 
         for output_item in output_unit.contained_units.iter() {
-            if Self::add_term(self, output_item, calculation_sign, &mut conversion_rate).is_err() {
-                debug_assert!(false, "Failed to add output_item");
-                return None;
+            match Self::compute_conversion_term(self, output_item, direction_sign) {
+                Ok(term) => conversion_rate *= term,
+                Err(_) => {
+                    debug_assert!(false, "Failed to add output_item");
+                    return None;
+                }
             }
         }
 
-        let offset = match Self::get_offset(self, input_unit, output_unit) {
+        let offset = match Self::compute_offset(self, input_unit, output_unit) {
             Ok(val) => val,
             Err(_) => {
                 debug_assert!(false, "Failed to get offset");
