@@ -45,6 +45,7 @@ pub struct Converter {
 
     /// Determines if the units are reciprocal or not.
     /// For example, `meter-per-second` and `second-per-meter` are reciprocal.
+    /// Real world case, `gallon-per-mile` and `100-kilometer-per-liter` which are reciprocal.
     reciprocal: bool,
 }
 
@@ -193,12 +194,8 @@ impl<'data> ConverterFactory<'data> {
         &self,
         unit_item: &MeasureUnitItem,
         sign: i8,
-    ) -> Result<Ratio<BigInt>, ConversionError> {
-        let conversion_info = self
-            .payload
-            .convert_infos
-            .get(unit_item.unit_id as usize)
-            .ok_or(ConversionError::DataNotFoundError)?;
+    ) -> Option<Ratio<BigInt>> {
+        let conversion_info = self.payload.convert_infos.get(unit_item.unit_id as usize)?;
 
         let mut conversion_info_factor = Self::extract_ratio_from_unaligned(
             &conversion_info.factor_sign,
@@ -209,7 +206,7 @@ impl<'data> ConverterFactory<'data> {
         Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
         // Apply power.
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
-        Ok(conversion_info_factor)
+        Some(conversion_info_factor)
     }
 
     fn extract_ratio_from_unaligned(
@@ -232,7 +229,7 @@ impl<'data> ConverterFactory<'data> {
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Result<Ratio<BigInt>, ConversionError> {
+    ) -> Option<Ratio<BigInt>> {
         // In order to have an offset, the input and output units should be simple.
         // This means, the input and output units should have only one unit item with power 1 and si prefix 0.
         // For example:
@@ -245,20 +242,18 @@ impl<'data> ConverterFactory<'data> {
             && input_unit.contained_units[0].si_prefix.power == 0
             && output_unit.contained_units[0].si_prefix.power == 0)
         {
-            return Ok(Ratio::<BigInt>::from_integer(0.into()));
+            return Some(Ratio::<BigInt>::from_integer(0.into()));
         }
 
         let input_conversion_info = self
             .payload
             .convert_infos
-            .get(input_unit.contained_units[0].unit_id as usize)
-            .ok_or(ConversionError::DataNotFoundError)?;
+            .get(input_unit.contained_units[0].unit_id as usize)?;
 
         let output_conversion_info = self
             .payload
             .convert_infos
-            .get(output_unit.contained_units[0].unit_id as usize)
-            .ok_or(ConversionError::DataNotFoundError)?;
+            .get(output_unit.contained_units[0].unit_id as usize)?;
 
         let input_offset = Self::extract_ratio_from_unaligned(
             &input_conversion_info.offset_sign,
@@ -273,7 +268,7 @@ impl<'data> ConverterFactory<'data> {
         );
 
         if input_offset.is_zero() && output_offset.is_zero() {
-            return Ok(Ratio::<BigInt>::from_integer(0.into()));
+            return Some(Ratio::<BigInt>::from_integer(0.into()));
         }
 
         let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
@@ -283,7 +278,7 @@ impl<'data> ConverterFactory<'data> {
             output_conversion_info.factor_num(),
         );
 
-        Ok((input_offset - output_offset) * output_conversion_rate_recip)
+        Some((input_offset - output_offset) * output_conversion_rate_recip)
     }
 
     /// Creates a converter for converting between two units in the form of CLDR identifiers.
@@ -304,28 +299,26 @@ impl<'data> ConverterFactory<'data> {
         };
 
         for input_item in input_unit.contained_units.iter() {
-            match Self::compute_conversion_term(self, input_item, 1) {
-                Ok(term) => conversion_rate *= term,
-                Err(_) => {
-                    debug_assert!(false, "Failed to add input_item");
-                    return None;
-                }
+            if let Some(term) = Self::compute_conversion_term(self, input_item, 1) {
+                conversion_rate *= term;
+            } else {
+                debug_assert!(false, "Failed to compute conversion term");
+                return None;
             }
         }
 
         for output_item in output_unit.contained_units.iter() {
-            match Self::compute_conversion_term(self, output_item, direction_sign) {
-                Ok(term) => conversion_rate *= term,
-                Err(_) => {
-                    debug_assert!(false, "Failed to add output_item");
-                    return None;
-                }
+            if let Some(term) = Self::compute_conversion_term(self, output_item, direction_sign) {
+                conversion_rate *= term;
+            } else {
+                debug_assert!(false, "Failed to compute conversion term");
+                return None;
             }
         }
 
         let offset = match Self::compute_offset(self, input_unit, output_unit) {
-            Ok(val) => val,
-            Err(_) => {
+            Some(val) => val,
+            None => {
                 debug_assert!(false, "Failed to get offset");
                 return None;
             }
