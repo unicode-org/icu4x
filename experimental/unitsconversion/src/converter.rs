@@ -189,10 +189,6 @@ impl<'data> ConverterFactory<'data> {
         }
     }
 
-    fn apply_power(power: i8, ratio: &mut Ratio<BigInt>) {
-        *ratio = ratio.pow(power as i32);
-    }
-
     fn add_term(
         &self,
         unit_item: &MeasureUnitItem,
@@ -212,7 +208,8 @@ impl<'data> ConverterFactory<'data> {
         );
 
         Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
-        Self::apply_power(unit_item.power * sign, &mut conversion_info_factor);
+        // Apply power.
+        conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
 
         *conversion_rate *= conversion_info_factor;
 
