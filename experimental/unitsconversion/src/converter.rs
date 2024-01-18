@@ -76,19 +76,19 @@ impl<'data> ConverterFactory<'data> {
     // TODO(#4512): the need needs to be bikeshedded.
     /// Extract the convertibility from the given units in the form of CLDR identifiers.
     fn extract_convertibility(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Convertibility {
-        /// A struct that contains the sums and subtractions of base unit powers.
+        /// A struct that contains the sum and difference of base unit powers.
         /// For example:
         ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
         ///     For the output unit `foot-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
-        ///     The subtractions are: meter: 1 - 1 = 0, second: -1 - (-1) = 0.
+        ///     The differences are: meter: 1 - 1 = 0, second: -1 - (-1) = 0.
         ///     The sums are: meter: 1 + 1 = 2, second: -1 + (-1) = -2.
         ///     If all the sums are zeros, then the units are reciprocal.
         ///     If all the subtractions are zeros, then the units are convertible.
         ///     This means the result for the example is convertible.
         #[derive(Debug)]
         struct DetermineConvertibility {
-            subtractions: i16,
-            sums: i16,
+            difference: i16,
+            sum: i16,
         }
 
         /// Inserting the units item into the map.
