@@ -65,6 +65,7 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 ///
 /// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
 #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
+#[allow(clippy::exhaustive_structs)] // unit struct
 pub struct Hebrew;
 
 /// The inner date type used for representing [`Date`]s of [`Hebrew`]. See [`Date`] and [`Hebrew`] for more details.
@@ -366,10 +367,10 @@ impl Date<Hebrew> {
     ///
     ///
     /// ```rust
-    /// use icu::calendar::hebrew::Hebrew;
+    /// use icu_calendar::Date;
     ///
     /// let date_hebrew =
-    ///     Date::try_new_hebrew_date(3425, 4, 25, hebrew)
+    ///     Date::try_new_hebrew_date(3425, 4, 25)
     ///         .expect("Failed to initialize Hebrew Date instance.");
     ///
     /// assert_eq!(date_hebrew.year().number, 3425);
