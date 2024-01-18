@@ -195,7 +195,9 @@ impl<'data> ConverterFactory<'data> {
         unit_item: &MeasureUnitItem,
         sign: i8,
     ) -> Option<Ratio<BigInt>> {
-        let conversion_info = self.payload.convert_infos.get(unit_item.unit_id as usize)?;
+        let conversion_info = self.payload.convert_infos.get(unit_item.unit_id as usize);
+        debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
+        let conversion_info = conversion_info?;
 
         let mut conversion_info_factor = Self::extract_ratio_from_unaligned(
             &conversion_info.factor_sign,
@@ -248,12 +250,22 @@ impl<'data> ConverterFactory<'data> {
         let input_conversion_info = self
             .payload
             .convert_infos
-            .get(input_unit.contained_units[0].unit_id as usize)?;
+            .get(input_unit.contained_units[0].unit_id as usize);
+        debug_assert!(
+            input_conversion_info.is_some(),
+            "Failed to get input conversion info"
+        );
+        let input_conversion_info = input_conversion_info?;
 
         let output_conversion_info = self
             .payload
             .convert_infos
-            .get(output_unit.contained_units[0].unit_id as usize)?;
+            .get(output_unit.contained_units[0].unit_id as usize);
+        debug_assert!(
+            output_conversion_info.is_some(),
+            "Failed to get output conversion info"
+        );
+        let output_conversion_info = output_conversion_info?;
 
         let input_offset = Self::extract_ratio_from_unaligned(
             &input_conversion_info.offset_sign,
@@ -299,30 +311,20 @@ impl<'data> ConverterFactory<'data> {
         };
 
         for input_item in input_unit.contained_units.iter() {
-            if let Some(term) = Self::compute_conversion_term(self, input_item, 1) {
-                conversion_rate *= term;
-            } else {
-                debug_assert!(false, "Failed to compute conversion term");
-                return None;
+            match Self::compute_conversion_term(self, input_item, 1) {
+                Some(term) => conversion_rate *= term,
+                None => return None,
             }
         }
 
         for output_item in output_unit.contained_units.iter() {
-            if let Some(term) = Self::compute_conversion_term(self, output_item, direction_sign) {
-                conversion_rate *= term;
-            } else {
-                debug_assert!(false, "Failed to compute conversion term");
-                return None;
+            match Self::compute_conversion_term(self, output_item, direction_sign) {
+                Some(term) => conversion_rate *= term,
+                None => return None,
             }
         }
 
-        let offset = match Self::compute_offset(self, input_unit, output_unit) {
-            Some(val) => val,
-            None => {
-                debug_assert!(false, "Failed to get offset");
-                return None;
-            }
-        };
+        let offset = Self::compute_offset(self, input_unit, output_unit)?;
 
         Some(Converter {
             conversion_rate,
