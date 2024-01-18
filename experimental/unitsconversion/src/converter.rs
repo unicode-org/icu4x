@@ -129,14 +129,14 @@ impl<'data> ConverterFactory<'data> {
                 let item_power = (item.power as i16) * original_power;
                 let signed_item_power = item_power * sign;
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.subtractions += signed_item_power;
-                    determine_convertibility.sums += item_power;
+                    determine_convertibility.difference += signed_item_power;
+                    determine_convertibility.sum += item_power;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
-                            subtractions: (signed_item_power),
-                            sums: (item_power),
+                            difference: (signed_item_power),
+                            sum: (item_power),
                         },
                     );
                 }
@@ -163,8 +163,8 @@ impl<'data> ConverterFactory<'data> {
             (true, true),
             |(sums, subs), (_, determine_convertibility)| {
                 (
-                    sums && determine_convertibility.sums == 0,
-                    subs && determine_convertibility.subtractions == 0,
+                    sums && determine_convertibility.sum == 0,
+                    subs && determine_convertibility.difference == 0,
                 )
             },
         );
