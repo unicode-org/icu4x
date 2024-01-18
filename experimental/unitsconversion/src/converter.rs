@@ -276,13 +276,14 @@ impl<'data> ConverterFactory<'data> {
             return Ok(Ratio::<BigInt>::from_integer(0.into()));
         }
 
-        let output_conversion_rate = Self::extract_ratio_from_unaligned(
+        let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
             &output_conversion_info.factor_sign,
-            output_conversion_info.factor_num(),
+            // Because we are computing the reciprocal, the numerator and denominator are swapped.
             output_conversion_info.factor_den(),
+            output_conversion_info.factor_num(),
         );
 
-        Ok((input_offset - output_offset) * output_conversion_rate.recip())
+        Ok((input_offset - output_offset) * output_conversion_rate_recip)
     }
 
     /// Creates a converter for converting between two units in the form of CLDR identifiers.
