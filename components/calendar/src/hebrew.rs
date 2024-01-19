@@ -80,7 +80,7 @@ impl Hebrew {
 
     /// Construct a new [`Hebrew`]
     ///
-    /// This is deprecated since we no longer
+    /// This is deprecated since the new implementation does not need precomputed data.
     #[deprecated(since = "1.5.0", note = "Use Hebrew::new()")]
     pub fn new_always_calculating() -> Self {
         Hebrew
