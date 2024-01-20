@@ -493,7 +493,7 @@ fn make_explicit_implicit_sets(
     let mut explicit: HashSet<DataLocale> = Default::default();
     for explicit_langid in explicit_langids.iter() {
         explicit.insert(explicit_langid.into());
-        if let Some(locales) = supported_map.get(&explicit_langid) {
+        if let Some(locales) = supported_map.get(explicit_langid) {
             explicit.extend(locales.iter().cloned()); // adds ar-EG-u-nu-latn
         }
         if explicit_langid == &LanguageIdentifier::UND {
