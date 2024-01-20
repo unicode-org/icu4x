@@ -552,26 +552,37 @@ fn select_locales_for_key(
         // one of the explicit locales. This ensures extensions are included. In addition, any
         // explicit locales are added to the list, even if they themselves don't contain data;
         // fallback should be performed upon exporting.
-        (Some(explicit), FallbackMode::Preresolved) => supported_map
+        (Some(explicit_langids), FallbackMode::Preresolved) => supported_map
             .into_values()
             .flatten()
-            .chain(explicit.iter().map(|langid| langid.into()))
-            .filter(|locale| explicit.contains(&locale.get_langid()))
+            .chain(explicit_langids.iter().map(|langid| langid.into()))
+            .filter(|locale| explicit_langids.contains(&locale.get_langid()))
             .collect(),
         // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-        (Some(explicit), _) => {
-            let include_und = explicit.contains(&LanguageIdentifier::UND);
-            let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
+        (Some(explicit_langids), _) => {
+            let include_und = explicit_langids.contains(&LanguageIdentifier::UND);
             let mut implicit = HashSet::new();
             // TODO: Make including the default locale configurable
             implicit.insert(DataLocale::default());
             let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
             let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
-            for locale in explicit.iter() {
-                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+            let mut explicit: HashSet<DataLocale> = Default::default();
+            for explicit_langid in explicit_langids.iter() {
+                explicit.insert(explicit_langid.into());
+                let mut iter = fallbacker_with_config.fallback_for(explicit_langid.into());
                 while !iter.get().is_und() {
                     implicit.insert(iter.get().clone());
+                    // Inherit aux keys and extension keywords from parent locales
+                    let iter_langid = iter.get().get_langid();
+                    if let Some(locales) = supported_map.get(&iter_langid) {
+                        implicit.extend(locales.iter().cloned()); // adds ar-u-nu-latn
+                        for locale in locales {
+                            let mut morphed_locale = locale.clone();
+                            morphed_locale.set_langid(explicit_langid.clone());
+                            explicit.insert(morphed_locale); // adds ar-SA-u-nu-latn
+                        }
+                    }
                     iter.step();
                 }
             }

@@ -290,6 +290,7 @@ fn explicit_hybrid() {
             .with_locales([
                 langid!("arc"), // Aramaic, not in supported list
                 langid!("ar-EG"),
+                langid!("ar-SA"),
                 langid!("en-GB"),
                 langid!("es"),
                 langid!("sr-ME"),
@@ -323,12 +324,14 @@ fn explicit_hybrid() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
         "ar-EG-u-nu-latn", // descendant of ar-EG
-        // "ar-u-nu-latn", // ??? should this be included?
+        "ar-SA",           // explicit locale, inheriting from ar
+        "ar-SA-u-nu-latn", // extensions should be included (#4533)
+        "ar-u-nu-latn",    // extensions should be included (#4533)
         "arc",    // Aramaic, inheriting from und
         "en",     // ancestor of en-GB
         "en-001", // ancestor of en-GB
@@ -356,6 +359,7 @@ fn explicit_runtime() {
             .with_locales([
                 langid!("arc"), // Aramaic, not in supported list
                 langid!("ar-EG"),
+                langid!("ar-SA"),
                 langid!("en-GB"),
                 langid!("es"),
                 langid!("sr-ME"),
@@ -389,12 +393,15 @@ fn explicit_runtime() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
         // "ar-EG", (same as 'ar')
         "ar-EG-u-nu-latn",
+        // "ar-SA", (same as 'ar')
+        // "ar-SA-u-nu-latn", (same as 'ar-u-nu-latn')
+        "ar-u-nu-latn",
         // "arc", (same as 'und')
         // "en", (same as 'und')
         // "en-001", (same as 'und')
@@ -420,6 +427,7 @@ fn explicit_preresolved() {
             .with_locales([
                 langid!("arc"), // Aramaic, not in supported list
                 langid!("ar-EG"),
+                langid!("ar-SA"),
                 langid!("en-GB"),
                 langid!("es"),
                 langid!("sr-ME"),
@@ -453,10 +461,12 @@ fn explicit_preresolved() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
+        "ar-SA",
+        // "ar-SA-u-nu-latn", // FIXME
         "arc",
         "en-GB",
         "es",
