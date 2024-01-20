@@ -332,10 +332,10 @@ fn explicit_hybrid() {
         "ar-SA",           // explicit locale, inheriting from ar
         "ar-SA-u-nu-latn", // extensions should be included (#4533)
         "ar-u-nu-latn",    // extensions should be included (#4533)
-        "arc",    // Aramaic, inheriting from und
-        "en",     // ancestor of en-GB
-        "en-001", // ancestor of en-GB
-        "en-GB",  // explicit locale not in supported locales
+        "arc",             // Aramaic, inheriting from und
+        "en",              // ancestor of en-GB
+        "en-001",          // ancestor of en-GB
+        "en-GB",           // explicit locale not in supported locales
         // "en-ZA", // not reachable
         "es",         // explicit and supported
         "es-AR",      // descendant of es
@@ -466,7 +466,7 @@ fn explicit_preresolved() {
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
         "ar-SA",
-        // "ar-SA-u-nu-latn", // FIXME
+        "ar-SA-u-nu-latn", // extensions included even in preresolved mode
         "arc",
         "en-GB",
         "es",
