@@ -482,28 +482,43 @@ fn select_locales_for_key(
         impl FnOnce() -> Result<LocaleFallbacker, DataError>,
     >,
 ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-    let mut result = provider
-        .supported_locales_for_key(key)
-        .map_err(|e| e.with_key(key))?
-        .into_iter()
-        .collect::<HashSet<DataLocale>>();
+    // A map from langid to data locales. Keys that have aux keys or extension keywords
+    // may have multiple data locales per langid.
+    let mut supported_map: HashMap<LanguageIdentifier, HashSet<DataLocale>> = Default::default();
+    for locale in provider.supported_locales_for_key(key).map_err(|e| e.with_key(key))? {
+        use std::collections::hash_map::Entry;
+        match supported_map.entry(locale.get_langid()) {
+            Entry::Occupied(mut entry) => {
+                entry.get_mut().insert(locale)
+            }
+            Entry::Vacant(entry) => {
+                entry.insert(Default::default()).insert(locale)
+            }
+        };
+    }
 
     if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
         || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
     {
-        result.retain(|locale| {
-            let model = crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
-            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let model = crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
+                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+            });
+            !locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(result);
+        return Ok(supported_map.into_values().flatten().collect());
     } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
-        result.retain(|locale| {
-            let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
-            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
+                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+            });
+            !locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(result);
+        return Ok(supported_map.into_values().flatten().collect());
     } else if key == icu_collator::provider::CollationDataV1Marker::KEY
         || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
         || key == icu_collator::provider::CollationJamoV1Marker::KEY
@@ -511,31 +526,35 @@ fn select_locales_for_key(
         || key == icu_collator::provider::CollationReorderingV1Marker::KEY
         || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
     {
-        result.retain(|locale| {
-            let Some(collation) = locale
-                .get_unicode_ext(&key!("co"))
-                .and_then(|co| co.as_single_subtag().copied())
-            else {
-                return true;
-            };
-            additional_collations.contains(collation.as_str())
-                || if collation.starts_with("search") {
-                    additional_collations.contains("search*")
-                } else {
-                    !["big5han", "gb2312"].contains(&collation.as_str())
-                }
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let Some(collation) = locale
+                    .get_unicode_ext(&key!("co"))
+                    .and_then(|co| co.as_single_subtag().copied())
+                else {
+                    return true;
+                };
+                additional_collations.contains(collation.as_str())
+                    || if collation.starts_with("search") {
+                        additional_collations.contains("search*")
+                    } else {
+                        !["big5han", "gb2312"].contains(&collation.as_str())
+                    }
+            });
+            !locales.is_empty()
         });
     }
 
-    result = match (locales, fallback) {
+    let result = match (locales, fallback) {
         // Case 1: `None` simply exports all supported locales for this key.
-        (None, _) => result,
+        (None, _) => supported_map.into_values().flatten().collect(),
         // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
         // one of the explicit locales. This ensures extensions are included. In addition, any
         // explicit locales are added to the list, even if they themselves don't contain data;
         // fallback should be performed upon exporting.
-        (Some(explicit), FallbackMode::Preresolved) => result
-            .into_iter()
+        (Some(explicit), FallbackMode::Preresolved) => supported_map
+            .into_values()
+            .flatten()
             .chain(explicit.iter().map(|langid| langid.into()))
             .filter(|locale| explicit.contains(&locale.get_langid()))
             .collect(),
@@ -557,8 +576,9 @@ fn select_locales_for_key(
                 }
             }
 
-            result
-                .into_iter()
+            supported_map
+                .into_values()
+                .flatten()
                 .chain(explicit.iter().cloned())
                 .filter(|locale_orig| {
                     let mut locale = locale_orig.clone();
