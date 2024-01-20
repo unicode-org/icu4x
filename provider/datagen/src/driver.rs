@@ -473,6 +473,10 @@ struct ExplicitImplicitLocaleSets {
     implicit: HashSet<DataLocale>,
 }
 
+/// Resolves the set of explicit langids and the supported locales into two sets of locales:
+///
+/// - `explicit` contains the explicit langids but with aux keys and extension keywords included
+/// - `implcit` contains any locale reachable by fallback from an `explicit` locale
 fn make_explicit_implicit_sets(
     key: DataKey,
     explicit_langids: &HashSet<LanguageIdentifier>,
