@@ -4,7 +4,7 @@
 
 use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::ZeroVec;
+use zerovec::{ZeroSlice, ZeroVec};
 
 use crate::{
     power::get_power,
@@ -17,13 +17,14 @@ use crate::{
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
     /// Contains the payload.
-    payload: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    payload: &'data ZeroTrieSimpleAscii<&'data[u8]>,
 }
 
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
+    // TODO: make this function only visible to the ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>) -> Self {
+    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<&[u8]>) -> Self {
         Self { payload }
     }
 

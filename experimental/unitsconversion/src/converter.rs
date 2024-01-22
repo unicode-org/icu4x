@@ -60,7 +60,7 @@ pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
     /// DataPayload<ErasedPluralRulesV1Marker>
     data: DataPayload<UnitsInfoV1Marker>,
-    payload_store: ZeroTrieSimpleAscii<ZeroVec<'static, u8>>,
+    // payload_store: ZeroTrieSimpleAscii<ZeroVec<'static, u8>>,
 }
 
 impl ConverterFactory {
@@ -76,23 +76,22 @@ impl ConverterFactory {
             .take_payload()?
             .cast();
 
-        let store: &UnitsInfoV1<'static> = data.get();
-        let store = store.units_conversion_trie.clone().take_store();
-        Ok(Self {
-            data,
-            payload_store: ZeroTrieSimpleAscii::from_store(store),
-        })
+        // let store: &UnitsInfoV1<'static> = data.get();
+        // let store = store.units_conversion_trie.clone().take_store();
+        Ok(Self { data })
     }
 
     pub fn parser<'data>(&'data self) -> MeasureUnitParser<'data> {
-        // let store = &self.data.get().units_conversion_trie.clone().take_store();
+        let store = self
+            .data
+            .get()
+            .units_conversion_trie
+            .clone() // cheap since store is a borrowed ZeroVec
+            .take_store()
+            .as_ule_slice();
 
-        // // .units_conversion_trie
-        // // .clone() // cheap since store is a borrowed ZeroVec
-        // // .take_store();
-
-        // let payload_store = ZeroTrieSimpleAscii::from_store(store.clone().into_owned());
-        MeasureUnitParser::from_payload(&self.payload_store)
+        let payload_store = ZeroTrieSimpleAscii::from_store(store);
+        MeasureUnitParser::from_payload(&payload_store)
     }
 
     // TODO(#4512): the need needs to be bikeshedded.
