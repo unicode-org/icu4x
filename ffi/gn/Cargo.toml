@@ -15,14 +15,14 @@ icu = { version = "1.0", path = "../../components/icu", default-features = false
 icu_provider = { version = "1.0", path = "../../provider/core" }
 
 # TODO: Determine the correct rustflags for memchr
-[gn.package.memchr."2.5.0"]
+[gn.package.memchr."2.6.3"]
 rustflags = []
 
-[gn.package.proc-macro2."1.0.63"]
+[gn.package.proc-macro2."1.0.75"]
 rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
 
-[gn.package.quote."1.0.26"]
-rustflags = []
+# [gn.package.quote."1.0.35"]
+# rustflags = []
 
 [gn.package.serde."1.0.160"]
 rustflags = []
@@ -30,8 +30,8 @@ rustflags = []
 [gn.package.serde_derive."1.0.160"]
 rustflags = []
 
-[gn.package.libm."0.2.6"]
+[gn.package.libm."0.2.7"]
 
-# Build cargo-gnaw with the checked-in lockfile
+# Build cargo-gnaw with its own dependency resolution
 [workspace]
-members = ["third_party_tools/fuchsia/tools/cargo-gnaw"]
+exclude = ["third_party_tools/fuchsia/tools/cargo-gnaw"]
