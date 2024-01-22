@@ -41,7 +41,7 @@ else
 end
 
 # Install GNaw locally in the bin directory (alongside GN)
-exec --fail-on-error cargo install --path fuchsia/tools/cargo-gnaw --root . --offline
+exec --fail-on-error cargo install --path fuchsia/tools/cargo-gnaw --root .
 
 # Ensure everything works
 exec --fail-on-error ./bin/gn --version
