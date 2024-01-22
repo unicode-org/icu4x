@@ -41,11 +41,7 @@ else
 end
 
 # Install GNaw locally in the bin directory (alongside GN)
-# Since the parent directory is vendored, we have no choice but to vendor here, too
-mkdir .cargo
-writefile .cargo/config "source = { crates-io.replace-with = 'vendored-sources', vendored-sources.directory = 'vendor' }"
-exec --fail-on-error cargo +stable vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
-exec --fail-on-error cargo +stable install --path fuchsia/tools/cargo-gnaw --root . --offline
+exec --fail-on-error cargo install --path fuchsia/tools/cargo-gnaw --root .
 
 # Ensure everything works
 exec --fail-on-error ./bin/gn --version
@@ -64,6 +60,17 @@ exit_on_error true
 cd ffi/gn
 
 rm -rf vendor
+rm -f .cargo/config
+rm -f Cargo.lock
+
+exec --fail-on-error cargo generate-lockfile
+
+# These versions should match what is in icu_capi_gn Cargo.toml
+exec --fail-on-error cargo update proc-macro2 --precise 1.0.75
+exec --fail-on-error cargo update serde --precise 1.0.160
+exec --fail-on-error cargo update serde_derive --precise 1.0.160
+exec --fail-on-error cargo update libm --precise 0.2.7
+
 output = exec --fail-on-error cargo vendor
 output_trimmed = trim_start ${output.stdout} # Needed since there are whitespace differences between cargo versions
                                              # Probably can be removed when we update our CI stable
@@ -115,6 +122,7 @@ description = "Build the GN version of ICU4X for the host platform"
 category = "ICU4X Development"
 dependencies = [
     "gn-vendor",
+    "gn-gen",
     "install-nightly",
 ]
 script_runner = "@duckscript"
@@ -135,6 +143,7 @@ description = "Build the GN version of ICU4X for wasm32-wasi"
 category = "ICU4X Development"
 dependencies = [
     "gn-vendor",
+    "gn-gen",
     "install-nightly",
 ]
 script_runner = "@duckscript"
