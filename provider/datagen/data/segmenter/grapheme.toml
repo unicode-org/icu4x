@@ -50,14 +50,43 @@ name = "LVT"
 name = "Extended_Pictographic"
 
 [[tables]]
+name = "InCBLinker"
+
+[[tables]]
+name = "InCBConsonant"
+
+[[tables]]
+name = "InCBExtend"
+
+[[tables]]
 name = "Extended_Pictographic_Extend"
 left = "Extended_Pictographic"
 right = "Extend"
 
 [[tables]]
 name = "Extended_Pictographic_Extend"
+left = "Extended_Pictographic"
+right = "InCBLinker"
+
+[[tables]]
+name = "Extended_Pictographic_Extend"
+left = "Extended_Pictographic"
+right = "InCBExtend"
+
+[[tables]]
+name = "Extended_Pictographic_Extend"
 left = "Extended_Pictographic_Extend"
 right = "Extend"
+
+[[tables]]
+name = "Extended_Pictographic_Extend"
+left = "Extended_Pictographic_Extend"
+right = "InCBLinker"
+
+[[tables]]
+name = "Extended_Pictographic_Extend"
+left = "Extended_Pictographic_Extend"
+right = "InCBExtend"
 
 [[tables]]
 name = "Extended_Pictographic_Extend_ZWJ"
@@ -73,6 +102,78 @@ right = "ZWJ"
 name = "RI_RI"
 left = "Regional_Indicator"
 right = "Regional_Indicator"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBExtend"
+left = "InCBConsonant"
+right = "InCBExtend"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBExtend"
+left = "InCBConsonant"
+right = "ZWJ"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker"
+left = "InCBConsonant"
+right = "InCBLinker"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBExtend"
+left = "InCBConsonant_InCBExtend"
+right = "InCBExtend"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBExtend"
+left = "InCBConsonant_InCBExtend"
+right = "ZWJ"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker"
+left = "InCBConsonant_InCBExtend"
+right = "InCBLinker"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker"
+left = "InCBConsonant_InCBLinker"
+right = "InCBLinker"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker_InCBExtend"
+left = "InCBConsonant_InCBLinker"
+right = "InCBExtend"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker_InCBExtend"
+left = "InCBConsonant_InCBLinker"
+right = "ZWJ"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker_InCBExtend"
+left = "InCBConsonant_InCBLinker_InCBExtend"
+right = "InCBExtend"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker_InCBExtend"
+left = "InCBConsonant_InCBLinker_InCBExtend"
+right = "ZWJ"
+
+[[tables]]
+# GB9c
+name = "InCBConsonant_InCBLinker_InCBExtend"
+left = "InCBConsonant_InCBLinker_InCBExtend"
+right = "InCBLinker"
 
 [[rules]]
 # GB1
@@ -91,7 +192,10 @@ left = [
   "Unknown",
   "RI_RI",
   "Extended_Pictographic_Extend",
-  "Extended_Pictographic_Extend_ZWJ"
+  "Extended_Pictographic_Extend_ZWJ",
+  "InCBConsonant_InCBExtend",
+  "InCBConsonant_InCBLinker",
+  "InCBConsonant_InCBLinker_InCBExtend"
 ]
 right = [ "eot" ]
 break_state = true
@@ -147,9 +251,21 @@ left = [
   "Extended_Pictographic",
   "ZWJ",
   "Extended_Pictographic_Extend_ZWJ",
-  "RI_RI"
+  "RI_RI",
+  "InCBExtend",
+  "InCBLinker"
 ]
-right = [ "Extend", "ZWJ" ]
+right = [ "Extend", "ZWJ", "InCBExtend", "InCBLinker" ]
+break_state = false
+
+[[rules]]
+# GB9
+left = [
+  "InCBConsonant",
+  "InCBConsonant_InCBExtend",
+  "InCBConsonant_InCBLinker_InCBExtend"
+]
+right = [ "Extend" ]
 break_state = false
 
 [[rules]]
@@ -168,7 +284,12 @@ left = [
   "ZWJ",
   "Regional_Indicator",
   "Extended_Pictographic_Extend_ZWJ",
-  "Extended_Pictographic_Extend"
+  "Extended_Pictographic_Extend",
+  "InCBConsonant",
+  "InCBConsonant_InCBExtend",
+  "InCBConsonant_InCBLinker_InCBExtend",
+  "InCBLinker",
+  "InCBExtend"
 ]
 right = [ "SpacingMark" ]
 break_state = false
@@ -187,8 +308,20 @@ right = [
   "LV",
   "LVT",
   "Extended_Pictographic",
-  "ZWJ"
+  "ZWJ",
+  "InCBConsonant",
+  "InCBLinker",
+  "InCBExtend"
 ]
+break_state = false
+
+[[rules]]
+# GB9c
+left = [
+  "InCBConsonant_InCBLinker",
+  "InCBConsonant_InCBLinker_InCBExtend"
+]
+right = ["InCBConsonant"]
 break_state = false
 
 [[rules]]
@@ -219,7 +352,31 @@ break_state = true
 # GB999
 left = [
   "Extended_Pictographic_Extend",
-  "Extended_Pictographic_Extend_ZWJ"
+  "Extended_Pictographic_Extend_ZWJ",
+  "InCBConsonant_InCBExtend",
+]
+right = [
+  "Control",
+  "CR",
+  "LF",
+  "L",
+  "V",
+  "T",
+  "LV",
+  "LVT",
+  "Prepend",
+  "Regional_Indicator",
+  "Extended_Pictographic",
+  "InCBConsonant",
+  "Unknown"
+]
+break_state = true
+
+[[rules]]
+# GB999
+left = [
+  "InCBConsonant_InCBLinker",
+  "InCBConsonant_InCBLinker_InCBExtend"
 ]
 right = [
   "Control",

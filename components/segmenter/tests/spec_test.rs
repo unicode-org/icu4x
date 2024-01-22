@@ -206,9 +206,8 @@ fn run_word_break_test() {
     }
 }
 
-#[test]
-fn run_grapheme_break_test() {
-    let test_iter = TestContentIterator::new(include_str!("testdata/GraphemeBreakTest.txt"));
+fn grapheme_break_test(file: &'static str) {
+    let test_iter = TestContentIterator::new(file);
     let segmenter = GraphemeClusterSegmenter::new();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -235,6 +234,16 @@ fn run_grapheme_break_test() {
             );
         }
     }
+}
+
+#[test]
+fn run_grapheme_break_test() {
+    grapheme_break_test(include_str!("testdata/GraphemeBreakTest.txt"));
+}
+
+#[test]
+fn run_grapheme_break_extra_test() {
+    grapheme_break_test(include_str!("testdata/GraphemeBreakExtraTest.txt"));
 }
 
 fn sentence_break_test(file: &'static str) {
