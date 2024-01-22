@@ -11,8 +11,8 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-mkdir ffi/gn/third_party_tools
-cd ffi/gn/third_party_tools
+mkdir docs/tutorials/gn/third_party_tools
+cd docs/tutorials/gn/third_party_tools
 
 # depot_tools contains the following things we need:
 # 1. A cross-platform ninja wrapper script
@@ -57,7 +57,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd ffi/gn
+cd docs/tutorials/gn
 
 rm -rf vendor
 rm -f .cargo/config
@@ -91,14 +91,14 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-third_party_tools = is_path_exists ffi/gn/third_party_tools
+third_party_tools = is_path_exists docs/tutorials/gn/third_party_tools
 assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
 
 icu4x_root = pwd
 
-cd ffi/gn
+cd docs/tutorials/gn
 
-exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${icu4x_root}/ffi/gn/Cargo.toml" --project-root ${icu4x_root} --output ${icu4x_root}/ffi/gn/icu4x/BUILD.gn --skip-root --gn-bin ${icu4x_root}/ffi/gn/third_party_tools/bin/gn
+exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${icu4x_root}/docs/tutorials/gn/Cargo.toml" --project-root ${icu4x_root} --output ${icu4x_root}/docs/tutorials/gn/icu4x/BUILD.gn --skip-root --gn-bin ${icu4x_root}/docs/tutorials/gn/third_party_tools/bin/gn
 exec --fail-on-error cargo rdme --force
 '''
 
@@ -111,7 +111,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/gn
+code = exec --get-exit-code git diff --exit-code -- docs/tutorials/gn
 if ${code}
     trigger_error "GN rules need to be regenerated. Please run `cargo make gn-install`, then `cargo make gn-gen`, and commit."
 end
@@ -129,12 +129,12 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-third_party_tools = is_path_exists ffi/gn/third_party_tools
+third_party_tools = is_path_exists docs/tutorials/gn/third_party_tools
 assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
 
-cd ffi/gn
+cd docs/tutorials/gn
 
-exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. out/host
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../../.. out/host
 exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/host
 '''
 
@@ -150,14 +150,14 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-third_party_tools = is_path_exists ffi/gn/third_party_tools
+third_party_tools = is_path_exists docs/tutorials/gn/third_party_tools
 assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
 
-cd ffi/gn
+cd docs/tutorials/gn
 
 exec --fail-on-error rustup target add wasm32-wasi --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 
-exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=target_os="wasi" out/wasi
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../../.. --args=target_os="wasi" out/wasi
 exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/wasi
 '''
 
@@ -173,7 +173,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/gn
-exec --fail-on-error ./out/host/obj/ffi/gn/hello_world/print_hello
-exec --fail-on-error wasmer run ./out/wasi/obj/ffi/gn/hello_world/print_hello
+cd docs/tutorials/gn
+exec --fail-on-error ./out/host/obj/docs/tutorials/gn/hello_world/print_hello
+exec --fail-on-error wasmer run ./out/wasi/obj/docs/tutorials/gn/hello_world/print_hello
 '''

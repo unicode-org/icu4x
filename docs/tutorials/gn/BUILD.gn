@@ -4,7 +4,7 @@
 
 group("default") {
   deps = [
-    "//ffi/gn/hello_world:print_hello",
-    "//ffi/gn/icu4x:icu_capi"
+    "//docs/tutorials/gn/hello_world:print_hello",
+    "//docs/tutorials/gn/icu4x:icu_capi"
   ]
 }
