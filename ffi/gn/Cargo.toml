@@ -14,15 +14,8 @@ icu_capi = { version = "1.0", path = "../../ffi/capi", default-features = false,
 icu = { version = "1.0", path = "../../components/icu", default-features = false }
 icu_provider = { version = "1.0", path = "../../provider/core" }
 
-# TODO: Determine the correct rustflags for memchr
-[gn.package.memchr."2.6.3"]
-rustflags = []
-
 [gn.package.proc-macro2."1.0.75"]
 rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
-
-# [gn.package.quote."1.0.35"]
-# rustflags = []
 
 [gn.package.serde."1.0.160"]
 rustflags = []

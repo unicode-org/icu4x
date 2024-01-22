@@ -66,9 +66,7 @@ rm -f Cargo.lock
 exec --fail-on-error cargo generate-lockfile
 
 # These versions should match what is in icu_capi_gn Cargo.toml
-exec --fail-on-error cargo update memchr --precise 2.6.3
 exec --fail-on-error cargo update proc-macro2 --precise 1.0.75
-exec --fail-on-error cargo update quote --precise 1.0.35
 exec --fail-on-error cargo update serde --precise 1.0.160
 exec --fail-on-error cargo update serde_derive --precise 1.0.160
 exec --fail-on-error cargo update libm --precise 0.2.7
