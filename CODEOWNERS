@@ -11,7 +11,7 @@ components/calendar/              @Manishearth @sffc
 components/casemap/               @Manishearth
 components/collator/              @hsivonen @echeran
 components/collections/           @echeran
-components/datetime/              @zbraniecki @gregtatum @nordzilla
+components/datetime/              @zbraniecki @nordzilla
 components/decimal/               @sffc
 components/list/                  @robertbastian
 components/locid/                 @zbraniecki @nciric
@@ -20,6 +20,7 @@ components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/timezone/              @nordzilla
+docs/tutorials/gn/                @sffc
 experimental/bies/                @sffc
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
@@ -27,15 +28,12 @@ experimental/ecma402/             @filmil
 experimental/harfbuzz/            @hsivonen
 experimental/relativetime/        @pdogr
 ffi/capi/                         @Manishearth
-ffi/gn/                           @sffc
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/datagen/                 @sffc @robertbastian @Manishearth
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
 tools/benchmark/binsize/          @gnrunge
-tools/benchmark/macros/           @gregtatum
-tools/benchmark/memory/           @gregtatum
 tools/depcheck/                   @Manishearth
 tools/depcheck/src/allowlist.rs   @unicode-org/icu4x-owners
 tools/make/                       @Manishearth @sffc

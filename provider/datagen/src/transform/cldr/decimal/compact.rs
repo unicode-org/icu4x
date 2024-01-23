@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_compactdecimal::provider::*;
 use icu_locid::extensions::unicode::key;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 
 impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
@@ -105,15 +106,17 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
     }
 }
 
-impl IterableDataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales()
+impl IterableDataProviderInternal<ShortCompactDecimalFormatDataV1Marker>
+    for crate::DatagenProvider
+{
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        self.supported_locales_for_numbers()
     }
 }
 
-impl IterableDataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales()
+impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        self.supported_locales_for_numbers()
     }
 }
 

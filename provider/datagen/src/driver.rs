@@ -14,6 +14,9 @@ use once_cell::sync::Lazy;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::fmt;
+use std::time::Duration;
+use std::time::Instant;
 use writeable::Writeable;
 
 /// Configuration for a data export operation.
@@ -304,7 +307,8 @@ impl DatagenDriver {
         };
 
         keys.clone().into_par_iter().try_for_each(|key| {
-            log::info!("Generating key {key}");
+            log::trace!("Generating key {key}");
+            let instant1 = Instant::now();
 
             if key.metadata().singleton {
                 if provider.supported_locales_for_key(key)? != [Default::default()] {
@@ -319,9 +323,25 @@ impl DatagenDriver {
                     .and_then(DataResponse::take_payload)
                     .map_err(|e| e.with_req(key, Default::default()))?;
 
-                return sink
-                    .flush_singleton(key, &payload)
-                    .map_err(|e| e.with_req(key, Default::default()));
+                let transform_duration = instant1.elapsed();
+
+                sink.flush_singleton(key, &payload)
+                    .map_err(|e| e.with_req(key, Default::default()))?;
+
+                let final_duration = instant1.elapsed();
+                let flush_duration = final_duration - transform_duration;
+
+                if final_duration > Duration::new(0, 500_000_000) {
+                    // Print durations if the key took longer than 500 ms
+                    log::info!(
+                        "Generated key {key} ({}, flushed in {})",
+                        DisplayDuration(final_duration),
+                        DisplayDuration(flush_duration)
+                    );
+                } else {
+                    log::info!("Generated key {key}");
+                }
+                return Ok(());
             }
 
             let locales_to_export = select_locales_for_key(
@@ -334,74 +354,114 @@ impl DatagenDriver {
                 &fallbacker,
             )?;
 
-            match fallback {
+            let (slowest_duration, slowest_locale) = match fallback {
                 FallbackMode::Runtime | FallbackMode::RuntimeManual => {
                     let payloads = locales_to_export
                         .into_par_iter()
                         .filter_map(|locale| {
+                            let instant2 = Instant::now();
                             load_with_fallback(key, &locale)
-                                .map(|r| r.map(|payload| (locale, payload)))
+                                .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
-                    payloads.iter().try_for_each(|(locale, payload)| {
-                        let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                        while !iter.get().is_und() {
-                            iter.step();
-                            if let Some(inherited_payload) = payloads.get(iter.get()) {
-                                if inherited_payload == payload {
-                                    // Found a match: don't need to write anything
-                                    log::trace!(
-                                        "Deduplicating {key}/{locale} (inherits from {})",
-                                        iter.get()
-                                    );
-                                    return Ok(());
-                                } else {
-                                    // Not a match: we must include this
-                                    break;
+                    payloads
+                        .iter()
+                        .try_for_each(|(locale, (payload, _duration))| {
+                            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                            while !iter.get().is_und() {
+                                iter.step();
+                                if let Some((inherited_payload, _duration)) =
+                                    payloads.get(iter.get())
+                                {
+                                    if inherited_payload == payload {
+                                        // Found a match: don't need to write anything
+                                        log::trace!(
+                                            "Deduplicating {key}/{locale} (inherits from {})",
+                                            iter.get()
+                                        );
+                                        return Ok(());
+                                    } else {
+                                        // Not a match: we must include this
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        // Did not find a match: export this payload
-                        sink.put_payload(key, locale, payload).map_err(|e| {
-                            e.with_req(
-                                key,
-                                DataRequest {
-                                    locale,
-                                    metadata: Default::default(),
-                                },
-                            )
-                        })
-                    })?
-                }
-                FallbackMode::Hybrid | FallbackMode::Preresolved => {
-                    locales_to_export.into_par_iter().try_for_each(|locale| {
-                        if let Some(payload) = load_with_fallback(key, &locale) {
-                            sink.put_payload(key, &locale, &payload?)
-                        } else {
-                            Ok(())
-                        }
-                        .map_err(|e| {
-                            e.with_req(
-                                key,
-                                DataRequest {
-                                    locale: &locale,
-                                    metadata: Default::default(),
-                                },
-                            )
-                        })
-                    })?
-                }
-                FallbackMode::PreferredForExporter => unreachable!("resolved"),
-            };
+                            // Did not find a match: export this payload
+                            sink.put_payload(key, locale, payload).map_err(|e| {
+                                e.with_req(
+                                    key,
+                                    DataRequest {
+                                        locale,
+                                        metadata: Default::default(),
+                                    },
+                                )
+                            })
+                        })?;
 
-            if fallback == FallbackMode::Runtime {
+                    // Slowest locale calculation:
+                    payloads
+                        .iter()
+                        .map(|(locale, (_payload, duration))| {
+                            (*duration, locale.write_to_string().into_owned())
+                        })
+                        .max()
+                }
+                FallbackMode::Hybrid | FallbackMode::Preresolved => locales_to_export
+                    .into_par_iter()
+                    .filter_map(|locale| {
+                        let instant2 = Instant::now();
+                        let result = load_with_fallback(key, &locale)?;
+                        let result = result
+                            .and_then(|payload| sink.put_payload(key, &locale, &payload))
+                            // Note: in Hybrid mode the elapsed time includes sink.put_payload.
+                            // In Runtime mode the elapsed time is only load_with_fallback.
+                            .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
+                            .map_err(|e| {
+                                e.with_req(
+                                    key,
+                                    DataRequest {
+                                        locale: &locale,
+                                        metadata: Default::default(),
+                                    },
+                                )
+                            });
+                        Some(result)
+                    })
+                    .collect::<Result<Vec<_>, DataError>>()?
+                    .into_iter()
+                    .max(),
+                FallbackMode::PreferredForExporter => unreachable!("resolved"),
+            }
+            .unwrap_or_default();
+
+            let transform_duration = instant1.elapsed();
+
+            // segmenter uses hardcoded locales internally, so fallback is not necessary.
+            // TODO(#4511): Use auxiliary keys for segmenter
+            if fallback == FallbackMode::Runtime && !key.path().get().starts_with("segmenter") {
                 sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
             } else {
                 sink.flush(key)
             }
-            .map_err(|e| e.with_key(key))
+            .map_err(|e| e.with_key(key))?;
+
+            let final_duration = instant1.elapsed();
+            let flush_duration = final_duration - transform_duration;
+
+            if final_duration > Duration::new(0, 500_000_000) {
+                // Print durations if the key took longer than 500 ms
+                log::info!(
+                    "Generated key {key} ({}, '{slowest_locale}' in {}, flushed in {})",
+                    DisplayDuration(final_duration),
+                    DisplayDuration(slowest_duration),
+                    DisplayDuration(flush_duration)
+                );
+            } else {
+                log::info!("Generated key {key}");
+            }
+            Ok(())
         })?;
 
         sink.close()
@@ -542,6 +602,23 @@ fn select_locales_for_key(
     };
 
     Ok(result)
+}
+
+struct DisplayDuration(pub Duration);
+
+impl fmt::Display for DisplayDuration {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let nanos = self.0.as_nanos();
+        if nanos > 100_000_000 {
+            write!(f, "{:.3}s", self.0.as_secs_f64())
+        } else if nanos > 1_000_000 {
+            write!(f, "{:.3}ms", (nanos as f64) / 1e6)
+        } else if nanos > 1_000 {
+            write!(f, "{:.3}µs", (nanos as f64) / 1e3)
+        } else {
+            write!(f, "{}ns", nanos)
+        }
+    }
 }
 
 #[test]

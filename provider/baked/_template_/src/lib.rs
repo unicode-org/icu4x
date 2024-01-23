@@ -3,8 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Data for the icu__component_ crate
+//!
+//! This data was generated with CLDR version _cldr_tag_, ICU version _icuexport_tag_, and
+//! LSTM segmenter version _segmenter_lstm_tag_.
 
 #![no_std]
+// The source is not readable and is massive as HTML.
+#![doc(html_no_source)]
 
 #[cfg(icu4x_custom_data)]
 include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));

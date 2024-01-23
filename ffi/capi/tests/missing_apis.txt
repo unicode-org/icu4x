@@ -14,6 +14,47 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::week::WeekCalculator::weekend#FnInStruct
+icu::datetime::FormattedDateTimePattern#Struct
+icu::datetime::FormattedDateTimePattern::write_to#FnInStruct
+icu::datetime::TypedDateTimeNames#Struct
+icu::datetime::TypedDateTimeNames::include_day_period_names#FnInStruct
+icu::datetime::TypedDateTimeNames::include_for_pattern#FnInStruct
+icu::datetime::TypedDateTimeNames::include_month_names#FnInStruct
+icu::datetime::TypedDateTimeNames::include_weekday_names#FnInStruct
+icu::datetime::TypedDateTimeNames::include_year_names#FnInStruct
+icu::datetime::TypedDateTimeNames::load_day_period_names#FnInStruct
+icu::datetime::TypedDateTimeNames::load_for_pattern#FnInStruct
+icu::datetime::TypedDateTimeNames::load_month_names#FnInStruct
+icu::datetime::TypedDateTimeNames::load_weekday_names#FnInStruct
+icu::datetime::TypedDateTimeNames::load_year_names#FnInStruct
+icu::datetime::TypedDateTimeNames::set_week_calculator#FnInStruct
+icu::datetime::TypedDateTimeNames::try_new#FnInStruct
+icu::datetime::TypedDateTimeNames::with_pattern#FnInStruct
+icu::datetime::neo::FormattedNeoDate#Struct
+icu::datetime::neo::FormattedNeoDate::pattern#FnInStruct
+icu::datetime::neo::FormattedNeoDate::write_to#FnInStruct
+icu::datetime::neo::FormattedNeoDateTime#Struct
+icu::datetime::neo::FormattedNeoDateTime::pattern#FnInStruct
+icu::datetime::neo::FormattedNeoDateTime::write_to#FnInStruct
+icu::datetime::neo::FormattedNeoTime#Struct
+icu::datetime::neo::FormattedNeoTime::pattern#FnInStruct
+icu::datetime::neo::FormattedNeoTime::write_to#FnInStruct
+icu::datetime::neo::NeoTimeFormatter#Struct
+icu::datetime::neo::NeoTimeFormatter::format#FnInStruct
+icu::datetime::neo::NeoTimeFormatter::try_new_with_length#FnInStruct
+icu::datetime::neo::TypedNeoDateFormatter#Struct
+icu::datetime::neo::TypedNeoDateFormatter::format#FnInStruct
+icu::datetime::neo::TypedNeoDateFormatter::try_new_with_length#FnInStruct
+icu::datetime::neo::TypedNeoDateTimeFormatter#Struct
+icu::datetime::neo::TypedNeoDateTimeFormatter::format#FnInStruct
+icu::datetime::neo::TypedNeoDateTimeFormatter::try_new#FnInStruct
+icu::datetime::neo::TypedNeoDateTimeFormatter::try_new_with_date_length#FnInStruct
+icu::datetime::neo::TypedNeoDateTimeFormatter::try_new_with_lengths#FnInStruct
+icu::datetime::neo::TypedNeoDateTimeFormatter::try_new_with_time_length#FnInStruct
+icu::datetime::neo_pattern::DateTimePattern#Struct
+icu::datetime::neo_pattern::DateTimePattern::from_str#FnInStruct
+icu::datetime::neo_pattern::DateTimePattern::try_from_pattern_str#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct

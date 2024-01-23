@@ -7,9 +7,11 @@ use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
 use icu_provider::DataError;
+use icu_unitsconversion::measureunit::MeasureUnitParser;
 use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigInt;
 use num_rational::Ratio;
+use zerovec::ZeroVec;
 
 use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
 
@@ -143,11 +145,12 @@ fn to_str_vec(string_vec: &[String]) -> Vec<&str> {
 }
 
 /// Extracts the conversion info from a base unit, factor and offset.
-pub fn extract_conversion_info(
+pub fn extract_conversion_info<'data>(
     base_unit: &str,
-    factor: ScientificNumber,
-    offset: ScientificNumber,
-) -> Result<ConversionInfo, DataError> {
+    factor: &ScientificNumber,
+    offset: &ScientificNumber,
+    parser: &MeasureUnitParser,
+) -> Result<ConversionInfo<'data>, DataError> {
     let factor_fraction = convert_slices_to_fraction(
         &to_str_vec(&factor.clean_num),
         &to_str_vec(&factor.clean_den),
@@ -167,8 +170,13 @@ pub fn extract_conversion_info(
         Exactness::Approximate
     };
 
+    let base_unit = match parser.try_from_identifier(base_unit) {
+        Ok(base_unit) => base_unit,
+        Err(_) => return Err(DataError::custom("the base unit is not valid")),
+    };
+
     Ok(ConversionInfo {
-        base_unit: base_unit.into(),
+        basic_units: ZeroVec::from_iter(base_unit),
         factor_num: factor_num.into(),
         factor_den: factor_den.into(),
         factor_sign,

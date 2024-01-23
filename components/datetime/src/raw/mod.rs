@@ -4,6 +4,8 @@
 
 /// Untyped versions of TypedDateTimeFormatter and TypedZonedDateTimeFormatter
 mod datetime;
+#[cfg(feature = "experimental")]
+pub(crate) mod neo;
 mod zoned_datetime;
 
 pub(crate) use datetime::{DateFormatter, DateTimeFormatter, TimeFormatter};

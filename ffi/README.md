@@ -1,11 +1,15 @@
 # ICU4X FFI crates
 
-This folder contains various FFI crates for ICU4X.
+This folder contains various FFI wrappers for ICU4X.
 
-The primary ICU4X FFI API is generated via [diplomat](https://github.com/rust-diplomat/diplomat/) and can be found under `ffi/capi` (crate name `icu_capi`), alongside generated C, C++, and WASM bindings.
+The primary ICU4X FFI is generated via [Diplomat](https://github.com/rust-diplomat/diplomat/) and can be found under `ffi/capi`, alongside generated C, C++, JS, TS, and Dart bindings.
 
-Due to [cargo #4881](https://github.com/rust-lang/cargo/issues/4881), it's not possible for `crate-type`s to be selectively built, and this can cause problems when designing FFI crates to be built on different platforms. For that reason, the `ffi/capi` `icu_capi` crate only builds as an `rlib` and should not be used directly when performing FFI. Instead, the `icu_capi_staticlib` (`ffi/capi_staticlib`) or `icu_capi_cdylib` (`ffi/capi_cdylib`) crates should be built to get the appropriate staticlib or cdylib target.
+In C and C++, the bindings in `ffi/capi/bindings` can be directly used and linked against a compiled version of `icu_capi`. See our [C++ tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md) for more info.
 
-Some platforms and build systems will have special bindings: currently we have one such case: FreeRTOS. If you wish to build ICU4X for FreeRTOS, use the `ffi/freertos` (`icu_freertos`) crate.
+For JS/TS we provide an NPM package in `ffi/npm`. This is currently not published on NPM.
 
-The `experimental/ecma402` (`icu4x_ecma402`) crate contains an implementation of the [`ecma402_traits`](https://docs.rs/ecma402_traits) traits, enabling compatibility testing against ICU.
+For Dart we provide a package in `ffi/dart`. This needs to be initialised with `make`. It is not currenlty published on `pub.dev`.
+
+For use in FreeRTOS, we provide a special wrapper in `ffi/freertos`. This uses the FreeRTOS allocator and can be linked directly with a FreeRTOS firmware.
+
+For use with the GN build tool, see `docs/tutorials/gn` for an example setup.

@@ -127,6 +127,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
+    // Don't do caching for this one. It uses its own mutex
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         self.cldr()?
             .transforms()?
