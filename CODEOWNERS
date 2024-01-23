@@ -20,6 +20,7 @@ components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/timezone/              @nordzilla
+docs/tutorials/gn/                @sffc
 experimental/bies/                @sffc
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
@@ -27,7 +28,6 @@ experimental/ecma402/             @filmil
 experimental/harfbuzz/            @hsivonen
 experimental/relativetime/        @pdogr
 ffi/capi/                         @Manishearth
-ffi/gn/                           @sffc
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/datagen/                 @sffc @robertbastian @Manishearth
