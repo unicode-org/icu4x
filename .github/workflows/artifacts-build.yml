@@ -712,6 +712,7 @@ jobs:
 
   dart-libs:
     name: "Build Dart binaries"
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       fail-fast: false
       matrix:
