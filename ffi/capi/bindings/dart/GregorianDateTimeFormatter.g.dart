@@ -12,8 +12,10 @@ part of 'lib.g.dart';
 final class GregorianDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  GregorianDateTimeFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  GregorianDateTimeFormatter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGregorianDateTimeFormatter_destroy));
@@ -28,7 +30,7 @@ final class GregorianDateTimeFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return GregorianDateTimeFormatter._(result.union.ok);
+    return GregorianDateTimeFormatter._(result.union.ok, true);
   }
 
   /// Formats a [`IsoDateTime`] to a string.

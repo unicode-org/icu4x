@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class WordBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  WordBreakIteratorUtf8._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  WordBreakIteratorUtf8._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWordBreakIteratorUtf8_destroy));

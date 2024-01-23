@@ -12,8 +12,10 @@ part of 'lib.g.dart';
 final class DateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  DateTimeFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  DateTimeFormatter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDateTimeFormatter_destroy));
@@ -28,7 +30,7 @@ final class DateTimeFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return DateTimeFormatter._(result.union.ok);
+    return DateTimeFormatter._(result.union.ok, true);
   }
 
   /// Formats a [`DateTime`] to a string.

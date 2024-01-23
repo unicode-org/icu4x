@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class PluralOperands implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  PluralOperands._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  PluralOperands._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralOperands_destroy));
@@ -30,7 +32,7 @@ final class PluralOperands implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PluralOperands._(result.union.ok);
+    return PluralOperands._(result.union.ok, true);
   }
 }
 

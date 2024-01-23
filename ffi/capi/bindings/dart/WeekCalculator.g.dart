@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class WeekCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  WeekCalculator._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  WeekCalculator._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWeekCalculator_destroy));
@@ -27,13 +29,13 @@ final class WeekCalculator implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return WeekCalculator._(result.union.ok);
+    return WeekCalculator._(result.union.ok, true);
   }
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
   factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(IsoWeekday firstWeekday, int minWeekDays) {
     final result = _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(firstWeekday._underlying, minWeekDays);
-    return WeekCalculator._(result);
+    return WeekCalculator._(result, true);
   }
 
   /// Returns the weekday that starts the week for this object's locale

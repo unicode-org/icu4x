@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class PluralRules implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  PluralRules._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  PluralRules._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralRules_destroy));
@@ -27,7 +29,7 @@ final class PluralRules implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PluralRules._(result.union.ok);
+    return PluralRules._(result.union.ok, true);
   }
 
   /// Construct an [`PluralRules`] for the given locale, for ordinal numbers
@@ -40,7 +42,7 @@ final class PluralRules implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PluralRules._(result.union.ok);
+    return PluralRules._(result.union.ok, true);
   }
 
   /// Get the category for a given number represented as operands

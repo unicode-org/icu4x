@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Time._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  Time._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XTime_destroy));
@@ -27,7 +29,7 @@ final class Time implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Time._(result.union.ok);
+    return Time._(result.union.ok, true);
   }
 
   /// Creates a new [`Time`] representing midnight (00:00.000).
@@ -40,7 +42,7 @@ final class Time implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Time._(result.union.ok);
+    return Time._(result.union.ok, true);
   }
 
   /// Returns the hour in this time

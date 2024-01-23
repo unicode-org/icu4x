@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class FixedDecimal implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  FixedDecimal._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  FixedDecimal._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XFixedDecimal_destroy));
@@ -20,7 +22,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
   factory FixedDecimal.fromInt(int v) {
     final result = _ICU4XFixedDecimal_create_from_i64(v);
-    return FixedDecimal._(result);
+    return FixedDecimal._(result, true);
   }
 
   /// Construct an [`FixedDecimal`] from an float, with a given power of 10 for the lower magnitude
@@ -35,7 +37,7 @@ final class FixedDecimal implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return FixedDecimal._(result.union.ok);
+    return FixedDecimal._(result.union.ok, true);
   }
 
   /// Construct an [`FixedDecimal`] from an float, for a given number of significant digits
@@ -50,7 +52,7 @@ final class FixedDecimal implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return FixedDecimal._(result.union.ok);
+    return FixedDecimal._(result.union.ok, true);
   }
 
   /// Construct an [`FixedDecimal`] from an float, with enough digits to recover
@@ -66,7 +68,7 @@ final class FixedDecimal implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return FixedDecimal._(result.union.ok);
+    return FixedDecimal._(result.union.ok, true);
   }
 
   /// Construct an [`FixedDecimal`] from a string.
@@ -82,7 +84,7 @@ final class FixedDecimal implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return FixedDecimal._(result.union.ok);
+    return FixedDecimal._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.

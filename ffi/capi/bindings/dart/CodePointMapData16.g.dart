@@ -17,8 +17,10 @@ part of 'lib.g.dart';
 final class CodePointMapData16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CodePointMapData16._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CodePointMapData16._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointMapData16_destroy));
@@ -36,7 +38,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
     final result = _ICU4XCodePointMapData16_iter_ranges_for_value(_underlying, value);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
 
   /// Produces an iterator over ranges of code points that do not map to `value`
@@ -44,7 +46,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     final result = _ICU4XCodePointMapData16_iter_ranges_for_value_complemented(_underlying, value);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
 
   /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
@@ -52,7 +54,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   CodePointSetData getSetForValue(int value) {
     final result = _ICU4XCodePointMapData16_get_set_for_value(_underlying, value);
-    return CodePointSetData._(result);
+    return CodePointSetData._(result, true);
   }
 
   /// See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
@@ -63,7 +65,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData16._(result.union.ok);
+    return CodePointMapData16._(result.union.ok, true);
   }
 }
 

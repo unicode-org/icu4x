@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class SentenceSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  SentenceSegmenter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  SentenceSegmenter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XSentenceSegmenter_destroy));
@@ -27,7 +29,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return SentenceSegmenter._(result.union.ok);
+    return SentenceSegmenter._(result.union.ok, true);
   }
 
   /// Segments a string.
@@ -41,7 +43,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     final inputView = input.utf16View;
     final result = _ICU4XSentenceSegmenter_segment_utf16(_underlying, inputView.pointer(temp), inputView.length);
     temp.releaseAll();
-    return SentenceBreakIteratorUtf16._(result);
+    return SentenceBreakIteratorUtf16._(result, true);
   }
 }
 

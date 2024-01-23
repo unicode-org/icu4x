@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  GregorianZonedDateTimeFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  GregorianZonedDateTimeFormatter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGregorianZonedDateTimeFormatter_destroy));
@@ -30,7 +32,7 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return GregorianZonedDateTimeFormatter._(result.union.ok);
+    return GregorianZonedDateTimeFormatter._(result.union.ok, true);
   }
 
   /// Creates a new [`GregorianZonedDateTimeFormatter`] from locale data.
@@ -42,11 +44,13 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory GregorianZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength, IsoTimeZoneOptions zoneOptions) {
-    final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(provider._underlying, locale._underlying, dateLength.index, timeLength.index, zoneOptions._underlying);
+    final temp = ffi2.Arena();
+    final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(provider._underlying, locale._underlying, dateLength.index, timeLength.index, zoneOptions._pointer(temp));
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return GregorianZonedDateTimeFormatter._(result.union.ok);
+    return GregorianZonedDateTimeFormatter._(result.union.ok, true);
   }
 
   /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.

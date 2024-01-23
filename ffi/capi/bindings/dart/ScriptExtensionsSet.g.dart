@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class ScriptExtensionsSet implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ScriptExtensionsSet._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ScriptExtensionsSet._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptExtensionsSet_destroy));

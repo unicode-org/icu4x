@@ -12,8 +12,10 @@ part of 'lib.g.dart';
 final class GraphemeClusterSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  GraphemeClusterSegmenter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  GraphemeClusterSegmenter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGraphemeClusterSegmenter_destroy));
@@ -28,7 +30,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return GraphemeClusterSegmenter._(result.union.ok);
+    return GraphemeClusterSegmenter._(result.union.ok, true);
   }
 
   /// Segments a string.
@@ -42,7 +44,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     final inputView = input.utf16View;
     final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(_underlying, inputView.pointer(temp), inputView.length);
     temp.releaseAll();
-    return GraphemeClusterBreakIteratorUtf16._(result);
+    return GraphemeClusterBreakIteratorUtf16._(result, true);
   }
 }
 

@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class TimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  TimeFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  TimeFormatter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XTimeFormatter_destroy));
@@ -27,7 +29,7 @@ final class TimeFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return TimeFormatter._(result.union.ok);
+    return TimeFormatter._(result.union.ok, true);
   }
 
   /// Formats a [`Time`] to a string.

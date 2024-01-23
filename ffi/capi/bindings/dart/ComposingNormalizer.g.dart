@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class ComposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ComposingNormalizer._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ComposingNormalizer._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XComposingNormalizer_destroy));
@@ -25,7 +27,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ComposingNormalizer._(result.union.ok);
+    return ComposingNormalizer._(result.union.ok, true);
   }
 
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
@@ -38,7 +40,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ComposingNormalizer._(result.union.ok);
+    return ComposingNormalizer._(result.union.ok, true);
   }
 
   /// Normalize a string

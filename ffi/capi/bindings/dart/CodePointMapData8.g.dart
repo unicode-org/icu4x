@@ -17,8 +17,10 @@ part of 'lib.g.dart';
 final class CodePointMapData8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CodePointMapData8._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CodePointMapData8._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointMapData8_destroy));
@@ -46,7 +48,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
     final result = _ICU4XCodePointMapData8_iter_ranges_for_value(_underlying, value);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
 
   /// Produces an iterator over ranges of code points that do not map to `value`
@@ -54,7 +56,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     final result = _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(_underlying, value);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
 
   /// Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
@@ -69,7 +71,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
   CodePointRangeIterator iterRangesForMask(int mask) {
     final result = _ICU4XCodePointMapData8_iter_ranges_for_mask(_underlying, mask);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
 
   /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
@@ -77,7 +79,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   CodePointSetData getSetForValue(int value) {
     final result = _ICU4XCodePointMapData8_get_set_for_value(_underlying, value);
-    return CodePointSetData._(result);
+    return CodePointSetData._(result, true);
   }
 
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
@@ -88,7 +90,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
@@ -99,7 +101,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
@@ -110,7 +112,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
@@ -121,7 +123,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
@@ -132,7 +134,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
@@ -143,7 +145,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
@@ -154,7 +156,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
@@ -165,7 +167,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData8._(result.union.ok);
+    return CodePointMapData8._(result.union.ok, true);
   }
 }
 

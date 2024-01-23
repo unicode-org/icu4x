@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class LocaleFallbacker implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleFallbacker._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  LocaleFallbacker._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbacker_destroy));
@@ -27,7 +29,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleFallbacker._(result.union.ok);
+    return LocaleFallbacker._(result.union.ok, true);
   }
 
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
@@ -35,7 +37,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory LocaleFallbacker.withoutData() {
     final result = _ICU4XLocaleFallbacker_create_without_data();
-    return LocaleFallbacker._(result);
+    return LocaleFallbacker._(result, true);
   }
 
   /// Associates this `LocaleFallbacker` with configuration options.
@@ -44,11 +46,13 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
-    final result = _ICU4XLocaleFallbacker_for_config(_underlying, config._underlying);
+    final temp = ffi2.Arena();
+    final result = _ICU4XLocaleFallbacker_for_config(_underlying, config._pointer(temp));
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleFallbackerWithConfig._(result.union.ok);
+    return LocaleFallbackerWithConfig._(result.union.ok, true);
   }
 }
 

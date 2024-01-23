@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleDisplayNamesFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  LocaleDisplayNamesFormatter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleDisplayNamesFormatter_destroy));
@@ -20,12 +22,14 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptionsV1 options) {
-    final result = _ICU4XLocaleDisplayNamesFormatter_create(provider._underlying, locale._underlying, options._underlying);
+  factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptions options) {
+    final temp = ffi2.Arena();
+    final result = _ICU4XLocaleDisplayNamesFormatter_create(provider._underlying, locale._underlying, options._pointer(temp));
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleDisplayNamesFormatter._(result.union.ok);
+    return LocaleDisplayNamesFormatter._(result.union.ok, true);
   }
 
   /// Returns the locale-specific display name of a locale.
@@ -47,9 +51,9 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleDisplayNamesFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_create')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_create')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleDisplayNamesFormatter_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsV1Ffi options);
+external _ResultOpaqueInt32 _ICU4XLocaleDisplayNamesFormatter_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsFfi options);
 
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_of')
 // ignore: non_constant_identifier_names

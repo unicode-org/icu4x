@@ -11,8 +11,10 @@ part of 'lib.g.dart';
 final class CanonicalCombiningClassMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CanonicalCombiningClassMap._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CanonicalCombiningClassMap._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalCombiningClassMap_destroy));
@@ -27,7 +29,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CanonicalCombiningClassMap._(result.union.ok);
+    return CanonicalCombiningClassMap._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.

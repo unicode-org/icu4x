@@ -9,8 +9,10 @@ part of 'lib.g.dart';
 final class ListFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ListFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ListFormatter._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XListFormatter_destroy));
@@ -25,7 +27,7 @@ final class ListFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ListFormatter._(result.union.ok);
+    return ListFormatter._(result.union.ok, true);
   }
 
   /// Construct a new ICU4XListFormatter instance for And patterns
@@ -38,7 +40,7 @@ final class ListFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ListFormatter._(result.union.ok);
+    return ListFormatter._(result.union.ok, true);
   }
 
   /// Construct a new ICU4XListFormatter instance for And patterns
@@ -51,7 +53,7 @@ final class ListFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ListFormatter._(result.union.ok);
+    return ListFormatter._(result.union.ok, true);
   }
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.

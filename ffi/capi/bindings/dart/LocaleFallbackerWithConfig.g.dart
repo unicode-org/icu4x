@@ -13,8 +13,10 @@ part of 'lib.g.dart';
 final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleFallbackerWithConfig._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  LocaleFallbackerWithConfig._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackerWithConfig_destroy));
@@ -24,7 +26,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
   LocaleFallbackIterator fallbackForLocale(Locale locale) {
     final result = _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(_underlying, locale._underlying);
-    return LocaleFallbackIterator._(result);
+    return LocaleFallbackIterator._(result, true);
   }
 }
 

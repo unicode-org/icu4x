@@ -26,6 +26,7 @@ pub mod ffi {
 
     //  FFI version of `DisplayNamesOptions`.
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
+    #[diplomat::attr(dart, rename = "DisplayNamesOptions")]
     pub struct ICU4XDisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: ICU4XDisplayNamesStyle,
