@@ -4,11 +4,15 @@
  - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
    - `icu_datagen@1.4.1`
 
+ - Fix normalization of character whose decomposition contains more than one starter and ends with a non-starter followed by a non-starter
+   with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
+   - `icu_normalizer@1.4.1`
+
 ## icu4x 1.4 (Nov 16, 2023)
 
 - General
   - MSRV is now 1.67
- 
+
 - Components
     - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
     - `icu_calendar`
