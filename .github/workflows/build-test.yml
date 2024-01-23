@@ -640,8 +640,8 @@ jobs:
       id: gn-third-party-tools-cache
       with:
         path: |
-          ffi/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'ffi/gn/Cargo.lock') }}
+          docs/tutorials/gn/third_party_tools
+        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'docs/tutorials/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install

@@ -1,2 +1,2 @@
-buildconfig = "//ffi/gn/BUILDCONFIG.gn"
-root = "//ffi/gn:default"
+buildconfig = "//docs/tutorials/gn/BUILDCONFIG.gn"
+root = "//docs/tutorials/gn:default"

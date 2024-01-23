@@ -77,7 +77,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew::new_always_calculating());
+        let input_hebrew = input_value.to_calendar(Hebrew);
         let input_indian = input_value.to_calendar(Indian);
         let input_islamic_civil = input_value.to_calendar(IslamicCivil::new_always_calculating());
         let input_islamic_observational =
