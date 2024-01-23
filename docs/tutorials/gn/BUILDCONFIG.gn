@@ -21,7 +21,7 @@ if (current_os == "") {
   current_os = target_os
 }
 
-_configs = [ "//ffi/gn/build:rust_defaults" ]
+_configs = [ "//docs/tutorials/gn/build:rust_defaults" ]
 
 set_defaults("executable") {
   configs = _configs
@@ -39,12 +39,12 @@ set_defaults("rust_library") {
 # doing cross-compiles. When not cross-compiling, this will be the same as the
 # default toolchain.
 
-host_toolchain = "//ffi/gn/build/rust_host"
+host_toolchain = "//docs/tutorials/gn/build/rust_host"
 
 if (target_cpu == host_cpu && target_os == host_os) {
-  set_default_toolchain("//ffi/gn/build/rust_host")
+  set_default_toolchain("//docs/tutorials/gn/build/rust_host")
 } else if (current_cpu == "wasm32" && current_os == "wasi") {
-  set_default_toolchain("//ffi/gn/build/rust_wasi")
+  set_default_toolchain("//docs/tutorials/gn/build/rust_wasi")
 } else {
   assert(false, "Don't know how to build for target $target_cpu / $target_os")
 }

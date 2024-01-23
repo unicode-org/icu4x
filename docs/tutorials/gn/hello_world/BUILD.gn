@@ -5,7 +5,7 @@
 executable("print_hello") {
   sources = [ "print_hello.rs" ]
   deps = [
-    "//ffi/gn/icu4x:icu",
-    "//ffi/gn/icu4x:icu_provider",
+    "//docs/tutorials/gn/icu4x:icu",
+    "//docs/tutorials/gn/icu4x:icu_provider",
   ]
 }

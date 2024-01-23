@@ -1569,6 +1569,43 @@ fn test_manual_resolved_options_da() {
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
 }
 
+#[test]
+fn test_ecma_sensitivity() {
+    {
+        // base
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Primary);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_eq!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_eq!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+    {
+        // accent
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Secondary);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_eq!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+    {
+        // case
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Primary);
+        options.case_level = Some(CaseLevel::On);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_eq!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+    {
+        // variant
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Tertiary);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)
