@@ -3,10 +3,11 @@ version: 0.0.0
 repository: https://github.com/unicode-org/icu4x
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.3.0-279.1.beta
 
 dependencies:
   ffi: ^2.0.0
+  native_assets_cli: ^0.3.2
 
 dev_dependencies:
   lints: ^3.0.0

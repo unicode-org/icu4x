@@ -13,7 +13,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCaseMapCloser_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
 
   /// Construct a new ICU4XCaseMapper instance
   ///
@@ -28,11 +28,6 @@ final class CaseMapCloser implements ffi.Finalizable {
     return CaseMapCloser._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCaseMapCloser_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
   /// Also adds special case closure mappings.
   ///
@@ -40,11 +35,6 @@ final class CaseMapCloser implements ffi.Finalizable {
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _ICU4XCaseMapCloser_add_case_closure_to(_underlying, c, builder._underlying);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCaseMapCloser_add_case_closure_to =
-    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_add_case_closure_to')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Finds all characters and strings which may casemap to `s` as their full case folding string
   /// and adds them to the set.
@@ -59,9 +49,20 @@ final class CaseMapCloser implements ffi.Finalizable {
     temp.releaseAll();
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCaseMapCloser_add_string_case_closure_to =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_add_string_case_closure_to')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XCaseMapCloser_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCaseMapCloser_create(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_case_closure_to')
+// ignore: non_constant_identifier_names
+external void _ICU4XCaseMapCloser_add_case_closure_to(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_string_case_closure_to')
+// ignore: non_constant_identifier_names
+external bool _ICU4XCaseMapCloser_add_string_case_closure_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> builder);

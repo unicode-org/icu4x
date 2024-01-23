@@ -41,11 +41,6 @@ final class TitlecaseOptionsV1 {
     return TitlecaseOptionsV1._(result);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XTitlecaseOptionsV1_default_options =
-    _capi<ffi.NativeFunction<_TitlecaseOptionsV1Ffi Function()>>('ICU4XTitlecaseOptionsV1_default_options')
-      .asFunction<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true);
-
   @override
   bool operator ==(Object other) =>
       other is TitlecaseOptionsV1 &&
@@ -58,3 +53,7 @@ final class TitlecaseOptionsV1 {
         _underlying.trailingCase,
       ]);
 }
+
+@ffi.Native<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true, symbol: 'ICU4XTitlecaseOptionsV1_default_options')
+// ignore: non_constant_identifier_names
+external _TitlecaseOptionsV1Ffi _ICU4XTitlecaseOptionsV1_default_options();

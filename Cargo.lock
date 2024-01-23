@@ -797,7 +797,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8194def008d44fd0a36276976d5268df4e572a27#8194def008d44fd0a36276976d5268df4e572a27"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d647ac0b9b4c72a4f7e2b98a309cb944156877a#2d647ac0b9b4c72a4f7e2b98a309cb944156877a"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -815,7 +815,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8194def008d44fd0a36276976d5268df4e572a27#8194def008d44fd0a36276976d5268df4e572a27"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d647ac0b9b4c72a4f7e2b98a309cb944156877a#2d647ac0b9b4c72a4f7e2b98a309cb944156877a"
 dependencies = [
  "log",
 ]
@@ -823,7 +823,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8194def008d44fd0a36276976d5268df4e572a27#8194def008d44fd0a36276976d5268df4e572a27"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d647ac0b9b4c72a4f7e2b98a309cb944156877a#2d647ac0b9b4c72a4f7e2b98a309cb944156877a"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -843,7 +843,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8194def008d44fd0a36276976d5268df4e572a27#8194def008d44fd0a36276976d5268df4e572a27"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d647ac0b9b4c72a4f7e2b98a309cb944156877a#2d647ac0b9b4c72a4f7e2b98a309cb944156877a"
 dependencies = [
  "displaydoc",
  "lazy_static",

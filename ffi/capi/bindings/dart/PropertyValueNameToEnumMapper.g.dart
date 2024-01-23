@@ -17,7 +17,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XPropertyValueNameToEnumMapper_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPropertyValueNameToEnumMapper_destroy));
 
   /// Get the property value matching the given name, using strict matching
   ///
@@ -32,11 +32,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_get_strict =
-    _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XPropertyValueNameToEnumMapper_get_strict')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
-
   /// Get the property value matching the given name, using loose matching
   ///
   /// Returns -1 if the name is unknown for this property
@@ -50,11 +45,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_get_loose =
-    _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XPropertyValueNameToEnumMapper_get_loose')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
-
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
@@ -65,11 +55,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_general_category =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_general_category')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
   ///
@@ -82,11 +67,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_bidi_class =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
@@ -97,11 +77,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
   ///
@@ -114,11 +89,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
@@ -129,11 +99,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_line_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_line_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
   ///
@@ -146,11 +111,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
@@ -161,11 +121,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_word_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_word_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
   ///
@@ -178,11 +133,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_sentence_break =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
@@ -193,9 +143,52 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._(result.union.ok);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPropertyValueNameToEnumMapper_load_script =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPropertyValueNameToEnumMapper_load_script')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XPropertyValueNameToEnumMapper_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_get_strict')
+// ignore: non_constant_identifier_names
+external int _ICU4XPropertyValueNameToEnumMapper_get_strict(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_get_loose')
+// ignore: non_constant_identifier_names
+external int _ICU4XPropertyValueNameToEnumMapper_get_loose(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_general_category')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_general_category(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_bidi_class(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_line_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_line_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_word_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_word_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_sentence_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_script')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_script(ffi.Pointer<ffi.Opaque> provider);

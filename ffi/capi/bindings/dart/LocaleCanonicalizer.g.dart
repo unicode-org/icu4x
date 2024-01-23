@@ -15,7 +15,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleCanonicalizer_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleCanonicalizer_destroy));
 
   /// Create a new [`LocaleCanonicalizer`].
   ///
@@ -30,11 +30,6 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     return LocaleCanonicalizer._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleCanonicalizer_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Create a new [`LocaleCanonicalizer`] with extended data.
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
@@ -48,11 +43,6 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     return LocaleCanonicalizer._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleCanonicalizer_create_extended =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create_extended')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// FFI version of `LocaleCanonicalizer::canonicalize()`.
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
@@ -60,9 +50,20 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     final result = _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
     return TransformResult.values[result];
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleCanonicalizer_canonicalize =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_canonicalize')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XLocaleCanonicalizer_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create_extended')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create_extended(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_canonicalize')
+// ignore: non_constant_identifier_names
+external int _ICU4XLocaleCanonicalizer_canonicalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

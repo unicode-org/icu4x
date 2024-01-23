@@ -15,7 +15,7 @@ final class WordSegmenter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XWordSegmenter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWordSegmenter_destroy));
 
   /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
   /// or dictionary payload data.
@@ -34,11 +34,6 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordSegmenter_create_auto =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_auto')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
   /// Thai.
   ///
@@ -56,11 +51,6 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordSegmenter_create_lstm =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_lstm')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai.
   ///
@@ -75,11 +65,6 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordSegmenter_create_dictionary =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_dictionary')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Segments a string.
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -93,9 +78,24 @@ final class WordSegmenter implements ffi.Finalizable {
     temp.releaseAll();
     return WordBreakIteratorUtf16._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordSegmenter_segment_utf16 =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XWordSegmenter_segment_utf16')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XWordSegmenter_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XWordSegmenter_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordSegmenter_create_auto')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XWordSegmenter_create_auto(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordSegmenter_create_lstm')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XWordSegmenter_create_lstm(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordSegmenter_create_dictionary')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XWordSegmenter_create_dictionary(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XWordSegmenter_segment_utf16')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XWordSegmenter_segment_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);

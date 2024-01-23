@@ -15,7 +15,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCanonicalCombiningClassMap_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalCombiningClassMap_destroy));
 
   /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
   ///
@@ -30,11 +30,6 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     return CanonicalCombiningClassMap._(result.union.ok);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalCombiningClassMap_create =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalCombiningClassMap_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
@@ -42,9 +37,16 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     final result = _ICU4XCanonicalCombiningClassMap_get(_underlying, ch);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalCombiningClassMap_get =
-    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XCanonicalCombiningClassMap_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_create')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCanonicalCombiningClassMap_create(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_get')
+// ignore: non_constant_identifier_names
+external int _ICU4XCanonicalCombiningClassMap_get(ffi.Pointer<ffi.Opaque> self, Rune ch);
