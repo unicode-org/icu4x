@@ -34,7 +34,9 @@
       - Add `explicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
 - Utilities
     - `calendrical_calculations`:
-        - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar.
+        - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar. (https://github.com/unicode-org/icu4x/pull/4504)
+        - Expose `Hebrew` as a unit struct, add `Date::try_new_hebrew_date()`, `DateTime::try_new_hebrew_datetime()`. (https://github.com/unicode-org/icu4x/pulls/4532)
+        - Deprecate `Hebrew::new_always_precomputing()`, `Date::try_new_hebrew_date_with_calendar()`, `DateTime::try_new_hebrew_datetime_with_calendar()`. The new implementation of the Hebrew calendar is faster and we do not need APIs for precomputation. (https://github.com/unicode-org/icu4x/pulls/4532)
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
         - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
@@ -43,15 +45,18 @@
         - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
 
 ## icu4x 1.4.x
- - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
-   - `icu_datagen@1.4.1`
 
+- [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
+   - `icu_datagen@1.4.1`
+ - Fix normalization of character whose decomposition contains more than one starter and ends with a non-starter followed by a non-starter
+   with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
+   - `icu_normalizer@1.4.1`
 
 ## icu4x 1.4 (Nov 16, 2023)
 
 - General
   - MSRV is now 1.67
- 
+
 - Components
     - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
     - `icu_calendar`

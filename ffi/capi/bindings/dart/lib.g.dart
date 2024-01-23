@@ -3,12 +3,13 @@
 // https://github.com/dart-lang/sdk/issues/53946
 // ignore_for_file: non_native_function_type_argument_to_pointer
 
-import 'dart:convert'  ;
-import 'dart:core'as core;
-import 'dart:core'show int, double, bool, String, Object, override;
-import 'dart:ffi'as ffi;
-import 'dart:typed_data'  ;
-import 'package:ffi/ffi.dart'as ffi2 show Arena, calloc;
+import 'dart:convert';
+import 'dart:core' as core;
+import 'dart:core' show int, double, bool, String, Object, override;
+import 'dart:ffi' as ffi;
+import 'dart:math';
+import 'dart:typed_data';
+import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
 part 'AnyCalendarKind.g.dart';
 part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
@@ -34,7 +35,7 @@ part 'CollatorCaseFirst.g.dart';
 part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
 part 'CollatorNumeric.g.dart';
-part 'CollatorOptionsV1.g.dart';
+part 'CollatorOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'CustomTimeZone.g.dart';
@@ -47,7 +48,7 @@ part 'DateTimeFormatter.g.dart';
 part 'Decomposed.g.dart';
 part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
-part 'DisplayNamesOptionsV1.g.dart';
+part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
 part 'Error.g.dart';
 part 'FixedDecimal.g.dart';
@@ -76,7 +77,7 @@ part 'LeadingAdjustment.g.dart';
 part 'LineBreakIteratorLatin1.g.dart';
 part 'LineBreakIteratorUtf16.g.dart';
 part 'LineBreakIteratorUtf8.g.dart';
-part 'LineBreakOptionsV1.g.dart';
+part 'LineBreakOptions.g.dart';
 part 'LineBreakStrictness.g.dart';
 part 'LineBreakWordOption.g.dart';
 part 'LineSegmenter.g.dart';
@@ -105,6 +106,7 @@ part 'PluralRules.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
+part 'ResolvedCollatorOptions.g.dart';
 part 'RoundingIncrement.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
@@ -119,7 +121,7 @@ part 'TimeFormatter.g.dart';
 part 'TimeLength.g.dart';
 part 'TimeZoneFormatter.g.dart';
 part 'TitlecaseMapper.g.dart';
-part 'TitlecaseOptionsV1.g.dart';
+part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnicodeSetData.g.dart';
@@ -146,21 +148,9 @@ part 'ZonedDateTimeFormatter.g.dart';
 ///
 /// A [String] can be constructed from a [Rune] using [String.fromCharCode]. 
 typedef Rune = int;
-/// A list of [Rune]s.
-typedef RuneList = Uint32List;
-
-late final ffi.Pointer<T> Function<T extends ffi.NativeType>(String) _capi;
-void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 
 // ignore: unused_element
 final _callocFree = core.Finalizer(ffi2.calloc.free);
-
-extension _UtfViews on String {
-  // ignore: unused_element
-  _Utf8View get utf8View => _Utf8View(this);
-  // ignore: unused_element
-  _Utf16View get utf16View => _Utf16View(this);
-}
 
 /// An unspecified error value
 // ignore: unused_element
@@ -172,6 +162,57 @@ class VoidError {
   int get hashCode => 1;
 }
 
+extension _View on ByteBuffer {
+  // ignore: unused_element
+  ffi.Pointer<ffi.Uint8> pointer(ffi.Allocator alloc) {
+    return alloc<ffi.Uint8>(length)..asTypedList(length).setRange(0, length, asUint8List());
+  }
+
+  int get length => lengthInBytes;
+}
+
+extension _UtfViews on String {
+  // ignore: unused_element
+  _Utf8View get utf8View => _Utf8View(this);
+  // ignore: unused_element
+  _Utf16View get utf16View => _Utf16View(this);
+}
+
+extension _NativeBoolViews on core.List<bool> {
+  // ignore: unused_element
+  _BoolListView get boolView => _BoolListView(this);
+}
+
+extension _NativeIntViews on core.List<int> {
+  // ignore: unused_element
+  _Int8ListView get int8View => _Int8ListView(this);
+  // ignore: unused_element
+  _Int16ListView get int16View => _Int16ListView(this);
+  // ignore: unused_element
+  _Int32ListView get int32View => _Int32ListView(this);
+  // ignore: unused_element
+  _Int64ListView get int64View => _Int64ListView(this);
+  // ignore: unused_element
+  _IsizeListView get isizeView => _IsizeListView(this);
+  // ignore: unused_element
+  _Uint8ListView get uint8View => _Uint8ListView(this);
+  // ignore: unused_element
+  _Uint16ListView get uint16View => _Uint16ListView(this);
+  // ignore: unused_element
+  _Uint32ListView get uint32View => _Uint32ListView(this);
+  // ignore: unused_element
+  _Uint64ListView get uint64View => _Uint64ListView(this);
+  // ignore: unused_element
+  _UsizeListView get usizeView => _UsizeListView(this);
+}
+
+extension _NativeFloatViews on core.List<double> {
+  // ignore: unused_element
+  _Float32ListView get float32View => _Float32ListView(this);
+  // ignore: unused_element
+  _Float64ListView get float64View => _Float64ListView(this);
+}
+
 // ignore: unused_element
 class _Utf8View {
   final Uint8List _codeUnits;
@@ -181,7 +222,7 @@ class _Utf8View {
 
   ffi.Pointer<ffi.Uint8> pointer(ffi.Allocator alloc) {
     // Copies
-    return alloc<ffi.Uint8>(length)..asTypedList(length).setAll(0, _codeUnits);
+    return alloc<ffi.Uint8>(length)..asTypedList(length).setRange(0, length, _codeUnits);
   }
 
   int get length => _codeUnits.length;
@@ -195,21 +236,21 @@ class _Utf16View {
 
   ffi.Pointer<ffi.Uint16> pointer(ffi.Allocator alloc) {
     // Copies
-    return alloc<ffi.Uint16>(length)..asTypedList(length).setAll(0, _codeUnits);
+    return alloc<ffi.Uint16>(length)..asTypedList(length).setRange(0, length, _codeUnits);
   }
 
   int get length => _codeUnits.length;
 }
 
 // ignore: unused_element
-class _SizeListView {
-  final core.List<int> _values;
+class _BoolListView{
+  final core.List<bool> _values;
 
-  _SizeListView(this._values);
+  _BoolListView(this._values);
 
   // Copies
-  ffi.Pointer<ffi.Size> pointer(ffi.Allocator alloc) {
-    final pointer = alloc<ffi.Size>(_values.length);
+  ffi.Pointer<ffi.Bool> pointer(ffi.Allocator alloc) {
+    final pointer = alloc<ffi.Bool>(_values.length);
     for (var i = 0; i < _values.length; i++) {
       pointer[i] = _values[i];
     }
@@ -219,76 +260,187 @@ class _SizeListView {
   int get length => _values.length;
 }
 
-extension _Int8ListFfi on Int8List {
+class _Int8ListView {
+  final core.List<int> _values;
+
+  _Int8ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Int8> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Int8>(length)..asTypedList(length).setAll(0, this);
+    return alloc<ffi.Int8>(length)..asTypedList(length).setRange(0, length, _values);
   }
+
+  int get length => _values.length;
 }
 
-extension _Int16ListFfi on Int16List {
+class _Int16ListView {
+  final core.List<int> _values;
+
+  _Int16ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Int16> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Int16>(length)..asTypedList(length).setAll(0, this);
+    return alloc<ffi.Int16>(length)..asTypedList(length).setRange(0, length, _values);
   }
+
+  int get length => _values.length;
 }
 
-extension _Int32ListFfi on Int32List {
+class _Int32ListView {
+  final core.List<int> _values;
+
+  _Int32ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Int32> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Int32>(length)..asTypedList(length).setAll(0, this);
+    return alloc<ffi.Int32>(length)..asTypedList(length).setRange(0, length, _values);
   }
+
+  int get length => _values.length;
 }
 
-extension _Int64ListFfi on Int64List {
+class _Int64ListView {
+  final core.List<int> _values;
+
+  _Int64ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Int64> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Int64>(length)..asTypedList(length).setAll(0, this);
+    return alloc<ffi.Int64>(length)..asTypedList(length).setRange(0, length, _values);
   }
+
+  int get length => _values.length;
 }
 
-extension _Uint8ListFfi on Uint8List {
+// ignore: unused_element
+class _IsizeListView {
+  final core.List<int> _values;
+
+  _IsizeListView(this._values);
+
+  // Copies
+  ffi.Pointer<ffi.IntPtr> pointer(ffi.Allocator alloc) {
+    final pointer = alloc<ffi.IntPtr>(_values.length);
+    for (var i = 0; i < _values.length; i++) {
+      pointer[i] = _values[i];
+    }
+    return pointer;
+  }
+
+  int get length => _values.length;
+}
+
+class _Uint8ListView {
+  final core.List<int> _values;
+
+  _Uint8ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Uint8> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Uint8>(length)..asTypedList(length).setAll(0, this);
+    final pointer = alloc<ffi.Uint8>(_values.length);
+    for (var i = 0; i < _values.length; i++) {
+      pointer[i] = min(255, max(0, _values[i]));
+    }
+    return pointer;
   }
+
+  int get length => _values.length;
 }
 
-extension _Uint16ListFfi on Uint16List {
+class _Uint16ListView {
+  final core.List<int> _values;
+
+  _Uint16ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Uint16> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Uint16>(length)..asTypedList(length).setAll(0, this);
+    final pointer = alloc<ffi.Uint16>(_values.length);
+    for (var i = 0; i < _values.length; i++) {
+      pointer[i] = min(65535, max(0, _values[i]));
+    }
+    return pointer;
   }
+
+  int get length => _values.length;
 }
 
-extension _Uint32ListFfi on Uint32List {
+class _Uint32ListView {
+  final core.List<int> _values;
+
+  _Uint32ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Uint32> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Uint32>(length)..asTypedList(length).setAll(0, this);
+    final pointer = alloc<ffi.Uint32>(_values.length);
+    for (var i = 0; i < _values.length; i++) {
+      pointer[i] = min(4294967295, max(0, _values[i]));
+    }
+    return pointer;
   }
+
+  int get length => _values.length;
 }
 
-extension _Uint64ListFfi on Uint64List {
+class _Uint64ListView {
+  final core.List<int> _values;
+
+  _Uint64ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Uint64> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Uint64>(length)..asTypedList(length).setAll(0, this);
+    final pointer = alloc<ffi.Uint64>(_values.length);
+    for (var i = 0; i < _values.length; i++) {
+      pointer[i] = max(0, _values[i]);
+    }
+    return pointer;
   }
+
+  int get length => _values.length;
 }
 
-extension _Float32ListFfi on Float32List {
+// ignore: unused_element
+class _UsizeListView {
+  final core.List<int> _values;
+
+  _UsizeListView(this._values);
+
+  // Copies
+  ffi.Pointer<ffi.Size> pointer(ffi.Allocator alloc) {
+    final pointer = alloc<ffi.Size>(_values.length);
+    for (var i = 0; i < _values.length; i++) {
+      pointer[i] = max(0, _values[i]);
+    }
+    return pointer;
+  }
+
+  int get length => _values.length;
+}
+
+class _Float32ListView {
+  final core.List<double> _values;
+
+  _Float32ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Float> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Float>(length)..asTypedList(length).setAll(0, this);
+    return alloc<ffi.Float>(length)..asTypedList(length).setRange(0, length, _values);
   }
+
+  int get length => _values.length;
 }
 
-extension _Float64ListFfi on Float64List {
+class _Float64ListView {
+  final core.List<double> _values;
+
+  _Float64ListView(this._values);
+
   // ignore: unused_element
   ffi.Pointer<ffi.Double> pointer(ffi.Allocator alloc) {
-    return alloc<ffi.Double>(length)..asTypedList(length).setAll(0, this);
+    return alloc<ffi.Double>(length)..asTypedList(length).setRange(0, length, _values);
   }
-}
 
+  int get length => _values.length;
+}
 
 final class _ResultBoolInt32Union extends ffi.Union {
   @ffi.Bool()
@@ -391,7 +543,7 @@ final class _ResultWeekOfFfiInt32 extends ffi.Struct {
   external bool isOk;
 }
 
-final class _SliceSize extends ffi.Struct {
+final class _SliceUsize extends ffi.Struct {
   external ffi.Pointer<ffi.Size> _pointer;
 
   @ffi.Size()
@@ -400,7 +552,7 @@ final class _SliceSize extends ffi.Struct {
   // This is expensive
   @override
   bool operator ==(Object other) {
-    if (other is! _SliceSize || other._length != _length) {
+    if (other is! _SliceUsize || other._length != _length) {
       return false;
     }
 
@@ -446,24 +598,28 @@ final class _SliceUtf8 extends ffi.Struct {
 final class _Writeable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  _Writeable() : _underlying = _create(0);
-  static final _create =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>('diplomat_buffer_writeable_create')
-    .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>();
-
+  _Writeable() : _underlying = _diplomat_buffer_writeable_create(0);
+  
   String finalize() {
-    final string = Utf8Decoder().convert(_getBytes(_underlying).asTypedList(_len(_underlying)));
-    _destroy(_underlying);
+    final string = Utf8Decoder().convert(_diplomat_buffer_writeable_get_bytes(_underlying).asTypedList(_diplomat_buffer_writeable_len(_underlying)));
+    _diplomat_buffer_writeable_destroy(_underlying);
     return string;
   }
-  static final _len = 
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_len')
-    .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
-  static final _getBytes = 
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_get_bytes')
-    .asFunction<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-  static final _destroy =
-    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_destroy')
-    .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+  
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_writeable_create', isLeaf: true)
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _diplomat_buffer_writeable_create(int len);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_len', isLeaf: true)
+// ignore: non_constant_identifier_names
+external int _diplomat_buffer_writeable_len(ffi.Pointer<ffi.Opaque> ptr);
+
+@ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_get_bytes', isLeaf: true)
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Uint8> _diplomat_buffer_writeable_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_destroy', isLeaf: true)
+// ignore: non_constant_identifier_names
+external void _diplomat_buffer_writeable_destroy(ffi.Pointer<ffi.Opaque> ptr);

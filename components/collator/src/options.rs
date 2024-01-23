@@ -22,7 +22,9 @@ use crate::elements::{CASE_MASK, TERTIARY_MASK};
 #[non_exhaustive]
 pub enum Strength {
     /// Compare only on the level of base letters. This level
-    /// corresponds to the ECMA-402 sensitivity "base".
+    /// corresponds to the ECMA-402 sensitivity "base" with
+    /// [`CaseLevel::Off`] (the default for [`CaseLevel`]) and
+    /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
     /// use icu_collator::*;
@@ -228,6 +230,9 @@ pub enum CaseLevel {
     Off = 0,
     /// Turn on the case level option, thereby making a separate level for case
     /// differences, positioned between secondary and tertiary.
+    ///
+    /// When used together with [`Strength::Primary`], this corresponds to the
+    /// ECMA-402 sensitivity "case".
     On = 1,
 }
 
@@ -260,6 +265,9 @@ pub enum BackwardSecondLevel {
 
 /// Options settable by the user of the API.
 ///
+/// With the exception of reordering (BCP47 `kr`), options that can by implied by locale are
+/// also settable via [`CollatorOptions`].
+///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options).
 ///
 /// The setters take an `Option` so that `None` can be used to go back to default.
@@ -268,55 +276,86 @@ pub enum BackwardSecondLevel {
 ///
 /// Examples for using the different options below can be found in the [crate-level docs](crate).
 ///
+/// ## ECMA-402 Sensitivity
+///
+/// ECMA-402 `sensitivity` maps to a combination of [`Strength`] and [`CaseLevel`] as follows:
+///
+/// <dl>
+/// <dt><code>sensitivity: "base"</code></dt>
+/// <dd><a href="enum.Strength.html#variant.Primary"><code>Strength::Primary</code></a></dd>
+/// <dt><code>sensitivity: "accent"</code></dt>
+/// <dd><a href="enum.Strength.html#variant.Secondary"><code>Strength::Secondary</code></a></dd>
+/// <dt><code>sensitivity: "case"</code></dt>
+/// <dd><a href="enum.Strength.html#variant.Primary"><code>Strength::Primary</code></a> and <a href="enum.CaseLevel.html#variant.On"><code>CaseLevel::On</code></a></dd>
+/// <dt><code>sensitivity: "variant"</code></dt>
+/// <dd><a href="enum.Strength.html#variant.Tertiary"><code>Strength::Tertiary</code></a></dd>
+/// </dl>
+///
 /// ## Strength
 ///
-/// This is the BCP47 key `ks`. The default is `Strength::Tertiary`.
+/// This is the BCP47 key `ks`. The default is [`Strength::Tertiary`].
 ///
 /// ## Alternate Handling
 ///
 /// This is the BCP47 key `ka`. Note that `AlternateHandling::ShiftTrimmed` and
 /// `AlternateHandling::Blanked` are unimplemented. The default is
-/// `AlternateHandling::NonIgnorable`, except
-/// for Thai, whose default is `AlternateHandling::Shifted`.
+/// [`AlternateHandling::NonIgnorable`], except
+/// for Thai, whose default is [`AlternateHandling::Shifted`].
 ///
 /// ## Case Level
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
-/// This is the BCP47 key `kc`. The default is `false` (off).
+/// This is the BCP47 key `kc`. The default is [`CaseLevel::Off`].
 ///
 /// ## Case First
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
-/// This is the BCP47 key `kf`. Three possibilities: `CaseFirst::Off` (default,
-/// except for Danish and Maltese), `CaseFirst::Lower`, and `CaseFirst::Upper`
+/// This is the BCP47 key `kf`. Three possibilities: [`CaseFirst::Off`] (default,
+/// except for Danish and Maltese), [`CaseFirst::LowerFirst`], and [`CaseFirst::UpperFirst`]
 /// (default for Danish and Maltese).
 ///
 /// ## Backward second level
 ///
 /// Compare the second level in backward order. This is the BCP47 key `kb`. `kb`
-/// is prohibited by ECMA 402. The default is `false` (off), except for Canadian
-/// French.
+/// is prohibited by ECMA-402. The default is [`BackwardSecondLevel::Off`], except
+/// for Canadian French.
 ///
 /// ## Numeric
 ///
-/// This is the BCP47 key `kn`. When set to `true` (on), any sequence of decimal
-/// digits (General_Category = Nd) is sorted at a primary level according to the
-/// numeric value. The default is `false` (off).
+/// This is the BCP47 key `kn`. When set to [`Numeric::On`], any sequence of decimal
+/// digits (General_Category = Nd) is sorted at the primary level according to the
+/// numeric value. The default is [`Numeric::Off`].
 ///
 /// # Unsupported BCP47 options
 ///
 /// Reordering (BCP47 `kr`) currently cannot be set via the API and is implied
-/// by the locale of the collation. `kr` is prohibited by ECMA 402.
+/// by the locale of the collation. `kr` is prohibited by ECMA-402.
 ///
 /// Normalization is always enabled and cannot be turned off. Therefore, there
-/// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA 402.
+/// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA-402.
 ///
 /// Hiragana quaternary handling is part of the strength for the Japanese
 /// tailoring. The BCP47 key `kh` is unsupported. `kh` is deprecated and
-/// prohibited by ECMA 402.
+/// prohibited by ECMA-402.
 ///
 /// Variable top (BCP47 `vt`) is unsupported (use Max Variable instead). `vt`
-/// is deprecated and prohibited by ECMA 402.
+/// is deprecated and prohibited by ECMA-402.
+///
+/// ## ECMA-402 Usage
+///
+/// ECMA-402 `usage: "search"` is represented as `-u-co-search` as part of the
+/// locale in ICU4X. However, neither ECMA-402 nor ICU4X provides prefix matching
+/// or substring matching API surface. This makes the utility of search collations
+/// very narrow: With `-u-co-search`, [`Strength::Primary`], and observing whether
+/// comparison output is [`core::cmp::Ordering::Equal`] (making no distinction between
+/// [`core::cmp::Ordering::Less`] and [`core::cmp::Ordering::Greater`]), it is
+/// possible to check if a set of human-readable strings contains a full-string
+/// fuzzy match of a user-entered string, where "fuzzy" means case-insensitive and
+/// accent-insentive for scripts that have such concepts and something roughly
+/// similar for other scripts.
+///
+/// Due to the very limited utility, ICU4X data does not include search collations
+/// by default.
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone)]
 pub struct CollatorOptions {
@@ -347,6 +386,73 @@ impl CollatorOptions {
             case_level: None,
             numeric: None,
             backward_second_level: None,
+        }
+    }
+}
+
+// Make it possible to easily copy the resolved options of
+// one collator into another collator.
+impl From<ResolvedCollatorOptions> for CollatorOptions {
+    /// Convenience conversion for copying the options from an
+    /// existing collator into a new one (overriding any locale-provided
+    /// defaults of the new one!).
+    fn from(options: ResolvedCollatorOptions) -> CollatorOptions {
+        Self {
+            strength: Some(options.strength),
+            alternate_handling: Some(options.alternate_handling),
+            case_first: Some(options.case_first),
+            max_variable: Some(options.max_variable),
+            case_level: Some(options.case_level),
+            numeric: Some(options.numeric),
+            backward_second_level: Some(options.backward_second_level),
+        }
+    }
+}
+
+/// The resolved (actually used) options used by the collator.
+///
+/// See the documentation of `CollatorOptions`.
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone)]
+pub struct ResolvedCollatorOptions {
+    /// Resolved strength collation option.
+    pub strength: Strength,
+    /// Resolved alternate handling collation option.
+    pub alternate_handling: AlternateHandling,
+    /// Resolved case first collation option.
+    pub case_first: CaseFirst,
+    /// Resolved max variable collation option.
+    pub max_variable: MaxVariable,
+    /// Resolved case level collation option.
+    pub case_level: CaseLevel,
+    /// Resolved numeric collation option.
+    pub numeric: Numeric,
+    /// Resolved backward second level collation option.
+    pub backward_second_level: BackwardSecondLevel,
+}
+
+impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
+    fn from(options: CollatorOptionsBitField) -> ResolvedCollatorOptions {
+        Self {
+            strength: options.strength(),
+            alternate_handling: options.alternate_handling(),
+            case_first: options.case_first(),
+            max_variable: options.max_variable(),
+            case_level: if options.case_level() {
+                CaseLevel::On
+            } else {
+                CaseLevel::Off
+            },
+            numeric: if options.numeric() {
+                Numeric::On
+            } else {
+                Numeric::Off
+            },
+            backward_second_level: if options.backward_second_level() {
+                BackwardSecondLevel::On
+            } else {
+                BackwardSecondLevel::Off
+            },
         }
     }
 }
@@ -510,6 +616,18 @@ impl CollatorOptionsBitField {
                 self.set_case_level(Some(false));
             }
             _ => self.set_case_level(None),
+        }
+    }
+
+    fn case_first(&self) -> CaseFirst {
+        if (self.0 & CollatorOptionsBitField::CASE_FIRST_MASK) != 0 {
+            if (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0 {
+                CaseFirst::UpperFirst
+            } else {
+                CaseFirst::LowerFirst
+            }
+        } else {
+            CaseFirst::Off
         }
     }
 
