@@ -76,7 +76,7 @@ fn get_basic_bench(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     g.bench_function("HashMap", |b| {
-        let hm: HashMap<&[u8], usize> = data.iter().copied().map(|(a, b)| (a, b)).collect();
+        let hm: HashMap<&[u8], usize> = data.iter().copied().collect();
         b.iter(|| {
             for (key, expected) in black_box(data) {
                 let actual = black_box(&hm).get(key);

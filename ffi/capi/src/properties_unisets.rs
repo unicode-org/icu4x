@@ -23,8 +23,7 @@ pub mod ffi {
     impl ICU4XUnicodeSetData {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed::contains, FnInStruct)]
-        pub fn contains(&self, s: &str) -> bool {
-            let s = s.as_bytes(); // #2520
+        pub fn contains(&self, s: &DiplomatStr) -> bool {
             let s = if let Ok(s) = str::from_utf8(s) {
                 s
             } else {
@@ -37,8 +36,8 @@ pub mod ffi {
             icu::properties::sets::UnicodeSetDataBorrowed::contains_char,
             FnInStruct
         )]
-        pub fn contains_char(&self, cp: char) -> bool {
-            self.0.as_borrowed().contains_char(cp)
+        pub fn contains_char(&self, cp: DiplomatChar) -> bool {
+            self.0.as_borrowed().contains32(cp)
         }
         /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
         #[diplomat::rust_link(
@@ -48,7 +47,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(dart, disable)]
         pub fn contains32(&self, cp: u32) -> bool {
-            self.0.as_borrowed().contains32(cp)
+            self.contains_char(cp)
         }
 
         #[diplomat::rust_link(icu::properties::sets::basic_emoji, Fn)]

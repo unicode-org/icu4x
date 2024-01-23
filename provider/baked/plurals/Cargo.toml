@@ -15,3 +15,8 @@ homepage.workspace = true
 include.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+
+[package.metadata.sources]
+cldr = { tagged = "44.1.0" }
+icuexport = { tagged = "release-74-2" }
+segmenter_lstm = { tagged = "v0.1.0" }

@@ -2,13 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::helpers::size_test;
 use crate::provider::{calendar::*, date_time::PatternSelector};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    WeekDataV1Marker,
 };
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -16,6 +18,13 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::DataLocale;
 use writeable::Writeable;
+
+size_test!(
+    DateTimeFormatter,
+    date_time_formatter_size,
+    pinned = 5480,
+    nightly = 5208
+);
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
 /// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
@@ -26,6 +35,8 @@ use writeable::Writeable;
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateTimeFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
+///
+#[doc = date_time_formatter_size!()]
 ///
 /// [`icu_datetime`]: crate
 ///
@@ -223,10 +234,12 @@ impl DateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
@@ -365,10 +378,12 @@ impl DateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
@@ -575,6 +590,7 @@ where {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};

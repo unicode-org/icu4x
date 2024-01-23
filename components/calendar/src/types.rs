@@ -137,6 +137,21 @@ impl MonthCode {
         }
         None
     }
+
+    /// Construct a "normal" month code given a number ("Mxx").
+    ///
+    /// Returns an error for months greater than 99
+    #[cfg(test)] // Only used in tests for now. Could be made public if people need it.
+    pub(crate) fn new_normal(number: u8) -> Option<Self> {
+        let tens = number / 10;
+        let ones = number % 10;
+        if tens > 9 {
+            return None;
+        }
+
+        let bytes = [b'M', b'0' + tens, b'0' + ones, 0];
+        Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
+    }
 }
 
 #[test]
@@ -772,10 +787,32 @@ impl From<usize> for IsoWeekday {
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
     /// ```
     fn from(input: usize) -> Self {
-        let mut ordinal = (input % 7) as i8;
-        if ordinal == 0 {
-            ordinal = 7;
+        use IsoWeekday::*;
+        match input % 7 {
+            0 => Sunday,
+            1 => Monday,
+            2 => Tuesday,
+            3 => Wednesday,
+            4 => Thursday,
+            5 => Friday,
+            6 => Saturday,
+            _ => unreachable!(),
         }
-        unsafe { core::mem::transmute(ordinal) }
+    }
+}
+
+impl IsoWeekday {
+    /// Returns the day after the current day.
+    pub(crate) fn next_day(self) -> IsoWeekday {
+        use IsoWeekday::*;
+        match self {
+            Monday => Tuesday,
+            Tuesday => Wednesday,
+            Wednesday => Thursday,
+            Thursday => Friday,
+            Friday => Saturday,
+            Saturday => Sunday,
+            Sunday => Monday,
+        }
     }
 }

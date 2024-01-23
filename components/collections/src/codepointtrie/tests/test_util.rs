@@ -8,8 +8,6 @@ use icu_collections::codepointtrie::*;
 use core::convert::TryFrom;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::fs::File;
-use std::io::Read;
 use std::path::Path;
 use zerovec::ZeroVec;
 
@@ -161,57 +159,42 @@ pub struct EnumPropSerializedCPTStruct {
     pub null_value: u32,
 }
 
-// The following structs are specific to the TOML format files for dumped ICU
-// test data.
-
-#[allow(dead_code)]
-#[derive(serde::Deserialize)]
-pub struct TestFile {
-    code_point_trie: TestCodePointTrie,
-}
-
-#[allow(dead_code)]
-#[derive(serde::Deserialize)]
-pub struct TestCodePointTrie {
-    // The trie_struct field for test data files is dumped from the same source
-    // (ICU4C) using the same function (usrc_writeUCPTrie) as property data
-    // for the provider, so we can reuse the same struct here.
-    #[serde(rename(deserialize = "struct"))]
-    trie_struct: EnumPropSerializedCPTStruct,
-    #[serde(rename(deserialize = "testdata"))]
-    test_data: TestData,
-}
-
-#[allow(dead_code)]
-#[derive(serde::Deserialize)]
-pub struct TestData {
-    #[serde(rename(deserialize = "checkRanges"))]
-    check_ranges: Vec<u32>,
-}
-
 // Given a .toml file dumped from ICU4C test data for UCPTrie, run the test
 // data file deserialization into the test file struct, convert and construct
 // the `CodePointTrie`, and test the constructed struct against the test file's
 // "check ranges" (inversion map ranges) using `check_trie` to verify the
 // validity of the `CodePointTrie`'s behavior for all code points.
 #[allow(dead_code)]
-pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
-    let path = Path::new(test_file_path);
-    let display = path.display();
+pub fn run_deserialize_test_from_test_data(test_file: &str) {
+    // The following structs are specific to the TOML format files for dumped ICU
+    // test data.
 
-    let mut file = match File::open(&path) {
-        Err(err) => panic!("couldn't open {}: {}", display, err),
-        Ok(file) => file,
-    };
-
-    let mut toml_str = String::new();
-
-    if let Err(err) = file.read_to_string(&mut toml_str) {
-        panic!("couldn't read {}: {}", display, err)
+    #[derive(serde::Deserialize)]
+    pub struct TestFile {
+        code_point_trie: TestCodePointTrie,
     }
 
-    let test_file: TestFile = ::toml::from_str(&toml_str).unwrap();
-    let test_struct = test_file.code_point_trie.trie_struct;
+    #[derive(serde::Deserialize)]
+    pub struct TestCodePointTrie {
+        // The trie_struct field for test data files is dumped from the same source
+        // (ICU4C) using the same function (usrc_writeUCPTrie) as property data
+        // for the provider, so we can reuse the same struct here.
+        #[serde(rename(deserialize = "struct"))]
+        trie_struct: EnumPropSerializedCPTStruct,
+        #[serde(rename(deserialize = "testdata"))]
+        test_data: TestData,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct TestData {
+        #[serde(rename(deserialize = "checkRanges"))]
+        check_ranges: Vec<u32>,
+    }
+
+    let test_struct = toml::from_str::<TestFile>(&test_file)
+        .unwrap()
+        .code_point_trie
+        .trie_struct;
 
     println!(
         "Running CodePointTrie reader logic test on test data file: {}",

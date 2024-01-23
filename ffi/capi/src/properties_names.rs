@@ -38,12 +38,14 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get_strict(&self, name: &str) -> i16 {
-            self.0
-                .as_borrowed()
-                .get_strict(name)
-                .map(|x| x as i16)
-                .unwrap_or(-1)
+        pub fn get_strict(&self, name: &DiplomatStr) -> i16 {
+            if let Ok(name) = core::str::from_utf8(name) {
+                self.0.as_borrowed().get_strict(name)
+            } else {
+                None
+            }
+            .map(|u_16| u_16 as i16)
+            .unwrap_or(-1)
         }
 
         /// Get the property value matching the given name, using loose matching
@@ -58,12 +60,14 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get_loose(&self, name: &str) -> i16 {
-            self.0
-                .as_borrowed()
-                .get_loose(name)
-                .map(|x| x as i16)
-                .unwrap_or(-1)
+        pub fn get_loose(&self, name: &DiplomatStr) -> i16 {
+            if let Ok(name) = core::str::from_utf8(name) {
+                self.0.as_borrowed().get_loose(name)
+            } else {
+                None
+            }
+            .map(|u_16| u_16 as i16)
+            .unwrap_or(-1)
         }
 
         #[diplomat::rust_link(
@@ -219,12 +223,14 @@ pub mod ffi {
         /// Returns 0 if the name is unknown for this property
         // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_strict, FnInStruct)]
         // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_strict_u16, FnInStruct, hidden)]
-        pub fn get_strict(&self, name: &str) -> u32 {
-            self.0
-                .as_borrowed()
-                .get_strict(name)
-                .map(Into::into)
-                .unwrap_or(0)
+        pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
+            if let Ok(name) = core::str::from_utf8(name) {
+                self.0.as_borrowed().get_strict(name)
+            } else {
+                None
+            }
+            .map(Into::into)
+            .unwrap_or_default()
         }
 
         /// Get the mask value matching the given name, using loose matching
@@ -232,12 +238,14 @@ pub mod ffi {
         /// Returns 0 if the name is unknown for this property
         // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_loose, FnInStruct)]
         // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_loose_u16, FnInStruct, hidden)]
-        pub fn get_loose(&self, name: &str) -> u32 {
-            self.0
-                .as_borrowed()
-                .get_loose(name)
-                .map(Into::into)
-                .unwrap_or(0)
+        pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
+            if let Ok(name) = core::str::from_utf8(name) {
+                self.0.as_borrowed().get_loose(name)
+            } else {
+                None
+            }
+            .map(Into::into)
+            .unwrap_or_default()
         }
 
         #[diplomat::rust_link(

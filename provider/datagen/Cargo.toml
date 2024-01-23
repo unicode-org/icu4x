@@ -50,8 +50,10 @@ icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
 icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
 icu_transliterate = { workspace = true, features = ["datagen"], optional = true }
+icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true }
 
 # ICU infrastructure
+calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
@@ -71,7 +73,7 @@ proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = "1.9"
+elsa = "1.10"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
@@ -87,6 +89,8 @@ zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"
 rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
 
+num-bigint = { version = "0.4.4", default-features = false, optional = true }
+num-rational = { version = "0.4", default-features = false, optional = true }
 
 
 # Dependencies for "bin" feature
@@ -100,11 +104,9 @@ crlify = { path = "../../utils/crlify" }
 icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
-num-bigint = { version = "0.4.4", default-features = false }
-num-rational = { version = "0.4", default-features = false }
 
 # Pre-experimental components with limited data generation
-icu_singlenumberformatter = { path = "../../experimental/singlenumberformatter", features = ["datagen"] }
+icu_dimension = { path = "../../experimental/dimension", features = ["datagen"] }
 icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
 
 [features]
@@ -129,11 +131,13 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
 icu_transliterate = ["dep:icu_transliterate"]
+icu_unitsconversion = ["dep:icu_unitsconversion", "dep:num-bigint", "dep:num-rational"]
 experimental_components = [
     "icu_compactdecimal",
     "icu_displaynames",
     "icu_relativetime",
     "icu_transliterate",
+    "icu_unitsconversion",
 ]
 
 [[bin]]

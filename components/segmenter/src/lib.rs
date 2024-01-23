@@ -130,10 +130,6 @@ mod word;
 
 pub mod provider;
 
-// icu_datagen uses symbols, but we don't want to expose this implementation detail to the users.
-#[doc(hidden)]
-pub mod symbols;
-
 // Main Segmenter and BreakIterator public types
 pub use crate::grapheme::GraphemeClusterBreakIterator;
 pub use crate::grapheme::GraphemeClusterSegmenter;

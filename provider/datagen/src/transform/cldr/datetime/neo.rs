@@ -3,127 +3,71 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
-use crate::transform::cldr::cldr_serde::ca::{self, Context, Length, PatternLength};
+use crate::provider::IterableDataProviderInternal;
+use crate::transform::cldr::cldr_serde::ca;
 use crate::DatagenProvider;
 use icu_datetime::pattern::{self, CoarseHourCycle};
 
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
+use icu_datetime::provider::neo::aux::{self, Context, Length, PatternLength};
 use icu_datetime::provider::neo::*;
 use icu_locid::{
-    extensions::private::{subtag, Subtag},
+    extensions::private::Subtag,
     extensions::unicode::{value, Value},
     LanguageIdentifier, Locale,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
-
-const NUMERIC: Subtag = subtag!("1");
-const ABBR: Subtag = subtag!("3");
-const NARROW: Subtag = subtag!("4");
-const WIDE: Subtag = subtag!("5");
-const SHORT: Subtag = subtag!("6");
-const ABBR_STANDALONE: Subtag = subtag!("3s");
-const NARROW_STANDALONE: Subtag = subtag!("4s");
-const WIDE_STANDALONE: Subtag = subtag!("5s");
-const SHORT_STANDALONE: Subtag = subtag!("6s");
-
-const PATTERN_FULL: Subtag = subtag!("f");
-const PATTERN_LONG: Subtag = subtag!("l");
-const PATTERN_MEDIUM: Subtag = subtag!("m");
-const PATTERN_SHORT: Subtag = subtag!("s");
-
-const PATTERN_FULL12: Subtag = subtag!("f12");
-const PATTERN_LONG12: Subtag = subtag!("l12");
-const PATTERN_MEDIUM12: Subtag = subtag!("m12");
-const PATTERN_SHORT12: Subtag = subtag!("s12");
-
-const PATTERN_FULL24: Subtag = subtag!("f24");
-const PATTERN_LONG24: Subtag = subtag!("l24");
-const PATTERN_MEDIUM24: Subtag = subtag!("m24");
-const PATTERN_SHORT24: Subtag = subtag!("s24");
-
-fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
-    use {Context::*, Length::*};
-    match subtag {
-        NUMERIC => (Format, Numeric),
-        ABBR => (Format, Abbr),
-        NARROW => (Format, Narrow),
-        WIDE => (Format, Wide),
-        SHORT => (Format, Short),
-        ABBR_STANDALONE => (Standalone, Abbr),
-        NARROW_STANDALONE => (Standalone, Narrow),
-        WIDE_STANDALONE => (Standalone, Wide),
-        SHORT_STANDALONE => (Standalone, Short),
-        _ => panic!("Found unexpected auxiliary subtag {}", subtag),
-    }
-}
-
-fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<CoarseHourCycle>) {
-    use {CoarseHourCycle::*, PatternLength::*};
-    match subtag {
-        PATTERN_FULL => (Full, None),
-        PATTERN_LONG => (Long, None),
-        PATTERN_MEDIUM => (Medium, None),
-        PATTERN_SHORT => (Short, None),
-
-        PATTERN_FULL12 => (Full, Some(H11H12)),
-        PATTERN_LONG12 => (Long, Some(H11H12)),
-        PATTERN_MEDIUM12 => (Medium, Some(H11H12)),
-        PATTERN_SHORT12 => (Short, Some(H11H12)),
-
-        PATTERN_FULL24 => (Full, Some(H23H24)),
-        PATTERN_LONG24 => (Long, Some(H23H24)),
-        PATTERN_MEDIUM24 => (Medium, Some(H23H24)),
-        PATTERN_SHORT24 => (Short, Some(H23H24)),
-        _ => panic!("Found unexpected auxiliary subtag {}", subtag),
-    }
-}
 
 /// Most keys don't have short symbols (except weekdays)
 ///
 /// We may further investigate and kick out standalone for some keys
 const NORMAL_KEY_LENGTHS: &[Subtag] = &[
-    ABBR,
-    NARROW,
-    WIDE,
-    ABBR_STANDALONE,
-    NARROW_STANDALONE,
-    WIDE_STANDALONE,
+    aux::ABBR,
+    aux::NARROW,
+    aux::WIDE,
+    aux::ABBR_STANDALONE,
+    aux::NARROW_STANDALONE,
+    aux::WIDE_STANDALONE,
 ];
 
 /// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
 const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
-    ABBR,
-    NARROW,
-    WIDE,
-    ABBR_STANDALONE,
-    NARROW_STANDALONE,
-    WIDE_STANDALONE,
-    NUMERIC,
+    aux::ABBR,
+    aux::NARROW,
+    aux::WIDE,
+    aux::ABBR_STANDALONE,
+    aux::NARROW_STANDALONE,
+    aux::WIDE_STANDALONE,
+    aux::NUMERIC,
 ];
 
 /// Lengths for year data (does not do standalone formatting)
-const YEARS_KEY_LENGTHS: &[Subtag] = &[ABBR, NARROW, WIDE];
+const YEARS_KEY_LENGTHS: &[Subtag] = &[aux::ABBR, aux::NARROW, aux::WIDE];
 
 /// All possible non-numeric lengths
 const FULL_KEY_LENGTHS: &[Subtag] = &[
-    ABBR,
-    NARROW,
-    WIDE,
-    SHORT,
-    ABBR_STANDALONE,
-    NARROW_STANDALONE,
-    WIDE_STANDALONE,
-    SHORT_STANDALONE,
+    aux::ABBR,
+    aux::NARROW,
+    aux::WIDE,
+    aux::SHORT,
+    aux::ABBR_STANDALONE,
+    aux::NARROW_STANDALONE,
+    aux::WIDE_STANDALONE,
+    aux::SHORT_STANDALONE,
 ];
 
 /// Lengths for normal patterns (not counting hour cycle stuff)
-const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
-    &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
+const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] = &[
+    aux::PATTERN_FULL,
+    aux::PATTERN_LONG,
+    aux::PATTERN_MEDIUM,
+    aux::PATTERN_SHORT,
+];
 
 impl DatagenProvider {
     fn load_calendar_dates(
@@ -206,7 +150,9 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
-            let (context, length) = aux_subtag_info(aux);
+            let Some((context, length)) = aux::symbol_subtag_info(aux) else {
+                panic!("Found unexpected auxiliary subtag {}", aux)
+            };
             conversion(self, langid, data, &calendar, context, length)
         })
     }
@@ -225,7 +171,9 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |_langid, data, aux| {
-            let (length, hc) = aux_pattern_subtag_info(aux);
+            let Some((length, hc)) = aux::pattern_subtag_info(aux) else {
+                panic!("Found unexpected auxiliary subtag {}", aux)
+            };
             conversion(data, length, hc)
         })
     }
@@ -234,8 +182,8 @@ impl DatagenProvider {
         &self,
         calendar: Value,
         keylengths: &'static [Subtag],
-    ) -> Result<Vec<DataLocale>, DataError> {
-        let mut r = Vec::new();
+    ) -> Result<HashSet<DataLocale>, DataError> {
+        let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
@@ -262,7 +210,7 @@ fn weekday_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearSymbolsV1<'static>, DataError> {
+) -> Result<LinearNamesV1<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
     let days = [
@@ -275,7 +223,7 @@ fn weekday_convert(
         &*day_symbols.sat,
     ];
 
-    Ok(LinearSymbolsV1 {
+    Ok(LinearNamesV1 {
         symbols: (&days).into(),
     })
 }
@@ -287,7 +235,7 @@ fn dayperiods_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearSymbolsV1<'static>, DataError> {
+) -> Result<LinearNamesV1<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -302,7 +250,7 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearSymbolsV1 {
+    Ok(LinearNamesV1 {
         symbols: (&periods).into(),
     })
 }
@@ -313,7 +261,7 @@ fn eras_convert(
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
-) -> Result<YearSymbolsV1<'static>, DataError> {
+) -> Result<YearNamesV1<'static>, DataError> {
     let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
@@ -412,7 +360,7 @@ fn eras_convert(
         }
     }
 
-    Ok(YearSymbolsV1::Eras(
+    Ok(YearNamesV1::Eras(
         out_eras
             .iter()
             .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
@@ -426,7 +374,7 @@ fn years_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<YearSymbolsV1<'static>, DataError> {
+) -> Result<YearNamesV1<'static>, DataError> {
     assert_eq!(
         context,
         Context::Format,
@@ -448,7 +396,7 @@ fn years_convert(
             }
             &**value
         }).collect();
-        Ok(YearSymbolsV1::Cyclic((&years).into()))
+        Ok(YearNamesV1::Cyclic((&years).into()))
     } else {
         panic!(
             "Calendar {calendar} in locale {langid} has neither eras nor cyclicNameSets for years"
@@ -488,7 +436,7 @@ fn months_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<MonthSymbolsV1<'static>, DataError> {
+) -> Result<MonthNamesV1<'static>, DataError> {
     if length == Length::Numeric {
         assert_eq!(
             context,
@@ -508,7 +456,7 @@ fn months_convert(
             pattern: string.into(),
             subst_index: index,
         };
-        return Ok(MonthSymbolsV1::LeapNumeric(pattern));
+        return Ok(MonthNamesV1::LeapNumeric(pattern));
     }
 
     let months = data.months.get_symbols(context, length);
@@ -543,7 +491,7 @@ fn months_convert(
 
             symbols[index] = (&**v).into();
         }
-        Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+        Ok(MonthNamesV1::LeapLinear((&symbols).into()))
     } else {
         for (k, v) in months.0.iter() {
             let index: usize = k
@@ -588,9 +536,9 @@ fn months_convert(
                 let replaced = leap.replace("{0}", &symbols[i]);
                 symbols[nonleap + i] = replaced.into();
             }
-            Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+            Ok(MonthNamesV1::LeapLinear((&symbols).into()))
         } else {
-            Ok(MonthSymbolsV1::Linear((&symbols).into()))
+            Ok(MonthNamesV1::Linear((&symbols).into()))
         }
     }
 }
@@ -734,10 +682,10 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // subtag actually should be produced (by returning a special error), then this code is no longer necessary
 // and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
 // in timepattern_convert
-impl IterableDataProvider<TimePatternV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         let calendar = value!("gregory");
-        let mut r = Vec::new();
+        let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
@@ -749,14 +697,14 @@ impl IterableDataProvider<TimePatternV1Marker> for DatagenProvider {
             let tp = &data.time_formats;
 
             let keylengths = [
-                PATTERN_FULL,
-                PATTERN_LONG,
-                PATTERN_MEDIUM,
-                PATTERN_SHORT,
-                nondefault_subtag(&tp.full, PATTERN_FULL12, PATTERN_FULL24),
-                nondefault_subtag(&tp.long, PATTERN_LONG12, PATTERN_LONG24),
-                nondefault_subtag(&tp.medium, PATTERN_MEDIUM12, PATTERN_MEDIUM24),
-                nondefault_subtag(&tp.short, PATTERN_SHORT12, PATTERN_SHORT24),
+                aux::PATTERN_FULL,
+                aux::PATTERN_LONG,
+                aux::PATTERN_MEDIUM,
+                aux::PATTERN_SHORT,
+                nondefault_subtag(&tp.full, aux::PATTERN_FULL12, aux::PATTERN_FULL24),
+                nondefault_subtag(&tp.long, aux::PATTERN_LONG12, aux::PATTERN_LONG24),
+                nondefault_subtag(&tp.medium, aux::PATTERN_MEDIUM12, aux::PATTERN_MEDIUM24),
+                nondefault_subtag(&tp.short, aux::PATTERN_SHORT12, aux::PATTERN_SHORT24),
             ];
             keylengths.into_iter().map(move |length| {
                 let locale: Locale = lid.clone().into();
@@ -780,8 +728,8 @@ macro_rules! impl_symbols_datagen {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }
@@ -796,8 +744,8 @@ macro_rules! impl_pattern_datagen {
             }
         }
 
-        impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }
@@ -806,7 +754,7 @@ macro_rules! impl_pattern_datagen {
 
 // Weekdays
 impl_symbols_datagen!(
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     "gregory",
     FULL_KEY_LENGTHS,
     weekday_convert
@@ -814,7 +762,7 @@ impl_symbols_datagen!(
 
 // Dayperiods
 impl_symbols_datagen!(
-    DayPeriodSymbolsV1Marker,
+    DayPeriodNamesV1Marker,
     "gregory",
     NORMAL_KEY_LENGTHS,
     dayperiods_convert
@@ -822,79 +770,79 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearSymbolsV1Marker,
+    BuddhistYearNamesV1Marker,
     "buddhist",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearSymbolsV1Marker,
+    ChineseYearNamesV1Marker,
     "chinese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearSymbolsV1Marker,
+    CopticYearNamesV1Marker,
     "coptic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    DangiYearSymbolsV1Marker,
+    DangiYearNamesV1Marker,
     "dangi",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    EthiopianYearSymbolsV1Marker,
+    EthiopianYearNamesV1Marker,
     "ethiopic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearSymbolsV1Marker,
+    GregorianYearNamesV1Marker,
     "gregory",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearSymbolsV1Marker,
+    HebrewYearNamesV1Marker,
     "hebrew",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearSymbolsV1Marker,
+    IndianYearNamesV1Marker,
     "indian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearSymbolsV1Marker,
+    IslamicYearNamesV1Marker,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearSymbolsV1Marker,
+    JapaneseYearNamesV1Marker,
     "japanese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearSymbolsV1Marker,
+    JapaneseExtendedYearNamesV1Marker,
     "japanext",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearSymbolsV1Marker,
+    PersianYearNamesV1Marker,
     "persian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    RocYearSymbolsV1Marker,
+    RocYearNamesV1Marker,
     "roc",
     YEARS_KEY_LENGTHS,
     years_convert
@@ -902,79 +850,79 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthSymbolsV1Marker,
+    BuddhistMonthNamesV1Marker,
     "buddhist",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthSymbolsV1Marker,
+    ChineseMonthNamesV1Marker,
     "chinese",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthSymbolsV1Marker,
+    CopticMonthNamesV1Marker,
     "coptic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthSymbolsV1Marker,
+    DangiMonthNamesV1Marker,
     "dangi",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthSymbolsV1Marker,
+    EthiopianMonthNamesV1Marker,
     "ethiopic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthSymbolsV1Marker,
+    GregorianMonthNamesV1Marker,
     "gregory",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthSymbolsV1Marker,
+    HebrewMonthNamesV1Marker,
     "hebrew",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthSymbolsV1Marker,
+    IndianMonthNamesV1Marker,
     "indian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthSymbolsV1Marker,
+    IslamicMonthNamesV1Marker,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthSymbolsV1Marker,
+    JapaneseMonthNamesV1Marker,
     "japanese",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthSymbolsV1Marker,
+    JapaneseExtendedMonthNamesV1Marker,
     "japanext",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthSymbolsV1Marker,
+    PersianMonthNamesV1Marker,
     "persian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    RocMonthSymbolsV1Marker,
+    RocMonthNamesV1Marker,
     "roc",
     NORMAL_KEY_LENGTHS,
     months_convert

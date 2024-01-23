@@ -3,9 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
-
-use std::convert::TryInto;
 
 use fixed_decimal::FixedDecimal;
 #[cfg(feature = "experimental")]
@@ -14,9 +11,9 @@ use icu_plurals::PluralOperands;
 
 #[test]
 fn test_parsing_operands() {
-    let path = "./tests/fixtures/operands.json";
     let test_set: fixtures::OperandsTestSet =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+        serde_json::from_str(include_str!("fixtures/operands.json"))
+            .expect("Failed to read a fixture");
 
     for test in test_set.string {
         let operands: PluralOperands = test.input.parse().expect("Failed to parse to operands.");
@@ -24,7 +21,7 @@ fn test_parsing_operands() {
     }
 
     for test in test_set.int {
-        let operands: PluralOperands = test.input.try_into().expect("Failed to parse to operands.");
+        let operands: PluralOperands = test.input.into();
         assert_eq!(operands, test.output.clone().into());
 
         if test.input.is_positive() {
@@ -37,7 +34,7 @@ fn test_parsing_operands() {
     #[cfg(feature = "experimental")]
     for test in test_set.floats {
         let t = test.clone();
-        let operands: PluralOperands = t.output.try_into().expect("Failed to parse to operands.");
+        let operands: PluralOperands = t.output.into();
         let raw_operands = RawPluralOperands::from(operands);
         let expected: f64 = t.input.abs();
         let fraction = raw_operands.t as f64 / 10_f64.powi(raw_operands.v as i32);
@@ -60,9 +57,9 @@ fn test_parsing_operand_errors() {
 
 #[test]
 fn test_from_fixed_decimals() {
-    let path = "./tests/fixtures/operands.json";
     let test_set: fixtures::OperandsTestSet =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+        serde_json::from_str(include_str!("fixtures/operands.json"))
+            .expect("Failed to read a fixture");
     for test in test_set.from_test {
         let input: FixedDecimal = FixedDecimal::from(&test.input);
         let actual: PluralOperands = PluralOperands::from(&input);
