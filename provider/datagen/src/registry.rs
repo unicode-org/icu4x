@@ -157,6 +157,7 @@ macro_rules! registry {
 registry!(
     #[cfg(test)]
     icu_dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
+    icu_dimension::provider::PercentEssentialsV1Marker = "percent/essentials@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
     icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",

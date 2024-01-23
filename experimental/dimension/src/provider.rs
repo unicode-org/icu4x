@@ -16,7 +16,10 @@ use zerovec::{VarZeroVec, ZeroMap};
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[CurrencyEssentialsV1Marker::KEY];
+pub const KEYS: &[DataKey] = &[
+    CurrencyEssentialsV1Marker::KEY,
+    PercentEssentialsV1Marker::KEY,
+];
 
 /// This type contains all of the essential data for currency formatting.
 ///
@@ -113,4 +116,56 @@ pub struct CurrencyPatterns {
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is `None`, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: Option<PlaceholderValue>,
+}
+
+#[icu_provider::data_struct(PercentEssentialsV1Marker = "percent/essentials@1")]
+#[derive(Default, Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_dimension::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct PercentEssentialsV1<'data> {
+    /// The index of the number placeholder in the standard pattern.
+    pub number_index: u8,
+
+    /// Prefix and suffix to apply to a percent sign when needed.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub percent_sign_affixes: PercentAffixesV1<'data>,
+
+    /// The percent symbol.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub percent_sign_symbol: Cow<'data, str>,
+
+    /// The index of the percent symbol in the standard pattern.
+    pub percent_symbol_index: u8,
+
+    /// Represents the standard pattern.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub standard: Cow<'data, str>,
+}
+
+/// A collection of strings to affix to a percent number.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Default, Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_dimension::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct PercentAffixesV1<'data> {
+    /// String to prepend before the percent sign.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub prefix: Cow<'data, str>,
+
+    /// String to append after the percent sign.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub suffix: Cow<'data, str>,
 }

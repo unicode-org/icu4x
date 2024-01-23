@@ -16,6 +16,8 @@ pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
+#[cfg(test)] // keep as test until bakeddata is needed
+pub mod percent;
 pub mod plurals;
 #[cfg(feature = "icu_relativetime")]
 pub mod relativetime;
