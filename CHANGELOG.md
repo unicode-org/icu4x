@@ -9,9 +9,6 @@
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
   - `icu_datetime`
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
-  - `icu_normalizer`
-    - Fix normalization of character whose decomposition contains more than one starter and ends with a non-starter followed by a non-starter
-      with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
   - `icu_segmenter`
@@ -51,6 +48,9 @@
  - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
    - `icu_datagen@1.4.1`
 
+ - Fix normalization of character whose decomposition contains more than one starter and ends with a non-starter followed by a non-starter
+   with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
+   - `icu_normalizer@1.4.1`
 
 ## icu4x 1.4 (Nov 16, 2023)
 
