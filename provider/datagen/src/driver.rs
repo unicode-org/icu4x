@@ -475,8 +475,11 @@ struct ExplicitImplicitLocaleSets {
 
 /// Resolves the set of explicit langids and the supported locales into two sets of locales:
 ///
-/// - `explicit` contains the explicit langids but with aux keys and extension keywords included
-/// - `implcit` contains any locale reachable by fallback from an `explicit` locale
+/// - `explicit` contains the explicit langids but with aux keys and extension keywords included.
+///   For example, if `ar-SA` is requested (explicit langid), and `ar` and `ar-u-nu-latn` are supported,
+///   then `ar-SA` and `ar-SA-u-nu-latn` will be returned as `explicit`.
+/// - `implcit` contains all supported locales reachable by fallback from an `explicit` locale.
+///   These locales can be included without increasing data payload size.
 fn make_explicit_implicit_sets(
     key: DataKey,
     explicit_langids: &HashSet<LanguageIdentifier>,
