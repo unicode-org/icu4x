@@ -267,11 +267,9 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             if ascii_i == key_ascii && ascii_j == key_ascii {
                 let len = self.prepend_ascii(key_ascii)?;
                 current_len += len;
-                if matches!(self.options.mixed_case_mode, MixedCaseMode::Reject) {
-                    if i == new_i + 2 {
-                        // This can happen if two strings were picked up, each with a different case
-                        return Err(Error::MixedCase);
-                    }
+                if matches!(self.options.mixed_case_mode, MixedCaseMode::Reject) && i == new_i + 2 {
+                    // This can happen if two strings were picked up, each with a different case
+                    return Err(Error::MixedCase);
                 }
                 debug_assert!(
                     i == new_i || i == new_i + 1,
