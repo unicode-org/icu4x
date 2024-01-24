@@ -31,7 +31,7 @@
 //! Here is an example ZeroTrie without branch nodes:
 //!
 //! ```
-//! use zerotrie::ZeroTrieSimpleAscii;
+//! use zerotrie::ZeroTriePerfectHash;
 //!
 //! let bytes = [
 //!     b'a',       // ASCII literal
@@ -44,7 +44,7 @@
 //!     0b10000100, // value 4
 //! ];
 //!
-//! let trie = ZeroTrieSimpleAscii::from_bytes(&bytes);
+//! let trie = ZeroTriePerfectHash::from_bytes(&bytes);
 //!
 //! // First value: "a" → 10
 //! assert_eq!(trie.get(b"a"), Some(10));
@@ -314,7 +314,7 @@ pub fn get_ascii_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize
             NodeType::Ascii => (0, trie),
             NodeType::Span => {
                 debug_assert!(false, "Span node found in ASCII trie!");
-                return None
+                return None;
             }
             NodeType::Value => read_varint_meta3(*b, trie),
             NodeType::Branch => read_varint_meta2(*b, trie),
