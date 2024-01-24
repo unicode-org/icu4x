@@ -96,6 +96,17 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 ///
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
+///
+/// The trie can only store ASCII bytes; a string with non-ASCII always returns None:
+///
+/// ```
+/// use zerotrie::ZeroTrieSimpleAscii;
+///
+/// // A trie with two values: "abc" and "abcdef"
+/// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+///
+/// assert!(matches!(trie.get(b"ab\xFF"), None));
+/// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
@@ -543,7 +554,7 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
     SimpleAscii,
-    get_bsearch_only,
+    get_ascii_bsearch_only,
     String,
     get_iter_ascii_or_panic,
     string_to_box_u8
