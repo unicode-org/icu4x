@@ -136,6 +136,22 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 ///
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
+///
+/// Strings with different cases of the same character at the same offset are not allowed:
+///
+/// ```
+/// use litemap::LiteMap;
+/// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+///
+/// let mut map = LiteMap::new_vec();
+/// map.insert(&b"bar"[..], 1);
+/// // OK: 'r' and 'Z' are different letters
+/// map.insert(b"baZ", 2);
+/// // Bad: we already inserted 'r' so we cannot also insert 'R' at the same position
+/// map.insert(b"baR", 2);
+///
+/// ZeroAsciiIgnoreCaseTrie::try_from(&map).expect_err("mixed-case strings!");
+/// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]

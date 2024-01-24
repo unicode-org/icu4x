@@ -406,7 +406,9 @@ pub fn get_ascii_bsearch_only_ignore_case(mut trie: &[u8], mut ascii: &[u8]) -> 
             let x = if x == 0 { 256 } else { x };
             // Always use binary search
             (search, trie) = trie.debug_split_at(x);
-            i = search.binary_search_by_key(&c.to_ascii_lowercase(), |x| x.to_ascii_lowercase()).ok()?;
+            i = search
+                .binary_search_by_key(&c.to_ascii_lowercase(), |x| x.to_ascii_lowercase())
+                .ok()?;
             trie = if w == 0 {
                 get_branch_w0(trie, i, x)
             } else {
