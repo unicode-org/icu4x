@@ -189,3 +189,25 @@ fn test_compute_bcp47_ids_hash() {
     assert_ne!(checksum4, checksum5);
     assert_ne!(checksum4, checksum6);
 }
+
+/// Tests that all IANA time zone IDs normalize to their correct form.
+#[test]
+fn test_normalize_iana_coverage() {
+    let provider = crate::DatagenProvider::new_latest_tested();
+
+    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = provider
+        .cldr()
+        .unwrap()
+        .bcp47()
+        .read_and_parse("timezone.json")
+        .unwrap();
+    let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+
+    let mapper = icu_timezone::IanaBcp47RoundTripMapper::try_new_unstable(&provider).unwrap();
+    let mapper_borrowed = mapper.as_borrowed();
+
+    for iana_id in iana2bcp.keys() {
+        let normalized = mapper_borrowed.normalize_iana(&iana_id);
+        assert_eq!(&normalized, iana_id);
+    }
+}
