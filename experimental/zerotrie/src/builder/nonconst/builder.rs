@@ -35,10 +35,19 @@ pub enum CapacityMode {
     Extended,
 }
 
+/// Whether to permit strings that have inconsistent ASCII case at a node, such as "abc" and "Abc"
+pub enum MixedCaseMode {
+    /// Allows strings regardless of case.
+    Allow,
+    /// Returns an error if a node exists with the same character in ambiguous case.
+    Reject,
+}
+
 pub struct ZeroTrieBuilderOptions {
     pub phf_mode: PhfMode,
     pub ascii_mode: AsciiMode,
     pub capacity_mode: CapacityMode,
+    pub mixed_case_mode: MixedCaseMode,
 }
 
 /// A low-level builder for ZeroTrie. Supports all options.
@@ -129,7 +138,17 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .iter()
             .map(|(k, v)| (k.as_ref(), *v))
             .collect::<Vec<(&[u8], usize)>>();
-        items.sort();
+        if matches!(options.mixed_case_mode, MixedCaseMode::Allow) {
+            // Sort normally (case-sensitive)
+            items.sort();
+        } else {
+            // Sort in a case-insensitive way
+            items.sort_by(|a, b| {
+                let a_iter = a.0.iter().map(|x| x.to_ascii_lowercase());
+                let b_iter = b.0.iter().map(|x| x.to_ascii_lowercase());
+                Iterator::cmp(a_iter, b_iter).then_with(|| a.1.cmp(&b.1))
+            });
+        }
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
         Self::from_sorted_tuple_slice(byte_str_slice, options)
@@ -288,6 +307,20 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             };
             let mut branch_metas = lengths_stack.pop_many_or_panic(total_count);
             let original_keys = branch_metas.map_to_ascii_bytes();
+            if matches!(self.options.mixed_case_mode, MixedCaseMode::Reject) {
+                // Check to see if we have the same letter in two different cases
+                let mut seen_ascii_alpha = [false; 26];
+                for c in original_keys.as_const_slice().as_slice() {
+                    if c.is_ascii_alphabetic() {
+                        let i = (c.to_ascii_lowercase() - b'a') as usize;
+                        if seen_ascii_alpha[i] {
+                            return Err(Error::MixedCase);
+                        } else {
+                            seen_ascii_alpha[i] = true;
+                        }
+                    }
+                }
+            }
             let use_phf = matches!(self.options.phf_mode, PhfMode::UsePhf);
             let opt_phf_vec = if total_count > 15 && use_phf {
                 let phf_vec = self

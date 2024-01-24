@@ -105,6 +105,48 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store> ZeroTrieSimpleAscii<Store> {
+    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    #[inline]
+    pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
+        ZeroTrie(ZeroTrieFlavor::SimpleAscii(self))
+    }
+}
+
+/// A data structure that compactly maps from ASCII strings to integers
+/// in a case-insensitive way.
+///
+/// # Examples
+///
+/// ```
+/// use litemap::LiteMap;
+/// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+///
+/// let mut map = LiteMap::new_vec();
+/// map.insert(&b"foo"[..], 1);
+/// map.insert(b"Bar", 2);
+/// map.insert(b"Bazzoo", 3);
+///
+/// let trie = ZeroAsciiIgnoreCaseTrie::try_from(&map)?;
+///
+/// assert_eq!(trie.get(b"foo"), Some(1));
+/// assert_eq!(trie.get(b"bar"), Some(2));
+/// assert_eq!(trie.get(b"bazzoo"), Some(3));
+/// assert_eq!(trie.get(b"unknown"), None);
+///
+/// # Ok::<_, zerotrie::ZeroTrieError>(())
+/// ```
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
+pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
+}
+
+// Note: ZeroAsciiIgnoreCaseTrie is not a variant of ZeroTrie so there is no `into_zerotrie`
+
 /// A data structure that compactly maps from byte strings to integers.
 ///
 /// For more information, see [`ZeroTrie`].
@@ -138,6 +180,14 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store> ZeroTriePerfectHash<Store> {
+    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    #[inline]
+    pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
+        ZeroTrie(ZeroTrieFlavor::PerfectHash(self))
+    }
+}
+
 /// A data structure that maps from a large number of byte strings to integers.
 ///
 /// For more information, see [`ZeroTrie`].
@@ -150,14 +200,17 @@ pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store> ZeroTrieExtendedCapacity<Store> {
+    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    #[inline]
+    pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
+        ZeroTrie(ZeroTrieFlavor::ExtendedCapacity(self))
+    }
+}
+
 macro_rules! impl_zerotrie_subtype {
-    ($name:ident, $variant:ident, $getter_fn:path, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
+    ($name:ident, $getter_fn:path, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
         impl<Store> $name<Store> {
-            /// Wrap this specific ZeroTrie variant into a ZeroTrie.
-            #[inline]
-            pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
-                ZeroTrie(ZeroTrieFlavor::$variant(self))
-            }
             /// Create a trie directly from a store.
             ///
             /// If the store does not contain valid bytes, unexpected behavior may occur.
@@ -542,15 +595,20 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
 
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
-    SimpleAscii,
     get_bsearch_only,
     String,
     get_iter_ascii_or_panic,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
+    ZeroAsciiIgnoreCaseTrie,
+    get_ascii_bsearch_only_ignore_case,
+    String,
+    get_iter_ascii_or_panic,
+    string_to_box_u8
+);
+impl_zerotrie_subtype!(
     ZeroTriePerfectHash,
-    PerfectHash,
     get_phf_limited,
     Vec<u8>,
     get_iter_phf,
@@ -558,7 +616,6 @@ impl_zerotrie_subtype!(
 );
 impl_zerotrie_subtype!(
     ZeroTrieExtendedCapacity,
-    ExtendedCapacity,
     get_phf_extended,
     Vec<u8>,
     get_iter_phf,
