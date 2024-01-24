@@ -18,7 +18,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
-/// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
+/// A mapping from lowercase IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
 ///
@@ -42,8 +42,42 @@ use zerovec::{VarZeroVec, ZeroVec};
 #[yoke(prove_covariance_manually)]
 pub struct IanaToBcp47MapV1<'data> {
     /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
+    /// The IANA identifiers are lowercase.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroTrie<ZeroVec<'data, u8>>,
+    /// A sorted list of BCP-47 time zone identifiers.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
+    pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
+    /// An XxHash64 checksum of [`Self::bcp47_ids`].
+    pub bcp47_ids_checksum: u64,
+}
+
+/// A mapping from normal-case IANA time zone identifiers to BCP-47 time zone identifiers.
+///
+/// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Clone, PartialEq)]
+#[icu_provider::data_struct(
+    marker(IanaToBcp47MapV2Marker, "time_zone/iana_to_bcp47@2", singleton)
+)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_timezone::provider::names),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct IanaToBcp47MapV2<'data> {
+    /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
+    /// The IANA identifiers are normal-case.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
     /// A sorted list of BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
     // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
