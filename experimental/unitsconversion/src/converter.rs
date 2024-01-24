@@ -66,13 +66,7 @@ pub struct ConverterFactory {
 impl ConverterFactory {
     #[cfg(feature = "datagen")]
     pub fn new(data: &(impl DataProvider<UnitsInfoV1Marker> + ?Sized)) -> Result<Self, DataError> {
-        let data = data
-            .load(DataRequest {
-                locale: &locale!("und").into(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?
-            .cast();
+        let data = data.load(DataRequest::default())?.take_payload()?.cast();
 
         // let store: &UnitsInfoV1<'static> = data.get();
         // let store = store.units_conversion_trie.clone().take_store();
