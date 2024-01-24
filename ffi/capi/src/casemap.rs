@@ -30,6 +30,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
+    #[diplomat::attr(dart, rename = "TitlecaseOptions")]
     pub struct ICU4XTitlecaseOptionsV1 {
         pub leading_adjustment: ICU4XLeadingAdjustment,
         pub trailing_case: ICU4XTrailingCase,
@@ -37,6 +38,7 @@ pub mod ffi {
 
     impl ICU4XTitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
+        #[diplomat::attr(dart, rename = "default")]
         pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
@@ -108,6 +110,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(dart, rename = "titlecase_segment_with_only_case_data")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &DiplomatStr,
@@ -310,6 +313,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(dart, rename = "titlecase_segment")]
         pub fn titlecase_segment_v1(
             &self,
             s: &DiplomatStr,
