@@ -65,9 +65,7 @@ pub struct ConverterFactory {
 
 impl ConverterFactory {
     #[cfg(feature = "datagen")]
-    pub fn trey_new(
-        data: &(impl DataProvider<UnitsInfoV1Marker> + ?Sized),
-    ) -> Result<Self, DataError> {
+    pub fn new(data: &(impl DataProvider<UnitsInfoV1Marker> + ?Sized)) -> Result<Self, DataError> {
         let data = data
             .load(DataRequest {
                 locale: &locale!("und").into(),
@@ -82,16 +80,9 @@ impl ConverterFactory {
     }
 
     pub fn parser<'data>(&'data self) -> MeasureUnitParser<'data> {
-        let store = self
-            .data
-            .get()
-            .units_conversion_trie
-            .clone() // cheap since store is a borrowed ZeroVec
-            .take_store()
-            .as_ule_slice();
+        let trie = self.data.get().units_conversion_trie.clone(); // cheap since store is a borrowed ZeroVec
 
-        let payload_store = ZeroTrieSimpleAscii::from_store(store);
-        MeasureUnitParser::from_payload(&payload_store)
+        MeasureUnitParser::from_payload(ZeroTrieSimpleAscii::from_store(trie.take_store()))
     }
 
     // TODO(#4512): the need needs to be bikeshedded.

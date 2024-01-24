@@ -4,7 +4,7 @@
 
 use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{ZeroSlice, ZeroVec};
+use zerovec::ZeroVec;
 
 use crate::{
     power::get_power,
@@ -17,14 +17,14 @@ use crate::{
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
     /// Contains the payload.
-    payload: &'data ZeroTrieSimpleAscii<&'data[u8]>,
+    payload: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     // TODO: make this function only visible to the ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<&[u8]>) -> Self {
+    pub fn from_payload(payload: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>) -> Self {
         Self { payload }
     }
 
@@ -32,7 +32,7 @@ impl<'data> MeasureUnitParser<'data> {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id<'a>(&'a self, part: &'a str) -> Result<(u16, &str), ConversionError> {
+    fn get_unit_id<'a, 'b>(&self, part: &'a str) -> Result<(u16, &'a str), ConversionError> {
         let mut cursor = self.payload.cursor();
         let mut longest_match = Err(ConversionError::InvalidUnit);
 
@@ -48,7 +48,7 @@ impl<'data> MeasureUnitParser<'data> {
         longest_match
     }
 
-    fn get_power<'a>(&'a self, part: &'a str) -> Result<(u8, &str), ConversionError> {
+    fn get_power<'a>(part: &'a str) -> Result<(u8, &str), ConversionError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -63,7 +63,7 @@ impl<'data> MeasureUnitParser<'data> {
         }
     }
 
-    fn get_si_prefix<'a>(&'a self, part: &'a str) -> (SiPrefix, &str) {
+    fn get_si_prefix<'a>(part: &'a str) -> (SiPrefix, &str) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
             return (si_prefix, part);
@@ -86,7 +86,7 @@ impl<'data> MeasureUnitParser<'data> {
     ) -> Result<(), ConversionError> {
         let mut identifier_part = identifier_part;
         while !identifier_part.is_empty() {
-            let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
+            let (power, identifier_part_without_power) = Self::get_power(identifier_part)?;
             let (si_prefix, unit_id, identifier_part_without_unit_id) =
                 match self.get_unit_id(identifier_part_without_power) {
                     Ok((unit_id, identifier_part_without_unit_id)) => (
@@ -99,7 +99,7 @@ impl<'data> MeasureUnitParser<'data> {
                     ),
                     Err(_) => {
                         let (si_prefix, identifier_part_without_si_prefix) =
-                            self.get_si_prefix(identifier_part_without_power);
+                            Self::get_si_prefix(identifier_part_without_power);
                         let (unit_id, identifier_part_without_unit_id) =
                             self.get_unit_id(identifier_part_without_si_prefix)?;
                         (si_prefix, unit_id, identifier_part_without_unit_id)

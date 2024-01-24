@@ -78,16 +78,13 @@ fn test_cldr_unit_tests() {
         })
         .collect();
 
-    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
-        .units_conversion_trie
-        .clone() // cheap since store is a borrowed ZeroVec
-        .take_store();
+    // let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+    //     .units_conversion_trie
+    //     .clone() // cheap since store is a borrowed ZeroVec
+    //     .take_store();
 
-    let payload_store = &ZeroTrieSimpleAscii::from_store(store);
-    let converter_factory = ConverterFactory::from_payload(
-        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
-        payload_store,
-    );
+    // let payload_store = &ZeroTrieSimpleAscii::from_store(store);
+    let converter_factory = ConverterFactory::new(&icu_unitsconversion::provider::Baked).unwrap();
     let parser = converter_factory.parser();
 
     for test in tests {
@@ -127,16 +124,13 @@ fn test_units_not_parsable() {
         "kilo-squared-meter",
     ];
 
-    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
-        .units_conversion_trie
-        .clone() // cheap since store is a borrowed ZeroVec
-        .take_store();
+    // let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+    //     .units_conversion_trie
+    //     .clone() // cheap since store is a borrowed ZeroVec
+    //     .take_store();
 
-    let payload_store = &ZeroTrieSimpleAscii::from_store(store);
-    let converter_factory = ConverterFactory::from_payload(
-        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
-        payload_store,
-    );
+    // let payload_store = &ZeroTrieSimpleAscii::from_store(store);
+    let converter_factory = ConverterFactory::new(&icu_unitsconversion::provider::Baked).unwrap();
     let parser = converter_factory.parser();
 
     for unit in unparsable_units.iter() {
