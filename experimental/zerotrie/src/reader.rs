@@ -502,7 +502,7 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
 ///
 /// The input-output argument `trie` starts at the original trie and ends pointing to
 /// the sub-trie reachable by `c`.
-pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
+pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
     let (mut b, x, search);
     loop {
         (b, *trie) = match trie.split_first() {
@@ -530,7 +530,7 @@ pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
             NodeType::Span => {
                 // Question: Should we put the trie back into a valid state?
                 // Currently this code is unreachable so let's not worry about it.
-                debug_assert!(false, "span nodes not supported in stepping");
+                debug_assert!(false, "Span node found in ASCII trie!");
                 return;
             }
             NodeType::Value => {
