@@ -543,7 +543,7 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
     SimpleAscii,
-    get_bsearch_only,
+    get_ascii_bsearch_only,
     String,
     get_iter_ascii_or_panic,
     string_to_box_u8
