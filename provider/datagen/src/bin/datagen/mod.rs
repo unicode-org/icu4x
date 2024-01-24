@@ -11,6 +11,8 @@ mod args;
 mod config;
 mod datagen;
 
+// Needed for datagen.rs to used with `include!`
+#[allow(clippy::single_component_path_imports)]
 use icu_datagen;
 
 pub fn main() -> eyre::Result<()> {
