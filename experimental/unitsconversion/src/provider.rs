@@ -54,6 +54,7 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsInfoV1<'data> {
+    // TODO: make this field `ZeroTrieSimpleAscii<ZeroVec<'data, u8>>` as same as the payload of the MeasureUnitParser.
     /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub units_conversion_trie: ZeroTrie<ZeroVec<'data, u8>>,
