@@ -5,6 +5,7 @@
 use crate::error::TimeZoneError;
 use crate::provider::names::*;
 use crate::TimeZoneBcp47Id;
+use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
 /// A mapper from IANA time zone identifiers to BCP-47 time zone identifiers.
@@ -108,6 +109,7 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
         // The longest IANA name in CLDR appears to be "America/Argentina/ComodRivadavia"
         // which is 32 characters long, so 48 should be plenty. Add a debug assertion
         // just in case.
+        // TODO: Use a ZeroTrieSimpleAsciiCursor
         let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_bytes(iana_id.as_bytes()) {
             Ok(tinystr) => tinystr.to_ascii_lowercase(),
             Err(tinystr::TinyStrError::TooLarge { .. }) => {
@@ -223,7 +225,7 @@ pub struct IanaBcp47RoundTripMapperBorrowed<'a> {
     data2: &'a Bcp47ToIanaMapV1<'a>,
 }
 
-impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
+impl IanaBcp47RoundTripMapperBorrowed<'_> {
     /// Looks up a BCP-47 time zone identifier based on an ASCII-case-insensitive match for
     /// the given IANA time zone identifier.
     ///
@@ -243,5 +245,120 @@ impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
     pub fn bcp47_to_iana(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
         let index = self.data1.bcp47_ids.binary_search(&bcp47_id).ok()?;
         self.data2.canonical_iana_ids.get(index)
+    }
+
+    /// Normalizes the case of an IANA time zone identifier. Does not canonicalize the identifier,
+    /// and the identifier does not need to exist.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::IanaBcp47RoundTripMapper;
+    ///
+    /// let mapper = IanaBcp47RoundTripMapper::new();
+    /// let mapper_borrowed = mapper.as_borrowed();
+    ///
+    /// assert_eq!(
+    ///     "Asia/Ho_Chi_Minh",
+    ///     mapper_borrowed.normalize_iana("Asia/Ho_chi_minh")
+    /// );
+    ///
+    /// // Does not canonicalize identifiers:
+    /// assert_eq!(
+    ///     "Asia/Saigon",
+    ///     mapper_borrowed.normalize_iana("Asia/Saigon")
+    /// );
+    ///
+    /// // Identifier need not exist:
+    /// assert_eq!(
+    ///     "America/Fake_City",
+    ///     mapper_borrowed.normalize_iana("America/faKe_CitY")
+    /// );
+    /// ```
+    pub fn normalize_iana<'a>(&'a self, iana_id: &'a str) -> Cow<'a, str> {
+        if let Some(bcp47_id) = self.iana_to_bcp47(iana_id) {
+            if let Some(iana_roundtrip) = self.bcp47_to_iana(bcp47_id) {
+                if iana_id.eq_ignore_ascii_case(iana_roundtrip) {
+                    return Cow::Borrowed(iana_roundtrip);
+                }
+            }
+        }
+        to_ypotryll_case(iana_id)
+    }
+}
+
+/// Converts a string to [ypotryll case](https://stackoverflow.com/a/54524664/1407170).
+fn to_ypotryll_case(input: &str) -> Cow<str> {
+    let mut is_title = true;
+    let mut output = Cow::Borrowed(input);
+    for i in 0..output.as_bytes().len() {
+        #[allow(clippy::indexing_slicing)] // i is in range
+        let current_byte = output.as_bytes()[i];
+        let expected_byte = if is_title {
+            current_byte.to_ascii_uppercase()
+        } else {
+            current_byte.to_ascii_lowercase()
+        };
+        if current_byte != expected_byte {
+            debug_assert!(current_byte.is_ascii());
+            // Safety: the byte at index i is an ASCII byte because the only bytes that can change
+            // via to_ascii_*case are ASCII bytes, and we're replacing it with another ASCII byte.
+            #[allow(clippy::indexing_slicing)] // i is in range
+            unsafe {
+                output.to_mut().as_bytes_mut()[i] = expected_byte
+            };
+        }
+        if current_byte.is_ascii_alphanumeric() {
+            is_title = false;
+        } else {
+            is_title = true;
+        }
+    }
+    output
+}
+
+#[test]
+fn test_to_ypotryll_case() {
+    struct TestCase<'a> {
+        input: &'a str,
+        expected: &'a str,
+    }
+    let cases = [
+        TestCase {
+            input: "abc",
+            expected: "Abc",
+        },
+        TestCase {
+            input: "abc_def",
+            expected: "Abc_Def",
+        },
+        TestCase {
+            input: "abc/def",
+            expected: "Abc/Def",
+        },
+        TestCase {
+            input: "abc/def_ghi",
+            expected: "Abc/Def_Ghi",
+        },
+        TestCase {
+            input: "a1b",
+            expected: "A1b",
+        },
+        TestCase {
+            input: "1ab",
+            expected: "1ab",
+        },
+    ];
+    for TestCase { input, expected } in &cases {
+        let output = to_ypotryll_case(input);
+        let roundtrip = to_ypotryll_case(&output);
+        let upper_input = input
+            .chars()
+            .map(|c| c.to_ascii_uppercase())
+            .collect::<String>();
+        let upper_output = to_ypotryll_case(&upper_input);
+        assert_eq!(expected, &output);
+        assert_eq!(expected, &roundtrip);
+        assert_eq!(expected, &upper_output);
     }
 }
