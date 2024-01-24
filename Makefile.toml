@@ -108,6 +108,13 @@ dependencies = [
     "test-docs",
 ]
 
+[tasks.ci-job-special-cfg]
+description = "Runs checks on code that requires special cfgs to build"
+category = "CI"
+dependencies = [
+    "check-icu4x-test-datagen",
+]
+
 [tasks.ci-job-full-datagen]
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"

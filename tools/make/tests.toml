@@ -133,6 +133,13 @@ set_env ICU4X_DATA_DIR ${pwd}/custom_compiled/baked_data
 exec --fail-on-error cargo run --release --manifest-path custom_compiled/Cargo.toml
 '''
 
+[tasks.check-icu4x-test-datagen]
+description = "Checks that the cfg(test) version of datagen builds successfully"
+category = "ICU4X Development"
+env = { RUSTFLAGS = "--cfg=icu4x_test_datagen" }
+command = "cargo"
+args = ["check", "--all-features", "--tests"]
+
 [tasks.install-cortex-7]
 description = "Install the thumbv7m target"
 category = "ICU4X Development"
