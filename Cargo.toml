@@ -241,6 +241,12 @@ opt-level = "s"
 panic = "abort"
 codegen-units = 1
 
+# Builds with debug metadata but not debug assertions
+# for testing GIGO code paths
+[profile.debug-without-assertions]
+inherits = "dev"
+debug-assertions = false
+
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
 #
