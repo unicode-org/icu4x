@@ -7,7 +7,6 @@ use icu_unitsconversion::converter::ConverterFactory;
 use num::{rational::Ratio, BigRational, Signed};
 
 use num_bigint::BigInt;
-use zerotrie::ZeroTrieSimpleAscii;
 
 // TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a decimal number to a BigRational.

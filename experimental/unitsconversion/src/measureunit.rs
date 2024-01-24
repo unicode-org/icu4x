@@ -48,7 +48,7 @@ impl<'data> MeasureUnitParser<'data> {
         longest_match
     }
 
-    fn get_power<'a>(part: &'a str) -> Result<(u8, &str), ConversionError> {
+    fn get_power(part: &str) -> Result<(u8, &str), ConversionError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -63,7 +63,7 @@ impl<'data> MeasureUnitParser<'data> {
         }
     }
 
-    fn get_si_prefix<'a>(part: &'a str) -> (SiPrefix, &str) {
+    fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
             return (si_prefix, part);

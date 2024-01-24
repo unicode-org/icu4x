@@ -4,7 +4,7 @@
 
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1, UnitsInfoV1Marker},
+    provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1Marker},
     ConversionError,
 };
 use icu_locid::locale;
@@ -15,7 +15,7 @@ use icu_provider::DataRequest;
 use litemap::LiteMap;
 use num::{rational::Ratio, BigInt, Zero};
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
+use zerovec::{ule::AsULE, ZeroSlice};
 
 /// Represents the possible cases for the convertibility between two units.
 #[derive(Debug, PartialEq)]
@@ -79,7 +79,7 @@ impl ConverterFactory {
         Ok(Self { data })
     }
 
-    pub fn parser<'data>(&'data self) -> MeasureUnitParser<'data> {
+    pub fn parser(&self) -> MeasureUnitParser<'_> {
         let trie = self.data.get().units_conversion_trie.clone(); // cheap since store is a borrowed ZeroVec
 
         MeasureUnitParser::from_payload(ZeroTrieSimpleAscii::from_store(trie.take_store()))
