@@ -1,0 +1,4 @@
+# Additional word breaking tests, not in WordBreakTest.txt
+#
+# https://github.com/unicode-org/icu4x/issues/4417
+÷ 0041 × 002E × 00AD × 0042 ÷

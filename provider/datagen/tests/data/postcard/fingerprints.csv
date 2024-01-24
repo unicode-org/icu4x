@@ -5731,7 +5731,7 @@ segmenter/grapheme@1, und, 9730B, 922c04bad19f0d2e
 segmenter/line@1, und, 24183B, 817be8a85b29478d
 segmenter/lstm/wl_auto@1, th, 72034B, c46e2e0c098c1fc1
 segmenter/sentence@1, und, 14422B, cb9b72ee7305a6
-segmenter/word@1, und, 14645B, 9fb13936260ec7ca
+segmenter/word@1, und, 14647B, 1d4c40497c8e7fee
 time_zone/bcp47_to_iana@1, und, 7679B, 23e2467f999c5942
 time_zone/exemplar_cities@1, ar, 10095B, d10cbe1ac73b6c13
 time_zone/exemplar_cities@1, ar-EG, 10095B, d10cbe1ac73b6c13

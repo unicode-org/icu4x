@@ -473,6 +473,18 @@ left = "Numeric_MidNumLet"
 right = "Format"
 
 [[tables]]
+# WB4
+name = "ALetter_MidNumLet"
+left = "ALetter_MidNumLet"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "ALetter_MidNumLet"
+left = "ALetter_MidNumLet"
+right = "Format"
+
+[[tables]]
 name = "Unknown"
 left = "Unknown"
 right = "Extend"
