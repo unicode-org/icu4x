@@ -445,6 +445,7 @@ macro_rules! impl_zerotrie_subtype {
             pub fn to_btreemap(&self) -> BTreeMap<$iter_ty, usize> {
                 self.iter().collect()
             }
+            #[allow(dead_code)] // not needed for ZeroAsciiIgnoreCaseTrie
             pub(crate) fn to_btreemap_bytes(&self) -> BTreeMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
             }
@@ -504,6 +505,7 @@ macro_rules! impl_zerotrie_subtype {
             pub fn to_litemap(&self) -> LiteMap<$iter_ty, usize> {
                 self.iter().collect()
             }
+            #[allow(dead_code)] // not needed for ZeroAsciiIgnoreCaseTrie
             pub(crate) fn to_litemap_bytes(&self) -> LiteMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
             }
