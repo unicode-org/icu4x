@@ -132,7 +132,6 @@
     )
 )]
 #![warn(missing_docs)]
-
 // See explanation in test_datagen.rs
 #![cfg_attr(icu4x_test_datagen, no_main)]
 
