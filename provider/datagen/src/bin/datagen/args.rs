@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::config;
+use super::icu_datagen;
 use clap::ValueEnum;
 use clap::{ArgGroup, Parser};
 use eyre::WrapErr;

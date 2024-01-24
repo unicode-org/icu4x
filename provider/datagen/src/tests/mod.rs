@@ -9,4 +9,7 @@
 #[cfg(all(feature = "fs_exporter", feature = "use_wasm"))]
 mod make_testdata;
 
+#[cfg(icu4x_test_datagen)]
+mod test_datagen;
+
 mod data;

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::icu_datagen;
 pub use icu_datagen::{CollationHanDatabase, CoverageLevel, FallbackMode, TrieType};
 pub use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
