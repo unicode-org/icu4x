@@ -7,7 +7,7 @@ use crate::{
     provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1Marker},
     ConversionError,
 };
-use icu_locid::locale;
+
 use icu_provider::DataError;
 use icu_provider::DataPayload;
 use icu_provider::DataProvider;
