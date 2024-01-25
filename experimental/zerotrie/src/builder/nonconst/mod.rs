@@ -13,6 +13,16 @@ impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
         phf_mode: PhfMode::BinaryOnly,
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
+        mixed_case_mode: MixedCaseMode::Allow,
+    };
+}
+
+impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
+    pub(crate) const BUILDER_OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
+        phf_mode: PhfMode::BinaryOnly,
+        ascii_mode: AsciiMode::AsciiOnly,
+        capacity_mode: CapacityMode::Normal,
+        mixed_case_mode: MixedCaseMode::Reject,
     };
 }
 
@@ -21,6 +31,7 @@ impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
         phf_mode: PhfMode::UsePhf,
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Normal,
+        mixed_case_mode: MixedCaseMode::Allow,
     };
 }
 
@@ -29,5 +40,6 @@ impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
         phf_mode: PhfMode::UsePhf,
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Extended,
+        mixed_case_mode: MixedCaseMode::Allow,
     };
 }

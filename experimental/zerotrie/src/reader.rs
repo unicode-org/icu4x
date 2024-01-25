@@ -360,6 +360,65 @@ pub fn get_ascii_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize
     }
 }
 
+/// Query the trie assuming all branch nodes are binary search
+/// and nodes use case-insensitive matching.
+pub fn get_ascii_bsearch_only_ignore_case(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
+    loop {
+        let (b, x, i, search);
+        (b, trie) = trie.split_first()?;
+        let byte_type = byte_type(*b);
+        (x, trie) = match byte_type {
+            NodeType::Ascii => (0, trie),
+            NodeType::Span => {
+                debug_assert!(false, "Span node found in ASCII trie!");
+                return None;
+            }
+            NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Branch => read_varint_meta2(*b, trie),
+        };
+        if let Some((c, temp)) = ascii.split_first() {
+            if matches!(byte_type, NodeType::Ascii) {
+                if b.to_ascii_lowercase() == c.to_ascii_lowercase() {
+                    // Matched a byte
+                    ascii = temp;
+                    continue;
+                } else {
+                    // Byte that doesn't match
+                    return None;
+                }
+            }
+            if matches!(byte_type, NodeType::Value) {
+                // Value node, but not at end of string
+                continue;
+            }
+            // Branch node
+            let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+            // See comment above regarding this assertion
+            debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
+            let w = w & 0x3;
+            let x = if x == 0 { 256 } else { x };
+            // Always use binary search
+            (search, trie) = trie.debug_split_at(x);
+            i = search
+                .binary_search_by_key(&c.to_ascii_lowercase(), |x| x.to_ascii_lowercase())
+                .ok()?;
+            trie = if w == 0 {
+                get_branch_w0(trie, i, x)
+            } else {
+                get_branch(trie, i, x, w)
+            };
+            ascii = temp;
+            continue;
+        } else {
+            if matches!(byte_type, NodeType::Value) {
+                // Value node at end of string
+                return Some(x);
+            }
+            return None;
+        }
+    }
+}
+
 /// Query the trie assuming branch nodes could be either binary search or PHF.
 pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
     loop {
