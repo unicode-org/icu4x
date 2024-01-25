@@ -51,7 +51,7 @@ use patterns::{
 };
 use std::str::FromStr;
 use tinystr::tinystr;
-use writeable::{assert_writeable_eq, Writeable};
+use writeable::assert_writeable_eq;
 
 mod mock;
 
@@ -565,20 +565,20 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         zone_variant: Some(ZoneVariant::daylight()),
     };
     let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
-    tzf.format(&time_zone).write_to_string();
+    tzf.format_to_string(&time_zone);
 }
 
 #[test]
 #[cfg(not(debug_assertions))]
 fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
-    let time_zone = MockTimeZone::new(
-        None,
-        Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        Some(MetazoneId(tinystr!(4, "ampa"))),
-        Some(tinystr!(8, "daylight")),
-    );
+    let time_zone = CustomTimeZone {
+        gmt_offset: None,
+        time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+        metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
+        zone_variant: Some(ZoneVariant::daylight()),
+    };
     let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
-    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?");
+    assert_writeable_eq!(tzf.format(&time_zone), "GMT+?");
 }
 
 #[test]
