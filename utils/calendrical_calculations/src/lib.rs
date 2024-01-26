@@ -45,8 +45,6 @@ mod error;
 pub mod ethiopian;
 /// The Hebrew calendar
 pub mod hebrew;
-/// Alternate, more efficient structures for working with the Hebrew Calendar
-/// using the keviyah and Four Gates system
 pub mod hebrew_keviyah;
 /// Additional math helpers
 pub mod helpers;
