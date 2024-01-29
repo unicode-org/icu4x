@@ -14,36 +14,29 @@ final class _WeekOfFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 final class WeekOf {
-  final _WeekOfFfi _underlying;
+  final int week;
+  final WeekRelativeUnit unit;
 
-  WeekOf._(this._underlying);
+  // ignore: unused_element
+  WeekOf._(_WeekOfFfi underlying) :
+    week = underlying.week,
+    unit = WeekRelativeUnit.values[underlying.unit];
 
-  factory WeekOf() {
-    final pointer = ffi2.calloc<_WeekOfFfi>();
-    final result = WeekOf._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
-
-  int get week => _underlying.week;
-  set week(int week) {
-    _underlying.week = week;
-  }
-
-  WeekRelativeUnit get unit => WeekRelativeUnit.values[_underlying.unit];
-  set unit(WeekRelativeUnit unit) {
-    _underlying.unit = unit.index;
+  // ignore: unused_element
+  _WeekOfFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_WeekOfFfi>();
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is WeekOf &&
-      other._underlying.week == _underlying.week &&
-      other._underlying.unit == _underlying.unit;
+      other.week == this.week &&
+      other.unit == this.unit;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.week,
-        _underlying.unit,
+        this.week,
+        this.unit,
       ]);
 }

@@ -18,6 +18,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
+    #[diplomat::attr(dart, rename = "CollatorOptions")]
     pub struct ICU4XCollatorOptionsV1 {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,
@@ -32,6 +33,8 @@ pub mod ffi {
     // in FFI `Collator` is part of the `ICU4XCollator` prefix, but in Rust,
     // `ResolvedCollatorOptions` makes more sense as English.
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
+    #[diplomat::out]
+    #[diplomat::attr(dart, rename = "ResolvedCollatorOptions")]
     pub struct ICU4XCollatorResolvedOptionsV1 {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,
@@ -107,6 +110,7 @@ pub mod ffi {
     impl ICU4XCollator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
+        #[diplomat::attr(dart, rename = "create")]
         pub fn create_v1(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

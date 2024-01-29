@@ -22,64 +22,45 @@ final class _PluralCategoriesFfi extends ffi.Struct {
 
 /// FFI version of `PluralRules::categories()` data.
 final class PluralCategories {
-  final _PluralCategoriesFfi _underlying;
+  final bool zero;
+  final bool one;
+  final bool two;
+  final bool few;
+  final bool many;
+  final bool other;
 
-  PluralCategories._(this._underlying);
+  // ignore: unused_element
+  PluralCategories._(_PluralCategoriesFfi underlying) :
+    zero = underlying.zero,
+    one = underlying.one,
+    two = underlying.two,
+    few = underlying.few,
+    many = underlying.many,
+    other = underlying.other;
 
-  factory PluralCategories() {
-    final pointer = ffi2.calloc<_PluralCategoriesFfi>();
-    final result = PluralCategories._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
-
-  bool get zero => _underlying.zero;
-  set zero(bool zero) {
-    _underlying.zero = zero;
-  }
-
-  bool get one => _underlying.one;
-  set one(bool one) {
-    _underlying.one = one;
-  }
-
-  bool get two => _underlying.two;
-  set two(bool two) {
-    _underlying.two = two;
-  }
-
-  bool get few => _underlying.few;
-  set few(bool few) {
-    _underlying.few = few;
-  }
-
-  bool get many => _underlying.many;
-  set many(bool many) {
-    _underlying.many = many;
-  }
-
-  bool get other => _underlying.other;
-  set other(bool other) {
-    _underlying.other = other;
+  // ignore: unused_element
+  _PluralCategoriesFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_PluralCategoriesFfi>();
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is PluralCategories &&
-      other._underlying.zero == _underlying.zero &&
-      other._underlying.one == _underlying.one &&
-      other._underlying.two == _underlying.two &&
-      other._underlying.few == _underlying.few &&
-      other._underlying.many == _underlying.many &&
-      other._underlying.other == _underlying.other;
+      other.zero == this.zero &&
+      other.one == this.one &&
+      other.two == this.two &&
+      other.few == this.few &&
+      other.many == this.many &&
+      other.other == this.other;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.zero,
-        _underlying.one,
-        _underlying.two,
-        _underlying.few,
-        _underlying.many,
-        _underlying.other,
+        this.zero,
+        this.one,
+        this.two,
+        this.few,
+        this.many,
+        this.other,
       ]);
 }

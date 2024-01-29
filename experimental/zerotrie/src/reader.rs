@@ -31,7 +31,7 @@
 //! Here is an example ZeroTrie without branch nodes:
 //!
 //! ```
-//! use zerotrie::ZeroTrieSimpleAscii;
+//! use zerotrie::ZeroTriePerfectHash;
 //!
 //! let bytes = [
 //!     b'a',       // ASCII literal
@@ -44,7 +44,7 @@
 //!     0b10000100, // value 4
 //! ];
 //!
-//! let trie = ZeroTrieSimpleAscii::from_bytes(&bytes);
+//! let trie = ZeroTriePerfectHash::from_bytes(&bytes);
 //!
 //! // First value: "a" → 10
 //! assert_eq!(trie.get(b"a"), Some(10));
@@ -303,15 +303,20 @@ fn byte_type(b: u8) -> NodeType {
 // | subtags_10pct | ~9.5557 µs        | ~4.8696 µs         | ~9.5779 µs        | ~4.5649 µs         |
 // | subtags_full  | ~137.75 µs        | ~76.016 µs         | ~142.02 µs        | ~70.254 µs         |
 
-/// Query the trie assuming all branch nodes are binary search.
-pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
+/// Query the trie assuming all branch nodes are binary search
+/// and there are no span nodes.
+pub fn get_ascii_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
     loop {
         let (b, x, i, search);
         (b, trie) = trie.split_first()?;
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Span => {
+                debug_assert!(false, "Span node found in ASCII trie!");
+                return None;
+            }
+            NodeType::Value => read_varint_meta3(*b, trie),
             NodeType::Branch => read_varint_meta2(*b, trie),
         };
         if let Some((c, temp)) = ascii.split_first() {
@@ -329,18 +334,6 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
                 // Value node, but not at end of string
                 continue;
             }
-            if matches!(byte_type, NodeType::Span) {
-                let (trie_span, ascii_span);
-                (trie_span, trie) = trie.debug_split_at(x);
-                (ascii_span, ascii) = ascii.maybe_split_at(x)?;
-                if trie_span == ascii_span {
-                    // Matched a byte span
-                    continue;
-                } else {
-                    // Byte span that doesn't match
-                    return None;
-                }
-            }
             // Branch node
             let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
             // See comment above regarding this assertion
@@ -350,6 +343,65 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             // Always use binary search
             (search, trie) = trie.debug_split_at(x);
             i = search.binary_search(c).ok()?;
+            trie = if w == 0 {
+                get_branch_w0(trie, i, x)
+            } else {
+                get_branch(trie, i, x, w)
+            };
+            ascii = temp;
+            continue;
+        } else {
+            if matches!(byte_type, NodeType::Value) {
+                // Value node at end of string
+                return Some(x);
+            }
+            return None;
+        }
+    }
+}
+
+/// Query the trie assuming all branch nodes are binary search
+/// and nodes use case-insensitive matching.
+pub fn get_ascii_bsearch_only_ignore_case(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
+    loop {
+        let (b, x, i, search);
+        (b, trie) = trie.split_first()?;
+        let byte_type = byte_type(*b);
+        (x, trie) = match byte_type {
+            NodeType::Ascii => (0, trie),
+            NodeType::Span => {
+                debug_assert!(false, "Span node found in ASCII trie!");
+                return None;
+            }
+            NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Branch => read_varint_meta2(*b, trie),
+        };
+        if let Some((c, temp)) = ascii.split_first() {
+            if matches!(byte_type, NodeType::Ascii) {
+                if b.to_ascii_lowercase() == c.to_ascii_lowercase() {
+                    // Matched a byte
+                    ascii = temp;
+                    continue;
+                } else {
+                    // Byte that doesn't match
+                    return None;
+                }
+            }
+            if matches!(byte_type, NodeType::Value) {
+                // Value node, but not at end of string
+                continue;
+            }
+            // Branch node
+            let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+            // See comment above regarding this assertion
+            debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
+            let w = w & 0x3;
+            let x = if x == 0 { 256 } else { x };
+            // Always use binary search
+            (search, trie) = trie.debug_split_at(x);
+            i = search
+                .binary_search_by_key(&c.to_ascii_lowercase(), |x| x.to_ascii_lowercase())
+                .ok()?;
             trie = if w == 0 {
                 get_branch_w0(trie, i, x)
             } else {
@@ -509,7 +561,7 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
 ///
 /// The input-output argument `trie` starts at the original trie and ends pointing to
 /// the sub-trie reachable by `c`.
-pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
+pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
     let (mut b, x, search);
     loop {
         (b, *trie) = match trie.split_first() {
@@ -537,7 +589,7 @@ pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
             NodeType::Span => {
                 // Question: Should we put the trie back into a valid state?
                 // Currently this code is unreachable so let's not worry about it.
-                debug_assert!(false, "span nodes not supported in stepping");
+                debug_assert!(false, "Span node found in ASCII trie!");
                 return;
             }
             NodeType::Value => {

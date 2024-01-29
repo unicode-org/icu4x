@@ -3,13 +3,13 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extend = [
+    { path = "./docs/tutorials/gn/gn.toml"}, #
     { path = "./tools/make/data.toml"}, #
     { path = "./tools/make/valgrind.toml"}, #
     { path = "./tools/make/tidy.toml"}, #
     { path = "./tools/make/wasm.toml"}, #
     { path = "./tools/make/tests.toml"}, #
     { path = "./tools/make/ffi.toml"}, #
-    { path = "./tools/make/gn.toml"}, #
 ]
 
 [config]
@@ -70,6 +70,13 @@ description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
     "test-all-features",
+]
+
+[tasks.ci-job-test-gigo]
+description = "Run specific tests with debug assertions disabled"
+category = "CI"
+dependencies = [
+    "test-debug-without-assertions",
 ]
 
 [tasks.ci-job-test-tutorials-local]
