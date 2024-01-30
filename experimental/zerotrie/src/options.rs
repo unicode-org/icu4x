@@ -46,8 +46,12 @@ pub(crate) struct ZeroTrieBuilderOptions {
     pub case_sensitivity: CaseSensitivity,
 }
 
-impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
-    pub(crate) const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
+pub(crate) trait ZeroTrieWithOptions {
+    const OPTIONS: ZeroTrieBuilderOptions;
+}
+
+impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieSimpleAscii<S> {
+    const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::BinaryOnly,
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
@@ -55,8 +59,8 @@ impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
     };
 }
 
-impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
-    pub(crate) const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
+impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
+    const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::BinaryOnly,
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
@@ -64,8 +68,8 @@ impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
     };
 }
 
-impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
-    pub(crate) const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
+impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
+    const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::UsePhf,
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Normal,
@@ -73,8 +77,8 @@ impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
     };
 }
 
-impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
-    pub(crate) const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
+impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
+    const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::UsePhf,
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Extended,
