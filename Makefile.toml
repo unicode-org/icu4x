@@ -75,7 +75,7 @@ dependencies = [
 description = "Run specific tests with debug assertions disabled"
 category = "CI"
 dependencies = [
-    "test-debug-without-assertions",
+    "test-dev-without-assertions",
 ]
 
 [tasks.ci-job-test-tutorials-local]
