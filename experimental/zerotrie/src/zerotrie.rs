@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::ZeroTrieWithOptions;
 use crate::reader;
 
 use core::borrow::Borrow;
@@ -387,6 +386,7 @@ macro_rules! impl_zerotrie_subtype {
         #[cfg(feature = "alloc")]
         impl $name<Vec<u8>> {
             pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, Error> {
+                use crate::options::ZeroTrieWithOptions;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_sorted_tuple_slice(
                     items,
                     Self::OPTIONS,
@@ -402,6 +402,7 @@ macro_rules! impl_zerotrie_subtype {
             K: AsRef<[u8]>
         {
             fn from_iter<T: IntoIterator<Item = (K, usize)>>(iter: T) -> Self {
+                use crate::options::ZeroTrieWithOptions;
                 use crate::builder::nonconst::ZeroTrieBuilder;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_bytes_iter(
                     iter,
