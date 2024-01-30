@@ -241,7 +241,7 @@ codegen-units = 1
 
 # Builds with debug metadata but not debug assertions
 # for testing GIGO code paths
-[profile.debug-without-assertions]
+[profile.dev-without-assertions]
 inherits = "dev"
 debug-assertions = false
 
