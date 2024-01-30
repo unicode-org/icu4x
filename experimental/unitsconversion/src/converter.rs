@@ -224,16 +224,33 @@ impl<'data> ConverterFactory<'data> {
         )
     }
 
+    /// Computes the offset between the input and output units.
+    /// To calculate the offset, we follow these steps:
+    /// 1. Assume the conversion rate for unit 1 to the root is: N1/D1 + OffsetN1/OffsetD1.
+    /// 2. Assume the conversion rate for unit 2 to the root is: N2/D2 + OffsetN2/OffsetD2.
+    /// 3. To convert from the root to unit 2, the formula is: D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 4. Given a value V to be converted from unit 1 to unit 2, the conversion to the root is:
+    ///    V * (N1/D1 + OffsetN1/OffsetD1) = (V * N1/D1) + OffsetN1/OffsetD1, denoted as V_Root.
+    /// 5. To convert V_Root to unit 2, the formula is: V_Root * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 6. Substituting V_Root from step 4 into step 5 yields:
+    ///    ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 7. Simplifying the equation gives:
+    ///    V * (N1/D1) * (D2/N2) + OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 * (D2/N2).
+    /// 8. Focusing on the constants (offsets), we derive the offset formula:
+    ///    Offset = (OffsetN1/OffsetD1 - OffsetN2/OffsetD2) * (D2/N2).
+    ///    This simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
+    ///
+    /// NOTE:
+    ///   In order to have an offset, the input and output units should be simple.
+    /// This means, the input and output units should have only one unit item with power 1 and si prefix 0.
+    /// For example:
+    ///           1 - `meter` and `foot` are simple units.
+    ///           2 - `meter-per-second` and `foot-per-second` are not simple units.
     fn compute_offset(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<Ratio<BigInt>> {
-        // In order to have an offset, the input and output units should be simple.
-        // This means, the input and output units should have only one unit item with power 1 and si prefix 0.
-        // For example:
-        //           1 - `meter` and `foot` are simple units.
-        //           2 - `meter-per-second` and `foot-per-second` are not simple units.
         if !(input_unit.contained_units.len() == 1
             && output_unit.contained_units.len() == 1
             && input_unit.contained_units[0].power == 1
@@ -279,25 +296,6 @@ impl<'data> ConverterFactory<'data> {
         if input_offset.is_zero() && output_offset.is_zero() {
             return Some(Ratio::<BigInt>::from_integer(0.into()));
         }
-
-        // To calculate the offset:
-        // Let's assume the unit 1 conversion rate is : N1/D1 + OffsetN1/OffsetD1 to be converted to the root.
-        // Let's assume the unit 2 conversion rate is : N2/D2 + OffsetN2/OffsetD2 to be converted to the root.
-        // To flip the conversion from the root to unit 2, we will have:
-        //      D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
-        // Then, If V is the value that will be converted from unit 1 to unit 2, then:
-        // V * (N1/D1 + OffsetN1/OffsetD1) = (V * N1/D1) + OffsetN1/OffsetD1 which we will call it V_Root.
-        // Then, to convert V_Root to the unit 2, we will have:
-        // V_Root * D2/N2 - OffsetN2/OffsetD2 *(D2/N2)
-        // Then, by substituting V_Root, we will have:
-        // ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 *(D2/N2)
-        // Then, by simplifying the equation, we will have:
-        // V * (N1/D1) * (D2/N2) + OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 *(D2/N2)
-        // Then, by looking at the constants part (which is the offset), we will have:
-        // Offset = OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 *(D2/N2)
-        //        = (OffsetN1/OffsetD1 - OffsetN2/OffsetD2) * (D2/N2).
-        // Then,
-        // Offset = (Offset1 - Offset2) * (1/ConversionRate2).
 
         let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
             &output_conversion_info.factor_sign,
