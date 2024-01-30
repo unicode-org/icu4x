@@ -34,6 +34,7 @@ pub struct Baked;
 const _: () = {
     pub mod icu {
         pub use crate as plurals;
+        #[allow(unused_imports)] // baked data may or may not need this
         pub use icu_locid_transform as locid_transform;
     }
     icu_plurals_data::make_provider!(Baked);
