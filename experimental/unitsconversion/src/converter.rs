@@ -280,6 +280,25 @@ impl<'data> ConverterFactory<'data> {
             return Some(Ratio::<BigInt>::from_integer(0.into()));
         }
 
+        // To calculate the offset:
+        // Let's assume the unit 1 conversion rate is : N1/D1 + OffsetN1/OffsetD1 to be converted to the root.
+        // Let's assume the unit 2 conversion rate is : N2/D2 + OffsetN2/OffsetD2 to be converted to the root.
+        // To flip the conversion from the root to unit 2, we will have:
+        //      D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+        // Then, If V is the value that will be converted from unit 1 to unit 2, then:
+        // V * (N1/D1 + OffsetN1/OffsetD1) = (V * N1/D1) + OffsetN1/OffsetD1 which we will call it V_Root.
+        // Then, to convert V_Root to the unit 2, we will have:
+        // V_Root * D2/N2 - OffsetN2/OffsetD2 *(D2/N2)
+        // Then, by substituting V_Root, we will have:
+        // ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 *(D2/N2)
+        // Then, by simplifying the equation, we will have:
+        // V * (N1/D1) * (D2/N2) + OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 *(D2/N2)
+        // Then, by looking at the constants part (which is the offset), we will have:
+        // Offset = OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 *(D2/N2)
+        //        = (OffsetN1/OffsetD1 - OffsetN2/OffsetD2) * (D2/N2).
+        // Then,
+        // Offset = (Offset1 - Offset2) * (1/ConversionRate2).
+
         let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
             &output_conversion_info.factor_sign,
             // Because we are computing the reciprocal, the numerator and denominator are swapped.
