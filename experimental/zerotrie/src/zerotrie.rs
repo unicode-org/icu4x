@@ -389,7 +389,7 @@ macro_rules! impl_zerotrie_subtype {
             pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, Error> {
                 ZeroTrieBuilder::<VecDeque<u8>>::from_sorted_tuple_slice(
                     items,
-                    Self::BUILDER_OPTIONS,
+                    Self::OPTIONS,
                 )
                 .map(|s| Self {
                     store: s.to_bytes(),
@@ -405,7 +405,7 @@ macro_rules! impl_zerotrie_subtype {
                 use crate::builder::nonconst::ZeroTrieBuilder;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_bytes_iter(
                     iter,
-                    Self::BUILDER_OPTIONS
+                    Self::OPTIONS
                 )
                 .map(|s| Self {
                     store: s.to_bytes(),

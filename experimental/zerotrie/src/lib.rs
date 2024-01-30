@@ -60,6 +60,7 @@ mod cursor;
 mod error;
 #[macro_use]
 mod helpers;
+mod options;
 mod reader;
 #[cfg(feature = "serde")]
 mod serde;

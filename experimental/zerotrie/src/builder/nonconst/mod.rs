@@ -7,39 +7,3 @@ mod store;
 
 pub(crate) use builder::*;
 pub(crate) use store::TrieBuilderStore;
-
-impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
-    pub(crate) const BUILDER_OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
-        phf_mode: PhfMode::BinaryOnly,
-        ascii_mode: AsciiMode::AsciiOnly,
-        capacity_mode: CapacityMode::Normal,
-        case_sensitivity: CaseSensitivity::Sensitive,
-    };
-}
-
-impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
-    pub(crate) const BUILDER_OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
-        phf_mode: PhfMode::BinaryOnly,
-        ascii_mode: AsciiMode::AsciiOnly,
-        capacity_mode: CapacityMode::Normal,
-        case_sensitivity: CaseSensitivity::IgnoreCase,
-    };
-}
-
-impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
-    pub(crate) const BUILDER_OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
-        phf_mode: PhfMode::UsePhf,
-        ascii_mode: AsciiMode::BinarySpans,
-        capacity_mode: CapacityMode::Normal,
-        case_sensitivity: CaseSensitivity::Sensitive,
-    };
-}
-
-impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
-    pub(crate) const BUILDER_OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
-        phf_mode: PhfMode::UsePhf,
-        ascii_mode: AsciiMode::BinarySpans,
-        capacity_mode: CapacityMode::Extended,
-        case_sensitivity: CaseSensitivity::Sensitive,
-    };
-}

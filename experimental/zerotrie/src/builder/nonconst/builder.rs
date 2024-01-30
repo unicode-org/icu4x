@@ -11,47 +11,9 @@ use crate::builder::bytestr::ByteStr;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::Error;
 use crate::varint;
+use crate::options::*;
 use alloc::borrow::Cow;
 use alloc::vec::Vec;
-
-/// Whether to use the perfect hash function in the ZeroTrie.
-pub enum PhfMode {
-    /// Use binary search for all branch nodes.
-    BinaryOnly,
-    /// Use the perfect hash function for large branch nodes.
-    UsePhf,
-}
-
-/// Whether to support non-ASCII data in the ZeroTrie.
-pub enum AsciiMode {
-    /// Support only ASCII, returning an error if non-ASCII is found.
-    AsciiOnly,
-    /// Support all data, creating span nodes for non-ASCII bytes.
-    BinarySpans,
-}
-
-/// Whether to enforce a limit to the capacity of the ZeroTrie.
-pub enum CapacityMode {
-    /// Return an error if the trie requires a branch of more than 2^32 bytes.
-    Normal,
-    /// Construct the trie without returning an error.
-    Extended,
-}
-
-/// How to handle strings with mixed ASCII case at a node, such as "abc" and "Abc"
-pub enum CaseSensitivity {
-    /// Allow all strings and sort them by byte value.
-    Sensitive,
-    /// Reject strings with different case and sort them as if `to_ascii_lowercase` is called.
-    IgnoreCase,
-}
-
-pub struct ZeroTrieBuilderOptions {
-    pub phf_mode: PhfMode,
-    pub ascii_mode: AsciiMode,
-    pub capacity_mode: CapacityMode,
-    pub case_sensitivity: CaseSensitivity,
-}
 
 /// A low-level builder for ZeroTrie. Supports all options.
 pub(crate) struct ZeroTrieBuilder<S> {
