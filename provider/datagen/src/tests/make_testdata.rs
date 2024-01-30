@@ -51,6 +51,7 @@ fn generate_json_and_verify_postcard() {
         baked_exporter::BakedExporter::new("tests/data/stub".into(), {
             let mut options = baked_exporter::Options::default();
             options.overwrite = true;
+            options.pretty = true;
             options
         })
         .unwrap(),
@@ -85,12 +86,16 @@ struct BakedStubdataExporter(baked_exporter::BakedExporter);
 impl DataExporter for BakedStubdataExporter {
     fn put_payload(
         &self,
-        _key: DataKey,
-        _locale: &DataLocale,
-        _payload: &DataPayload<ExportMarker>,
+        key: DataKey,
+        locale: &DataLocale,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        // do not put any payloads in stubdata!
-        Ok(())
+        // put `und-*` but not any other locales
+        if locale.is_langid_und() {
+            self.0.put_payload(key, locale, payload)
+        } else {
+            Ok(())
+        }
     }
 
     fn flush_singleton(
