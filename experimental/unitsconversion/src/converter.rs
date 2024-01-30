@@ -36,6 +36,7 @@ enum Convertibility {
 ///    The converter is not able to convert between two units that are not single. such as "foot-and-inch" to "meter".
 #[derive(Debug)]
 pub struct Converter {
+    // TODO(#4554): Implement a New Struct `IcuRatio` to Encapsulate `Ratio<BigInt>`.
     /// The conversion rate between the input and output units.
     conversion_rate: Ratio<BigInt>,
 
@@ -125,7 +126,7 @@ impl<'data> ConverterFactory<'data> {
             original_power: i16,
             sign: i16,
             map: &mut LiteMap<u16, DetermineConvertibility>,
-        ) -> Result<(), ConversionError> {
+        ) {
             for item in basic_units.iter() {
                 let item_power = (item.power as i16) * original_power;
                 let signed_item_power = item_power * sign;
@@ -142,8 +143,6 @@ impl<'data> ConverterFactory<'data> {
                     );
                 }
             }
-
-            Ok(())
         }
 
         let unit1 = &unit1.contained_units;
@@ -160,15 +159,14 @@ impl<'data> ConverterFactory<'data> {
             return Convertibility::NotConvertible;
         }
 
-        let (sums_are_zeros, subtractions_are_zeros) = map.iter().fold(
-            (true, true),
-            |(sums, subs), (_, determine_convertibility)| {
-                (
-                    sums && determine_convertibility.sum == 0,
-                    subs && determine_convertibility.difference == 0,
-                )
-            },
-        );
+        let (sums_are_zeros, subtractions_are_zeros) =
+            map.iter_values()
+                .fold((true, true), |(sums, subs), determine_convertibility| {
+                    (
+                        sums && determine_convertibility.sum == 0,
+                        subs && determine_convertibility.difference == 0,
+                    )
+                });
 
         if subtractions_are_zeros {
             Convertibility::Convertible
@@ -206,7 +204,6 @@ impl<'data> ConverterFactory<'data> {
         );
 
         Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
-        // Apply power.
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
         Some(conversion_info_factor)
     }
