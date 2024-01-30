@@ -48,7 +48,7 @@ fn generate_json_and_verify_postcard() {
     });
 
     let stubdata_out = Box::new(BakedStubdataExporter(
-        baked_exporter::BakedExporter::new("tests/data/stub".into(), {
+        baked_exporter::BakedExporter::new("tests/data/baked".into(), {
             let mut options = baked_exporter::Options::default();
             options.overwrite = true;
             options.pretty = true;
