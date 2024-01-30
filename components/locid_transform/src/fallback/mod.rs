@@ -58,33 +58,8 @@ mod algorithms;
 /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
 /// ```
 ///
-/// Unicode extension keywords take part in fallback, but [auxiliary keys]
-/// are not modified:
-///
-/// ```
-/// use icu_locid::locale;
-/// use icu_locid_transform::LocaleFallbacker;
-///
-/// let fallbacker = LocaleFallbacker::new();
-/// let mut fallback_iterator = fallbacker
-///     .for_config(Default::default())
-///     .fallback_for("en-US-u-sd-usca-x-aux".parse().unwrap());
-///
-/// assert_eq!(fallback_iterator.get().to_string(), "en-US-u-sd-usca-x-aux");
-/// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get().to_string(), "en-US-x-aux");
-/// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get().to_string(), "en-u-sd-usca-x-aux");
-/// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get().to_string(), "en-x-aux");
-/// fallback_iterator.step();
-/// assert_eq!(fallback_iterator.get().to_string(), "und-x-aux");
-/// assert!(fallback_iterator.get().is_und());
-/// ```
-///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
-/// [auxiliary keys]: icu_provider::AuxiliaryKeys
 /// [language identifier]: icu_locid::LanguageIdentifier
 #[doc(hidden)]
 #[derive(Debug, Clone, PartialEq)]
