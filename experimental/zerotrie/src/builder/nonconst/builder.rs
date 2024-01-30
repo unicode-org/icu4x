@@ -38,19 +38,19 @@ pub enum CapacityMode {
     Extended,
 }
 
-/// Whether to permit strings that have inconsistent ASCII case at a node, such as "abc" and "Abc"
-pub enum MixedCaseMode {
-    /// Allows strings regardless of case.
-    Allow,
-    /// Returns an error if a node exists with the same character in ambiguous case.
-    Reject,
+/// How to handle strings with mixed ASCII case at a node, such as "abc" and "Abc"
+pub enum CaseSensitivity {
+    /// Allow all strings and sort them by byte value.
+    Sensitive,
+    /// Reject strings with different case and sort them as if `to_ascii_lowercase` is called.
+    IgnoreCase,
 }
 
 pub struct ZeroTrieBuilderOptions {
     pub phf_mode: PhfMode,
     pub ascii_mode: AsciiMode,
     pub capacity_mode: CapacityMode,
-    pub mixed_case_mode: MixedCaseMode,
+    pub case_sensitivity: CaseSensitivity,
 }
 
 /// A low-level builder for ZeroTrie. Supports all options.
@@ -144,7 +144,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         items.sort_by(|a, b| cmp_keys_values(&options, *a, *b));
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
-        Self::from_sorted_tuple_slice(byte_str_slice, options)
+        Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
     }
 
     /// Builds a ZeroTrie with the given items and options. Assumes that the items are sorted,
@@ -158,12 +158,20 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, Error> {
         let mut items = Cow::Borrowed(items);
-        if matches!(options.mixed_case_mode, MixedCaseMode::Reject) {
+        if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
             // We need to re-sort the items with our custom comparator.
             items.to_mut().sort_by(|a, b| {
                 cmp_keys_values(&options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
             });
         }
+        Self::from_sorted_tuple_slice_impl(&items, options)
+    }
+
+    /// Internal constructor that does not re-sort the items.
+    fn from_sorted_tuple_slice_impl(
+        items: &[(&ByteStr, usize)],
+        options: ZeroTrieBuilderOptions,
+    ) -> Result<Self, Error> {
         for ab in items.windows(2) {
             debug_assert!(cmp_keys_values(
                 &options,
@@ -267,7 +275,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             if ascii_i == key_ascii && ascii_j == key_ascii {
                 let len = self.prepend_ascii(key_ascii)?;
                 current_len += len;
-                if matches!(self.options.mixed_case_mode, MixedCaseMode::Reject) && i == new_i + 2 {
+                if matches!(self.options.case_sensitivity, CaseSensitivity::IgnoreCase) && i == new_i + 2 {
                     // This can happen if two strings were picked up, each with a different case
                     return Err(Error::MixedCase);
                 }
@@ -324,7 +332,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             };
             let mut branch_metas = lengths_stack.pop_many_or_panic(total_count);
             let original_keys = branch_metas.map_to_ascii_bytes();
-            if matches!(self.options.mixed_case_mode, MixedCaseMode::Reject) {
+            if matches!(self.options.case_sensitivity, CaseSensitivity::IgnoreCase) {
                 // Check to see if we have the same letter in two different cases
                 let mut seen_ascii_alpha = [false; 26];
                 for c in original_keys.as_const_slice().as_slice() {
@@ -435,7 +443,7 @@ fn cmp_keys_values(
     a: (&[u8], usize),
     b: (&[u8], usize),
 ) -> Ordering {
-    if matches!(options.mixed_case_mode, MixedCaseMode::Allow) {
+    if matches!(options.case_sensitivity, CaseSensitivity::Sensitive) {
         a.0.cmp(b.0)
     } else {
         let a_iter = a.0.iter().map(|x| x.to_ascii_lowercase());

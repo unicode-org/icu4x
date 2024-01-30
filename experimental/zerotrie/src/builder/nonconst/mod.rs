@@ -13,7 +13,7 @@ impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
         phf_mode: PhfMode::BinaryOnly,
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
-        mixed_case_mode: MixedCaseMode::Allow,
+        case_sensitivity: CaseSensitivity::Sensitive,
     };
 }
 
@@ -22,7 +22,7 @@ impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
         phf_mode: PhfMode::BinaryOnly,
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
-        mixed_case_mode: MixedCaseMode::Reject,
+        case_sensitivity: CaseSensitivity::IgnoreCase,
     };
 }
 
@@ -31,7 +31,7 @@ impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
         phf_mode: PhfMode::UsePhf,
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Normal,
-        mixed_case_mode: MixedCaseMode::Allow,
+        case_sensitivity: CaseSensitivity::Sensitive,
     };
 }
 
@@ -40,6 +40,6 @@ impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
         phf_mode: PhfMode::UsePhf,
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Extended,
-        mixed_case_mode: MixedCaseMode::Allow,
+        case_sensitivity: CaseSensitivity::Sensitive,
     };
 }
