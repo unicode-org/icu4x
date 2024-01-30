@@ -297,7 +297,7 @@ fn byte_type(b: u8) -> NodeType {
 }
 
 #[inline]
-pub fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
+pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     mut trie: &[u8],
     mut ascii: &[u8],
 ) -> Option<usize> {
