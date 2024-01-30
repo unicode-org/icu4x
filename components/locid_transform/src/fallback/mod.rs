@@ -23,12 +23,6 @@ mod algorithms;
 ///
 /// If running fallback in a loop, use [`DataLocale::is_und()`] to break from the loop.
 ///
-/// # Algorithm Invariants
-///
-/// 1. The [language identifier] will eventually reach `und`.
-/// 2. The Unicode extension keywords will eventually be removed.
-/// 3. The fallback chain requires context from the original input.
-///
 /// # Examples
 ///
 /// ```
