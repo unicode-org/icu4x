@@ -298,7 +298,7 @@ mod tests {
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
-            // NOTE: -u-rg is not yet supported; when it is, this test should be updated
+            // TODO(#4413): -u-rg is not yet supported; when it is, this test should be updated
             input: "en-u-rg-gbxxxx",
             requires_data: false,
             extension_key: None,
