@@ -10,8 +10,8 @@ use super::store::TrieBuilderStore;
 use crate::builder::bytestr::ByteStr;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::Error;
-use crate::varint;
 use crate::options::*;
+use crate::varint;
 use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
@@ -237,7 +237,9 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             if ascii_i == key_ascii && ascii_j == key_ascii {
                 let len = self.prepend_ascii(key_ascii)?;
                 current_len += len;
-                if matches!(self.options.case_sensitivity, CaseSensitivity::IgnoreCase) && i == new_i + 2 {
+                if matches!(self.options.case_sensitivity, CaseSensitivity::IgnoreCase)
+                    && i == new_i + 2
+                {
                     // This can happen if two strings were picked up, each with a different case
                     return Err(Error::MixedCase);
                 }
