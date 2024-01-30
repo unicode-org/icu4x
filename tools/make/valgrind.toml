@@ -13,7 +13,7 @@ args = [
     "build", "--examples",
     "--features", "icu_benchmark_macros/rust_global_allocator",
     "--features", "zerovec/serde",
-    "--profile", "bench",
+    "--profile", "memory",
 ]
 
 [tasks.valgrind]
@@ -33,7 +33,7 @@ mkdir benchmarks
 mkdir benchmarks/valgrind
 
 # Re-run the build command only to generate the JSON output (--message-format=json)
-output = exec cargo build --examples --message-format=json --features icu_benchmark_macros/rust_global_allocator --features zerovec/serde --profile bench
+output = exec cargo build --examples --message-format=json --features icu_benchmark_macros/rust_global_allocator --features zerovec/serde --profile memory
 if ${output.code}
     trigger_error "Build failed! To debug, build examples with `--features icu_benchmark_macros/rust_global_allocator`"
 end

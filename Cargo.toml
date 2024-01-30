@@ -245,17 +245,13 @@ codegen-units = 1
 inherits = "dev"
 debug-assertions = false
 
-# Enable debug information specifically for memory profiling.
-# https://docs.rs/dhat/0.2.1/dhat/#configuration
-#
-# 2021-01-08: This would be nicer as a named profile, e.g. [profile.memory]
-# https://github.com/rust-lang/cargo/issues/6988
 [profile.bench]
 lto = true
-debug = true
-debug-assertions = false
 
+# Enable debug information specifically for memory profiling.
+# https://docs.rs/dhat/0.2.1/dhat/#configuration
 [profile.memory]
 inherits = "release"
 lto = true
 debug = true
+debug-assertions = false
