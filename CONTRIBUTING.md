@@ -32,7 +32,7 @@ Many ICU4X engineers use [Visual Studio Code](https://code.visualstudio.com/) wi
 
 To build all code paths and improve build times in VSCode, we recommend the following settings. (Note: The second setting causes VSCode to build ICU4X with only the `und` locale, which reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.) To add these settings, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
 
-```json
+```jsonc
 "settings": {
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
