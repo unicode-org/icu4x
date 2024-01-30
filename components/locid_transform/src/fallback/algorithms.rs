@@ -225,12 +225,12 @@ mod tests {
     #[test]
     fn test_aux_key_fallback() {
         use super::LocaleFallbacker;
-    
+
         let fallbacker = LocaleFallbacker::new();
         let mut fallback_iterator = fallbacker
             .for_config(Default::default())
             .fallback_for("en-US-u-sd-usca-x-aux".parse().unwrap());
-    
+
         assert_eq!(fallback_iterator.get().to_string(), "en-US-u-sd-usca-x-aux");
         fallback_iterator.step();
         assert_eq!(fallback_iterator.get().to_string(), "en-US-x-aux");
