@@ -251,7 +251,6 @@ lto = true
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
 [profile.bench-memory]
-inherits = "release"
-lto = true
+inherits = "bench"
 debug = true
 debug-assertions = false
