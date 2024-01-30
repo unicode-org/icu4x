@@ -243,20 +243,20 @@ args = ["doc", "--workspace", "--release", "--all-features", "--no-deps", "--lib
 description = "Locally run all CI jobs"
 category = "ICU4X Development"
 dependencies = [
-    # make quick
+    # Fastest jobs
     "ci-job-fmt",
     "ci-job-clippy",
-    "ci-job-nostd",
+    "ci-job-doc",
+    "ci-job-tidy",
+    "ci-job-diplomat",
     "ci-job-msrv-check",
     "check-tutorials-local",
-    "ci-job-tidy",
-    "ci-job-doc",
 
     # Get a coffee
     "ci-job-test",
     "ci-job-test-docs",
     "ci-job-test-tutorials-cratesio",
-    "ci-job-diplomat",
+    "ci-job-nostd",
     "ci-job-testdata",
     "ci-job-msrv-features",
     "ci-job-full-datagen",
