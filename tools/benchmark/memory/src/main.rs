@@ -102,7 +102,7 @@ fn main() {
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
             .arg("--features")
-            .arg("memory")
+            .arg("bench")
             .status()
             .unwrap_or_else(|err| {
                 eprintln!("Failed to collect examples {err:?}");
@@ -156,7 +156,7 @@ fn main() {
             .arg("--example")
             .arg(example)
             .arg("--profile")
-            .arg("memory")
+            .arg("bench-memory")
             // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
             // icu_benchmark_macros package.
             .arg("--features")
