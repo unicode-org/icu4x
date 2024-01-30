@@ -147,7 +147,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             phf_cache: PerfectByteHashMapCacheOwned::new_empty(),
             options,
         };
-        let total_size = result.create(&items)?;
+        let total_size = result.create(items)?;
         debug_assert!(total_size == result.data.atbs_len());
         Ok(result)
     }
