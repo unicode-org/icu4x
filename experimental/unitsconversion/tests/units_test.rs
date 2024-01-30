@@ -98,11 +98,9 @@ fn test_cldr_unit_tests() {
             .try_from_identifier(test.output_unit.as_str())
             .unwrap();
 
-        let converter = converter_factory.converter(&input_unit, &output_unit);
-
-        assert!(converter.is_some());
-
-        let converter = converter.unwrap();
+        let converter = converter_factory
+            .converter(&input_unit, &output_unit)
+            .unwrap();
         let result = converter.convert(&Ratio::from_integer(1000.into()));
         let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
 
