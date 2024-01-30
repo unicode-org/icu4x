@@ -99,6 +99,8 @@ fn main() {
         Command::new("cargo")
             .arg("build")
             .arg("--examples")
+            .arg("--profile")
+            .arg("bench-memory")
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
             .arg("--features")
@@ -108,7 +110,7 @@ fn main() {
                 eprintln!("Failed to collect examples {err:?}");
                 process::exit(1);
             });
-        fs::read_dir(root_dir.join("target/debug/examples"))
+        fs::read_dir(root_dir.join("target/bench-memory/examples"))
             .unwrap()
             .flat_map(|entry| {
                 entry.ok()?.file_name().into_string().ok().and_then(|s| {
@@ -121,6 +123,8 @@ fn main() {
             })
             .collect()
     };
+
+    println!("[memory] Examples to benchmark:  {examples:?}");
 
     // benchmarks/memory/{os}
     let benchmark_dir = root_dir
