@@ -50,6 +50,8 @@ pub(crate) trait ZeroTrieWithOptions {
     const OPTIONS: ZeroTrieBuilderOptions;
 }
 
+/// All branch nodes are binary search
+/// and there are no span nodes.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieSimpleAscii<S> {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::BinaryOnly,
@@ -59,6 +61,8 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieSimpleAscii<S> {
     };
 }
 
+/// All branch nodes are binary search
+/// and nodes use case-insensitive matching.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::BinaryOnly,
@@ -68,6 +72,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
     };
 }
 
+/// Branch nodes could be either binary search or PHF.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::UsePhf,
@@ -77,6 +82,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
     };
 }
 
+/// No limited capacity assertion.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         phf_mode: PhfMode::UsePhf,

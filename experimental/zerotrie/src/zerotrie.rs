@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::options::ZeroTrieWithOptions;
-use crate::reader::*;
+use crate::reader;
 
 use core::borrow::Borrow;
 
@@ -237,7 +237,7 @@ impl<Store> ZeroTrieExtendedCapacity<Store> {
 }
 
 macro_rules! impl_zerotrie_subtype {
-    ($name:ident, $getter_fn:path, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
+    ($name:ident, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
         impl<Store> $name<Store> {
             /// Create a trie directly from a store.
             ///
@@ -275,10 +275,9 @@ macro_rules! impl_zerotrie_subtype {
         Store: AsRef<[u8]> + ?Sized,
         {
             /// Queries the trie for a string.
-            #[inline]
             pub fn get<K>(&self, key: K) -> Option<usize> where K: AsRef<[u8]> {
                 // TODO: Should this be AsRef or Borrow?
-                $getter_fn(self.store.as_ref(), key.as_ref())
+                reader::get_parameterized::<Self>(self.store.as_ref(), key.as_ref())
             }
             /// Returns `true` if the trie is empty.
             #[inline]
@@ -625,30 +624,26 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
 
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
-    get_ascii_bsearch_only,
     String,
-    get_iter_ascii_or_panic,
+    reader::get_iter_ascii_or_panic,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroAsciiIgnoreCaseTrie,
-    get_ascii_bsearch_only_ignore_case,
     String,
-    get_iter_ascii_or_panic,
+    reader::get_iter_ascii_or_panic,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroTriePerfectHash,
-    get_phf_limited,
     Vec<u8>,
-    get_iter_phf,
+    reader::get_iter_phf,
     Vec::into_boxed_slice
 );
 impl_zerotrie_subtype!(
     ZeroTrieExtendedCapacity,
-    get_phf_extended,
     Vec<u8>,
-    get_iter_phf,
+    reader::get_iter_phf,
     Vec::into_boxed_slice
 );
 

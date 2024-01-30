@@ -297,7 +297,7 @@ fn byte_type(b: u8) -> NodeType {
 }
 
 #[inline]
-fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
+pub fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     mut trie: &[u8],
     mut ascii: &[u8],
 ) -> Option<usize> {
@@ -404,28 +404,6 @@ fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
 // | basic         | ~187.51 ns        | ~97.586 ns         | ~199.11 ns        | ~99.236 ns         |
 // | subtags_10pct | ~9.5557 µs        | ~4.8696 µs         | ~9.5779 µs        | ~4.5649 µs         |
 // | subtags_full  | ~137.75 µs        | ~76.016 µs         | ~142.02 µs        | ~70.254 µs         |
-
-/// Query the trie assuming all branch nodes are binary search
-/// and there are no span nodes.
-pub fn get_ascii_bsearch_only(trie: &[u8], ascii: &[u8]) -> Option<usize> {
-    get_parameterized::<crate::ZeroTrieSimpleAscii<[u8]>>(trie, ascii)
-}
-
-/// Query the trie assuming all branch nodes are binary search
-/// and nodes use case-insensitive matching.
-pub fn get_ascii_bsearch_only_ignore_case(trie: &[u8], ascii: &[u8]) -> Option<usize> {
-    get_parameterized::<crate::ZeroAsciiIgnoreCaseTrie<[u8]>>(trie, ascii)
-}
-
-/// Query the trie assuming branch nodes could be either binary search or PHF.
-pub fn get_phf_limited(trie: &[u8], ascii: &[u8]) -> Option<usize> {
-    get_parameterized::<crate::ZeroTriePerfectHash<[u8]>>(trie, ascii)
-}
-
-/// Query the trie without the limited capacity assertion.
-pub fn get_phf_extended(trie: &[u8], ascii: &[u8]) -> Option<usize> {
-    get_parameterized::<crate::ZeroTrieExtendedCapacity<[u8]>>(trie, ascii)
-}
 
 /// Steps one node into the trie assuming all branch nodes are binary search and that
 /// there are no span nodes.
