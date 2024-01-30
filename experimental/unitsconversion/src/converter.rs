@@ -110,7 +110,7 @@ impl<'data> ConverterFactory<'data> {
                     .get(item.unit_id as usize)
                     .ok_or(ConversionError::DataNotFoundError)?;
 
-                insert_base_units(items_from_item.basic_units(), item.power as i16, sign, map)?;
+                insert_base_units(items_from_item.basic_units(), item.power as i16, sign, map);
             }
 
             Ok(())
@@ -159,18 +159,18 @@ impl<'data> ConverterFactory<'data> {
             return Convertibility::NotConvertible;
         }
 
-        let (sums_are_zeros, subtractions_are_zeros) =
-            map.iter_values()
-                .fold((true, true), |(sums, subs), determine_convertibility| {
-                    (
-                        sums && determine_convertibility.sum == 0,
-                        subs && determine_convertibility.difference == 0,
-                    )
-                });
+        let (unit1_unit2_power_sums_are_zero, unit1_unit2_power_diffs_are_zero) = map
+            .iter_values()
+            .fold((true, true), |(sums, subs), determine_convertibility| {
+                (
+                    sums && determine_convertibility.sum == 0,
+                    subs && determine_convertibility.difference == 0,
+                )
+            });
 
-        if subtractions_are_zeros {
+        if unit1_unit2_power_diffs_are_zero {
             Convertibility::Convertible
-        } else if sums_are_zeros {
+        } else if unit1_unit2_power_sums_are_zero {
             Convertibility::Reciprocal
         } else {
             Convertibility::NotConvertible
