@@ -26,13 +26,12 @@ ICU4X_BUILDING_WITH_FORCED_NIGHTLY = { value = "1", condition = { env_set = ["IC
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
 category = "ICU4X Development"
-dependencies = [
+env = { "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
+run_task.name = [
     "ci-job-fmt",
     "ci-job-clippy",
-    "ci-job-nostd",
     "check-no-features",
-    "check-tutorials-local",
-    "ci-job-tidy",
+    "depcheck",
     "ci-job-doc",
 ]
 

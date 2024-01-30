@@ -288,6 +288,8 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
+    - name: Install rustfmt
+      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
