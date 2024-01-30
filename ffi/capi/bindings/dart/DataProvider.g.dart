@@ -11,11 +11,13 @@ part of 'lib.g.dart';
 final class DataProvider implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  DataProvider._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  DataProvider._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XDataProvider_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDataProvider_destroy));
 
   /// Constructs an [`DataProvider`] that uses compiled data.
   ///
@@ -25,20 +27,15 @@ final class DataProvider implements ffi.Finalizable {
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
   factory DataProvider.compiled() {
     final result = _ICU4XDataProvider_create_compiled();
-    return DataProvider._(result);
+    return DataProvider._(result, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_create_compiled =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>('ICU4XDataProvider_create_compiled')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 
   /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DataProvider.fromByteSlice(Uint8List blob) {
+  factory DataProvider.fromByteSlice(ByteBuffer blob) {
     final temp = ffi2.Arena();
     final blobView = blob;
     final result = _ICU4XDataProvider_create_from_byte_slice(blobView.pointer(temp), blobView.length);
@@ -46,26 +43,16 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return DataProvider._(result.union.ok);
+    return DataProvider._(result.union.ok, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_create_from_byte_slice =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XDataProvider_create_from_byte_slice')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Constructs an empty [`DataProvider`].
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
   factory DataProvider.empty() {
     final result = _ICU4XDataProvider_create_empty();
-    return DataProvider._(result);
+    return DataProvider._(result, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_create_empty =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>('ICU4XDataProvider_create_empty')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 
   /// Creates a provider that tries the current provider and then, if the current provider
   /// doesn't support the data key, another provider `other`.
@@ -86,11 +73,6 @@ final class DataProvider implements ffi.Finalizable {
     }
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_fork_by_key =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_key')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Same as `fork_by_key` but forks by locale instead of key.
   ///
   /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
@@ -102,11 +84,6 @@ final class DataProvider implements ffi.Finalizable {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_fork_by_locale =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_locale')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Enables locale fallbacking for data requests made to this provider.
   ///
@@ -124,11 +101,6 @@ final class DataProvider implements ffi.Finalizable {
     }
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_enable_locale_fallback =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_enable_locale_fallback')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
@@ -140,9 +112,36 @@ final class DataProvider implements ffi.Finalizable {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_enable_locale_fallback_with =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_enable_locale_fallback_with')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XDataProvider_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XDataProvider_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XDataProvider_create_compiled')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XDataProvider_create_compiled();
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XDataProvider_create_from_byte_slice')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XDataProvider_create_from_byte_slice(ffi.Pointer<ffi.Uint8> blobData, int blobLength);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XDataProvider_create_empty')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XDataProvider_create_empty();
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_fork_by_key')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XDataProvider_fork_by_key(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_fork_by_locale')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XDataProvider_fork_by_locale(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_enable_locale_fallback')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XDataProvider_enable_locale_fallback(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDataProvider_enable_locale_fallback_with')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XDataProvider_enable_locale_fallback_with(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> fallbacker);

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::helpers::size_test;
 use crate::provider::calendar::*;
 use crate::{calendar, options::length, raw};
 use crate::{input::DateInput, DateTimeError, FormattedDateTime};
@@ -18,6 +19,13 @@ use icu_provider::prelude::*;
 use icu_provider::DataLocale;
 use writeable::Writeable;
 
+size_test!(
+    DateFormatter,
+    date_formatter_size,
+    pinned = 4600,
+    nightly = 4456
+);
+
 /// [`DateFormatter`] is a formatter capable of formatting
 /// dates from any calendar, selected at runtime. For the difference between this and [`TypedDateFormatter`](crate::TypedDateFormatter),
 /// please read the [crate root docs][crate].
@@ -27,6 +35,8 @@ use writeable::Writeable;
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
+///
+#[doc = date_formatter_size!()]
 ///
 /// [`icu_datetime`]: crate
 ///

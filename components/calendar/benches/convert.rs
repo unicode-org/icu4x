@@ -76,6 +76,9 @@ fn convert_benches(c: &mut Criterion) {
     );
 
     #[cfg(feature = "bench")]
+    bench_calendar(&mut group, "calendar/hebrew", icu::calendar::hebrew::Hebrew);
+
+    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",

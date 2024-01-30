@@ -118,9 +118,28 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// cursor.step(b'y');
     /// assert_eq!(cursor.take_value(), None); // "abcdxy"
     /// ```
+    ///
+    /// If the byte is not ASCII, the cursor will become empty:
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// let mut cursor = trie.cursor();
+    /// assert_eq!(cursor.take_value(), None); // ""
+    /// cursor.step(b'a');
+    /// assert_eq!(cursor.take_value(), None); // "a"
+    /// cursor.step(b'b');
+    /// assert_eq!(cursor.take_value(), None); // "ab"
+    /// cursor.step(b'\xFF');
+    /// assert!(cursor.is_empty());
+    /// assert_eq!(cursor.take_value(), None);
+    /// ```
     #[inline]
     pub fn step(&mut self, byte: u8) {
-        step_bsearch_only(&mut self.trie.store, byte)
+        step_ascii_bsearch_only(&mut self.trie.store, byte)
     }
 
     /// Takes the value at the current position.

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::exhaustive_structs)] // part of data struct and internal API
+
 use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::vec::Vec;
 use core::str::FromStr;
@@ -14,7 +16,6 @@ use zerovec::ZeroVec;
     derive(databake::Bake),
     databake(path = icu_datetime::pattern::runtime),
 )]
-#[allow(clippy::exhaustive_structs)] // part of data struct
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::skip_derive(Ord)]
 pub struct Pattern<'data> {
@@ -41,12 +42,25 @@ impl PatternMetadata {
         Self::from_time_granularity(time_granularity)
     }
 
+    /// Merges the metadata from a date pattern and a time pattern into one.
+    #[cfg(feature = "experimental")]
+    #[inline]
+    pub(crate) fn merge_date_and_time_metadata(
+        _date: PatternMetadata,
+        time: PatternMetadata,
+    ) -> PatternMetadata {
+        // Currently we only have time granularity so we ignore the date metadata.
+        time
+    }
+
     #[inline]
     #[doc(hidden)] // databake
     pub const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
         Self(time_granularity.ordinal())
     }
 
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    #[inline]
     pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
         self.0 = time_granularity.ordinal();
     }

@@ -9,11 +9,13 @@ part of 'lib.g.dart';
 final class BidiParagraph implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  BidiParagraph._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  BidiParagraph._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XBidiParagraph_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiParagraph_destroy));
 
   /// Given a paragraph index `n` within the surrounding text, this sets this
   /// object to the paragraph at that index. Returns `Error::OutOfBoundsError` when out of bounds.
@@ -29,11 +31,6 @@ final class BidiParagraph implements ffi.Finalizable {
     }
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_set_paragraph_in_text =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiParagraph_set_paragraph_in_text')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// The primary direction of this paragraph
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
@@ -41,11 +38,6 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _ICU4XBidiParagraph_direction(_underlying);
     return BidiDirection.values[result];
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_direction =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_direction')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The number of bytes in this paragraph
   ///
@@ -55,32 +47,17 @@ final class BidiParagraph implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_size =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_size')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// The start index of this paragraph within the source text
   int get rangeStart {
     final result = _ICU4XBidiParagraph_range_start(_underlying);
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_range_start =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_range_start')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// The end index of this paragraph within the source text
   int get rangeEnd {
     final result = _ICU4XBidiParagraph_range_end(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_range_end =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_range_end')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
   /// within this paragraph's range.
@@ -97,11 +74,6 @@ final class BidiParagraph implements ffi.Finalizable {
     return writeable.finalize();
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_reorder_line =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_reorder_line')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Get the BIDI level at a particular byte index in this paragraph.
   /// This integer is conceptually a `unicode_bidi::Level`,
   /// and can be further inspected using the static methods on ICU4XBidi.
@@ -113,9 +85,36 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _ICU4XBidiParagraph_level_at(_underlying, pos);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_level_at =
-    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiParagraph_level_at')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XBidiParagraph_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_set_paragraph_in_text')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XBidiParagraph_set_paragraph_in_text(ffi.Pointer<ffi.Opaque> self, int n);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_direction')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiParagraph_direction(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_size')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiParagraph_size(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_range_start')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiParagraph_range_start(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_range_end')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiParagraph_range_end(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_reorder_line')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XBidiParagraph_reorder_line(ffi.Pointer<ffi.Opaque> self, int rangeStart, int rangeEnd, ffi.Pointer<ffi.Opaque> writeable);
+
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_level_at')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiParagraph_level_at(ffi.Pointer<ffi.Opaque> self, int pos);

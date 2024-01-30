@@ -51,7 +51,7 @@ use patterns::{
 };
 use std::str::FromStr;
 use tinystr::tinystr;
-use writeable::{assert_writeable_eq, Writeable};
+use writeable::assert_writeable_eq;
 
 mod mock;
 
@@ -62,7 +62,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
     {
         let japanese = Japanese::new();
         let japanext = JapaneseExtended::new();
-        let options_base = match fixtures::get_options(&fx.input.options) {
+        let options = match fixtures::get_options(&fx.input.options) {
             Some(o) => o,
             #[cfg(feature = "experimental")]
             None => unreachable!(),
@@ -77,7 +77,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew::new_always_calculating());
+        let input_hebrew = input_value.to_calendar(Hebrew);
         let input_indian = input_value.to_calendar(Indian);
         let input_islamic_civil = input_value.to_calendar(IslamicCivil::new_always_calculating());
         let input_islamic_observational =
@@ -99,7 +99,6 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
@@ -271,13 +270,9 @@ fn assert_fixture_element<A>(
     #[cfg(feature = "experimental")]
     let (dtf, any_dtf) = {
         (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(
-                &locale.into(),
-                options.clone(),
-            )
-            .expect(description),
-            DateTimeFormatter::try_new_experimental(&locale.into(), options.clone())
+            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(&locale.into(), options)
                 .expect(description),
+            DateTimeFormatter::try_new_experimental(&locale.into(), options).expect(description),
         )
     };
     #[cfg(not(feature = "experimental"))]
@@ -363,7 +358,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
             let dtf = {
                 TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
                     &locale.into(),
-                    options.clone(),
+                    options,
                     TimeZoneFormatterOptions::default(),
                 )
                 .unwrap()
@@ -570,20 +565,20 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         zone_variant: Some(ZoneVariant::daylight()),
     };
     let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
-    tzf.format(&time_zone).write_to_string();
+    tzf.format_to_string(&time_zone);
 }
 
 #[test]
 #[cfg(not(debug_assertions))]
 fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
-    let time_zone = MockTimeZone::new(
-        None,
-        Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        Some(MetazoneId(tinystr!(4, "ampa"))),
-        Some(tinystr!(8, "daylight")),
-    );
+    let time_zone = CustomTimeZone {
+        gmt_offset: None,
+        time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+        metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
+        zone_variant: Some(ZoneVariant::daylight()),
+    };
     let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
-    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?");
+    assert_writeable_eq!(tzf.format(&time_zone), "GMT+?");
 }
 
 #[test]

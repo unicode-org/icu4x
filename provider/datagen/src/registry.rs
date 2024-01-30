@@ -157,12 +157,14 @@ macro_rules! registry {
 registry!(
     #[cfg(test)]
     icu_dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
+    icu_dimension::provider::PercentEssentialsV1Marker = "percent/essentials@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
     icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
+    icu_calendar::provider::WeekDataV2Marker = "datetime/week_data@2",
     #[cfg(any(all(), feature = "icu_casemap"))]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
     icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
@@ -287,6 +289,7 @@ registry!(
     icu_list::provider::UnitListV1Marker = "list/unit@1",
     #[cfg(all())]
     icu_locid_transform::provider::AliasesV1Marker = "locid_transform/aliases@1",
+    icu_locid_transform::provider::AliasesV2Marker = "locid_transform/aliases@2",
     icu_locid_transform::provider::CollationFallbackSupplementV1Marker = "fallback/supplement/co@1",
     icu_locid_transform::provider::LikelySubtagsV1Marker = "locid_transform/likelysubtags@1",
     icu_locid_transform::provider::LikelySubtagsExtendedV1Marker =

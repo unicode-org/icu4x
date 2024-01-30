@@ -45,6 +45,7 @@ mod error;
 pub mod ethiopian;
 /// The Hebrew calendar
 pub mod hebrew;
+pub mod hebrew_keviyah;
 /// Additional math helpers
 pub mod helpers;
 /// Various islamic lunar calendars

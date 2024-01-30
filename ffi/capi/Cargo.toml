@@ -35,7 +35,7 @@ denylist = ["bench", "cpp_default", "wasm_default", "provider_test"]
 max_combination_size = 2
 
 [features]
-default = ["compiled_data", "default_components", "logging", "simple_logger"]
+default = ["compiled_data", "default_components", "logging", "simple_logger", "std"]
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
@@ -57,8 +57,8 @@ buffer_provider = [
     "icu_segmenter?/serde",
     "icu_timezone?/serde",
 ]
-provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
-logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log"]
+provider_fs = ["dep:icu_provider_fs", "buffer_provider", "std"]
+logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log", "std"]
 simple_logger = ["dep:simple_logger", "logging"]
 
 # Legacy features
@@ -104,6 +104,12 @@ compiled_data = [
     "icu_timezone?/compiled_data",
 ]
 
+std = []
+# Adds a looping panic handler (useful for no_std targets)
+looping_panic_handler = []
+# Uses malloc as the global allocator (useful for no_std targets)
+libc_alloc = ["dep:libc_alloc"]
+
 [dependencies]
 # Mandatory ICU4X components and utils
 icu_locid.workspace = true
@@ -146,3 +152,5 @@ simple_logger = { version = "4.1.0", optional = true }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { workspace = true, optional = true }
+
+libc_alloc = { version = "1.0.6", features = ["global"], optional = true }
