@@ -1,0 +1,42 @@
+// @generated
+/// Implement `DataProvider<IslamicDateSymbolsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_islamic_datesymbols_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker>, icu_provider::DataError> {
+                static UND: <icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu::datetime::provider::calendar::months::ContextsV1 { format: icu::datetime::provider::calendar::months::FormatWidthsV1 { abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([alloc::borrow::Cow::Borrowed("Muh."), alloc::borrow::Cow::Borrowed("Saf."), alloc::borrow::Cow::Borrowed("Rab. I"), alloc::borrow::Cow::Borrowed("Rab. II"), alloc::borrow::Cow::Borrowed("Jum. I"), alloc::borrow::Cow::Borrowed("Jum. II"), alloc::borrow::Cow::Borrowed("Raj."), alloc::borrow::Cow::Borrowed("Sha."), alloc::borrow::Cow::Borrowed("Ram."), alloc::borrow::Cow::Borrowed("Shaw."), alloc::borrow::Cow::Borrowed("Dhuʻl-Q."), alloc::borrow::Cow::Borrowed("Dhuʻl-H.")]), narrow: icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([alloc::borrow::Cow::Borrowed("1"), alloc::borrow::Cow::Borrowed("2"), alloc::borrow::Cow::Borrowed("3"), alloc::borrow::Cow::Borrowed("4"), alloc::borrow::Cow::Borrowed("5"), alloc::borrow::Cow::Borrowed("6"), alloc::borrow::Cow::Borrowed("7"), alloc::borrow::Cow::Borrowed("8"), alloc::borrow::Cow::Borrowed("9"), alloc::borrow::Cow::Borrowed("10"), alloc::borrow::Cow::Borrowed("11"), alloc::borrow::Cow::Borrowed("12")]), short: None, wide: icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([alloc::borrow::Cow::Borrowed("Muharram"), alloc::borrow::Cow::Borrowed("Safar"), alloc::borrow::Cow::Borrowed("Rabiʻ I"), alloc::borrow::Cow::Borrowed("Rabiʻ II"), alloc::borrow::Cow::Borrowed("Jumada I"), alloc::borrow::Cow::Borrowed("Jumada II"), alloc::borrow::Cow::Borrowed("Rajab"), alloc::borrow::Cow::Borrowed("Shaʻban"), alloc::borrow::Cow::Borrowed("Ramadan"), alloc::borrow::Cow::Borrowed("Shawwal"), alloc::borrow::Cow::Borrowed("Dhuʻl-Qiʻdah"), alloc::borrow::Cow::Borrowed("Dhuʻl-Hijjah")]) }, stand_alone: None },
+                    weekdays: icu::datetime::provider::calendar::weekdays::ContextsV1 { format: icu::datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]), narrow: icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")])), wide: icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]) }, stand_alone: None },
+                    eras: icu::datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0islamic") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AH") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0islamic") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AH") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0islamic") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AH") })
+                        },
+                    },
+                };
+                static VALUES: [&<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static KEYS: [&str; 1usize] = ["und"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

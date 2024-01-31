@@ -26,7 +26,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X utils
     "calendrical_calculations",
     "fixed_decimal",
-    "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
     "litemap",
     "tinystr",
@@ -113,7 +112,12 @@ pub const EXTRA_RYU_DEPS: &[&str] = &["ryu"];
 
 /// Runtime dependencies allowed when building `icu_capi`
 /// This shuld almost never change
-pub const EXTRA_CAPI_DEPS: &[&str] = &["diplomat-runtime", "icu_capi", "unicode-bidi"];
+pub const EXTRA_CAPI_DEPS: &[&str] = &[
+    "diplomat-runtime",
+    "icu_capi",
+    "icu_provider_adapters",
+    "unicode-bidi",
+];
 
 /// Build-time dependencies allowed when building `icu_capi`
 /// This may change as Diplomat evolves, but care should be taken to keep this small
@@ -143,6 +147,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "elsa",
     "erased-serde",
     "icu_codepointtrie_builder",
+    "icu_provider_adapters",
     "itertools",
     "itoa",
     "matrixmultiply",

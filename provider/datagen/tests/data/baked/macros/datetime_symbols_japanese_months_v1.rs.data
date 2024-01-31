@@ -1,0 +1,26 @@
+// @generated
+/// Implement `DataProvider<JapaneseMonthNamesV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_symbols_japanese_months_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker>, icu_provider::DataError> {
+                static UND_X_4: <icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::MonthNamesV1::Linear(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\x00123456789101112") });
+                static UND_X_3: <icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::MonthNamesV1::Linear(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0!\0M01M02M03M04M05M06M07M08M09M10M11M12") });
+                static VALUES: [&<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::DataMarker>::Yokeable; 6usize] = [&UND_X_3, &UND_X_3, &UND_X_4, &UND_X_4, &UND_X_3, &UND_X_3];
+                static KEYS: [&str; 6usize] = ["und-x-3", "und-x-3s", "und-x-4", "und-x-4s", "und-x-5", "und-x-5s"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

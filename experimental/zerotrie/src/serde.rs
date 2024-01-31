@@ -4,6 +4,7 @@
 
 use crate::builder::bytestr::ByteStr;
 use crate::zerotrie::ZeroTrieFlavor;
+use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrie;
 use crate::ZeroTrieExtendedCapacity;
 use crate::ZeroTriePerfectHash;
@@ -119,6 +120,51 @@ where
 }
 
 impl<Store> Serialize for ZeroTrieSimpleAscii<Store>
+where
+    Store: AsRef<[u8]>,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        if serializer.is_human_readable() {
+            let lm = self.to_litemap();
+            lm.serialize(serializer)
+        } else {
+            let bytes = self.as_bytes();
+            bytes.serialize(serializer)
+        }
+    }
+}
+
+impl<'de, 'data, Store> Deserialize<'de> for ZeroAsciiIgnoreCaseTrie<Store>
+where
+    'de: 'data,
+    // DISCUSS: There are several possibilities for the bounds here that would
+    // get the job done. I could look for Deserialize, but this would require
+    // creating a custom Deserializer for the map case. I also considered
+    // introducing a new trait instead of relying on From.
+    Store: From<&'data [u8]> + From<Vec<u8>> + 'data,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
+            ZeroAsciiIgnoreCaseTrie::try_from_serde_litemap(&lm)
+                .map_err(D::Error::custom)
+                .map(|trie| trie.convert_store())
+        } else {
+            // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
+            <&[u8]>::deserialize(deserializer)
+                .map(ZeroAsciiIgnoreCaseTrie::from_store)
+                .map(|x| x.convert_store())
+        }
+    }
+}
+
+impl<Store> Serialize for ZeroAsciiIgnoreCaseTrie<Store>
 where
     Store: AsRef<[u8]>,
 {

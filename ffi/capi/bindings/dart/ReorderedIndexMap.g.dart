@@ -13,11 +13,13 @@ part of 'lib.g.dart';
 final class ReorderedIndexMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ReorderedIndexMap._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ReorderedIndexMap._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XReorderedIndexMap_destroy));
 
   /// Get this as a slice/array of indices
   core.List<int> get asSlice {
@@ -25,32 +27,17 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     return core.Iterable.generate(result._length).map((i) => result._pointer[i]).toList(growable: false);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XReorderedIndexMap_as_slice =
-    _capi<ffi.NativeFunction<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
-      .asFunction<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// The length of this map
   int get length {
     final result = _ICU4XReorderedIndexMap_len(_underlying);
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XReorderedIndexMap_len =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_len')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Whether this map is empty
   bool get isEmpty {
     final result = _ICU4XReorderedIndexMap_is_empty(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XReorderedIndexMap_is_empty =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_is_empty')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get element at `index`. Returns 0 when out of bounds
   /// (note that 0 is also a valid in-bounds value, please use `len()`
@@ -59,9 +46,24 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     final result = _ICU4XReorderedIndexMap_get(_underlying, index);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XReorderedIndexMap_get =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XReorderedIndexMap_get')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XReorderedIndexMap_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_as_slice')
+// ignore: non_constant_identifier_names
+external _SliceUsize _ICU4XReorderedIndexMap_as_slice(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_len')
+// ignore: non_constant_identifier_names
+external int _ICU4XReorderedIndexMap_len(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_is_empty')
+// ignore: non_constant_identifier_names
+external bool _ICU4XReorderedIndexMap_is_empty(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_get')
+// ignore: non_constant_identifier_names
+external int _ICU4XReorderedIndexMap_get(ffi.Pointer<ffi.Opaque> self, int index);

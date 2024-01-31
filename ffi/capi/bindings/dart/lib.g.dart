@@ -35,8 +35,7 @@ part 'CollatorCaseFirst.g.dart';
 part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
 part 'CollatorNumeric.g.dart';
-part 'CollatorOptionsV1.g.dart';
-part 'CollatorResolvedOptionsV1.g.dart';
+part 'CollatorOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'CustomTimeZone.g.dart';
@@ -49,7 +48,7 @@ part 'DateTimeFormatter.g.dart';
 part 'Decomposed.g.dart';
 part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
-part 'DisplayNamesOptionsV1.g.dart';
+part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
 part 'Error.g.dart';
 part 'FixedDecimal.g.dart';
@@ -78,7 +77,7 @@ part 'LeadingAdjustment.g.dart';
 part 'LineBreakIteratorLatin1.g.dart';
 part 'LineBreakIteratorUtf16.g.dart';
 part 'LineBreakIteratorUtf8.g.dart';
-part 'LineBreakOptionsV1.g.dart';
+part 'LineBreakOptions.g.dart';
 part 'LineBreakStrictness.g.dart';
 part 'LineBreakWordOption.g.dart';
 part 'LineSegmenter.g.dart';
@@ -107,6 +106,7 @@ part 'PluralRules.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
+part 'ResolvedCollatorOptions.g.dart';
 part 'RoundingIncrement.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
@@ -121,7 +121,7 @@ part 'TimeFormatter.g.dart';
 part 'TimeLength.g.dart';
 part 'TimeZoneFormatter.g.dart';
 part 'TitlecaseMapper.g.dart';
-part 'TitlecaseOptionsV1.g.dart';
+part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnicodeSetData.g.dart';
@@ -148,9 +148,6 @@ part 'ZonedDateTimeFormatter.g.dart';
 ///
 /// A [String] can be constructed from a [Rune] using [String.fromCharCode]. 
 typedef Rune = int;
-
-late final ffi.Pointer<T> Function<T extends ffi.NativeType>(String) _capi;
-void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 
 // ignore: unused_element
 final _callocFree = core.Finalizer(ffi2.calloc.free);
@@ -601,24 +598,28 @@ final class _SliceUtf8 extends ffi.Struct {
 final class _Writeable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  _Writeable() : _underlying = _create(0);
-  static final _create =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>('diplomat_buffer_writeable_create')
-    .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>();
-
+  _Writeable() : _underlying = _diplomat_buffer_writeable_create(0);
+  
   String finalize() {
-    final string = Utf8Decoder().convert(_getBytes(_underlying).asTypedList(_len(_underlying)));
-    _destroy(_underlying);
+    final string = Utf8Decoder().convert(_diplomat_buffer_writeable_get_bytes(_underlying).asTypedList(_diplomat_buffer_writeable_len(_underlying)));
+    _diplomat_buffer_writeable_destroy(_underlying);
     return string;
   }
-  static final _len = 
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_len')
-    .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
-  static final _getBytes = 
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_get_bytes')
-    .asFunction<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-  static final _destroy =
-    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_destroy')
-    .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+  
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_writeable_create', isLeaf: true)
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _diplomat_buffer_writeable_create(int len);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_len', isLeaf: true)
+// ignore: non_constant_identifier_names
+external int _diplomat_buffer_writeable_len(ffi.Pointer<ffi.Opaque> ptr);
+
+@ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_get_bytes', isLeaf: true)
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Uint8> _diplomat_buffer_writeable_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_destroy', isLeaf: true)
+// ignore: non_constant_identifier_names
+external void _diplomat_buffer_writeable_destroy(ffi.Pointer<ffi.Opaque> ptr);
