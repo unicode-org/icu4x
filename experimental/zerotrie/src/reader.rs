@@ -410,25 +410,48 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
 ///
 /// The input-output argument `trie` starts at the original trie and ends pointing to
 /// the sub-trie reachable by `c`.
-pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
+#[inline]
+pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(trie: &mut &[u8], c: u8) -> Option<u8> {
+    // BinarySpans is tricky to implement because the state can no longer be simply a trie
+    debug_assert!(
+        matches!(T::OPTIONS.ascii_mode, AsciiMode::AsciiOnly),
+        "Spans not yet implemented in step function"
+    );
+    // PHF can be easily implemented but the code is not yet reachable
+    debug_assert!(
+        matches!(T::OPTIONS.phf_mode, PhfMode::BinaryOnly),
+        "PHF not yet implemented in step function"
+    );
+    // Extended Capacity can be easily implemented but the code is not yet reachable
+    debug_assert!(
+        matches!(T::OPTIONS.capacity_mode, CapacityMode::Normal),
+        "Extended capacity not yet implemented in step function"
+    );
     let (mut b, x, search);
     loop {
         (b, *trie) = match trie.split_first() {
             Some(v) => v,
             None => {
                 // Empty trie or only a value node
-                return;
+                return None;
             }
         };
         match byte_type(*b) {
-            NodeType::Ascii if *b == c => {
-                // Matched a byte
-                return;
-            }
             NodeType::Ascii => {
-                // Byte that doesn't match
-                *trie = &[];
-                return;
+                let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
+                {
+                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                } else {
+                    *b == c
+                };
+                if is_match {
+                    // Matched a byte
+                    return Some(*b);
+                } else {
+                    // Byte that doesn't match
+                    *trie = &[];
+                    return None;
+                }
             }
             NodeType::Branch => {
                 // Proceed to the branch node logic below
@@ -439,7 +462,7 @@ pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
                 // Question: Should we put the trie back into a valid state?
                 // Currently this code is unreachable so let's not worry about it.
                 debug_assert!(false, "Span node found in ASCII trie!");
-                return;
+                return None;
             }
             NodeType::Value => {
                 // Skip the value node and go to the next node
@@ -456,7 +479,15 @@ pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
     let x = if x == 0 { 256 } else { x };
     // Always use binary search
     (search, *trie) = trie.debug_split_at(x);
-    match search.binary_search(&c) {
+    let bsearch_result =
+        if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
+            search.binary_search_by_key(&c.to_ascii_lowercase(), |x| {
+                x.to_ascii_lowercase()
+            })
+        } else {
+            search.binary_search(&c)
+        };
+    match bsearch_result {
         Ok(i) => {
             // Matched a byte
             *trie = if w == 0 {
@@ -464,12 +495,14 @@ pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
             } else {
                 get_branch(trie, i, x, w)
             };
+            Some(search[i])
         }
         Err(_) => {
             // Byte that doesn't match
-            *trie = &[]
+            *trie = &[];
+            None
         }
-    };
+    }
 }
 
 /// Steps one node into the trie if the head node is a value node, returning the value.

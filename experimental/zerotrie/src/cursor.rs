@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::reader::*;
+use crate::reader;
 use crate::ZeroTrieSimpleAscii;
 
 use core::fmt;
@@ -139,7 +139,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// ```
     #[inline]
     pub fn step(&mut self, byte: u8) {
-        step_ascii_bsearch_only(&mut self.trie.store, byte)
+        reader::step_parameterized::<ZeroTrieSimpleAscii<[u8]>>(&mut self.trie.store, byte);
     }
 
     /// Takes the value at the current position.
@@ -162,7 +162,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// ```
     #[inline]
     pub fn take_value(&mut self) -> Option<usize> {
-        take_value(&mut self.trie.store)
+        reader::take_value(&mut self.trie.store)
     }
 
     /// Checks whether the cursor points to an empty trie.
