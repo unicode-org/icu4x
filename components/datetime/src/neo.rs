@@ -213,7 +213,25 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 }
 
-/// TODO: Docs
+size_test!(
+    NeoDateFormatter,
+    neo_date_formatter_size,
+    pinned = 568,
+    nightly = 552
+);
+
+/// [`NeoDateFormatter`] is a formatter capable of formatting dates from any calendar, selected
+/// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
+/// [crate root docs][crate].
+///
+#[doc = neo_date_formatter_size!()]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
+/// </div>
 #[derive(Debug)]
 pub struct NeoDateFormatter {
     selection: DatePatternSelectionData,
