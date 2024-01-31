@@ -411,7 +411,10 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
 /// The input-output argument `trie` starts at the original trie and ends pointing to
 /// the sub-trie reachable by `c`.
 #[inline]
-pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(trie: &mut &[u8], c: u8) -> Option<u8> {
+pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
+    trie: &mut &[u8],
+    c: u8,
+) -> Option<u8> {
     // BinarySpans is tricky to implement because the state can no longer be simply a trie
     debug_assert!(
         matches!(T::OPTIONS.ascii_mode, AsciiMode::AsciiOnly),
@@ -479,14 +482,11 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(trie: &mut &[u
     let x = if x == 0 { 256 } else { x };
     // Always use binary search
     (search, *trie) = trie.debug_split_at(x);
-    let bsearch_result =
-        if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
-            search.binary_search_by_key(&c.to_ascii_lowercase(), |x| {
-                x.to_ascii_lowercase()
-            })
-        } else {
-            search.binary_search(&c)
-        };
+    let bsearch_result = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
+        search.binary_search_by_key(&c.to_ascii_lowercase(), |x| x.to_ascii_lowercase())
+    } else {
+        search.binary_search(&c)
+    };
     match bsearch_result {
         Ok(i) => {
             // Matched a byte
