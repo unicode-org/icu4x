@@ -18,7 +18,10 @@ use crate::CldrCalendar;
 use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::provider::WeekDataV2Marker;
+use icu_calendar::provider::{
+    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    WeekDataV2Marker,
+};
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
@@ -278,9 +281,147 @@ impl NeoDateFormatter {
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error> {
-        let provider = &crate::provider::Baked;
-        let loader = &ExternalLoaderCompiledData;
-        let calendar = AnyCalendar::new_for_locale(locale);
+        Self::try_new_with_length_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_length,
+        try_new_with_length_with_any_provider,
+        try_new_with_length_with_buffer_provider,
+        try_new_with_length_internal,
+        length: length::Date
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    pub fn try_new_with_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            // DatePattern, YearNames, and MonthNames keys
+            + DataProvider<BuddhistDatePatternV1Marker>
+            + DataProvider<BuddhistYearNamesV1Marker>
+            + DataProvider<BuddhistMonthNamesV1Marker>
+            + DataProvider<ChineseDatePatternV1Marker>
+            + DataProvider<ChineseYearNamesV1Marker>
+            + DataProvider<ChineseMonthNamesV1Marker>
+            + DataProvider<CopticDatePatternV1Marker>
+            + DataProvider<CopticYearNamesV1Marker>
+            + DataProvider<CopticMonthNamesV1Marker>
+            + DataProvider<DangiDatePatternV1Marker>
+            + DataProvider<DangiYearNamesV1Marker>
+            + DataProvider<DangiMonthNamesV1Marker>
+            + DataProvider<EthiopianDatePatternV1Marker>
+            + DataProvider<EthiopianYearNamesV1Marker>
+            + DataProvider<EthiopianMonthNamesV1Marker>
+            + DataProvider<GregorianDatePatternV1Marker>
+            + DataProvider<GregorianYearNamesV1Marker>
+            + DataProvider<GregorianMonthNamesV1Marker>
+            + DataProvider<HebrewDatePatternV1Marker>
+            + DataProvider<HebrewYearNamesV1Marker>
+            + DataProvider<HebrewMonthNamesV1Marker>
+            + DataProvider<IndianDatePatternV1Marker>
+            + DataProvider<IndianYearNamesV1Marker>
+            + DataProvider<IndianMonthNamesV1Marker>
+            + DataProvider<IslamicDatePatternV1Marker>
+            + DataProvider<IslamicYearNamesV1Marker>
+            + DataProvider<IslamicMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<JapaneseExtendedDatePatternV1Marker>
+            + DataProvider<JapaneseExtendedYearNamesV1Marker>
+            + DataProvider<JapaneseExtendedMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<PersianDatePatternV1Marker>
+            + DataProvider<PersianYearNamesV1Marker>
+            + DataProvider<PersianMonthNamesV1Marker>
+            + DataProvider<RocDatePatternV1Marker>
+            + DataProvider<RocYearNamesV1Marker>
+            + DataProvider<RocMonthNamesV1Marker>
+            // AnyCalendar constructor keys
+            + DataProvider<ChineseCacheV1Marker>
+            + DataProvider<DangiCacheV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            // Other keys
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_with_length_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            length,
+        )
+    }
+
+    fn try_new_with_length_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            // DatePattern, YearNames, and MonthNames keys
+            + DataProvider<BuddhistDatePatternV1Marker>
+            + DataProvider<BuddhistYearNamesV1Marker>
+            + DataProvider<BuddhistMonthNamesV1Marker>
+            + DataProvider<ChineseDatePatternV1Marker>
+            + DataProvider<ChineseYearNamesV1Marker>
+            + DataProvider<ChineseMonthNamesV1Marker>
+            + DataProvider<CopticDatePatternV1Marker>
+            + DataProvider<CopticYearNamesV1Marker>
+            + DataProvider<CopticMonthNamesV1Marker>
+            + DataProvider<DangiDatePatternV1Marker>
+            + DataProvider<DangiYearNamesV1Marker>
+            + DataProvider<DangiMonthNamesV1Marker>
+            + DataProvider<EthiopianDatePatternV1Marker>
+            + DataProvider<EthiopianYearNamesV1Marker>
+            + DataProvider<EthiopianMonthNamesV1Marker>
+            + DataProvider<GregorianDatePatternV1Marker>
+            + DataProvider<GregorianYearNamesV1Marker>
+            + DataProvider<GregorianMonthNamesV1Marker>
+            + DataProvider<HebrewDatePatternV1Marker>
+            + DataProvider<HebrewYearNamesV1Marker>
+            + DataProvider<HebrewMonthNamesV1Marker>
+            + DataProvider<IndianDatePatternV1Marker>
+            + DataProvider<IndianYearNamesV1Marker>
+            + DataProvider<IndianMonthNamesV1Marker>
+            + DataProvider<IslamicDatePatternV1Marker>
+            + DataProvider<IslamicYearNamesV1Marker>
+            + DataProvider<IslamicMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<JapaneseExtendedDatePatternV1Marker>
+            + DataProvider<JapaneseExtendedYearNamesV1Marker>
+            + DataProvider<JapaneseExtendedMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<PersianDatePatternV1Marker>
+            + DataProvider<PersianYearNamesV1Marker>
+            + DataProvider<PersianMonthNamesV1Marker>
+            + DataProvider<RocDatePatternV1Marker>
+            + DataProvider<RocYearNamesV1Marker>
+            + DataProvider<RocMonthNamesV1Marker>
+            // Other keys
+            + DataProvider<WeekdayNamesV1Marker>,
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
+    {
+        let calendar = AnyCalendarLoader::load(loader, locale)?;
         let kind = calendar.kind();
         let any_calendar_provider = AnyCalendarProvider { provider, kind };
         let selection = DatePatternSelectionData::try_new_with_length::<ErasedDatePatternV1Marker>(
