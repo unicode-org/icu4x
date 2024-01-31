@@ -1,0 +1,47 @@
+// @generated
+/// Implement `DataProvider<PercentEssentialsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_percent_essentials_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::PercentEssentialsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::PercentEssentialsV1Marker>, icu_provider::DataError> {
+                static DE_CH: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                static AS: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 8u8, standard: alloc::borrow::Cow::Borrowed("#,##,##0%") };
+                static AR: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("\u{200e}%\u{200e}"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                static AR_SA: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("٪"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
+                static OC: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed("\u{202f}"), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 8u8, standard: alloc::borrow::Cow::Borrowed("#,##0\u{202f}%") };
+                static BE: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed("\u{a0}"), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 7u8, standard: alloc::borrow::Cow::Borrowed("#,##0\u{a0}%") };
+                static KU: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 1u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%#,##0") };
+                static TOK: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 1u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%#,#0") };
+                static EU: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 3u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("\u{a0}") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%\u{a0}#,##0") };
+                static BLO: <icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::PercentEssentialsV1 { number_index: 3u8, percent_sign_affixes: icu::experimental::dimension::provider::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("\u{a0}") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 0u8, standard: alloc::borrow::Cow::Borrowed("%\u{a0}#,#0;%\u{a0}-#,#0") };
+                static VALUES: [&<icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable; 60usize] = [&AR, &AR_SA, &AR_SA, &AS, &BE, &BLO, &AS, &BE, &AS, &BE, &BE, &BE, &BE, &BE, &DE_CH, &DE_CH, &BE, &BE, &BE, &BE, &BE, &AS, &BE, &BE, &DE_CH, &EU, &BE, &BE, &BE, &DE_CH, &BE, &AS, &AS, &BE, &BE, &KU, &BE, &BE, &BE, &BE, &BE, &OC, &AS, &BE, &BE, &BE, &BE, &AS, &BE, &BE, &BE, &AS, &DE_CH, &DE_CH, &BE, &TOK, &KU, &BE, &DE_CH, &AS];
+                static KEYS: [&str; 60usize] = ["ar", "ar-SA", "ar-SO", "as", "be", "blo", "bn", "br", "brx", "ca", "cs", "cv", "da", "de", "de-CH", "de-LI", "dsb", "en-AT", "en-DE", "en-DK", "en-FI", "en-IN", "en-SE", "es", "es-419", "eu", "fi", "fo", "fr", "fr-CH", "gl", "gu", "hi", "hr", "hsb", "ku", "lb", "lt", "mk", "nds", "no", "oc", "pa", "qu", "rm", "ro", "ru", "sa", "sk", "sl", "sv", "ta", "ta-MY", "ta-SG", "tk", "tok", "tr", "tt", "und", "xnr"];
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_und() {
+                            return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::dimension::provider::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata })
+            }
+        }
+    };
+}

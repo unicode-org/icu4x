@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde::numbers::DecimalFormat;
-use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
-use icu_compactdecimal::provider::*;
+use icu_experimental::compactdecimal::provider::CompactDecimalPatternDataV1;
+use icu_experimental::compactdecimal::provider::*;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::collections::BTreeMap;

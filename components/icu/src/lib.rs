@@ -187,19 +187,3 @@ pub use icu_segmenter as segmenter;
 
 #[doc(inline)]
 pub use icu_timezone as timezone;
-
-#[cfg(feature = "icu_displaynames")]
-#[doc(inline)]
-pub use icu_displaynames as displaynames;
-
-#[cfg(feature = "icu_relativetime")]
-#[doc(inline)]
-pub use icu_relativetime as relativetime;
-
-#[cfg(feature = "icu_compactdecimal")]
-#[doc(inline)]
-pub use icu_compactdecimal as compactdecimal;
-
-#[cfg(feature = "icu_transliterate")]
-#[doc(inline)]
-pub use icu_transliterate as transliterate;

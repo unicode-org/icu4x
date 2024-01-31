@@ -27,12 +27,7 @@ icu_plurals = { path = "../../components/plurals" }
 icu_properties = { path = "../../components/properties" }
 icu_segmenter = { path = "../../components/segmenter" }
 icu_timezone = { path = "../../components/timezone" }
-icu_compactdecimal = { path = "../../experimental/compactdecimal" }
-icu_displaynames = {  path = "../../experimental/displaynames" }
-icu_personnames = { path = "../../experimental/personnames" }
-icu_relativetime = { path = "../../experimental/relativetime" }
-icu_transliterate = { path = "../../experimental/transliterate" }
-icu_unicodeset_parse = { path = "../../experimental/unicodeset_parse" }
+icu_experimental = { path = "../../experimental/experimental" }
 icu_unitsconversion = { path = "../../experimental/unitsconversion" }
 
 # FFI
@@ -53,16 +48,14 @@ icu_provider_macros = { path = "../../provider/macros" }
 icu_calendar_data = { path = "../../provider/baked/calendar" }
 icu_casemap_data = { path = "../../provider/baked/casemap" }
 icu_collator_data = { path = "../../provider/baked/collator" }
-icu_compactdecimal_data = { path = "../../provider/baked/compactdecimal" }
 icu_datetime_data = { path = "../../provider/baked/datetime" }
 icu_decimal_data = { path = "../../provider/baked/decimal" }
-icu_displaynames_data = { path = "../../provider/baked/displaynames" }
+icu_experimental_data = { path = "../../provider/baked/experimental" }
 icu_list_data = { path = "../../provider/baked/list" }
 icu_locid_transform_data = { path = "../../provider/baked/locid_transform" }
 icu_normalizer_data = { path = "../../provider/baked/normalizer" }
 icu_plurals_data = { path = "../../provider/baked/plurals" }
 icu_properties_data = { path = "../../provider/baked/properties"}
-icu_relativetime_data = { path = "../../provider/baked/relativetime" }
 icu_segmenter_data = { path = "../../provider/baked/segmenter" }
 icu_timezone_data = { path = "../../provider/baked/timezone" }
 

@@ -335,19 +335,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_decimal",
- "icu_plurals",
- "icu_provider",
- "writeable",
- "zerovec",
-]
-
-[[package]]
 name = "icu_datetime"
 version = "1.4.0"
 dependencies = [
@@ -379,12 +366,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_displaynames"
-version = "0.11.2"
+name = "icu_experimental"
+version = "0.0.0"
 dependencies = [
+ "displaydoc",
+ "fixed_decimal",
+ "icu_collections",
+ "icu_decimal",
  "icu_locid",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
  "icu_provider",
+ "litemap",
  "tinystr",
+ "writeable",
  "zerovec",
 ]
 
@@ -424,7 +420,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -510,19 +506,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_relativetime"
-version = "0.1.4"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_decimal",
- "icu_plurals",
- "icu_provider",
- "writeable",
- "zerovec",
-]
-
-[[package]]
 name = "icu_segmenter"
 version = "1.4.0"
 dependencies = [
@@ -544,10 +527,9 @@ dependencies = [
  "icu_casemap",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -557,7 +539,6 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
  "zerotrie",

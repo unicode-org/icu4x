@@ -6,7 +6,7 @@
 //! 
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::displaynames::RegionDisplayNames;
+use icu_experimental::displaynames::RegionDisplayNames;
 use icu::locid::{locale, subtags::region};
 
 fn main() {
