@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::datetime::write_pattern;
-use crate::calendar::CldrCalendar;
+use crate::calendar::{CldrCalendar, YearNamesV1Provider, MonthNamesV1Provider};
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;
 use crate::fields::{self, FieldLength, FieldSymbol};
@@ -698,8 +698,8 @@ impl RawDateTimeNames {
         field_length: FieldLength,
     ) -> Result<(), Error>
     where
-        P: DataProvider<M> + ?Sized,
-        M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
+        P: YearNamesV1Provider<M> + ?Sized,
+        M: DataMarker<Yokeable = YearNamesV1<'static>>,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
@@ -741,8 +741,8 @@ impl RawDateTimeNames {
         field_length: FieldLength,
     ) -> Result<(), Error>
     where
-        P: DataProvider<M> + ?Sized,
-        M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+        P: MonthNamesV1Provider<M> + ?Sized,
+        M: DataMarker<Yokeable = MonthNamesV1<'static>>,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
@@ -917,8 +917,8 @@ impl RawDateTimeNames {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn load_for_pattern<YearMarker, MonthMarker>(
         &mut self,
-        year_provider: Option<&(impl DataProvider<YearMarker> + ?Sized)>,
-        month_provider: Option<&(impl DataProvider<MonthMarker> + ?Sized)>,
+        year_provider: Option<&(impl YearNamesV1Provider<YearMarker> + ?Sized)>,
+        month_provider: Option<&(impl MonthNamesV1Provider<MonthMarker> + ?Sized)>,
         weekday_provider: Option<&(impl DataProvider<WeekdayNamesV1Marker> + ?Sized)>,
         dayperiod_provider: Option<&(impl DataProvider<DayPeriodNamesV1Marker> + ?Sized)>,
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
@@ -927,8 +927,8 @@ impl RawDateTimeNames {
         pattern_items: impl Iterator<Item = PatternItem>,
     ) -> Result<(), Error>
     where
-        YearMarker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
-        MonthMarker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+        YearMarker: DataMarker<Yokeable = YearNamesV1<'static>>,
+        MonthMarker: DataMarker<Yokeable = MonthNamesV1<'static>>,
     {
         let fields = pattern_items.filter_map(|p| match p {
             PatternItem::Field(field) => Some(field),
