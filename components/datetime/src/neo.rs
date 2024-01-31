@@ -1187,7 +1187,7 @@ impl NeoDateTimeFormatter {
         length: length::Date
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_date_length)]
     pub fn try_new_with_date_length_unstable<P>(
         provider: &P,
         locale: &DataLocale,
@@ -1381,7 +1381,7 @@ impl NeoDateTimeFormatter {
         length: length::Time
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_time_length)]
     pub fn try_new_with_time_length_unstable<P>(
         provider: &P,
         locale: &DataLocale,
