@@ -117,7 +117,7 @@ fn generate_rule_break_data(
     let extended_pictographic = data.as_borrowed();
 
     let data = maps::load_indic_syllabic_category(provider).expect("The data should be valid!");
-    let incb = data.as_borrowed();
+    let insc = data.as_borrowed();
 
     let data = maps::load_canonical_combining_class(provider).expect("The data should be valid!");
     let ccc = data.as_borrowed();
@@ -261,7 +261,7 @@ fn generate_rule_break_data(
                         continue;
                     }
 
-                    // InCB* isn't a part of grapheme break propery.
+                    // The Indic_Conjunct_Break property is separate from the Grapheme_Cluster_Break property.
                     // See https://unicode.org/reports/tr44/#Indic_Conjunct_Break
                     if p.name == "InCBConsonant" || p.name == "InCBLinker" || p.name == "InCBExtend"
                     {
@@ -271,40 +271,33 @@ fn generate_rule_break_data(
 
                         for i in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if let Some(c) = char::from_u32(i) {
-                                let incb_value = incb.get(c);
-                                match incb_value {
-                                    IndicSyllabicCategory::Consonant
-                                    | IndicSyllabicCategory::Virama => {
-                                        let sc = script.get(c);
-                                        if sc == Script::Bengali
-                                            || sc == Script::Devanagari
-                                            || sc == Script::Gujarati
-                                            || sc == Script::Malayalam
-                                            || sc == Script::Oriya
-                                            || sc == Script::Telugu
-                                        {
-                                            // InCB = Linker or InCB = Consonant
-                                            if (p.name == "InCBConsonant"
-                                                && incb_value == IndicSyllabicCategory::Consonant)
-                                                || (p.name == "InCBLinker"
-                                                    && incb_value == IndicSyllabicCategory::Virama)
-                                            {
-                                                properties_map[c as usize] = property_index;
-                                            }
-                                        }
-                                    }
-                                    _ => {
-                                        // ZWJ is InCB=Extend, but this won't include in this rules
-                                        // due to ZWJ is only 1 in 15.1
-                                        if p.name == "InCBExtend"
-                                            && (gb.get32(i) == gcb_extend
-                                                && ccc.get32(i)
-                                                    != CanonicalCombiningClass::NotReordered)
-                                        {
-                                            // InCB = Extend
-                                            properties_map[c as usize] = property_index;
-                                        }
-                                    }
+                                let insc_value = insc.get(c);
+                                let sc = script.get(c);
+                                let is_gb9c_script = sc == Script::Bengali
+                                    || sc == Script::Devanagari
+                                    || sc == Script::Gujarati
+                                    || sc == Script::Malayalam
+                                    || sc == Script::Oriya
+                                    || sc == Script::Telugu;
+                                // InCB = Linker or InCB = Consonant
+                                if (p.name == "InCBConsonant"
+                                    && insc_value == IndicSyllabicCategory::Consonant
+                                    && is_gb9c_script)
+                                    || (p.name == "InCBLinker"
+                                        && insc_value == IndicSyllabicCategory::Virama
+                                        && is_gb9c_script)
+                                    // ZWJ is InCB=Extend, but is in a different GCB class anyway so it needs to be special-cased in the tables.
+                                    // NOTE(eggrobin): the `is_gb9c_script &&` here is not present in UAX #44, Version 15.1.
+                                    // I believe that to be a defect in that version of Unicode.
+                                    // This has been brought to the attention of the Properties and Algorithms Group.
+                                    || (p.name == "InCBExtend"
+                                        && gb.get32(i) == gcb_extend
+                                        && ccc.get32(i) != CanonicalCombiningClass::NotReordered
+                                        && !(is_gb9c_script &&
+                                             (insc_value == IndicSyllabicCategory::Consonant
+                                              || insc_value == IndicSyllabicCategory::Virama)))
+                                {
+                                    properties_map[c as usize] = property_index;
                                 }
                             }
                         }
