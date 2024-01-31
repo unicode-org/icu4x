@@ -234,10 +234,47 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
 impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// Steps the cursor one byte into the trie.
     ///
-    /// For more details, see [`ZeroAsciiIgnoreCaseTrieCursor::step`].
+    /// Returns the byte if matched, which may be a different case than the input byte.
+    /// If this function returns `None`, any lookup loops can be terminated.
+    ///
+    /// # Examples
+    ///
+    /// Normalize the case of a value by stepping through an ignore-case trie:
+    ///
+    /// ```
+    /// use core::fmt::Write;
+    /// use std::borrow::Cow;
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    ///
+    /// // A trie with two values: "aBc" and "aBcdEf"
+    /// let trie = ZeroAsciiIgnoreCaseTrie::from_bytes(b"aBc\x80dEf\x81");
+    ///
+    /// // Get out the value for "abc" and normalize the key string
+    /// let mut cursor = trie.cursor();
+    /// let mut key_str = Cow::Borrowed("abc".as_bytes());
+    /// let mut i = 0;
+    /// let value = loop {
+    ///     if i == key_str.len() {
+    ///         break cursor.take_value();
+    ///     }
+    ///     let input_byte = key_str[i];
+    ///     let Some(matched_byte) = cursor.step(input_byte) else {
+    ///         break None;
+    ///     };
+    ///     if matched_byte != input_byte {
+    ///         key_str.to_mut()[i] = matched_byte;
+    ///     }
+    ///     i += 1;
+    /// };
+    ///
+    /// assert_eq!(value, Some(0));
+    /// assert_eq!(&*key_str, "aBc".as_bytes());
+    /// ```
+    ///
+    /// For more examples, see [`ZeroAsciiIgnoreCaseTrieCursor::step`].
     #[inline]
-    pub fn step(&mut self, byte: u8) {
-        reader::step_parameterized::<ZeroAsciiIgnoreCaseTrie<[u8]>>(&mut self.trie.store, byte);
+    pub fn step(&mut self, byte: u8) -> Option<u8> {
+        reader::step_parameterized::<ZeroAsciiIgnoreCaseTrie<[u8]>>(&mut self.trie.store, byte)
     }
 
     /// Takes the value at the current position.
