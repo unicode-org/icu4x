@@ -30,17 +30,18 @@ ICU4X can be edited using any text editor capable of editing Rust code.
 
 Many ICU4X engineers use [Visual Studio Code](https://code.visualstudio.com/) with the [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension.
 
-To build all code paths and improve build times in VSCode, we recommend the following settings. (Note: The second setting causes VSCode to build ICU4X with only the `und` locale, which reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.) To add these settings, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
+To build all code paths and improve build times in VSCode, we recommend the following settings. To add them, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
 
-```jsonc
+```json
 "settings": {
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
-		// Path relative to `provider/baked/*/src/lib.rs`
 		"ICU4X_DATA_DIR": "../../../../provider/datagen/tests/data/baked"
 	}
 }
 ```
+
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/baked/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
 
 ## Contributing a Pull Request
 
