@@ -96,6 +96,7 @@ pub struct MismatchedCalendarError {
     /// The calendar kind of the target object (formatter).
     pub this_kind: AnyCalendarKind,
     /// The calendar kind of the input object (date being formatted).
+    /// Can be `None` if the input calendar was not specified.
     pub date_kind: Option<AnyCalendarKind>,
 }
 
