@@ -12,10 +12,12 @@ use num::{rational::Ratio, BigInt};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-/// A converter for converting between two single units.
+/// Converts between two units that are linearly related.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
 ///              3- `100-kilometer-per-liter` to `gallon-per-mile`.
+/// 
+/// But, it cannot convert between two units that are not linearly related such as `celsius` to `fahrenheit`.
 /// NOTE:
 ///    The converter is not able to convert between two units that are not single. such as "foot-and-inch" to "meter".
 #[derive(Debug)]
