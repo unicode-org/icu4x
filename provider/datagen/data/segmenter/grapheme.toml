@@ -263,6 +263,7 @@ break_state = false
 left = [
   "InCBConsonant",
   "InCBConsonant_InCBExtend",
+  "InCBConsonant_InCBLinker",
   "InCBConsonant_InCBLinker_InCBExtend"
 ]
 right = [ "Extend" ]
@@ -283,10 +284,12 @@ left = [
   "Extended_Pictographic",
   "ZWJ",
   "Regional_Indicator",
+  "RI_RI",
   "Extended_Pictographic_Extend_ZWJ",
   "Extended_Pictographic_Extend",
   "InCBConsonant",
   "InCBConsonant_InCBExtend",
+  "InCBConsonant_InCBLinker",
   "InCBConsonant_InCBLinker_InCBExtend",
   "InCBLinker",
   "InCBExtend"
@@ -344,7 +347,7 @@ break_state = true
 
 [[rules]]
 # GB999
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "Any" ]
 break_state = true
 
