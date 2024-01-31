@@ -55,7 +55,7 @@ icu_locid = { path = "../../components/locid" }
 
 [features]
 default = ["compiled_data"]
-compiled_data = ["dep:icu_experimental_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data"]
+compiled_data = ["dep:icu_experimental_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data"]
 datagen = ["serde", "std", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_collections/databake", "std", "log", "icu_provider/datagen"]
 ryu = ["fixed_decimal/ryu"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_collections/serde", "icu_decimal/serde", "icu_plurals/serde", "icu_provider/serde"]
