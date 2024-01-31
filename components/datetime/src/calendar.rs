@@ -74,6 +74,51 @@ pub trait CldrCalendar: InternalCldrCalendar {
     }
 }
 
+pub(crate) trait YearNamesV1Provider<M: DataMarker>
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+impl<M, P> YearNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+pub(crate) trait MonthNamesV1Provider<M: DataMarker>
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+impl<M, P> MonthNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+pub(crate) trait DatePatternV1Provider<M: DataMarker>
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+impl<M, P> DatePatternV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
 /// Check if the provided value is of the form `islamic-{subcal}`
 fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
     if let &[first, second] = value.as_tinystr_slice() {
@@ -588,3 +633,71 @@ where
     };
     Ok(payload)
 }
+
+pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
+    pub(crate) provider: &'a P,
+    pub(crate) kind: AnyCalendarKind,
+}
+
+macro_rules! impl_load_any_calendar {
+    ([$(($trait:ident, $erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl_load_any_calendar!(@expand [$(($trait, $erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
+    };
+    (@expand [$(($trait:ident, $erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
+        $(impl_load_any_calendar!(@single_impl $trait, $erased, $marker, $tail1, $tail2);)+
+    };
+    (@single_impl $trait:ident, $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl<P> $trait<$erased> for AnyCalendarProvider<'_, P>
+        where
+            P: ?Sized + $(DataProvider::<<$kind_cal as CldrCalendar>::$marker> +)+
+        {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<$erased>, DataError> {
+                match self.kind {
+                    $(
+                        AnyCalendarKind::$kind_cal => DataProvider
+                            ::<<$kind_cal as CldrCalendar>::$marker>
+                            ::load(self.provider, req)
+                            .map(DataResponse::cast),
+                    )+
+                    $(
+                        AnyCalendarKind::$kind => DataProvider
+                            ::<<$cal as CldrCalendar>::$marker>
+                            ::load(self.provider, req)
+                            .map(DataResponse::cast),
+                    )+
+                    _ => Err(
+                        DataError::custom("Don't know how to load data for specified calendar")
+                            .with_debug_context(&self.kind)),
+                }
+            }
+        }
+    };
+}
+
+impl_load_any_calendar!([
+    (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
+    (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
+    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker)
+], [
+    Buddhist,
+    Chinese,
+    Coptic,
+    Dangi,
+    Ethiopian,
+    Gregorian,
+    Hebrew,
+    Indian,
+    IslamicCivil,
+    IslamicObservational,
+    IslamicTabular,
+    IslamicUmmAlQura,
+    Japanese,
+    JapaneseExtended,
+    Persian,
+    Roc
+], [
+    EthiopianAmeteAlem => Ethiopian
+]);

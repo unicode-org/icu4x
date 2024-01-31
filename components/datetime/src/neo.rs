@@ -4,6 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
@@ -17,6 +18,7 @@ use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
+use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::Writeable;
@@ -172,8 +174,10 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<WeekdayNamesV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
-        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
-            provider, locale, length,
+        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker>(
+            provider,
+            locale,
+            length,
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
@@ -206,6 +210,66 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             datetime,
             names: self.names.as_borrowed(),
         }
+    }
+}
+
+#[derive(Debug)]
+pub struct DateFormatter {
+    selection: DatePatternSelectionData,
+    names: RawDateTimeNames,
+    calendar: AnyCalendar,
+}
+
+impl DateFormatter {
+    /// Construct a new [`DateFormatter`] from compiled data.
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
+    /// use icu::datetime::{options::length, DateFormatter};
+    /// use icu::locid::locale;
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
+    /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let length = length::Date::Medium;
+    /// let locale = locale!("en-u-ca-gregory");
+    ///
+    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
+    ///
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
+    /// ```
+    #[inline(never)]
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error> {
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+        let provider = AnyCalendarProvider {
+            provider: &crate::provider::Baked,
+            kind,
+        };
+        let selection = DatePatternSelectionData::try_new_with_length::<ErasedDatePatternV1Marker>(
+            &provider,
+            locale,
+            length,
+        )?;
+        todo!()
     }
 }
 
