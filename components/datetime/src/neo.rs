@@ -4,7 +4,6 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-#[cfg(feature = "compiled_data")]
 use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
 use crate::format::neo::*;
