@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::vec::Vec;
 use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-use crate::{
+use crate::unitsconversion::{
     power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
     si_prefix::get_si_prefix,
