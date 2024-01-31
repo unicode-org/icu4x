@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::calendar::*;
+use icu_calendar::AnyCalendar;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
@@ -701,3 +702,29 @@ impl_load_any_calendar!([
 ], [
     EthiopianAmeteAlem => Ethiopian
 ]);
+
+/// Converts a date to the correct calendar if necessary
+///
+/// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
+/// if the date is compatible with the current calendar and doesn't need conversion
+pub(crate) fn convert_if_necessary<'a>(
+    any_calendar: &'a AnyCalendar,
+    value: &impl crate::input::DateInput<Calendar = AnyCalendar>,
+) -> Result<Option<icu_calendar::Date<icu_calendar::Ref<'a, AnyCalendar>>>, crate::MismatchedCalendarError> {
+    let this_kind = any_calendar.kind();
+    let date_kind = value.any_calendar_kind();
+
+    if Some(this_kind) != date_kind {
+        if date_kind != Some(AnyCalendarKind::Iso) {
+            return Err(crate::MismatchedCalendarError {
+                this_kind,
+                date_kind
+            });
+        }
+        let date = value.to_iso().to_any();
+        let converted = any_calendar.convert_any_date(&date);
+        Ok(Some(converted))
+    } else {
+        Ok(None)
+    }
+}
