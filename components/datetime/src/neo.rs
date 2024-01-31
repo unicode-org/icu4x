@@ -258,7 +258,7 @@ impl NeoDateFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date};
     /// use icu::datetime::{options::length, neo::NeoDateFormatter};
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
@@ -1024,7 +1024,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         let selection = DateTimeGluePatternSelectionData::try_new_with_lengths::<
             C::DatePatternV1Marker,
             _,
-        >(provider, locale, date_length, time_length)?;
+        >(provider, provider, locale, date_length, time_length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
             Some(provider), // year
@@ -1141,7 +1141,6 @@ impl NeoDateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
@@ -1239,13 +1238,13 @@ impl NeoDateTimeFormatter {
             + DataProvider<RocDatePatternV1Marker>
             + DataProvider<RocYearNamesV1Marker>
             + DataProvider<RocMonthNamesV1Marker>
+            // Other date formatting keys
+            + DataProvider<WeekdayNamesV1Marker>
             // AnyCalendar constructor keys
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-            // Other date formatting keys
-            + DataProvider<WeekdayNamesV1Marker>
             // FixedDecimalFormatter keys
             + DataProvider<DecimalSymbolsV1Marker>
             // WeekCalculator keys
@@ -1336,7 +1335,6 @@ impl NeoDateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
@@ -1430,6 +1428,227 @@ impl NeoDateTimeFormatter {
         Ok(Self {
             selection: DateTimePatternSelectionData::Time(time_formatter.selection),
             names: time_formatter.names,
+            calendar,
+        })
+    }
+
+    /// Creates a [`NeoDateTimeFormatter`] for date and time lengths.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::neo::NeoDateTimeFormatter;
+    /// use icu::datetime::options::length;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter =
+    ///     NeoDateTimeFormatter::try_new_with_lengths(
+    ///         &locale!("es-MX").into(),
+    ///         length::Date::Full,
+    ///         length::Time::Medium,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(
+    ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
+    ///             .unwrap()
+    ///             .to_any()
+    ///     )
+    ///     .unwrap(),
+    ///     "miércoles, 20 de diciembre de 2023, 2:48:58 p.m."
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_lengths(
+        locale: &DataLocale,
+        date_length: length::Date,
+        time_length: length::Time,
+    ) -> Result<Self, Error> {
+        Self::try_new_with_lengths_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            date_length,
+            time_length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_lengths,
+        try_new_with_lengths_with_any_provider,
+        try_new_with_lengths_with_buffer_provider,
+        try_new_with_lengths_internal,
+        date_length: length::Date,
+        time_length: length::Time
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_lengths)]
+    pub fn try_new_with_lengths_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        date_length: length::Date,
+        time_length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            // DatePattern, YearNames, and MonthNames keys
+            + DataProvider<BuddhistDatePatternV1Marker>
+            + DataProvider<BuddhistYearNamesV1Marker>
+            + DataProvider<BuddhistMonthNamesV1Marker>
+            + DataProvider<ChineseDatePatternV1Marker>
+            + DataProvider<ChineseYearNamesV1Marker>
+            + DataProvider<ChineseMonthNamesV1Marker>
+            + DataProvider<CopticDatePatternV1Marker>
+            + DataProvider<CopticYearNamesV1Marker>
+            + DataProvider<CopticMonthNamesV1Marker>
+            + DataProvider<DangiDatePatternV1Marker>
+            + DataProvider<DangiYearNamesV1Marker>
+            + DataProvider<DangiMonthNamesV1Marker>
+            + DataProvider<EthiopianDatePatternV1Marker>
+            + DataProvider<EthiopianYearNamesV1Marker>
+            + DataProvider<EthiopianMonthNamesV1Marker>
+            + DataProvider<GregorianDatePatternV1Marker>
+            + DataProvider<GregorianYearNamesV1Marker>
+            + DataProvider<GregorianMonthNamesV1Marker>
+            + DataProvider<HebrewDatePatternV1Marker>
+            + DataProvider<HebrewYearNamesV1Marker>
+            + DataProvider<HebrewMonthNamesV1Marker>
+            + DataProvider<IndianDatePatternV1Marker>
+            + DataProvider<IndianYearNamesV1Marker>
+            + DataProvider<IndianMonthNamesV1Marker>
+            + DataProvider<IslamicDatePatternV1Marker>
+            + DataProvider<IslamicYearNamesV1Marker>
+            + DataProvider<IslamicMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<JapaneseExtendedDatePatternV1Marker>
+            + DataProvider<JapaneseExtendedYearNamesV1Marker>
+            + DataProvider<JapaneseExtendedMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<PersianDatePatternV1Marker>
+            + DataProvider<PersianYearNamesV1Marker>
+            + DataProvider<PersianMonthNamesV1Marker>
+            + DataProvider<RocDatePatternV1Marker>
+            + DataProvider<RocYearNamesV1Marker>
+            + DataProvider<RocMonthNamesV1Marker>
+            // Other date formatting keys
+            + DataProvider<WeekdayNamesV1Marker>
+            // Time formatting keys
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            // DateTime glue key
+            + DataProvider<DateTimePatternV1Marker>
+            // AnyCalendar constructor keys
+            + DataProvider<ChineseCacheV1Marker>
+            + DataProvider<DangiCacheV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            // FixedDecimalFormatter key
+            + DataProvider<DecimalSymbolsV1Marker>
+            // WeekCalculator key
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_with_lengths_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            date_length,
+            time_length,
+        )
+    }
+
+    fn try_new_with_lengths_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        date_length: length::Date,
+        time_length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            // DatePattern, YearNames, and MonthNames keys
+            + DataProvider<BuddhistDatePatternV1Marker>
+            + DataProvider<BuddhistYearNamesV1Marker>
+            + DataProvider<BuddhistMonthNamesV1Marker>
+            + DataProvider<ChineseDatePatternV1Marker>
+            + DataProvider<ChineseYearNamesV1Marker>
+            + DataProvider<ChineseMonthNamesV1Marker>
+            + DataProvider<CopticDatePatternV1Marker>
+            + DataProvider<CopticYearNamesV1Marker>
+            + DataProvider<CopticMonthNamesV1Marker>
+            + DataProvider<DangiDatePatternV1Marker>
+            + DataProvider<DangiYearNamesV1Marker>
+            + DataProvider<DangiMonthNamesV1Marker>
+            + DataProvider<EthiopianDatePatternV1Marker>
+            + DataProvider<EthiopianYearNamesV1Marker>
+            + DataProvider<EthiopianMonthNamesV1Marker>
+            + DataProvider<GregorianDatePatternV1Marker>
+            + DataProvider<GregorianYearNamesV1Marker>
+            + DataProvider<GregorianMonthNamesV1Marker>
+            + DataProvider<HebrewDatePatternV1Marker>
+            + DataProvider<HebrewYearNamesV1Marker>
+            + DataProvider<HebrewMonthNamesV1Marker>
+            + DataProvider<IndianDatePatternV1Marker>
+            + DataProvider<IndianYearNamesV1Marker>
+            + DataProvider<IndianMonthNamesV1Marker>
+            + DataProvider<IslamicDatePatternV1Marker>
+            + DataProvider<IslamicYearNamesV1Marker>
+            + DataProvider<IslamicMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<JapaneseExtendedDatePatternV1Marker>
+            + DataProvider<JapaneseExtendedYearNamesV1Marker>
+            + DataProvider<JapaneseExtendedMonthNamesV1Marker>
+            + DataProvider<JapaneseDatePatternV1Marker>
+            + DataProvider<JapaneseYearNamesV1Marker>
+            + DataProvider<JapaneseMonthNamesV1Marker>
+            + DataProvider<PersianDatePatternV1Marker>
+            + DataProvider<PersianYearNamesV1Marker>
+            + DataProvider<PersianMonthNamesV1Marker>
+            + DataProvider<RocDatePatternV1Marker>
+            + DataProvider<RocYearNamesV1Marker>
+            + DataProvider<RocMonthNamesV1Marker>
+            // Other date formatting keys
+            + DataProvider<WeekdayNamesV1Marker>
+            // Time formatting keys
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            // DateTime glue key
+            + DataProvider<DateTimePatternV1Marker>,
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
+    {
+        let calendar = AnyCalendarLoader::load(loader, locale)?;
+        let kind = calendar.kind();
+        let any_calendar_provider = AnyCalendarProvider { provider, kind };
+        let selection =
+            DateTimeGluePatternSelectionData::try_new_with_lengths::<ErasedDatePatternV1Marker, _>(
+                &any_calendar_provider,
+                provider,
+                locale,
+                date_length,
+                time_length,
+            )?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker>(
+            Some(&any_calendar_provider), // year
+            Some(&any_calendar_provider), // month
+            Some(provider),               // weekday
+            Some(provider),               // day period
+            Some(loader),                 // fixed decimal formatter
+            Some(loader),                 // week calculator
+            locale,
+            selection.pattern_items_for_data_loading(),
+        )?;
+        Ok(Self {
+            selection: DateTimePatternSelectionData::DateTimeGlue(selection),
+            names,
             calendar,
         })
     }

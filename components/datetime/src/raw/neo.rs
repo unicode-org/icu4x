@@ -232,20 +232,21 @@ impl<'a> TimePatternDataBorrowed<'a> {
 
 impl DateTimeGluePatternSelectionData {
     pub(crate) fn try_new_with_lengths<M, P>(
+        date_pattern_provider: &(impl DatePatternV1Provider<M> + ?Sized),
         provider: &P,
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, Error>
     where
-        P: DataProvider<M>
-            + DataProvider<TimePatternV1Marker>
-            + DataProvider<DateTimePatternV1Marker>
-            + ?Sized,
-        M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+        P: DataProvider<TimePatternV1Marker> + DataProvider<DateTimePatternV1Marker> + ?Sized,
+        M: DataMarker<Yokeable = DatePatternV1<'static>>,
     {
-        let date =
-            DatePatternSelectionData::try_new_with_length::<M>(provider, locale, date_length)?;
+        let date = DatePatternSelectionData::try_new_with_length::<M>(
+            date_pattern_provider,
+            locale,
+            date_length,
+        )?;
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
