@@ -75,10 +75,12 @@ pub trait CldrCalendar: InternalCldrCalendar {
     }
 }
 
+#[cfg(feature = "experimental")]
 pub(crate) trait YearNamesV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
+#[cfg(feature = "experimental")]
 impl<M, P> YearNamesV1Provider<M> for P
 where
     M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
@@ -89,10 +91,12 @@ where
     }
 }
 
+#[cfg(feature = "experimental")]
 pub(crate) trait MonthNamesV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
+#[cfg(feature = "experimental")]
 impl<M, P> MonthNamesV1Provider<M> for P
 where
     M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
@@ -103,10 +107,12 @@ where
     }
 }
 
+#[cfg(feature = "experimental")]
 pub(crate) trait DatePatternV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
+#[cfg(feature = "experimental")]
 impl<M, P> DatePatternV1Provider<M> for P
 where
     M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
@@ -632,11 +638,13 @@ where
     Ok(payload)
 }
 
+#[cfg(feature = "experimental")]
 pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
     pub(crate) provider: &'a P,
     pub(crate) kind: AnyCalendarKind,
 }
 
+#[cfg(feature = "experimental")]
 macro_rules! impl_load_any_calendar {
     ([$(($trait:ident, $erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
         impl_load_any_calendar!(@expand [$(($trait, $erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
@@ -675,6 +683,7 @@ macro_rules! impl_load_any_calendar {
     };
 }
 
+#[cfg(feature = "experimental")]
 impl_load_any_calendar!([
     (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
     (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
