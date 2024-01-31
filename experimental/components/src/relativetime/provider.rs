@@ -10,6 +10,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
+use alloc::format;
+use alloc::string::ToString;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 

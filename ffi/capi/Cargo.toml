@@ -55,6 +55,7 @@ buffer_provider = [
     "icu_provider_adapters/serde",
     "icu_segmenter?/serde",
     "icu_timezone?/serde",
+    "icu_experimental?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider", "std"]
 logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log", "std"]
@@ -70,6 +71,7 @@ default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_dateti
                       "icu_list", "icu_locid_transform",
                       "icu_normalizer", "icu_plurals", "icu_properties",
                       "icu_segmenter", "icu_timezone"]
+experimental_components = ["dep:icu_experimental"]
 
 icu_calendar = ["dep:icu_calendar"]
 icu_casemap = ["dep:icu_casemap"]
@@ -98,6 +100,7 @@ compiled_data = [
     "icu_properties?/compiled_data",
     "icu_segmenter?/compiled_data",
     "icu_timezone?/compiled_data",
+    "icu_experimental?/compiled_data",
 ]
 
 std = []
@@ -134,6 +137,7 @@ icu_plurals = { workspace = true, optional = true }
 icu_properties = { workspace = true, features = ["bidi"], optional = true }
 icu_segmenter = { workspace = true, features = ["auto"], optional = true }
 icu_timezone = { workspace = true, optional = true }
+icu_experimental = { workspace = true, optional = true }
 
 # Optional ICU4X features (not components)
 icu_provider_blob = { workspace = true, optional = true }

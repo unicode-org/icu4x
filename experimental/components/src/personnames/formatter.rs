@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
-
 use crate::personnames::api::PersonNamesFormatterError;
 use crate::personnames::api::{PersonName, PersonNamesFormatterOptions};
 use crate::personnames::provider::PersonNamesFormattingDefinitionV1Marker;
+use alloc::string::String;
+use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
 
 pub struct PersonNamesFormatter {
     pub(crate) _data_payload: DataPayload<PersonNamesFormattingDefinitionV1Marker>,

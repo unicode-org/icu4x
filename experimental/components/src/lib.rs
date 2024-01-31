@@ -26,8 +26,6 @@ pub mod unicodeset_parse;
 // Compiled constructors look for the baked provider at crate::provider::Baked,
 // which is why we have to hook it up here.
 pub mod provider {
-    use icu_provider::prelude::*;
-
     #[cfg(feature = "compiled_data")]
     pub struct Baked;
 

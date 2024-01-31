@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::Locale;
-use litemap::LiteMap;
-
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{
     NameField, NameFieldKind, PersonName, PersonNamesFormatterError, PreferredOrder,
 };
+use alloc::string::String;
+use alloc::vec::Vec;
+use icu_locid::Locale;
+use litemap::LiteMap;
 
 ///
 /// DefaultPersonName, default implementation provided for PersonNameFormatter.

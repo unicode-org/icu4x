@@ -18,7 +18,6 @@ icu_collections = { path = "../../components/collections" }
 icu_codepointtrie_builder = { path = "../../components/collections/codepointtrie_builder" }
 icu_datetime = { path = "../../components/datetime" }
 icu_decimal = { path = "../../components/decimal" }
-icu_dimension = { path = "../../experimental/dimension"}
 icu_list = { path = "../../components/list" }
 icu_locid = { path = "../../components/locid" }
 icu_locid_transform = { path = "../../components/locid_transform" }
@@ -27,7 +26,7 @@ icu_plurals = { path = "../../components/plurals" }
 icu_properties = { path = "../../components/properties" }
 icu_segmenter = { path = "../../components/segmenter" }
 icu_timezone = { path = "../../components/timezone" }
-icu_experimental = { path = "../../experimental/experimental" }
+icu_experimental = { path = "../../experimental/components" }
 icu_unitsconversion = { path = "../../experimental/unitsconversion" }
 
 # FFI
