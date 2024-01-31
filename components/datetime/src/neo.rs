@@ -119,10 +119,11 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error>
     where
-        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+        crate::provider::Baked: Sized
+            // Calendar-specific date formatting keys
+            + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>,
+            + DataProvider<C::MonthNamesV1Marker>,
     {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
@@ -560,10 +561,7 @@ impl NeoTimeFormatter {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error>
-    where
-        crate::provider::Baked: DataProvider<TimePatternV1Marker>,
-    {
+    pub fn try_new_with_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error> {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -745,10 +743,11 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         length: length::Date,
     ) -> Result<Self, Error>
     where
-        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+        crate::provider::Baked: Sized
+            // Calendar-specific date formatting keys
+            + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>,
+            + DataProvider<C::MonthNamesV1Marker>,
     {
         Self::try_new_with_date_length_internal(
             &crate::provider::Baked,
@@ -848,11 +847,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     pub fn try_new_with_time_length(
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
-    where
-        crate::provider::Baked:
-            DataProvider<TimePatternV1Marker> + DataProvider<DayPeriodNamesV1Marker>,
-    {
+    ) -> Result<Self, Error> {
         Self::try_new_with_time_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -948,13 +943,11 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         time_length: length::Time,
     ) -> Result<Self, Error>
     where
-        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+        crate::provider::Baked: Sized
+            // Calendar-specific date formatting keys
+            + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<TimePatternV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<DateTimePatternV1Marker>,
+            + DataProvider<C::MonthNamesV1Marker>,
     {
         Self::try_new_with_lengths_internal(
             &crate::provider::Baked,
@@ -1068,13 +1061,11 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         options: crate::DateTimeFormatterOptions,
     ) -> Result<Self, Error>
     where
-        crate::provider::Baked: DataProvider<C::DatePatternV1Marker>
+        crate::provider::Baked: Sized
+            // Calendar-specific date formatting keys
+            + DataProvider<C::DatePatternV1Marker>
             + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<TimePatternV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<DateTimePatternV1Marker>,
+            + DataProvider<C::MonthNamesV1Marker>,
     {
         use crate::DateTimeFormatterOptions;
         match options {
