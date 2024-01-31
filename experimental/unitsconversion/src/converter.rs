@@ -230,7 +230,7 @@ impl<'data> ConverterFactory<'data> {
     /// 2. Assume the conversion rate for unit 2 to the root is: N2/D2 + OffsetN2/OffsetD2.
     /// 3. To convert from the root to unit 2, the formula is: D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
     /// 4. Given a value V to be converted from unit 1 to unit 2, the conversion to the root is:
-    ///    V * (N1/D1 + OffsetN1/OffsetD1) = (V * N1/D1) + OffsetN1/OffsetD1, denoted as V_Root.
+    ///    (V * N1/D1) + OffsetN1/OffsetD1, denoted as V_Root.
     /// 5. To convert V_Root to unit 2, the formula is: V_Root * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
     /// 6. Substituting V_Root from step 4 into step 5 yields:
     ///    ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
