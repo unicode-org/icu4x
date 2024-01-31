@@ -1,0 +1,34 @@
+// @generated
+/// Implement `DataProvider<CurrencyEssentialsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_currency_essentials_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::dimension::provider::CurrencyEssentialsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::dimension::provider::CurrencyEssentialsV1Marker>, icu_provider::DataError> {
+                static UND: <icu::dimension::provider::CurrencyEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::dimension::provider::CurrencyEssentialsV1 {
+                    currency_patterns_map: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AFNAMDAOAARSAUDAZNBAMBBDBDTBMDBNDBOBBRLBSDBWPBZDCADCLPCNYCOPCRCCUCCUPCZKDKKDOPEGPESPEURFJDFKPGBPGELGHSGIPGNFGTQGYDHKDHNLHRKHUFIDRILSINRISKJMDJPYKGSKHRKMFKPWKRWKYDKZTLAKLBPLKRLRDLTLLVLMGAMMKMNTMURMXNMYRNADNGNNIONOKNPRNZDPHPPKRPLNPYGRONRUBRWFSBDSEKSGDSHPSRDSSPSTNSYPTHBTOPTRYTTDTWDUAHUSDUYUVEFVNDXAFXCDXOFXPFXXXZARZMW") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"8\xFF\08\xFF\x018\xFF\x028\xFF\x03\0\x04\x038\xFF\x058\xFF\x068\xFF\x038\xFF\x078\xFF\x038\xFF\x038\xFF\x08\0\t\t8\xFF\x038\xFF\n8\xFF\x03\0\x0B\x038\xFF\x03\0\x0C\r8\xFF\x038\xFF\x0E8\xFF\x038\xFF\x038\xFF\x0F8\xFF\x108\xFF\x038\xFF\x118\xFF\x12\0\x13\x138\xFF\x038\xFF\x14\0\x14\x148\xFF\x158\xFF\x168\xFF\x148\xFF\x178\xFF\x188\xFF\x03\0\x19\x038\xFF\x1A8\xFF\x1B8\xFF\x1C8\xFF\x1D\0\x1E\x1E\0\x1F\x1F8\xFF\x108\xFF\x03\0 \r8\xFF!8\xFF\"8\xFF#8\xFF$\0$$8\xFF\x038\xFF%8\xFF&8\xFF'8\xFF(8\xFF\x038\xFF)8\xFF*8\xFF+8\xFF,8\xFF-8\xFF(\0.\x038\xFF/8\xFF\x038\xFF08\xFF18\xFF\x108\xFF(\x002\x03\x00338\xFF(8\xFF48\xFF58\xFF68\xFF78\xFF88\xFF\x038\xFF\x108\xFF\x038\xFF\x148\xFF\x038\xFF\x148\xFF98\xFF\x148\xFF:8\xFF;8\xFF<8\xFF\x03\0=\x038\xFF>\0?\x038\xFF\x038\xFF\x08\0@@\x07A\xFF\0B\x03\x07C\xFF\x07D\xFF\x07E\xFF8\xFFF8\xFFG") })
+                    },
+                    standard: alloc::borrow::Cow::Borrowed("¤\u{a0}#,##0.00"),
+                    standard_alpha_next_to_number: alloc::borrow::Cow::Borrowed(""),
+                    place_holders: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"H\0\0\0\0\0\x02\0\x04\0\x06\0\x07\0\t\0\x0C\0\x0E\0\x11\0\x13\0\x15\0\x16\0\x19\0\x1D\0\x1F\0\"\0%\0'\0*\0-\x000\x002\x005\0:\0<\0=\0@\0A\0C\0E\0G\0J\0M\0Q\0T\0W\0Y\0\\\0_\0b\0e\0g\0i\0k\0m\0n\0q\0t\0v\0y\0{\0~\0\x81\0\x84\0\x87\0\x8A\0\x8D\0\x8F\0\x91\0\x94\0\x96\0\x99\0\x9C\0\x9F\0\xA2\0\xA5\0\xA9\0\xAC\0\xB3\0\xB7\0\xB9\0\xBA\0\xD8\x8B\xD6\x8FKz$A$\xE2\x82\xBCKM\xE0\xA7\xB3BsR$PCA$CN\xC2\xA5\xC2\xA5\xE2\x82\xA1K\xC4\x8DkrE\xC2\xA3\xE2\x82\xA7\xE2\x82\xAC\xC2\xA3\xE2\x82\xBEGH\xE2\x82\xB5FGQHK$LknFtRp\xE2\x82\xAA\xE2\x82\xB9JP\xC2\xA5\xE2\x83\x80\xE1\x9F\x9BCF\xE2\x82\xA9\xE2\x82\xB8\xE2\x82\xADL\xC2\xA3RsLtLsArK\xE2\x82\xAEMX$RM\xE2\x82\xA6C$NZ$\xE2\x82\xB1z\xC5\x82\xE2\x82\xB2lei\xE2\x82\xBDRFDb\xE0\xB8\xBFT$\xE2\x82\xBANT$\xE2\x82\xB4US$\xE2\x82\xABFCFAEC$F\xE2\x80\xAFCFACFPF\xC2\xA4RZK") },
+                    default_pattern: icu::dimension::provider::CurrencyPatterns { short_pattern_standard: icu::dimension::provider::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_standard: icu::dimension::provider::PatternSelection::StandardAlphaNextToNumber, short_place_holder_index: None, narrow_place_holder_index: None },
+                };
+                static VALUES: [&<icu::dimension::provider::CurrencyEssentialsV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static KEYS: [&str; 1usize] = ["und"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::dimension::provider::CurrencyEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

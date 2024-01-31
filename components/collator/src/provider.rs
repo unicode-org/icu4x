@@ -54,6 +54,7 @@ const _: () = {
     pub mod icu {
         pub use crate as collator;
         pub use icu_collections as collections;
+        #[allow(unused_imports)] // baked data may or may not need this
         pub use icu_locid_transform as locid_transform;
     }
     icu_collator_data::make_provider!(Baked);

@@ -56,6 +56,6 @@ pub mod iso;
 pub mod julian;
 /// The persian calendar
 pub mod persian;
-/// Representation of Rata Die (R.D., also called J.D. for Julain Date)
-/// dates, which are represented as the number of days since ISO date 0001-01-01.
+/// Representation of Rata Die (R.D.) dates, which are
+/// represented as the number of days since ISO date 0001-01-01.
 pub mod rata_die;

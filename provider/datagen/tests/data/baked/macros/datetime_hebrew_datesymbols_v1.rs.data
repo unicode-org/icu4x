@@ -1,0 +1,59 @@
+// @generated
+/// Implement `DataProvider<HebrewDateSymbolsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_hebrew_datesymbols_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker>, icu_provider::DataError> {
+                static UND: <icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
+                    months: icu::datetime::provider::calendar::months::ContextsV1 {
+                        format: icu::datetime::provider::calendar::months::FormatWidthsV1 {
+                            abbreviated: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
+                            }),
+                            narrow: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0C\0\x0E\0\x10\x00123456778910111213") })
+                            }),
+                            short: None,
+                            wide: icu::datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                                #[allow(unused_unsafe)]
+                                zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"M01\0M02\0M03\0M04\0M05\0M05LM06\0M06LM07\0M08\0M09\0M10\0M11\0M12\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x06\0\r\0\x13\0\x18\0\x1E\0$\0(\0/\x004\08\0=\0B\0D\0TishriHeshvanKislevTevetShevatAdar IAdarAdar IINisanIyarSivanTamuzAvElul") })
+                            }),
+                        },
+                        stand_alone: None,
+                    },
+                    weekdays: icu::datetime::provider::calendar::weekdays::ContextsV1 { format: icu::datetime::provider::calendar::weekdays::FormatWidthsV1 { abbreviated: icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]), narrow: icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("S"), alloc::borrow::Cow::Borrowed("M"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("W"), alloc::borrow::Cow::Borrowed("T"), alloc::borrow::Cow::Borrowed("F"), alloc::borrow::Cow::Borrowed("S")]), short: Some(icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")])), wide: icu::datetime::provider::calendar::weekdays::SymbolsV1([alloc::borrow::Cow::Borrowed("Sun"), alloc::borrow::Cow::Borrowed("Mon"), alloc::borrow::Cow::Borrowed("Tue"), alloc::borrow::Cow::Borrowed("Wed"), alloc::borrow::Cow::Borrowed("Thu"), alloc::borrow::Cow::Borrowed("Fri"), alloc::borrow::Cow::Borrowed("Sat")]) }, stand_alone: None },
+                    eras: icu::datetime::provider::calendar::Eras {
+                        names: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AM") })
+                        },
+                        abbr: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AM") })
+                        },
+                        narrow: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0hebrew") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0AM") })
+                        },
+                    },
+                };
+                static VALUES: [&<icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static KEYS: [&str; 1usize] = ["und"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}
