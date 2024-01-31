@@ -70,10 +70,10 @@ impl<'data> ConverterFactory<'data> {
         ///     The differences are: meter: 1 - 1 = 0, second: -1 - (-1) = 0.
         ///     The sums are: meter: 1 + 1 = 2, second: -1 + (-1) = -2.
         ///     If all the sums are zeros, then the units are reciprocal.
-        ///     If all the subtractions are zeros, then the units are convertible.
-        ///     This means the result for the example is convertible.
+        ///     If all the diffs are zeros, then the units are convertible.
+        ///     If none of the above, then the units are not convertible.
         #[derive(Debug)]
-        struct DetermineConvertibility {
+        struct PowersInfo {
             diffs: i16,
             sums: i16,
         }
@@ -86,7 +86,7 @@ impl<'data> ConverterFactory<'data> {
             factory: &ConverterFactory,
             units: &[MeasureUnitItem],
             sign: i16,
-            map: &mut LiteMap<u16, DetermineConvertibility>,
+            map: &mut LiteMap<u16, PowersInfo>,
         ) -> Result<(), ConversionError> {
             for item in units {
                 let items_from_item = factory
@@ -110,18 +110,18 @@ impl<'data> ConverterFactory<'data> {
             basic_units: &ZeroSlice<MeasureUnitItem>,
             original_power: i16,
             sign: i16,
-            map: &mut LiteMap<u16, DetermineConvertibility>,
+            map: &mut LiteMap<u16, PowersInfo>,
         ) {
             for item in basic_units.iter() {
                 let item_power = (item.power as i16) * original_power;
                 let signed_item_power = item_power * sign;
-                if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.diffs += signed_item_power;
-                    determine_convertibility.sums += item_power;
+                if let Some(powers) = map.get_mut(&item.unit_id) {
+                    powers.diffs += signed_item_power;
+                    powers.sums += item_power;
                 } else {
                     map.insert(
                         item.unit_id,
-                        DetermineConvertibility {
+                        PowersInfo {
                             diffs: (signed_item_power),
                             sums: (item_power),
                         },
