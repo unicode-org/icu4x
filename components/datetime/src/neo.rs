@@ -1374,7 +1374,6 @@ impl NeoDateTimeFormatter {
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             // Other keys
-            + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
     {
         Self::try_new_with_time_length_internal(
@@ -1393,11 +1392,8 @@ impl NeoDateTimeFormatter {
     ) -> Result<Self, Error>
     where
         P: ?Sized
-            // Time formatting keys
             + DataProvider<TimePatternV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            // Other keys
-            + DataProvider<WeekdayNamesV1Marker>,
+            + DataProvider<DayPeriodNamesV1Marker>,
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // Need to compute the calendar ourselves since it is not in NeoTimeFormatter
