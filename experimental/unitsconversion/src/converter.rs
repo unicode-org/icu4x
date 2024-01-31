@@ -12,22 +12,6 @@ use num::{rational::Ratio, BigInt};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-/// Represents the possible cases for the convertibility between two units.
-#[derive(Debug, PartialEq)]
-enum Convertibility {
-    /// The units are convertible.
-    /// For example, `meter` and `foot` are convertible.
-    Convertible,
-
-    /// The units are reciprocal.
-    /// For example, `gallon-per-mile` and `100-kilometer-per-liter` are reciprocal.
-    Reciprocal,
-
-    /// The units are not convertible.
-    /// For example, `meter` and `second` are not convertible.
-    NotConvertible,
-}
-
 /// A converter for converting between two single units.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
@@ -72,8 +56,12 @@ impl<'data> ConverterFactory<'data> {
     }
 
     // TODO(#4512): the need needs to be bikeshedded.
-    /// Extract the convertibility from the given units in the form of CLDR identifiers.
-    fn extract_convertibility(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Convertibility {
+    /// Checks if the given units are reciprocal or not.
+    /// If it is not reciprocal, this means that the units are convertible.
+    /// NOTE:
+    ///   If the units are not convertible or reciprocal, the function will return `None`
+    ///   which means that the units are not compatible.
+    fn is_reciprocal(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Option<bool> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
         ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
@@ -85,8 +73,8 @@ impl<'data> ConverterFactory<'data> {
         ///     This means the result for the example is convertible.
         #[derive(Debug)]
         struct DetermineConvertibility {
-            difference: i16,
-            sum: i16,
+            diffs: i16,
+            sums: i16,
         }
 
         /// Inserting the units item into the map.
@@ -127,14 +115,14 @@ impl<'data> ConverterFactory<'data> {
                 let item_power = (item.power as i16) * original_power;
                 let signed_item_power = item_power * sign;
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
-                    determine_convertibility.difference += signed_item_power;
-                    determine_convertibility.sum += item_power;
+                    determine_convertibility.diffs += signed_item_power;
+                    determine_convertibility.sums += item_power;
                 } else {
                     map.insert(
                         item.unit_id,
                         DetermineConvertibility {
-                            difference: (signed_item_power),
-                            sum: (item_power),
+                            diffs: (signed_item_power),
+                            sums: (item_power),
                         },
                     );
                 }
@@ -152,24 +140,24 @@ impl<'data> ConverterFactory<'data> {
         debug_assert!(second_insert_result.is_ok());
 
         if first_insert_result.is_err() || second_insert_result.is_err() {
-            return Convertibility::NotConvertible;
+            return None;
         }
 
-        let (unit1_unit2_power_sums_are_zero, unit1_unit2_power_diffs_are_zero) = map
-            .iter_values()
-            .fold((true, true), |(sums, subs), determine_convertibility| {
-                (
-                    sums && determine_convertibility.sum == 0,
-                    subs && determine_convertibility.difference == 0,
-                )
-            });
+        let (power_sums_are_zero, power_diffs_are_zero) =
+            map.iter_values()
+                .fold((true, true), |(sums, diffs), determine_convertibility| {
+                    (
+                        sums && determine_convertibility.sums == 0,
+                        diffs && determine_convertibility.diffs == 0,
+                    )
+                });
 
-        if unit1_unit2_power_diffs_are_zero {
-            Convertibility::Convertible
-        } else if unit1_unit2_power_sums_are_zero {
-            Convertibility::Reciprocal
+        if power_diffs_are_zero {
+            Some(false)
+        } else if power_sums_are_zero {
+            Some(true)
         } else {
-            Convertibility::NotConvertible
+            None
         }
     }
 
@@ -226,16 +214,12 @@ impl<'data> ConverterFactory<'data> {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<LinearConverter> {
-        let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
-        let convertibility = self.extract_convertibility(input_unit, output_unit);
+        let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
 
-        let direction_sign = match convertibility {
-            Convertibility::Convertible => -1,
-            Convertibility::Reciprocal => 1,
-            Convertibility::NotConvertible => {
-                return None;
-            }
-        };
+        // Determine the sign of the powers of the units from root to unit2.
+        let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
+
+        let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
 
         for input_item in input_unit.contained_units.iter() {
             match Self::compute_conversion_term(self, input_item, 1) {
@@ -245,7 +229,7 @@ impl<'data> ConverterFactory<'data> {
         }
 
         for output_item in output_unit.contained_units.iter() {
-            match Self::compute_conversion_term(self, output_item, direction_sign) {
+            match Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign) {
                 Some(term) => conversion_rate *= term,
                 None => return None,
             }
@@ -253,7 +237,7 @@ impl<'data> ConverterFactory<'data> {
 
         Some(LinearConverter {
             conversion_rate,
-            reciprocal: convertibility == Convertibility::Reciprocal,
+            reciprocal: is_reciprocal,
         })
     }
 }
