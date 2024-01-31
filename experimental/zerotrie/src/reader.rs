@@ -415,7 +415,9 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     trie: &mut &[u8],
     c: u8,
 ) -> Option<u8> {
-    // BinarySpans is tricky to implement because the state can no longer be simply a trie
+    // Currently, the only option `step_parameterized` supports is `CaseSensitivity::IgnoreCase`.
+    // `AsciiMode::BinarySpans` is tricky because the state can no longer be simply a trie.
+    // If a span node is encountered, `None` is returned later in this function.
     debug_assert!(
         matches!(T::OPTIONS.ascii_mode, AsciiMode::AsciiOnly),
         "Spans not yet implemented in step function"
