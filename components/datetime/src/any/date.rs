@@ -107,6 +107,8 @@ impl DateFormatter {
     ///     "Sep 1, 2020"
     /// );
     /// ```
+    ///
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
