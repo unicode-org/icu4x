@@ -76,6 +76,8 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const KEYS: &[DataKey] = &[
+        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
+        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
         super::dimension::provider::CurrencyEssentialsV1Marker::KEY,
         super::dimension::provider::PercentEssentialsV1Marker::KEY,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::KEY,
@@ -107,7 +109,5 @@ pub mod provider {
         super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY,
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
     ];
 }

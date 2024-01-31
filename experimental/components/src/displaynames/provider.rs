@@ -24,6 +24,16 @@ type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
 type UnvalidatedLocale = UnvalidatedStr;
 type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 
+#[cfg(feature = "compiled_data")]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub use crate::provider::Baked;
+
 #[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
