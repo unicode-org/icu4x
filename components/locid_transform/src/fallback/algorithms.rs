@@ -219,6 +219,30 @@ mod tests {
     use std::str::FromStr;
     use writeable::Writeable;
 
+    /// Unicode extension keywords take part in fallback, but [auxiliary keys] are not modified.
+    ///
+    /// [auxiliary keys]: icu_provider::AuxiliaryKeys
+    #[test]
+    fn test_aux_key_fallback() {
+        use super::LocaleFallbacker;
+
+        let fallbacker = LocaleFallbacker::new();
+        let mut fallback_iterator = fallbacker
+            .for_config(Default::default())
+            .fallback_for("en-US-u-sd-usca-x-aux".parse().unwrap());
+
+        assert_eq!(fallback_iterator.get().to_string(), "en-US-u-sd-usca-x-aux");
+        fallback_iterator.step();
+        assert_eq!(fallback_iterator.get().to_string(), "en-US-x-aux");
+        fallback_iterator.step();
+        assert_eq!(fallback_iterator.get().to_string(), "en-u-sd-usca-x-aux");
+        fallback_iterator.step();
+        assert_eq!(fallback_iterator.get().to_string(), "en-x-aux");
+        fallback_iterator.step();
+        assert_eq!(fallback_iterator.get().to_string(), "und-x-aux");
+        assert!(fallback_iterator.get().is_und());
+    }
+
     struct TestCase {
         input: &'static str,
         requires_data: bool,
