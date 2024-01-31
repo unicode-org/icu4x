@@ -71,6 +71,9 @@ pub mod provider {
     };
 
     #[cfg(feature = "datagen")]
+    use icu_provider::prelude::*;
+
+    #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const KEYS: &[DataKey] = &[
         super::dimension::provider::CurrencyEssentialsV1Marker::KEY,
