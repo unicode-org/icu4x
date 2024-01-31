@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::datetime::write_pattern;
-use crate::calendar::{CldrCalendar, YearNamesV1Provider, MonthNamesV1Provider};
+use crate::calendar::{CldrCalendar, MonthNamesV1Provider, YearNamesV1Provider};
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;
 use crate::fields::{self, FieldLength, FieldSymbol};

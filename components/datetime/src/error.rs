@@ -96,7 +96,7 @@ pub struct MismatchedCalendarError {
     /// The calendar kind of the target object (formatter).
     pub this_kind: AnyCalendarKind,
     /// The calendar kind of the input object (date being formatted).
-    pub date_kind: Option<AnyCalendarKind>
+    pub date_kind: Option<AnyCalendarKind>,
 }
 
 impl From<PatternError> for DateTimeError {

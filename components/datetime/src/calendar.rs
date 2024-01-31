@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::calendar::*;
-use icu_calendar::AnyCalendar;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
+use icu_calendar::AnyCalendar;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, dangi::Dangi, ethiopian::Ethiopian, hebrew::Hebrew,
     indian::Indian, islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
@@ -75,8 +75,7 @@ pub trait CldrCalendar: InternalCldrCalendar {
     }
 }
 
-pub(crate) trait YearNamesV1Provider<M: DataMarker>
-{
+pub(crate) trait YearNamesV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
@@ -90,8 +89,7 @@ where
     }
 }
 
-pub(crate) trait MonthNamesV1Provider<M: DataMarker>
-{
+pub(crate) trait MonthNamesV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
@@ -105,8 +103,7 @@ where
     }
 }
 
-pub(crate) trait DatePatternV1Provider<M: DataMarker>
-{
+pub(crate) trait DatePatternV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
@@ -710,7 +707,10 @@ impl_load_any_calendar!([
 pub(crate) fn convert_if_necessary<'a>(
     any_calendar: &'a AnyCalendar,
     value: &impl crate::input::DateInput<Calendar = AnyCalendar>,
-) -> Result<Option<icu_calendar::Date<icu_calendar::Ref<'a, AnyCalendar>>>, crate::MismatchedCalendarError> {
+) -> Result<
+    Option<icu_calendar::Date<icu_calendar::Ref<'a, AnyCalendar>>>,
+    crate::MismatchedCalendarError,
+> {
     let this_kind = any_calendar.kind();
     let date_kind = value.any_calendar_kind();
 
@@ -718,7 +718,7 @@ pub(crate) fn convert_if_necessary<'a>(
         if date_kind != Some(AnyCalendarKind::Iso) {
             return Err(crate::MismatchedCalendarError {
                 this_kind,
-                date_kind
+                date_kind,
             });
         }
         let date = value.to_iso().to_any();

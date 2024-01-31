@@ -175,9 +175,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
         let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker>(
-            provider,
-            locale,
-            length,
+            provider, locale, length,
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
@@ -281,10 +279,7 @@ impl NeoDateFormatter {
         let loader = &ExternalLoaderCompiledData;
         let calendar = AnyCalendar::new_for_locale(locale);
         let kind = calendar.kind();
-        let any_calendar_provider = AnyCalendarProvider {
-            provider,
-            kind,
-        };
+        let any_calendar_provider = AnyCalendarProvider { provider, kind };
         let selection = DatePatternSelectionData::try_new_with_length::<ErasedDatePatternV1Marker>(
             &any_calendar_provider,
             locale,
@@ -292,12 +287,12 @@ impl NeoDateFormatter {
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker>(
-            Some(&any_calendar_provider),           // year
-            Some(&any_calendar_provider),           // month
-            Some(provider),           // weekday
-            None::<&PhantomProvider>, // day period
-            Some(loader),             // fixed decimal formatter
-            Some(loader),             // week calculator
+            Some(&any_calendar_provider), // year
+            Some(&any_calendar_provider), // month
+            Some(provider),               // weekday
+            None::<&PhantomProvider>,     // day period
+            Some(loader),                 // fixed decimal formatter
+            Some(loader),                 // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -318,11 +313,12 @@ impl NeoDateFormatter {
     where
         T: DateInput<Calendar = AnyCalendar>,
     {
-        let datetime = if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
-            ExtractedDateTimeInput::extract_from_date(&converted)
-        } else {
-            ExtractedDateTimeInput::extract_from_date(date)
-        };
+        let datetime =
+            if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
+                ExtractedDateTimeInput::extract_from_date(&converted)
+            } else {
+                ExtractedDateTimeInput::extract_from_date(date)
+            };
         Ok(FormattedNeoDate {
             pattern: self.selection.select(&datetime),
             datetime,
