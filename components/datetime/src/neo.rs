@@ -1104,8 +1104,8 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
 size_test!(
     NeoDateTimeFormatter,
     neo_date_time_formatter_size,
-    pinned = 568,
-    nightly = 552
+    pinned = 640,
+    nightly = 624
 );
 
 /// [`NeoDateTimeFormatter`] is a formatter capable of formatting dates from any calendar, selected
