@@ -111,11 +111,11 @@
 //! - `datagen`: Whether to implement functionality that is only required during data generation.
 //! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
 //!   when running `cargo bench`.
-//! 
+//!
 //! # Experimental modules
-//! 
-//! Experimental, unstable functionality can be found in the [`icu_experimental`] crate. The modules in that crate
-//! are on track to be eventually stabilized into this crate. 
+//!
+//! Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+//! are on track to be eventually stabilized into this crate.
 //!
 //!
 //! [CLDR]: http://cldr.unicode.org/
