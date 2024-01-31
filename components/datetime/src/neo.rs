@@ -1300,6 +1300,118 @@ impl NeoDateTimeFormatter {
         })
     }
 
+    /// Constructs a [`NeoDateTimeFormatter`] for a time length from compiled data.
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::NeoDateTimeFormatter;
+    /// use icu::datetime::options::length;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter =
+    ///     NeoDateTimeFormatter::try_new_with_time_length(
+    ///         &locale!("es-MX").into(),
+    ///         length::Time::Medium,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(
+    ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
+    ///             .unwrap()
+    ///             .to_any()
+    ///     )
+    ///     .unwrap(),
+    ///     "2:48:58 p.m."
+    /// );
+    /// ```
+    ///
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
+    #[inline(never)]
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_time_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error> {
+        Self::try_new_with_time_length_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new_with_time_length,
+        try_new_with_time_length_with_any_provider,
+        try_new_with_time_length_with_buffer_provider,
+        try_new_with_time_length_internal,
+        length: length::Time
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    pub fn try_new_with_time_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            // Time formatting keys
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            // AnyCalendar constructor keys
+            + DataProvider<ChineseCacheV1Marker>
+            + DataProvider<DangiCacheV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            // Other keys
+            + DataProvider<WeekdayNamesV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+    {
+        Self::try_new_with_time_length_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            length,
+        )
+    }
+
+    fn try_new_with_time_length_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, Error>
+    where
+        P: ?Sized
+            // Time formatting keys
+            + DataProvider<TimePatternV1Marker>
+            + DataProvider<DayPeriodNamesV1Marker>
+            // Other keys
+            + DataProvider<WeekdayNamesV1Marker>,
+        L: FixedDecimalFormatterLoader + AnyCalendarLoader,
+    {
+        // Need to compute the calendar ourselves since it is not in NeoTimeFormatter
+        let calendar = AnyCalendarLoader::load(loader, locale)?;
+        let time_formatter = NeoTimeFormatter::try_new_with_length_internal(
+            provider, loader, locale, length,
+        )?;
+        Ok(Self {
+            selection: DateTimePatternSelectionData::Time(time_formatter.selection),
+            names: time_formatter.names,
+            calendar,
+        })
+    }
+
     /// Formats a date and time of day.
     ///
     /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
