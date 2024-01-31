@@ -19,7 +19,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu_experimental::locid::locale;
+/// use icu::locid::locale;
 /// use icu_experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -45,7 +45,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu_experimental::locid::locale;
+/// use icu::locid::locale;
 /// use icu_experimental::relativetime::options::Numeric;
 /// use icu_experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
@@ -81,7 +81,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// # Example
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu_experimental::locid::locale;
+/// use icu::locid::locale;
 /// use icu_experimental::relativetime::options::Numeric;
 /// use icu_experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
