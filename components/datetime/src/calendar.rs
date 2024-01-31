@@ -6,6 +6,7 @@ use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
+use icu_calendar::AnyCalendar;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, dangi::Dangi, ethiopian::Ethiopian, hebrew::Hebrew,
     indian::Indian, islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
@@ -71,6 +72,54 @@ pub trait CldrCalendar: InternalCldrCalendar {
     /// By default, just checks against DEFAULT_BCP_47_IDENTIFIER
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == Self::DEFAULT_BCP_47_IDENTIFIER
+    }
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) trait YearNamesV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> YearNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) trait MonthNamesV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> MonthNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) trait DatePatternV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> DatePatternV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
     }
 }
 
@@ -587,4 +636,104 @@ where
         }
     };
     Ok(payload)
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
+    pub(crate) provider: &'a P,
+    pub(crate) kind: AnyCalendarKind,
+}
+
+#[cfg(feature = "experimental")]
+macro_rules! impl_load_any_calendar {
+    ([$(($trait:ident, $erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl_load_any_calendar!(@expand [$(($trait, $erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
+    };
+    (@expand [$(($trait:ident, $erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
+        $(impl_load_any_calendar!(@single_impl $trait, $erased, $marker, $tail1, $tail2);)+
+    };
+    (@single_impl $trait:ident, $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl<P> $trait<$erased> for AnyCalendarProvider<'_, P>
+        where
+            P: ?Sized + $(DataProvider::<<$kind_cal as CldrCalendar>::$marker> +)+
+        {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<$erased>, DataError> {
+                match self.kind {
+                    $(
+                        AnyCalendarKind::$kind_cal => DataProvider
+                            ::<<$kind_cal as CldrCalendar>::$marker>
+                            ::load(self.provider, req)
+                            .map(DataResponse::cast),
+                    )+
+                    $(
+                        AnyCalendarKind::$kind => DataProvider
+                            ::<<$cal as CldrCalendar>::$marker>
+                            ::load(self.provider, req)
+                            .map(DataResponse::cast),
+                    )+
+                    _ => Err(
+                        DataError::custom("Don't know how to load data for specified calendar")
+                            .with_debug_context(&self.kind)),
+                }
+            }
+        }
+    };
+}
+
+#[cfg(feature = "experimental")]
+impl_load_any_calendar!([
+    (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
+    (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
+    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker)
+], [
+    Buddhist,
+    Chinese,
+    Coptic,
+    Dangi,
+    Ethiopian,
+    Gregorian,
+    Hebrew,
+    Indian,
+    IslamicCivil,
+    IslamicObservational,
+    IslamicTabular,
+    IslamicUmmAlQura,
+    Japanese,
+    JapaneseExtended,
+    Persian,
+    Roc
+], [
+    EthiopianAmeteAlem => Ethiopian
+]);
+
+/// Converts a date to the correct calendar if necessary
+///
+/// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
+/// if the date is compatible with the current calendar and doesn't need conversion
+pub(crate) fn convert_if_necessary<'a>(
+    any_calendar: &'a AnyCalendar,
+    value: &impl crate::input::DateInput<Calendar = AnyCalendar>,
+) -> Result<
+    Option<icu_calendar::Date<icu_calendar::Ref<'a, AnyCalendar>>>,
+    crate::MismatchedCalendarError,
+> {
+    let this_kind = any_calendar.kind();
+    let date_kind = value.any_calendar_kind();
+
+    if Some(this_kind) != date_kind {
+        if date_kind != Some(AnyCalendarKind::Iso) {
+            return Err(crate::MismatchedCalendarError {
+                this_kind,
+                date_kind,
+            });
+        }
+        let date = value.to_iso().to_any();
+        let converted = any_calendar.convert_any_date(&date);
+        Ok(Some(converted))
+    } else {
+        Ok(None)
+    }
 }

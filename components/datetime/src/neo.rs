@@ -4,6 +4,8 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+#[cfg(feature = "compiled_data")]
+use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
@@ -17,6 +19,7 @@ use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
+use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::Writeable;
@@ -172,7 +175,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<WeekdayNamesV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
-        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker, _>(
+        let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker>(
             provider, locale, length,
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -206,6 +209,124 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             datetime,
             names: self.names.as_borrowed(),
         }
+    }
+}
+
+size_test!(
+    NeoDateFormatter,
+    neo_date_formatter_size,
+    pinned = 568,
+    nightly = 552
+);
+
+/// [`NeoDateFormatter`] is a formatter capable of formatting dates from any calendar, selected
+/// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
+/// [crate root docs][crate].
+///
+#[doc = neo_date_formatter_size!()]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
+/// </div>
+#[derive(Debug)]
+pub struct NeoDateFormatter {
+    selection: DatePatternSelectionData,
+    names: RawDateTimeNames,
+    calendar: AnyCalendar,
+}
+
+impl NeoDateFormatter {
+    /// Construct a new [`NeoDateFormatter`] from compiled data.
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
+    /// use icu::datetime::{options::length, neo::NeoDateFormatter};
+    /// use icu::locid::locale;
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
+    /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let length = length::Date::Medium;
+    /// let locale = locale!("en-u-ca-gregory");
+    ///
+    /// let df = NeoDateFormatter::try_new_with_length(&locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
+    ///
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
+    /// ```
+    ///
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
+    #[inline(never)]
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error> {
+        let provider = &crate::provider::Baked;
+        let loader = &ExternalLoaderCompiledData;
+        let calendar = AnyCalendar::new_for_locale(locale);
+        let kind = calendar.kind();
+        let any_calendar_provider = AnyCalendarProvider { provider, kind };
+        let selection = DatePatternSelectionData::try_new_with_length::<ErasedDatePatternV1Marker>(
+            &any_calendar_provider,
+            locale,
+            length,
+        )?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker>(
+            Some(&any_calendar_provider), // year
+            Some(&any_calendar_provider), // month
+            Some(provider),               // weekday
+            None::<&PhantomProvider>,     // day period
+            Some(loader),                 // fixed decimal formatter
+            Some(loader),                 // week calculator
+            locale,
+            selection.pattern_items_for_data_loading(),
+        )?;
+        Ok(Self {
+            selection,
+            names,
+            calendar,
+        })
+    }
+
+    /// Formats a date.
+    ///
+    /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
+    /// an error is returned.
+    ///
+    /// For an example, see [`NeoDateFormatter`].
+    pub fn format<T>(&self, date: &T) -> Result<FormattedNeoDate, crate::MismatchedCalendarError>
+    where
+        T: DateInput<Calendar = AnyCalendar>,
+    {
+        let datetime =
+            if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
+                ExtractedDateTimeInput::extract_from_date(&converted)
+            } else {
+                ExtractedDateTimeInput::extract_from_date(date)
+            };
+        Ok(FormattedNeoDate {
+            pattern: self.selection.select(&datetime),
+            datetime,
+            names: self.names.as_borrowed(),
+        })
     }
 }
 

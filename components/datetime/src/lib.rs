@@ -162,6 +162,7 @@ pub use calendar::CldrCalendar;
 pub use calendar::InternalCldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
+pub use error::MismatchedCalendarError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, TypedDateTimeNames};
