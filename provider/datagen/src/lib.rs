@@ -107,14 +107,9 @@
 //!   * enables the deprecated pre-1.3 API
 //!   * enabled by default for semver stability
 //!   * will be removed in 2.0.
-//!
-//! Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
-//! affect the behaviour of [`all_keys`]:
-//! * `icu_compactdecimal`
-//! * `icu_displaynames`
-//! * `icu_relativetime`
-//! * `icu_transliterate`
-//! * ...
+//! * `icu_experimental`
+//!   * enables data generation for keys defined in the unstable `icu_experimental` crate
+//!   * note that this features affects the behaviour of `all_keys`
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
 

@@ -46,11 +46,7 @@ icu_properties = { workspace = true, features = ["datagen"]}
 icu_segmenter = { workspace = true, features = ["datagen", "lstm"] }
 icu_timezone = { workspace = true, features = ["datagen"] }
 
-icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true }
-icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
-icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
-icu_transliterate = { workspace = true, features = ["datagen"], optional = true }
-icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true }
+icu_experimental = { workspace = true, features = ["datagen"], optional = true }
 
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
@@ -89,9 +85,6 @@ zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"
 rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
 
-num-bigint = { version = "0.4.4", default-features = false, optional = true }
-num-rational = { version = "0.4", default-features = false, optional = true }
-
 
 # Dependencies for "bin" feature
 clap = { version = "4", optional = true, features = ["derive"] }
@@ -106,8 +99,9 @@ postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 # Pre-experimental components with limited data generation
-icu_dimension = { path = "../../experimental/dimension", features = ["datagen"] }
 icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
+num-bigint = { version = "0.4.4", default-features = false }
+num-rational = { version = "0.4", default-features = false }
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
@@ -125,20 +119,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
-
-# experimental deps
-icu_compactdecimal = ["dep:icu_compactdecimal"]
-icu_displaynames = ["dep:icu_displaynames"]
-icu_relativetime = ["dep:icu_relativetime"]
-icu_transliterate = ["dep:icu_transliterate"]
-icu_unitsconversion = ["dep:icu_unitsconversion", "dep:num-bigint", "dep:num-rational"]
-experimental_components = [
-    "icu_compactdecimal",
-    "icu_displaynames",
-    "icu_relativetime",
-    "icu_transliterate",
-    "icu_unitsconversion",
-]
+experimental_components = ["dep:icu_experimental"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -151,6 +132,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_transliterate"]
+always_include_features = ["experimental_components"]
 # We have a *lot* of features here
 max_combination_size = 2

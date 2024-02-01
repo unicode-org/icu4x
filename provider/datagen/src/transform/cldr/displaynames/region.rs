@@ -5,7 +5,7 @@
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
-use icu_displaynames::provider::*;
+use icu_experimental::displaynames::provider::*;
 use icu_locid::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};

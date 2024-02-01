@@ -122,7 +122,8 @@ pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
 exec --fail-on-error cargo run --release --manifest-path default/Cargo.toml
-exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
+# icu_experimental is not currently published
+# exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
 exec --fail-on-error cargo run --release --manifest-path sync/Cargo.toml
 exec --fail-on-error cargo run --release --manifest-path baked/Cargo.toml
 

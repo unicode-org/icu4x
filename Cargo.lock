@@ -198,7 +198,7 @@ version = "1.4.0"
 dependencies = [
  "icu",
  "icu_datagen",
- "icu_unitsconversion",
+ "icu_experimental",
  "log",
  "simple_logger",
 ]
@@ -1300,10 +1300,8 @@ dependencies = [
  "icu_casemap",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1313,10 +1311,8 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
- "icu_transliterate",
  "writeable",
 ]
 
@@ -1389,7 +1385,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1497,28 +1493,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-dependencies = [
- "databake",
- "displaydoc",
- "fixed_decimal",
- "icu_compactdecimal_data",
- "icu_decimal",
- "icu_locid",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "serde",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_compactdecimal_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_datagen"
 version = "1.4.1"
 dependencies = [
@@ -1536,11 +1510,9 @@ dependencies = [
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_dimension",
- "icu_displaynames",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1551,10 +1523,8 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
- "icu_transliterate",
  "icu_unitsconversion",
  "itertools",
  "log",
@@ -1647,35 +1617,33 @@ name = "icu_depcheck"
 version = "0.1.0"
 
 [[package]]
-name = "icu_dimension"
+name = "icu_experimental"
 version = "0.0.0"
 dependencies = [
+ "criterion",
  "databake",
  "displaydoc",
- "icu_locid",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_displaynames"
-version = "0.11.2"
-dependencies = [
- "databake",
- "icu_displaynames_data",
+ "fixed_decimal",
+ "icu_collections",
+ "icu_decimal",
+ "icu_experimental_data",
  "icu_locid",
  "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
  "icu_provider",
+ "litemap",
+ "log",
  "serde",
  "tinystr",
+ "writeable",
  "zerovec",
 ]
 
 [[package]]
-name = "icu_displaynames_data"
-version = "1.4.0"
+name = "icu_experimental_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1813,18 +1781,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_personnames"
-version = "0.0.0"
-dependencies = [
- "databake",
- "icu_locid",
- "icu_provider",
- "litemap",
- "serde",
- "zerovec",
-]
-
-[[package]]
 name = "icu_plurals"
 version = "1.4.0"
 dependencies = [
@@ -1956,28 +1912,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_relativetime"
-version = "0.1.4"
-dependencies = [
- "databake",
- "displaydoc",
- "fixed_decimal",
- "icu",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "icu_relativetime_data",
- "serde",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_relativetime_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_segmenter"
 version = "1.4.0"
 dependencies = [
@@ -2043,38 +1977,6 @@ name = "icu_timezone_data"
 version = "1.4.0"
 
 [[package]]
-name = "icu_transliterate"
-version = "0.1.2"
-dependencies = [
- "criterion",
- "databake",
- "displaydoc",
- "icu_collections",
- "icu_locid",
- "icu_normalizer",
- "icu_properties",
- "icu_provider",
- "icu_unicodeset_parse",
- "litemap",
- "log",
- "serde",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_unicodeset_parse"
-version = "0.1.2"
-dependencies = [
- "icu_collections",
- "icu_properties",
- "icu_provider",
- "log",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
 name = "icu_unitsconversion"
 version = "0.0.0"
 dependencies = [
@@ -2082,17 +1984,12 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "icu_unitsconversion_data",
  "num",
  "serde",
  "smallvec",
  "zerotrie",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_unitsconversion_data"
-version = "1.4.0"
 
 [[package]]
 name = "ident_case"

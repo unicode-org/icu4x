@@ -13,4 +13,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "1.4", features = ["icu_displaynames"] }
+icu = "1.4"
+icu_experimental = "0"

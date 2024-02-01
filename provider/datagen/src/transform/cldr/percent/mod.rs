@@ -7,7 +7,7 @@ use std::collections::HashSet;
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 
-use icu_dimension::provider::*;
+use icu_experimental::dimension::provider::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use tinystr::tinystr;
@@ -106,7 +106,7 @@ fn extract_percent_essentials<'data>(
 
 #[test]
 fn test_basic() {
-    use icu_dimension::provider::*;
+    use icu_experimental::dimension::provider::*;
     use icu_locid::locale;
 
     let provider = crate::DatagenProvider::new_testing();

@@ -13,7 +13,6 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
-#[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
 ///
@@ -24,13 +23,14 @@ use zerovec::{VarZeroVec, ZeroVec};
 /// </div>
 pub struct Baked;
 
-#[cfg(feature = "compiled_data")]
+include!("../../../provider/datagen/tests/data/baked/macros.rs");
+
 const _: () = {
     pub mod icu {
         pub use crate as unitsconversion;
     }
-    icu_unitsconversion_data::make_provider!(Baked);
-    icu_unitsconversion_data::impl_units_info_v1!(Baked);
+    make_provider!(Baked);
+    impl_units_info_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]

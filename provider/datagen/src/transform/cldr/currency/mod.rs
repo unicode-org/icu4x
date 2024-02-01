@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_dimension::ule::MAX_PLACE_HOLDER_INDEX;
+use icu_experimental::dimension::ule::MAX_PLACE_HOLDER_INDEX;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
@@ -13,7 +13,7 @@ use zerovec::ZeroMap;
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use crate::DatagenProvider;
-use icu_dimension::provider::*;
+use icu_experimental::dimension::provider::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -316,7 +316,7 @@ fn test_basic() {
         (short_place_holder, narrow_place_holder)
     }
 
-    use icu_dimension::provider::*;
+    use icu_experimental::dimension::provider::*;
     use icu_locid::locale;
 
     let provider = crate::DatagenProvider::new_testing();
