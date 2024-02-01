@@ -4,8 +4,8 @@
 
 use icu_locid::subtags::script;
 use icu_locid::{subtags, Locale};
+use icu_properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed;
 use icu_properties::script::ScriptWithExtensionsBorrowed;
-use subtags::Script;
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
@@ -31,7 +31,7 @@ pub fn effective_locale<'a>(
 }
 
 // TODO: proper handling of compatible scripts.
-fn compatible_scripts(sc1: Script, sc2: Script) -> bool {
+fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
     let jpan_compatible = [script!("Hani"), script!("Kana"), script!("Hira")];
     if sc1 == script!("Jpan") && jpan_compatible.contains(&sc2) {
         return true;
@@ -43,22 +43,21 @@ fn compatible_scripts(sc1: Script, sc2: Script) -> bool {
 }
 
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-locale
-pub fn likely_person_name_locale<N>(person_name: &N) -> Result<Locale, PersonNamesFormatterError>
+pub fn likely_person_name_locale<N>(
+    person_name: &N,
+    swe: ScriptWithExtensionsBorrowed,
+    scripts: PropertyEnumToValueNameLinearTiny4MapperBorrowed<icu_properties::Script>,
+) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
 {
-    use icu_properties::Script;
-
-    let swe = icu_properties::script::script_with_extensions();
     let mut found_name_script = find_script(person_name, swe, Surname);
     if found_name_script.is_none() {
         found_name_script = find_script(person_name, swe, Given);
     }
-    let name_script = found_name_script.unwrap_or(Script::Unknown);
+    let name_script = found_name_script.unwrap_or(icu_properties::Script::Unknown);
 
-    let lookup = Script::enum_to_short_name_mapper().static_to_owned();
-    let lookup = lookup.as_borrowed();
-    let locid_script = lookup
+    let locid_script = scripts
         .get(name_script)
         .unwrap()
         .as_str()
@@ -178,20 +177,26 @@ mod tests {
 
     #[test]
     fn test_likely_person_names_locale() {
+        let swe = icu_properties::script::script_with_extensions();
+        let scripts = icu_properties::Script::enum_to_short_name_mapper();
         assert_eq!(
-            likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap()),
+            likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
             Ok(locale!("und_Latn"))
         );
         assert_eq!(
-            likely_person_name_locale(&person_name("駿", "宮崎").unwrap()),
+            likely_person_name_locale(&person_name("駿", "宮崎").unwrap(), swe, scripts),
             Ok(locale!("und_Hani"))
         );
         assert_eq!(
-            likely_person_name_locale(&person_name("하야오", "미야자키").unwrap()),
+            likely_person_name_locale(&person_name("하야오", "미야자키").unwrap(), swe, scripts),
             Ok(locale!("und_Hang"))
         );
         assert_eq!(
-            likely_person_name_locale(&person_name("アルベルト", "アインシュタイン").unwrap()),
+            likely_person_name_locale(
+                &person_name("アルベルト", "アインシュタイン").unwrap(),
+                swe,
+                scripts
+            ),
             Ok(locale!("und_Kana"))
         );
     }

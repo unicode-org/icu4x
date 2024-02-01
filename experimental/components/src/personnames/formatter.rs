@@ -4,6 +4,8 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
+use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
+use icu_properties::script::ScriptWithExtensions;
 
 use super::api::{
     FormattingOrder, NameField, NameFieldKind, PersonName, PersonNamesFormatterError,
@@ -15,12 +17,13 @@ use super::provider::{
 };
 use super::specifications;
 use icu_locid::Locale;
-use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
 use zerofrom::ZeroFrom;
 
-pub struct PersonNamesFormatter<'lt> {
+pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
-    pub(crate) data_provider: &'lt dyn DataProvider<PersonNamesFormatV1Marker>,
+    swe: ScriptWithExtensions,
+    scripts: PropertyEnumToValueNameLinearTiny4Mapper<icu_properties::Script>,
 }
 
 impl From<&PersonNamesFormatterOptions> for PersonNamesFormattingAttributesMask {
@@ -32,37 +35,49 @@ impl From<&PersonNamesFormatterOptions> for PersonNamesFormattingAttributesMask 
     }
 }
 
-impl PersonNamesFormatter<'_> {
-    pub fn try_new_unstable<D: DataProvider<PersonNamesFormatV1Marker>>(
-        data_provider: &D,
+impl PersonNamesFormatter {
+    pub fn try_new_unstable<P>(
+        provider: &P,
         options: PersonNamesFormatterOptions,
-    ) -> Result<PersonNamesFormatter, DataError>
+    ) -> Result<PersonNamesFormatter, PersonNamesFormatterError>
     where
-        D: DataProvider<PersonNamesFormatV1Marker>,
-        D: DataProvider<PersonNamesFormatV1Marker>,
+        P: ?Sized
+            + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
+            + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>,
     {
+        let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
+        let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;
         Ok(PersonNamesFormatter {
             default_options: options,
-            data_provider,
+            swe,
+            scripts,
         })
     }
 
-    pub fn format_to_string<N>(&self, person_name: &N) -> Result<String, PersonNamesFormatterError>
+    pub fn format_to_string<P, N>(
+        &self,
+        provider: &P,
+        person_name: &N,
+    ) -> Result<String, PersonNamesFormatterError>
     where
+        P: ?Sized + DataProvider<PersonNamesFormatV1Marker>,
         N: PersonName,
     {
         let available_name_fields = person_name.available_name_fields();
         if !validate_person_name(&available_name_fields) {
             return Err(PersonNamesFormatterError::InvalidPersonName);
         }
-        let person_name_locale = &specifications::likely_person_name_locale(person_name)?;
+        let person_name_locale = &specifications::likely_person_name_locale(
+            person_name,
+            self.swe.as_borrowed(),
+            self.scripts.as_borrowed(),
+        )?;
         let effective_locale = specifications::effective_locale(
             &self.default_options.target_locale,
             person_name_locale,
         )?;
 
-        let data_payload: &DataPayload<PersonNamesFormatV1Marker> = &self
-            .data_provider
+        let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &DataLocale::from(effective_locale),
                 metadata: Default::default(),

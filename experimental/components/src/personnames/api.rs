@@ -40,6 +40,19 @@ pub enum PersonNamesFormatterError {
     InvalidLocale,
     InvalidCldrData,
     Data(DataError),
+    Properties(icu_properties::Error),
+}
+
+impl From<DataError> for PersonNamesFormatterError {
+    fn from(e: DataError) -> Self {
+        PersonNamesFormatterError::Data(e)
+    }
+}
+
+impl From<icu_properties::Error> for PersonNamesFormatterError {
+    fn from(e: icu_properties::Error) -> Self {
+        PersonNamesFormatterError::Properties(e)
+    }
 }
 
 /// Field Modifiers.
