@@ -99,8 +99,6 @@ exclude = [
     "provider/testdata",
     # Tutorials are tested outside the workspace to simulate external users
     "docs",
-    # Not a functioning crate
-    "provider/baked/_template_",
 ]
 
 [workspace.package]
