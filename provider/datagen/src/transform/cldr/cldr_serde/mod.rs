@@ -26,7 +26,7 @@ pub mod locale_resource;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
-#[cfg(feature = "icu_personnames")]
+#[cfg(feature = "experimental_components")]
 pub mod personnames;
 pub mod plural_ranges;
 pub mod plurals;

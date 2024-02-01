@@ -5,7 +5,7 @@
 use core::convert::TryFrom;
 use std::borrow::Cow;
 
-use icu_personnames::provider::*;
+use icu_experimental::personnames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
