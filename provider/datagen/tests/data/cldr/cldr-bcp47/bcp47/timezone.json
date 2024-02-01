@@ -91,15 +91,18 @@
         },
         "arbue": {
           "_description": "Buenos Aires, Argentina",
-          "_alias": "America/Buenos_Aires America/Argentina/Buenos_Aires"
+          "_alias": "America/Buenos_Aires America/Argentina/Buenos_Aires",
+          "_iana": "America/Argentina/Buenos_Aires"
         },
         "arcor": {
           "_description": "Córdoba, Argentina",
-          "_alias": "America/Cordoba America/Argentina/Cordoba America/Rosario"
+          "_alias": "America/Cordoba America/Argentina/Cordoba America/Rosario",
+          "_iana": "America/Argentina/Cordoba"
         },
         "arctc": {
           "_description": "Catamarca, Argentina",
-          "_alias": "America/Catamarca America/Argentina/Catamarca America/Argentina/ComodRivadavia"
+          "_alias": "America/Catamarca America/Argentina/Catamarca America/Argentina/ComodRivadavia",
+          "_iana": "America/Argentina/Catamarca"
         },
         "arirj": {
           "_description": "La Rioja, Argentina",
@@ -107,7 +110,8 @@
         },
         "arjuj": {
           "_description": "Jujuy, Argentina",
-          "_alias": "America/Jujuy America/Argentina/Jujuy"
+          "_alias": "America/Jujuy America/Argentina/Jujuy",
+          "_iana": "America/Argentina/Jujuy"
         },
         "arluq": {
           "_description": "San Luis, Argentina",
@@ -115,7 +119,8 @@
         },
         "armdz": {
           "_description": "Mendoza, Argentina",
-          "_alias": "America/Mendoza America/Argentina/Mendoza"
+          "_alias": "America/Mendoza America/Argentina/Mendoza",
+          "_iana": "America/Argentina/Mendoza"
         },
         "arrgl": {
           "_description": "Río Gallegos, Argentina",
@@ -167,11 +172,12 @@
         },
         "auhba": {
           "_description": "Hobart, Australia",
-          "_alias": "Australia/Hobart Australia/Tasmania"
+          "_alias": "Australia/Hobart Australia/Tasmania Australia/Currie"
         },
         "aukns": {
+          "_deprecated": true,
           "_description": "Currie, Australia",
-          "_alias": "Australia/Currie"
+          "_preferred": "auhba"
         },
         "auldc": {
           "_description": "Lindeman Island, Australia",
@@ -350,11 +356,12 @@
         },
         "caedm": {
           "_description": "Edmonton, Canada",
-          "_alias": "America/Edmonton Canada/Mountain"
+          "_alias": "America/Edmonton Canada/Mountain America/Yellowknife"
         },
         "caffs": {
+          "_deprecated": true,
           "_description": "Rainy River, Canada",
-          "_alias": "America/Rainy_River"
+          "_preferred": "cawnp"
         },
         "cafne": {
           "_description": "Fort Nelson, Canada",
@@ -375,7 +382,7 @@
         },
         "caiql": {
           "_description": "Iqaluit, Canada",
-          "_alias": "America/Iqaluit"
+          "_alias": "America/Iqaluit America/Pangnirtung"
         },
         "camon": {
           "_description": "Moncton, Canada",
@@ -387,12 +394,14 @@
           "_preferred": "cator"
         },
         "canpg": {
+          "_deprecated": true,
           "_description": "Nipigon, Canada",
-          "_alias": "America/Nipigon"
+          "_preferred": "cator"
         },
         "capnt": {
+          "_deprecated": true,
           "_description": "Pangnirtung, Canada",
-          "_alias": "America/Pangnirtung"
+          "_preferred": "caiql"
         },
         "careb": {
           "_description": "Resolute, Canada",
@@ -407,12 +416,13 @@
           "_alias": "America/St_Johns Canada/Newfoundland"
         },
         "cathu": {
+          "_deprecated": true,
           "_description": "Thunder Bay, Canada",
-          "_alias": "America/Thunder_Bay"
+          "_preferred": "cator"
         },
         "cator": {
           "_description": "Toronto, Canada",
-          "_alias": "America/Toronto America/Montreal Canada/Eastern"
+          "_alias": "America/Toronto America/Montreal Canada/Eastern America/Nipigon America/Thunder_Bay"
         },
         "cavan": {
           "_description": "Vancouver, Canada",
@@ -420,7 +430,7 @@
         },
         "cawnp": {
           "_description": "Winnipeg, Canada",
-          "_alias": "America/Winnipeg Canada/Central"
+          "_alias": "America/Winnipeg Canada/Central America/Rainy_River"
         },
         "caybx": {
           "_description": "Blanc-Sablon, Canada",
@@ -455,12 +465,14 @@
           "_alias": "America/Swift_Current"
         },
         "cayzf": {
+          "_deprecated": true,
           "_description": "Yellowknife, Canada",
-          "_alias": "America/Yellowknife"
+          "_preferred": "caedm"
         },
         "cayzs": {
           "_description": "Atikokan, Canada",
-          "_alias": "America/Coral_Harbour America/Atikokan"
+          "_alias": "America/Coral_Harbour America/Atikokan",
+          "_iana": "America/Atikokan"
         },
         "cccck": {
           "_description": "Cocos (Keeling) Islands",
@@ -623,7 +635,8 @@
         },
         "erasm": {
           "_description": "Asmara, Eritrea",
-          "_alias": "Africa/Asmera Africa/Asmara"
+          "_alias": "Africa/Asmera Africa/Asmara",
+          "_iana": "Africa/Asmara"
         },
         "esceu": {
           "_description": "Ceuta, Spain",
@@ -668,15 +681,18 @@
         },
         "fmpni": {
           "_description": "Pohnpei, Micronesia",
-          "_alias": "Pacific/Ponape Pacific/Pohnpei"
+          "_alias": "Pacific/Ponape Pacific/Pohnpei",
+          "_iana": "Pacific/Pohnpei"
         },
         "fmtkk": {
           "_description": "Chuuk, Micronesia",
-          "_alias": "Pacific/Truk Pacific/Chuuk Pacific/Yap"
+          "_alias": "Pacific/Truk Pacific/Chuuk Pacific/Yap",
+          "_iana": "Pacific/Chuuk"
         },
         "fotho": {
           "_description": "Faroe Islands",
-          "_alias": "Atlantic/Faeroe Atlantic/Faroe"
+          "_alias": "Atlantic/Faeroe Atlantic/Faroe",
+          "_iana": "Atlantic/Faroe"
         },
         "frpar": {
           "_description": "Paris, France",
@@ -730,7 +746,8 @@
         },
         "glgoh": {
           "_description": "Nuuk (Godthåb), Greenland",
-          "_alias": "America/Godthab America/Nuuk"
+          "_alias": "America/Godthab America/Nuuk",
+          "_iana": "America/Nuuk"
         },
         "globy": {
           "_description": "Ittoqqortoormiit (Scoresbysund), Greenland",
@@ -844,7 +861,8 @@
         },
         "inccu": {
           "_description": "Kolkata, India",
-          "_alias": "Asia/Calcutta Asia/Kolkata"
+          "_alias": "Asia/Calcutta Asia/Kolkata",
+          "_iana": "Asia/Kolkata"
         },
         "iodga": {
           "_description": "Chagos Archipelago",
@@ -904,7 +922,8 @@
         },
         "kipho": {
           "_description": "Enderbury Island, Kiribati",
-          "_alias": "Pacific/Enderbury Pacific/Kanton"
+          "_alias": "Pacific/Enderbury Pacific/Kanton",
+          "_iana": "Pacific/Kanton"
         },
         "kitrw": {
           "_description": "Tarawa, Kiribati",
@@ -1046,7 +1065,8 @@
         },
         "mmrgn": {
           "_description": "Yangon (Rangoon), Burma",
-          "_alias": "Asia/Rangoon Asia/Yangon"
+          "_alias": "Asia/Rangoon Asia/Yangon",
+          "_iana": "Asia/Yangon"
         },
         "mncoq": {
           "_description": "Choibalsan, Mongolia",
@@ -1148,12 +1168,13 @@
           "_since": "1.9"
         },
         "mxstis": {
+          "_deprecated": true,
           "_description": "Santa Isabel (Baja California), Mexico",
-          "_alias": "America/Santa_Isabel"
+          "_preferred": "mxtij"
         },
         "mxtij": {
           "_description": "Tijuana, Mexico",
-          "_alias": "America/Tijuana America/Ensenada Mexico/BajaNorte"
+          "_alias": "America/Tijuana America/Ensenada Mexico/BajaNorte America/Santa_Isabel"
         },
         "mykch": {
           "_description": "Kuching, Malaysia",
@@ -1201,7 +1222,8 @@
         },
         "npktm": {
           "_description": "Kathmandu, Nepal",
-          "_alias": "Asia/Katmandu Asia/Kathmandu"
+          "_alias": "Asia/Katmandu Asia/Kathmandu",
+          "_iana": "Asia/Kathmandu"
         },
         "nrinu": {
           "_description": "Nauru",
@@ -1587,19 +1609,22 @@
         },
         "uaiev": {
           "_description": "Kyiv, Ukraine",
-          "_alias": "Europe/Kiev Europe/Kyiv"
+          "_alias": "Europe/Kiev Europe/Kyiv Europe/Zaporozhye Europe/Uzhgorod",
+          "_iana": "Europe/Kyiv"
         },
         "uaozh": {
+          "_deprecated": true,
           "_description": "Zaporizhia (Zaporozhye), Ukraine",
-          "_alias": "Europe/Zaporozhye"
+          "_preferred": "uaiev"
         },
         "uasip": {
           "_description": "Simferopol, Ukraine",
           "_alias": "Europe/Simferopol"
         },
         "uauzh": {
+          "_deprecated": true,
           "_description": "Uzhhorod (Uzhgorod), Ukraine",
-          "_alias": "Europe/Uzhgorod"
+          "_preferred": "uaiev"
         },
         "ugkla": {
           "_description": "Kampala, Uganda",
@@ -1610,8 +1635,9 @@
           "_alias": "Pacific/Wake"
         },
         "umjon": {
+          "_deprecated": true,
           "_description": "Johnston Atoll, U.S. Minor Outlying Islands",
-          "_alias": "Pacific/Johnston"
+          "_preferred": "ushnl"
         },
         "ummdy": {
           "_description": "Midway Islands, U.S. Minor Outlying Islands",
@@ -1651,11 +1677,12 @@
         },
         "ushnl": {
           "_description": "Honolulu, United States",
-          "_alias": "Pacific/Honolulu US/Hawaii"
+          "_alias": "Pacific/Honolulu US/Hawaii Pacific/Johnston"
         },
         "usind": {
           "_description": "Indianapolis, United States",
-          "_alias": "America/Indianapolis America/Fort_Wayne America/Indiana/Indianapolis US/East-Indiana"
+          "_alias": "America/Indianapolis America/Fort_Wayne America/Indiana/Indianapolis US/East-Indiana",
+          "_iana": "America/Indiana/Indianapolis"
         },
         "usinvev": {
           "_description": "Vevay (Indiana), United States",
@@ -1675,7 +1702,8 @@
         },
         "uslui": {
           "_description": "Louisville (Kentucky), United States",
-          "_alias": "America/Louisville America/Kentucky/Louisville"
+          "_alias": "America/Louisville America/Kentucky/Louisville",
+          "_iana": "America/Kentucky/Louisville"
         },
         "usmnm": {
           "_description": "Menominee (Michigan), United States",
@@ -1887,7 +1915,8 @@
         },
         "vnsgn": {
           "_description": "Ho Chi Minh City, Vietnam",
-          "_alias": "Asia/Saigon Asia/Ho_Chi_Minh"
+          "_alias": "Asia/Saigon Asia/Ho_Chi_Minh",
+          "_iana": "Asia/Ho_Chi_Minh"
         },
         "vuvli": {
           "_description": "Efate, Vanuatu",

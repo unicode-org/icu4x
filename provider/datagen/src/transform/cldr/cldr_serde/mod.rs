@@ -10,7 +10,7 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
-#[cfg(feature = "icu_singlenumberformatter")]
+#[cfg(test)] // keep as test until baked data is needed
 pub mod currencies;
 pub mod currency_data;
 #[cfg(feature = "icu_relativetime")]
@@ -28,6 +28,7 @@ pub mod numbers;
 pub mod parent_locales;
 #[cfg(feature = "icu_personnames")]
 pub mod personnames;
+pub mod plural_ranges;
 pub mod plurals;
 pub mod time_zones;
 #[cfg(feature = "icu_transliterate")]

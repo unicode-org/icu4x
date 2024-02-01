@@ -73,8 +73,7 @@ impl TimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
@@ -114,9 +113,11 @@ impl TimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
@@ -181,7 +182,7 @@ impl DateFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+            Some(WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -202,8 +203,7 @@ impl DateFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         Ok(Self::new(
             generic_pattern,
@@ -238,9 +238,18 @@ impl DateFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
-                provider, locale,
-            )?)
+            Some(
+                (*DataProvider::<WeekDataV1Marker>::load(
+                    provider,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )?
+                .take_payload()?
+                .get())
+                .into(),
+            )
         } else {
             None
         };
@@ -260,9 +269,11 @@ impl DateFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         Ok(Self::new(
             generic_pattern,
@@ -380,7 +391,7 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+            Some(WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -407,8 +418,7 @@ impl DateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         Ok(Self::new(
             patterns,
@@ -444,9 +454,18 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
-                provider, locale,
-            )?)
+            Some(
+                (*DataProvider::<WeekDataV1Marker>::load(
+                    provider,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )?
+                .take_payload()?
+                .get())
+                .into(),
+            )
         } else {
             None
         };
@@ -472,9 +491,11 @@ impl DateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         Ok(Self::new(
             patterns,

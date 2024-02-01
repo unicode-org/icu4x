@@ -3,7 +3,7 @@
     "ccp": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "ccp"
       },
@@ -372,7 +372,6 @@
                 "MMMEd": "E d MMM",
                 "MMMMd": "d MMMM",
                 "MMMMEd": "E d MMMM",
-                "MMMMW-count-one": "MMMM 𑄃𑄬𑄢𑄴 𑄠𑄴 𑄥𑄛𑄴𑄖 W",
                 "MMMMW-count-other": "MMMM 𑄃𑄬𑄢𑄴 𑄠𑄴 𑄥𑄛𑄴𑄖 W",
                 "ms": "mm:ss",
                 "y": "y",
@@ -386,7 +385,6 @@
                 "yMMMM": "MMMM y",
                 "yQQQ": "QQQ y",
                 "yQQQQ": "QQQQ y",
-                "yw-count-one": "Y 𑄃𑄬𑄢𑄴 𑄖𑄧𑄟𑄴 𑄥𑄛𑄴𑄖 w",
                 "yw-count-other": "Y 𑄃𑄬𑄢𑄴 𑄖𑄧𑄟𑄴 𑄥𑄛𑄴𑄖 w"
               },
               "appendItems": {

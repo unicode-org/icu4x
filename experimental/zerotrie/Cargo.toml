@@ -5,7 +5,7 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.1.1"
+version = "0.1.2"
 license-file = "LICENSE"
 
 rust-version.workspace = true
@@ -27,7 +27,7 @@ denylist = ["bench"]
 databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 litemap = { workspace = true, features = ["alloc"], optional = true }
-serde = { version = "1.0", optional = true }
+serde = { version = "1.0", default-features = false, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
@@ -42,6 +42,8 @@ rand_pcg = "0.3"
 serde = { version = "1.0", default-features = false }
 serde_json = "1.0"
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
+icu_locid = { path = "../../components/locid" }
+writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
@@ -70,4 +72,8 @@ required-features = ["alloc", "litemap"]
 
 [[test]]
 name = "builder_test"
+required-features = ["alloc", "litemap"]
+
+[[test]]
+name = "locale_aux_test"
 required-features = ["alloc", "litemap"]

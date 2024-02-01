@@ -3,7 +3,7 @@
     "bn": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "bn"
       },
@@ -1411,14 +1411,14 @@
             "America_Eastern": {
               "long": {
                 "generic": "পূর্বাঞ্চলীয় সময়",
-                "standard": "পূর্বাঞ্চলের প্রমাণ সময়",
+                "standard": "পূর্বাঞ্চলের মানক সময়",
                 "daylight": "পূর্বাঞ্চলের দিবালোক সময়"
               }
             },
             "America_Mountain": {
               "long": {
                 "generic": "পার্বত্য অঞ্চলের সময়",
-                "standard": "পার্বত্য অঞ্চলের প্রমাণ সময়",
+                "standard": "পার্বত্য অঞ্চলের মানক সময়",
                 "daylight": "পার্বত্য অঞ্চলের দিনের সময়"
               }
             },

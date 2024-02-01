@@ -5,7 +5,7 @@
 [package]
 name = "databake"
 description = "Trait that lets structs represent themselves as (const) Rust expressions"
-version = "0.1.6"
+version = "0.1.7"
 categories = ["rust-patterns", "memory-management", "development-tools::procedural-macro-helpers", "development-tools::build-utils"]
 keywords = ["zerocopy", "serialization", "const", "proc"]
 license-file = "LICENSE"
@@ -28,5 +28,4 @@ derive = ["dep:databake-derive"]
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "2", features = ["derive", "fold"] }
 databake-derive = { workspace = true, optional = true}

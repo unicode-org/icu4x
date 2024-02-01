@@ -127,6 +127,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
+    // Don't do caching for this one. It uses its own mutex
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         self.cldr()?
             .transforms()?
@@ -147,7 +148,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                locale: &"und+de-t-de-d0-ascii".parse().unwrap(),
+                locale: &"und-x-de-t-de-d0-ascii".parse().unwrap(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -161,7 +162,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                locale: &"und+und-Latn-t-s0-ascii".parse().unwrap(),
+                locale: &"und-x-und-Latn-t-s0-ascii".parse().unwrap(),
                 metadata: Default::default(),
             })
             .unwrap()

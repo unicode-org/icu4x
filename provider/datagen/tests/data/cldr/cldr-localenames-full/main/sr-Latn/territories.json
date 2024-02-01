@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "sr",
         "script": "Latn"
@@ -161,6 +161,8 @@
           "IM": "Ostrvo Man",
           "IN": "Indija",
           "IO": "Britanska teritorija Indijskog okeana",
+          "IO-alt-biot": "Britanska teritorija Indijskog okeana",
+          "IO-alt-chagos": "arhipelag Čagos",
           "IQ": "Irak",
           "IR": "Iran",
           "IS": "Island",

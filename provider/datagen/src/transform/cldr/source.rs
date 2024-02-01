@@ -6,15 +6,20 @@
 
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
+use icu_calendar::provider::EraStartDate;
 use icu_locid::LanguageIdentifier;
-use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
-use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
+use icu_locid_transform::provider::{
+    LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
+    LikelySubtagsForScriptRegionV1Marker,
+};
 use icu_locid_transform::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::make_forking_provider;
 use once_cell::sync::OnceCell;
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -23,7 +28,8 @@ use std::str::FromStr;
 pub(crate) struct CldrCache {
     pub(super) serde_cache: SerdeCache,
     dir_suffix: OnceCell<&'static str>,
-    locale_expander: OnceCell<LocaleExpander>,
+    extended_locale_expander: OnceCell<LocaleExpander>,
+    modern_japanese_eras: OnceCell<BTreeSet<String>>,
     #[cfg(feature = "icu_transliterate")]
     // used by transforms/mod.rs
     pub(super) transforms: OnceCell<std::sync::Mutex<icu_transliterate::RuleCollection>>,
@@ -34,7 +40,8 @@ impl CldrCache {
         CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
-            locale_expander: Default::default(),
+            extended_locale_expander: Default::default(),
+            modern_japanese_eras: Default::default(),
             #[cfg(feature = "icu_transliterate")]
             transforms: Default::default(),
         }
@@ -106,25 +113,67 @@ impl CldrCache {
             .copied()
     }
 
-    fn locale_expander(&self) -> Result<&LocaleExpander, DataError> {
+    fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
         use super::locale_canonicalizer::likely_subtags::*;
-        self.locale_expander.get_or_try_init(|| {
-            let data = transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-            let provider = ForkByKeyProvider::new(
-                AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
-                    data.clone().into(),
-                ),
-                AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(data.into()),
+        self.extended_locale_expander.get_or_try_init(|| {
+            let common_data =
+                transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
+            let extended_data =
+                transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
+            let provider = make_forking_provider!(
+                ForkByKeyProvider::new,
+                [
+                    AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
+                        common_data.clone().into(),
+                    ),
+                    AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(
+                        common_data.into(),
+                    ),
+                    AnyPayloadProvider::from_owned::<LikelySubtagsExtendedV1Marker>(
+                        extended_data.into()
+                    ),
+                ]
             );
-            LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
+            LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
                 DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
             })
         })
     }
 
+    /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
+    ///
+    /// These will be in CLDR era index form; these are usually numbers
+    pub(super) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
+        self.modern_japanese_eras.get_or_try_init(|| {
+            let era_dates: &super::cldr_serde::japanese::Resource = self
+                .core()
+                .read_and_parse("supplemental/calendarData.json")?;
+            let mut set = BTreeSet::<String>::new();
+            for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
+                let start_date =
+                    EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
+                        start_date
+                    } else {
+                        continue;
+                    })
+                    .map_err(|_| {
+                        DataError::custom(
+                            "calendarData.json contains unparseable data for a japanese era",
+                        )
+                        .with_display_context(&format!("era index {}", era_index))
+                    })?;
+
+                if start_date.year >= 1868 {
+                    set.insert(era_index.into());
+                }
+            }
+            Ok(set)
+        })
+    }
+
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
-    fn add_script(
+    fn add_script_extended(
         &self,
         langid: &LanguageIdentifier,
     ) -> Result<Option<LanguageIdentifier>, DataError> {
@@ -132,8 +181,11 @@ impl CldrCache {
             return Ok(None);
         }
         let mut new_langid = langid.clone();
-        self.locale_expander()?.maximize(&mut new_langid);
-        debug_assert!(new_langid.script.is_some());
+        self.extended_locale_expander()?.maximize(&mut new_langid);
+        debug_assert!(
+            new_langid.script.is_some(),
+            "Script not found for: {new_langid:?}"
+        );
         if langid.region.is_none() {
             new_langid.region = None;
         }
@@ -143,7 +195,7 @@ impl CldrCache {
     /// ICU4X does not store locales with their script
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
-    fn remove_script(
+    fn remove_script_extended(
         &self,
         langid: &LanguageIdentifier,
     ) -> Result<Option<LanguageIdentifier>, DataError> {
@@ -152,7 +204,7 @@ impl CldrCache {
         }
         let region = langid.region;
         let mut langid = langid.clone();
-        self.locale_expander()?.minimize(&mut langid);
+        self.extended_locale_expander()?.minimize(&mut langid);
         if langid.script.is_some() || (region.is_none() && langid.region.is_some()) {
             // Wasn't able to minimize the script, or had to add a region
             return Ok(None);
@@ -191,7 +243,7 @@ impl<'a> CldrDirLang<'a> {
         let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
-        } else if let Some(new_langid) = self.0.add_script(lang)? {
+        } else if let Some(new_langid) = self.0.add_script_extended(lang)? {
             self.read_and_parse(&new_langid, file_name)
         } else {
             Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
@@ -209,7 +261,7 @@ impl<'a> CldrDirLang<'a> {
             .list(&path)?
             .map(|path| -> Result<LanguageIdentifier, DataError> {
                 let langid = LanguageIdentifier::from_str(&path).unwrap();
-                Ok(self.0.remove_script(&langid)?.unwrap_or(langid))
+                Ok(self.0.remove_script_extended(&langid)?.unwrap_or(langid))
             })
             .collect::<Result<Vec<_>, _>>()?
             .into_iter())
@@ -224,7 +276,7 @@ impl<'a> CldrDirLang<'a> {
         let path = format!("{}-{dir_suffix}/main/{lang}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             Ok(true)
-        } else if let Some(new_langid) = self.0.add_script(lang)? {
+        } else if let Some(new_langid) = self.0.add_script_extended(lang)? {
             self.file_exists(&new_langid, file_name)
         } else {
             Ok(false)

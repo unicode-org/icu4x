@@ -1,0 +1,25 @@
+// @generated
+/// Implement `DataProvider<DangiYearNamesV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_symbols_dangi_years_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::DangiYearNamesV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::DangiYearNamesV1Marker>, icu_provider::DataError> {
+                static UND_X_3: <icu::datetime::provider::neo::DangiYearNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearNamesV1::Cyclic(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"<\0\0\0\0\0\x06\0\r\0\x15\0\x1D\0$\0)\x000\x007\0?\0F\0L\0R\0Y\0b\0h\0n\0w\0}\0\x83\0\x8A\0\x92\0\x98\0\x9F\0\xA7\0\xAC\0\xB3\0\xBB\0\xC2\0\xCA\0\xD0\0\xD6\0\xDC\0\xE5\0\xED\0\xF2\0\xF8\0\xFF\0\x07\x01\x0E\x01\x15\x01\x1D\x01\"\x01)\x011\x018\x01>\x01E\x01L\x01R\x01Z\x01a\x01g\x01p\x01w\x01|\x01\x82\x01\x8B\x01\x92\x01\x98\x01jia-ziyi-choubing-yinding-maowu-chenji-sigeng-wuxin-weiren-shengui-youjia-xuyi-haibing-ziding-chouwu-yinji-maogeng-chenxin-siren-wugui-weijia-shenyi-youbing-xuding-haiwu-ziji-chougeng-yinxin-maoren-chengui-sijia-wuyi-weibing-shending-youwu-xuji-haigeng-zixin-chouren-yingui-maojia-chenyi-sibing-wuding-weiwu-shenji-yougeng-xuxin-hairen-zigui-choujia-yinyi-maobing-chending-siwu-wuji-weigeng-shenxin-youren-xugui-hai") });
+                static VALUES: [&<icu::datetime::provider::neo::DangiYearNamesV1Marker as icu_provider::DataMarker>::Yokeable; 3usize] = [&UND_X_3, &UND_X_3, &UND_X_3];
+                static KEYS: [&str; 3usize] = ["und-x-3", "und-x-4", "und-x-5"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::DangiYearNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

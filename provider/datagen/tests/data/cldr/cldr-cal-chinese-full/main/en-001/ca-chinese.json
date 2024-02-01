@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "en",
         "territory": "001"
@@ -304,7 +304,7 @@
                 },
                 "narrow": {
                   "midnight": "midnight",
-                  "am": "am",
+                  "am": "AM",
                   "am-alt-variant": "am",
                   "noon": "noon",
                   "pm": "pm",

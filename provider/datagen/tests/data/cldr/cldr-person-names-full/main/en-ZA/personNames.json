@@ -3,7 +3,7 @@
     "en-ZA": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "en",
         "territory": "ZA"
@@ -20,6 +20,9 @@
           "yue",
           "zh"
         ],
+        "formality": "informal",
+        "length": "medium",
+        "nativeSpaceReplacement": " ",
         "foreignSpaceReplacement": " ",
         "initial": "{0}.",
         "initialSequence": "{0}{1}",

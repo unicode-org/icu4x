@@ -3,7 +3,7 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "es",
         "territory": "AR"
@@ -234,12 +234,12 @@
                 },
                 "narrow": {
                   "am": "a. m.",
-                  "noon": "del mediodía",
+                  "noon": "mediodía",
                   "pm": "p. m.",
-                  "morning1": "de la madrugada",
-                  "morning2": "de la mañana",
-                  "evening1": "de la tarde",
-                  "night1": "de la noche"
+                  "morning1": "madrugada",
+                  "morning2": "mañana",
+                  "evening1": "tarde",
+                  "night1": "noche"
                 },
                 "wide": {
                   "am": "a. m.",
@@ -305,22 +305,22 @@
               "short": "GGGGGyyMMdd"
             },
             "timeFormats": {
-              "full": "HH:mm:ss zzzz",
-              "long": "HH:mm:ss z",
-              "medium": "HH:mm:ss",
-              "short": "HH:mm"
+              "full": "h:mm:ss a zzzz",
+              "long": "h:mm:ss a z",
+              "medium": "h:mm:ss a",
+              "short": "h:mm a"
             },
             "timeSkeletons": {
-              "full": "HHmmsszzzz",
-              "long": "HHmmssz",
-              "medium": "HHmmss",
-              "short": "HHmm"
+              "full": "ahmmsszzzz",
+              "long": "ahmmssz",
+              "medium": "ahmmss",
+              "short": "ahmm"
             },
             "dateTimeFormats": {
               "full": "{1}, {0}",
               "long": "{1}, {0}",
-              "medium": "{1} {0}",
-              "short": "{1} {0}",
+              "medium": "{1}, {0}",
+              "short": "{1}, {0}",
               "availableFormats": {
                 "Bh": "h B",
                 "Bhm": "h:mm B",

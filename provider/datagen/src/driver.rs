@@ -14,6 +14,9 @@ use once_cell::sync::Lazy;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::fmt;
+use std::time::Duration;
+use std::time::Instant;
 use writeable::Writeable;
 
 /// Configuration for a data export operation.
@@ -304,7 +307,8 @@ impl DatagenDriver {
         };
 
         keys.clone().into_par_iter().try_for_each(|key| {
-            log::info!("Generating key {key}");
+            log::trace!("Generating key {key}");
+            let instant1 = Instant::now();
 
             if key.metadata().singleton {
                 if provider.supported_locales_for_key(key)? != [Default::default()] {
@@ -319,9 +323,25 @@ impl DatagenDriver {
                     .and_then(DataResponse::take_payload)
                     .map_err(|e| e.with_req(key, Default::default()))?;
 
-                return sink
-                    .flush_singleton(key, &payload)
-                    .map_err(|e| e.with_req(key, Default::default()));
+                let transform_duration = instant1.elapsed();
+
+                sink.flush_singleton(key, &payload)
+                    .map_err(|e| e.with_req(key, Default::default()))?;
+
+                let final_duration = instant1.elapsed();
+                let flush_duration = final_duration - transform_duration;
+
+                if final_duration > Duration::new(0, 500_000_000) {
+                    // Print durations if the key took longer than 500 ms
+                    log::info!(
+                        "Generated key {key} ({}, flushed in {})",
+                        DisplayDuration(final_duration),
+                        DisplayDuration(flush_duration)
+                    );
+                } else {
+                    log::info!("Generated key {key}");
+                }
+                return Ok(());
             }
 
             let locales_to_export = select_locales_for_key(
@@ -334,73 +354,173 @@ impl DatagenDriver {
                 &fallbacker,
             )?;
 
-            match fallback {
+            let (slowest_duration, slowest_locale) = match fallback {
                 FallbackMode::Runtime | FallbackMode::RuntimeManual => {
                     let payloads = locales_to_export
                         .into_par_iter()
                         .filter_map(|locale| {
+                            let instant2 = Instant::now();
                             load_with_fallback(key, &locale)
-                                .map(|r| r.map(|payload| (locale, payload)))
+                                .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
                     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
-                    payloads.iter().try_for_each(|(locale, payload)| {
-                        let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                        while !iter.get().is_und() {
-                            iter.step();
-                            if payloads.get(iter.get()) == Some(payload) {
-                                // Found a match: don't need to write anything
-                                log::trace!(
-                                    "Deduplicating {key}/{locale} (inherits from {})",
-                                    iter.get()
-                                );
-                                return Ok(());
+                    payloads
+                        .iter()
+                        .try_for_each(|(locale, (payload, _duration))| {
+                            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                            while !iter.get().is_und() {
+                                iter.step();
+                                if let Some((inherited_payload, _duration)) =
+                                    payloads.get(iter.get())
+                                {
+                                    if inherited_payload == payload {
+                                        // Found a match: don't need to write anything
+                                        log::trace!(
+                                            "Deduplicating {key}/{locale} (inherits from {})",
+                                            iter.get()
+                                        );
+                                        return Ok(());
+                                    } else {
+                                        // Not a match: we must include this
+                                        break;
+                                    }
+                                }
                             }
-                        }
-                        // Did not find a match: export this payload
-                        sink.put_payload(key, locale, payload).map_err(|e| {
-                            e.with_req(
-                                key,
-                                DataRequest {
-                                    locale,
-                                    metadata: Default::default(),
-                                },
-                            )
-                        })
-                    })?
-                }
-                FallbackMode::Hybrid | FallbackMode::Preresolved => {
-                    locales_to_export.into_par_iter().try_for_each(|locale| {
-                        if let Some(payload) = load_with_fallback(key, &locale) {
-                            sink.put_payload(key, &locale, &payload?)
-                        } else {
-                            Ok(())
-                        }
-                        .map_err(|e| {
-                            e.with_req(
-                                key,
-                                DataRequest {
-                                    locale: &locale,
-                                    metadata: Default::default(),
-                                },
-                            )
-                        })
-                    })?
-                }
-                FallbackMode::PreferredForExporter => unreachable!("resolved"),
-            };
+                            // Did not find a match: export this payload
+                            sink.put_payload(key, locale, payload).map_err(|e| {
+                                e.with_req(
+                                    key,
+                                    DataRequest {
+                                        locale,
+                                        metadata: Default::default(),
+                                    },
+                                )
+                            })
+                        })?;
 
-            if fallback == FallbackMode::Runtime {
+                    // Slowest locale calculation:
+                    payloads
+                        .iter()
+                        .map(|(locale, (_payload, duration))| {
+                            (*duration, locale.write_to_string().into_owned())
+                        })
+                        .max()
+                }
+                FallbackMode::Hybrid | FallbackMode::Preresolved => locales_to_export
+                    .into_par_iter()
+                    .filter_map(|locale| {
+                        let instant2 = Instant::now();
+                        let result = load_with_fallback(key, &locale)?;
+                        let result = result
+                            .and_then(|payload| sink.put_payload(key, &locale, &payload))
+                            // Note: in Hybrid mode the elapsed time includes sink.put_payload.
+                            // In Runtime mode the elapsed time is only load_with_fallback.
+                            .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
+                            .map_err(|e| {
+                                e.with_req(
+                                    key,
+                                    DataRequest {
+                                        locale: &locale,
+                                        metadata: Default::default(),
+                                    },
+                                )
+                            });
+                        Some(result)
+                    })
+                    .collect::<Result<Vec<_>, DataError>>()?
+                    .into_iter()
+                    .max(),
+                FallbackMode::PreferredForExporter => unreachable!("resolved"),
+            }
+            .unwrap_or_default();
+
+            let transform_duration = instant1.elapsed();
+
+            // segmenter uses hardcoded locales internally, so fallback is not necessary.
+            // TODO(#4511): Use auxiliary keys for segmenter
+            if fallback == FallbackMode::Runtime && !key.path().get().starts_with("segmenter") {
                 sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
             } else {
                 sink.flush(key)
             }
-            .map_err(|e| e.with_key(key))
+            .map_err(|e| e.with_key(key))?;
+
+            let final_duration = instant1.elapsed();
+            let flush_duration = final_duration - transform_duration;
+
+            if final_duration > Duration::new(0, 500_000_000) {
+                // Print durations if the key took longer than 500 ms
+                log::info!(
+                    "Generated key {key} ({}, '{slowest_locale}' in {}, flushed in {})",
+                    DisplayDuration(final_duration),
+                    DisplayDuration(slowest_duration),
+                    DisplayDuration(flush_duration)
+                );
+            } else {
+                log::info!("Generated key {key}");
+            }
+            Ok(())
         })?;
 
         sink.close()
     }
+}
+
+struct ExplicitImplicitLocaleSets {
+    explicit: HashSet<DataLocale>,
+    implicit: HashSet<DataLocale>,
+}
+
+/// Resolves the set of explicit langids and the supported locales into two sets of locales:
+///
+/// - `explicit` contains the explicit langids but with aux keys and extension keywords included.
+///   For example, if `ar-SA` is requested (explicit langid), and `ar` and `ar-u-nu-latn` are supported,
+///   then `ar-SA` and `ar-SA-u-nu-latn` will be returned as `explicit`.
+/// - `implcit` contains all supported locales reachable by fallback from an `explicit` locale.
+///   These locales can be included without increasing data payload size.
+fn make_explicit_implicit_sets(
+    key: DataKey,
+    explicit_langids: &HashSet<LanguageIdentifier>,
+    supported_map: &HashMap<LanguageIdentifier, HashSet<DataLocale>>,
+    fallbacker: &Lazy<
+        Result<LocaleFallbacker, DataError>,
+        impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+    >,
+) -> Result<ExplicitImplicitLocaleSets, DataError> {
+    let mut implicit = HashSet::new();
+    // TODO: Make including the default locale configurable
+    implicit.insert(DataLocale::default());
+
+    let mut explicit: HashSet<DataLocale> = Default::default();
+    for explicit_langid in explicit_langids.iter() {
+        explicit.insert(explicit_langid.into());
+        if let Some(locales) = supported_map.get(explicit_langid) {
+            explicit.extend(locales.iter().cloned()); // adds ar-EG-u-nu-latn
+        }
+        if explicit_langid == &LanguageIdentifier::UND {
+            continue;
+        }
+        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+        let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+        let mut iter = fallbacker_with_config.fallback_for(explicit_langid.into());
+        while !iter.get().is_und() {
+            implicit.insert(iter.get().clone());
+            // Inherit aux keys and extension keywords from parent locales
+            let iter_langid = iter.get().get_langid();
+            if let Some(locales) = supported_map.get(&iter_langid) {
+                implicit.extend(locales.iter().cloned()); // adds ar-u-nu-latn
+                for locale in locales {
+                    let mut morphed_locale = locale.clone();
+                    morphed_locale.set_langid(explicit_langid.clone());
+                    explicit.insert(morphed_locale); // adds ar-SA-u-nu-latn
+                }
+            }
+            iter.step();
+        }
+    }
+    Ok(ExplicitImplicitLocaleSets { explicit, implicit })
 }
 
 /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
@@ -409,7 +529,7 @@ fn select_locales_for_key(
     provider: &dyn ExportableProvider,
     key: DataKey,
     fallback: FallbackMode,
-    locales: Option<&HashSet<LanguageIdentifier>>,
+    explicit_langids: Option<&HashSet<LanguageIdentifier>>,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
     fallbacker: &Lazy<
@@ -417,28 +537,43 @@ fn select_locales_for_key(
         impl FnOnce() -> Result<LocaleFallbacker, DataError>,
     >,
 ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-    let mut result = provider
+    // A map from langid to data locales. Keys that have aux keys or extension keywords
+    // may have multiple data locales per langid.
+    let mut supported_map: HashMap<LanguageIdentifier, HashSet<DataLocale>> = Default::default();
+    for locale in provider
         .supported_locales_for_key(key)
         .map_err(|e| e.with_key(key))?
-        .into_iter()
-        .collect::<HashSet<DataLocale>>();
+    {
+        use std::collections::hash_map::Entry;
+        match supported_map.entry(locale.get_langid()) {
+            Entry::Occupied(mut entry) => entry.get_mut().insert(locale),
+            Entry::Vacant(entry) => entry.insert(Default::default()).insert(locale),
+        };
+    }
 
     if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
         || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
     {
-        result.retain(|locale| {
-            let model = crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
-            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let model =
+                    crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
+                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+            });
+            !locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(result);
+        return Ok(supported_map.into_values().flatten().collect());
     } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
-        result.retain(|locale| {
-            let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
-            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
+                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+            });
+            !locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(result);
+        return Ok(supported_map.into_values().flatten().collect());
     } else if key == icu_collator::provider::CollationDataV1Marker::KEY
         || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
         || key == icu_collator::provider::CollationJamoV1Marker::KEY
@@ -446,60 +581,58 @@ fn select_locales_for_key(
         || key == icu_collator::provider::CollationReorderingV1Marker::KEY
         || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
     {
-        result.retain(|locale| {
-            let Some(collation) = locale
-                .get_unicode_ext(&key!("co"))
-                .and_then(|co| co.as_single_subtag().copied())
-            else {
-                return true;
-            };
-            additional_collations.contains(collation.as_str())
-                || if collation.starts_with("search") {
-                    additional_collations.contains("search*")
-                } else {
-                    !["big5han", "gb2312"].contains(&collation.as_str())
-                }
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let Some(collation) = locale
+                    .get_unicode_ext(&key!("co"))
+                    .and_then(|co| co.as_single_subtag().copied())
+                else {
+                    return true;
+                };
+                additional_collations.contains(collation.as_str())
+                    || if collation.starts_with("search") {
+                        additional_collations.contains("search*")
+                    } else {
+                        !["big5han", "gb2312"].contains(&collation.as_str())
+                    }
+            });
+            !locales.is_empty()
         });
     }
 
-    result = match (locales, fallback) {
+    let result = match (explicit_langids, fallback) {
         // Case 1: `None` simply exports all supported locales for this key.
-        (None, _) => result,
+        (None, _) => supported_map.into_values().flatten().collect(),
         // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
         // one of the explicit locales. This ensures extensions are included. In addition, any
         // explicit locales are added to the list, even if they themselves don't contain data;
         // fallback should be performed upon exporting.
-        (Some(explicit), FallbackMode::Preresolved) => result
-            .into_iter()
-            .chain(explicit.iter().map(|langid| langid.into()))
-            .filter(|locale| explicit.contains(&locale.get_langid()))
-            .collect(),
+        (Some(explicit_langids), FallbackMode::Preresolved) => {
+            let ExplicitImplicitLocaleSets { explicit, .. } =
+                make_explicit_implicit_sets(key, explicit_langids, &supported_map, fallbacker)?;
+            explicit
+        }
         // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-        (Some(explicit), _) => {
-            let include_und = explicit.contains(&LanguageIdentifier::UND);
-            let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
-            let mut implicit = HashSet::new();
-            // TODO: Make including the default locale configurable
-            implicit.insert(DataLocale::default());
+        (Some(explicit_langids), _) => {
+            let include_und = explicit_langids.contains(&LanguageIdentifier::UND);
+
+            let ExplicitImplicitLocaleSets { explicit, implicit } =
+                make_explicit_implicit_sets(key, explicit_langids, &supported_map, fallbacker)?;
+
             let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
             let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
-            for locale in explicit.iter() {
-                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                while !iter.get().is_und() {
-                    implicit.insert(iter.get().clone());
-                    iter.step();
-                }
-            }
-
-            result
-                .into_iter()
+            supported_map
+                .into_values()
+                .flatten()
                 .chain(explicit.iter().cloned())
-                .filter(|locale| {
-                    if implicit.contains(locale) {
+                .filter(|locale_orig| {
+                    let mut locale = locale_orig.clone();
+                    locale.remove_aux();
+                    if implicit.contains(&locale) {
                         return true;
                     }
-                    if explicit.contains(locale) {
+                    if explicit.contains(&locale) {
                         return true;
                     }
                     if locale.is_langid_und() && include_und {
@@ -520,14 +653,14 @@ fn select_locales_for_key(
                     {
                         return false;
                     }
-                    let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                    let mut iter = fallbacker_with_config.fallback_for(locale);
                     while !iter.get().is_und() {
                         if explicit.contains(iter.get()) {
                             return true;
                         }
                         iter.step();
                     }
-                    log::trace!("Filtered out: {key}/{locale}");
+                    log::trace!("Filtered out: {key}/{locale_orig}"); // this will print aux keys too but it avoids a clone
                     false
                 })
                 .collect()
@@ -535,6 +668,23 @@ fn select_locales_for_key(
     };
 
     Ok(result)
+}
+
+struct DisplayDuration(pub Duration);
+
+impl fmt::Display for DisplayDuration {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let nanos = self.0.as_nanos();
+        if nanos > 100_000_000 {
+            write!(f, "{:.3}s", self.0.as_secs_f64())
+        } else if nanos > 1_000_000 {
+            write!(f, "{:.3}ms", (nanos as f64) / 1e6)
+        } else if nanos > 1_000 {
+            write!(f, "{:.3}µs", (nanos as f64) / 1e3)
+        } else {
+            write!(f, "{}ns", nanos)
+        }
+    }
 }
 
 #[test]
@@ -621,7 +771,7 @@ fn test_collation_filtering() {
             Some(&HashSet::from_iter([cas.language.clone()])),
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
-            &once_cell::sync::Lazy::new(|| unreachable!()),
+            &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
         )
         .unwrap()
         .into_iter()

@@ -3,7 +3,7 @@
     "en": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "en"
       },
@@ -163,6 +163,8 @@
           "IM": "Isle of Man",
           "IN": "India",
           "IO": "British Indian Ocean Territory",
+          "IO-alt-biot": "British Indian Ocean Territory",
+          "IO-alt-chagos": "Chagos Archipelago",
           "IQ": "Iraq",
           "IR": "Iran",
           "IS": "Iceland",

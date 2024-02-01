@@ -11,9 +11,18 @@ use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::{ule::UnvalidatedStr, ZeroMap};
 
+size_test!(
+    DateSymbolsV1,
+    date_symbols_v1_size,
+    pinned = 3896,
+    nightly = 3792
+);
+
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+#[doc = date_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -64,9 +73,18 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
+size_test!(
+    TimeSymbolsV1,
+    time_symbols_v1_size,
+    pinned = 896,
+    nightly = 768
+);
+
 /// Symbol data for the day periods needed to format a time.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+#[doc = time_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -251,6 +269,27 @@ macro_rules! symbols {
                 /// The symbol data for "stand-alone" style symbols.
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
+            }
+
+            #[cfg(any(feature = "datagen", feature = "experimental"))]
+            impl<'data> ContextsV1<'data> {
+                /// Convenience function to return stand-alone abbreviated as an `Option<&>`.
+                pub(crate) fn stand_alone_abbreviated(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref())
+                }
+                /// Convenience function to return stand-alone wide as an `Option<&>`.
+                pub(crate) fn stand_alone_wide(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.wide.as_ref())
+                }
+                /// Convenience function to return stand-alone narrow as an `Option<&>`.
+                pub(crate) fn stand_alone_narrow(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.narrow.as_ref())
+                }
+                /// Convenience function to return stand-alone short as an `Option<&>`.
+                #[allow(dead_code)] // not all symbols have a short variant
+                pub(crate) fn stand_alone_short(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.short.as_ref())
+                }
             }
         }
     };

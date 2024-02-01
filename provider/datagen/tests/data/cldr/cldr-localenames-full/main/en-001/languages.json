@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "en",
         "territory": "001"
@@ -81,6 +81,7 @@
           "bjn": "Banjar",
           "bkm": "Kom",
           "bla": "Siksika",
+          "blo": "Anii",
           "blt": "Tai Dam",
           "bm": "Bambara",
           "bn": "Bangla",
@@ -341,6 +342,7 @@
           "kv": "Komi",
           "kw": "Cornish",
           "kwk": "Kwakʼwala",
+          "kxv": "Kuvi",
           "ky": "Kyrgyz",
           "ky-alt-variant": "Kirghiz",
           "la": "Latin",
@@ -396,7 +398,7 @@
           "mgo": "Metaʼ",
           "mh": "Marshallese",
           "mi": "Māori",
-          "mic": "Mi'kmaq",
+          "mic": "Mi'kmaw",
           "min": "Minangkabau",
           "mk": "Macedonian",
           "ml": "Malayalam",
@@ -649,6 +651,7 @@
           "vi": "Vietnamese",
           "vls": "West Flemish",
           "vmf": "Main-Franconian",
+          "vmw": "Makhuwa",
           "vo": "Volapük",
           "vot": "Votic",
           "vro": "Võro",
@@ -664,6 +667,7 @@
           "xal": "Kalmyk",
           "xh": "Xhosa",
           "xmf": "Mingrelian",
+          "xnr": "Kangri",
           "xog": "Soga",
           "yao": "Yao",
           "yap": "Yapese",

@@ -5,7 +5,7 @@
 [package]
 name = "icu_transliterate"
 description = "API for Transliteration"
-version = "0.1.1"
+version = "0.1.2"
 license-file = "LICENSE"
 
 authors.workspace = true
@@ -24,6 +24,7 @@ icu_provider = { workspace = true, features = ["macros", "experimental"] }
 icu_locid = { workspace = true }
 icu_collections = { workspace = true }
 icu_normalizer = { workspace = true }
+writeable = { workspace = true }
 
 icu_properties = { workspace = true, optional = true }
 icu_unicodeset_parse = { workspace = true, optional = true }

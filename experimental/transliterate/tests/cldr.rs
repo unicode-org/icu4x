@@ -4,59 +4,59 @@
 
 // TODO(#3736): find a way to keep cldr_testData uptodate
 
-use icu_locid::Locale;
 use icu_transliterate::Transliterator;
-use std::path::PathBuf;
 
 include!("data/baked/mod.rs");
 
 #[test]
 fn test_all_cldr() {
-    let mut in_order =
-        std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/fixtures"))
-            .unwrap()
-            .map(|x| x.unwrap().path())
+    for (locale, data) in [
+        (
+            "de-t-de-d0-ascii",
+            include_str!("data/fixtures/de-t-de-d0-ascii.txt"),
+        ),
+        (
+            "el-Latn-t-el-m0-bgn",
+            include_str!("data/fixtures/el-Latn-t-el-m0-bgn.txt"),
+        ),
+        (
+            "und-Arab-t-und-beng",
+            include_str!("data/fixtures/und-Arab-t-und-beng.txt"),
+        ),
+        (
+            "und-t-d0-publish",
+            include_str!("data/fixtures/und-t-d0-publish.txt"),
+        ),
+        (
+            "und-t-s0-publish",
+            include_str!("data/fixtures/und-t-s0-publish.txt"),
+        ),
+        (
+            "und-t-und-latn-d0-ascii",
+            include_str!("data/fixtures/und-t-und-latn-d0-ascii.txt"),
+        ),
+    ] {
+        let t =
+            Transliterator::try_new_unstable(locale.parse().unwrap(), &BakedDataProvider).unwrap();
+        let test_cases = data
+            .lines()
+            .filter(|x| !x.starts_with('#'))
+            .map(|l| l.split_once('\t').unwrap())
             .collect::<Vec<_>>();
-    in_order.sort();
-    for path in in_order {
-        if path.ends_with("_readme.txt") {
-            continue;
+
+        eprintln!("Testing {:?} with {} test cases", locale, test_cases.len());
+
+        for (idx, (input, output)) in test_cases.into_iter().enumerate() {
+            eprintln!(
+                "Testing testcase {}! Input: {:?} Output: {:?}",
+                idx + 1,
+                input,
+                output
+            );
+            let actual = t.transliterate(input.to_string());
+            assert_eq!(actual, output, "Transliterator {:?} failed", locale);
+            eprintln!("Passed testcase {}!", idx + 1);
         }
-        let locale = path.file_stem().unwrap().to_str().unwrap();
-        let locale: Locale = locale.parse().unwrap();
-        let t = Transliterator::try_new_unstable(locale, &BakedDataProvider).unwrap();
-        test_file(t, path);
+        eprintln!("Transliterator {:?} passed", locale);
     }
-}
-
-fn test_file(t: Transliterator, path: PathBuf) {
-    let data = std::fs::read_to_string(&path).unwrap();
-    let lines = data.lines().filter(|x| !x.starts_with('#'));
-    let test_cases = lines
-        .map(|l| l.split_once('\t').unwrap())
-        .collect::<Vec<_>>();
-
-    eprintln!(
-        "Testing {:?} with {} test cases",
-        path.file_stem().unwrap(),
-        test_cases.len()
-    );
-
-    for (idx, (input, output)) in test_cases.into_iter().enumerate() {
-        eprintln!(
-            "Testing testcase {}! Input: {:?} Output: {:?}",
-            idx + 1,
-            input,
-            output
-        );
-        let actual = t.transliterate(input.to_string());
-        assert_eq!(
-            actual,
-            output,
-            "Transliterator {:?} failed",
-            path.file_stem().unwrap()
-        );
-        eprintln!("Passed testcase {}!", idx + 1);
-    }
-    eprintln!("Transliterator {:?} passed", path.file_stem().unwrap());
 }

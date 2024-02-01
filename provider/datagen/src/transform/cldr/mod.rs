@@ -7,7 +7,7 @@
 pub mod calendar;
 pub mod characters;
 pub mod cldr_serde;
-#[cfg(feature = "icu_singlenumberformatter")]
+#[cfg(test)] // keep as test until bakeddata is needed
 pub mod currency;
 pub mod datetime;
 pub mod decimal;
@@ -16,6 +16,8 @@ pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
+#[cfg(test)] // keep as test until bakeddata is needed
+pub mod percent;
 #[cfg(feature = "icu_personnames")]
 pub mod personnames;
 pub mod plurals;

@@ -3,7 +3,7 @@
     "tr": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "tr"
       },
@@ -72,6 +72,7 @@
           "bfd": "Bafut",
           "bfq": "Badaga",
           "bg": "Bulgarca",
+          "bgc": "Haryanvi dili",
           "bgn": "Batı Balochi",
           "bho": "Arayanice",
           "bi": "Bislama",

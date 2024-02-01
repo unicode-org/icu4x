@@ -9,6 +9,7 @@ description = "Build all permutations of all features for the provided chunk ind
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
+env = { RUSTFLAGS = "-Dwarnings" }
 command = "cargo"
 args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
@@ -31,15 +32,17 @@ args = ["build-all-features"]
 [tasks.test-all-features]
 description = "Run all Rust tests with all features and targets"
 category = "ICU4X Development"
+# This might be required if Windows runs out of disk again
+# env = { RUSTFLAGS = "-Cdebuginfo=none -Cdebug-assertions=true", condition = { platforms = ["windows"] } }
+env = { RUSTFLAGS = "--cfg=icu4x_run_size_tests" }
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 
-[tasks.test-all-features-windows]
-description = "Run all Rust tests with all features and targets (with special changes to reduce Windows disk space)"
+[tasks.test-dev-without-assertions]
+description = "Run all Rust unit and integration tests without debug assertions (GIGO mode)"
 category = "ICU4X Development"
 command = "cargo"
-args = ["test", "--all-features", "--all-targets", "--no-fail-fast", "--profile", "windows-test-ci"]
-
+args = ["test", "--profile=dev-without-assertions", "--all-features", "--tests", "--no-fail-fast"]
 
 [tasks.test-docs]
 description = "Run all Rust doctests with all features"
@@ -57,15 +60,14 @@ exit_on_error true
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-cd docs/tutorials/testing
+cd docs/tutorials/rust
 
-exec --fail-on-error cargo --config patch.toml test -p tutorials-test
-exec --fail-on-error cargo --config patch.toml check -p tutorial_default
-exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
-exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
-exec --fail-on-error cargo --config patch.toml check -p tutorial_sync
-# tutorial_baked requires a datagen release build
-# tutorial_custom_compiled doesn't compile without data
+exec --fail-on-error cargo check --manifest-path default/Cargo.toml
+exec --fail-on-error cargo check --manifest-path buffer/Cargo.toml
+exec --fail-on-error cargo check --manifest-path experimental/Cargo.toml
+exec --fail-on-error cargo check --manifest-path sync/Cargo.toml
+# baked requires a datagen release build
+# custom_compiled doesn't compile without data
 '''
 
 [tasks.test-tutorials-local]
@@ -80,27 +82,26 @@ set_env CARGO_TARGET_DIR ${project_dir}/target
 
 exec --fail-on-error cargo build -p icu_datagen
 
-cd docs/tutorials
+cd docs/tutorials/rust
 
-mkdir crates/bin
-cp ${project_dir}/target/debug/icu4x-datagen crates/bin/icu4x-datagen
+mkdir bin
+cp ${project_dir}/target/debug/icu4x-datagen bin/icu4x-datagen
 
-exec --fail-on-error cargo --config testing/patch.toml test -p tutorials-test
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_default
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_experimental
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_sync
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_baked
+exec --fail-on-error cargo run --manifest-path default/Cargo.toml
+exec --fail-on-error cargo run --manifest-path experimental/Cargo.toml
+exec --fail-on-error cargo run --manifest-path sync/Cargo.toml
+exec --fail-on-error cargo run --manifest-path baked/Cargo.toml
 
 # Copy our own tutorial_buffer to speed up the task
-exec --fail-on-error cargo --config testing/patch.toml build -p tutorial_buffer
-mkdir crates/buffer/bin
-cp ${project_dir}/target/debug/tutorial_buffer crates/buffer/bin/tutorial_buffer
-exec --fail-on-error make -C crates/buffer buffer_data.postcard
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_buffer
+exec --fail-on-error cargo build --manifest-path buffer/Cargo.toml
+mkdir buffer/bin
+cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
+exec --fail-on-error make -C buffer buffer_data.postcard
+exec --fail-on-error cargo run --manifest-path buffer/Cargo.toml
 
-exec --fail-on-error make -C crates/custom_compiled baked_data/mod.rs
-set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/crates/custom_compiled/baked_data
-exec --fail-on-error cargo run --config testing/patch.toml -p tutorial_custom_compiled
+exec --fail-on-error make -C custom_compiled baked_data/mod.rs
+set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/rust/custom_compiled/baked_data
+exec --fail-on-error cargo run --manifest-path custom_compiled/Cargo.toml
 '''
 
 [tasks.test-tutorials-cratesio]
@@ -110,31 +111,45 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd docs/tutorials
+cd docs/tutorials/rust
 
 # Delete the lockfile to make a clean crates.io build
 rm -f Cargo.lock
+# Delete the patch file to use crates.io
+rm -f ../.cargo/config.toml
 
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
-
-
-exec --fail-on-error cargo test --release -p tutorials-test
-exec --fail-on-error cargo run --release -p tutorial_default
-exec --fail-on-error cargo run --release -p tutorial_experimental
-exec --fail-on-error cargo run --release -p tutorial_sync
-exec --fail-on-error cargo run --release -p tutorial_baked
+exec --fail-on-error cargo run --release --manifest-path default/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path sync/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path baked/Cargo.toml
 
 # Build the postcard file
 # Use the full Makefile task
-exec --fail-on-error cargo build --release -p tutorial_buffer
-exec --fail-on-error make -C crates/buffer
-exec --fail-on-error cargo run --release -p tutorial_buffer
+exec --fail-on-error cargo build --release --manifest-path buffer/Cargo.toml
+exec --fail-on-error make -C buffer
+exec --fail-on-error cargo run --release --manifest-path buffer/Cargo.toml
 
 # Build custom compiled data
 # Use the full Makefile task
-exec --fail-on-error make -C crates/custom_compiled
-set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/crates/custom_compiled/baked_data
-exec --fail-on-error cargo run --release -p tutorial_custom_compiled
+exec --fail-on-error make -C custom_compiled
+set_env ICU4X_DATA_DIR ${pwd}/custom_compiled/baked_data
+exec --fail-on-error cargo run --release --manifest-path custom_compiled/Cargo.toml
 '''
+
+[tasks.install-cortex-7]
+description = "Install the thumbv7m target"
+category = "ICU4X Development"
+command = "rustup"
+args = [
+    "target", "add", "thumbv7m-none-eabi",
+]
+
+[tasks.check-nostd]
+description = "Ensure ICU4X builds on no-std"
+category = "ICU4X Development"
+dependencies = ["install-cortex-7"]
+command = "cargo"
+args = ["check", "--package", "icu_capi", "--target", "thumbv7m-none-eabi", "--no-default-features", "--features=buffer_provider"]

@@ -19,7 +19,6 @@ use icu_timezone::provider::MetazonePeriodV1;
 use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::collections::HashMap;
 use tinystr::TinyStr8;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
@@ -42,8 +41,11 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
+/// Returns a map from time zone long identifier to time zone BCP-47 ID.
+///
+/// For example: "America/Chicago" to "uschi"
 pub(crate) fn compute_bcp47_tzids_btreemap(
-    bcp47_tzids_resource: &HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<String, TimeZoneBcp47Id> {
     let mut bcp47_tzids = BTreeMap::new();
     for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
@@ -56,10 +58,41 @@ pub(crate) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids
 }
 
-fn compute_meta_zone_ids_hashmap(
-    meta_zone_ids_resource: &HashMap<MetazoneId, MetazoneAliasData>,
-) -> HashMap<String, MetazoneId> {
-    let mut meta_zone_ids = HashMap::new();
+/// Returns a map from BCP-47 ID to a single canonical long identifier.
+///
+/// For example: "inccu" to "Asia/Kolkata"
+pub(crate) fn compute_canonical_tzids_btreemap(
+    bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+) -> BTreeMap<TimeZoneBcp47Id, String> {
+    let mut canonical_tzids = BTreeMap::new();
+    for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
+        if Some(true) == bcp47_tzid_data.deprecated {
+            // skip
+        } else if let Some(iana) = &bcp47_tzid_data.iana {
+            canonical_tzids.insert(*bcp47_tzid, iana.clone());
+        } else if let Some(iana) = &bcp47_tzid_data
+            .alias
+            .as_ref()
+            .and_then(|s| s.split(' ').next())
+        {
+            canonical_tzids.insert(*bcp47_tzid, String::from(*iana));
+        } else {
+            debug_assert!(
+                false,
+                "Could not find canonical IANA for bcp47 time zone: {bcp47_tzid:?}"
+            );
+        }
+    }
+    canonical_tzids
+}
+
+/// Returns a map from metazone long identifier to metazone BCP-47 ID.
+///
+/// For example: "America_Central" to "amce"
+fn compute_meta_zone_ids_btreemap(
+    meta_zone_ids_resource: &BTreeMap<MetazoneId, MetazoneAliasData>,
+) -> BTreeMap<String, MetazoneId> {
+    let mut meta_zone_ids = BTreeMap::new();
     for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
     }
@@ -94,27 +127,15 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
 
 impl Location {
     fn exemplar_city(&self) -> Option<String> {
-        match self {
-            Self::City(place) => Some(place.exemplar_city.clone()),
-            Self::Long(place) => place.exemplar_city.clone(),
-            Self::Short(place) => place.exemplar_city.clone(),
-        }
+        self.exemplar_city.clone()
     }
 
     fn long_metazone_names(&self) -> Option<ZoneFormat> {
-        match self {
-            Self::City(place) => place.long.clone(),
-            Self::Long(place) => Some(place.long.clone()),
-            Self::Short(place) => place.long.clone(),
-        }
+        self.long.clone()
     }
 
     fn short_metazone_names(&self) -> Option<ZoneFormat> {
-        match self {
-            Self::City(place) => place.short.clone(),
-            Self::Long(place) => place.short.clone(),
-            Self::Short(place) => Some(place.short.clone()),
-        }
+        self.short.clone()
     }
 }
 
@@ -175,13 +196,13 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
         let data = other.meta_zone_periods_resource;
         let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
-        let meta_zone_id_data = &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
+        let meta_zone_id_data = &compute_meta_zone_ids_btreemap(other.meta_zone_ids_resource);
         Self(
             data.iter()
                 .flat_map(|(key, zone)| match zone {
                     ZonePeriod::Region(periods) => match bcp47_tzid_data.get(key) {
                         Some(bcp47) => {
-                            vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                            vec![(*bcp47, periods, meta_zone_id_data)]
                         }
                         None => panic!("Cannot find bcp47 for {key:?}."),
                     },
@@ -192,14 +213,14 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                             key.push('/');
                             key.push_str(inner_key);
                             match location_or_subregion {
-                                MetaLocationOrSubRegion::Location(periods) => match bcp47_tzid_data
-                                    .get(&key)
-                                {
-                                    Some(bcp47) => {
-                                        vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                                MetaLocationOrSubRegion::Location(periods) => {
+                                    match bcp47_tzid_data.get(&key) {
+                                        Some(bcp47) => {
+                                            vec![(*bcp47, periods, meta_zone_id_data)]
+                                        }
+                                        None => panic!("Cannot find bcp47 for {key:?}."),
                                     }
-                                    None => panic!("Cannot find bcp47 for {key:?}."),
-                                },
+                                }
                                 MetaLocationOrSubRegion::SubRegion(subregion) => subregion
                                     .iter()
                                     .flat_map(move |(inner_inner_key, periods)| {
@@ -208,11 +229,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                         key.push_str(inner_inner_key);
                                         match bcp47_tzid_data.get(&key) {
                                             Some(bcp47) => {
-                                                vec![(
-                                                    *bcp47,
-                                                    periods.clone(),
-                                                    meta_zone_id_data.clone(),
-                                                )]
+                                                vec![(*bcp47, periods, meta_zone_id_data)]
                                             }
                                             None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
@@ -235,7 +252,7 @@ macro_rules! long_short_impls {
                 let data = other.time_zone_names_resource;
                 let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
                 let meta_zone_id_data =
-                    &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
+                    &compute_meta_zone_ids_btreemap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
                         None => Default::default(),
@@ -322,7 +339,7 @@ macro_rules! long_short_impls {
                 let data = other.time_zone_names_resource;
                 let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
                 let meta_zone_id_data =
-                    &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
+                    &compute_meta_zone_ids_btreemap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
                         None => Default::default(),
@@ -447,16 +464,16 @@ fn iterate_zone_format_for_time_zone_id(
         .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
 }
 
-fn metazone_periods_iter(
+fn metazone_periods_iter<'a>(
     pair: (
         TimeZoneBcp47Id,
-        Vec<MetazoneForPeriod>,
-        HashMap<String, MetazoneId>,
+        &'a Vec<MetazoneForPeriod>,
+        &'a BTreeMap<String, MetazoneId>,
     ),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> + 'a {
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
-        .into_iter()
+        .iter()
         .map(move |period| match &period.uses_meta_zone.from {
             Some(from) => {
                 // TODO(#2127): Ideally this parsing can move into a library function

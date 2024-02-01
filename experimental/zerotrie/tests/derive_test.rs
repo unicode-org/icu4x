@@ -4,6 +4,7 @@
 
 #![allow(non_camel_case_types, non_snake_case)]
 
+use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerotrie::ZeroTrie;
 use zerotrie::ZeroTrieExtendedCapacity;
 use zerotrie::ZeroTriePerfectHash;
@@ -64,6 +65,30 @@ fn bake_ZeroTrieSimpleAscii_ZeroVec() {
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+struct DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    _data: ZeroAsciiIgnoreCaseTrie<ZeroVec<'data, u8>>,
+}
+
+#[test]
+#[cfg(all(feature = "databake", feature = "alloc"))]
+fn bake_ZeroAsciiIgnoreCaseTrie_ZeroVec() {
+    use databake::*;
+    extern crate std;
+    test_bake!(
+        DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec<'static>,
+        crate::DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec {
+            _data: zerotrie::ZeroAsciiIgnoreCaseTrie {
+                store: zerovec::ZeroVec::new(),
+            }
+        },
+    );
+}
+
+#[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
+#[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
 struct DeriveTest_ZeroTriePerfectHash_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroTriePerfectHash<ZeroVec<'data, u8>>,
@@ -95,7 +120,6 @@ struct DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'data> {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieExtendedCapacity_ZeroVec() {
     use databake::*;

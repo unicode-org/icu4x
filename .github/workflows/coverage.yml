@@ -15,14 +15,14 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v3
+      - uses:                   actions/checkout@v4
 
       ## Coverage steps
 
       - name: Get grcov version
         id: grcov-version
         run: |
-          echo "::set-output name=hash::$(cargo search grcov | grep '^grcov =' | md5sum)"
+          echo "hash=$(cargo search grcov | grep '^grcov =' | md5sum)" >> $GITHUB_OUTPUT
         shell: bash
       - name: Attempt to load cached grcov
         uses: actions/cache@v3
@@ -39,7 +39,7 @@ jobs:
   
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2022-09-26
+          toolchain:            nightly-2022-12-26
           override:             true
 
       - run: cargo test --all-features --no-fail-fast

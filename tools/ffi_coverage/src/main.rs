@@ -47,10 +47,7 @@ fn main() {
         .flat_map(collect_public_types)
         .map(|(path_vec, typ)| {
             let mut path = ast::Path::empty();
-            path.elements = path_vec
-                .into_iter()
-                .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
-                .collect();
+            path.elements = path_vec.into_iter().map(ast::Ident::from).collect();
             RustLinkInfo { path, typ }
         })
         .filter(|rl| {
@@ -63,21 +60,20 @@ fn main() {
         })
         .collect::<BTreeSet<_>>();
 
-    let diplomat_crate = PathBuf::from(concat!(
+    let capi_crate = PathBuf::from(concat!(
         std::env!("CARGO_MANIFEST_DIR"),
-        "/../../ffi/diplomat/src/lib.rs"
+        "/../../ffi/capi/src/lib.rs"
     ));
-    eprintln!("Loading icu_capi crate from {diplomat_crate:?}");
-    let diplomat_types =
-        ast::File::from(&syn_inline_mod::parse_and_inline_modules(&diplomat_crate))
-            .all_rust_links()
-            .into_iter()
-            .cloned()
-            .map(|rl| RustLinkInfo {
-                path: rl.path,
-                typ: rl.typ,
-            })
-            .collect::<BTreeSet<_>>();
+    eprintln!("Loading icu_capi crate from {capi_crate:?}");
+    let capi_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(&capi_crate))
+        .all_rust_links()
+        .into_iter()
+        .cloned()
+        .map(|rl| RustLinkInfo {
+            path: rl.path,
+            typ: rl.typ,
+        })
+        .collect::<BTreeSet<_>>();
 
     let mut file_anchor = None;
     let mut stdout_anchor = None;
@@ -90,7 +86,7 @@ fn main() {
     };
     writeln!(out_stream, "{FILE_HEADER}").unwrap();
     doc_types
-        .difference(&diplomat_types)
+        .difference(&capi_types)
         .for_each(|item| writeln!(out_stream, "{item}").unwrap());
 }
 
@@ -105,7 +101,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2022-09-26",
+                    "nightly-2022-12-26",
                     "cargo",
                     "rustdoc",
                     "-p",
@@ -350,15 +346,6 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(types, path, ast::DocType::Constant);
                     }
                     ItemEnum::Function(_) => {
-                        insert_ty(types, path, ast::DocType::Fn);
-                    }
-                    ItemEnum::Macro(_) => {
-                        insert_ty(types, path, ast::DocType::Macro);
-                    }
-                    ItemEnum::Typedef(_) => {
-                        insert_ty(types, path, ast::DocType::Typedef);
-                    }
-                    ItemEnum::Method(_) => {
                         let doc_type = match inside {
                             Some(In::Enum(tr)) | Some(In::Struct(tr))
                                 if check_ignored_assoc_item(item_name, tr) =>
@@ -368,9 +355,15 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             Some(In::Enum(_)) => ast::DocType::FnInEnum,
                             Some(In::Trait) => ast::DocType::FnInTrait,
                             Some(In::Struct(_)) => ast::DocType::FnInStruct,
-                            _ => panic!("Method needs In"),
+                            _ => ast::DocType::Fn,
                         };
                         insert_ty(types, path, doc_type);
+                    }
+                    ItemEnum::Macro(_) => {
+                        insert_ty(types, path, ast::DocType::Macro);
+                    }
+                    ItemEnum::Typedef(_) => {
+                        insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Variant(_) => {
                         insert_ty(types, path, ast::DocType::EnumVariant);

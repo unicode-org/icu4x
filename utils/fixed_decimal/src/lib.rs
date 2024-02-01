@@ -73,6 +73,9 @@ use displaydoc::Display;
 pub use integer::FixedInteger;
 pub use scientific::ScientificDecimal;
 
+#[cfg(feature = "experimental")]
+pub use decimal::RoundingIncrement;
+
 /// An error involving FixedDecimal operations or conversion.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]

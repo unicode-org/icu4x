@@ -26,13 +26,12 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
+version = "1.4.1"
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-
 # ICU components
 icu_calendar = { workspace = true, features = ["datagen"] }
 icu_casemap = { workspace = true, features = ["datagen"] }
@@ -51,11 +50,11 @@ icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
 icu_personnames = { workspace = true, features = ["datagen"], optional = true }
 icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
-icu_singlenumberformatter = { workspace = true, features = ["datagen"], optional = true}
 icu_transliterate = { workspace = true, features = ["datagen"], optional = true }
-icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true}
+icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true }
 
 # ICU infrastructure
+calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
@@ -70,12 +69,12 @@ zerovec = { workspace = true, features = ["serde", "yoke"] }
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 icu_provider_fs = { workspace = true, features = ["export"], optional = true }
 crlify = { workspace = true, optional = true }
-databake = { workspace = true, optional = true }
-syn = { version = "2", features = ["parsing"], optional = true }
+databake = { workspace = true, optional = true}
+proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = "1.9"
+elsa = "1.10"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
@@ -92,10 +91,15 @@ rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
 serde-tuple-vec-map = { version = "1.0.1" }
 
+num-bigint = { version = "0.4.4", default-features = false, optional = true }
+num-rational = { version = "0.4", default-features = false, optional = true }
+
+
 # Dependencies for "bin" feature
 clap = { version = "4", optional = true, features = ["derive"] }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
+either = "1.9.0"
 
 [dev-dependencies]
 crlify = { path = "../../utils/crlify" }
@@ -103,9 +107,13 @@ icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
+# Pre-experimental components with limited data generation
+icu_dimension = { path = "../../experimental/dimension", features = ["datagen"] }
+icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
+
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
-baked_exporter = ["dep:crlify", "dep:databake", "dep:syn"]
+baked_exporter = ["dep:crlify", "dep:databake", "dep:proc-macro2"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
 legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter"]
@@ -125,17 +133,15 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_personnames = ["dep:icu_personnames"]
 icu_relativetime = ["dep:icu_relativetime"]
-icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 icu_transliterate = ["dep:icu_transliterate"]
-icu_unitsconversion = ["dep:icu_unitsconversion"]
+icu_unitsconversion = ["dep:icu_unitsconversion", "dep:num-bigint", "dep:num-rational"]
 experimental_components = [
     "icu_compactdecimal",
     "icu_displaynames",
     "icu_personnames",
     "icu_relativetime",
-    "icu_singlenumberformatter",
     "icu_transliterate",
-    "icu_unitsconversion"
+    "icu_unitsconversion",
 ]
 
 [[bin]]
@@ -143,17 +149,12 @@ name = "icu4x-datagen"
 path = "src/bin/datagen/mod.rs"
 required-features = ["bin"]
 
-[[test]]
-name = "make-testdata"
-path = "tests/make-testdata.rs"
-required-features = ["fs_exporter", "use_wasm"]
-
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_personnames", "icu_relativetime", "icu_singlenumberformatter", "icu_transliterate", "icu_unitsconversion"]
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_personnames", "icu_relativetime", "icu_transliterate"]
 # We have a *lot* of features here
 max_combination_size = 2

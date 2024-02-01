@@ -27,7 +27,7 @@ icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
 icu_locid = { workspace = true }
 icu_plurals = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true, features = ["macros", "experimental"] }
 icu_timezone = { workspace = true }
 smallvec = "1.6"
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
@@ -116,7 +116,11 @@ required-features = ["compiled_data"]
 
 [[test]]
 name = "resolved_components"
-required-features = ["experimental"]
+required-features = ["experimental", "compiled_data"]
+
+[[test]]
+name = "simple_test"
+required-features = ["compiled_data"]
 
 [[test]]
 name = "skeleton_serialization"

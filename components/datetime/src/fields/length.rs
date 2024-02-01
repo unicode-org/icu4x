@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::cmp::{Ord, PartialOrd};
+use core::fmt;
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
@@ -54,7 +55,17 @@ pub enum FieldLength {
     Six,
     /// A fixed size format for numeric-only fields that is at most 127 digits.
     Fixed(u8),
+    /// FieldLength::One (numeric), but overridden with a different numbering system
+    NumericOverride(FieldNumericOverrides),
 }
+
+/// First index used for numeric overrides in compact FieldLength representation
+///
+/// Currently 17 due to decision in <https://unicode-org.atlassian.net/browse/CLDR-17217>,
+/// may become 16 if the `> 16` is updated to a ` >= 16`
+const FIRST_NUMERIC_OVERRIDE: u8 = 17;
+/// First index used for fixed size formats in compact FieldLength representation
+const FIRST_FIXED: u8 = 128;
 
 impl FieldLength {
     #[inline]
@@ -66,7 +77,10 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
-            FieldLength::Fixed(p) => 128 + p.min(&127), /* truncate to at most 127 digits to avoid overflow */
+            FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
+                .saturating_add(*o as u8)
+                .min(FIRST_FIXED - 1),
+            FieldLength::Fixed(p) => FIRST_FIXED.saturating_add(*p), /* truncate to at most 127 digits to avoid overflow */
         }
     }
 
@@ -80,10 +94,14 @@ impl FieldLength {
             5 => Self::Narrow,
             6 => Self::Six,
             idx => {
-                if idx < 128 {
+                if idx < FIRST_NUMERIC_OVERRIDE {
                     return Err(LengthError::InvalidLength);
                 }
-                Self::Fixed(idx - 128)
+                if idx < FIRST_FIXED {
+                    Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
+                } else {
+                    Self::Fixed(idx - FIRST_FIXED)
+                }
             }
         })
     }
@@ -98,7 +116,20 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
+            FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
             FieldLength::Fixed(p) => p as usize,
+        }
+    }
+
+    /// UTS 35 defines several 1 and 2 symbols to be the same as 3 symbols (abbreviated).
+    /// For example, 'a' represents an abbreviated day period, the same as 'aaa'.
+    ///
+    /// This function maps field lengths 1 and 2 to field length 3.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn numeric_to_abbr(self) -> Self {
+        match self {
+            FieldLength::One | FieldLength::TwoDigit => FieldLength::Abbreviated,
+            other => other,
         }
     }
 }
@@ -142,5 +173,61 @@ unsafe impl ULE for FieldLengthULE {
             Self::validate_byte(*byte)?;
         }
         Ok(())
+    }
+}
+
+/// Various numeric overrides for datetime patterns
+/// as found in CLDR
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::fields),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum FieldNumericOverrides {
+    /// `hanidec`
+    Hanidec = 0,
+    /// `hanidays`
+    Hanidays = 1,
+    /// `hebr`
+    Hebr = 2,
+    /// `romanlow`
+    Romanlow = 3,
+    /// `jpnyear`
+    Jpnyear = 4,
+}
+
+impl TryFrom<u8> for FieldNumericOverrides {
+    type Error = LengthError;
+    fn try_from(other: u8) -> Result<Self, LengthError> {
+        Ok(match other {
+            0 => Self::Hanidec,
+            1 => Self::Hanidays,
+            2 => Self::Hebr,
+            3 => Self::Romanlow,
+            4 => Self::Jpnyear,
+            _ => return Err(LengthError::InvalidLength),
+        })
+    }
+}
+
+impl FieldNumericOverrides {
+    /// Conver this to the corresponding string code
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Hanidec => "hanidec",
+            Self::Hanidays => "hanidays",
+            Self::Hebr => "hebr",
+            Self::Romanlow => "romanlow",
+            Self::Jpnyear => "jpnyear",
+        }
+    }
+}
+
+impl fmt::Display for FieldNumericOverrides {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.as_str().fmt(f)
     }
 }

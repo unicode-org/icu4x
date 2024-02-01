@@ -8,42 +8,45 @@ use icu_datagen::baked_exporter::*;
 use icu_datagen::prelude::*;
 use std::path::Path;
 
-const COMPONENTS: &[(&str, &[DataKey])] = &[
-    ("components/calendar", icu::calendar::provider::KEYS),
-    ("components/casemap", icu::casemap::provider::KEYS),
-    ("components/collator", icu::collator::provider::KEYS),
-    ("components/datetime", icu::datetime::provider::KEYS),
-    ("components/decimal", icu::decimal::provider::KEYS),
-    ("components/list", icu::list::provider::KEYS),
+const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
+
+const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
+    ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
+    ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
+    ("collator", icu::collator::provider::KEYS, REPO_VERSION),
     (
-        "components/locid_transform",
-        icu::locid_transform::provider::KEYS,
+        "compactdecimal",
+        icu::compactdecimal::provider::KEYS,
+        REPO_VERSION,
     ),
-    ("components/normalizer", icu::normalizer::provider::KEYS),
-    ("components/plurals", icu::plurals::provider::KEYS),
-    ("components/properties", icu::properties::provider::KEYS),
-    ("components/segmenter", icu::segmenter::provider::KEYS),
-    ("components/timezone", icu::timezone::provider::KEYS),
+    ("datetime", icu::datetime::provider::KEYS, REPO_VERSION),
+    ("decimal", icu::decimal::provider::KEYS, REPO_VERSION),
     (
-        "experimental/compactdecimal",
-        icu_compactdecimal::provider::KEYS,
-    ),
-    (
-        "experimental/displaynames",
+        "displaynames",
         icu::displaynames::provider::KEYS,
+        REPO_VERSION,
     ),
     ("experimental/personnames", icu::personnames::provider::KEYS),
+    ("list", icu::list::provider::KEYS, REPO_VERSION),
     (
-        "experimental/relativetime",
+        "locid_transform",
+        icu::locid_transform::provider::KEYS,
+        REPO_VERSION,
+    ),
+    ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
+    ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
+    ("properties", icu::properties::provider::KEYS, REPO_VERSION),
+    (
+        "relativetime",
         icu::relativetime::provider::KEYS,
+        REPO_VERSION,
     ),
+    ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
+    ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
     (
-        "experimental/single_number_formatter",
-        icu_singlenumberformatter::provider::KEYS,
-    ),
-    (
-        "experimental/unitsconversion",
+        "unitsconversion",
         icu_unitsconversion::provider::KEYS,
+        REPO_VERSION,
     ),
 ];
 
@@ -59,16 +62,18 @@ fn main() {
     let components = if args.len() == 1 {
         COMPONENTS
             .iter()
-            .map(|(k, v)| (k.to_string(), *v))
+            .map(|(krate, keys, version)| (krate.to_string(), *keys, *version))
             .collect::<Vec<_>>()
     } else {
-        let map = std::collections::HashMap::<&str, &'static [DataKey]>::from_iter(
-            COMPONENTS.iter().copied(),
+        let map = std::collections::HashMap::<&str, (&'static [DataKey], &'static str)>::from_iter(
+            COMPONENTS
+                .iter()
+                .map(|(krate, keys, version)| (*krate, (*keys, *version))),
         );
         args.skip(1)
-            .filter_map(|arg| {
-                map.get(arg.strip_suffix('/').unwrap_or(arg.as_str()))
-                    .map(|k| (arg, *k))
+            .filter_map(|krate| {
+                map.get(krate.as_str())
+                    .map(|(keys, version)| (krate, *keys, *version))
             })
             .collect()
     };
@@ -92,18 +97,52 @@ fn main() {
     options.overwrite = true;
     options.pretty = true;
 
-    for (path, keys) in components {
-        if path == "components/segmenter" {
-            // segmenter uses hardcoded locales internally, so fallback is not necessary.
-            driver.clone().with_fallback_mode(FallbackMode::Hybrid)
-        } else {
-            driver.clone()
+    let template = Path::new("provider/baked/_template_");
+
+    for (component, keys, version) in &components {
+        let path = Path::new("provider/baked").join(component);
+
+        let _ = std::fs::remove_dir_all(&path);
+        for dir in ["", "src", "data"] {
+            std::fs::create_dir(&path.join(dir)).unwrap();
         }
-        .with_keys(keys.iter().copied())
-        .export(
-            &source,
-            BakedExporter::new(Path::new(&path).join("data/data"), options).unwrap(),
-        )
-        .unwrap();
+        for file in [
+            "build.rs",
+            "Cargo.toml",
+            "LICENSE",
+            "README.md",
+            "src/lib.rs",
+        ] {
+            std::fs::write(
+                path.join(file),
+                &std::fs::read_to_string(template.join(file))
+                    .unwrap()
+                    .replace("_component_", component)
+                    .replace("_version_", version)
+                    .replace("_cldr_tag_", DatagenProvider::LATEST_TESTED_CLDR_TAG)
+                    .replace(
+                        "_icuexport_tag_",
+                        DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG,
+                    )
+                    .replace(
+                        "_segmenter_lstm_tag_",
+                        DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+                    ),
+            )
+            .unwrap();
+        }
+
+        driver
+            .clone()
+            .with_keys(keys.iter().copied())
+            .export(
+                &source,
+                BakedExporter::new(path.join("data"), options).unwrap(),
+            )
+            .unwrap();
+
+        for file in ["data/any.rs", "data/mod.rs"] {
+            std::fs::remove_file(path.join(file)).unwrap();
+        }
     }
 }

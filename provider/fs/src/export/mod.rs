@@ -42,13 +42,17 @@
 //! use icu_provider::prelude::*;
 //! use icu_provider_fs::FsDataProvider;
 //!
-//! # let demo_path = std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/json"));
+//! # let demo_path = "tests/data/json";
 //! // Create a filesystem provider reading from the demo directory
 //! let provider = FsDataProvider::try_new(&demo_path)
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Use the provider as a `BufferProvider`
-//! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(&provider, &langid!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+//!     &provider,
+//!     &langid!("en").into(),
+//! )
+//! .unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```

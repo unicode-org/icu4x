@@ -348,13 +348,11 @@ mod test {
     }
 
     #[test]
-    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn bake_FlexZeroVec() {
         test_bake!(
             DeriveTest_FlexZeroVec<'static>,
             crate::yoke_impls::test::DeriveTest_FlexZeroVec {
-                _data: unsafe { crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x01") }
-                    .as_flexzerovec(),
+                _data: crate::vecs::FlexZeroVec::new(),
             },
             zerovec,
         );

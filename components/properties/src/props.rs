@@ -1396,6 +1396,7 @@ impl Script {
     pub const Nabataean: Script = Script(143);
     pub const NagMundari: Script = Script(199);
     pub const Nandinagari: Script = Script(187);
+    pub const Nastaliq: Script = Script(200);
     pub const NewTaiLue: Script = Script(59);
     pub const Newa: Script = Script(170);
     pub const Nko: Script = Script(87);
@@ -1685,6 +1686,13 @@ impl LineBreak {
     pub const EBase: LineBreak = LineBreak(40); // name="EB"
     pub const EModifier: LineBreak = LineBreak(41); // name="EM"
     pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ"
+
+    // Added in ICU 74:
+    pub const Aksara: LineBreak = LineBreak(43); // name="AK"
+    pub const AksaraPrebase: LineBreak = LineBreak(44); // name=AP"
+    pub const AksaraStart: LineBreak = LineBreak(45); // name=AS"
+    pub const ViramaFinal: LineBreak = LineBreak(46); // name=VF"
+    pub const Virama: LineBreak = LineBreak(47); // name=VI"
 }
 
 impl_value_getter! {
@@ -2235,5 +2243,124 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameSparseMapper / PropertyEnumToValueNameSparseMapperBorrowed;
+    }
+}
+
+/// Property Indic_Syllabic_Category.
+/// See UAX #44:
+/// <https://www.unicode.org/reports/tr44/#Indic_Syllabic_Category>.
+///
+/// The numeric value is compatible with `UIndicSyllabicCategory` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(IndicSyllabicCategoryULE)]
+pub struct IndicSyllabicCategory(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl IndicSyllabicCategory {
+    pub const Other: IndicSyllabicCategory = IndicSyllabicCategory(0);
+    pub const Avagraha: IndicSyllabicCategory = IndicSyllabicCategory(1);
+    pub const Bindu: IndicSyllabicCategory = IndicSyllabicCategory(2);
+    pub const BrahmiJoiningNumber: IndicSyllabicCategory = IndicSyllabicCategory(3);
+    pub const CantillationMark: IndicSyllabicCategory = IndicSyllabicCategory(4);
+    pub const Consonant: IndicSyllabicCategory = IndicSyllabicCategory(5);
+    pub const ConsonantDead: IndicSyllabicCategory = IndicSyllabicCategory(6);
+    pub const ConsonantFinal: IndicSyllabicCategory = IndicSyllabicCategory(7);
+    pub const ConsonantHeadLetter: IndicSyllabicCategory = IndicSyllabicCategory(8);
+    pub const ConsonantInitialPostfixed: IndicSyllabicCategory = IndicSyllabicCategory(9);
+    pub const ConsonantKiller: IndicSyllabicCategory = IndicSyllabicCategory(10);
+    pub const ConsonantMedial: IndicSyllabicCategory = IndicSyllabicCategory(11);
+    pub const ConsonantPlaceholder: IndicSyllabicCategory = IndicSyllabicCategory(12);
+    pub const ConsonantPrecedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(13);
+    pub const ConsonantPrefixed: IndicSyllabicCategory = IndicSyllabicCategory(14);
+    pub const ConsonantSucceedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(15);
+    pub const ConsonantSubjoined: IndicSyllabicCategory = IndicSyllabicCategory(16);
+    pub const ConsonantWithStacker: IndicSyllabicCategory = IndicSyllabicCategory(17);
+    pub const GeminationMark: IndicSyllabicCategory = IndicSyllabicCategory(18);
+    pub const InvisibleStacker: IndicSyllabicCategory = IndicSyllabicCategory(19);
+    pub const Joiner: IndicSyllabicCategory = IndicSyllabicCategory(20);
+    pub const ModifyingLetter: IndicSyllabicCategory = IndicSyllabicCategory(21);
+    pub const NonJoiner: IndicSyllabicCategory = IndicSyllabicCategory(22);
+    pub const Nukta: IndicSyllabicCategory = IndicSyllabicCategory(23);
+    pub const Number: IndicSyllabicCategory = IndicSyllabicCategory(24);
+    pub const NumberJoiner: IndicSyllabicCategory = IndicSyllabicCategory(25);
+    pub const PureKiller: IndicSyllabicCategory = IndicSyllabicCategory(26);
+    pub const RegisterShifter: IndicSyllabicCategory = IndicSyllabicCategory(27);
+    pub const SyllableModifier: IndicSyllabicCategory = IndicSyllabicCategory(28);
+    pub const ToneLetter: IndicSyllabicCategory = IndicSyllabicCategory(29);
+    pub const ToneMark: IndicSyllabicCategory = IndicSyllabicCategory(30);
+    pub const Virama: IndicSyllabicCategory = IndicSyllabicCategory(31);
+    pub const Visarga: IndicSyllabicCategory = IndicSyllabicCategory(32);
+    pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33);
+    pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34);
+    pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35);
+}
+
+impl_value_getter! {
+    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_INSC_V1, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_INSC_V1, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_INSC_V1;
+    impl IndicSyllabicCategory {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `Indic_Syllabic_Category` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::IndicSyllabicCategory;
+        ///
+        /// let lookup = IndicSyllabicCategory::name_to_enum_mapper();
+        /// // long/short name for value
+        /// assert_eq!(lookup.get_strict("Brahmi_Joining_Number"), Some(IndicSyllabicCategory::BrahmiJoiningNumber));
+        /// assert_eq!(lookup.get_strict("Vowel_Independent"), Some(IndicSyllabicCategory::VowelIndependent));
+        /// // name has incorrect casing and hyphens
+        /// assert_eq!(lookup.get_strict("brahmi-joining-number"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("brahmi-joining-number"), Some(IndicSyllabicCategory::BrahmiJoiningNumber));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Tone_Number"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
+        /// for values of the `Indic_Syllabic_Category` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::IndicSyllabicCategory;
+        ///
+        /// let lookup = IndicSyllabicCategory::enum_to_short_name_mapper();
+        /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
+        /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
+        /// ```
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
+        /// for values of the `Indic_Syllabic_Category` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::IndicSyllabicCategory;
+        ///
+        /// let lookup = IndicSyllabicCategory::enum_to_long_name_mapper();
+        /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
+        /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
+        /// ```
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }
 }

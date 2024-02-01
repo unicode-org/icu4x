@@ -91,7 +91,7 @@ fn test_implicit_unihan() {
 fn test_currency() {
     // Adapted from `CollationCurrencyTest::currencyTest` in currcoll.cpp of ICU4C.
     // All the currency symbols, in collation order.
-    let currencies = "\u{00A4}\u{00A2}\u{FFE0}\u{0024}\u{FF04}\u{FE69}\u{00A3}\u{FFE1}\u{00A5}\u{FFE5}\u{09F2}\u{09F3}\u{0E3F}\u{17DB}\u{20A0}\u{20A1}\u{20A2}\u{20A3}\u{20A4}\u{20A5}\u{20A6}\u{20A7}\u{20A9}\u{FFE6}\u{20AA}\u{20AB}\u{20AC}\u{20AD}\u{20AE}\u{20AF}";
+    let currencies = "\u{00A4}\u{00A2}\u{FFE0}\u{0024}\u{FF04}\u{FE69}\u{00A3}\u{FFE1}\u{00A5}\u{FFE5}\u{09F2}\u{09F3}\u{0E3F}\u{17DB}\u{20A0}\u{20A1}\u{20A2}\u{20A3}\u{20A4}\u{20A5}\u{20A6}\u{20A9}\u{FFE6}\u{20AA}\u{20AB}\u{20AC}\u{20AD}\u{20AE}\u{20AF}";
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Quaternary);
@@ -1453,6 +1453,159 @@ fn test_case_level() {
     );
 }
 
+#[test]
+fn test_default_resolved_options() {
+    let collator = Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Strength::Tertiary);
+    assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
+    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
+    assert_eq!(resolved.case_level, CaseLevel::Off);
+    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_data_resolved_options_th() {
+    let locale: DataLocale = langid!("th").into();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Strength::Tertiary);
+    assert_eq!(resolved.alternate_handling, AlternateHandling::Shifted);
+    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
+    assert_eq!(resolved.case_level, CaseLevel::Off);
+    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+
+    // There's a separate more comprehensive test for the shifted behavior
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_data_resolved_options_da() {
+    let locale: DataLocale = langid!("da").into();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Strength::Tertiary);
+    assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
+    assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+    assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
+    assert_eq!(resolved.case_level, CaseLevel::Off);
+    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_data_resolved_options_fr_ca() {
+    let locale: DataLocale = langid!("fr-CA").into();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Strength::Tertiary);
+    assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
+    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
+    assert_eq!(resolved.case_level, CaseLevel::Off);
+    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(
+        collator.compare("coté", "côte"),
+        core::cmp::Ordering::Greater
+    );
+}
+
+#[test]
+fn test_manual_and_data_resolved_options_fr_ca() {
+    let locale: DataLocale = langid!("fr-CA").into();
+
+    let mut options = CollatorOptions::new();
+    options.case_first = Some(CaseFirst::UpperFirst);
+
+    let collator = Collator::try_new(&locale, options).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Strength::Tertiary);
+    assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
+    assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+    assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
+    assert_eq!(resolved.case_level, CaseLevel::Off);
+    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+    assert_eq!(
+        collator.compare("coté", "côte"),
+        core::cmp::Ordering::Greater
+    );
+}
+
+#[test]
+fn test_manual_resolved_options_da() {
+    let locale: DataLocale = langid!("da").into();
+
+    let mut options = CollatorOptions::new();
+    options.case_first = Some(CaseFirst::Off);
+
+    let collator = Collator::try_new(&locale, options).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Strength::Tertiary);
+    assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
+    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
+    assert_eq!(resolved.case_level, CaseLevel::Off);
+    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_ecma_sensitivity() {
+    {
+        // base
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Primary);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_eq!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_eq!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+    {
+        // accent
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Secondary);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_eq!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+    {
+        // case
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Primary);
+        options.case_level = Some(CaseLevel::On);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_eq!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+    {
+        // variant
+        let mut options = CollatorOptions::new();
+        options.strength = Some(Strength::Tertiary);
+        let collator = Collator::try_new(&Default::default(), options).unwrap();
+        assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
+        assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)
@@ -1499,6 +1652,3 @@ fn test_case_level() {
 // TODO: Test Tibetan
 
 // TODO: Test de-AT-u-co-phonebk vs de-DE-u-co-phonebk
-
-// TODO: Test da defaulting to [caseFirst upper]
-// TODO: Test fr-CA defaulting to backward second level

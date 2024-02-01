@@ -112,6 +112,14 @@ impl CoarseHourCycle {
             skeleton::BestSkeleton::NoMatch => None,
         }
     }
+
+    /// Get the other coarse hour cycle (map h11/h12 to h23/h24, and vice versa)
+    pub fn invert(self) -> Self {
+        match self {
+            CoarseHourCycle::H11H12 => CoarseHourCycle::H23H24,
+            CoarseHourCycle::H23H24 => CoarseHourCycle::H11H12,
+        }
+    }
 }
 
 /// The hour cycle can be set by preferences. This function switches between h11 and h12,

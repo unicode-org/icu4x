@@ -4,25 +4,50 @@
 
 #![cfg(feature = "serde")]
 
-pub mod structs;
-
 use icu_datetime::DateTimeFormatterOptions;
-use std::fs::File;
-use std::io::BufReader;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
-    let file = File::open(format!("./tests/fixtures/tests/{name}.json"))?;
-    let reader = BufReader::new(file);
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Fixture(pub Vec<Test>);
 
-    Ok(serde_json::from_reader(reader)?)
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Test {
+    pub description: Option<String>,
+    pub input: TestInput,
+    pub output: TestOutput,
 }
 
-pub fn get_options(input: &structs::TestOptions) -> Option<DateTimeFormatterOptions> {
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TestInput {
+    pub value: String,
+    pub options: TestOptions,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum TestOptions {
+    #[serde(rename = "length")]
+    Length(icu_datetime::options::length::Bag),
+    #[serde(rename = "components")]
+    #[cfg(feature = "experimental")]
+    Components(icu_datetime::options::components::Bag),
+    #[serde(rename = "components")]
+    #[cfg(not(feature = "experimental"))]
+    Components(serde_json::Value),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TestOutput {
+    // Key is locale, and value is expected test output.
+    pub values: HashMap<String, String>,
+}
+
+pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
     match input {
-        structs::TestOptions::Length(bag) => Some((*bag).into()),
+        TestOptions::Length(bag) => Some((*bag).into()),
         #[cfg(feature = "experimental")]
-        structs::TestOptions::Components(bag) => Some((*bag).into()),
+        TestOptions::Components(bag) => Some((*bag).into()),
         #[cfg(not(feature = "experimental"))]
-        structs::TestOptions::Components(_) => None,
+        TestOptions::Components(_) => None,
     }
 }

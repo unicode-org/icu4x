@@ -3,7 +3,7 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "es",
         "territory": "AR"
@@ -358,7 +358,7 @@
             "relative-type-1": "el próximo martes",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "dentro de {0} martes",
-              "relativeTimePattern-count-other": "en {0} martes"
+              "relativeTimePattern-count-other": "dentro de {0} martes"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "hace {0} martes",
@@ -548,13 +548,13 @@
             }
           },
           "dayperiod-short": {
-            "displayName": "a.m./p.m."
+            "displayName": "a. m./p. m."
           },
           "dayperiod": {
             "displayName": "a. m./p. m."
           },
           "dayperiod-narrow": {
-            "displayName": "a.m./p.m."
+            "displayName": "a. m./p. m."
           },
           "hour": {
             "displayName": "hora",

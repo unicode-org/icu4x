@@ -4,3 +4,6 @@
 
 /// Data for calendar arithmetic
 pub mod japanese;
+
+/// Cached data for chinese-based calendars
+pub mod chinese_based;

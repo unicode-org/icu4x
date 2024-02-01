@@ -1,5 +1,267 @@
 # Changelog
 
+## Unreleased
+
+- Components
+  - `icu_datetime`
+    - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
+  - `icu_calendar`
+    - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+  - `icu_datetime`
+    - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
+  - `icu_properties`
+    - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
+  - `icu_segmenter`
+    - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
+- Data model and providers
+  - `icu_datagen`
+    - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
+    - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
+    - Never use fallback for baked segmentation data (https://github.com/unicode-org/icu4x/pull/4510)
+    - Propagate extension keywords and auxiliary keys to explicit locales (https://github.com/unicode-org/icu4x/pull/4533)
+  - `icu_provider`
+    - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
+  - `icu_provider_blob`
+    - Blob v2 no longer allocates (https://github.com/unicode-org/icu4x/pull/4383)
+- FFI:
+    - All languages
+      - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
+      - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
+    - JS
+      - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
+      - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
+    - C++
+      - Fixed a bug where a result header defines a struct that shadows the class' name  (https://github.com/rust-diplomat/diplomat/pull/394)
+      - Add `explicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
+- Utilities
+    - `calendrical_calculations`:
+        - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar. (https://github.com/unicode-org/icu4x/pull/4504)
+        - Expose `Hebrew` as a unit struct, add `Date::try_new_hebrew_date()`, `DateTime::try_new_hebrew_datetime()`. (https://github.com/unicode-org/icu4x/pulls/4532)
+        - Deprecate `Hebrew::new_always_precomputing()`, `Date::try_new_hebrew_date_with_calendar()`, `DateTime::try_new_hebrew_datetime_with_calendar()`. The new implementation of the Hebrew calendar is faster and we do not need APIs for precomputation. (https://github.com/unicode-org/icu4x/pulls/4532)
+    - `yoke`
+        - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
+        - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
+    - `zerotrie`
+        - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
+        - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
+
+## icu4x 1.4.x
+
+- [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
+   - `icu_datagen@1.4.1`
+ - Fix normalization of character whose decomposition contains more than one starter and ends with a non-starter followed by a non-starter
+   with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
+   - `icu_normalizer@1.4.1`
+
+## icu4x 1.4 (Nov 16, 2023)
+
+- General
+  - MSRV is now 1.67
+
+- Components
+    - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
+    - `icu_calendar`
+      - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
+    - `icu_locid`
+      - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
+    - `icu_plurals`
+        - Experimental `PluralRulesWithRanges` for selecting the plural category for ranges (https://github.com/unicode-org/icu4x/issues/3012)
+    - `icu_properties`
+        - Support Indic_Syllabic_Category in icu_properties. (https://github.com/unicode-org/icu4x/pull/4176)
+        - Add enum constants for new Unicode 15.1 Line_Break properties. (https://github.com/unicode-org/icu4x/issues/4132)
+    - `icu_segmenter`
+        - Fix Unicode 15.0 sentence segmentation (https://github.com/unicode-org/icu4x/pull/4213)
+    - `icu_unicodeset_parse`
+        - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/4175)
+- Data model and providers
+    - `icu_provider`
+        - Implement Any/BufferProvider for some smart pointers (https://github.com/unicode-org/icu4x/pull/4255) 
+    - `icu_provider_blob`
+      - New V2 serialization schema (https://github.com/unicode-org/icu4x/pull/4207)
+    - `icu_datagen`
+        - New CLI option `--format=blob2` (https://github.com/unicode-org/icu4x/pull/4207)
+        - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
+        - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
+        - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
+        - Make datagen work without `CARGO_PKG_RUST_VERSION` environment variable (https://github.com/unicode-org/icu4x/pull/4292)
+- Utilities
+    - `databake`
+        - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
+        - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+    - `fixed_decimal`
+        - Experimental rounding increment support (https://github.com/unicode-org/icu4x/pull/4219, https://github.com/unicode-org/icu4x/pull/4246)
+    - `litemap`
+        - Implement `databake::Bake` on `LiteMap` (https://github.com/unicode-org/icu4x/pull/4275)
+    - `tinystr`
+        - Better Debug impl for UnvalidatedTinyAsciiStr (https://github.com/unicode-org/icu4x/pull/4189)
+    - `zerovec`
+        - Fix indexing bug in `ZeroMap2d::insert` (https://github.com/unicode-org/icu4x/pull/4160)
+
+## icu4x 1.3.x
+
+Some crates received additional 1.3.x patch releases:
+
+- [Fix #4165, locale "vi" not working in Collator](https://github.com/unicode-org/icu4x/issues/4165):
+    - `icu_collator@1.3.3`
+    - `icu_collator_data@1.3.3`
+- [Fix #4232, some locale data being improperly deduplicated](https://github.com/unicode-org/icu4x/issues/4232):
+    - `icu_compactdecimal_data@1.3.4`
+    - `icu_datagen@1.3.3`
+    - `icu_datetime_data@1.3.4`
+    - `icu_decimal_data@1.3.4`
+    - `icu_displaynames_data@1.3.4`
+    - `icu_properties_data@1.3.4`
+
+## icu4x 1.3.2 (Oct 4, 2023)
+
+1.3.2 was released to clean up the range dependency on `zerovec` deliberately introduced in 1.3.0. It includes all previous 1.3.x changes
+
+## icu4x 1.3.1
+
+A subset of crates received a 1.3.1 patch release, to incorporate documentation fixes (https://github.com/unicode-org/icu4x/pull/4096, https://github.com/unicode-org/icu4x/pull/4097, https://github.com/unicode-org/icu4x/pull/4099, https://github.com/unicode-org/icu4x/pull/4101). These crates were: `icu_calendar`, `icu_casemap`, `icu_datetime`, `icu_locid_transform`, `icu_provider`.
+
+## icu4x 1.3 (Sep 25, 2023)
+
+- General
+  - All updated crates:
+    - License updated to the [new Unicode license](https://www.unicode.org/license.txt)
+    - MSRV is now 1.66
+  - Components now have the option to use `compiled_data`, an efficient default set of data baked in to the component. This is now recommended over using a data provider unless you have specific needs driving it.
+- Data model and providers
+  - `icu_provider`:
+    - Make `DataPayload` constructible from `&'static M::Yokeable` (https://github.com/unicode-org/icu4x/pull/3467)
+    - Add `ExportableDataPayload::eq_dyn` (https://github.com/unicode-org/icu4x/pull/3639)
+    - Better docs (https://github.com/unicode-org/icu4x/pull/3740, https://github.com/unicode-org/icu4x/pull/3742)
+    - Moving fallback options into `icu_provider` (https://github.com/unicode-org/icu4x/pull/3651)
+    - Add `DataPayload::dynamic_cast_mut` (https://github.com/unicode-org/icu4x/pull/3952)
+    - (experimental) Add `AuxiliaryKey` to `DataLocale` (https://github.com/unicode-org/icu4x/pull/3872)
+  - `icu_datagen`:
+    - Completely revamped API (https://github.com/unicode-org/icu4x/pull/3705, https://github.com/unicode-org/icu4x/pull/3861, https://github.com/unicode-org/icu4x/pull/3951, https://github.com/unicode-org/icu4x/pull/4008, https://github.com/unicode-org/icu4x/pull/4041, https://github.com/unicode-org/icu4x/pull/3669)
+        - The old API is still available behind the `legacy_api` default Cargo feature
+    - Updated baked data output to be usable by `compiled_data` (https://github.com/unicode-org/icu4x/pull/3449, https://github.com/unicode-org/icu4x/pull/3493, https://github.com/unicode-org/icu4x/pull/3549, https://github.com/unicode-org/icu4x/pull/3500, https://github.com/unicode-org/icu4x/pull/3847)
+    - Add recommended locale set and expand regions in datagen (https://github.com/unicode-org/icu4x/pull/3586)
+    - Make datagen faster by caching more things (https://github.com/unicode-org/icu4x/pull/3625)
+    - Consume CLDR-JSON resources keyed with default script (https://github.com/unicode-org/icu4x/pull/3772, https://github.com/unicode-org/icu4x/pull/3786)
+    - (cli) Warn for `--locales all` (https://github.com/unicode-org/icu4x/pull/3691)
+  - `icu_provider_adapters`: 
+    - Deprecated `LocaleFallbacker`, use through `icu_locid_transform`
+  - `icu_provider_blob`:
+    - Returning `ExtraneousLocale` in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3562)
+    - Fix empty keys in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3551) 
+  - `icu_provider_fs`:
+    - Correct error types for `icu_provider_fs` (https://github.com/unicode-org/icu4x/pull/3682) 
+  - `icu_testdata`:
+    - This crate has been superseded by `compiled_data` and is now deprecated.
+    - Data for new components will not be added, and it will not be updated for ICU4X 2.0.
+- Components:
+  - Cross component:
+    - All component crates now have a default `compiled_data` feature that enables constructors that do not require data providers, instead using data compiled into the library
+  - `icu_calendar`
+    - Support for new non-Gregorian calendars: Persian (Solar Hijri), ROC, Hebrew, Chinese, Korean (Dangi), and Islamic (civil, observational, tabular, and Umm al-Qura). Lunar calendars are not yet fully optimized.
+    - Add `Ord` and `PartialOrd` to `icu_calendar` types (https://github.com/unicode-org/icu4x/pull/3468)
+    - Add cyclic year to `FormattableYear` (https://github.com/unicode-org/icu4x/pull/3581)
+  - `icu_casemap`
+    - Newly stabilized crate
+  - `icu_collator`
+    - No additional changes
+  - `icu_collections`
+    - Fixed JSON serialization of unpaired surrogates (https://github.com/unicode-org/icu4x/pull/3892)
+  - `icu_datetime`
+    - Formatting for the new calendars added in `icu_calendar`
+      - Includes preview formatting for Chinese and Korean with cyclic years and leap months
+    - Hardening of edge cases surrounding the `Calendar` trait
+    - `TimeZoneFormatter::load_*_format` functions:
+      - Those with a provider argument gain an equivalent `TimeZoneFormatter::load_*_format` gated by `compiled_data`
+      - Those without a provider argument renamed to `TimeZoneFormatter::include_*_format` with deprecation warning
+  - `icu_decimal`
+    - No additional changes
+  - `icu_list`
+    - No additional changes
+  - `icu_locid`
+    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locid::extensions::unicode::value` now works, instead of `use icu::locid::extensions_unicode_value`
+  - `icu_locid_transform`
+    - New home of `LocaleFallbacker` and `fallback` module previously found in `icu_provider_adapters`
+    - New `LocaleDirectionality` to access the right-to-left status of locales
+  - `icu_normalizer`
+    - No additional changes
+  - `icu_plurals`
+    - No additional changes
+  - `icu_properties`
+    - Compiled data functions added to `sets` and `maps` without `load_` prefix: `icu::properties::sets::basic_emoji()`
+  - `icu_segmenter`
+    - Algorithmic bug fixes such as https://github.com/unicode-org/icu4x/pull/3392
+  - `icu_timezone`
+    - New `IanaToBcp47Mapper` for converting between IANA time zone names and BCP-47 time zone names (https://github.com/unicode-org/icu4x/pull/2909)
+ - Utils:
+    - `calendrical_calculations`: New crate: 0.1.0
+    - `crlify`: 1.0.2 -> 1.0.3
+    - `databake` and `databake_derive`: 1.0.5 -> 1.0.6
+      - `::` paths changed (https://github.com/unicode-org/icu4x/pull/3450)
+    - `deduplicating_array`:  0.1.4 -> 0.1.5
+    - `fixed_decimal`: 0.5.3 -> 0.5.4
+      - Fix rounding bug (https://github.com/unicode-org/icu4x/pull/3644)
+      - Reexport some types to be more consistent with ICU4X naming (https://github.com/unicode-org/icu4x/pull/3945)
+    - `litemap`: 0.7.0 -> 0.7.1
+      - Add const litemap getter functions for common types (https://github.com/unicode-org/icu4x/pull/3416)
+    - `icu_pattern`: 0.1.4 -> 0.1.5
+    - `tinystr`: 0.7.1 -> 0.7.2
+      - Add `UnvalidatedTinyAsciiStr` (https://github.com/unicode-org/icu4x/pull/3406)
+      - Make compatible with `T: Bake` on `ZeroVec` (https://github.com/unicode-org/icu4x/pull/3451)
+    - `tzif`: 0.2.1 -> 0.2.2
+    - `writeable`: 0.5.2 -> 0.5.3
+    - `yoke` and `yoke_derive`: 0.7.1 -> 0.7.2
+      - Make `impl<...> Debug for Yoke<...>` implementation sound (https://github.com/unicode-org/icu4x/pull/3686)
+      - Add `KindaSortaDangling` internal type to make Yoke safe under strong protection (https://github.com/unicode-org/icu4x/pull/3735)
+    - `zerofrom` and `zerofrom_derive`: 0.1.2 -> 0.1.3
+      - Expand `ZeroFrom` to cover cases where attrs can borrow (https://github.com/unicode-org/icu4x/pull/3770)
+      - Expand `ZeroFrom` impl on unsized &T (https://github.com/unicode-org/icu4x/pull/3467)
+    - `zerovec` and `zerovec_derive`: 0.9.4 -> (0.9.6)
+      - Add `ZeroTrie`, an efficient string-to-int collection (https://github.com/unicode-org/icu4x/pull/2722)
+      - Handle incorrect `VarZeroVec` bytes representation (https://github.com/unicode-org/icu4x/pull/3883)
+      - Better soundness under stacked borrows (https://github.com/unicode-org/icu4x/pull/3513, https://github.com/unicode-org/icu4x/pull/3524, https://github.com/unicode-org/icu4x/pull/3515, https://github.com/unicode-org/icu4x/pull/3509)
+      - Deserialization for `VarZeroVec<VarZeroSlice>`, take 2 (https://github.com/unicode-org/icu4x/pull/3649)
+      - Fix `MultiFieldsULE` (https://github.com/unicode-org/icu4x/pull/3642)
+      - Add initial `zeroslice!` and `zerovec!` macros https://github.com/unicode-org/icu4x/pull/3453, Update `zerovec!`/`zeroslice!` macro syntax to nested arrays (https://github.com/unicode-org/icu4x/pull/3611)
+      - Add support for custom varule fields in #[make_varule] (https://github.com/unicode-org/icu4x/pull/3580)
+      - Add `UnvalidatedChar` (https://github.com/unicode-org/icu4x/pull/3444)
+      - `get_copied_by` API (https://github.com/unicode-org/icu4x/pull/3351)
+    - `zerovec` and `zerovec_derive`: 0.9.6 -> 0.10.0:
+      - Adding `T: Bake` bound on `ZeroVec`'s `Bake` (https://github.com/unicode-org/icu4x/pull/3451)
+ - FFI:
+    - Feature support
+      - Case mapping exports:
+        - `ICU4XCaseMapper`
+        - `ICU4XCaseMapCloser`
+        - `ICU4XTitlecaseMapper`
+        - `ICU4XTrailingCase`
+      - Other new exports:
+        - `ICU4XCodePointSetBuilder`
+        - `ICU4XLocaleDirection`
+        - `ICU4XLocaleDirectionality`
+        - `ICU4XLocaleFallbackSupplement`
+        - `ICU4XIanaToBcp47Mapper`
+      - Enum variants added for calendar types and errors
+    - C++
+      - Don't use `std::move` for inline arguments (https://github.com/rust-diplomat/diplomat/pull/336)
+ - Experimental:
+   - `bies`
+     - No additional changes
+   - `icu_compactdecimal`
+     - Convenience functions for formatting `f64` and `FixedDecimal` (https://github.com/unicode-org/icu4x/pull/3699)
+   - `displaynames`
+     - New `VariantDisplayNames` for accessing display names of locale variant subtags (https://github.com/unicode-org/icu4x/pull/3461)
+     - `LocaleDisplayNamesFormatter` now supports full UTS 35 language identifier formatting (https://github.com/unicode-org/icu4x/pull/3587)
+   - `harfbuzz`
+     - No additional changes
+   - `ixdtf`
+     - No additional changes
+   - `relativetime`
+     - No additional changes
+   - `transliterate`: New crate: 0.1.0
+   - `unicodeset_parse`: New crate: 0.1.0
+   - `zerotrie`: New crate: 0.1.0
+
+
 ## icu4x 1.2.x (Apr 17, 2023)
 
 Note: A subset of crates received patch releases in the 1.2 stream.

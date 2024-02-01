@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use quote::quote;
+use quote::{quote, ToTokens};
 
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
@@ -148,6 +148,24 @@ impl<'a> FieldInfo<'a> {
             quote!()
         }
     }
+
+    /// Produce a name for a getter for the field
+    pub fn getter(&self) -> TokenStream2 {
+        if let Some(ref i) = self.field.ident {
+            quote!(#i)
+        } else {
+            suffixed_ident("field", self.index, self.field.span()).into_token_stream()
+        }
+    }
+
+    /// Produce a prose name for the field for use in docs
+    pub fn getter_doc_name(&self) -> String {
+        if let Some(ref i) = self.field.ident {
+            format!("the unsized `{i}` field")
+        } else {
+            format!("tuple struct field #{}", self.index)
+        }
+    }
 }
 
 /// Extracts all `zerovec::name(..)` attribute
@@ -221,7 +239,7 @@ pub fn extract_field_attributes(attrs: &mut Vec<Attribute>) -> Result<Option<Ide
         ));
     }
 
-    Ok(varule.get(0).cloned())
+    Ok(varule.first().cloned())
 }
 
 #[derive(Default, Copy, Clone)]
@@ -247,7 +265,7 @@ pub fn extract_attributes_common(
 
     let name = if is_var { "make_varule" } else { "make_ule" };
 
-    if let Some(attr) = zerovec_attrs.get(0) {
+    if let Some(attr) = zerovec_attrs.first() {
         return Err(Error::new(
             attr.span(),
             format!("Found unknown or duplicate attribute for #[{name}]"),

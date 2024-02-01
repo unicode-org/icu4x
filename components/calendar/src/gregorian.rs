@@ -126,6 +126,10 @@ impl Calendar for Gregorian {
         year_as_gregorian(date.0 .0.year)
     }
 
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Iso.is_in_leap_year(&date.0)
+    }
+
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         Iso.month(&date.0)

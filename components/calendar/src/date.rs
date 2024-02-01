@@ -214,6 +214,12 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year(&self.inner)
     }
 
+    /// Returns whether `self` is in a calendar-specific leap year
+    #[inline]
+    pub fn is_in_leap_year(&self) -> bool {
+        self.calendar.as_calendar().is_in_leap_year(&self.inner)
+    }
+
     /// The calendar-specific month represented by `self`
     #[inline]
     pub fn month(&self) -> types::FormattableMonth {
@@ -252,6 +258,7 @@ impl<A: AsCalendar> Date<A> {
         let config = WeekCalculator {
             first_weekday,
             min_week_days: 0, // ignored
+            weekend: None,
         };
         config.week_of_month(self.day_of_month(), self.day_of_week())
     }
@@ -382,8 +389,11 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
             f,
-            "Date({:?}, for calendar {})",
-            self.inner,
+            "Date({}-{}-{}, {} era, for calendar {})",
+            self.year().number,
+            self.month().ordinal,
+            self.day_of_month().0,
+            self.year().era.0,
             self.calendar.as_calendar().debug_name()
         )
     }

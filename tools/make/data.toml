@@ -23,10 +23,11 @@ args = [
     "test",
     "-p=icu_datagen",
     "--no-default-features",
-    "--features=fs_exporter,use_wasm,rayon,experimental_components",
-    "generate_json_and_verify_postcard",
+    "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components",
     "--",
-    "--nocapture"
+    "--ignored",
+    "--nocapture",
+    "generate_json_and_verify_postcard",
 ]
 
 [tasks.testdata-hello-world]
@@ -42,7 +43,8 @@ exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --loc
 exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
-exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/hello_world.postcard
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
 exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
 exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --fallback preresolved --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
@@ -80,6 +82,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=make-testdata-legacy",
+    "--release",
     "--manifest-path=tools/testdata-scripts/Cargo.toml", # avoid global feature resolution
 ]
 

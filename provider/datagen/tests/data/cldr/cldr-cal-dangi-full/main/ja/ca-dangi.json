@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "ja"
       },
@@ -1068,15 +1068,33 @@
               }
             },
             "dateFormats": {
-              "full": "U年MMMd日EEEE",
-              "long": "U年MMMd日",
-              "medium": "U年MMMd日",
+              "full": {
+                "_value": "U年MMMd日EEEE",
+                "_numbers": "hanidec"
+              },
+              "long": {
+                "_value": "U年MMMd日",
+                "_numbers": "hanidec"
+              },
+              "medium": {
+                "_value": "U年MMMd日",
+                "_numbers": "hanidec"
+              },
               "short": "U-M-d"
             },
             "dateSkeletons": {
-              "full": "UMMMEEEEd",
-              "long": "UMMMd",
-              "medium": "UMMMd",
+              "full": {
+                "_value": "UMMMEEEEd",
+                "_numbers": "hanidec"
+              },
+              "long": {
+                "_value": "UMMMd",
+                "_numbers": "hanidec"
+              },
+              "medium": {
+                "_value": "UMMMd",
+                "_numbers": "hanidec"
+              },
               "short": "UMd"
             },
             "timeFormats": {

@@ -31,7 +31,7 @@
 //! Here is an example ZeroTrie without branch nodes:
 //!
 //! ```
-//! use zerotrie::ZeroTrieSimpleAscii;
+//! use zerotrie::ZeroTriePerfectHash;
 //!
 //! let bytes = [
 //!     b'a',       // ASCII literal
@@ -44,7 +44,7 @@
 //!     0b10000100, // value 4
 //! ];
 //!
-//! let trie = ZeroTrieSimpleAscii::from_bytes(&bytes);
+//! let trie = ZeroTriePerfectHash::from_bytes(&bytes);
 //!
 //! // First value: "a" → 10
 //! assert_eq!(trie.get(b"a"), Some(10));
@@ -205,6 +205,7 @@
 
 use crate::byte_phf::PerfectByteHashMap;
 use crate::helpers::*;
+use crate::options::*;
 use crate::varint::read_varint_meta2;
 use crate::varint::read_varint_meta3;
 
@@ -219,17 +220,17 @@ use alloc::string::String;
 /// - `n` = the number of items in the offset table
 /// - `w` = the width of the offset table items minus one
 #[inline]
-fn get_branch(mut trie: &[u8], i: usize, n: usize, mut w: usize) -> Option<&[u8]> {
+fn get_branch(mut trie: &[u8], i: usize, n: usize, mut w: usize) -> &[u8] {
     let mut p = 0usize;
     let mut q = 0usize;
     loop {
         let indices;
-        (indices, trie) = debug_split_at(trie, n - 1)?;
+        (indices, trie) = trie.debug_split_at(n - 1);
         p = (p << 8)
             + if i == 0 {
                 0
             } else {
-                debug_get(indices, i - 1)? as usize
+                *indices.get(i - 1).debug_unwrap_or(&0) as usize
             };
         q = match indices.get(i) {
             Some(x) => (q << 8) + *x as usize,
@@ -240,24 +241,24 @@ fn get_branch(mut trie: &[u8], i: usize, n: usize, mut w: usize) -> Option<&[u8]
         }
         w -= 1;
     }
-    debug_get_range(trie, p..q)
+    trie.get(p..q).debug_unwrap_or(&[])
 }
 
 /// Version of [`get_branch()`] specialized for the case `w == 0` for performance
 #[inline]
-fn get_branch_w0(mut trie: &[u8], i: usize, n: usize) -> Option<&[u8]> {
+fn get_branch_w0(mut trie: &[u8], i: usize, n: usize) -> &[u8] {
     let indices;
-    (indices, trie) = debug_split_at(trie, n - 1)?;
+    (indices, trie) = trie.debug_split_at(n - 1);
     let p = if i == 0 {
         0
     } else {
-        debug_get(indices, i - 1)? as usize
+        *indices.get(i - 1).debug_unwrap_or(&0) as usize
     };
     let q = match indices.get(i) {
         Some(x) => *x as usize,
         None => trie.len(),
     };
-    debug_get_range(trie, p..q)
+    trie.get(p..q).debug_unwrap_or(&[])
 }
 
 /// The node type. See the module-level docs for more explanation of the four node types.
@@ -295,6 +296,107 @@ fn byte_type(b: u8) -> NodeType {
     }
 }
 
+#[inline]
+pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
+    mut trie: &[u8],
+    mut ascii: &[u8],
+) -> Option<usize> {
+    loop {
+        let (b, x, i, search);
+        (b, trie) = trie.split_first()?;
+        let byte_type = byte_type(*b);
+        (x, trie) = match byte_type {
+            NodeType::Ascii => (0, trie),
+            NodeType::Span => {
+                if matches!(T::OPTIONS.ascii_mode, AsciiMode::BinarySpans) {
+                    read_varint_meta3(*b, trie)
+                } else {
+                    debug_assert!(false, "Span node found in ASCII trie!");
+                    return None;
+                }
+            }
+            NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Branch => read_varint_meta2(*b, trie),
+        };
+        if let Some((c, temp)) = ascii.split_first() {
+            if matches!(byte_type, NodeType::Ascii) {
+                let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
+                {
+                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                } else {
+                    b == c
+                };
+                if is_match {
+                    // Matched a byte
+                    ascii = temp;
+                    continue;
+                } else {
+                    // Byte that doesn't match
+                    return None;
+                }
+            }
+            if matches!(byte_type, NodeType::Value) {
+                // Value node, but not at end of string
+                continue;
+            }
+            if matches!(T::OPTIONS.ascii_mode, AsciiMode::BinarySpans)
+                && matches!(byte_type, NodeType::Span)
+            {
+                let (trie_span, ascii_span);
+                (trie_span, trie) = trie.debug_split_at(x);
+                (ascii_span, ascii) = ascii.maybe_split_at(x)?;
+                if trie_span == ascii_span {
+                    // Matched a byte span
+                    continue;
+                } else {
+                    // Byte span that doesn't match
+                    return None;
+                }
+            }
+            // Branch node
+            let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+            let w = if matches!(T::OPTIONS.capacity_mode, CapacityMode::Extended) {
+                w
+            } else {
+                // See the table below regarding this assertion
+                debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
+                w & 0x3
+            };
+            let x = if x == 0 { 256 } else { x };
+            if matches!(T::OPTIONS.phf_mode, PhfMode::BinaryOnly) || x < 16 {
+                // binary search
+                (search, trie) = trie.debug_split_at(x);
+                let bsearch_result =
+                    if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
+                        search.binary_search_by_key(&c.to_ascii_lowercase(), |x| {
+                            x.to_ascii_lowercase()
+                        })
+                    } else {
+                        search.binary_search(c)
+                    };
+                i = bsearch_result.ok()?;
+            } else {
+                // phf
+                (search, trie) = trie.debug_split_at(x * 2 + 1);
+                i = PerfectByteHashMap::from_store(search).get(*c)?;
+            }
+            trie = if w == 0 {
+                get_branch_w0(trie, i, x)
+            } else {
+                get_branch(trie, i, x, w)
+            };
+            ascii = temp;
+            continue;
+        } else {
+            if matches!(byte_type, NodeType::Value) {
+                // Value node at end of string
+                return Some(x);
+            }
+            return None;
+        }
+    }
+}
+
 // DISCUSS: This function is 7% faster *on aarch64* if we assert a max on w.
 //
 // | Bench         | No Assert, x86_64 | No Assert, aarch64 | Assertion, x86_64 | Assertion, aarch64 |
@@ -303,203 +405,86 @@ fn byte_type(b: u8) -> NodeType {
 // | subtags_10pct | ~9.5557 µs        | ~4.8696 µs         | ~9.5779 µs        | ~4.5649 µs         |
 // | subtags_full  | ~137.75 µs        | ~76.016 µs         | ~142.02 µs        | ~70.254 µs         |
 
-/// Query the trie assuming all branch nodes are binary search.
-pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
+/// Steps one node into the trie assuming all branch nodes are binary search and that
+/// there are no span nodes.
+///
+/// The input-output argument `trie` starts at the original trie and ends pointing to
+/// the sub-trie reachable by `c`.
+pub(crate) fn step_ascii_bsearch_only(trie: &mut &[u8], c: u8) {
+    let (mut b, x, search);
     loop {
-        let (b, x, i, search);
-        (b, trie) = trie.split_first()?;
-        let byte_type = byte_type(*b);
-        (x, trie) = match byte_type {
-            NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-            NodeType::Branch => read_varint_meta2(*b, trie)?,
-        };
-        if let Some((c, temp)) = ascii.split_first() {
-            if matches!(byte_type, NodeType::Ascii) {
-                if b == c {
-                    // Matched a byte
-                    ascii = temp;
-                    continue;
-                } else {
-                    // Byte that doesn't match
-                    return None;
-                }
+        (b, *trie) = match trie.split_first() {
+            Some(v) => v,
+            None => {
+                // Empty trie or only a value node
+                return;
             }
-            if matches!(byte_type, NodeType::Value) {
-                // Value node, but not at end of string
+        };
+        match byte_type(*b) {
+            NodeType::Ascii if *b == c => {
+                // Matched a byte
+                return;
+            }
+            NodeType::Ascii => {
+                // Byte that doesn't match
+                *trie = &[];
+                return;
+            }
+            NodeType::Branch => {
+                // Proceed to the branch node logic below
+                (x, *trie) = read_varint_meta2(*b, trie);
+                break;
+            }
+            NodeType::Span => {
+                // Question: Should we put the trie back into a valid state?
+                // Currently this code is unreachable so let's not worry about it.
+                debug_assert!(false, "Span node found in ASCII trie!");
+                return;
+            }
+            NodeType::Value => {
+                // Skip the value node and go to the next node
+                (_, *trie) = read_varint_meta3(*b, trie);
                 continue;
             }
-            if matches!(byte_type, NodeType::Span) {
-                let (trie_span, ascii_span);
-                (trie_span, trie) = debug_split_at(trie, x)?;
-                (ascii_span, ascii) = maybe_split_at(ascii, x)?;
-                if trie_span == ascii_span {
-                    // Matched a byte span
-                    continue;
-                } else {
-                    // Byte span that doesn't match
-                    return None;
-                }
-            }
-            // Branch node
-            let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
-            // See comment above regarding this assertion
-            debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
-            let w = w & 0x3;
-            let x = if x == 0 { 256 } else { x };
-            // Always use binary search
-            (search, trie) = debug_split_at(trie, x)?;
-            i = search.binary_search(c).ok()?;
-            trie = if w == 0 {
+        };
+    }
+    // Branch node
+    let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+    // See comment above regarding this assertion
+    debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
+    let w = w & 0x3;
+    let x = if x == 0 { 256 } else { x };
+    // Always use binary search
+    (search, *trie) = trie.debug_split_at(x);
+    match search.binary_search(&c) {
+        Ok(i) => {
+            // Matched a byte
+            *trie = if w == 0 {
                 get_branch_w0(trie, i, x)
             } else {
                 get_branch(trie, i, x, w)
-            }?;
-            ascii = temp;
-            continue;
-        } else {
-            if matches!(byte_type, NodeType::Value) {
-                // Value node at end of string
-                return Some(x);
-            }
-            return None;
+            };
         }
-    }
+        Err(_) => {
+            // Byte that doesn't match
+            *trie = &[]
+        }
+    };
 }
 
-/// Query the trie assuming branch nodes could be either binary search or PHF.
-pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
-    loop {
-        let (b, x, i, search);
-        (b, trie) = trie.split_first()?;
-        let byte_type = byte_type(*b);
-        (x, trie) = match byte_type {
-            NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-            NodeType::Branch => read_varint_meta2(*b, trie)?,
-        };
-        if let Some((c, temp)) = ascii.split_first() {
-            if matches!(byte_type, NodeType::Ascii) {
-                if b == c {
-                    // Matched a byte
-                    ascii = temp;
-                    continue;
-                } else {
-                    // Byte that doesn't match
-                    return None;
-                }
-            }
-            if matches!(byte_type, NodeType::Value) {
-                // Value node, but not at end of string
-                continue;
-            }
-            if matches!(byte_type, NodeType::Span) {
-                let (trie_span, ascii_span);
-                (trie_span, trie) = debug_split_at(trie, x)?;
-                (ascii_span, ascii) = maybe_split_at(ascii, x)?;
-                if trie_span == ascii_span {
-                    // Matched a byte span
-                    continue;
-                } else {
-                    // Byte span that doesn't match
-                    return None;
-                }
-            }
-            // Branch node
-            let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
-            // See comment above regarding this assertion
-            debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
-            let w = w & 0x3;
-            let x = if x == 0 { 256 } else { x };
-            if x < 16 {
-                // binary search
-                (search, trie) = debug_split_at(trie, x)?;
-                i = search.binary_search(c).ok()?;
-            } else {
-                // phf
-                (search, trie) = debug_split_at(trie, x * 2 + 1)?;
-                i = PerfectByteHashMap::from_store(search).get(*c)?;
-            }
-            trie = if w == 0 {
-                get_branch_w0(trie, i, x)
-            } else {
-                get_branch(trie, i, x, w)
-            }?;
-            ascii = temp;
-            continue;
-        } else {
-            if matches!(byte_type, NodeType::Value) {
-                // Value node at end of string
-                return Some(x);
-            }
-            return None;
-        }
-    }
-}
-
-/// Query the trie without the limited capacity assertion.
-pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
-    loop {
-        let (b, x, i, search);
-        (b, trie) = trie.split_first()?;
-        let byte_type = byte_type(*b);
-        (x, trie) = match byte_type {
-            NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-            NodeType::Branch => read_varint_meta2(*b, trie)?,
-        };
-        if let Some((c, temp)) = ascii.split_first() {
-            if matches!(byte_type, NodeType::Ascii) {
-                if b == c {
-                    // Matched a byte
-                    ascii = temp;
-                    continue;
-                } else {
-                    // Byte that doesn't match
-                    return None;
-                }
-            }
-            if matches!(byte_type, NodeType::Value) {
-                // Value node, but not at end of string
-                continue;
-            }
-            if matches!(byte_type, NodeType::Span) {
-                let (trie_span, ascii_span);
-                (trie_span, trie) = debug_split_at(trie, x)?;
-                (ascii_span, ascii) = maybe_split_at(ascii, x)?;
-                if trie_span == ascii_span {
-                    // Matched a byte span
-                    continue;
-                } else {
-                    // Byte span that doesn't match
-                    return None;
-                }
-            }
-            // Branch node
-            let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
-            let x = if x == 0 { 256 } else { x };
-            if x < 16 {
-                // binary search
-                (search, trie) = debug_split_at(trie, x)?;
-                i = search.binary_search(c).ok()?;
-            } else {
-                // phf
-                (search, trie) = debug_split_at(trie, x * 2 + 1)?;
-                i = PerfectByteHashMap::from_store(search).get(*c)?;
-            }
-            trie = if w == 0 {
-                get_branch_w0(trie, i, x)
-            } else {
-                get_branch(trie, i, x, w)
-            }?;
-            ascii = temp;
-            continue;
-        } else {
-            if matches!(byte_type, NodeType::Value) {
-                // Value node at end of string
-                return Some(x);
-            }
-            return None;
+/// Steps one node into the trie if the head node is a value node, returning the value.
+/// If the head node is not a value node, no change is made.
+///
+/// The input-output argument `trie` starts at the original trie and ends pointing to
+/// the sub-trie with the value node removed.
+pub(crate) fn take_value(trie: &mut &[u8]) -> Option<usize> {
+    let (b, new_trie) = trie.split_first()?;
+    match byte_type(*b) {
+        NodeType::Ascii | NodeType::Span | NodeType::Branch => None,
+        NodeType::Value => {
+            let x;
+            (x, *trie) = read_varint_meta3(*b, new_trie);
+            Some(x)
         }
     }
 }
@@ -554,11 +539,11 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
             }
             (x, trie) = match byte_type {
                 NodeType::Ascii => (0, trie),
-                NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-                NodeType::Branch => read_varint_meta2(*b, trie)?,
+                NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie),
+                NodeType::Branch => read_varint_meta2(*b, trie),
             };
             if matches!(byte_type, NodeType::Span) {
-                (span, trie) = debug_split_at(trie, x)?;
+                (span, trie) = trie.debug_split_at(x);
                 string.extend(span);
                 continue;
             }
@@ -578,19 +563,19 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
             }
             let byte = if x < 16 || !self.use_phf {
                 // binary search
-                (search, trie) = debug_split_at(trie, x)?;
-                debug_get(search, branch_idx)?
+                (search, trie) = trie.debug_split_at(x);
+                debug_unwrap!(search.get(branch_idx), return None)
             } else {
                 // phf
-                (search, trie) = debug_split_at(trie, x * 2 + 1)?;
-                debug_get(search, branch_idx + x + 1)?
+                (search, trie) = trie.debug_split_at(x * 2 + 1);
+                debug_unwrap!(search.get(branch_idx + x + 1), return None)
             };
-            string.push(byte);
+            string.push(*byte);
             trie = if w == 0 {
                 get_branch_w0(trie, branch_idx, x)
             } else {
                 get_branch(trie, branch_idx, x, w)
-            }?;
+            };
             branch_idx = 0;
         }
     }

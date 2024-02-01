@@ -2,20 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{
     extensions::unicode::{key, value},
     Locale,
 };
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::str::FromStr;
 
+mod neo;
 mod patterns;
 mod skeletons;
 mod symbols;
@@ -101,59 +100,34 @@ macro_rules! impl_data_provider {
                         .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
                         .clone();
 
-                    let mundi_name = ethioaa_data
-                        .eras
+                    let ethioaa_eras = ethioaa_data.eras.as_ref().expect("ethioaa must have eras");
+                    let mundi_name = ethioaa_eras
                         .names
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
-                    let mundi_abbr = ethioaa_data
-                        .eras
+                    let mundi_abbr = ethioaa_eras
                         .abbr
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
-                    let mundi_narrow = ethioaa_data
-                        .eras
+                    let mundi_narrow = ethioaa_eras
                         .narrow
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
 
-                    data.eras.names.insert("2".to_string(), mundi_name.clone());
-                    data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
-                    data.eras
-                        .narrow
-                        .insert("2".to_string(), mundi_narrow.clone());
+                    let eras = data.eras.as_mut().expect("ethiopic must have eras");
+                    eras.names.insert("2".to_string(), mundi_name.clone());
+                    eras.abbr.insert("2".to_string(), mundi_abbr.clone());
+                    eras.narrow.insert("2".to_string(), mundi_narrow.clone());
                 }
 
                 if calendar == value!("japanese") || calendar == value!("japanext") {
+                    let eras = data.eras.as_mut().expect("japanese must have eras");
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
-                        let era_dates: &cldr_serde::japanese::Resource = self
-                            .cldr()?
-                            .core()
-                            .read_and_parse("supplemental/calendarData.json")?;
-                        let mut set = HashSet::<String>::new();
-                        for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                            let start_date =
-                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
-                                    start_date
-                                } else {
-                                    continue;
-                                })
-                                .map_err(|_| {
-                                    DataError::custom(
-                                        "calendarData.json contains unparseable data for a japanese era",
-                                    )
-                                    .with_display_context(&format!("era index {}", era_index))
-                                })?;
-
-                            if start_date.year >= 1868 {
-                                set.insert(era_index.into());
-                            }
-                        }
-
-                        data.eras.names.retain(|e, _| set.contains(e));
-                        data.eras.abbr.retain(|e, _| set.contains(e));
-                        data.eras.narrow.retain(|e, _| set.contains(e));
+                        let modern_japanese_eras = self.cldr()?.modern_japanese_eras()?;
+                        eras.names.retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.abbr.retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.narrow.retain(|e, _| modern_japanese_eras.contains(e));
                     }
 
                     // Splice in gregorian data for pre-meiji
@@ -171,49 +145,51 @@ macro_rules! impl_data_provider {
                         .expect("CLDR file contains a gregorian calendar")
                         .clone();
 
-                    data.eras.names.insert(
+                    let greg_eras = greg.eras.as_ref().expect("gregorian must have eras");
+
+                    eras.names.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .names
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.names.insert(
+                    eras.names.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .names
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
                             .into(),
                     );
-                    data.eras.abbr.insert(
+                    eras.abbr.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .abbr
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.abbr.insert(
+                    eras.abbr.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .abbr
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
                             .into(),
                     );
-                    data.eras.narrow.insert(
+                    eras.narrow.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .narrow
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.narrow.insert(
+                    eras.narrow.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .narrow
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
@@ -232,9 +208,9 @@ macro_rules! impl_data_provider {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                let mut r = Vec::new();
+        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+                let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {

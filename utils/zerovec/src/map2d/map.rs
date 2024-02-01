@@ -299,15 +299,25 @@ where
 
     /// Insert `value` with `key`, returning the existing value if it exists.
     ///
-    /// See example in [`Self::get_2d()`].
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// assert_eq!(map.insert(&0, "zero", "foo"), None,);
+    /// assert_eq!(map.insert(&1, "one", "bar"), None,);
+    /// assert_eq!(map.insert(&1, "one", "baz").as_deref(), Some("bar"),);
+    /// assert_eq!(map.get_2d(&1, "one").as_deref(), Some("baz"));
+    /// assert_eq!(map.len(), 2);
+    /// ```
     pub fn insert(&mut self, key0: &K0, key1: &K1, value: &V) -> Option<V::OwnedType> {
         let (key0_index, range) = self.get_or_insert_range_for_key0(key0);
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
         debug_assert!(range.end <= self.keys1.zvl_len());
+        let range_start = range.start;
         #[allow(clippy::unwrap_used)] // by debug_assert! invariants
-        let index = range.start
+        let index = range_start
             + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
-                Ok(index) => return Some(self.values.zvl_replace(index, value)),
+                Ok(index) => return Some(self.values.zvl_replace(range_start + index, value)),
                 Err(index) => index,
             };
         self.keys1.zvl_insert(index, key1);
@@ -697,6 +707,8 @@ where
                 map.insert(key0, key1, value);
             }
         }
+        #[cfg(debug_assertions)]
+        map.check_invariants();
         map
     }
 }
@@ -704,6 +716,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use alloc::collections::BTreeMap;
 
     #[test]
     fn stress_test() {
@@ -823,5 +836,40 @@ mod test {
         assert_eq!(result.as_deref(), Some("YYY"));
 
         assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3, 6, 7]), joiner: ZeroVec([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
+    }
+
+    #[test]
+    fn zeromap2d_metazone() {
+        let source_data = [
+            (*b"aedxb", 0, Some(*b"gulf")),
+            (*b"afkbl", 0, Some(*b"afgh")),
+            (*b"ushnl", 0, None),
+            (*b"ushnl", 7272660, Some(*b"haal")),
+            (*b"ushnl", 0, None),
+            (*b"ushnl", 7272660, Some(*b"haal")),
+        ];
+
+        let btreemap: BTreeMap<([u8; 5], i32), Option<[u8; 4]>> = source_data
+            .iter()
+            .copied()
+            .map(|(a, b, c)| ((a, b), c))
+            .collect();
+
+        let zeromap2d: ZeroMap2d<[u8; 5], i32, Option<[u8; 4]>> =
+            source_data.iter().copied().collect();
+
+        let mut btreemap_iter = btreemap.iter();
+
+        for cursor in zeromap2d.iter0() {
+            for (key1, value) in cursor.iter1() {
+                // This code runs for every (key0, key1) pair in order
+                let expected = btreemap_iter.next().unwrap();
+                assert_eq!(
+                    (expected.0 .0, expected.0 .1, expected.1),
+                    (*cursor.key0(), key1.as_unsigned_int() as i32, &value.get())
+                );
+            }
+        }
+        assert!(btreemap_iter.next().is_none());
     }
 }

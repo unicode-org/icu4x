@@ -1,9 +1,9 @@
 {
   "date": {
-    "full": "EEEE, dd MMMM y G",
-    "long": "dd MMMM y G",
-    "medium": "dd MMM y G",
-    "short": "GGGGG y/MM/dd"
+    "full": "EEEE, d MMMM y G",
+    "long": "d MMMM y G",
+    "medium": "d MMM y G",
+    "short": "dd/MM/y GGGGG"
   },
   "length_combinations": {
     "full": "{1}, {0}",

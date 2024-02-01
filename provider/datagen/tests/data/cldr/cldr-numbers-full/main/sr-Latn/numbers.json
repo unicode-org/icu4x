@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44.1"
         },
         "language": "sr",
         "script": "Latn"
@@ -74,40 +74,28 @@
           "short": {
             "decimalFormat": {
               "1000-count-one": "0 hilj'.'",
-              "1000-count-few": "0 hilj'.'",
               "1000-count-other": "0 hilj'.'",
               "10000-count-one": "00 hilj'.'",
-              "10000-count-few": "00 hilj'.'",
               "10000-count-other": "00 hilj'.'",
               "100000-count-one": "000 hilj'.'",
-              "100000-count-few": "000 hilj'.'",
               "100000-count-other": "000 hilj'.'",
               "1000000-count-one": "0 mil'.'",
-              "1000000-count-few": "0 mil'.'",
               "1000000-count-other": "0 mil'.'",
               "10000000-count-one": "00 mil'.'",
-              "10000000-count-few": "00 mil'.'",
               "10000000-count-other": "00 mil'.'",
               "100000000-count-one": "000 mil'.'",
-              "100000000-count-few": "000 mil'.'",
               "100000000-count-other": "000 mil'.'",
               "1000000000-count-one": "0 mlrd'.'",
-              "1000000000-count-few": "0 mlrd'.'",
               "1000000000-count-other": "0 mlrd'.'",
               "10000000000-count-one": "00 mlrd'.'",
-              "10000000000-count-few": "00 mlrd'.'",
               "10000000000-count-other": "00 mlrd'.'",
               "100000000000-count-one": "000 mlrd'.'",
-              "100000000000-count-few": "000 mlrd'.'",
               "100000000000-count-other": "000 mlrd'.'",
               "1000000000000-count-one": "0 bil'.'",
-              "1000000000000-count-few": "0 bil'.'",
               "1000000000000-count-other": "0 bil'.'",
               "10000000000000-count-one": "00 bil'.'",
-              "10000000000000-count-few": "00 bil'.'",
               "10000000000000-count-other": "00 bil'.'",
               "100000000000000-count-one": "000 bil'.'",
-              "100000000000000-count-few": "000 bil'.'",
               "100000000000000-count-other": "000 bil'.'"
             }
           }

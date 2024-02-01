@@ -7,7 +7,10 @@
 use crate::source::*;
 use crate::transform::cldr::source::CldrCache;
 use crate::{CollationHanDatabase, CoverageLevel};
+use elsa::sync::FrozenMap;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -31,10 +34,10 @@ pub struct DatagenProvider {
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.1.0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "44.1.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-05-02/73.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-74-2";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -61,27 +64,6 @@ impl DatagenProvider {
             .clone()
     }
 
-    #[cfg(test)]
-    pub fn new_testing() -> Self {
-        // Singleton so that all instantiations share the same cache.
-        static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
-            once_cell::sync::OnceCell::new();
-        SINGLETON
-            .get_or_init(|| {
-                // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
-                let data_root =
-                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
-                Self::new_custom()
-                    .with_cldr(data_root.join("cldr"))
-                    .unwrap()
-                    .with_icuexport(data_root.join("icuexport"))
-                    .unwrap()
-                    .with_segmenter_lstm(data_root.join("lstm"))
-                    .unwrap()
-            })
-            .clone()
-    }
-
     /// A provider with no source data. Without adding more sources, most `load` methods
     /// will return errors.
     ///
@@ -99,6 +81,7 @@ impl DatagenProvider {
                 icuexport_dictionary_fallback: None,
                 #[cfg(feature = "legacy_api")]
                 collations: Default::default(),
+                supported_locales_cache: Default::default(),
             },
         }
     }
@@ -279,6 +262,19 @@ impl DatagenProvider {
     ) -> Result<impl IntoIterator<Item = icu_locid::LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
+
+    pub(crate) fn supported_locales_set<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
+    where
+        M: KeyedDataMarker,
+        Self: IterableDataProviderInternal<M>,
+    {
+        #[allow(deprecated)] // SourceData
+        self.source
+            .supported_locales_cache
+            .insert_with(M::KEY, || Box::new(self.supported_locales_impl()))
+            .as_ref()
+            .map_err(|e| *e)
+    }
 }
 
 /// Specifies the trie type to use.
@@ -317,16 +313,19 @@ impl std::fmt::Display for TrieType {
 #[non_exhaustive]
 #[deprecated(since = "1.3.0", note = "use `DatagenProvider`")]
 pub struct SourceData {
-    cldr_paths: Option<Arc<CldrCache>>,
-    icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_lstm_paths: Option<Arc<SerdeCache>>,
-    trie_type: TrieType,
-    collation_han_database: CollationHanDatabase,
+    pub(crate) cldr_paths: Option<Arc<CldrCache>>,
+    pub(crate) icuexport_paths: Option<Arc<SerdeCache>>,
+    pub(crate) segmenter_lstm_paths: Option<Arc<SerdeCache>>,
+    pub(crate) trie_type: TrieType,
+    pub(crate) collation_han_database: CollationHanDatabase,
     #[cfg(feature = "legacy_api")]
     // populated if constructed through `SourceData` constructor only
     pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
+    #[allow(clippy::type_complexity)] // not as complex as it appears
+    pub(crate) supported_locales_cache:
+        Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
 }
 
 #[cfg(feature = "legacy_api")]
@@ -504,5 +503,23 @@ impl SourceData {
             .as_deref()
             .ok_or(DatagenProvider::MISSING_CLDR_ERROR)?
             .locales(levels.iter().copied())
+    }
+}
+
+pub(crate) trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError>;
+}
+
+impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
+where
+    DatagenProvider: IterableDataProviderInternal<M>,
+{
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        self.supported_locales_set()
+            .map(|v| v.iter().cloned().collect())
+    }
+
+    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
+        self.supported_locales_set().map(|v| v.contains(locale))
     }
 }
