@@ -191,57 +191,57 @@ impl Debug for PersonNamesFormattingData<'_> {
 
         debug.field(
             "given_first",
-            &(&self.attributes & PersonNamesFormattingAttributes::GivenFirst.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::GivenFirst.bit_value()
                 == PersonNamesFormattingAttributes::GivenFirst.bit_value()),
         );
         debug.field(
             "surname_first",
-            &(&self.attributes & PersonNamesFormattingAttributes::SurnameFirst.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::SurnameFirst.bit_value()
                 == PersonNamesFormattingAttributes::SurnameFirst.bit_value()),
         );
         debug.field(
             "sorting",
-            &(&self.attributes & PersonNamesFormattingAttributes::Sorting.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Sorting.bit_value()
                 == PersonNamesFormattingAttributes::Sorting.bit_value()),
         );
         debug.field(
             "short",
-            &(&self.attributes & PersonNamesFormattingAttributes::Short.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Short.bit_value()
                 == PersonNamesFormattingAttributes::Short.bit_value()),
         );
         debug.field(
             "medium",
-            &(&self.attributes & PersonNamesFormattingAttributes::Medium.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Medium.bit_value()
                 == PersonNamesFormattingAttributes::Medium.bit_value()),
         );
         debug.field(
             "long",
-            &(&self.attributes & PersonNamesFormattingAttributes::Long.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Long.bit_value()
                 == PersonNamesFormattingAttributes::Long.bit_value()),
         );
         debug.field(
             "addressing",
-            &(&self.attributes & PersonNamesFormattingAttributes::Addressing.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Addressing.bit_value()
                 == PersonNamesFormattingAttributes::Addressing.bit_value()),
         );
         debug.field(
             "referring",
-            &(&self.attributes & PersonNamesFormattingAttributes::Referring.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Referring.bit_value()
                 == PersonNamesFormattingAttributes::Referring.bit_value()),
         );
         debug.field(
             "monogram",
-            &(&self.attributes & PersonNamesFormattingAttributes::Monogram.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Monogram.bit_value()
                 == PersonNamesFormattingAttributes::Monogram.bit_value()),
         );
         debug.field(
             "formal",
-            &(&self.attributes & PersonNamesFormattingAttributes::Formal.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Formal.bit_value()
                 == PersonNamesFormattingAttributes::Formal.bit_value()),
         );
         debug.field(
             "informal",
-            &(&self.attributes & PersonNamesFormattingAttributes::Informal.bit_value()
+            &(self.attributes & PersonNamesFormattingAttributes::Informal.bit_value()
                 == PersonNamesFormattingAttributes::Informal.bit_value()),
         );
         debug.finish()

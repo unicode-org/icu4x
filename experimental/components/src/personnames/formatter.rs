@@ -90,9 +90,9 @@ impl PersonNamesFormatter {
                 locale: &DataLocale::from(effective_locale),
                 metadata: Default::default(),
             })
-            .map_err(|err| PersonNamesFormatterError::Data(err))?
+            .map_err(PersonNamesFormatterError::Data)?
             .take_payload()
-            .map_err(|err| PersonNamesFormatterError::Data(err))?;
+            .map_err(PersonNamesFormatterError::Data)?;
         let formatting_definition: &PersonNamesFormatV1 = data_payload.get();
         let option_with_proper_name_order = self.final_person_names_formatter_options(
             effective_locale,
@@ -110,7 +110,7 @@ impl PersonNamesFormatter {
                 // attributes not provided by the source.
                 // i.e. : you can have 100, 010, 001, 111, but never 000
                 // (000 means nothing is provided, and by specification, this means all are valid)
-                &pattern.attributes & applicable_mask == applicable_mask
+                pattern.attributes & applicable_mask == applicable_mask
             })
             .ok_or_else(|| {
                 PersonNamesFormatterError::ParseError(String::from(

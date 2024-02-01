@@ -159,13 +159,13 @@ pub struct FieldModifierSet {
 impl FieldModifierSet {
     /// Return true of the field modifier is set. (None will always return true.)
     pub(crate) fn has_field(&self, modifier: FieldModifier) -> bool {
-        &self.value & modifier.bit_value() == modifier.bit_value()
+        self.value & modifier.bit_value() == modifier.bit_value()
     }
 
     /// Returns a copy of the field modifier set with the part changed.
     pub(crate) fn with_part(&self, part: FieldPart) -> FieldModifierSet {
         FieldModifierSet {
-            value: (&self.value
+            value: (self.value
                 & (u32::MAX
                     ^ (FieldModifier::Core.bit_value() | FieldModifier::Prefix.bit_value())))
                 | FieldModifier::from(part).bit_value(),
@@ -174,7 +174,7 @@ impl FieldModifierSet {
     /// Returns a copy of the field modifier set with the length changed.
     pub(crate) fn with_length(&self, length: FieldLength) -> FieldModifierSet {
         FieldModifierSet {
-            value: (&self.value
+            value: (self.value
                 & (u32::MAX
                     ^ (FieldModifier::Monogram.bit_value() | FieldModifier::Initial.bit_value())))
                 | FieldModifier::from(length).bit_value(),
