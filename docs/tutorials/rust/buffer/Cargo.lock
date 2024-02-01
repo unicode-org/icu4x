@@ -72,10 +72,8 @@ dependencies = [
  "icu_casemap",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -83,10 +81,8 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
- "icu_transliterate",
 ]
 
 [[package]]
@@ -163,25 +159,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_compactdecimal_data",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_compactdecimal_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_datetime"
 version = "1.4.0"
 dependencies = [
@@ -224,23 +201,6 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.4.0"
-
-[[package]]
-name = "icu_displaynames"
-version = "0.11.2"
-dependencies = [
- "icu_displaynames_data",
- "icu_locid",
- "icu_locid_transform",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_displaynames_data"
 version = "1.4.0"
 
 [[package]]
@@ -292,7 +252,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -386,26 +346,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_relativetime"
-version = "0.1.4"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "icu_relativetime_data",
- "serde",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_relativetime_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_segmenter"
 version = "1.4.0"
 dependencies = [
@@ -442,34 +382,6 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "1.4.0"
-
-[[package]]
-name = "icu_transliterate"
-version = "0.1.2"
-dependencies = [
- "displaydoc",
- "icu_collections",
- "icu_locid",
- "icu_normalizer",
- "icu_properties",
- "icu_provider",
- "icu_unicodeset_parse",
- "litemap",
- "serde",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_unicodeset_parse"
-version = "0.1.2"
-dependencies = [
- "icu_collections",
- "icu_properties",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
 
 [[package]]
 name = "libm"
@@ -739,10 +651,14 @@ version = "0.3.7"
 
 [[patch.unused]]
 name = "icu_datagen"
-version = "1.4.0"
+version = "1.4.1"
 
 [[patch.unused]]
-name = "icu_dimension"
+name = "icu_experimental"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_experimental_data"
 version = "0.0.0"
 
 [[patch.unused]]
@@ -756,10 +672,6 @@ version = "0.1.2"
 [[patch.unused]]
 name = "icu_pattern"
 version = "0.1.5"
-
-[[patch.unused]]
-name = "icu_personnames"
-version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_provider_adapters"

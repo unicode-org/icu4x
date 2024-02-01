@@ -9,8 +9,8 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-specific
-    use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
-    use icu_displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
+    use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
+    use icu_experimental::displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
     use icu_locid::subtags::Region;
     use writeable::Writeable;
 
@@ -135,7 +135,7 @@ pub mod ffi {
 }
 
 #[allow(unused_imports)] // feature-specific
-use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay, Style};
+use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay, Style};
 
 impl From<ffi::ICU4XDisplayNamesStyle> for Option<Style> {
     fn from(style: ffi::ICU4XDisplayNamesStyle) -> Option<Style> {

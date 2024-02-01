@@ -4,6 +4,7 @@ calendar/japanese@1, und, 111B, b31e52deaf52706f
 calendar/japanext@1, und, 5216B, 6c20e216c8cd6e41
 collator/data@1, ar, 8267B, fce742b37324adbe
 collator/data@1, ar-EG, 8267B, fce742b37324adbe
+collator/data@1, ar-EG-u-co-compat, 1888B, e7b7e3fda37b8565
 collator/data@1, ar-u-co-compat, 1888B, e7b7e3fda37b8565
 collator/data@1, bn, 1304B, 4b0a44d6a365bcd1
 collator/data@1, bn-u-co-trad, 11083B, 1d78781818d5ec49
@@ -13,6 +14,7 @@ collator/data@1, en-001, 126799B, a0ea0e0eecc34e27
 collator/data@1, en-ZA, 126799B, a0ea0e0eecc34e27
 collator/data@1, es, 1064B, 53d5d15868ead10a
 collator/data@1, es-AR, 1064B, 53d5d15868ead10a
+collator/data@1, es-AR-u-co-trad, 1130B, 7f0603bad1cbb60d
 collator/data@1, es-u-co-trad, 1130B, 7f0603bad1cbb60d
 collator/data@1, fil, 1088B, f4b69509fc410230
 collator/data@1, fr, 126799B, a0ea0e0eecc34e27
@@ -47,6 +49,7 @@ collator/dia@1, und, 160B, 8ace760351a33687
 collator/jamo@1, und, 1026B, 8554e65df2b9cfbb
 collator/meta@1, ar, 1B, 9208c26164ee7a99
 collator/meta@1, ar-EG, 1B, 9208c26164ee7a99
+collator/meta@1, ar-EG-u-co-compat, 1B, 9208c26164ee7a99
 collator/meta@1, ar-u-co-compat, 1B, 9208c26164ee7a99
 collator/meta@1, bn, 1B, 9208c26164ee7a99
 collator/meta@1, bn-u-co-trad, 1B, 9208c26164ee7a99
@@ -56,6 +59,7 @@ collator/meta@1, en-001, 1B, 667dd5401e6fd800
 collator/meta@1, en-ZA, 1B, 667dd5401e6fd800
 collator/meta@1, es, 1B, 9aab82d56f3b362e
 collator/meta@1, es-AR, 1B, 9aab82d56f3b362e
+collator/meta@1, es-AR-u-co-trad, 1B, 9aab82d56f3b362e
 collator/meta@1, es-u-co-trad, 1B, 9aab82d56f3b362e
 collator/meta@1, fil, 1B, 9aab82d56f3b362e
 collator/meta@1, fr, 1B, 667dd5401e6fd800
@@ -72,6 +76,7 @@ collator/meta@1, und-u-co-eor, 1B, 667dd5401e6fd800
 collator/prim@1, und, 10B, 792009c72825eaba
 collator/reord@1, ar, 264B, 556a25539c4da116
 collator/reord@1, ar-EG, 264B, 556a25539c4da116
+collator/reord@1, ar-EG-u-co-compat, 264B, 556a25539c4da116
 collator/reord@1, ar-u-co-compat, 264B, 556a25539c4da116
 collator/reord@1, bn, 268B, 99752b8b1cb4c37b
 collator/reord@1, bn-u-co-trad, 268B, 99752b8b1cb4c37b
@@ -1591,12 +1596,16 @@ datetime/patterns/time@1, en-001-x-s, 17B, dd691ff921592b5
 datetime/patterns/time@1, en-001-x-s24, 11B, 7b06e5a4993a4e9a
 datetime/patterns/time@1, en-ZA-x-f, 23B, 6a41da8c43bf6f45
 datetime/patterns/time@1, en-ZA-x-f12, 29B, 7cab8ab71d571c6
+datetime/patterns/time@1, en-ZA-x-f24, 23B, 1c9cddd11d68c33a
 datetime/patterns/time@1, en-ZA-x-l, 23B, 2244959498606494
 datetime/patterns/time@1, en-ZA-x-l12, 29B, 7cab8ab71d571c6
+datetime/patterns/time@1, en-ZA-x-l24, 23B, 1c9cddd11d68c33a
 datetime/patterns/time@1, en-ZA-x-m, 17B, d037d51a86bbe2
 datetime/patterns/time@1, en-ZA-x-m12, 23B, 72dd914cf7818843
+datetime/patterns/time@1, en-ZA-x-m24, 17B, d037d51a86bbe2
 datetime/patterns/time@1, en-ZA-x-s, 11B, 7b06e5a4993a4e9a
 datetime/patterns/time@1, en-ZA-x-s12, 17B, dd691ff921592b5
+datetime/patterns/time@1, en-ZA-x-s24, 11B, 7b06e5a4993a4e9a
 datetime/patterns/time@1, en-x-f, 29B, eab82b7bd4db3d8d
 datetime/patterns/time@1, en-x-f24, 23B, 1c9cddd11d68c33a
 datetime/patterns/time@1, en-x-l, 29B, 513d9b72aeff08ed
@@ -1606,12 +1615,16 @@ datetime/patterns/time@1, en-x-m24, 17B, d037d51a86bbe2
 datetime/patterns/time@1, en-x-s, 17B, dd691ff921592b5
 datetime/patterns/time@1, en-x-s24, 11B, 7b06e5a4993a4e9a
 datetime/patterns/time@1, es-AR-x-f, 29B, eab82b7bd4db3d8d
+datetime/patterns/time@1, es-AR-x-f12, 29B, 7cab8ab71d571c6
 datetime/patterns/time@1, es-AR-x-f24, 23B, 1c9cddd11d68c33a
 datetime/patterns/time@1, es-AR-x-l, 29B, 513d9b72aeff08ed
+datetime/patterns/time@1, es-AR-x-l12, 29B, 7cab8ab71d571c6
 datetime/patterns/time@1, es-AR-x-l24, 23B, 1c9cddd11d68c33a
 datetime/patterns/time@1, es-AR-x-m, 23B, 72dd914cf7818843
+datetime/patterns/time@1, es-AR-x-m12, 23B, 72dd914cf7818843
 datetime/patterns/time@1, es-AR-x-m24, 17B, d037d51a86bbe2
 datetime/patterns/time@1, es-AR-x-s, 17B, dd691ff921592b5
+datetime/patterns/time@1, es-AR-x-s12, 17B, dd691ff921592b5
 datetime/patterns/time@1, es-AR-x-s24, 11B, 7b06e5a4993a4e9a
 datetime/patterns/time@1, es-x-f, 29B, c1bdced58fc9f02f
 datetime/patterns/time@1, es-x-f12, 29B, 7cab8ab71d571c6

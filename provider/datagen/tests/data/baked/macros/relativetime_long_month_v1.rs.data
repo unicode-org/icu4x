@@ -9,22 +9,22 @@ macro_rules! __impl_relativetime_long_month_v1 {
         #[clippy::msrv = "1.67"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.67"]
-        impl icu_provider::DataProvider<icu::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
-                static UND: <icu::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::relativetime::provider::RelativeTimePatternDataV1 {
+        impl icu_provider::DataProvider<icu::experimental::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
+                static UND: <icu::experimental::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                     relatives: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x14\0last monththis monthnext month") })
                     },
-                    past: icu::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- m"), index: 1u8 } },
-                    future: icu::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ m"), index: 1u8 } },
+                    past: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("- m"), index: 1u8 } },
+                    future: icu::experimental::relativetime::provider::PluralRulesCategoryMapping { zero: None, one: None, two: None, few: None, many: None, other: icu::experimental::relativetime::provider::SingularSubPattern { pattern: alloc::borrow::Cow::Borrowed("+ m"), index: 1u8 } },
                 };
-                static VALUES: [&<icu::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static VALUES: [&<icu::experimental::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::experimental::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

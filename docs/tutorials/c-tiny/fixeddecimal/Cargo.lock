@@ -386,7 +386,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -397,12 +397,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
 
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=4bb7d034730b00bbb4bbb36e30fdc02c6481a667#4bb7d034730b00bbb4bbb36e30fdc02c6481a667"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -755,7 +755,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "calendrical_calculations",
  "clap",
@@ -881,7 +881,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2769,14 +2769,6 @@ name = "icu_collator_data"
 version = "1.4.0"
 
 [[patch.unused]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-
-[[patch.unused]]
-name = "icu_compactdecimal_data"
-version = "1.4.0"
-
-[[patch.unused]]
 name = "icu_datetime_data"
 version = "1.4.0"
 
@@ -2785,16 +2777,12 @@ name = "icu_decimal_data"
 version = "1.4.0"
 
 [[patch.unused]]
-name = "icu_dimension"
+name = "icu_experimental"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_displaynames"
-version = "0.11.2"
-
-[[patch.unused]]
-name = "icu_displaynames_data"
-version = "1.4.0"
+name = "icu_experimental_data"
+version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_freertos"
@@ -2821,23 +2809,11 @@ name = "icu_pattern"
 version = "0.1.5"
 
 [[patch.unused]]
-name = "icu_personnames"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "icu_plurals_data"
 version = "1.4.0"
 
 [[patch.unused]]
 name = "icu_properties_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_relativetime"
-version = "0.1.4"
-
-[[patch.unused]]
-name = "icu_relativetime_data"
 version = "1.4.0"
 
 [[patch.unused]]
@@ -2847,14 +2823,6 @@ version = "1.4.0"
 [[patch.unused]]
 name = "icu_timezone_data"
 version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_transliterate"
-version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_unicodeset_parse"
-version = "0.1.2"
 
 [[patch.unused]]
 name = "icu_unitsconversion"

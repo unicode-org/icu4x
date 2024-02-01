@@ -35,12 +35,6 @@ icu_properties = { workspace = true }
 icu_segmenter = { workspace = true }
 icu_timezone = { workspace = true }
 
-# Experimental components
-icu_compactdecimal = { workspace = true, optional = true }
-icu_displaynames = { workspace = true, optional = true }
-icu_relativetime = { workspace = true, optional = true }
-icu_transliterate = { workspace = true, features = ["compile"], optional = true } # currently only usable with the compile feature
-
 # For docs links and features
 icu_provider = { workspace = true }
 
@@ -55,16 +49,13 @@ default = [
     "icu_calendar/default",
     "icu_casemap/default",
     "icu_collator/default",
-    "icu_compactdecimal?/default",
     "icu_datetime/default",
     "icu_decimal/default",
-    "icu_displaynames?/default",
     "icu_list/default",
     "icu_locid_transform/default",
     "icu_normalizer/default",
     "icu_plurals/default",
     "icu_properties/default",
-    "icu_relativetime?/default",
     "icu_segmenter/default",
     "icu_timezone/default",
 ]
@@ -75,17 +66,14 @@ std = [
     "icu_collections/std",
     "icu_datetime/std",
     "icu_decimal/std",
-    "icu_displaynames?/std",
     "icu_list/std",
     "icu_locid_transform/std",
     "icu_locid/std",
     "icu_normalizer/std",
     "icu_plurals/std",
     "icu_properties/std",
-    "icu_relativetime?/std",
     "icu_segmenter/std",
     "icu_timezone/std",
-    "icu_transliterate?/std",
 ]
 serde = [
     "icu_calendar/serde",
@@ -94,35 +82,28 @@ serde = [
     "icu_collections/serde",
     "icu_datetime/serde",
     "icu_decimal/serde",
-    "icu_displaynames?/serde",
     "icu_list/serde",
     "icu_locid_transform/serde",
     "icu_locid/serde",
     "icu_normalizer/serde",
     "icu_plurals/serde",
     "icu_properties/serde",
-    "icu_relativetime?/serde",
     "icu_segmenter/serde",
     "icu_timezone/serde",
-    "icu_transliterate?/serde",
 ]
 compiled_data = [
     "icu_calendar/compiled_data",
     "icu_casemap/compiled_data",
     "icu_collator/compiled_data",
-    "icu_compactdecimal?/compiled_data",
     "icu_datetime/compiled_data",
     "icu_decimal/compiled_data",
-    "icu_displaynames?/compiled_data",
     "icu_list/compiled_data",
     "icu_locid_transform/compiled_data",
     "icu_normalizer/compiled_data",
     "icu_plurals/compiled_data",
     "icu_properties/compiled_data",
-    "icu_relativetime?/compiled_data",
     "icu_segmenter/compiled_data",
     "icu_timezone/compiled_data",
-    "icu_transliterate?/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"
@@ -134,12 +115,8 @@ icu_plurals_experimental = [
     "icu_plurals/experimental"
 ]
 experimental = [
-    "icu_compactdecimal",
     "icu_datetime_experimental",
-    "icu_displaynames",
     "icu_plurals_experimental",
-    "icu_relativetime",
-    "icu_transliterate",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging"]

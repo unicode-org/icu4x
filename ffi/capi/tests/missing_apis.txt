@@ -17,6 +17,7 @@
 icu::calendar::week::WeekCalculator::weekend#FnInStruct
 icu::datetime::FormattedDateTimePattern#Struct
 icu::datetime::FormattedDateTimePattern::write_to#FnInStruct
+icu::datetime::MismatchedCalendarError#Struct
 icu::datetime::TypedDateTimeNames#Struct
 icu::datetime::TypedDateTimeNames::include_day_period_names#FnInStruct
 icu::datetime::TypedDateTimeNames::include_for_pattern#FnInStruct
@@ -40,6 +41,9 @@ icu::datetime::neo::FormattedNeoDateTime::write_to#FnInStruct
 icu::datetime::neo::FormattedNeoTime#Struct
 icu::datetime::neo::FormattedNeoTime::pattern#FnInStruct
 icu::datetime::neo::FormattedNeoTime::write_to#FnInStruct
+icu::datetime::neo::NeoDateFormatter#Struct
+icu::datetime::neo::NeoDateFormatter::format#FnInStruct
+icu::datetime::neo::NeoDateFormatter::try_new_with_length#FnInStruct
 icu::datetime::neo::NeoTimeFormatter#Struct
 icu::datetime::neo::NeoTimeFormatter::format#FnInStruct
 icu::datetime::neo::NeoTimeFormatter::try_new_with_length#FnInStruct

@@ -45,7 +45,6 @@ buffer_provider = [
     "icu_collator?/serde",
     "icu_datetime?/serde",
     "icu_decimal?/serde",
-    "icu_displaynames?/serde",
     "icu_list?/serde",
     "icu_locid_transform?/serde",
     "icu_locid/serde",
@@ -56,6 +55,7 @@ buffer_provider = [
     "icu_provider_adapters/serde",
     "icu_segmenter?/serde",
     "icu_timezone?/serde",
+    "icu_experimental?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider", "std"]
 logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log", "std"]
@@ -71,7 +71,7 @@ default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_dateti
                       "icu_list", "icu_locid_transform",
                       "icu_normalizer", "icu_plurals", "icu_properties",
                       "icu_segmenter", "icu_timezone"]
-# icu_displaynames is experimental, not included by default
+experimental_components = ["dep:icu_experimental"]
 
 icu_calendar = ["dep:icu_calendar"]
 icu_casemap = ["dep:icu_casemap"]
@@ -79,7 +79,6 @@ icu_collator = ["dep:icu_collator"]
 # icu_collections = ["dep:icu_collections"] # Not useful on its own: use icu_properties
 icu_datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
 icu_decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
-icu_displaynames = ["dep:icu_displaynames"]
 icu_list = ["dep:icu_list"]
 icu_locid_transform = ["dep:icu_locid_transform"]
 icu_normalizer = ["dep:icu_normalizer"]
@@ -94,7 +93,6 @@ compiled_data = [
     "icu_collator?/compiled_data",
     "icu_datetime?/compiled_data",
     "icu_decimal?/compiled_data",
-    "icu_displaynames?/compiled_data",
     "icu_list?/compiled_data",
     "icu_locid_transform?/compiled_data",
     "icu_normalizer?/compiled_data",
@@ -102,6 +100,7 @@ compiled_data = [
     "icu_properties?/compiled_data",
     "icu_segmenter?/compiled_data",
     "icu_timezone?/compiled_data",
+    "icu_experimental?/compiled_data",
 ]
 
 std = []
@@ -131,7 +130,6 @@ icu_collator = { workspace = true, optional = true }
 icu_collections = { workspace = true, optional = true }
 icu_datetime = { workspace = true, optional = true }
 icu_decimal = { workspace = true, optional = true }
-icu_displaynames = { workspace = true, optional = true }
 icu_list = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true }
 icu_normalizer = { workspace = true, optional = true }
@@ -139,6 +137,7 @@ icu_plurals = { workspace = true, optional = true }
 icu_properties = { workspace = true, features = ["bidi"], optional = true }
 icu_segmenter = { workspace = true, features = ["auto"], optional = true }
 icu_timezone = { workspace = true, optional = true }
+icu_experimental = { workspace = true, optional = true }
 
 # Optional ICU4X features (not components)
 icu_provider_blob = { workspace = true, optional = true }
