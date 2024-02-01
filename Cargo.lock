@@ -1636,6 +1636,7 @@ dependencies = [
  "icu_provider",
  "litemap",
  "log",
+ "once_cell",
  "regex",
  "serde",
  "tinystr",

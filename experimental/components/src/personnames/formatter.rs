@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
+use alloc::vec::Vec;
 
 use super::api::{
     FormattingOrder, NameField, NameFieldKind, PersonName, PersonNamesFormatterError,
@@ -66,9 +67,9 @@ impl PersonNamesFormatter<'_> {
                 locale: &DataLocale::from(effective_locale),
                 metadata: Default::default(),
             })
-            .map_err(|err| PersonNamesFormatterError::InvalidCldrData(err.to_string()))?
+            .map_err(|err| PersonNamesFormatterError::Data(err))?
             .take_payload()
-            .map_err(|err| PersonNamesFormatterError::InvalidCldrData(err.to_string()))?;
+            .map_err(|err| PersonNamesFormatterError::Data(err))?;
         let formatting_definition: &PersonNamesFormatV1 = data_payload.get();
         let option_with_proper_name_order = self.final_person_names_formatter_options(
             effective_locale,

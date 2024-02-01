@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::personnames::api::{FieldModifier, FieldPart, NameField};
+use alloc::vec;
+use alloc::vec::Vec;
 
 /// Transform the request field in a list of requested field based on the available fields.
 /// a single field can be transformed into 2 fields, or just be removed.

@@ -110,7 +110,9 @@ mod tests {
     use litemap::LiteMap;
 
     use super::{effective_locale, likely_person_name_locale};
-    use crate::personnames::api::{FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError};
+    use crate::personnames::api::{
+        FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError,
+    };
     use crate::personnames::provided_struct::DefaultPersonName;
 
     #[test]

@@ -5,6 +5,7 @@
 use icu_locid::subtags::Language;
 use icu_locid::Locale;
 use icu_locid_transform::fallback::LocaleFallbacker;
+use writeable::Writeable;
 use zerovec::VarZeroVec;
 
 use crate::personnames::api::FormattingOrder;
@@ -27,12 +28,12 @@ pub fn name_order_derive(
 
     loop {
         let chain_locale = fallback_iterator.get().clone().into_locale();
-        let chain_locale_str = chain_locale.to_string();
+        let chain_locale_str = chain_locale.write_to_string();
 
         // switch lookup with UND
         let mut chain_locale_und = chain_locale.clone();
         chain_locale_und.id.language = Language::UND;
-        let chain_locale_und_str = chain_locale_und.to_string();
+        let chain_locale_und_str = chain_locale_und.write_to_string();
 
         if given_first
             .iter()

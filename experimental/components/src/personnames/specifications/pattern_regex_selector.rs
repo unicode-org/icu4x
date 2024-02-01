@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::sync::OnceLock;
+use alloc::string::String;
+use alloc::vec::Vec;
 
+use once_cell::sync::OnceCell as OnceLock;
 use regex::{Captures, Match, Regex};
 
 use crate::personnames::api::{
@@ -120,7 +122,7 @@ impl PersonNamePattern<'_> {
                         initial_sequence_pattern,
                     )
                     .join(" ");
-                [p_name, v.to_string()]
+                [p_name, String::from(*v)]
             })
             .collect()
     }
@@ -139,10 +141,13 @@ impl TryFrom<Match<'_>> for NameFieldKind {
             "generation" => Ok(NameFieldKind::Generation),
             "credentials" => Ok(NameFieldKind::Credentials),
 
-            _ => Err(PersonNamesFormatterError::InvalidCldrData(format!(
-                "Invalid NameFieldKind value matched [{}]",
-                value.as_str(),
-            ))),
+            _ => {
+                icu_provider::_internal::log::warn!(
+                    "Invalid NameFieldKind value matched [{}]",
+                    value.as_str()
+                );
+                Err(PersonNamesFormatterError::InvalidCldrData)
+            }
         }
     }
 }
@@ -159,10 +164,13 @@ impl TryFrom<&Match<'_>> for FieldModifier {
             "-initialCap" => Ok(FieldModifier::InitialCap),
             "-initial" => Ok(FieldModifier::Initial),
             "-monogram" => Ok(FieldModifier::Monogram),
-            _ => Err(PersonNamesFormatterError::InvalidCldrData(format!(
-                "Invalid FieldModifier value matched [{}]",
-                value.as_str(),
-            ))),
+            _ => {
+                icu_provider::_internal::log::warn!(
+                    "Invalid FieldModifier value matched [{}]",
+                    value.as_str()
+                );
+                Err(PersonNamesFormatterError::InvalidCldrData)
+            }
         }
     }
 }
@@ -175,9 +183,8 @@ impl TryFrom<&Captures<'_>> for NameField {
             .name("name_field_kind")
             .map(NameFieldKind::try_from)
             .unwrap_or_else(|| {
-                Err(PersonNamesFormatterError::InvalidCldrData(String::from(
-                    "unable to match",
-                )))
+                icu_provider::_internal::log::warn!("unable to match");
+                Err(PersonNamesFormatterError::InvalidCldrData)
             })?;
 
         let field_modifier_1 = value

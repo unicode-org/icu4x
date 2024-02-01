@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::sync::OnceLock;
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
 
+use once_cell::sync::OnceCell as OnceLock;
 use regex::Regex;
 
 use crate::personnames::api::{FieldLength, FieldModifier, NameField, PersonName};
@@ -32,7 +35,7 @@ pub fn derive_missing_initials(
     initial_sequence_pattern: &str,
 ) -> String {
     if person_name.has_name_field(requested_field) {
-        return person_name.get(requested_field).to_string();
+        return String::from(person_name.get(requested_field));
     }
     if requested_field.modifier.has_field(FieldModifier::Initial) {
         let full_value = Vec::from_iter(
@@ -61,9 +64,9 @@ pub fn derive_missing_initials(
                 let initial = name_part
                     .chars()
                     .nth(position)
-                    .map(|i| i.to_string() + trailing)
+                    .map(|i| String::from(i) + trailing)
                     // Default to empty string if not found.
-                    .unwrap_or(String::from(""));
+                    .unwrap_or_else(|| String::from(""));
                 initials.push(initial);
             }
         }
@@ -78,11 +81,11 @@ pub fn derive_missing_initials(
             build_initials.push(
                 initials
                     .get(position)
-                    .map(|s| s.to_string() + trailing_sequence)
-                    .unwrap_or(trailing_sequence.to_string()),
+                    .map(|s| s.clone() + trailing_sequence)
+                    .unwrap_or_else(|| String::from(trailing_sequence)),
             )
         }
-        return build_initials.join("").trim().to_string();
+        return String::from(build_initials.join("").trim());
     }
     // If it had the field, it would have been returned earlier.
     String::from("")
@@ -94,7 +97,9 @@ mod tests {
     use litemap::LiteMap;
 
     use crate::personnames::api::NameFieldKind::Given;
-    use crate::personnames::api::{FieldLength, FieldModifierSet, NameField, PersonNamesFormatterError};
+    use crate::personnames::api::{
+        FieldLength, FieldModifierSet, NameField, PersonNamesFormatterError,
+    };
     use crate::personnames::provided_struct::DefaultPersonName;
 
     #[test]

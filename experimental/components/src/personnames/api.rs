@@ -7,6 +7,7 @@ use alloc::vec::Vec;
 use core::fmt;
 use icu_locid::Locale;
 use icu_locid_transform::LocaleExpander;
+use icu_provider::DataError;
 
 /// Trait for providing person name data.
 pub trait PersonName {
@@ -37,7 +38,8 @@ pub enum PersonNamesFormatterError {
     ParseError(String),
     InvalidPersonName,
     InvalidLocale,
-    InvalidCldrData(String),
+    InvalidCldrData,
+    Data(DataError),
 }
 
 /// Field Modifiers.
