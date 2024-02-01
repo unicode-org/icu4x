@@ -34,8 +34,6 @@ smallvec = "1.11.2"
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["yoke"] }
 
-icu_unitsconversion_data = { workspace = true, optional = true }
-
 [dev-dependencies]
 num = "0.4.1"
 
