@@ -81,8 +81,6 @@ fn main() {
     options.overwrite = true;
     options.pretty = true;
 
-    let template = Path::new("provider/baked/_template_");
-
     for (component, keys, version) in &components {
         let path = Path::new("provider/baked").join(component);
 
@@ -90,17 +88,22 @@ fn main() {
         for dir in ["", "src", "data"] {
             std::fs::create_dir(&path.join(dir)).unwrap();
         }
-        for file in [
-            "build.rs",
-            "Cargo.toml",
-            "LICENSE",
-            "README.md",
-            "src/lib.rs",
+        for (file, template) in [
+            ("build.rs", include_str!("../template/build.rs.template")),
+            (
+                "Cargo.toml",
+                include_str!("../template/Cargo.toml.template"),
+            ),
+            ("LICENSE", include_str!("../LICENSE")),
+            ("README.md", include_str!("../template/README.md.template")),
+            (
+                "src/lib.rs",
+                include_str!("../template/src/lib.rs.template"),
+            ),
         ] {
             std::fs::write(
                 path.join(file),
-                &std::fs::read_to_string(template.join(file))
-                    .unwrap()
+                template
                     .replace("_component_", component)
                     .replace("_version_", version)
                     .replace("_cldr_tag_", DatagenProvider::LATEST_TESTED_CLDR_TAG)
