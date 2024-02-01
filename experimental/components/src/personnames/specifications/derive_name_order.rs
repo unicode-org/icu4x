@@ -4,7 +4,7 @@
 
 use icu_locid::subtags::Language;
 use icu_locid::Locale;
-use icu_locid_transform::fallback::LocaleFallbacker;
+use icu_locid_transform::fallback::LocaleFallbackerBorrowed;
 use writeable::Writeable;
 use zerovec::VarZeroVec;
 
@@ -17,9 +17,8 @@ pub fn name_order_derive(
     person_name_locale: &Locale,
     surname_first: &VarZeroVec<str>,
     given_first: &VarZeroVec<str>,
+    fallbacker: LocaleFallbackerBorrowed,
 ) -> FormattingOrder {
-    // Set up a LocaleFallbacker with data.
-    let fallbacker = LocaleFallbacker::new();
     // Create a LocaleFallbackerIterator with a default configuration.
     // By default, uses language priority with no additional extension keywords.
     let mut fallback_iterator = fallbacker
@@ -54,6 +53,7 @@ pub fn name_order_derive(
 #[cfg(test)]
 mod tests {
     use icu_locid::locale;
+    use icu_locid_transform::LocaleFallbacker;
     use zerovec::VarZeroVec;
 
     use super::name_order_derive;
@@ -61,13 +61,15 @@ mod tests {
 
     #[test]
     fn test_plain_locale() {
+        let fallbacker = LocaleFallbacker::new();
+
         let given_first = VarZeroVec::from(&["und"]);
         // will never match by definition because there only have locale, but given first has precedence.
         let surname_first = VarZeroVec::from(&["hu", "ja", "km", "ko", "mn", "vi", "yue", "zh"]);
 
         // Match "und"
         assert_eq!(
-            name_order_derive(&locale!("de_Latn_ch"), &surname_first, &given_first),
+            name_order_derive(&locale!("de_Latn_ch"), &surname_first, &given_first, fallbacker),
             FormattingOrder::GivenFirst,
             "failed for de_Latn_ch"
         );
@@ -77,34 +79,36 @@ mod tests {
         // As evaluation goes, the locale being checked are {"ja", "und"},
         // since "und" is a catch all set in given first, it is a perfect match.
         assert_eq!(
-            name_order_derive(&locale!("ja_Jpan_jp"), &surname_first, &given_first),
+            name_order_derive(&locale!("ja_Jpan_jp"), &surname_first, &given_first, fallbacker),
             FormattingOrder::GivenFirst,
             "failed for ja_Jpan_jp"
         );
     }
     #[test]
     fn test_mixed_und() {
+        let fallbacker = LocaleFallbacker::new();
+
         let given_first = VarZeroVec::from(&["und"]);
         let surname_first = VarZeroVec::from(&[
             "zh", "ja", "und-CN", "und-TW", "und-SG", "und-HK", "und-MO", "und-HU", "und-JP",
         ]);
 
         assert_eq!(
-            name_order_derive(&locale!("en_Latn_SG"), &surname_first, &given_first),
+            name_order_derive(&locale!("en_Latn_SG"), &surname_first, &given_first, fallbacker),
             FormattingOrder::SurnameFirst,
             "failed for en_Latn_SG"
         );
 
         // This is not matching because of zh, but because of und-CN
         assert_eq!(
-            name_order_derive(&locale!("zh_Hans_CN"), &surname_first, &given_first),
+            name_order_derive(&locale!("zh_Hans_CN"), &surname_first, &given_first, fallbacker),
             FormattingOrder::SurnameFirst,
             "failed for zh_Hans_CN"
         );
 
         // This is not matching because of zh, but because of und-CN
         assert_eq!(
-            name_order_derive(&locale!("zh_Hans"), &surname_first, &given_first),
+            name_order_derive(&locale!("zh_Hans"), &surname_first, &given_first, fallbacker),
             FormattingOrder::GivenFirst,
             "failed for zh_Hans"
         );

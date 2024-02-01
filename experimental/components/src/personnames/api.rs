@@ -6,7 +6,6 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
 use icu_locid::Locale;
-use icu_locid_transform::LocaleExpander;
 use icu_provider::DataError;
 
 /// Trait for providing person name data.
@@ -319,31 +318,10 @@ pub enum FormattingFormality {
 /// Person name formatter options.
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub struct PersonNamesFormatterOptions {
-    /// the target locale will maximized when passed into the formatter.
+    /// TODO: the target locale should be maximized when passed into the formatter.
     pub target_locale: Locale,
     pub order: FormattingOrder,
     pub length: FormattingLength,
     pub usage: FormattingUsage,
     pub formality: FormattingFormality,
-}
-
-impl PersonNamesFormatterOptions {
-    pub fn new(
-        target_locale: Locale,
-        order: FormattingOrder,
-        length: FormattingLength,
-        usage: FormattingUsage,
-        formality: FormattingFormality,
-    ) -> Self {
-        let lc = LocaleExpander::new();
-        let mut final_locale = target_locale.clone();
-        lc.maximize(&mut final_locale);
-        Self {
-            target_locale: final_locale,
-            order,
-            length,
-            usage,
-            formality,
-        }
-    }
 }
