@@ -737,3 +737,39 @@ pub(crate) fn convert_if_necessary<'a>(
         Ok(None)
     }
 }
+
+/// Converts a date to the correct calendar if necessary
+///
+/// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
+/// if the date is compatible with the current calendar and doesn't need conversion
+pub(crate) fn convert_datetime_if_necessary<'a>(
+    any_calendar: &'a AnyCalendar,
+    value: &impl crate::input::DateTimeInput<Calendar = AnyCalendar>,
+) -> Result<
+    Option<icu_calendar::DateTime<icu_calendar::Ref<'a, AnyCalendar>>>,
+    crate::MismatchedCalendarError,
+> {
+    let this_kind = any_calendar.kind();
+    let date_kind = value.any_calendar_kind();
+
+    if Some(this_kind) != date_kind {
+        if date_kind != Some(AnyCalendarKind::Iso) {
+            return Err(crate::MismatchedCalendarError {
+                this_kind,
+                date_kind,
+            });
+        }
+        let date = value.to_iso();
+        let time = icu_calendar::types::Time::new(
+            value.hour().unwrap_or_default(),
+            value.minute().unwrap_or_default(),
+            value.second().unwrap_or_default(),
+            value.nanosecond().unwrap_or_default(),
+        );
+        let datetime = icu_calendar::DateTime::new(date, time).to_any();
+        let converted = any_calendar.convert_any_datetime(&datetime);
+        Ok(Some(converted))
+    } else {
+        Ok(None)
+    }
+}

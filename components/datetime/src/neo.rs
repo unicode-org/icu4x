@@ -1661,17 +1661,18 @@ impl NeoDateTimeFormatter {
     /// For an example, see [`NeoDateTimeFormatter`].
     pub fn format<T>(
         &self,
-        date: &T,
+        datetime: &T,
     ) -> Result<FormattedNeoDateTime, crate::MismatchedCalendarError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        let datetime =
-            if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
-                ExtractedDateTimeInput::extract_from_date(&converted)
-            } else {
-                ExtractedDateTimeInput::extract_from_date(date)
-            };
+        let datetime = if let Some(converted) =
+            crate::calendar::convert_datetime_if_necessary(&self.calendar, datetime)?
+        {
+            ExtractedDateTimeInput::extract_from(&converted)
+        } else {
+            ExtractedDateTimeInput::extract_from(datetime)
+        };
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
