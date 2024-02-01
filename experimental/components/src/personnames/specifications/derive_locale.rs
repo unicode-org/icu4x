@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{Locale, subtags};
 use icu_locid::subtags::script;
+use icu_locid::{subtags, Locale};
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 use subtags::Script;
 
-use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
-use crate::api::NameFieldKind::{Given, Surname};
+use crate::personnames::api::NameFieldKind::{Given, Surname};
+use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
 
 /// Override the formatting payload to use based on specification rules.
 ///
@@ -43,9 +43,7 @@ fn compatible_scripts(sc1: Script, sc2: Script) -> bool {
 }
 
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-locale
-pub fn likely_person_name_locale<N>(
-    person_name: &N,
-) -> Result<Locale, PersonNamesFormatterError>
+pub fn likely_person_name_locale<N>(person_name: &N) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
 {
@@ -111,9 +109,9 @@ mod tests {
     use icu_locid_transform::LocaleExpander;
     use litemap::LiteMap;
 
-    use crate::api::{FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError};
     use super::{effective_locale, likely_person_name_locale};
-    use crate::provided_struct::DefaultPersonName;
+    use crate::personnames::api::{FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError};
+    use crate::personnames::provided_struct::DefaultPersonName;
 
     #[test]
     fn test_effective_locale_matching_script() {

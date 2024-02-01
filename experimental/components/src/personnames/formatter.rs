@@ -2,15 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::personnames::api::PersonNamesFormatterError;
-use crate::personnames::api::{PersonName, PersonNamesFormatterOptions};
-use crate::personnames::provider::PersonNamesFormattingDefinitionV1Marker;
 use alloc::string::String;
-use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
 
-pub struct PersonNamesFormatter {
-    pub(crate) _data_payload: DataPayload<PersonNamesFormattingDefinitionV1Marker>,
-    pub(crate) _options: PersonNamesFormatterOptions,
+use super::api::{
+    FormattingOrder, NameField, NameFieldKind, PersonName, PersonNamesFormatterError,
+    PersonNamesFormatterOptions, PreferredOrder,
+};
+use super::provider::{
+    PersonNamesFormatV1, PersonNamesFormatV1Marker, PersonNamesFormattingAttributes,
+    PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
+};
+use super::specifications;
+use icu_locid::Locale;
+use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
+use zerofrom::ZeroFrom;
+
+pub struct PersonNamesFormatter<'lt> {
+    pub(crate) default_options: PersonNamesFormatterOptions,
+    pub(crate) data_provider: &'lt dyn DataProvider<PersonNamesFormatV1Marker>,
 }
 
 impl From<&PersonNamesFormatterOptions> for PersonNamesFormattingAttributesMask {
@@ -46,8 +55,10 @@ impl PersonNamesFormatter<'_> {
             return Err(PersonNamesFormatterError::InvalidPersonName);
         }
         let person_name_locale = &specifications::likely_person_name_locale(person_name)?;
-        let effective_locale =
-            specifications::effective_locale(&self.default_options.target_locale, person_name_locale)?;
+        let effective_locale = specifications::effective_locale(
+            &self.default_options.target_locale,
+            person_name_locale,
+        )?;
 
         let data_payload: &DataPayload<PersonNamesFormatV1Marker> = &self
             .data_provider
@@ -87,7 +98,8 @@ impl PersonNamesFormatter<'_> {
             .patterns
             .iter()
             .map(specifications::to_person_name_pattern)
-            .collect::<Result<Vec<specifications::PersonNamePattern>, PersonNamesFormatterError>>()?;
+            .collect::<Result<Vec<specifications::PersonNamePattern>, PersonNamesFormatterError>>(
+            )?;
         let best_applicable_pattern = specifications::find_best_applicable_pattern(
             &applicable_patterns,
             &available_name_fields,
@@ -178,5 +190,5 @@ impl PersonNamesFormatter<'_> {
 pub(crate) fn validate_person_name(available_name_fields: &[&NameField]) -> bool {
     available_name_fields
         .iter()
-        .any(|field| field.kind == Given || field.kind == Surname)
+        .any(|field| field.kind == NameFieldKind::Given || field.kind == NameFieldKind::Surname)
 }

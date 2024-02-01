@@ -39,9 +39,13 @@ litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
+zerofrom = { workspace = true }
 
 displaydoc = { version = "0.2.3", default-features = false }
 log = { version = "0.4", optional = true }
+# if pulling regex 1.9.x is pulling conflicting dependencies
+# regex-automata => ^0.3.8
+regex = "=1.8.4"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 icu_experimental_data = { workspace = true, optional = true }

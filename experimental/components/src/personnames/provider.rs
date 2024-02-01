@@ -16,30 +16,20 @@ use icu_provider::prelude::*;
 use icu_provider::serde::borrow_de_utils::option_of_cow;
 use zerovec::VarZeroVec;
 
-use crate::api::FormattingFormality;
-use crate::api::FormattingLength;
-use crate::api::FormattingOrder;
-use crate::api::FormattingUsage;
+use crate::personnames::api::FormattingFormality;
+use crate::personnames::api::FormattingLength;
+use crate::personnames::api::FormattingOrder;
+use crate::personnames::api::FormattingUsage;
 
 #[cfg(feature = "compiled_data")]
-#[derive(Debug)]
 /// Baked data
-pub struct Baked;
-
-#[cfg(feature = "compiled_data")]
-const _: () = {
-    pub mod icu {
-        pub use icu_locid_transform as locid_transform;
-
-        pub use crate as personnames;
-    }
-    icu_personnames_data::make_provider!(Baked);
-    icu_personnames_data::impl_personnames_personnames_v1!(Baked);
-};
-
-#[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[PersonNamesFormatV1Marker::KEY];
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub use crate::provider::Baked;
 
 /// This is the equivalent of
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element>

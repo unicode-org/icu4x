@@ -4,6 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::fmt;
 use icu_locid::Locale;
 use icu_locid_transform::LocaleExpander;
 
@@ -225,8 +226,8 @@ impl Default for FieldModifierSet {
     }
 }
 
-impl Debug for FieldModifierSet {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+impl fmt::Debug for FieldModifierSet {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> core::fmt::Result {
         let mut debug = f.debug_struct("FieldModifierSet");
         debug.field("core", &self.has_field(FieldModifier::Core));
         debug.field("informal", &self.has_field(FieldModifier::Informal));

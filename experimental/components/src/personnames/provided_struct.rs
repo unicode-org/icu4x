@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{
     NameField, NameFieldKind, PersonName, PersonNamesFormatterError, PreferredOrder,
 };
@@ -67,7 +66,7 @@ impl DefaultPersonName {
             locale,
             preferred_order,
         };
-        if !crate::formatter::validate_person_name(&result.available_name_fields()) {
+        if !crate::personnames::formatter::validate_person_name(&result.available_name_fields()) {
             return Err(PersonNamesFormatterError::InvalidPersonName);
         }
         Ok(result)

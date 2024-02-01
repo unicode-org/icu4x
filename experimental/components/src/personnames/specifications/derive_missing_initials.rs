@@ -6,20 +6,18 @@ use std::sync::OnceLock;
 
 use regex::Regex;
 
-use crate::api::{FieldLength, FieldModifier, NameField, PersonName};
+use crate::personnames::api::{FieldLength, FieldModifier, NameField, PersonName};
 
 fn initial_pattern_regex() -> &'static Regex {
     static INITIAL_PATTERN: OnceLock<Regex> = OnceLock::new();
-    INITIAL_PATTERN.get_or_init(|| {
-        Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap()
-    })
+    INITIAL_PATTERN
+        .get_or_init(|| Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap())
 }
 
 fn initial_pattern_sequence_regex() -> &'static Regex {
     static INITIAL_PATTERN_SEQUENCE: OnceLock<Regex> = OnceLock::new();
-    INITIAL_PATTERN_SEQUENCE.get_or_init(|| {
-        Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap()
-    })
+    INITIAL_PATTERN_SEQUENCE
+        .get_or_init(|| Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap())
 }
 
 ///
@@ -95,9 +93,9 @@ mod tests {
     use icu_locid::locale;
     use litemap::LiteMap;
 
-    use crate::api::{FieldLength, FieldModifierSet, NameField, PersonNamesFormatterError};
-    use crate::api::NameFieldKind::Given;
-    use crate::provided_struct::DefaultPersonName;
+    use crate::personnames::api::NameFieldKind::Given;
+    use crate::personnames::api::{FieldLength, FieldModifierSet, NameField, PersonNamesFormatterError};
+    use crate::personnames::provided_struct::DefaultPersonName;
 
     #[test]
     fn test_single_initial() -> Result<(), PersonNamesFormatterError> {
@@ -114,12 +112,8 @@ mod tests {
             kind: Given,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let result = super::derive_missing_initials(
-            &person_name,
-            &requested_field,
-            "{0}.",
-            "{0} {1}",
-        );
+        let result =
+            super::derive_missing_initials(&person_name, &requested_field, "{0}.", "{0} {1}");
         assert_eq!(result, "H.");
         Ok(())
     }
@@ -139,12 +133,8 @@ mod tests {
             kind: Given,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let result = super::derive_missing_initials(
-            &person_name,
-            &requested_field,
-            "{0}.",
-            "{0} {1}",
-        );
+        let result =
+            super::derive_missing_initials(&person_name, &requested_field, "{0}.", "{0} {1}");
         assert_eq!(result, "M. J.");
         Ok(())
     }
@@ -164,12 +154,8 @@ mod tests {
             kind: Given,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let result = super::derive_missing_initials(
-            &person_name,
-            &requested_field,
-            "{0}.",
-            "{0} {1}",
-        );
+        let result =
+            super::derive_missing_initials(&person_name, &requested_field, "{0}.", "{0} {1}");
         assert_eq!(result, "M. J.");
         Ok(())
     }

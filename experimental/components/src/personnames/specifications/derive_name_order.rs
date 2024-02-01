@@ -7,7 +7,7 @@ use icu_locid::Locale;
 use icu_locid_transform::fallback::LocaleFallbacker;
 use zerovec::VarZeroVec;
 
-use crate::api::FormattingOrder;
+use crate::personnames::api::FormattingOrder;
 
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-order
@@ -55,8 +55,8 @@ mod tests {
     use icu_locid::locale;
     use zerovec::VarZeroVec;
 
-    use crate::api::FormattingOrder;
     use super::name_order_derive;
+    use crate::personnames::api::FormattingOrder;
 
     #[test]
     fn test_plain_locale() {

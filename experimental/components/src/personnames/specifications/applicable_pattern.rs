@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::api::{NameField, PersonNamesFormatterError};
-use crate::specifications::PersonNamePattern;
+use crate::personnames::api::{NameField, PersonNamesFormatterError};
+use crate::personnames::specifications::PersonNamePattern;
 
 pub fn find_best_applicable_pattern<'lt>(
     applicable_pattern: &'lt [PersonNamePattern<'lt>],
@@ -37,11 +37,11 @@ pub fn find_best_applicable_pattern<'lt>(
 
 #[cfg(test)]
 mod tests {
-    use crate::api::{
+    use crate::personnames::api::{
         FieldLength, FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError,
     };
-    use crate::specifications::pattern_regex_selector::PersonNamePattern;
-    use crate::specifications::to_person_name_pattern;
+    use crate::personnames::specifications::pattern_regex_selector::PersonNamePattern;
+    use crate::personnames::specifications::to_person_name_pattern;
 
     #[test]
     fn test_simple_match() -> Result<(), PersonNamesFormatterError> {

@@ -15,15 +15,15 @@ use serde::Deserialize;
 pub struct FormalityFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, String)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ReferringFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, FormalityFormatting)>);
+pub struct ReferringFormatting(
+    #[serde(with = "tuple_vec_map")] pub Vec<(String, FormalityFormatting)>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct SizedFormatting(
-    #[serde(with = "tuple_vec_map")] pub Vec<(String, ReferringFormatting)>);
+pub struct SizedFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, ReferringFormatting)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct OrderFormatting(
-    #[serde(with = "tuple_vec_map")] pub Vec<(String, SizedFormatting)>);
+pub struct OrderFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, SizedFormatting)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct PersonNames {

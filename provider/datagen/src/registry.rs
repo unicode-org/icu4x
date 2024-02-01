@@ -290,7 +290,8 @@ registry!(
     icu_experimental::displaynames::provider::VariantDisplayNamesV1Marker =
         "displaynames/variants@1",
     #[cfg(feature = "experimental_components")]
-    icu_experimental::personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
+    icu_experimental::personnames::provider::PersonNamesFormatV1Marker =
+        "personnames/personnames@1",
     #[cfg(all())]
     icu_list::provider::AndListV1Marker = "list/and@1",
     icu_list::provider::OrListV1Marker = "list/or@1",

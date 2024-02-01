@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::api::{FieldModifier, FieldPart, NameField};
+use crate::personnames::api::{FieldModifier, FieldPart, NameField};
 
 /// Transform the request field in a list of requested field based on the available fields.
 /// a single field can be transformed into 2 fields, or just be removed.
@@ -92,9 +92,9 @@ pub fn handle_field_modifier_core_prefix(
 
 #[cfg(test)]
 mod tests {
-    use crate::api::{FieldModifierSet, FieldPart, NameField, NameFieldKind};
+    use crate::personnames::api::{FieldModifierSet, FieldPart, NameField, NameFieldKind};
 
-// Each case is named after the combination if the field is present in spec table.
+    // Each case is named after the combination if the field is present in spec table.
     // e.g. : cp = core + plain, pc = prefix + core, pp = prefix + plain, pcp = all fields
 
     #[test]

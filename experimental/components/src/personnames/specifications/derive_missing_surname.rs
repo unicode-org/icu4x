@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::api::{NameField, NameFieldKind};
+use crate::personnames::api::{NameField, NameFieldKind};
 
 /// Returns a remapped field for missing surname.
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-missing-surname
@@ -36,7 +36,7 @@ pub fn derive_missing_surname(
 mod tests {
     use NameFieldKind::{Given, Surname};
 
-    use crate::api::{NameField, NameFieldKind};
+    use crate::personnames::api::{NameField, NameFieldKind};
 
     #[test]
     fn test_given_name_unused_no_surname_available_should_be_none_for_given() {
@@ -48,11 +48,8 @@ mod tests {
             kind: Given,
             modifier: Default::default(),
         }];
-        let result = super::derive_missing_surname(
-            available_name_field,
-            requested_name_field,
-            false,
-        );
+        let result =
+            super::derive_missing_surname(available_name_field, requested_name_field, false);
 
         assert_eq!(result, None)
     }
@@ -67,11 +64,8 @@ mod tests {
             kind: Given,
             modifier: Default::default(),
         }];
-        let result = super::derive_missing_surname(
-            available_name_field,
-            requested_name_field,
-            false,
-        );
+        let result =
+            super::derive_missing_surname(available_name_field, requested_name_field, false);
 
         assert_eq!(
             result,
@@ -92,11 +86,8 @@ mod tests {
             kind: Given,
             modifier: Default::default(),
         }];
-        let result = super::derive_missing_surname(
-            available_name_field,
-            requested_name_field,
-            true,
-        );
+        let result =
+            super::derive_missing_surname(available_name_field, requested_name_field, true);
 
         assert_eq!(
             result,
@@ -123,11 +114,8 @@ mod tests {
                 modifier: Default::default(),
             },
         ];
-        let result = super::derive_missing_surname(
-            available_name_field,
-            requested_name_field,
-            true,
-        );
+        let result =
+            super::derive_missing_surname(available_name_field, requested_name_field, true);
 
         assert_eq!(
             result,
@@ -154,11 +142,8 @@ mod tests {
                 modifier: Default::default(),
             },
         ];
-        let result = super::derive_missing_surname(
-            available_name_field,
-            requested_name_field,
-            false,
-        );
+        let result =
+            super::derive_missing_surname(available_name_field, requested_name_field, false);
 
         assert_eq!(
             result,

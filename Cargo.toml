@@ -50,7 +50,6 @@ members = [
     "provider/baked/list",
     "provider/baked/locid_transform",
     "provider/baked/normalizer",
-    "provider/baked/personnames",
     "provider/baked/plurals",
     "provider/baked/properties",
     "provider/baked/segmenter",
@@ -170,7 +169,6 @@ icu_decimal_data = { version = "~1.4.0", path = "provider/baked/decimal", defaul
 icu_list_data = { version = "~1.4.0", path = "provider/baked/list", default-features = false }
 icu_locid_transform_data = { version = "~1.4.0", path = "provider/baked/locid_transform", default-features = false }
 icu_normalizer_data = { version = "~1.4.0", path = "provider/baked/normalizer", default-features = false }
-icu_personnames_data = { version = "~1.4.0", path = "experimental/personnames/data", default-features = false }
 icu_plurals_data = { version = "~1.4.0", path = "provider/baked/plurals", default-features = false }
 icu_properties_data = { version = "~1.4.0", path = "provider/baked/properties", default-features = false }
 icu_segmenter_data = { version = "~1.4.0", path = "provider/baked/segmenter", default-features = false }

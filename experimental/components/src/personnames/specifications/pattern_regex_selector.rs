@@ -6,11 +6,11 @@ use std::sync::OnceLock;
 
 use regex::{Captures, Match, Regex};
 
-use crate::api::{
+use crate::personnames::api::{
     FieldModifier, FieldModifierSet, NameField, NameFieldKind, PersonName,
     PersonNamesFormatterError,
 };
-use crate::specifications;
+use crate::personnames::specifications;
 
 fn person_name_pattern() -> &'static Regex {
     static PERSON_NAMES_PATTERN: OnceLock<Regex> = OnceLock::new();
@@ -19,8 +19,6 @@ fn person_name_pattern() -> &'static Regex {
             .unwrap()
     })
 }
-
-
 
 /// Contains meta information about the person name pattern.
 #[derive(PartialEq, Debug)]
@@ -80,8 +78,10 @@ impl PersonNamePattern<'_> {
         initial_sequence_pattern: &'lt str,
     ) -> Vec<String> {
         let available_name_field = person_name.available_name_fields();
-        let effective_name_field =
-            specifications::handle_field_modifier_core_prefix(&available_name_field, requested_name_field);
+        let effective_name_field = specifications::handle_field_modifier_core_prefix(
+            &available_name_field,
+            requested_name_field,
+        );
 
         return effective_name_field
             .iter()
@@ -229,11 +229,11 @@ pub fn to_person_name_pattern<'pattern_lt>(
 mod tests {
     use litemap::LiteMap;
 
-    use crate::api::{
+    use crate::personnames::api::{
         FieldCapsStyle, FieldFormality, FieldLength, FieldModifierSet, FieldPart, NameField,
         NameFieldKind, PersonNamesFormatterError,
     };
-    use crate::provided_struct::DefaultPersonName;
+    use crate::personnames::provided_struct::DefaultPersonName;
 
     use super::*;
 
