@@ -140,7 +140,11 @@ unsafe extern "C" fn icu4x_hb_unicode_combining_class(
     #[cfg(not(feature = "alloc"))]
     let ccc_map = None;
 
-    ccc_map.or(CCC_MAP.as_ref()).unwrap_unchecked().get32(unicode).0 as hb_unicode_combining_class_t
+    ccc_map
+        .or(CCC_MAP.as_ref())
+        .unwrap_unchecked()
+        .get32(unicode)
+        .0 as hb_unicode_combining_class_t
 }
 
 #[allow(clippy::indexing_slicing)]
@@ -414,37 +418,37 @@ pub fn new_hb_unicode_funcs() -> Result<UnicodeFuncs, HarfBuzzError> {
         hb_unicode_funcs_set_combining_class_func(
             ufuncs,
             Some(icu4x_hb_unicode_combining_class),
-            core::ptr::null_mut() as *mut c_void,
+            core::ptr::null_mut(),
             None,
         );
         hb_unicode_funcs_set_general_category_func(
             ufuncs,
             Some(icu4x_hb_unicode_general_category),
-            core::ptr::null_mut() as *mut c_void,
+            core::ptr::null_mut(),
             None,
         );
         hb_unicode_funcs_set_mirroring_func(
             ufuncs,
             Some(icu4x_hb_unicode_mirroring),
-            core::ptr::null_mut() as *mut c_void,
+            core::ptr::null_mut(),
             None,
         );
         hb_unicode_funcs_set_script_func(
             ufuncs,
             Some(icu4x_hb_unicode_script),
-            core::ptr::null_mut() as *mut c_void,
+            core::ptr::null_mut(),
             None,
         );
         hb_unicode_funcs_set_compose_func(
             ufuncs,
             Some(icu4x_hb_unicode_compose),
-            core::ptr::null_mut() as *mut c_void,
+            core::ptr::null_mut(),
             None,
         );
         hb_unicode_funcs_set_decompose_func(
             ufuncs,
             Some(icu4x_hb_unicode_decompose),
-            core::ptr::null_mut() as *mut c_void,
+            core::ptr::null_mut(),
             None,
         );
 
