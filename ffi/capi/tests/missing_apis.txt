@@ -44,6 +44,11 @@ icu::datetime::neo::FormattedNeoTime::write_to#FnInStruct
 icu::datetime::neo::NeoDateFormatter#Struct
 icu::datetime::neo::NeoDateFormatter::format#FnInStruct
 icu::datetime::neo::NeoDateFormatter::try_new_with_length#FnInStruct
+icu::datetime::neo::NeoDateTimeFormatter#Struct
+icu::datetime::neo::NeoDateTimeFormatter::format#FnInStruct
+icu::datetime::neo::NeoDateTimeFormatter::try_new_with_date_length#FnInStruct
+icu::datetime::neo::NeoDateTimeFormatter::try_new_with_lengths#FnInStruct
+icu::datetime::neo::NeoDateTimeFormatter::try_new_with_time_length#FnInStruct
 icu::datetime::neo::NeoTimeFormatter#Struct
 icu::datetime::neo::NeoTimeFormatter::format#FnInStruct
 icu::datetime::neo::NeoTimeFormatter::try_new_with_length#FnInStruct
