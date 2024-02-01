@@ -90,10 +90,16 @@ fn main() {
         }
         for (file, template) in [
             ("build.rs", include_str!("../template/build.rs.template")),
-            ("Cargo.toml", include_str!("../template/Cargo.toml.template")),
+            (
+                "Cargo.toml",
+                include_str!("../template/Cargo.toml.template"),
+            ),
             ("LICENSE", include_str!("../LICENSE")),
             ("README.md", include_str!("../template/README.md.template")),
-            ("src/lib.rs", include_str!("../template/src/lib.rs.template")),
+            (
+                "src/lib.rs",
+                include_str!("../template/src/lib.rs.template"),
+            ),
         ] {
             std::fs::write(
                 path.join(file),
