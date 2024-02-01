@@ -279,23 +279,26 @@ fn generate_rule_break_data(
                                     || sc == Script::Malayalam
                                     || sc == Script::Oriya
                                     || sc == Script::Telugu;
+                                let is_incb_consonant = insc_value
+                                    == IndicSyllabicCategory::Consonant
+                                    && is_gb9c_script;
+                                let is_incb_linker =
+                                    insc_value == IndicSyllabicCategory::Virama && is_gb9c_script;
                                 // InCB = Linker or InCB = Consonant
-                                if (p.name == "InCBConsonant"
-                                    && insc_value == IndicSyllabicCategory::Consonant
-                                    && is_gb9c_script)
-                                    || (p.name == "InCBLinker"
-                                        && insc_value == IndicSyllabicCategory::Virama
-                                        && is_gb9c_script)
-                                    // ZWJ is InCB=Extend, but is in a different GCB class anyway so it needs to be special-cased in the tables.
-                                    // NOTE(eggrobin): the `is_gb9c_script &&` here is not present in UAX #44, Version 15.1.
+                                if (p.name == "InCBConsonant" && is_incb_consonant)
+                                    || (p.name == "InCBLinker" && is_incb_linker)
+                                    // ZWJ is InCB=Extend, but is in a different GCB class anyway so
+                                    // it needs to be special-cased in the tables.
+                                    // NOTE(eggrobin): UAX #44, Version 15.1, instead excludes based
+                                    // on InSC.
                                     // I believe that to be a defect in that version of Unicode.
-                                    // This has been brought to the attention of the Properties and Algorithms Group.
+                                    // This has been brought to the attention of the Properties and
+                                    // Algorithms Group.
                                     || (p.name == "InCBExtend"
-                                        && gb.get32(i) == gcb_extend
-                                        && ccc.get32(i) != CanonicalCombiningClass::NotReordered
-                                        && !(is_gb9c_script &&
-                                             (insc_value == IndicSyllabicCategory::Consonant
-                                              || insc_value == IndicSyllabicCategory::Virama)))
+                                        && (gb.get32(i) == gcb_extend
+                                            && ccc.get32(i) != CanonicalCombiningClass::NotReordered
+                                            && !is_incb_consonant
+                                            && !is_incb_linker))
                                 {
                                     properties_map[c as usize] = property_index;
                                 }
