@@ -127,25 +127,25 @@
     {
       "attributes": 674,
       "patterns": [
-        "{surname}{given2}{given}{title}"
+        "{surname} {given2} {given}{title}"
       ]
     },
     {
       "attributes": 1186,
       "patterns": [
-        "{surname}{given-informal}{title}"
+        "{surname} {given-informal}{title}"
       ]
     },
     {
       "attributes": 610,
       "patterns": [
-        "{surname}{given}{title}"
+        "{surname} {given}{title}"
       ]
     },
     {
       "attributes": 1122,
       "patterns": [
-        "{surname}{given-informal}{title}"
+        "{surname} {given-informal}{title}"
       ]
     },
     {
@@ -163,25 +163,25 @@
     {
       "attributes": 658,
       "patterns": [
-        "{surname}{given}{title}"
+        "{surname} {given}{title}"
       ]
     },
     {
       "attributes": 1170,
       "patterns": [
-        "{surname}{given-informal}{title}"
+        "{surname} {given-informal}{title}"
       ]
     },
     {
       "attributes": 594,
       "patterns": [
-        "{surname}{given}{title}"
+        "{surname} {given}{title}"
       ]
     },
     {
       "attributes": 1106,
       "patterns": [
-        "{surname}{given-informal}{title}"
+        "{surname} {given-informal}{title}"
       ]
     },
     {
@@ -199,13 +199,13 @@
     {
       "attributes": 650,
       "patterns": [
-        "{surname}{given}{title}"
+        "{surname} {given}{title}"
       ]
     },
     {
       "attributes": 1162,
       "patterns": [
-        "{surname}{given-informal}{title}"
+        "{surname} {given-informal}{title}"
       ]
     },
     {

@@ -28,7 +28,7 @@
     {
       "attributes": 609,
       "patterns": [
-        "{title} {given} {given2} {surname} {surname2} {credentials}"
+        "{title} {surname}"
       ]
     },
     {

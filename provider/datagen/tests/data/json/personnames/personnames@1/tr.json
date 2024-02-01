@@ -16,7 +16,7 @@
     {
       "attributes": 673,
       "patterns": [
-        "{title} {given} {given2} {surname} {surname2}, {credentials}"
+        "{title} {credentials} {given} {given2} {surname} {generation}"
       ]
     },
     {
@@ -52,7 +52,7 @@
     {
       "attributes": 657,
       "patterns": [
-        "{given} {given2-initial} {surname} {generation}, {credentials}"
+        "{credentials} {given} {given2-initial} {surname} {generation}"
       ]
     },
     {
