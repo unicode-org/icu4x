@@ -30,9 +30,10 @@ pub(crate) struct CldrCache {
     dir_suffix: OnceCell<&'static str>,
     extended_locale_expander: OnceCell<LocaleExpander>,
     modern_japanese_eras: OnceCell<BTreeSet<String>>,
-    #[cfg(feature = "icu_transliterate")]
+    #[cfg(feature = "experimental_components")]
     // used by transforms/mod.rs
-    pub(super) transforms: OnceCell<std::sync::Mutex<icu_transliterate::RuleCollection>>,
+    pub(super) transforms:
+        OnceCell<std::sync::Mutex<icu_experimental::transliterate::RuleCollection>>,
 }
 
 impl CldrCache {
@@ -42,7 +43,7 @@ impl CldrCache {
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
             modern_japanese_eras: Default::default(),
-            #[cfg(feature = "icu_transliterate")]
+            #[cfg(feature = "experimental_components")]
             transforms: Default::default(),
         }
     }

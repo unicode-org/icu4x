@@ -105,14 +105,18 @@
 //! - `logging`: Enables logging through the `log` crate.
 //! - `serde`: Activates `serde` implementations for core library types, such as [`Locale`], as well
 //!    as `*_with_buffer_provider` constructors for explicit data management.
-//! - `experimental`: Whether to enable experimental preview features. Modules enabled with
-//!   this feature may not be production-ready and could change at any time.
 //!
 //! The following Cargo features are only available on the individual crates, but not on this meta-crate:
 //!
 //! - `datagen`: Whether to implement functionality that is only required during data generation.
 //! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
 //!   when running `cargo bench`.
+//!
+//! # Experimental modules
+//!
+//! Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+//! are on track to be eventually stabilized into this crate.
+//!
 //!
 //! [CLDR]: http://cldr.unicode.org/
 //! [`DataProvider`]: icu_provider::DataProvider
@@ -187,23 +191,3 @@ pub use icu_segmenter as segmenter;
 
 #[doc(inline)]
 pub use icu_timezone as timezone;
-
-#[cfg(feature = "icu_displaynames")]
-#[doc(inline)]
-pub use icu_displaynames as displaynames;
-
-#[cfg(feature = "icu_personnames")]
-#[doc(inline)]
-pub use icu_personnames as personnames;
-
-#[cfg(feature = "icu_relativetime")]
-#[doc(inline)]
-pub use icu_relativetime as relativetime;
-
-#[cfg(feature = "icu_compactdecimal")]
-#[doc(inline)]
-pub use icu_compactdecimal as compactdecimal;
-
-#[cfg(feature = "icu_transliterate")]
-#[doc(inline)]
-pub use icu_transliterate as transliterate;

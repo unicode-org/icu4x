@@ -24,14 +24,8 @@ members = [
     "components/properties",
     "components/segmenter",
     "components/timezone",
-    "experimental/compactdecimal",
-    "experimental/displaynames",
-    "experimental/personnames",
-    "experimental/relativetime",
-    "experimental/dimension",
-    "experimental/transliterate",
-    "experimental/unicodeset_parse",
     "experimental/unitsconversion",
+    "experimental/components",
 
     # FFI
     "ffi/capi",
@@ -51,20 +45,16 @@ members = [
     "provider/baked/calendar",
     "provider/baked/casemap",
     "provider/baked/collator",
-    "provider/baked/compactdecimal",
     "provider/baked/datetime",
     "provider/baked/decimal",
-    "provider/baked/displaynames",
     "provider/baked/list",
     "provider/baked/locid_transform",
     "provider/baked/normalizer",
     "provider/baked/personnames",
     "provider/baked/plurals",
     "provider/baked/properties",
-    "provider/baked/relativetime",
     "provider/baked/segmenter",
     "provider/baked/timezone",
-    "provider/baked/unitsconversion",
 
     # Utils
     "utils/calendrical_calculations",
@@ -154,14 +144,8 @@ icu_plurals = { version = "~1.4.0", path = "components/plurals", default-feature
 icu_properties = { version = "~1.4.0", path = "components/properties", default-features = false }
 icu_segmenter = { version = "~1.4.0", path = "components/segmenter", default-features = false }
 icu_timezone = { version = "~1.4.0", path = "components/timezone", default-features = false }
-icu_compactdecimal = { version = "0.2.3", path = "experimental/compactdecimal", default-features = false }
-icu_displaynames = { version = "0.11.2", path = "experimental/displaynames", default-features = false }
-icu_personnames = { version = "0.0.0", path = "experimental/personnames", default-features = false }
-icu_relativetime = { version = "0.1.4", path = "experimental/relativetime", default-features = false }
-icu_dimension = { version = "0.0.0", path = "experimental/dimension", default-features = false }
-icu_transliterate = { version = "0.1.2", path = "experimental/transliterate", default-features = false }
-icu_unicodeset_parse = { version = "0.1.2", path = "experimental/unicodeset_parse", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
+icu_experimental = { version = "0.0.0", path = "experimental/components", default-features = false }
 
 # FFI
 icu_capi = { version = "~1.4.0", path = "ffi/capi", default-features = false }
@@ -181,20 +165,17 @@ icu_provider_macros = { version = "~1.4.0", path = "provider/macros", default-fe
 icu_calendar_data = { version = "~1.4.0", path = "provider/baked/calendar", default-features = false }
 icu_casemap_data = { version = "~1.4.0", path = "provider/baked/casemap", default-features = false }
 icu_collator_data = { version = "~1.4.0", path = "provider/baked/collator", default-features = false }
-icu_compactdecimal_data = { version = "~1.4.0", path = "provider/baked/compactdecimal", default-features = false }
 icu_datetime_data = { version = "~1.4.0", path = "provider/baked/datetime", default-features = false }
 icu_decimal_data = { version = "~1.4.0", path = "provider/baked/decimal", default-features = false }
-icu_displaynames_data = { version = "~1.4.0", path = "provider/baked/displaynames", default-features = false }
 icu_list_data = { version = "~1.4.0", path = "provider/baked/list", default-features = false }
 icu_locid_transform_data = { version = "~1.4.0", path = "provider/baked/locid_transform", default-features = false }
 icu_normalizer_data = { version = "~1.4.0", path = "provider/baked/normalizer", default-features = false }
 icu_personnames_data = { version = "~1.4.0", path = "experimental/personnames/data", default-features = false }
 icu_plurals_data = { version = "~1.4.0", path = "provider/baked/plurals", default-features = false }
 icu_properties_data = { version = "~1.4.0", path = "provider/baked/properties", default-features = false }
-icu_relativetime_data = { version = "~1.4.0", path = "provider/baked/relativetime", default-features = false }
 icu_segmenter_data = { version = "~1.4.0", path = "provider/baked/segmenter", default-features = false }
 icu_timezone_data = { version = "~1.4.0", path = "provider/baked/timezone", default-features = false }
-icu_unitsconversion_data = { version = "~1.4.0", path = "provider/baked/unitsconversion", default-features = false }
+icu_experimental_data = { version = "0.0.0", path = "provider/baked/experimental", default-features = false }
 
 # Utils
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }

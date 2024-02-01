@@ -7,25 +7,25 @@
 pub mod calendar;
 pub mod characters;
 pub mod cldr_serde;
-#[cfg(test)] // keep as test until bakeddata is needed
+#[cfg(feature = "experimental_components")]
 pub mod currency;
 pub mod datetime;
 pub mod decimal;
-#[cfg(feature = "icu_displaynames")]
+#[cfg(feature = "experimental_components")]
 pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
-#[cfg(test)] // keep as test until bakeddata is needed
+#[cfg(feature = "experimental_components")]
 pub mod percent;
 #[cfg(feature = "icu_personnames")]
 pub mod personnames;
 pub mod plurals;
-#[cfg(feature = "icu_relativetime")]
+#[cfg(feature = "experimental_components")]
 pub mod relativetime;
 pub mod source;
 pub mod time_zones;
-#[cfg(feature = "icu_transliterate")]
+#[cfg(feature = "experimental_components")]
 pub mod transforms;
-#[cfg(feature = "icu_unitsconversion")]
+#[cfg(test)]
 pub mod units;

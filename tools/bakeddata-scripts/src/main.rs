@@ -9,24 +9,13 @@ use icu_datagen::prelude::*;
 use std::path::Path;
 
 const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
-
+const EXPERIMENTAL_VERSION: &str = "0.0.0";
 const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
     ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
     ("collator", icu::collator::provider::KEYS, REPO_VERSION),
-    (
-        "compactdecimal",
-        icu::compactdecimal::provider::KEYS,
-        REPO_VERSION,
-    ),
     ("datetime", icu::datetime::provider::KEYS, REPO_VERSION),
     ("decimal", icu::decimal::provider::KEYS, REPO_VERSION),
-    (
-        "displaynames",
-        icu::displaynames::provider::KEYS,
-        REPO_VERSION,
-    ),
-    ("experimental/personnames", icu::personnames::provider::KEYS),
     ("list", icu::list::provider::KEYS, REPO_VERSION),
     (
         "locid_transform",
@@ -36,17 +25,12 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
     ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
     ("properties", icu::properties::provider::KEYS, REPO_VERSION),
-    (
-        "relativetime",
-        icu::relativetime::provider::KEYS,
-        REPO_VERSION,
-    ),
     ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
     ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
     (
-        "unitsconversion",
-        icu_unitsconversion::provider::KEYS,
-        REPO_VERSION,
+        "experimental",
+        icu_experimental::provider::KEYS,
+        EXPERIMENTAL_VERSION,
     ),
 ];
 

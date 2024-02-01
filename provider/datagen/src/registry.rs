@@ -156,29 +156,30 @@ macro_rules! registry {
 // If `#[cfg(test)]` becomes empty, replace it with `no_cfg_test,`
 registry!(
     #[cfg(test)]
-    icu_dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    icu_dimension::provider::PercentEssentialsV1Marker = "percent/essentials@1",
-    #[cfg(any(all(), feature = "icu_calendar"))]
+    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
+    #[cfg(all())]
     icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
     icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
     icu_calendar::provider::WeekDataV2Marker = "datetime/week_data@2",
-    #[cfg(any(all(), feature = "icu_casemap"))]
+    #[cfg(all())]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
     icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
-    #[cfg(any(all(), feature = "icu_collator"))]
+    #[cfg(all())]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
     icu_collator::provider::CollationDiacriticsV1Marker = "collator/dia@1",
     icu_collator::provider::CollationJamoV1Marker = "collator/jamo@1",
     icu_collator::provider::CollationMetadataV1Marker = "collator/meta@1",
     icu_collator::provider::CollationReorderingV1Marker = "collator/reord@1",
     icu_collator::provider::CollationSpecialPrimariesV1Marker = "collator/prim@1",
-    #[cfg(feature = "icu_compactdecimal")]
-    icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
-    icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
-    #[cfg(any(all(), feature = "icu_datetime"))]
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker =
+        "compactdecimal/long@1",
+    icu_experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker =
+        "compactdecimal/short@1",
+    #[cfg(all())]
     icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker =
         "datetime/buddhist/datelengths@1",
     icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker =
@@ -275,17 +276,22 @@ registry!(
         "time_zone/specific_short@1",
     icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker = "time_zone/formats@1",
     icu_datetime::provider::time_zones::ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1",
-    #[cfg(any(all(), feature = "icu_decimal"))]
+    #[cfg(all())]
     icu_decimal::provider::DecimalSymbolsV1Marker = "decimal/symbols@1",
-    #[cfg(feature = "icu_displaynames")]
-    icu_displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
-    icu_displaynames::provider::LanguageDisplayNamesV1Marker = "displaynames/languages@1",
-    icu_displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
-    icu_displaynames::provider::ScriptDisplayNamesV1Marker = "displaynames/scripts@1",
-    icu_displaynames::provider::VariantDisplayNamesV1Marker = "displaynames/variants@1",
-    #[cfg(feature = "icu_personnames")]
-    icu_personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
-    #[cfg(any(all(), feature = "icu_list"))]
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
+    icu_experimental::dimension::provider::PercentEssentialsV1Marker = "percent/essentials@1",
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
+    icu_experimental::displaynames::provider::LanguageDisplayNamesV1Marker =
+        "displaynames/languages@1",
+    icu_experimental::displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
+    icu_experimental::displaynames::provider::ScriptDisplayNamesV1Marker = "displaynames/scripts@1",
+    icu_experimental::displaynames::provider::VariantDisplayNamesV1Marker =
+        "displaynames/variants@1",
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
+    #[cfg(all())]
     icu_list::provider::AndListV1Marker = "list/and@1",
     icu_list::provider::OrListV1Marker = "list/or@1",
     icu_list::provider::UnitListV1Marker = "list/unit@1",
@@ -303,7 +309,7 @@ registry!(
     icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1",
     icu_locid_transform::provider::LocaleFallbackParentsV1Marker = "fallback/parents@1",
     icu_locid_transform::provider::ScriptDirectionV1Marker = "locid_transform/script_dir@1",
-    #[cfg(any(all(), feature = "icu_normalizer"))]
+    #[cfg(all())]
     icu_normalizer::provider::CanonicalCompositionsV1Marker = "normalizer/comp@1",
     icu_normalizer::provider::CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
     icu_normalizer::provider::CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
@@ -311,11 +317,11 @@ registry!(
     icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1",
     icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1",
     icu_normalizer::provider::Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1",
-    #[cfg(any(all(), feature = "icu_plurals"))]
+    #[cfg(all())]
     icu_plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
     icu_plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",
     icu_plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",
-    #[cfg(any(all(), feature = "icu_properties"))]
+    #[cfg(all())]
     icu_properties::provider::AlnumV1Marker = "props/alnum@1",
     icu_properties::provider::AlphabeticV1Marker = "props/Alpha@1",
     icu_properties::provider::AsciiHexDigitV1Marker = "props/AHex@1",
@@ -445,51 +451,56 @@ registry!(
     icu_properties::provider::VariationSelectorV1Marker = "props/VS@1",
     icu_properties::provider::WhiteSpaceV1Marker = "props/WSpace@1",
     icu_properties::provider::WordBreakV1Marker = "props/WB@1",
-    #[cfg(feature = "icu_relativetime")]
-    icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker =
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker =
         "relativetime/long/second@1",
-    icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker =
         "relativetime/short/second@1",
-    icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/second@1",
-    icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker =
         "relativetime/long/minute@1",
-    icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker =
         "relativetime/short/minute@1",
-    icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/minute@1",
-    icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker = "relativetime/long/hour@1",
-    icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker =
+        "relativetime/long/hour@1",
+    icu_experimental::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker =
         "relativetime/short/hour@1",
-    icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/hour@1",
-    icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker = "relativetime/long/day@1",
-    icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker = "relativetime/short/day@1",
-    icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker =
+        "relativetime/long/day@1",
+    icu_experimental::relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker =
+        "relativetime/short/day@1",
+    icu_experimental::relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/day@1",
-    icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker = "relativetime/long/week@1",
-    icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker =
+        "relativetime/long/week@1",
+    icu_experimental::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker =
         "relativetime/short/week@1",
-    icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/week@1",
-    icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker =
         "relativetime/long/month@1",
-    icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker =
         "relativetime/short/month@1",
-    icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/month@1",
-    icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker =
         "relativetime/long/quarter@1",
-    icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker =
         "relativetime/short/quarter@1",
-    icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/quarter@1",
-    icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker = "relativetime/long/year@1",
-    icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::LongYearRelativeTimeFormatDataV1Marker =
+        "relativetime/long/year@1",
+    icu_experimental::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker =
         "relativetime/short/year@1",
-    icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
+    icu_experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
-    #[cfg(any(all(), feature = "icu_segmenter"))]
+    #[cfg(all())]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
         "segmenter/dictionary/wl_ext@1",
     icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker = "segmenter/dictionary/w_auto@1",
@@ -498,14 +509,13 @@ registry!(
     icu_segmenter::provider::LstmForWordLineAutoV1Marker = "segmenter/lstm/wl_auto@1",
     icu_segmenter::provider::SentenceBreakDataV1Marker = "segmenter/sentence@1",
     icu_segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
-    #[cfg(any(all(), feature = "icu_timezone"))]
+    #[cfg(all())]
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
     icu_timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
     icu_timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
-    #[cfg(feature = "icu_transliterate")]
-    icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
-    #[cfg(feature = "icu_unitsconversion")]
-    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::transliterate::provider::TransliteratorRulesV1Marker =
+        "transliterator/rules@1",
 );
 
 /// Same as `all_keys`.

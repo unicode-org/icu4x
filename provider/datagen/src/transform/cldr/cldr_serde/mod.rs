@@ -10,13 +10,13 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
-#[cfg(test)] // keep as test until baked data is needed
+#[cfg(feature = "experimental_components")]
 pub mod currencies;
 pub mod currency_data;
-#[cfg(feature = "icu_relativetime")]
+#[cfg(feature = "experimental_components")]
 pub mod date_fields;
 pub mod directionality;
-#[cfg(feature = "icu_displaynames")]
+#[cfg(feature = "experimental_components")]
 pub mod displaynames;
 pub mod exemplar_chars;
 pub mod japanese;
@@ -31,9 +31,9 @@ pub mod personnames;
 pub mod plural_ranges;
 pub mod plurals;
 pub mod time_zones;
-#[cfg(feature = "icu_transliterate")]
+#[cfg(feature = "experimental_components")]
 pub mod transforms;
-#[cfg(feature = "icu_unitsconversion")]
+#[cfg(test)]
 pub mod units;
 pub mod week_data;
 

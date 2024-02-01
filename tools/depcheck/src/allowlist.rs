@@ -86,30 +86,11 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
-pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
-    "icu_displaynames",
-    "icu_personnames",
-    "icu_relativetime",
-    "icu_compactdecimal",
-    "regex",
-    "aho-corasick",
-    "regex-syntax",
-    "serde",
-    "icu_locid_transform_data",
-    "icu_properties_data",
-    "serde_derive",
-    "icu_transliterate",
-    "icu_unicodeset_parse",
-];
+pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &["icu_experimental"];
 
 /// Dependencies allowed when opting in to compiled data
 /// for experimental crates.
-pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
-    "icu_displaynames_data",
-    "icu_personnames_data",
-    "icu_relativetime_data",
-    "icu_compactdecimal_data",
-];
+pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &["icu_experimental_data"];
 
 /// Dependencies allowed when opting in to LSTM segmenter
 pub const EXTRA_LSTM_DEPS: &[&str] = &[];
