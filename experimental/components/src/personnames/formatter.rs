@@ -25,7 +25,7 @@ pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
     scripts: PropertyEnumToValueNameLinearTiny4Mapper<icu_properties::Script>,
-    fallbacker: LocaleFallbacker
+    fallbacker: LocaleFallbacker,
 }
 
 impl From<&PersonNamesFormatterOptions> for PersonNamesFormattingAttributesMask {
@@ -49,7 +49,7 @@ impl PersonNamesFormatter {
             + DataProvider<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>
             + DataProvider<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>
             // TODO: We shouldn't need the collation supplement here
-            + DataProvider<icu_locid_transform::provider::CollationFallbackSupplementV1Marker>
+            + DataProvider<icu_locid_transform::provider::CollationFallbackSupplementV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
         let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;
@@ -198,7 +198,7 @@ impl PersonNamesFormatter {
                             l,
                             &formatting_definition.surname_first_locales,
                             &formatting_definition.given_first_locales,
-                            self.fallbacker.as_borrowed()
+                            self.fallbacker.as_borrowed(),
                         )
                     })
                     .unwrap_or(FormattingOrder::GivenFirst),

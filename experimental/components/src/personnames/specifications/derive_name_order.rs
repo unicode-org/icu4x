@@ -69,7 +69,12 @@ mod tests {
 
         // Match "und"
         assert_eq!(
-            name_order_derive(&locale!("de_Latn_ch"), &surname_first, &given_first, fallbacker),
+            name_order_derive(
+                &locale!("de_Latn_ch"),
+                &surname_first,
+                &given_first,
+                fallbacker
+            ),
             FormattingOrder::GivenFirst,
             "failed for de_Latn_ch"
         );
@@ -79,7 +84,12 @@ mod tests {
         // As evaluation goes, the locale being checked are {"ja", "und"},
         // since "und" is a catch all set in given first, it is a perfect match.
         assert_eq!(
-            name_order_derive(&locale!("ja_Jpan_jp"), &surname_first, &given_first, fallbacker),
+            name_order_derive(
+                &locale!("ja_Jpan_jp"),
+                &surname_first,
+                &given_first,
+                fallbacker
+            ),
             FormattingOrder::GivenFirst,
             "failed for ja_Jpan_jp"
         );
@@ -94,21 +104,36 @@ mod tests {
         ]);
 
         assert_eq!(
-            name_order_derive(&locale!("en_Latn_SG"), &surname_first, &given_first, fallbacker),
+            name_order_derive(
+                &locale!("en_Latn_SG"),
+                &surname_first,
+                &given_first,
+                fallbacker
+            ),
             FormattingOrder::SurnameFirst,
             "failed for en_Latn_SG"
         );
 
         // This is not matching because of zh, but because of und-CN
         assert_eq!(
-            name_order_derive(&locale!("zh_Hans_CN"), &surname_first, &given_first, fallbacker),
+            name_order_derive(
+                &locale!("zh_Hans_CN"),
+                &surname_first,
+                &given_first,
+                fallbacker
+            ),
             FormattingOrder::SurnameFirst,
             "failed for zh_Hans_CN"
         );
 
         // This is not matching because of zh, but because of und-CN
         assert_eq!(
-            name_order_derive(&locale!("zh_Hans"), &surname_first, &given_first, fallbacker),
+            name_order_derive(
+                &locale!("zh_Hans"),
+                &surname_first,
+                &given_first,
+                fallbacker
+            ),
             FormattingOrder::GivenFirst,
             "failed for zh_Hans"
         );
