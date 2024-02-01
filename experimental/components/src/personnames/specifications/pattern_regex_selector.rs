@@ -5,7 +5,7 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 
-use once_cell::sync::OnceCell as OnceLock;
+use crate::personnames::helpers::OnceLock;
 use regex::{Captures, Match, Regex};
 
 use crate::personnames::api::{
@@ -15,7 +15,7 @@ use crate::personnames::api::{
 use crate::personnames::specifications;
 
 fn person_name_pattern() -> &'static Regex {
-    static PERSON_NAMES_PATTERN: OnceLock<Regex> = OnceLock::new();
+    static PERSON_NAMES_PATTERN: OnceLock<Regex> = OnceLock::<Regex>::new();
     PERSON_NAMES_PATTERN.get_or_init(|| {
         Regex::new(r"\{(?P<name_field_kind>title|given|given2|surname|generation|credentials)(?P<field_mod_1>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_2>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_3>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_4>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?}(?P<trailing>[^{]+)?")
             .unwrap()

@@ -6,19 +6,19 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 
-use once_cell::sync::OnceCell as OnceLock;
+use crate::personnames::helpers::OnceLock;
 use regex::Regex;
 
 use crate::personnames::api::{FieldLength, FieldModifier, NameField, PersonName};
 
 fn initial_pattern_regex() -> &'static Regex {
-    static INITIAL_PATTERN: OnceLock<Regex> = OnceLock::new();
+    static INITIAL_PATTERN: OnceLock<Regex> = OnceLock::<Regex>::new();
     INITIAL_PATTERN
         .get_or_init(|| Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap())
 }
 
 fn initial_pattern_sequence_regex() -> &'static Regex {
-    static INITIAL_PATTERN_SEQUENCE: OnceLock<Regex> = OnceLock::new();
+    static INITIAL_PATTERN_SEQUENCE: OnceLock<Regex> = OnceLock::<Regex>::new();
     INITIAL_PATTERN_SEQUENCE
         .get_or_init(|| Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap())
 }
