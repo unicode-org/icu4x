@@ -41,31 +41,43 @@
 //! assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
 //! ```
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 mod error;
 
 use crate::error::HarfBuzzError;
-use alloc::boxed::Box;
 use core::ffi::{c_char, c_void};
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
 use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::Decomposed;
-use icu_normalizer::provider::CanonicalCompositionsV1Marker;
-use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
-use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
-use icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker;
+#[cfg(feature = "alloc")]
+use icu_normalizer::provider::{
+    CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
+    CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
+};
+use icu_properties::bidi_data;
+#[cfg(feature = "alloc")]
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
+use icu_properties::bidi_data::BidiAuxiliaryPropertiesBorrowed;
+use icu_properties::maps;
+#[cfg(feature = "alloc")]
 use icu_properties::maps::CodePointMapData;
+use icu_properties::maps::CodePointMapDataBorrowed;
+#[cfg(feature = "alloc")]
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
+use icu_properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed;
+#[cfg(feature = "alloc")]
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+#[cfg(feature = "alloc")]
 use icu_properties::provider::{
     GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
 };
 use icu_properties::{GeneralCategory, Script};
+#[cfg(feature = "alloc")]
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyStr4};
+use tinystr::tinystr;
 
 /// The total number of General Category values is fixed per
 /// https://www.unicode.org/policies/stability_policy.html :
@@ -116,35 +128,47 @@ static ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ: [u8; 30] = [
 unsafe extern "C" fn icu4x_hb_unicode_combining_class(
     _ufuncs: *mut hb_unicode_funcs_t,
     unicode: hb_codepoint_t,
-    user_data: *mut c_void,
+    #[cfg_attr(not(feature = "alloc"), allow(unused_variables))] user_data: *mut c_void,
 ) -> hb_unicode_combining_class_t {
-    (*(user_data as *mut CanonicalCombiningClassMap))
-        .get32(unicode)
-        .0 as hb_unicode_combining_class_t
-}
+    #[cfg(feature = "compiled_data")]
+    const CCC_MAP: Option<CanonicalCombiningClassMap> = Some(CanonicalCombiningClassMap::new());
+    #[cfg(not(feature = "compiled_data"))]
+    const CCC_MAP: Option<CanonicalCombiningClassMap> = None;
 
-unsafe extern "C" fn icu4x_hb_unicode_combining_class_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut CanonicalCombiningClassMap);
+    #[cfg(feature = "alloc")]
+    let ccc_map = (user_data as *mut CanonicalCombiningClassMap).as_ref();
+    #[cfg(not(feature = "alloc"))]
+    let ccc_map = None;
+
+    ccc_map.or(CCC_MAP.as_ref()).unwrap_unchecked().get32(unicode).0 as hb_unicode_combining_class_t
 }
 
 #[allow(clippy::indexing_slicing)]
 unsafe extern "C" fn icu4x_hb_unicode_general_category(
     _ufuncs: *mut hb_unicode_funcs_t,
     unicode: hb_codepoint_t,
-    user_data: *mut c_void,
+    #[cfg_attr(not(feature = "alloc"), allow(unused_variables))] user_data: *mut c_void,
 ) -> hb_unicode_general_category_t {
+    #[cfg(feature = "compiled_data")]
+    const GC_MAP: Option<CodePointMapDataBorrowed<'static, GeneralCategory>> =
+        Some(maps::general_category());
+    #[cfg(not(feature = "compiled_data"))]
+    const GC_MAP: Option<CodePointMapDataBorrowed<'static, GeneralCategory>> = None;
+
+    #[cfg(feature = "alloc")]
+    let gc_map = (user_data as *mut CodePointMapData<GeneralCategory>)
+        .as_ref()
+        .map(CodePointMapData::as_borrowed);
+    #[cfg(not(feature = "alloc"))]
+    let gc_map = None;
+
     // Indexing is OK, because `GeneralCategory` data is validated upon
     // deserialization so that there can be no out-of-range `GeneralCategory`
     // values (which would be UB to materialize). `GeneralCategory` is a
     // stable exhaustive enum, and the length of `ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ`
     // matches the number of enum items, so the index will always be in range here.
-    ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ[(*(user_data as *mut CodePointMapData<GeneralCategory>))
-        .as_borrowed()
-        .get32(unicode) as usize] as hb_unicode_general_category_t
-}
-
-unsafe extern "C" fn icu4x_hb_unicode_general_category_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut CodePointMapData<GeneralCategory>);
+    ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ[gc_map.or(GC_MAP).unwrap_unchecked().get32(unicode) as usize]
+        as hb_unicode_general_category_t
 }
 
 /// Returns the Bidi_Mirroring_Glyph, but adjusting the return value
@@ -158,20 +182,30 @@ unsafe extern "C" fn icu4x_hb_unicode_general_category_destroy(user_data: *mut c
 unsafe extern "C" fn icu4x_hb_unicode_mirroring(
     _ufuncs: *mut hb_unicode_funcs_t,
     unicode: hb_codepoint_t,
-    user_data: *mut c_void,
+    #[cfg_attr(not(feature = "alloc"), allow(unused_variables))] user_data: *mut c_void,
 ) -> hb_codepoint_t {
-    (*(user_data as *mut BidiAuxiliaryProperties))
-        .as_borrowed()
+    #[cfg(feature = "compiled_data")]
+    const BIDI: Option<BidiAuxiliaryPropertiesBorrowed<'static>> =
+        Some(bidi_data::bidi_auxiliary_properties());
+    #[cfg(not(feature = "compiled_data"))]
+    const BIDI: Option<BidiAuxiliaryPropertiesBorrowed<'static>> = None;
+
+    #[cfg(feature = "alloc")]
+    let bidi = (user_data as *mut BidiAuxiliaryProperties)
+        .as_ref()
+        .map(BidiAuxiliaryProperties::as_borrowed);
+    #[cfg(not(feature = "alloc"))]
+    let bidi = None;
+
+    bidi.or(BIDI)
+        .unwrap_unchecked()
         .get32_mirroring_props(unicode)
         .mirroring_glyph
         .map(u32::from)
         .unwrap_or(unicode) as hb_codepoint_t
 }
 
-unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
-}
-
+#[cfg(feature = "alloc")]
 struct ScriptDataForHarfBuzz {
     script_map: CodePointMapData<Script>,
     enum_to_name_mapper: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
@@ -180,22 +214,43 @@ struct ScriptDataForHarfBuzz {
 unsafe extern "C" fn icu4x_hb_unicode_script(
     _ufuncs: *mut hb_unicode_funcs_t,
     unicode: hb_codepoint_t,
-    user_data: *mut c_void,
+    #[cfg_attr(not(feature = "alloc"), allow(unused_variables))] user_data: *mut c_void,
 ) -> hb_script_t {
-    let script_data: &ScriptDataForHarfBuzz = &*(user_data as *mut ScriptDataForHarfBuzz);
-    let script: Script = script_data.script_map.as_borrowed().get32(unicode);
-    let enum_to_name_mapper = script_data.enum_to_name_mapper.as_borrowed();
-    let name: TinyStr4 = enum_to_name_mapper
+    #[cfg(feature = "compiled_data")]
+    const SCRIPT_MAP: Option<CodePointMapDataBorrowed<'static, Script>> = Some(maps::script());
+    #[cfg(feature = "compiled_data")]
+    const ENUM_TO_NAME_MAPPER: Option<PropertyEnumToValueNameLinearTiny4MapperBorrowed<Script>> =
+        Some(Script::enum_to_short_name_mapper());
+    #[cfg(not(feature = "compiled_data"))]
+    const SCRIPT_MAP: Option<CodePointMapDataBorrowed<'static, Script>> = None;
+    #[cfg(not(feature = "compiled_data"))]
+    const ENUM_TO_NAME_MAPPER: Option<PropertyEnumToValueNameLinearTiny4MapperBorrowed<Script>> =
+        None;
+
+    #[cfg(feature = "alloc")]
+    let script_map = (user_data as *mut ScriptDataForHarfBuzz)
+        .as_ref()
+        .map(|d| d.script_map.as_borrowed());
+    #[cfg(feature = "alloc")]
+    let enum_to_name_mapper = (user_data as *mut ScriptDataForHarfBuzz)
+        .as_ref()
+        .map(|d| d.enum_to_name_mapper.as_borrowed());
+    #[cfg(not(feature = "alloc"))]
+    let script_map = None;
+    #[cfg(not(feature = "alloc"))]
+    let enum_to_name_mapper = None;
+
+    let script = script_map.or(SCRIPT_MAP).unwrap_unchecked().get32(unicode);
+    let name = enum_to_name_mapper
+        .or(ENUM_TO_NAME_MAPPER)
+        .unwrap_unchecked()
         .get(script)
         .unwrap_or(tinystr!(4, "Zzzz"));
+
     hb_script_from_string(
         name.as_ptr() as *const c_char,
         name.len().try_into().unwrap_or(0),
     )
-}
-
-unsafe extern "C" fn icu4x_hb_unicode_script_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut ScriptDataForHarfBuzz);
 }
 
 unsafe extern "C" fn icu4x_hb_unicode_compose(
@@ -203,8 +258,18 @@ unsafe extern "C" fn icu4x_hb_unicode_compose(
     a: hb_codepoint_t,
     b: hb_codepoint_t,
     ab: *mut hb_codepoint_t,
-    user_data: *mut c_void,
+    #[cfg_attr(not(feature = "alloc"), allow(unused_variables))] user_data: *mut c_void,
 ) -> hb_bool_t {
+    #[cfg(feature = "compiled_data")]
+    const CC: Option<CanonicalComposition> = Some(CanonicalComposition::new());
+    #[cfg(not(feature = "compiled_data"))]
+    const CC: Option<CanonicalComposition> = None;
+
+    #[cfg(feature = "alloc")]
+    let cc = (user_data as *mut CanonicalComposition).as_ref();
+    #[cfg(not(feature = "alloc"))]
+    let cc = None;
+
     // It appears that HarfBuzz will pass valid scalar values
     // unless the application violated the contract of
     // `hb_buffer_add_codepoints` and passed in non-scalar values.
@@ -225,7 +290,7 @@ unsafe extern "C" fn icu4x_hb_unicode_compose(
         debug_assert!(false);
         return false as hb_bool_t;
     };
-    if let Some(c) = (*(user_data as *mut CanonicalComposition)).compose(first, second) {
+    if let Some(c) = cc.or(CC.as_ref()).unwrap_unchecked().compose(first, second) {
         core::ptr::write(ab, c as hb_codepoint_t);
         true as hb_bool_t
     } else {
@@ -233,17 +298,23 @@ unsafe extern "C" fn icu4x_hb_unicode_compose(
     }
 }
 
-unsafe extern "C" fn icu4x_hb_unicode_compose_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut CanonicalComposition);
-}
-
 unsafe extern "C" fn icu4x_hb_unicode_decompose(
     _ufuncs: *mut hb_unicode_funcs_t,
     ab: hb_codepoint_t,
     a: *mut hb_codepoint_t,
     b: *mut hb_codepoint_t,
-    user_data: *mut c_void,
+    #[cfg_attr(not(feature = "alloc"), allow(unused_variables))] user_data: *mut c_void,
 ) -> hb_bool_t {
+    #[cfg(feature = "compiled_data")]
+    const DC: Option<CanonicalDecomposition> = Some(CanonicalDecomposition::new());
+    #[cfg(not(feature = "compiled_data"))]
+    const DC: Option<CanonicalDecomposition> = None;
+
+    #[cfg(feature = "alloc")]
+    let dc = (user_data as *mut CanonicalDecomposition).as_ref();
+    #[cfg(not(feature = "alloc"))]
+    let dc = None;
+
     // It appears that HarfBuzz will pass valid scalar values
     // unless the application violated the contract of
     // `hb_buffer_add_codepoints` and passed in non-scalar values.
@@ -257,7 +328,7 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose(
         debug_assert!(false);
         return false as hb_bool_t;
     };
-    match (*(user_data as *mut CanonicalDecomposition)).decompose(composed) {
+    match dc.or(DC.as_ref()).unwrap_unchecked().decompose(composed) {
         Decomposed::Default => false as hb_bool_t,
         Decomposed::Expansion(first, second) => {
             core::ptr::write(a, first as hb_codepoint_t);
@@ -270,10 +341,6 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose(
             true as hb_bool_t
         }
     }
-}
-
-unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut CanonicalDecomposition);
 }
 
 /// RAII holder for `*mut hb_unicode_funcs_t`.
@@ -334,50 +401,6 @@ impl Drop for UnicodeFuncs {
 /// [📚 Help choosing a constructor](icu_provider::constructors)
 #[cfg(feature = "compiled_data")]
 pub fn new_hb_unicode_funcs() -> Result<UnicodeFuncs, HarfBuzzError> {
-    create_ufuncs(
-        CanonicalCombiningClassMap::new(),
-        icu_properties::maps::general_category().static_to_owned(),
-        icu_properties::bidi_data::bidi_auxiliary_properties().static_to_owned(),
-        icu_properties::maps::script().static_to_owned(),
-        Script::enum_to_short_name_mapper().static_to_owned(),
-        CanonicalComposition::new(),
-        CanonicalDecomposition::new(),
-    )
-}
-
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, new_hb_unicode_funcs)]
-pub fn new_hb_unicode_funcs_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
-where
-    D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
-        + DataProvider<CanonicalCompositionsV1Marker>
-        + DataProvider<CanonicalDecompositionDataV1Marker>
-        + DataProvider<CanonicalDecompositionTablesV1Marker>
-        + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptValueToShortNameV1Marker>
-        + DataProvider<ScriptV1Marker>
-        + ?Sized,
-{
-    create_ufuncs(
-        CanonicalCombiningClassMap::try_new_unstable(provider)?,
-        icu_properties::maps::load_general_category(provider)?,
-        icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(provider)?,
-        icu_properties::maps::load_script(provider)?,
-        Script::get_enum_to_short_name_mapper(provider)?,
-        CanonicalComposition::try_new_unstable(provider)?,
-        CanonicalDecomposition::try_new_unstable(provider)?,
-    )
-}
-
-fn create_ufuncs(
-    canonical_combining_class_map: CanonicalCombiningClassMap,
-    general_category_map: CodePointMapData<GeneralCategory>,
-    bidi_auxiliary_props_map: BidiAuxiliaryProperties,
-    script_map: CodePointMapData<Script>,
-    script_enum_to_short_name_lookup: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
-    canonical_composition: CanonicalComposition,
-    canonical_decomposition: CanonicalDecomposition,
-) -> Result<UnicodeFuncs, HarfBuzzError> {
     unsafe {
         let empty = hb_unicode_funcs_get_empty();
         // The HarfBuzz refcounting convention is that "create"
@@ -391,40 +414,152 @@ fn create_ufuncs(
         hb_unicode_funcs_set_combining_class_func(
             ufuncs,
             Some(icu4x_hb_unicode_combining_class),
-            Box::into_raw(Box::new(canonical_combining_class_map)) as *mut c_void,
+            core::ptr::null_mut() as *mut c_void,
+            None,
+        );
+        hb_unicode_funcs_set_general_category_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_general_category),
+            core::ptr::null_mut() as *mut c_void,
+            None,
+        );
+        hb_unicode_funcs_set_mirroring_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_mirroring),
+            core::ptr::null_mut() as *mut c_void,
+            None,
+        );
+        hb_unicode_funcs_set_script_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_script),
+            core::ptr::null_mut() as *mut c_void,
+            None,
+        );
+        hb_unicode_funcs_set_compose_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_compose),
+            core::ptr::null_mut() as *mut c_void,
+            None,
+        );
+        hb_unicode_funcs_set_decompose_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_decompose),
+            core::ptr::null_mut() as *mut c_void,
+            None,
+        );
+
+        // Compatibility decomposition and East Asian Width lookups
+        // are deprecated, and there's no need to set up the callbacks
+        // for those.
+
+        hb_unicode_funcs_make_immutable(ufuncs);
+        Ok(UnicodeFuncs::from_raw(ufuncs))
+    }
+}
+
+#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, new_hb_unicode_funcs)]
+#[cfg(feature = "alloc")]
+pub fn new_hb_unicode_funcs_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
+where
+    D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
+        + DataProvider<CanonicalCompositionsV1Marker>
+        + DataProvider<CanonicalDecompositionDataV1Marker>
+        + DataProvider<CanonicalDecompositionTablesV1Marker>
+        + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
+        + DataProvider<GeneralCategoryV1Marker>
+        + DataProvider<ScriptValueToShortNameV1Marker>
+        + DataProvider<ScriptV1Marker>
+        + ?Sized,
+{
+    let canonical_combining_class_map = CanonicalCombiningClassMap::try_new_unstable(provider)?;
+    let general_category_map = maps::load_general_category(provider)?;
+    let bidi_auxiliary_props_map = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
+    let script_map = maps::load_script(provider)?;
+    let script_enum_to_short_name_lookup = Script::get_enum_to_short_name_mapper(provider)?;
+    let canonical_composition = CanonicalComposition::try_new_unstable(provider)?;
+    let canonical_decomposition = CanonicalDecomposition::try_new_unstable(provider)?;
+
+    #[cfg(not(feature = "std"))]
+    use alloc::boxed::Box;
+
+    let combining_class = Box::into_raw(Box::new(canonical_combining_class_map));
+    let general_category = Box::into_raw(Box::new(general_category_map));
+    let mirroring = Box::into_raw(Box::new(bidi_auxiliary_props_map));
+    let script = Box::into_raw(Box::new(ScriptDataForHarfBuzz {
+        script_map,
+        enum_to_name_mapper: script_enum_to_short_name_lookup,
+    }));
+    let compose = Box::into_raw(Box::new(canonical_composition));
+    let decompose = Box::into_raw(Box::new(canonical_decomposition));
+
+    unsafe extern "C" fn icu4x_hb_unicode_combining_class_destroy(user_data: *mut c_void) {
+        let _ = Box::from_raw(user_data as *mut CanonicalCombiningClassMap);
+    }
+
+    unsafe extern "C" fn icu4x_hb_unicode_general_category_destroy(user_data: *mut c_void) {
+        let _ = Box::from_raw(user_data as *mut CodePointMapData<GeneralCategory>);
+    }
+
+    unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
+        let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
+    }
+
+    unsafe extern "C" fn icu4x_hb_unicode_script_destroy(user_data: *mut c_void) {
+        let _ = Box::from_raw(user_data as *mut ScriptDataForHarfBuzz);
+    }
+
+    unsafe extern "C" fn icu4x_hb_unicode_compose_destroy(user_data: *mut c_void) {
+        let _ = Box::from_raw(user_data as *mut CanonicalComposition);
+    }
+
+    unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) {
+        let _ = Box::from_raw(user_data as *mut CanonicalDecomposition);
+    }
+
+    unsafe {
+        let empty = hb_unicode_funcs_get_empty();
+        // The HarfBuzz refcounting convention is that "create"
+        // sets refcount to one, not zero.
+        // https://harfbuzz.github.io/object-model-lifecycle.html
+        let ufuncs = hb_unicode_funcs_create(empty);
+        if ufuncs == empty {
+            return Err(HarfBuzzError::Alloc);
+        }
+        // Below this point, the only return is upon success.
+        hb_unicode_funcs_set_combining_class_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_combining_class),
+            combining_class as *mut c_void,
             Some(icu4x_hb_unicode_combining_class_destroy),
         );
         hb_unicode_funcs_set_general_category_func(
             ufuncs,
             Some(icu4x_hb_unicode_general_category),
-            Box::into_raw(Box::new(general_category_map)) as *mut c_void,
+            general_category as *mut c_void,
             Some(icu4x_hb_unicode_general_category_destroy),
         );
         hb_unicode_funcs_set_mirroring_func(
             ufuncs,
             Some(icu4x_hb_unicode_mirroring),
-            Box::into_raw(Box::new(bidi_auxiliary_props_map)) as *mut c_void,
+            mirroring as *mut c_void,
             Some(icu4x_hb_unicode_mirroring_destroy),
         );
         hb_unicode_funcs_set_script_func(
             ufuncs,
             Some(icu4x_hb_unicode_script),
-            Box::into_raw(Box::new(ScriptDataForHarfBuzz {
-                script_map,
-                enum_to_name_mapper: script_enum_to_short_name_lookup,
-            })) as *mut c_void,
+            script as *mut c_void,
             Some(icu4x_hb_unicode_script_destroy),
         );
         hb_unicode_funcs_set_compose_func(
             ufuncs,
             Some(icu4x_hb_unicode_compose),
-            Box::into_raw(Box::new(canonical_composition)) as *mut c_void,
+            compose as *mut c_void,
             Some(icu4x_hb_unicode_compose_destroy),
         );
         hb_unicode_funcs_set_decompose_func(
             ufuncs,
             Some(icu4x_hb_unicode_decompose),
-            Box::into_raw(Box::new(canonical_decomposition)) as *mut c_void,
+            decompose as *mut c_void,
             Some(icu4x_hb_unicode_decompose_destroy),
         );
 

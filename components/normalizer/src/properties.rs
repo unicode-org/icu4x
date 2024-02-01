@@ -90,7 +90,7 @@ impl CanonicalComposition {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             canonical_compositions: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
