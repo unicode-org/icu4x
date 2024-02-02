@@ -9,6 +9,7 @@ use crate::{
 use litemap::LiteMap;
 use num_bigint::BigInt;
 use num_rational::Ratio;
+use num_traits::identities::One;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
@@ -222,7 +223,7 @@ impl<'data> ConverterFactory<'data> {
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
-        let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
+        let mut conversion_rate = Ratio::one();
         for input_item in input_unit.contained_units.iter() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
