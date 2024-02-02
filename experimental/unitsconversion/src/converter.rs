@@ -7,8 +7,9 @@ use crate::{
     provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1},
     ConversionError,
 };
+use icu_provider::DataError;
 use litemap::LiteMap;
-use num::{rational::Ratio, BigInt};
+use num::{rational::Ratio, BigInt, One};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
@@ -39,6 +40,15 @@ pub struct ConverterFactory<'data> {
     /// Contains the necessary data for the conversion factory.
     payload: &'data UnitsInfoV1<'data>,
     payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+}
+
+impl Into<num_bigint::Sign> for Sign {
+    fn into(self) -> num_bigint::Sign {
+        match self {
+            Sign::Positive => num_bigint::Sign::Plus,
+            Sign::Negative => num_bigint::Sign::Minus,
+        }
+    }
 }
 
 impl<'data> ConverterFactory<'data> {
@@ -94,7 +104,9 @@ impl<'data> ConverterFactory<'data> {
                     .payload
                     .convert_infos
                     .get(item.unit_id as usize)
-                    .ok_or(ConversionError::DataNotFoundError)?;
+                    .ok_or(ConversionError::Data(DataError::custom(
+                        "Data is not found",
+                    )))?;
 
                 insert_base_units(items_from_item.basic_units(), item.power as i16, sign, map);
             }
@@ -138,8 +150,14 @@ impl<'data> ConverterFactory<'data> {
         let first_insert_result = insert_non_basic_units(self, unit1, 1, &mut map);
         let second_insert_result = insert_non_basic_units(self, unit2, -1, &mut map);
 
-        debug_assert!(first_insert_result.is_ok());
-        debug_assert!(second_insert_result.is_ok());
+        debug_assert!(
+            first_insert_result.is_ok(),
+            "First insert result encountered an error"
+        );
+        debug_assert!(
+            second_insert_result.is_ok(),
+            "Second insert result encountered an error"
+        );
 
         if first_insert_result.is_err() || second_insert_result.is_err() {
             return None;
@@ -199,11 +217,7 @@ impl<'data> ConverterFactory<'data> {
         num_ule: &ZeroSlice<u8>,
         den_ule: &ZeroSlice<u8>,
     ) -> Ratio<BigInt> {
-        let sign = match Sign::from_unaligned(*sign_ule) {
-            Sign::Positive => num_bigint::Sign::Plus,
-            Sign::Negative => num_bigint::Sign::Minus,
-        };
-
+        let sign = Sign::from_unaligned(*sign_ule).into();
         Ratio::<BigInt>::new(
             BigInt::from_bytes_le(sign, num_ule.as_ule_slice()),
             BigInt::from_bytes_le(num_bigint::Sign::Plus, den_ule.as_ule_slice()),
@@ -221,20 +235,14 @@ impl<'data> ConverterFactory<'data> {
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
-        let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
-
+        let mut conversion_rate = Ratio::one();
         for input_item in input_unit.contained_units.iter() {
-            match Self::compute_conversion_term(self, input_item, 1) {
-                Some(term) => conversion_rate *= term,
-                None => return None,
-            }
+            conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
         for output_item in output_unit.contained_units.iter() {
-            match Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign) {
-                Some(term) => conversion_rate *= term,
-                None => return None,
-            }
+            conversion_rate *=
+                Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
 
         Some(LinearConverter {

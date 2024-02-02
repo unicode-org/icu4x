@@ -4,6 +4,8 @@
 
 //! Experimental.
 
+use icu_provider::DataError;
+
 extern crate alloc;
 
 pub mod converter;
@@ -26,5 +28,5 @@ pub enum ConversionError {
     InvalidConversion,
 
     /// The needed data is not found.
-    DataNotFoundError,
+    Data(DataError),
 }
