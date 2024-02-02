@@ -42,9 +42,9 @@ pub struct ConverterFactory<'data> {
     payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
-impl Into<num_bigint::Sign> for Sign {
-    fn into(self) -> num_bigint::Sign {
-        match self {
+impl From<Sign> for num_bigint::Sign {
+    fn from(val: Sign) -> Self {
+        match val {
             Sign::Positive => num_bigint::Sign::Plus,
             Sign::Negative => num_bigint::Sign::Minus,
         }
