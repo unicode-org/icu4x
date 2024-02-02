@@ -12,6 +12,8 @@ use num::{rational::Ratio, BigInt};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
+
+// TODO(#4576): Bikeshed the name of the converter.
 /// LinearConverter is responsible for converting between two units that are linearly related.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
@@ -28,7 +30,7 @@ pub struct LinearConverter {
 
     /// Determines if the units are reciprocal or not.
     /// For example, `meter-per-second` and `second-per-meter` are reciprocal.
-    /// Real world case, `gallon-per-mile` and `100-kilometer-per-liter` which are reciprocal.
+    /// Real world case, `mile-per-gallon` and `liter-per-100-kilometer` which are reciprocal.
     reciprocal: bool,
 }
 
