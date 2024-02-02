@@ -21,12 +21,4 @@ pub enum ConversionError {
     /// This can happen if the unit id is not following the CLDR specification.
     /// For example, `meter` is a valid unit id, but `metre` is not.
     InvalidUnit,
-
-    /// The conversion is not valid.
-    /// This can happen if the units are not compatible.
-    /// For example, `meter` and `foot` are compatible, but `meter` and `second` are not.
-    InvalidConversion,
-
-    /// The needed data is not found.
-    Data(DataError),
 }
