@@ -7,7 +7,8 @@ use crate::{
     provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1},
 };
 use litemap::LiteMap;
-use num::{rational::Ratio, BigInt, One};
+use num_bigint::BigInt;
+use num_rational::Ratio;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
@@ -221,7 +222,7 @@ impl<'data> ConverterFactory<'data> {
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
-        let mut conversion_rate = Ratio::one();
+        let mut conversion_rate = Ratio::<BigInt>::from_integer(1.into());
         for input_item in input_unit.contained_units.iter() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
