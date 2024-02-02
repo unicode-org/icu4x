@@ -5,9 +5,7 @@
 use crate::{
     measureunit::{MeasureUnit, MeasureUnitParser},
     provider::{Base, MeasureUnitItem, SiPrefix, Sign, SignULE, UnitsInfoV1},
-    ConversionError,
 };
-use icu_provider::DataError;
 use litemap::LiteMap;
 use num::{rational::Ratio, BigInt, One};
 use zerotrie::ZeroTrieSimpleAscii;
@@ -98,20 +96,21 @@ impl<'data> ConverterFactory<'data> {
             units: &[MeasureUnitItem],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
-        ) -> Result<(), ConversionError> {
+        ) -> Option<()> {
             for item in units {
-                let items_from_item = factory
-                    .payload
-                    .convert_infos
-                    .get(item.unit_id as usize)
-                    .ok_or(ConversionError::Data(DataError::custom(
-                        "Data is not found",
-                    )))?;
+                let items_from_item = factory.payload.convert_infos.get(item.unit_id as usize);
 
-                insert_base_units(items_from_item.basic_units(), item.power as i16, sign, map);
+                debug_assert!(items_from_item.is_some(), "Failed to get convert info");
+
+                insert_base_units(
+                    items_from_item.unwrap().basic_units(),
+                    item.power as i16,
+                    sign,
+                    map,
+                );
             }
 
-            Ok(())
+            Some(())
         }
 
         /// Inserting the basic units into the map.
@@ -147,21 +146,8 @@ impl<'data> ConverterFactory<'data> {
         let unit2 = &unit2.contained_units;
 
         let mut map = LiteMap::new();
-        let first_insert_result = insert_non_basic_units(self, unit1, 1, &mut map);
-        let second_insert_result = insert_non_basic_units(self, unit2, -1, &mut map);
-
-        debug_assert!(
-            first_insert_result.is_ok(),
-            "First insert result encountered an error"
-        );
-        debug_assert!(
-            second_insert_result.is_ok(),
-            "Second insert result encountered an error"
-        );
-
-        if first_insert_result.is_err() || second_insert_result.is_err() {
-            return None;
-        }
+        insert_non_basic_units(self, unit1, 1, &mut map)?;
+        insert_non_basic_units(self, unit2, -1, &mut map)?;
 
         let (power_sums_are_zero, power_diffs_are_zero) =
             map.iter_values()
