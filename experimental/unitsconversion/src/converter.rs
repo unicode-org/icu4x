@@ -12,12 +12,11 @@ use num::{rational::Ratio, BigInt};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-
 // TODO(#4576): Bikeshed the name of the converter.
 /// LinearConverter is responsible for converting between two units that are linearly related.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
-///              3- `100-kilometer-per-liter` to `gallon-per-mile`.
+///              3- `mile-per-gallon` and `liter-per-100-kilometer`.
 ///
 /// However, it cannot convert between two units that are not linearly related such as `celsius` to `fahrenheit`.
 /// NOTE:
@@ -31,7 +30,7 @@ pub struct LinearConverter {
     /// Determines if the units are reciprocal or not.
     /// For example, `meter-per-second` and `second-per-meter` are reciprocal.
     /// Real world case, `mile-per-gallon` and `liter-per-100-kilometer` which are reciprocal.
-    reciprocal: bool,
+    is_reciprocal: bool,
 }
 
 /// ConverterFactory is a factory for creating a converter.
@@ -240,7 +239,7 @@ impl<'data> ConverterFactory<'data> {
 
         Some(LinearConverter {
             conversion_rate,
-            reciprocal: is_reciprocal,
+            is_reciprocal,
         })
     }
 }
@@ -249,7 +248,7 @@ impl LinearConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
         let mut result: Ratio<BigInt> = value * &self.conversion_rate;
-        if self.reciprocal {
+        if self.is_reciprocal {
             result = result.recip();
         }
 
