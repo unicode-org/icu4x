@@ -6,11 +6,14 @@ use core::fmt::{self, Write};
 use writeable::{PartsWrite, Writeable};
 
 #[cfg(feature = "alloc")]
+use crate::parser::{Parser, ParserOptions, PatternToken};
+#[cfg(feature = "alloc")]
 use alloc::string::String;
 
 const MIN_PLACEHOLDER_CODE_POINT: usize = 1;
 const MAX_PLACEHOLDER_CHAR: char = '\x06';
 const MAX_PLACEHOLDER_CODE_POINT: usize = MAX_PLACEHOLDER_CHAR as usize;
+#[cfg(feature = "alloc")]
 const PLACEHOLDER_RANGE_SIZE: usize = MAX_PLACEHOLDER_CODE_POINT - MIN_PLACEHOLDER_CODE_POINT;
 
 /// A string pattern with simple numeric placeholders, like `"{0} and {1}"`
@@ -47,19 +50,23 @@ const PLACEHOLDER_RANGE_SIZE: usize = MAX_PLACEHOLDER_CODE_POINT - MIN_PLACEHOLD
 /// use icu_pattern_2::NumericPlaceholderPattern;
 /// use writeable::assert_writeable_eq;
 ///
-/// let pattern = NumericPlaceholderPattern::from_store("Hello, \x01 and \x02!");
+/// // Create a pattern from the string syntax:
+/// let pattern = NumericPlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
 ///
+/// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(
 ///     pattern.interpolate(["Alice", "Bob"]),
 ///     "Hello, Alice and Bob!"
 /// );
 /// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NumericPlaceholderPattern<Store: ?Sized> {
     store: Store,
 }
 
 /// An item in a [`NumericPlaceholderPattern`]. Items are either string literals or placeholders.
 #[allow(clippy::exhaustive_enums)] // documented structure
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NumericPlaceholderPatternItem<'a> {
     /// A string literal. This can occur in one of three places:
     ///
@@ -71,12 +78,32 @@ pub enum NumericPlaceholderPatternItem<'a> {
     Placeholder(usize),
 }
 
+#[cfg(feature = "alloc")]
+impl<'a> From<&'a PatternToken<'_, usize>> for NumericPlaceholderPatternItem<'a> {
+    fn from(value: &'a PatternToken<usize>) -> Self {
+        match value {
+            PatternToken::Literal { content, .. } => {
+                NumericPlaceholderPatternItem::Literal(&content)
+            }
+            PatternToken::Placeholder(number) => {
+                NumericPlaceholderPatternItem::Placeholder(*number)
+            }
+        }
+    }
+}
+
 impl<Store> NumericPlaceholderPattern<Store> {
     pub fn from_store(store: Store) -> Self {
         Self { store }
     }
     pub fn take_store(self) -> Store {
         self.store
+    }
+}
+
+impl<Store: ?Sized> NumericPlaceholderPattern<Store> {
+    pub fn borrow_store(&self) -> &Store {
+        &self.store
     }
 }
 
@@ -227,40 +254,96 @@ impl<'a> Iterator for NumericPlaceholderPatternIterator<'a> {
 #[cfg(feature = "alloc")]
 impl<'a> FromIterator<NumericPlaceholderPatternItem<'a>> for NumericPlaceholderPattern<String> {
     fn from_iter<T: IntoIterator<Item = NumericPlaceholderPatternItem<'a>>>(iter: T) -> Self {
-        let mut pattern_str = String::new();
+        let mut retval = NumericPlaceholderPattern {
+            store: String::new(),
+        };
         for item in iter {
-            match item {
-                NumericPlaceholderPatternItem::Literal(s) => {
-                    if cfg!(debug_assertions) {
-                        for ch in s.chars() {
-                            let ch_usize = ch as usize;
-                            debug_assert!(
-                                ch_usize < MIN_PLACEHOLDER_CODE_POINT || ch_usize > MAX_PLACEHOLDER_CODE_POINT,
-                                "invalid code point in string being converted to numeric placeholder pattern: {:?}",
-                                s.as_bytes()
-                            );
-                        }
+            retval.append_pattern_item(item);
+        }
+        retval
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<'a> TryFrom<Parser<'a, usize>> for NumericPlaceholderPattern<String> {
+    type Error = crate::ParserError<core::num::ParseIntError>;
+    fn try_from(mut parser: Parser<'a, usize>) -> Result<Self, Self::Error> {
+        let mut retval = NumericPlaceholderPattern {
+            store: String::new(),
+        };
+        while let Some(item) = parser.try_next()? {
+            retval.append_pattern_item((&item).into());
+        }
+        Ok(retval)
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl core::str::FromStr for NumericPlaceholderPattern<String> {
+    type Err = crate::ParserError<core::num::ParseIntError>;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Self::from_str(input)
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl NumericPlaceholderPattern<String> {
+    /// Parses a UTS 35 pattern string into a [`NumericPlaceholderPattern`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern_2::NumericPlaceholderPattern;
+    ///
+    /// // Create a pattern from the string syntax:
+    /// let pattern = NumericPlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
+    ///
+    /// // Check that it parsed correctly:
+    /// assert_eq!(
+    ///     pattern.borrow_store(),
+    ///     "Hello, \x01 and \x02!"
+    /// );
+    /// ```
+    pub fn from_str(input: &str) -> Result<Self, crate::ParserError<core::num::ParseIntError>> {
+        let parser = Parser::new(
+            input,
+            ParserOptions {
+                allow_raw_letters: true,
+            },
+        );
+        parser.try_into()
+    }
+
+    fn append_pattern_item(&mut self, item: NumericPlaceholderPatternItem) {
+        match item {
+            NumericPlaceholderPatternItem::Literal(s) => {
+                if cfg!(debug_assertions) {
+                    for ch in s.chars() {
+                        let ch_usize = ch as usize;
+                        debug_assert!(
+                            ch_usize < MIN_PLACEHOLDER_CODE_POINT || ch_usize > MAX_PLACEHOLDER_CODE_POINT,
+                            "invalid code point in string being converted to numeric placeholder pattern: {:?}",
+                            s.as_bytes()
+                        );
                     }
-                    pattern_str.push_str(s);
                 }
-                NumericPlaceholderPatternItem::Placeholder(number) => {
-                    let mut remainder = number;
-                    loop {
-                        if remainder < MAX_PLACEHOLDER_CODE_POINT - MIN_PLACEHOLDER_CODE_POINT {
-                            debug_assert!(
-                                remainder - MIN_PLACEHOLDER_CODE_POINT <= u8::MAX as usize
-                            );
-                            let u8_to_push = (remainder - MIN_PLACEHOLDER_CODE_POINT) as u8;
-                            pattern_str.push(char::from(u8_to_push));
-                        } else {
-                            pattern_str.push(MAX_PLACEHOLDER_CHAR);
-                            remainder -= PLACEHOLDER_RANGE_SIZE;
-                        }
+                self.store.push_str(s);
+            }
+            NumericPlaceholderPatternItem::Placeholder(number) => {
+                let mut remainder = number;
+                loop {
+                    if remainder < MAX_PLACEHOLDER_CODE_POINT - MIN_PLACEHOLDER_CODE_POINT {
+                        debug_assert!(remainder + MIN_PLACEHOLDER_CODE_POINT <= u8::MAX as usize);
+                        let u8_to_push = (remainder + MIN_PLACEHOLDER_CODE_POINT) as u8;
+                        self.store.push(char::from(u8_to_push));
+                        break;
+                    } else {
+                        self.store.push(MAX_PLACEHOLDER_CHAR);
+                        remainder -= PLACEHOLDER_RANGE_SIZE;
                     }
                 }
             }
         }
-        NumericPlaceholderPattern { store: pattern_str }
     }
 }
 

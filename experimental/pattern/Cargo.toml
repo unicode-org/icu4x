@@ -26,11 +26,13 @@ all-features = true
 
 [dependencies]
 writeable = { workspace = true }
+displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 
 [features]
 alloc = []
+std = []
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"

@@ -1785,6 +1785,7 @@ name = "icu_pattern_2"
 version = "0.0.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "writeable",
 ]
 
