@@ -270,6 +270,24 @@ impl<'a> FromIterator<NumericPlaceholderPatternItem<'a>> for NumericPlaceholderP
 }
 
 /// A type that returns [`Writeable`]s for interpolating into a [`NumericPlaceholderPattern`].
+///
+/// This trait is implemented on slices of [`Writeable`]s, including `[W]`, `[W; N]`, and `&[W]`.
+///
+/// # Examples
+///
+/// Interpolating a slice of `i32` (`i32` implements [`Writeable`]):
+///
+/// ```
+/// use icu_pattern_2::NumericPlaceholderPattern;
+/// use writeable::assert_writeable_eq;
+///
+/// let pattern = NumericPlaceholderPattern::from_store("Your lucky numbers are: \x01, \x02, and \x03");
+///
+/// assert_writeable_eq!(
+///     pattern.interpolate(&[55, 46, 91] as &[i32]),
+///     "Your lucky numbers are: 55, 46, and 91"
+/// );
+/// ```
 pub trait NumericPlaceholderProvider {
     type W<'a>: Writeable
     where
@@ -301,7 +319,7 @@ where
 
 impl<'b, T> NumericPlaceholderProvider for &'b T
 where
-    T: NumericPlaceholderProvider,
+    T: NumericPlaceholderProvider + ?Sized,
 {
     type W<'a> = T::W<'a> where T: 'a, 'b: 'a;
     fn replacement_for<'a>(&'a self, number: usize) -> Option<Self::W<'a>> {
