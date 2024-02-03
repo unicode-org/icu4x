@@ -1,0 +1,36 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_pattern_2"
+description = "Pattern interpolation utilities for ICU4X"
+version = "0.0.0"
+license-file = "LICENSE"
+# Publish this as a new version of `icu_pattern`, not `icu_pattern_2`
+publish = false
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+writeable = { workspace = true }
+
+[dev-dependencies]
+
+[features]
+alloc = []
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"

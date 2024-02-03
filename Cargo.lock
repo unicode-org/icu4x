@@ -1781,6 +1781,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_pattern_2"
+version = "0.0.0"
+dependencies = [
+ "criterion",
+ "writeable",
+]
+
+[[package]]
 name = "icu_plurals"
 version = "1.4.0"
 dependencies = [

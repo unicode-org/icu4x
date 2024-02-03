@@ -76,6 +76,7 @@ members = [
     "utils/zerovec/derive",
     "experimental/bies",
     "experimental/ixdtf",
+    "experimental/pattern",
     "experimental/zerotrie",
 
     # Tools
@@ -182,6 +183,7 @@ deduplicating_array = { version = "0.1.5", path = "utils/deduplicating_array", d
 fixed_decimal = { version = "0.5.5", path = "utils/fixed_decimal", default-features = false }
 litemap = { version = "0.7.2", path = "utils/litemap", default-features = false }
 icu_pattern = { version = "0.1.5", path = "utils/pattern", default-features = false }
+icu_pattern_2 = { version = "0.2.0", path = "experimental/pattern", default-features = false }
 tinystr = { version = "0.7.4", path = "utils/tinystr", default-features = false }
 tzif = { version = "0.0.0", path = "utils/tzif", default-features = false }
 writeable = { version = "0.5.4", path = "utils/writeable/", default-features = false }
