@@ -5,7 +5,7 @@
 
  * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html Rust documentation for `RoundingIncrement`} for more information.
  */
-export enum ICU4XRoundingIncrement {
+export enum ICU4XFixedDecimalRoundingIncrement {
   /**
    */
   MultiplesOf1 = 'MultiplesOf1',

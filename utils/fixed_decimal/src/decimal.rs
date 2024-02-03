@@ -163,14 +163,8 @@ pub enum SignDisplay {
 ///
 /// Forces a rounding operation to round to only multiples of the specified increment.
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[non_exhaustive]
-#[cfg(feature = "experimental")]
 pub enum RoundingIncrement {
     /// Round the last digit to any digit (0-9).
     ///
@@ -329,7 +323,6 @@ impl FixedDecimal {
     /// Gets the digit at the specified order of next upper magnitude (magnitude + 1).
     /// Returns 0 if the next upper magnitude is out of range of currently visible digits or
     /// the magnitude is equal to `i16::MAX`.
-    #[cfg(feature = "experimental")]
     fn digit_at_previous_position(&self, magnitude: i16) -> u8 {
         if magnitude == i16::MAX {
             0
@@ -350,7 +343,6 @@ impl FixedDecimal {
     }
 
     /// Returns the relative ordering of the digits after `magnitude` with respect to 5.
-    #[cfg(feature = "experimental")]
     fn half_at_next_magnitude(&self, magnitude: i16) -> Ordering {
         #[cfg(debug_assertions)] // Depends on having no trailing zeroes.
         self.check_invariants();
@@ -383,7 +375,6 @@ impl FixedDecimal {
 
     /// Returns the relative ordering of the digits from `magnitude` onwards
     /// with respect to the half increment of `increment`.
-    #[cfg(feature = "experimental")]
     fn half_increment_at_magnitude(
         &self,
         magnitude: i16,
@@ -453,7 +444,6 @@ impl FixedDecimal {
 
     /// Checks if this number is already rounded to the specified magnitude and
     /// increment.
-    #[cfg(feature = "experimental")]
     fn is_rounded(&self, position: i16, increment: RoundingIncrement) -> bool {
         // The number is rounded if it's already zero, since zero is a multiple of
         // all increments.
@@ -1194,72 +1184,11 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.trunc_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    fn trunc_internal(&mut self, position: i16) {
-        // 1. Set upper and lower magnitude
-        self.lower_magnitude = cmp::min(position, 0);
-        if position == i16::MIN {
-            // Nothing more to do
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-        let magnitude = position - 1;
-        self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
-
-        // 2. If the rounding position is *lower than* the rightmost nonzero digit, exit early
-        if self.is_zero() || magnitude < self.nonzero_magnitude_end() {
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-
-        // 3. If the rounding position is *in the middle* of the nonzero digits
-        if magnitude < self.magnitude {
-            // 3a. Calculate the number of digits to retain and remove the rest
-            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
-            self.digits.truncate(digits_to_retain as usize);
-            // 3b. Remove trailing zeros from self.digits to retain invariants
-            // Note: this does not affect visible trailing zeros,
-            // which is tracked by self.lower_magnitude
-            let position_past_last_nonzero_digit = self
-                .digits
-                .iter()
-                .rposition(|x| *x != 0)
-                .map(|x| x + 1)
-                .unwrap_or(0);
-            self.digits.truncate(position_past_last_nonzero_digit);
-            // 3c. By the invariant, there should still be at least 1 nonzero digit
-            debug_assert!(!self.digits.is_empty());
-        } else {
-            // 4. If the rounding position is *above* the leftmost nonzero digit, set to zero
-            self.digits.clear();
-            self.magnitude = 0;
-        }
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
+        self.trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Truncates the number on the right to a particular position and rounding
     /// increment, deleting digits if necessary.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -1298,7 +1227,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn trunced_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
         self.trunc_to_increment(position, increment);
         self
@@ -1306,12 +1234,6 @@ impl FixedDecimal {
 
     /// Truncates the number on the right to a particular position and rounding
     /// increment, deleting digits if necessary.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -1335,7 +1257,6 @@ impl FixedDecimal {
     /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("9.98", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
@@ -1482,45 +1403,11 @@ impl FixedDecimal {
     /// assert_eq!("4", dec.to_string());
     /// ```
     pub fn half_trunc(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.half_trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.half_trunc_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    fn half_trunc_internal(&mut self, position: i16) {
-        let digit_after_position = self.digit_at_next_position(position);
-        let should_expand = match digit_after_position.cmp(&5) {
-            Ordering::Less => false,
-            Ordering::Greater => true,
-            Ordering::Equal =>
-            // NOTE: `digit_after_position` equals 5, this means, position does not equal to `i16::MIN`.
-            {
-                self.nonzero_magnitude_end() < position - 1
-            }
-        };
-
-        if should_expand {
-            self.expand(position);
-        } else {
-            self.trunc(position);
-        }
+        self.half_trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Half Truncates the number on the right to a particular position and rounding increment,
     /// deleting digits if necessary.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -1544,7 +1431,6 @@ impl FixedDecimal {
     /// dec.half_trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("9.98", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         // Only expand if the rounding position is strictly greater than the half increment.
         // At the half increment, `half_trunc` always truncates.
@@ -1588,12 +1474,6 @@ impl FixedDecimal {
     /// Half Truncates the number on the right to a particular position and rounding increment,
     /// deleting digits if necessary.
     ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
@@ -1631,7 +1511,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_trunced_to_increment(
         mut self,
         position: i16,
@@ -1666,85 +1545,10 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.expand_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.expand_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    fn expand_internal(&mut self, position: i16) {
-        // 1. Set upper and lower magnitude
-        self.lower_magnitude = cmp::min(position, 0);
-        if position == i16::MIN {
-            // Nothing more to do
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-        let magnitude = position - 1;
-        self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
-
-        // 2. If the rounding position is *lower than* the rightmost nonzero digit, exit early
-        if self.is_zero() || magnitude < self.nonzero_magnitude_end() {
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-
-        // 3. If the rounding position is *in the middle* of the nonzero digits
-        if magnitude < self.magnitude {
-            // 3a. Calculate the number of digits to retain and remove the rest
-            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
-            self.digits.truncate(digits_to_retain as usize);
-            // 3b. Increment the rightmost remaining digit since we are rounding up; this might
-            // require bubbling the addition to higher magnitudes, like 199 + 1 = 200
-            for (zero_count, digit) in self.digits.iter_mut().rev().enumerate() {
-                *digit += 1;
-                if *digit < 10 {
-                    self.digits.truncate(self.digits.len() - zero_count);
-                    #[cfg(debug_assertions)]
-                    self.check_invariants();
-                    return;
-                }
-            }
-            // 3c. If we get here, the mantissa is fully saturated, and we continue into case 4
-        }
-
-        // 4. If the rounding position is *above* the leftmost nonzero digit, OR if we saturated,
-        // set the value to a single digit 1 at the appropriate position
-        if self.magnitude == i16::MAX {
-            // TODO(#2297): Decide on behavior here
-            self.magnitude = 0;
-            self.digits.clear();
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-        self.digits.clear();
-        self.digits.push(1);
-        // If we got here from case 3, we should use self.magnitude + 1
-        // If we got here directly from case 4, we should use magnitude + 1
-        // We can use cmp::max to pick the right one
-        self.magnitude = cmp::max(self.magnitude, magnitude) + 1;
-        self.upper_magnitude = cmp::max(self.upper_magnitude, self.magnitude);
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
+        self.expand_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the expand of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -1768,7 +1572,6 @@ impl FixedDecimal {
     /// dec.expand_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("10.00", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         /// Modifies `number` to signal that an overflow happened.
         fn overflow(number: &mut FixedDecimal) {
@@ -2026,12 +1829,6 @@ impl FixedDecimal {
 
     /// Take the expand of the number at a particular position and rounding increment.
     ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
@@ -2069,7 +1866,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn expanded_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
         self.expand_to_increment(position, increment);
         self
@@ -2100,35 +1896,10 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_expand(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.half_expand_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.half_expand_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    pub fn half_expand_internal(&mut self, position: i16) {
-        let digit_after_position = self.digit_at_next_position(position);
-
-        if digit_after_position >= 5 {
-            self.expand(position);
-        } else {
-            self.trunc(position);
-        }
+        self.half_expand_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half expand of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2152,7 +1923,6 @@ impl FixedDecimal {
     /// dec.half_expand_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("10.00", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         // Only truncate if the rounding position is strictly less than the half increment.
         // At the half increment, `half_expand` always expands.
@@ -2191,12 +1961,6 @@ impl FixedDecimal {
 
     /// Take the half expand of the number at a particular position and rounding increment.
     ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
@@ -2234,7 +1998,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_expanded_to_increment(
         mut self,
         position: i16,
@@ -2269,34 +2032,10 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn ceil(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.ceil_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    fn ceil_internal(&mut self, position: i16) {
-        if self.sign == Sign::Negative {
-            self.trunc(position);
-            return;
-        }
-
-        self.expand(position);
+        self.ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the ceiling of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2320,7 +2059,6 @@ impl FixedDecimal {
     /// dec.ceil_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-9.98", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn ceil_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         if self.sign == Sign::Negative {
             self.trunc_to_increment(position, increment);
@@ -2355,12 +2093,6 @@ impl FixedDecimal {
     }
 
     /// Take the ceiling of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2399,7 +2131,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn ceiled_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
         self.ceil_to_increment(position, increment);
         self
@@ -2430,34 +2161,10 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_ceil(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.half_ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.half_ceil_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    fn half_ceil_internal(&mut self, position: i16) {
-        if self.sign == Sign::Negative {
-            self.half_trunc(position);
-            return;
-        }
-
-        self.half_expand(position);
+        self.half_ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half ceiling of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2481,7 +2188,6 @@ impl FixedDecimal {
     /// dec.half_ceil_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-9.98", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_ceil_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         if self.sign == Sign::Negative {
             self.half_trunc_to_increment(position, increment);
@@ -2516,12 +2222,6 @@ impl FixedDecimal {
     }
 
     /// Take the half ceiling of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2560,7 +2260,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_ceiled_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
         self.half_ceil_to_increment(position, increment);
         self
@@ -2591,34 +2290,10 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn floor(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.floor_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.floor_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    pub fn floor_internal(&mut self, position: i16) {
-        if self.sign == Sign::Negative {
-            self.expand(position);
-            return;
-        }
-
-        self.trunc(position);
+        self.floor_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the floor of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2642,7 +2317,6 @@ impl FixedDecimal {
     /// dec.floor_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-10.00", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn floor_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         if self.sign == Sign::Negative {
             self.expand_to_increment(position, increment);
@@ -2677,12 +2351,6 @@ impl FixedDecimal {
     }
 
     /// Take the floor of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2721,7 +2389,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn floored_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
         self.floor_to_increment(position, increment);
         self
@@ -2752,34 +2419,10 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn half_floor(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.half_floor_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.half_floor_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    fn half_floor_internal(&mut self, position: i16) {
-        if self.sign == Sign::Negative {
-            self.half_expand(position);
-            return;
-        }
-
-        self.half_trunc(position);
+        self.half_floor_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half floor of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2803,7 +2446,6 @@ impl FixedDecimal {
     /// dec.half_floor_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-10.00", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_floor_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         if self.sign == Sign::Negative {
             self.half_expand_to_increment(position, increment);
@@ -2838,12 +2480,6 @@ impl FixedDecimal {
     }
 
     /// Take the half floor of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2882,7 +2518,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_floored_to_increment(
         mut self,
         position: i16,
@@ -2917,47 +2552,10 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_even(&mut self, position: i16) {
-        #[cfg(feature = "experimental")]
-        {
-            self.half_even_to_increment(position, RoundingIncrement::MultiplesOf1);
-        }
-
-        #[cfg(not(feature = "experimental"))]
-        {
-            self.half_even_internal(position);
-        }
-    }
-
-    #[cfg(not(feature = "experimental"))]
-    pub fn half_even_internal(&mut self, position: i16) {
-        let digit_after_position = self.digit_at_next_position(position);
-        let should_expand = match digit_after_position.cmp(&5) {
-            Ordering::Less => false,
-            Ordering::Greater => true,
-            Ordering::Equal => {
-                // NOTE: `digit_after_position` equals to 5, this means that positon does not equal i16::MIN.
-                if self.nonzero_magnitude_end() < position - 1 {
-                    true
-                } else {
-                    self.digit_at(position) % 2 != 0
-                }
-            }
-        };
-
-        if should_expand {
-            self.expand(position);
-        } else {
-            self.trunc(position);
-        }
+        self.half_even_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half even of the number at a particular position and rounding increment.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
     ///
     /// # Examples
     ///
@@ -2981,7 +2579,6 @@ impl FixedDecimal {
     /// dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("10.00", dec.to_string());
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_even_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         let should_expand = match self.half_increment_at_magnitude(position, increment) {
             Ordering::Greater => true,
@@ -3057,12 +2654,6 @@ impl FixedDecimal {
 
     /// Take the half even of the number at a particular position and rounding increment.
     ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/3929">#3929</a>
-    /// </div>
-    ///
     /// # Examples
     ///
     /// ```
@@ -3100,7 +2691,6 @@ impl FixedDecimal {
     ///         .to_string()
     /// );
     /// ```
-    #[cfg(feature = "experimental")]
     pub fn half_evened_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
         self.half_even_to_increment(position, increment);
         self
@@ -4999,7 +4589,6 @@ fn test_concatenate() {
 }
 
 #[test]
-#[cfg(feature = "experimental")]
 fn test_rounding_increment() {
     // Test Truncate Right
     let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);

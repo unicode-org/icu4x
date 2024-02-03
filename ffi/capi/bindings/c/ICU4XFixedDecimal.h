@@ -17,6 +17,7 @@ typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 #include "diplomat_result_box_ICU4XFixedDecimal_ICU4XError.h"
 #include "ICU4XFixedDecimalSign.h"
 #include "ICU4XFixedDecimalSignDisplay.h"
+#include "ICU4XFixedDecimalRoundingIncrement.h"
 #include "diplomat_result_void_void.h"
 #ifdef __cplusplus
 namespace capi {
@@ -73,21 +74,39 @@ void ICU4XFixedDecimal_set_max_position(ICU4XFixedDecimal* self, int16_t positio
 
 void ICU4XFixedDecimal_trunc(ICU4XFixedDecimal* self, int16_t position);
 
+void ICU4XFixedDecimal_trunc_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+
 void ICU4XFixedDecimal_half_trunc(ICU4XFixedDecimal* self, int16_t position);
+
+void ICU4XFixedDecimal_half_trunc_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
 void ICU4XFixedDecimal_expand(ICU4XFixedDecimal* self, int16_t position);
 
+void ICU4XFixedDecimal_expand_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+
 void ICU4XFixedDecimal_half_expand(ICU4XFixedDecimal* self, int16_t position);
+
+void ICU4XFixedDecimal_half_expand_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
 void ICU4XFixedDecimal_ceil(ICU4XFixedDecimal* self, int16_t position);
 
+void ICU4XFixedDecimal_ceil_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+
 void ICU4XFixedDecimal_half_ceil(ICU4XFixedDecimal* self, int16_t position);
+
+void ICU4XFixedDecimal_half_ceil_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
 void ICU4XFixedDecimal_floor(ICU4XFixedDecimal* self, int16_t position);
 
+void ICU4XFixedDecimal_floor_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+
 void ICU4XFixedDecimal_half_floor(ICU4XFixedDecimal* self, int16_t position);
 
+void ICU4XFixedDecimal_half_floor_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+
 void ICU4XFixedDecimal_half_even(ICU4XFixedDecimal* self, int16_t position);
+
+void ICU4XFixedDecimal_half_even_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
 
 diplomat_result_void_void ICU4XFixedDecimal_concatenate_end(ICU4XFixedDecimal* self, ICU4XFixedDecimal* other);
 

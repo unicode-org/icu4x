@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use fixed_decimal::RoundingIncrement;
 use fixed_decimal::Sign;
 use fixed_decimal::SignDisplay;
 
@@ -40,7 +41,7 @@ pub mod ffi {
 
     /// Increment used in a rounding operation.
     #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
-    pub enum ICU4XRoundingIncrement {
+    pub enum ICU4XFixedDecimalRoundingIncrement {
         MultiplesOf1,
         MultiplesOf2,
         MultiplesOf5,
@@ -237,10 +238,38 @@ pub mod ffi {
             self.0.trunc(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::trunc_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::trunced_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn trunc_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.trunc_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_trunc, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_trunced, FnInStruct, hidden)]
         pub fn half_trunc(&mut self, position: i16) {
             self.0.half_trunc(position)
+        }
+
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_trunc_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::half_trunced_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn half_trunc_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.half_trunc_to_increment(position, increment.into())
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::expand, FnInStruct)]
@@ -249,10 +278,38 @@ pub mod ffi {
             self.0.expand(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::expand_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::expanded_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn expand_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.expand_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_expand, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_expanded, FnInStruct, hidden)]
         pub fn half_expand(&mut self, position: i16) {
             self.0.half_expand(position)
+        }
+
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_expand_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::half_expanded_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn half_expand_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.half_expand_to_increment(position, increment.into())
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceil, FnInStruct)]
@@ -261,10 +318,34 @@ pub mod ffi {
             self.0.ceil(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceil_to_increment, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::ceiled_to_increment, FnInStruct, hidden)]
+        pub fn ceil_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.ceil_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_ceil, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_ceiled, FnInStruct, hidden)]
         pub fn half_ceil(&mut self, position: i16) {
             self.0.half_ceil(position)
+        }
+
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_ceil_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::half_ceiled_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn half_ceil_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.half_ceil_to_increment(position, increment.into())
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::floor, FnInStruct)]
@@ -273,16 +354,58 @@ pub mod ffi {
             self.0.floor(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::floor_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::floored_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn floor_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.floor_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_floor, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_floored, FnInStruct, hidden)]
         pub fn half_floor(&mut self, position: i16) {
             self.0.half_floor(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_floor_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::half_floored_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn half_floor_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.half_floor_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_even, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_evened, FnInStruct, hidden)]
         pub fn half_even(&mut self, position: i16) {
             self.0.half_even(position)
+        }
+
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_even_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::half_evened_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn half_even_to_increment(
+            &mut self,
+            position: i16,
+            increment: ICU4XFixedDecimalRoundingIncrement,
+        ) {
+            self.0.half_even_to_increment(position, increment.into())
         }
 
         /// Concatenates `other` to the end of `self`.
@@ -335,6 +458,25 @@ impl From<ffi::ICU4XFixedDecimalSignDisplay> for SignDisplay {
             ffi::ICU4XFixedDecimalSignDisplay::Always => Self::Always,
             ffi::ICU4XFixedDecimalSignDisplay::ExceptZero => Self::ExceptZero,
             ffi::ICU4XFixedDecimalSignDisplay::Negative => Self::Negative,
+        }
+    }
+}
+
+impl From<ffi::ICU4XFixedDecimalRoundingIncrement> for RoundingIncrement {
+    fn from(value: ffi::ICU4XFixedDecimalRoundingIncrement) -> Self {
+        match value {
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf1 => {
+                RoundingIncrement::MultiplesOf1
+            }
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf2 => {
+                RoundingIncrement::MultiplesOf2
+            }
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf5 => {
+                RoundingIncrement::MultiplesOf5
+            }
+            ffi::ICU4XFixedDecimalRoundingIncrement::MultiplesOf25 => {
+                RoundingIncrement::MultiplesOf25
+            }
         }
     }
 }
