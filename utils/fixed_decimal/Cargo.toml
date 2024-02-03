@@ -40,7 +40,7 @@ criterion = "0.4"
 
 [features]
 std = []
-bench = []
+bench = ["ryu"]
 experimental = []
 ryu = ["dep:ryu"]
 

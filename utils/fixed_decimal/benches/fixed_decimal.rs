@@ -22,6 +22,15 @@ fn triangular_nums(range: f64) -> Vec<isize> {
         .collect()
 }
 
+#[cfg(feature = "bench")]
+fn triangular_floats(range: f64) -> impl Iterator<Item = f64> {
+    // Use Lcg64Xsh32, a small, fast PRNG.s
+    // Generate 1000 numbers between -range and +range, weighted around 0.
+    let rng = Lcg64Xsh32::seed_from_u64(2024);
+    let dist = Triangular::new(-range, range, 0.0).unwrap();
+    dist.sample_iter(rng).take(1000)
+}
+
 fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e4);
     let values: Vec<_> = nums.iter().map(|n| n.to_string()).collect();
@@ -51,6 +60,7 @@ fn overview_bench(c: &mut Criterion) {
         larger_isize_benches(c);
         to_string_benches(c);
         from_string_benches(c);
+        rounding_benches(c);
     }
 }
 
@@ -156,6 +166,45 @@ fn from_string_benches(c: &mut Criterion) {
         }
         group.finish();
     }
+}
+
+#[cfg(feature = "bench")]
+fn rounding_benches(c: &mut Criterion) {
+    use fixed_decimal::FloatPrecision;
+    #[allow(clippy::type_complexity)] // most compact representation in code
+    const ROUNDING_FNS: [(&str, fn(FixedDecimal, i16) -> FixedDecimal); 9] = [
+        ("ceil", FixedDecimal::ceiled),
+        ("floor", FixedDecimal::floored),
+        ("expand", FixedDecimal::expanded),
+        ("trunc", FixedDecimal::trunced),
+        ("half_ceil", FixedDecimal::half_ceiled),
+        ("half_floor", FixedDecimal::half_floored),
+        ("half_expand", FixedDecimal::half_expanded),
+        ("half_trunc", FixedDecimal::half_trunced),
+        ("half_even", FixedDecimal::half_evened),
+    ];
+
+    let nums: Vec<_> = triangular_floats(1e7)
+        .map(|f| FixedDecimal::try_from_f64(f, FloatPrecision::Floating).unwrap())
+        .collect();
+    let mut group = c.benchmark_group("rounding");
+
+    for (name, rounding_fn) in ROUNDING_FNS {
+        group.bench_function(name, |b| {
+            b.iter(|| {
+                for offset in -5..=5 {
+                    nums.iter()
+                        .cloned()
+                        .map(|num| rounding_fn(black_box(num), offset))
+                        .for_each(|num| {
+                            black_box(num);
+                        });
+                }
+            })
+        });
+    }
+
+    group.finish()
 }
 
 criterion_group!(benches, overview_bench,);
