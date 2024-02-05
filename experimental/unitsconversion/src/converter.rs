@@ -105,7 +105,7 @@ impl<'data> ConverterFactory<'data> {
                 debug_assert!(items_from_item.is_some(), "Failed to get convert info");
 
                 insert_base_units(
-                    items_from_item.unwrap().basic_units(),
+                    items_from_item?.basic_units(),
                     item.power as i16,
                     sign,
                     map,
