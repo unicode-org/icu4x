@@ -323,6 +323,7 @@ _(followed by the original boilerplate from Unicode data)_
 
 Please discuss first.
 
+[style_guide]: docs/process/style_guide.md
 [policies]: https://www.unicode.org/policies/licensing_policy.html
 [unicode-corporate-clas]: https://www.unicode.org/policies/corporate-cla-list/
 [signing]: https://www.unicode.org/policies/licensing_policy.html#signing
