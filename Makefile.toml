@@ -197,6 +197,15 @@ exec --fail-on-error rustup install 1.67 --profile minimal
 exec --fail-on-error cargo +1.67 make check-all-features-chunked 3
 '''
 
+[tasks.ci-job-msrv-features-4]
+description = "Run all tests for the CI 'msrv-features-4' job"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install 1.67 --profile minimal
+exec --fail-on-error cargo +1.67 make check-all-features-chunked 4
+'''
+
 [tasks.ci-job-msrv-features]
 description = "Run all tests for the CI 'msrv-features-3' job"
 category = "CI"
