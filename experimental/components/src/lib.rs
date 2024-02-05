@@ -32,8 +32,9 @@ pub mod provider {
 
     #[cfg(feature = "compiled_data")]
     const _: () = {
+        pub use crate as icu_experimental;
+
         pub mod icu {
-            pub use crate as experimental;
             #[allow(unused_imports)] // baked data may or may not need this
             pub use icu_locid_transform as locid_transform;
         }
