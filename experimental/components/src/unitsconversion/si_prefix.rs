@@ -4,7 +4,7 @@
 
 use zerotrie::ZeroTrieSimpleAscii;
 
-use crate::provider::{Base, SiPrefix};
+use crate::unitsconversion::provider::{Base, SiPrefix};
 
 /// The offset of the SI prefixes.
 /// NOTE:

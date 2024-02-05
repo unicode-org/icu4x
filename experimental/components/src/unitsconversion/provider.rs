@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
-#[derive(Debug)]
+#[cfg(feature = "compiled_data")]
 /// Baked data
 ///
 /// <div class="stab unstable">
@@ -21,21 +21,7 @@ use zerovec::{VarZeroVec, ZeroVec};
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-pub struct Baked;
-
-include!("../../../provider/datagen/tests/data/baked/macros.rs");
-
-const _: () = {
-    pub mod icu {
-        pub use crate as unitsconversion;
-    }
-    make_provider!(Baked);
-    impl_units_info_v1!(Baked);
-};
-
-#[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
+pub use crate::provider::Baked;
 
 /// This type encapsulates all the constant data required for unit conversions.
 ///
@@ -49,7 +35,7 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -71,7 +57,7 @@ pub struct UnitsInfoV1<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(
     feature = "datagen",
@@ -122,7 +108,7 @@ pub struct ConversionInfo<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -138,7 +124,7 @@ pub enum Sign {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -153,7 +139,7 @@ pub enum Exactness {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -176,7 +162,7 @@ pub enum Base {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MeasureUnitItem {
@@ -197,7 +183,7 @@ pub struct MeasureUnitItem {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
+    databake(path = icu_experimental::unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SiPrefix {

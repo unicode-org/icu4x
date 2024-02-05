@@ -6,9 +6,9 @@ use core::ops::{Div, Mul};
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
+use icu_experimental::unitsconversion::measureunit::MeasureUnitParser;
+use icu_experimental::unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use icu_provider::DataError;
-use icu_unitsconversion::measureunit::MeasureUnitParser;
-use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use zerovec::ZeroVec;

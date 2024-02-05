@@ -4,9 +4,10 @@
 
 use core::str::FromStr;
 use icu_unitsconversion::converter::ConverterFactory;
-use num::{rational::Ratio, BigRational, Signed};
-
 use num_bigint::BigInt;
+use num_rational::BigRational;
+use num_rational::Ratio;
+use num_rational::Signed;
 use zerotrie::ZeroTrieSimpleAscii;
 
 // TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
