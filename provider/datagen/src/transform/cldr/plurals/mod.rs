@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -62,14 +63,12 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
                     .keys()
-                    // TODO(#568): Avoid the clone
-                    .cloned()
                     .map(DataLocale::from)
                     .collect())
             }
@@ -121,14 +120,12 @@ impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<PluralRangesV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
             .keys()
-            // TODO(#568): Avoid the clone
-            .cloned()
             .map(DataLocale::from)
             .chain([DataLocale::default()]) // `und` is not included in the locales of plural ranges.
             .collect())

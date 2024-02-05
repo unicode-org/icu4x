@@ -18,7 +18,7 @@ The design goals of `ICU4X` are:
 
 For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](docs/tutorials/intro.md) tutorial. Further tutorials can be found in the [tutorial index](docs/tutorials/index.md).
 
-For technical information on how to use ICU4X, visit our [API docs (latest stable)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/docs/icu/).
+For technical information on how to use ICU4X, visit our [API docs (latest stable)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
 
 More information about the project can be found in [the docs subdirectory](docs/README.md).
 
@@ -58,7 +58,7 @@ assert_eq!(
 
 ## Development
 
-`ICU4X` is developed by the `ICU4X-SC`. We are a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.  See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
+ICU4X is developed by the ICU4X Technical Committee (ICU4X-TC) in the Unicode Consortium. The ICU4X-TC leads strategy and development of internationalization solutions for modern platforms and ecosystems, including client-side and resource-constrained environments. See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
 
 Please subscribe to this repository to participate in discussions.  If you want to contribute, see our [contributing.md](CONTRIBUTING.md).
 
@@ -81,6 +81,6 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 
 Copyright © 2020-2023 Unicode, Inc. Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the United States and other countries.
 
-The project is released under [LICENSE](./LICENSE).
+The project is released under [LICENSE](./LICENSE), the free and open-source [Unicode License](https://www.unicode.org/license.txt), which is based on the well-known MIT license, with the primary difference being that the Unicode License expressly covers data and data files, as well as code. For further information please see [The Unicode Consortium Intellectual Property, Licensing, and Technical Contribution Policies](https://www.unicode.org/policies/licensing_policy.html). 
 
 A CLA is required to contribute to this project - please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file (or start a Pull Request) for more information.

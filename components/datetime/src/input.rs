@@ -129,7 +129,7 @@ pub(crate) struct DateTimeInputWithWeekConfig<'data, T: DateTimeInput> {
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Copy, Clone)]
 pub(crate) struct ExtractedDateTimeInput {
     year: Option<FormattableYear>,
     month: Option<FormattableMonth>,
@@ -146,7 +146,7 @@ pub(crate) struct ExtractedDateTimeInput {
 /// A [`TimeZoneInput`] type with all of the fields pre-extracted
 ///
 /// See [`TimeZoneInput`] for documentation on individual fields
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub(crate) struct ExtractedTimeZoneInput {
     gmt_offset: Option<GmtOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,

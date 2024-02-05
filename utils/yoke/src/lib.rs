@@ -45,6 +45,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+pub mod cartable_ptr;
 pub mod either;
 #[cfg(feature = "alloc")]
 pub mod erased;

@@ -55,9 +55,9 @@ fn parse_dhat_log(dhat_log: &[String]) -> (u64, u64, u64) {
     );
 
     (
-        extract_bytes_from_log_line("dhat: Total:", dhat_log.get(0).unwrap()),
-        extract_bytes_from_log_line("dhat: At t-gmax:", dhat_log.get(1).unwrap()),
-        extract_bytes_from_log_line("dhat: At t-end:", dhat_log.get(2).unwrap()),
+        extract_bytes_from_log_line("dhat: Total:", &dhat_log[0]),
+        extract_bytes_from_log_line("dhat: At t-gmax:", &dhat_log[1]),
+        extract_bytes_from_log_line("dhat: At t-end:", &dhat_log[2]),
     )
 }
 
@@ -99,6 +99,8 @@ fn main() {
         Command::new("cargo")
             .arg("build")
             .arg("--examples")
+            .arg("--profile")
+            .arg("bench-memory")
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
             .arg("--features")
@@ -108,7 +110,7 @@ fn main() {
                 eprintln!("Failed to collect examples {err:?}");
                 process::exit(1);
             });
-        fs::read_dir(root_dir.join("target/debug/examples"))
+        fs::read_dir(root_dir.join("target/bench-memory/examples"))
             .unwrap()
             .flat_map(|entry| {
                 entry.ok()?.file_name().into_string().ok().and_then(|s| {
@@ -121,6 +123,8 @@ fn main() {
             })
             .collect()
     };
+
+    println!("[memory] Examples to benchmark:  {examples:?}");
 
     // benchmarks/memory/{os}
     let benchmark_dir = root_dir
@@ -156,7 +160,7 @@ fn main() {
             .arg("--example")
             .arg(example)
             .arg("--profile")
-            .arg("bench")
+            .arg("bench-memory")
             // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
             // icu_benchmark_macros package.
             .arg("--features")

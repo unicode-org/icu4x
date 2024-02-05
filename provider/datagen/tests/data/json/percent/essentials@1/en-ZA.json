@@ -1,0 +1,10 @@
+{
+  "number_index": 0,
+  "percent_sign_affixes": {
+    "prefix": "",
+    "suffix": ""
+  },
+  "percent_sign_symbol": "%",
+  "percent_symbol_index": 5,
+  "standard": "#,##0%"
+}

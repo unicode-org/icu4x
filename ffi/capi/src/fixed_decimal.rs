@@ -138,8 +138,7 @@ pub mod ffi {
 
         /// Construct an [`ICU4XFixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
-        pub fn create_from_string(v: &str) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
-            let v = v.as_bytes(); // #2520
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
             Ok(Box::new(ICU4XFixedDecimal(FixedDecimal::try_from(v)?)))
         }
 

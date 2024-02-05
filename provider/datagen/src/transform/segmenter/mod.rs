@@ -8,7 +8,7 @@
 #![allow(unused_imports)]
 
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
     SentenceBreak, WordBreak,
@@ -16,7 +16,7 @@ use icu_properties::{
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
-use icu_segmenter::symbols::*;
+use icu_segmenter::WordType;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
@@ -130,15 +130,17 @@ fn generate_rule_break_data(
     let wb_name_to_enum = data.as_borrowed();
 
     fn set_break_state(
-        break_state_table: &mut [i8],
+        break_state_table: &mut [Option<BreakState>],
         property_length: usize,
         left_index: usize,
         right_index: usize,
-        break_state: i8,
+        break_state: BreakState,
     ) {
         let index = left_index * property_length + right_index;
-        if break_state_table[index] == UNKNOWN_RULE || break_state_table[index] == NOT_MATCH_RULE {
-            break_state_table[index] = break_state;
+        if break_state_table[index].is_none()
+            || break_state_table[index] == Some(BreakState::NoMatch)
+        {
+            break_state_table[index] = Some(break_state);
         }
     }
 
@@ -181,7 +183,7 @@ fn generate_rule_break_data(
     for p in &segmenter.tables {
         let property_index = if !properties_names.contains(&p.name) {
             properties_names.push(p.name.clone());
-            (properties_names.len() - 1) as u8
+            (properties_names.len() - 1).try_into().unwrap()
         } else {
             continue;
         };
@@ -375,17 +377,17 @@ fn generate_rule_break_data(
     properties_names.push("eot".to_string());
 
     let rule_size = properties_names.len() * properties_names.len();
-    let mut break_state_table = vec![UNKNOWN_RULE; rule_size];
+    let mut break_state_table = vec![None; rule_size];
 
     for rule in &segmenter.rules {
         let break_state = if let Some(state) = rule.break_state {
             if state {
-                BREAK_RULE
+                BreakState::Break
             } else {
-                KEEP_RULE
+                BreakState::Keep
             }
         } else {
-            NOT_MATCH_RULE
+            BreakState::NoMatch
         };
 
         for l in &rule.left {
@@ -395,8 +397,8 @@ fn generate_rule_break_data(
                     if r == "Any" {
                         // Fill all unknown state.
                         for item in break_state_table.iter_mut().take(rule_size) {
-                            if *item == UNKNOWN_RULE {
-                                *item = break_state;
+                            if item.is_none() {
+                                *item = Some(break_state);
                             }
                         }
                     } else {
@@ -432,10 +434,9 @@ fn generate_rule_break_data(
                 let right_index = get_index_from_name(&properties_names, r).unwrap();
                 if r != "eot"
                     && break_state_table[left_index * properties_names.len() + right_index]
-                        == NOT_MATCH_RULE
+                        == Some(BreakState::NoMatch)
                 {
-                    break_state_table[left_index * properties_names.len() + right_index] =
-                        UNKNOWN_RULE;
+                    break_state_table[left_index * properties_names.len() + right_index] = None;
                 }
                 set_break_state(
                     &mut break_state_table,
@@ -452,7 +453,7 @@ fn generate_rule_break_data(
                             properties_names.len(),
                             left_index,
                             i,
-                            NOT_MATCH_RULE,
+                            BreakState::NoMatch,
                         );
                     }
                 }
@@ -466,58 +467,58 @@ fn generate_rule_break_data(
             if let Some(right) = &p.right {
                 let right_index = get_index_from_name(&properties_names, right).unwrap();
                 let left_index = get_index_from_name(&properties_names, left).unwrap();
-                let interm_break_state = if p.interm_break_state.is_some() {
-                    INTERMEDIATE_MATCH_RULE
-                } else {
-                    0
-                };
 
-                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap() as i8;
+                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
                 break_state_table[left_index * properties_names.len() + right_index] =
-                    index | interm_break_state;
+                    Some(if p.interm_break_state.is_some() {
+                        BreakState::Intermediate(index.try_into().unwrap())
+                    } else {
+                        BreakState::Index(index.try_into().unwrap())
+                    })
             }
         }
     }
 
-    let rule_status_table = if segmenter.segmenter_type == "word" {
-        segmenter
-            .tables
-            .iter()
-            .map(|p| {
-                (match &*p.name {
-                    "Numeric" => RuleStatusType::Number,
-                    "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
-                        RuleStatusType::Letter
-                    }
-                    _ => RuleStatusType::None,
-                }) as u8
-            })
-            .collect()
-    } else {
-        Default::default()
-    };
-
     RuleBreakDataV1 {
-        property_table: RuleBreakPropertyTable(
-            CodePointTrieBuilder {
-                data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
-                default_value: 0,
-                error_value: 0,
-                trie_type: match trie_type {
-                    crate::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                    crate::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
-                },
-            }
-            .build(),
-        ),
-        break_state_table: RuleBreakStateTable(ZeroVec::new_owned(break_state_table)),
-        rule_status_table: RuleStatusTable(ZeroVec::new_owned(rule_status_table)),
-        property_count: properties_names.len() as u8,
-        last_codepoint_property: (simple_properties_count - 1) as i8,
-        sot_property: (properties_names.len() - 2) as u8,
-        eot_property: (properties_names.len() - 1) as u8,
+        property_table: CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match trie_type {
+                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => codepointtrie::TrieType::Small,
+            },
+        }
+        .build(),
+        break_state_table: break_state_table
+            .into_iter()
+            // All states are initialized
+            .map(|o| o.unwrap())
+            .collect(),
+        word_type_table: if segmenter.segmenter_type == "word" {
+            segmenter
+                .tables
+                .iter()
+                .map(|p| match &*p.name {
+                    "Numeric" => WordType::Number,
+                    "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
+                        WordType::Letter
+                    }
+                    _ => WordType::None,
+                })
+                .collect()
+        } else {
+            Default::default()
+        },
+        property_count: properties_names.len().try_into().unwrap(),
+        last_codepoint_property: (simple_properties_count - 1).try_into().unwrap(),
+        sot_property: (properties_names.len() - 2).try_into().unwrap(),
+        eot_property: (properties_names.len() - 1).try_into().unwrap(),
         // Return 127 if the complex language isn't handled.
-        complex_property: get_index_from_name(&properties_names, "SA").unwrap_or(127) as u8,
+        complex_property: get_index_from_name(&properties_names, "SA")
+            .unwrap_or(127)
+            .try_into()
+            .unwrap(),
     }
 }
 
@@ -559,7 +560,7 @@ fn hardcoded_segmenter_provider() -> crate::DatagenProvider {
     #![allow(deprecated)]
     use crate::{
         source::{AbstractFs, SerdeCache},
-        DatagenProvider, TrieType,
+        DatagenProvider,
     };
     // Singleton so that all instantiations share the same cache.
     static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> = once_cell::sync::OnceCell::new();
@@ -677,10 +678,15 @@ mod tests {
         //     0xe0100..=0xe01ef => CM,
         //     _ => XX,
         // }
-        assert_eq!(data.property_table.0.get32(0x20000), ID);
-        assert_eq!(data.property_table.0.get32(0x3fffd), ID);
-        assert_eq!(data.property_table.0.get32(0xd0000), XX);
-        assert_eq!(data.property_table.0.get32(0xe0001), CM);
-        assert_eq!(data.property_table.0.get32(0xe0020), CM);
+
+        const CM: u8 = 10;
+        const XX: u8 = 45;
+        const ID: u8 = 21;
+
+        assert_eq!(data.property_table.get32(0x20000), ID);
+        assert_eq!(data.property_table.get32(0x3fffd), ID);
+        assert_eq!(data.property_table.get32(0xd0000), XX);
+        assert_eq!(data.property_table.get32(0xe0001), CM);
+        assert_eq!(data.property_table.get32(0xe0020), CM);
     }
 }

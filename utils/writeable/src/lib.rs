@@ -66,6 +66,7 @@
 
 extern crate alloc;
 
+mod cmp;
 mod impls;
 mod ops;
 
@@ -269,6 +270,52 @@ pub trait Writeable {
         let mut output = String::with_capacity(hint.capacity());
         let _ = self.write_to(&mut output);
         Cow::Owned(output)
+    }
+
+    /// Compares the contents of this `Writeable` to the given bytes
+    /// without allocating a String to hold the `Writeable` contents.
+    ///
+    /// This returns a lexicographical comparison, the same as if the Writeable
+    /// were first converted to a String and then compared with `Ord`. For a
+    /// locale-sensitive string ordering, use an ICU4X Collator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::cmp::Ordering;
+    /// use core::fmt;
+    /// use writeable::Writeable;
+    ///
+    /// struct WelcomeMessage<'s> {
+    ///     pub name: &'s str,
+    /// }
+    ///
+    /// impl<'s> Writeable for WelcomeMessage<'s> {
+    ///     // see impl in Writeable docs
+    /// #    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+    /// #        sink.write_str("Hello, ")?;
+    /// #        sink.write_str(self.name)?;
+    /// #        sink.write_char('!')?;
+    /// #        Ok(())
+    /// #    }
+    /// }
+    ///
+    /// let message = WelcomeMessage { name: "Alice" };
+    /// let message_str = message.write_to_string();
+    ///
+    /// assert_eq!(Ordering::Equal, message.write_cmp_bytes(b"Hello, Alice!"));
+    ///
+    /// assert_eq!(Ordering::Greater, message.write_cmp_bytes(b"Alice!"));
+    /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
+    ///
+    /// assert_eq!(Ordering::Less, message.write_cmp_bytes(b"Hello, Bob!"));
+    /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
+    /// ```
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        let mut wc = cmp::WriteComparator::new(other);
+        #[allow(clippy::unwrap_used)] // infallible impl
+        self.write_to(&mut wc).unwrap();
+        wc.finish().reverse()
     }
 }
 

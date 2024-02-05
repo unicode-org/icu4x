@@ -39,9 +39,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Normalize a (potentially ill-formed) UTF8 string
+        /// Normalize a string
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::normalize_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::normalize, FnInStruct, hidden)]
         #[diplomat::rust_link(
@@ -54,23 +55,26 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            let s = s.as_bytes(); // #2520
+        pub fn normalize(
+            &self,
+            s: &DiplomatStr,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
             self.0.normalize_utf8_to(s, write)?;
             Ok(())
         }
 
-        /// Check if a (potentially ill-formed) UTF8 string is normalized
+        /// Check if a string is normalized
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::is_normalized_utf8, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizer::is_normalized,
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized(&self, s: &str) -> bool {
-            let s = s.as_bytes(); // #2520
+        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
     }
@@ -106,9 +110,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Normalize a (potentially ill-formed) UTF8 string
+        /// Normalize a string
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::normalize_utf8, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizer::normalize,
@@ -125,15 +130,19 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            let s = s.as_bytes(); // #2520
+        pub fn normalize(
+            &self,
+            s: &DiplomatStr,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
             self.0.normalize_utf8_to(s, write)?;
             Ok(())
         }
 
-        /// Check if a (potentially ill-formed) UTF8 string is normalized
+        /// Check if a string is normalized
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizer::is_normalized_utf8,
             FnInStruct
@@ -143,8 +152,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized(&self, s: &str) -> bool {
-            let s = s.as_bytes(); // #2520
+        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
     }

@@ -52,9 +52,11 @@ pub mod ffi {
         )]
         pub fn for_text<'text>(
             &self,
-            text: &'text str,
+            text: &'text DiplomatStr,
             default_level: u8,
         ) -> Box<ICU4XBidiInfo<'text>> {
+            #[allow(clippy::unwrap_used)] // #2520
+            let text = core::str::from_utf8(text).unwrap();
             let data = self.0.as_borrowed();
             let adapter = BidiClassAdapter::new(data);
 
@@ -122,10 +124,14 @@ pub mod ffi {
         }
 
         /// The length of this map
-        #[allow(clippy::len_without_is_empty)]
         #[diplomat::attr(dart, rename = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
+        }
+
+        /// Whether this map is empty
+        pub fn is_empty(&self) -> bool {
+            self.0.is_empty()
         }
 
         /// Get element at `index`. Returns 0 when out of bounds

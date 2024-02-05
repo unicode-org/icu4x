@@ -525,17 +525,6 @@ impl BakedExporter {
                         .insert("icu_locid_transform/compiled_data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
-                    let maybe_err = if keys.contains(&String::from("und")) {
-                        // The loop will terminate on its own
-                        quote!()
-                    } else {
-                        // We have to manually break the loop
-                        quote! {
-                            if fallback_iterator.get().is_und() {
-                                return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
-                            }
-                        }
-                    };
                     quote! {
                         #(#statics)*
 
@@ -549,11 +538,12 @@ impl BakedExporter {
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
-                                #maybe_err
-
                                 if let Ok(payload) = #search_iterator {
                                     metadata.locale = Some(fallback_iterator.take());
                                     break payload;
+                                }
+                                if fallback_iterator.get().is_und() {
+                                    return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
                                 }
                                 fallback_iterator.step();
                             }

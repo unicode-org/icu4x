@@ -575,9 +575,9 @@ impl AnyCalendar {
     pub const fn new(kind: AnyCalendarKind) -> Self {
         match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::new()),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi::new()),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -613,9 +613,13 @@ impl AnyCalendar {
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
+            AnyCalendarKind::Chinese => {
+                AnyCalendar::Chinese(Chinese::try_new_with_any_provider(provider)?)
+            }
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
+            AnyCalendarKind::Dangi => {
+                AnyCalendar::Dangi(Dangi::try_new_with_any_provider(provider)?)
+            }
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -654,9 +658,13 @@ impl AnyCalendar {
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
+            AnyCalendarKind::Chinese => {
+                AnyCalendar::Chinese(Chinese::try_new_with_buffer_provider(provider)?)
+            }
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
+            AnyCalendarKind::Dangi => {
+                AnyCalendar::Dangi(Dangi::try_new_with_buffer_provider(provider)?)
+            }
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -689,13 +697,15 @@ impl AnyCalendar {
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
+            + DataProvider<crate::provider::ChineseCacheV1Marker>
+            + DataProvider<crate::provider::DangiCacheV1Marker>
             + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::try_new_unstable(provider)?),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi::try_new_unstable(provider)?),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -759,6 +769,8 @@ impl AnyCalendar {
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
+            + DataProvider<crate::provider::ChineseCacheV1Marker>
+            + DataProvider<crate::provider::DangiCacheV1Marker>
             + ?Sized,
     {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
@@ -930,46 +942,39 @@ impl AnyCalendarKind {
     /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        let slice = x.as_tinystr_slice();
-
-        if slice.len() <= 2 {
-            if let Some(first) = slice.get(0) {
-                if let Some(second) = slice.get(1) {
-                    if first == "islamic" {
-                        match second.as_str() {
-                            "civil" => return Some(AnyCalendarKind::IslamicCivil),
-                            "tbla" => return Some(AnyCalendarKind::IslamicTabular),
-                            "umalqura" => return Some(AnyCalendarKind::IslamicUmmAlQura),
-                            _ => (),
-                        }
-                    }
-                } else {
-                    match first.as_str() {
-                        "buddhist" => return Some(AnyCalendarKind::Buddhist),
-                        "chinese" => return Some(AnyCalendarKind::Chinese),
-                        "coptic" => return Some(AnyCalendarKind::Coptic),
-                        "dangi" => return Some(AnyCalendarKind::Dangi),
-                        "ethioaa" => return Some(AnyCalendarKind::EthiopianAmeteAlem),
-                        "ethiopic" => return Some(AnyCalendarKind::Ethiopian),
-                        "gregory" => return Some(AnyCalendarKind::Gregorian),
-                        "hebrew" => return Some(AnyCalendarKind::Hebrew),
-                        "indian" => return Some(AnyCalendarKind::Indian),
-                        "islamic" => return Some(AnyCalendarKind::IslamicObservational),
-                        "islamicc" => return Some(AnyCalendarKind::IslamicCivil),
-                        "iso" => return Some(AnyCalendarKind::Iso),
-                        "japanese" => return Some(AnyCalendarKind::Japanese),
-                        "japanext" => return Some(AnyCalendarKind::JapaneseExtended),
-                        "persian" => return Some(AnyCalendarKind::Persian),
-                        "roc" => return Some(AnyCalendarKind::Roc),
-                        _ => (),
-                    }
-                }
+        match *x.as_tinystr_slice() {
+            [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
+            [first] if first == "chinese" => Some(AnyCalendarKind::Chinese),
+            [first] if first == "coptic" => Some(AnyCalendarKind::Coptic),
+            [first] if first == "dangi" => Some(AnyCalendarKind::Dangi),
+            [first] if first == "ethioaa" => Some(AnyCalendarKind::EthiopianAmeteAlem),
+            [first] if first == "ethiopic" => Some(AnyCalendarKind::Ethiopian),
+            [first] if first == "gregory" => Some(AnyCalendarKind::Gregorian),
+            [first] if first == "hebrew" => Some(AnyCalendarKind::Hebrew),
+            [first] if first == "indian" => Some(AnyCalendarKind::Indian),
+            [first] if first == "islamic" => Some(AnyCalendarKind::IslamicObservational),
+            [first] if first == "islamicc" => Some(AnyCalendarKind::IslamicCivil),
+            [first, second] if first == "islamic" && second == "civil" => {
+                Some(AnyCalendarKind::IslamicCivil)
+            }
+            [first, second] if first == "islamic" && second == "tbla" => {
+                Some(AnyCalendarKind::IslamicTabular)
+            }
+            [first, second] if first == "islamic" && second == "umalqura" => {
+                Some(AnyCalendarKind::IslamicUmmAlQura)
+            }
+            [first] if first == "iso" => Some(AnyCalendarKind::Iso),
+            [first] if first == "japanese" => Some(AnyCalendarKind::Japanese),
+            [first] if first == "japanext" => Some(AnyCalendarKind::JapaneseExtended),
+            [first] if first == "persian" => Some(AnyCalendarKind::Persian),
+            [first] if first == "roc" => Some(AnyCalendarKind::Roc),
+            _ => {
+                // Log a warning when a calendar value is passed in but doesn't match any calendars
+                DataError::custom("bcp47_value did not match any calendars")
+                    .with_display_context(x);
+                None
             }
         }
-
-        // Log a warning when a calendar value is passed in but doesn't match any calendars
-        DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
-        None
     }
 
     /// Convert to a BCP-47 string
@@ -1026,9 +1031,9 @@ impl AnyCalendarKind {
     fn debug_name(self) -> &'static str {
         match self {
             AnyCalendarKind::Buddhist => Buddhist.debug_name(),
-            AnyCalendarKind::Chinese => Chinese.debug_name(),
+            AnyCalendarKind::Chinese => Chinese::DEBUG_NAME,
             AnyCalendarKind::Coptic => Coptic.debug_name(),
-            AnyCalendarKind::Dangi => Dangi.debug_name(),
+            AnyCalendarKind::Dangi => Dangi::DEBUG_NAME,
             AnyCalendarKind::Ethiopian => Ethiopian(false).debug_name(),
             AnyCalendarKind::EthiopianAmeteAlem => Ethiopian(true).debug_name(),
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
@@ -1131,10 +1136,10 @@ impl IntoAnyCalendar for Buddhist {
 
 impl IntoAnyCalendar for Chinese {
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::Chinese(Chinese)
+        AnyCalendar::Chinese(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Chinese(Chinese)
+        AnyCalendar::Chinese(self.clone())
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Chinese(*d)
@@ -1155,10 +1160,10 @@ impl IntoAnyCalendar for Coptic {
 
 impl IntoAnyCalendar for Dangi {
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::Dangi(Dangi)
+        AnyCalendar::Dangi(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Dangi(Dangi)
+        AnyCalendar::Dangi(self.clone())
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Dangi(*d)

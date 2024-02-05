@@ -30,6 +30,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
+    #[diplomat::attr(dart, rename = "TitlecaseOptions")]
     pub struct ICU4XTitlecaseOptionsV1 {
         pub leading_adjustment: ICU4XLeadingAdjustment,
         pub trailing_case: ICU4XTrailingCase,
@@ -37,6 +38,7 @@ pub mod ffi {
 
     impl ICU4XTitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
+        #[diplomat::attr(dart, rename = "default")]
         pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
@@ -67,14 +69,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
         pub fn lowercase(
             &self,
-            s: &str,
+            s: &DiplomatStr,
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            core::str::from_utf8(s.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+            let s =
+                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0.lowercase(s, &locale.0.id).write_to(write)?;
 
             Ok(())
@@ -85,14 +85,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase_to_string, FnInStruct, hidden)]
         pub fn uppercase(
             &self,
-            s: &str,
+            s: &DiplomatStr,
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            core::str::from_utf8(s.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+            let s =
+                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0.uppercase(s, &locale.0.id).write_to(write)?;
 
             Ok(())
@@ -112,17 +110,16 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(dart, rename = "titlecase_segment_with_only_case_data")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
-            s: &str,
+            s: &DiplomatStr,
             locale: &ICU4XLocale,
             options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            core::str::from_utf8(s.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+            let s =
+                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0
                 .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
                 .write_to(write)?;
@@ -133,11 +130,13 @@ pub mod ffi {
         /// Case-folds the characters in the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
-        pub fn fold(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            core::str::from_utf8(s.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+        pub fn fold(
+            &self,
+            s: &DiplomatStr,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            let s =
+                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0.fold(s).write_to(write)?;
 
             Ok(())
@@ -148,13 +147,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic_string, FnInStruct, hidden)]
         pub fn fold_turkic(
             &self,
-            s: &str,
+            s: &DiplomatStr,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            core::str::from_utf8(s.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+            let s =
+                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0.fold_turkic(s).write_to(write)?;
 
             Ok(())
@@ -280,12 +277,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_string_case_closure_to, FnInStruct)]
         pub fn add_string_case_closure_to(
             &self,
-            s: &str,
+            s: &DiplomatStr,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) -> bool {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            let s = core::str::from_utf8(s.as_bytes()).unwrap_or("");
+            let s = core::str::from_utf8(s).unwrap_or("");
             self.0.add_string_case_closure_to(s, &mut builder.0)
         }
     }
@@ -318,17 +313,16 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(dart, rename = "titlecase_segment")]
         pub fn titlecase_segment_v1(
             &self,
-            s: &str,
+            s: &DiplomatStr,
             locale: &ICU4XLocale,
             options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            // #2520
-            // In the future we should be able to make assumptions based on backend
-            core::str::from_utf8(s.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+            let s =
+                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0
                 .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write)?;

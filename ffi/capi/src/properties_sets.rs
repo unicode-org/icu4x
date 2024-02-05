@@ -868,10 +868,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262, Fn, hidden)]
         pub fn load_for_ecma262(
             provider: &ICU4XDataProvider,
-            property_name: &str,
+            property_name: &DiplomatStr,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
-            let name = property_name.as_bytes(); // #2520
-            let name = if let Ok(s) = str::from_utf8(name) {
+            let name = if let Ok(s) = str::from_utf8(property_name) {
                 s
             } else {
                 return Err(ICU4XError::TinyStrNonAsciiError);

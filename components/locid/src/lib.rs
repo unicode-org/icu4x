@@ -75,6 +75,7 @@ mod parser;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
+#[allow(deprecated)]
 pub use ordering::SubtagOrderingResult;
 pub use parser::errors::ParserError;
 

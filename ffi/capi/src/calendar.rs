@@ -82,8 +82,7 @@ pub mod ffi {
             FnInEnum,
             hidden
         )]
-        pub fn get_for_bcp47(s: &str) -> Result<ICU4XAnyCalendarKind, ()> {
-            let s = s.as_bytes(); // #2520
+        pub fn get_for_bcp47(s: &DiplomatStr) -> Result<ICU4XAnyCalendarKind, ()> {
             AnyCalendarKind::get_for_bcp47_bytes(s)
                 .map(Into::into)
                 .ok_or(())

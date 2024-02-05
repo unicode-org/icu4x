@@ -291,7 +291,7 @@ where
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         } else if cal_val == &value!("islamic")
             || cal_val == &value!("islamicc")
-            || cal_val.as_tinystr_slice().get(0) == Some(&tinystr!(8, "islamic"))
+            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
             locale.set_unicode_ext(key!("ca"), value!("islamic"));

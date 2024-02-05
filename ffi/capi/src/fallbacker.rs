@@ -62,7 +62,7 @@ pub mod ffi {
         /// Choice of priority mode.
         pub priority: ICU4XLocaleFallbackPriority,
         /// An empty string is considered `None`.
-        pub extension_key: &'a str,
+        pub extension_key: &'a DiplomatStr,
         /// Fallback supplement data key to customize fallback rules.
         pub fallback_supplement: ICU4XLocaleFallbackSupplement,
     }
@@ -181,8 +181,8 @@ impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>>
         let mut result = Self::default();
         result.priority = other.priority.into();
         result.extension_key = match other.extension_key {
-            "" => None,
-            s => Some(s.parse()?),
+            b"" => None,
+            s => Some(icu_locid::extensions::unicode::Key::try_from_bytes(s)?),
         };
         result.fallback_supplement = match other.fallback_supplement {
             ffi::ICU4XLocaleFallbackSupplement::None => None,
