@@ -23,7 +23,6 @@ pub struct MeasureUnitParser<'data> {
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    #[cfg(feature = "datagen")]
     pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<ZeroVec<u8>>) -> Self {
         Self { payload }
     }
@@ -129,7 +128,7 @@ impl<'data> MeasureUnitParser<'data> {
     pub fn try_from_identifier(
         &self,
         identifier: &'data str,
-    ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
+    ) -> Result<MeasureUnit, ConversionError> {
         if identifier.starts_with('-') || identifier.ends_with('-') {
             return Err(ConversionError::InvalidUnit);
         }
@@ -143,11 +142,14 @@ impl<'data> MeasureUnitParser<'data> {
 
         self.analyze_identifier_part(num_part, 1, &mut measure_unit_items)?;
         self.analyze_identifier_part(den_part, -1, &mut measure_unit_items)?;
-        Ok(measure_unit_items)
+        Ok(MeasureUnit {
+            contained_units: measure_unit_items.into(),
+        })
     }
 }
 
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
+#[derive(Debug)]
 pub struct MeasureUnit {
     /// Contains the processed units.
     pub contained_units: SmallVec<[MeasureUnitItem; 8]>,

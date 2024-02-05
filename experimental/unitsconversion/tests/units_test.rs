@@ -3,11 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_unitsconversion::measureunit::MeasureUnitParser;
-use num::BigRational;
+use icu_unitsconversion::converter::ConverterFactory;
+use num::{rational::Ratio, BigRational, Signed};
 
+use num_bigint::BigInt;
 use zerotrie::ZeroTrieSimpleAscii;
 
+// TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
     let mut components = decimal.split('.');
@@ -28,6 +30,7 @@ fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
     Some(integer_component)
 }
 
+// TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a scientific notation string to a BigRational.
 pub fn get_rational(rational: &str) -> Option<BigRational> {
     // remove all the commas
@@ -50,14 +53,14 @@ pub fn get_rational(rational: &str) -> Option<BigRational> {
 }
 
 #[test]
-fn test_conversion() {
+fn test_cldr_unit_tests() {
     /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
-        _category: String,
+        category: String,
         input_unit: String,
         output_unit: String,
-        _result: BigRational,
+        result: BigRational,
     }
 
     let data = std::fs::read_to_string("tests/data/unitsTest.txt").unwrap();
@@ -67,30 +70,54 @@ fn test_conversion() {
         .map(|line| {
             let parts: Vec<&str> = line.split(';').map(|s| s.trim()).collect();
             UnitsTest {
-                _category: parts[0].to_string(),
+                category: parts[0].to_string(),
                 input_unit: parts[1].to_string(),
                 output_unit: parts[2].to_string(),
-                _result: get_rational(parts[4]).unwrap(),
+                result: get_rational(parts[4]).unwrap(),
             }
         })
         .collect();
 
-    // TODO: how to convert from `&ZeroTrie<ZeroVec<'_, u8>>` to &ZeroTrieSimpleAscii<Vec<u8>>?
     let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
         .units_conversion_trie
         .clone() // cheap since store is a borrowed ZeroVec
         .take_store();
 
-    let payload = ZeroTrieSimpleAscii::from_store(store);
-    let parser = MeasureUnitParser::from_payload(&payload);
+    let payload_store = &ZeroTrieSimpleAscii::from_store(store);
+    let converter_factory = ConverterFactory::from_payload(
+        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        payload_store,
+    );
+    let parser = converter_factory.parser();
 
     for test in tests {
-        let input_unit = parser.try_from_identifier(test.input_unit.as_str());
-        let output_unit = parser.try_from_identifier(test.output_unit.as_str());
+        // TODO: remove this exception once the full converter is implemented.
+        if test.category == "temperature" {
+            continue;
+        }
 
-        assert!(input_unit.is_ok());
-        assert!(output_unit.is_ok());
+        let input_unit = parser
+            .try_from_identifier(test.input_unit.as_str())
+            .unwrap();
+        let output_unit = parser
+            .try_from_identifier(test.output_unit.as_str())
+            .unwrap();
+
+        let converter = converter_factory
+            .converter(&input_unit, &output_unit)
+            .unwrap();
+        let result = converter.convert(&Ratio::from_integer(1000.into()));
+        let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
+
+        if diff_ratio > Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
+            panic!(
+                "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
+                test.category, test.input_unit, test.output_unit, result, test.result
+            );
+        }
     }
+
+    // TODO: add more test cases for the NonConvertible units.
 }
 
 #[test]
@@ -103,15 +130,19 @@ fn test_units_not_parsable() {
         "kilo-squared-meter",
     ];
 
+    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+        .units_conversion_trie
+        .clone() // cheap since store is a borrowed ZeroVec
+        .take_store();
+
+    let payload_store = &ZeroTrieSimpleAscii::from_store(store);
+    let converter_factory = ConverterFactory::from_payload(
+        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        payload_store,
+    );
+    let parser = converter_factory.parser();
+
     for unit in unparsable_units.iter() {
-        let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
-            .units_conversion_trie
-            .clone() // cheap since store is a borrowed ZeroVec
-            .take_store();
-
-        let payload = ZeroTrieSimpleAscii::from_store(store);
-        let parser = MeasureUnitParser::from_payload(&payload);
-
         let result = parser.try_from_identifier(unit);
         assert!(result.is_err());
     }
