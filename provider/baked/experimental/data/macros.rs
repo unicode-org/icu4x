@@ -189,3 +189,8 @@ pub use __impl_relativetime_short_week_v1 as impl_relativetime_short_week_v1;
 mod relativetime_short_year_v1;
 #[doc(inline)]
 pub use __impl_relativetime_short_year_v1 as impl_relativetime_short_year_v1;
+#[macro_use]
+#[path = "macros/units_info_v1.rs.data"]
+mod units_info_v1;
+#[doc(inline)]
+pub use __impl_units_info_v1 as impl_units_info_v1;

@@ -316,7 +316,7 @@ jobs:
           - components/locid_transform
           - components/plurals
           - components/segmenter
-          - experimental/transliterate
+          # - experimental/transliterate
           - experimental/zerotrie
           - provider/blob
           - utils/fixed_decimal
@@ -712,7 +712,7 @@ jobs:
 
   dart-libs:
     name: "Build Dart binaries"
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: false && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       fail-fast: false
       matrix:
