@@ -54,8 +54,12 @@ args = ["-C", "docs/tutorials/js-tiny", "test"]
 [tasks.test-dart]
 description = "Run Dart tests"
 category = "ICU4X Development"
-command = "make"
-args = ["-C", "ffi/dart", "test"]
+cwd = "ffi/dart"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error dart --enable-experiment=native-assets pub get
+exec --fail-on-error dart --enable-experiment=native-assets test
+'''
 
 # no_std tasks
 

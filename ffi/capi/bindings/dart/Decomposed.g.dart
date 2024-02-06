@@ -5,11 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// The outcome of non-recursive canonical decomposition of a character.
-/// `second` will be NUL when the decomposition expands to a single character
-/// (which may or may not be the original one)
-///
-/// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class _DecomposedFfi extends ffi.Struct {
   @ffi.Uint32()
   external Rune first;
@@ -17,37 +12,35 @@ final class _DecomposedFfi extends ffi.Struct {
   external Rune second;
 }
 
+/// The outcome of non-recursive canonical decomposition of a character.
+/// `second` will be NUL when the decomposition expands to a single character
+/// (which may or may not be the original one)
+///
+/// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class Decomposed {
-  final _DecomposedFfi _underlying;
+  final Rune first;
+  final Rune second;
 
-  Decomposed._(this._underlying);
+  // ignore: unused_element
+  Decomposed._(_DecomposedFfi underlying) :
+    first = underlying.first,
+    second = underlying.second;
 
-  factory Decomposed() {
-    final pointer = ffi2.calloc<_DecomposedFfi>();
-    final result = Decomposed._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
-
-  Rune get first => _underlying.first;
-  set first(Rune first) {
-    _underlying.first = first;
-  }
-
-  Rune get second => _underlying.second;
-  set second(Rune second) {
-    _underlying.second = second;
+  // ignore: unused_element
+  _DecomposedFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_DecomposedFfi>();
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is Decomposed &&
-      other._underlying.first == _underlying.first &&
-      other._underlying.second == _underlying.second;
+      other.first == this.first &&
+      other.second == this.second;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.first,
-        _underlying.second,
+        this.first,
+        this.second,
       ]);
 }

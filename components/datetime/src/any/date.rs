@@ -7,12 +7,11 @@ use crate::provider::calendar::*;
 use crate::{calendar, options::length, raw};
 use crate::{input::DateInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
-use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
+use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
-use icu_calendar::Date;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -108,6 +107,8 @@ impl DateFormatter {
     ///     "Sep 1, 2020"
     /// );
     /// ```
+    ///
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
@@ -233,7 +234,7 @@ impl DateFormatter {
     where
         T: DateInput<Calendar = AnyCalendar>,
     {
-        if let Some(converted) = self.convert_if_necessary(value)? {
+        if let Some(converted) = calendar::convert_if_necessary(&self.1, value)? {
             Ok(self.0.format(&converted))
         } else {
             Ok(self.0.format(value))
@@ -251,32 +252,6 @@ impl DateFormatter {
         value: &impl DateInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeError> {
         Ok(self.format(value)?.write_to_string().into_owned())
-    }
-
-    /// Converts a date to the correct calendar if necessary
-    ///
-    /// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
-    /// if the date is compatible with the current calendar and doesn't need conversion
-    fn convert_if_necessary<'a>(
-        &'a self,
-        value: &impl DateInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<Date<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeError> {
-        let this_calendar = self.1.kind();
-        let date_calendar = value.any_calendar_kind();
-
-        if Some(this_calendar) != date_calendar {
-            if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeError::MismatchedAnyCalendar(
-                    this_calendar,
-                    date_calendar,
-                ));
-            }
-            let date = value.to_iso().to_any();
-            let converted = self.1.convert_any_date(&date);
-            Ok(Some(converted))
-        } else {
-            Ok(None)
-        }
     }
 }
 

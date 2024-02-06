@@ -60,6 +60,7 @@ mod cursor;
 mod error;
 #[macro_use]
 mod helpers;
+mod options;
 mod reader;
 #[cfg(feature = "serde")]
 mod serde;
@@ -67,6 +68,7 @@ mod varint;
 mod zerotrie;
 
 pub use crate::cursor::ZeroTrieSimpleAsciiCursor;
+pub use crate::zerotrie::ZeroAsciiIgnoreCaseTrie;
 pub use crate::zerotrie::ZeroTrie;
 pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;

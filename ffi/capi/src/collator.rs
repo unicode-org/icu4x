@@ -18,6 +18,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
+    #[diplomat::attr(dart, rename = "CollatorOptions")]
     pub struct ICU4XCollatorOptionsV1 {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,
@@ -32,6 +33,8 @@ pub mod ffi {
     // in FFI `Collator` is part of the `ICU4XCollator` prefix, but in Rust,
     // `ResolvedCollatorOptions` makes more sense as English.
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
+    #[diplomat::out]
+    #[diplomat::attr(dart, rename = "ResolvedCollatorOptions")]
     pub struct ICU4XCollatorResolvedOptionsV1 {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,
@@ -43,7 +46,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::Strength, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorStrength {
         Auto = 0,
         Primary = 1,
@@ -54,7 +57,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::AlternateHandling, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorAlternateHandling {
         Auto = 0,
         NonIgnorable = 1,
@@ -62,7 +65,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorCaseFirst {
         Auto = 0,
         Off = 1,
@@ -71,7 +74,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorMaxVariable {
         Auto = 0,
         Space = 1,
@@ -81,7 +84,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CaseLevel, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorCaseLevel {
         Auto = 0,
         Off = 1,
@@ -89,7 +92,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::Numeric, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorNumeric {
         Auto = 0,
         Off = 1,
@@ -97,7 +100,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::BackwardSecondLevel, Enum)]
-    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
+    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum ICU4XCollatorBackwardSecondLevel {
         Auto = 0,
         Off = 1,
@@ -107,6 +110,7 @@ pub mod ffi {
     impl ICU4XCollator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
+        #[diplomat::attr(dart, rename = "create")]
         pub fn create_v1(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

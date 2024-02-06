@@ -109,6 +109,7 @@ pub mod ffi {
     }
 
     /// FFI version of `PluralRules::categories()` data.
+    #[diplomat::out]
     pub struct ICU4XPluralCategories {
         pub zero: bool,
         pub one: bool,

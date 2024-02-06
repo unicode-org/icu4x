@@ -12,4 +12,4 @@ For Dart we provide a package in `ffi/dart`. This needs to be initialised with `
 
 For use in FreeRTOS, we provide a special wrapper in `ffi/freertos`. This uses the FreeRTOS allocator and can be linked directly with a FreeRTOS firmware.
 
-For use with the GN build tool, we have a wrapper of `ffi/capi` in `ffi/gn`.
+For use with the GN build tool, see `docs/tutorials/gn` for an example setup.

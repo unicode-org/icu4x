@@ -40,7 +40,7 @@ use tinystr::TinyStrError;
 pub mod ffi {
     use alloc::boxed::Box;
 
-    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     /// A common enum for errors that ICU4X may return, organized by API
     ///

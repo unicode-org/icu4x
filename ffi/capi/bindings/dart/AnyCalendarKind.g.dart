@@ -79,11 +79,6 @@ enum AnyCalendarKind {
     return AnyCalendarKind.values[result.union.ok];
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_get_for_locale =
-    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_get_for_locale')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
   ///
   /// Errors if the calendar is not known or supported.
@@ -102,11 +97,6 @@ enum AnyCalendarKind {
     return AnyCalendarKind.values[result.union.ok];
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_get_for_bcp47 =
-    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
-
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
@@ -120,9 +110,16 @@ enum AnyCalendarKind {
     }
     return writeable.finalize();
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_bcp47 =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
-      .asFunction<_ResultVoidInt32 Function(int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_locale')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_locale(ffi.Pointer<ffi.Opaque> locale);
+
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_bcp47')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_bcp47(ffi.Pointer<ffi.Uint8> sData, int sLength);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> writeable);

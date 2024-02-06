@@ -29,14 +29,15 @@ ICU4X_DATA_DIR=$(pwd)/baked_data cargo build --release
 
 ## Cargo.toml with experimental modules
 
-If you wish to use an experimental modules, such as `icu::displaynames`, set up your Cargo.toml like this:
+Experimental modules are published in a separate `icu_experimental` crate:
 
 ```toml
 [dependencies]
-icu = { version = "1.3", features = ["icu_displaynames"] }
+icu = "1.4"
+icu_experimental = "0"
 ```
 
-In your main.rs, you can now use the experimental `icu::displaynames` module.
+In your main.rs, you can now use e.g. the `icu_experimental::displaynames` module.
 
 [« Fully Working Example »](./crates/experimental)
 

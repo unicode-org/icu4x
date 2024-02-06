@@ -204,16 +204,8 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/hebrew",
         &fxs,
-        icu::calendar::hebrew::Hebrew::new_always_calculating(),
-        |y, m, d| {
-            Date::try_new_hebrew_date_with_calendar(
-                y,
-                m,
-                d,
-                icu::calendar::hebrew::Hebrew::new_always_calculating(),
-            )
-            .unwrap()
-        },
+        icu::calendar::hebrew::Hebrew,
+        |y, m, d| Date::try_new_hebrew_date(y, m, d).unwrap(),
     );
 
     #[cfg(feature = "bench")]

@@ -53,10 +53,8 @@ dependencies = [
  "icu_casemap",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -64,7 +62,6 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
 ]
@@ -139,25 +136,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_compactdecimal_data",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_compactdecimal_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_datetime"
 version = "1.4.0"
 dependencies = [
@@ -197,22 +175,6 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.4.0"
-
-[[package]]
-name = "icu_displaynames"
-version = "0.11.2"
-dependencies = [
- "icu_displaynames_data",
- "icu_locid",
- "icu_locid_transform",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_displaynames_data"
 version = "1.4.0"
 
 [[package]]
@@ -260,7 +222,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -335,25 +297,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "icu_relativetime"
-version = "0.1.4"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "icu_relativetime_data",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_relativetime_data"
-version = "1.4.0"
 
 [[package]]
 name = "icu_segmenter"
@@ -640,10 +583,14 @@ version = "0.3.7"
 
 [[patch.unused]]
 name = "icu_datagen"
-version = "1.4.0"
+version = "1.4.1"
 
 [[patch.unused]]
-name = "icu_dimension"
+name = "icu_experimental"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_experimental_data"
 version = "0.0.0"
 
 [[patch.unused]]
@@ -659,10 +606,6 @@ name = "icu_pattern"
 version = "0.1.5"
 
 [[patch.unused]]
-name = "icu_personnames"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "icu_provider_adapters"
 version = "1.4.0"
 
@@ -673,14 +616,6 @@ version = "1.4.0"
 [[patch.unused]]
 name = "icu_provider_fs"
 version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_transliterate"
-version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_unicodeset_parse"
-version = "0.1.2"
 
 [[patch.unused]]
 name = "icu_unitsconversion"

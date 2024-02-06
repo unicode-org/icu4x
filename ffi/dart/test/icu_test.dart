@@ -1,9 +1,8 @@
 import 'package:icu/icu.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  init(path.absolute('test/libicu_capi.so'));
+  Logger.initSimpleLogger();
 
   test('FixedDecimal.toString', () {
     final x = FixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);
@@ -12,9 +11,10 @@ void main() {
 
   test('LocaleFallbacker', () {
     final iterator = LocaleFallbacker(DataProvider.compiled())
-        .forConfig(LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region)
+        .forConfig(LocaleFallbackConfig(
+            extensionKey: 'ca',
+            priority: LocaleFallbackPriority.region,
+            fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.get.toString(), 'de-CH-u-ca-japanese');
     iterator.step();
@@ -27,24 +27,7 @@ void main() {
     expect(iterator.get.toString(), 'und');
   });
 
-  test('Struct equality', () {
-    expect(
-        LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region,
-        LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region);
-    expect(
-        LocaleFallbackConfig()
-          ..extensionKey = 'nu'
-          ..priority = LocaleFallbackPriority.region,
-        isNot(LocaleFallbackConfig()
-          ..extensionKey = 'ca'
-          ..priority = LocaleFallbackPriority.region));
-  });
-
-  test('Runes', () {
+  test('Properties', () {
     Rune a = 'a'.runes.first;
     Rune emoji = '💡'.runes.first;
 
@@ -54,5 +37,17 @@ void main() {
 
     Rune upperA = CaseMapper(DataProvider.compiled()).simpleUppercase(a);
     expect(String.fromCharCode(upperA), 'A');
+  });
+
+  test('ListFormatter', () {
+    final formatter = ListFormatter.andWithLength(
+        DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
+    final list = List()
+      ..push('España')
+      ..push('Francia')
+      ..push('Suiza')
+      ..push('Italia');
+
+    expect(formatter.format(list), 'España, Francia, Suiza e Italia');
   });
 }

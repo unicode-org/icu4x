@@ -9,11 +9,13 @@ part of 'lib.g.dart';
 final class SentenceBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  SentenceBreakIteratorLatin1._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  SentenceBreakIteratorLatin1._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XSentenceBreakIteratorLatin1_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XSentenceBreakIteratorLatin1_destroy));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
@@ -23,9 +25,12 @@ final class SentenceBreakIteratorLatin1 implements ffi.Finalizable {
     final result = _ICU4XSentenceBreakIteratorLatin1_next(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XSentenceBreakIteratorLatin1_next =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XSentenceBreakIteratorLatin1_next')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XSentenceBreakIteratorLatin1_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XSentenceBreakIteratorLatin1_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XSentenceBreakIteratorLatin1_next')
+// ignore: non_constant_identifier_names
+external int _ICU4XSentenceBreakIteratorLatin1_next(ffi.Pointer<ffi.Opaque> self);

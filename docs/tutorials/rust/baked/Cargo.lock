@@ -436,9 +436,9 @@ checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
 name = "elsa"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "714f766f3556b44e7e4776ad133fcc3445a489517c25c704ace411bb14790194"
+checksum = "d98e71ae4df57d214182a2e5cb90230c0192c6ddfcaa05c36453d46a54713e10"
 dependencies = [
  "stable_deref_trait",
 ]
@@ -571,15 +571,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fraction"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59a78dd758a47a7305478e0e054f9fde4e983b9f9eccda162bf7ca03b79e9d40"
-dependencies = [
- "num",
-]
-
-[[package]]
 name = "funty"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -663,10 +654,8 @@ dependencies = [
  "icu_casemap",
  "icu_collator",
  "icu_collections",
- "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -674,7 +663,6 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
- "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
 ]
@@ -768,28 +756,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_compactdecimal_data",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_compactdecimal_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_datagen"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
+ "calendrical_calculations",
  "clap",
  "crlify",
  "databake",
@@ -797,7 +767,6 @@ dependencies = [
  "either",
  "elsa",
  "eyre",
- "fraction",
  "icu_calendar",
  "icu_casemap",
  "icu_codepointtrie_builder",
@@ -821,7 +790,6 @@ dependencies = [
  "log",
  "memchr",
  "ndarray",
- "num-bigint",
  "once_cell",
  "proc-macro2",
  "rayon",
@@ -887,22 +855,6 @@ name = "icu_decimal_data"
 version = "1.4.0"
 
 [[package]]
-name = "icu_displaynames"
-version = "0.11.2"
-dependencies = [
- "icu_displaynames_data",
- "icu_locid",
- "icu_locid_transform",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_displaynames_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_list"
 version = "1.4.0"
 dependencies = [
@@ -954,7 +906,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1081,25 +1033,6 @@ dependencies = [
  "quote",
  "syn 2.0.37",
 ]
-
-[[package]]
-name = "icu_relativetime"
-version = "0.1.4"
-dependencies = [
- "displaydoc",
- "fixed_decimal",
- "icu_decimal",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "icu_relativetime_data",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_relativetime_data"
-version = "1.4.0"
 
 [[package]]
 name = "icu_segmenter"
@@ -1353,30 +1286,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "num"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b05180d69e3da0e530ba2a1dae5110317e49e3b7f3d41be227dc5f92e49ee7af"
-dependencies = [
- "num-complex",
- "num-integer",
- "num-iter",
- "num-rational",
- "num-traits",
-]
-
-[[package]]
-name = "num-bigint"
-version = "0.4.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "608e7659b5c3d7cba262d894801b9ec9d00de989e8a82bd4bef91d08da45cdc0"
-dependencies = [
- "autocfg",
- "num-integer",
- "num-traits",
-]
-
-[[package]]
 name = "num-complex"
 version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1392,28 +1301,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "225d3389fb3509a24c93f5c29eb6bde2586b98d9f016636dff58d7c6f7569cd9"
 dependencies = [
  "autocfg",
- "num-traits",
-]
-
-[[package]]
-name = "num-iter"
-version = "0.1.43"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d03e6c028c5dc5cac6e2dec0efda81fc887605bb3d884578bb6d6bf7514e252"
-dependencies = [
- "autocfg",
- "num-integer",
- "num-traits",
-]
-
-[[package]]
-name = "num-rational"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
-dependencies = [
- "autocfg",
- "num-integer",
  "num-traits",
 ]
 
@@ -2931,7 +2818,11 @@ name = "icu_capi"
 version = "1.4.0"
 
 [[patch.unused]]
-name = "icu_dimension"
+name = "icu_experimental"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_experimental_data"
 version = "0.0.0"
 
 [[patch.unused]]
@@ -2945,18 +2836,6 @@ version = "0.1.2"
 [[patch.unused]]
 name = "icu_pattern"
 version = "0.1.5"
-
-[[patch.unused]]
-name = "icu_personnames"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_transliterate"
-version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_unicodeset_parse"
-version = "0.1.2"
 
 [[patch.unused]]
 name = "icu_unitsconversion"

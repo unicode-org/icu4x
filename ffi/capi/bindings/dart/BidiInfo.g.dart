@@ -11,11 +11,13 @@ part of 'lib.g.dart';
 final class BidiInfo implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  BidiInfo._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  BidiInfo._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XBidiInfo_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiInfo_destroy));
 
   /// The number of paragraphs contained here
   int get paragraphCount {
@@ -23,32 +25,17 @@ final class BidiInfo implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiInfo_paragraph_count =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiInfo_paragraph_count')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Get the nth paragraph, returning `None` if out of bounds
   BidiParagraph? paragraphAt(int n) {
     final result = _ICU4XBidiInfo_paragraph_at(_underlying, n);
-    return result.address == 0 ? null : BidiParagraph._(result);
+    return result.address == 0 ? null : BidiParagraph._(result, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiInfo_paragraph_at =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_paragraph_at')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// The number of bytes in this full text
   int get size {
     final result = _ICU4XBidiInfo_size(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiInfo_size =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiInfo_size')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the BIDI level at a particular byte index in the full text.
   /// This integer is conceptually a `unicode_bidi::Level`,
@@ -59,9 +46,24 @@ final class BidiInfo implements ffi.Finalizable {
     final result = _ICU4XBidiInfo_level_at(_underlying, pos);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XBidiInfo_level_at =
-    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_level_at')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XBidiInfo_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XBidiInfo_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiInfo_paragraph_count')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiInfo_paragraph_count(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiInfo_paragraph_at')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XBidiInfo_paragraph_at(ffi.Pointer<ffi.Opaque> self, int n);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiInfo_size')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiInfo_size(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiInfo_level_at')
+// ignore: non_constant_identifier_names
+external int _ICU4XBidiInfo_level_at(ffi.Pointer<ffi.Opaque> self, int pos);

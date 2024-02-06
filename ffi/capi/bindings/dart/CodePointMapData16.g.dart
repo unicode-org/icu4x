@@ -17,11 +17,13 @@ part of 'lib.g.dart';
 final class CodePointMapData16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CodePointMapData16._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CodePointMapData16._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCodePointMapData16_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointMapData16_destroy));
 
   /// Gets the value for a code point.
   ///
@@ -31,49 +33,29 @@ final class CodePointMapData16 implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData16_get =
-    _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData16_get')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
-
   /// Produces an iterator over ranges of code points that map to `value`
   ///
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
     final result = _ICU4XCodePointMapData16_iter_ranges_for_value(_underlying, value);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData16_iter_ranges_for_value =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>('ICU4XCodePointMapData16_iter_ranges_for_value')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Produces an iterator over ranges of code points that do not map to `value`
   ///
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     final result = _ICU4XCodePointMapData16_iter_ranges_for_value_complemented(_underlying, value);
-    return CodePointRangeIterator._(result);
+    return CodePointRangeIterator._(result, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData16_iter_ranges_for_value_complemented =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>('ICU4XCodePointMapData16_iter_ranges_for_value_complemented')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   CodePointSetData getSetForValue(int value) {
     final result = _ICU4XCodePointMapData16_get_set_for_value(_underlying, value);
-    return CodePointSetData._(result);
+    return CodePointSetData._(result, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData16_get_set_for_value =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>('ICU4XCodePointMapData16_get_set_for_value')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
   ///
@@ -83,11 +65,30 @@ final class CodePointMapData16 implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CodePointMapData16._(result.union.ok);
+    return CodePointMapData16._(result.union.ok, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData16_load_script =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointMapData16_load_script')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData16_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XCodePointMapData16_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointMapData16_get')
+// ignore: non_constant_identifier_names
+external int _ICU4XCodePointMapData16_get(ffi.Pointer<ffi.Opaque> self, Rune cp);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XCodePointMapData16_iter_ranges_for_value')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData16_iter_ranges_for_value(ffi.Pointer<ffi.Opaque> self, int value);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XCodePointMapData16_iter_ranges_for_value_complemented')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData16_iter_ranges_for_value_complemented(ffi.Pointer<ffi.Opaque> self, int value);
+
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XCodePointMapData16_get_set_for_value')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData16_get_set_for_value(ffi.Pointer<ffi.Opaque> self, int value);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData16_load_script')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData16_load_script(ffi.Pointer<ffi.Opaque> provider);

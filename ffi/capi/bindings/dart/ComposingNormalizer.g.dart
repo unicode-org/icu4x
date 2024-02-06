@@ -9,11 +9,13 @@ part of 'lib.g.dart';
 final class ComposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ComposingNormalizer._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  ComposingNormalizer._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XComposingNormalizer_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XComposingNormalizer_destroy));
 
   /// Construct a new ICU4XComposingNormalizer instance for NFC
   ///
@@ -25,13 +27,8 @@ final class ComposingNormalizer implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ComposingNormalizer._(result.union.ok);
+    return ComposingNormalizer._(result.union.ok, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_create_nfc =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_create_nfc')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
   ///
@@ -43,13 +40,8 @@ final class ComposingNormalizer implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ComposingNormalizer._(result.union.ok);
+    return ComposingNormalizer._(result.union.ok, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_create_nfkc =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_create_nfkc')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Normalize a string
   ///
@@ -71,11 +63,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     return writeable.finalize();
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_normalize =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_normalize')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Check if a string is normalized
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -89,9 +76,24 @@ final class ComposingNormalizer implements ffi.Finalizable {
     temp.releaseAll();
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_is_normalized =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XComposingNormalizer_is_normalized')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XComposingNormalizer_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_create_nfc')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfc(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_create_nfkc')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfkc(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_normalize')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized')
+// ignore: non_constant_identifier_names
+external bool _ICU4XComposingNormalizer_is_normalized(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);

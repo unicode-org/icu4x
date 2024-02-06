@@ -10,11 +10,13 @@ part of 'lib.g.dart';
 final class CodePointRangeIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CodePointRangeIterator._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  CodePointRangeIterator._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_CodePointRangeIterator_destroy));
 
   /// Advance the iterator by one and return the next range.
   ///
@@ -23,9 +25,12 @@ final class CodePointRangeIterator implements ffi.Finalizable {
     final result = _CodePointRangeIterator_next(_underlying);
     return CodePointRangeIteratorResult._(result);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _CodePointRangeIterator_next =
-    _capi<ffi.NativeFunction<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
-      .asFunction<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'CodePointRangeIterator_destroy')
+// ignore: non_constant_identifier_names
+external void _CodePointRangeIterator_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'CodePointRangeIterator_next')
+// ignore: non_constant_identifier_names
+external _CodePointRangeIteratorResultFfi _CodePointRangeIterator_next(ffi.Pointer<ffi.Opaque> self);

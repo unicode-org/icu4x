@@ -11,11 +11,13 @@ part of 'lib.g.dart';
 final class PluralOperands implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  PluralOperands._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  PluralOperands._(this._underlying, bool isOwned) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XPluralOperands_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralOperands_destroy));
 
   /// Construct for a given string representing a number
   ///
@@ -30,11 +32,14 @@ final class PluralOperands implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return PluralOperands._(result.union.ok);
+    return PluralOperands._(result.union.ok, true);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XPluralOperands_create_from_string =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XPluralOperands_create_from_string')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XPluralOperands_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_string')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XPluralOperands_create_from_string(ffi.Pointer<ffi.Uint8> sData, int sLength);

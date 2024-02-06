@@ -918,6 +918,32 @@ where
                 .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())?,
         ))
     }
+
+    /// Convert between two [`DataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
+    ///
+    /// This happens if they both have the same [`DataMarker::Yokeable`] type.
+    ///
+    /// Can be used to erase the key of a data payload in cases where multiple keys correspond
+    /// to the same data struct.
+    ///
+    /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
+    #[inline]
+    pub fn cast<M2>(self) -> DataResponse<M2>
+    where
+        M2: DataMarker<Yokeable = M::Yokeable>,
+    {
+        match self.payload {
+            Some(payload) => DataResponse {
+                metadata: self.metadata,
+                payload: Some(payload.cast()),
+            },
+            None => DataResponse {
+                metadata: self.metadata,
+                payload: None,
+            },
+        }
+    }
 }
 
 impl<M> TryFrom<DataResponse<M>> for DataPayload<M>
