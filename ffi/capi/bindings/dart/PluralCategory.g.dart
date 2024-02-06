@@ -5,8 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// FFI version of `PluralCategory`.
-///
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
 enum PluralCategory {
   zero,
