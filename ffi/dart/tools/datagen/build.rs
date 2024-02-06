@@ -5,8 +5,19 @@ use std::fs::File;
 use std::path::Path;
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+
+    simple_logger::SimpleLogger::new()
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
+
     DatagenDriver::new()
-        .with_keys(icu_datagen::all_keys())
+        .with_keys(if std::env::var("PROFILE").unwrap() == "release" {
+            icu_datagen::all_keys()
+        } else {
+            Default::default()
+        })
         .with_all_locales()
         .export(
             &DatagenProvider::new_latest_tested(),

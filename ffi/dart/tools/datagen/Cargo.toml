@@ -16,9 +16,11 @@ icu_provider_blob = { workspace = true, features = ["export"] }
 icu_provider = { workspace = true, features = ["datagen"] }
 icu_datagen.workspace = true
 
-eyre = "0.6.11"
-clap = { version = "4.4.17", features = ["derive"] }
-serde = "1.0.195"
+clap = { version = "4", features = ["derive"] }
+eyre = "0.6"
+log = "0.4"
+serde = "1"
+simple_logger = { version = "4.1.0", default-features = false }
 
 # These are required to make the make_exportable_provider macro work
 icu_calendar.workspace = true
@@ -37,3 +39,5 @@ icu_timezone.workspace = true
 [build-dependencies]
 icu_datagen = { workspace = true, features = ["networking", "use_wasm"] }
 icu_provider_blob = { workspace = true, features = ["export"] }
+log = "0.4"
+simple_logger = { version = "4.1.0", default-features = false }

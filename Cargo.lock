@@ -2657,7 +2657,9 @@ dependencies = [
  "icu_provider_blob",
  "icu_segmenter",
  "icu_timezone",
+ "log",
  "serde",
+ "simple_logger",
 ]
 
 [[package]]

@@ -3,12 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use clap::Parser;
-use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider_blob::BlobDataProvider;
 use icu_provider_blob::export::BlobExporter;
+use icu_provider_blob::BlobDataProvider;
 use serde::Deserialize;
 use std::path::PathBuf;
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
@@ -69,6 +68,11 @@ icu_datagen::make_exportable_provider!(ReexportableBlobDataProvider);
 fn main() -> eyre::Result<()> {
     let matches = Cli::parse();
 
+    simple_logger::SimpleLogger::new()
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
+
     let keys = matches
         .keys
         .iter()
@@ -81,14 +85,14 @@ fn main() -> eyre::Result<()> {
         .map(|l| l.parse::<LanguageIdentifier>())
         .collect::<Result<Vec<_>, _>>()?;
 
-    let provider = ;
-
     DatagenDriver::new()
         .with_keys(keys)
         .with_locales(locales)
         .export(
-            &BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(core::env!("OUT_DIR"), "/all.blob")))?,
-            BlobExporter::new_with_sink(Box::new(std::fs::File::new(&matches.output).open()?)),
+            &ReexportableBlobDataProvider(BlobDataProvider::try_new_from_static_blob(
+                include_bytes!(concat!(core::env!("OUT_DIR"), "/all.blob")),
+            )?),
+            BlobExporter::new_with_sink(Box::new(std::fs::File::create(&matches.output)?)),
         )?;
 
     Ok(())
