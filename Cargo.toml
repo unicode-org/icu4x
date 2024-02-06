@@ -86,7 +86,7 @@ members = [
     "tools/diplomat-gen",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
-    "tools/md-tests", 
+    "tools/md-tests",
     "ffi/dart/tools/datagen",
 ]
 # Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
