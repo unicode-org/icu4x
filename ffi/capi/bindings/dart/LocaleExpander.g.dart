@@ -45,16 +45,12 @@ final class LocaleExpander implements ffi.Finalizable {
     return LocaleExpander._(result.union.ok, true);
   }
 
-  /// FFI version of `LocaleExpander::maximize()`.
-  ///
   /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
   TransformResult maximize(Locale locale) {
     final result = _ICU4XLocaleExpander_maximize(_underlying, locale._underlying);
     return TransformResult.values[result];
   }
 
-  /// FFI version of `LocaleExpander::minimize()`.
-  ///
   /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
   TransformResult minimize(Locale locale) {
     final result = _ICU4XLocaleExpander_minimize(_underlying, locale._underlying);

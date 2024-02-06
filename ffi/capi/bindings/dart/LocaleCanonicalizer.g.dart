@@ -45,8 +45,6 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     return LocaleCanonicalizer._(result.union.ok, true);
   }
 
-  /// FFI version of `LocaleCanonicalizer::canonicalize()`.
-  ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
   TransformResult canonicalize(Locale locale) {
     final result = _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
