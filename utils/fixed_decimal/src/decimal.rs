@@ -159,27 +159,6 @@ pub enum SignDisplay {
     Negative,
 }
 
-/// Increment used in a rounding operation.
-///
-/// Forces a rounding operation to round to only multiples of the specified increment.
-///
-#[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
-#[non_exhaustive]
-pub enum RoundingIncrement {
-    /// Round the last digit to any digit (0-9).
-    ///
-    /// This is the default rounding increment for all the methods that don't take a
-    /// `RoundingIncrement` as an argument.
-    #[default]
-    MultiplesOf1,
-    /// Round the last digit to only multiples of two (0, 2, 4, 6, 8).
-    MultiplesOf2,
-    /// Round the last digit to only multiples of five (0, 5).
-    MultiplesOf5,
-    /// Round the last two digits to only multiples of twenty-five (0, 25, 50, 75).
-    MultiplesOf25,
-}
-
 impl Default for FixedDecimal {
     /// Returns a `FixedDecimal` representing zero.
     fn default() -> Self {
@@ -236,6 +215,60 @@ impl_from_unsigned_integer_type!(u64);
 impl_from_unsigned_integer_type!(u32);
 impl_from_unsigned_integer_type!(u16);
 impl_from_unsigned_integer_type!(u8);
+
+/// Increment used in a rounding operation.
+///
+/// Forces a rounding operation to round to only multiples of the specified increment.
+///
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
+#[non_exhaustive]
+pub enum RoundingIncrement {
+    /// Round the last digit to any digit (0-9).
+    ///
+    /// This is the default rounding increment for all the methods that don't take a
+    /// `RoundingIncrement` as an argument.
+    #[default]
+    MultiplesOf1,
+    /// Round the last digit to only multiples of two (0, 2, 4, 6, 8).
+    MultiplesOf2,
+    /// Round the last digit to only multiples of five (0, 5).
+    MultiplesOf5,
+    /// Round the last two digits to only multiples of twenty-five (0, 25, 50, 75).
+    MultiplesOf25,
+}
+
+// Adapters to convert runtime dispatched calls into const-inlined methods.
+// This allows reducing the codesize for the common case of no increment.
+
+#[derive(Copy, Clone, PartialEq)]
+struct NoIncrement;
+
+trait IncrementLike: Copy + Sized + PartialEq {
+    const MULTIPLES_OF_1: Option<Self>;
+    const MULTIPLES_OF_2: Option<Self>;
+    const MULTIPLES_OF_5: Option<Self>;
+    const MULTIPLES_OF_25: Option<Self>;
+}
+
+impl IncrementLike for RoundingIncrement {
+    const MULTIPLES_OF_1: Option<Self> = Some(Self::MultiplesOf1);
+
+    const MULTIPLES_OF_2: Option<Self> = Some(Self::MultiplesOf2);
+
+    const MULTIPLES_OF_5: Option<Self> = Some(Self::MultiplesOf5);
+
+    const MULTIPLES_OF_25: Option<Self> = Some(Self::MultiplesOf25);
+}
+
+impl IncrementLike for NoIncrement {
+    const MULTIPLES_OF_1: Option<Self> = Some(Self);
+
+    const MULTIPLES_OF_2: Option<Self> = None;
+
+    const MULTIPLES_OF_5: Option<Self> = None;
+
+    const MULTIPLES_OF_25: Option<Self> = None;
+}
 
 impl FixedDecimal {
     /// Initialize a `FixedDecimal` with an iterator of digits in ascending
@@ -375,17 +408,17 @@ impl FixedDecimal {
 
     /// Returns the relative ordering of the digits from `magnitude` onwards
     /// with respect to the half increment of `increment`.
-    fn half_increment_at_magnitude(
+    fn half_increment_at_magnitude<R: IncrementLike>(
         &self,
         magnitude: i16,
-        increment: RoundingIncrement,
+        increment: R,
     ) -> Ordering {
         #[cfg(debug_assertions)] // Depends on having no trailing zeroes.
         self.check_invariants();
 
-        match increment {
-            RoundingIncrement::MultiplesOf1 => self.half_at_next_magnitude(magnitude),
-            RoundingIncrement::MultiplesOf2 => {
+        match Some(increment) {
+            x if x == R::MULTIPLES_OF_1 => self.half_at_next_magnitude(magnitude),
+            x if x == R::MULTIPLES_OF_2 => {
                 let current_digit = self.digit_at(magnitude);
 
                 // Equivalent to "if current_digit is odd".
@@ -412,7 +445,7 @@ impl FixedDecimal {
                     Ordering::Less
                 }
             }
-            RoundingIncrement::MultiplesOf5 => {
+            x if x == R::MULTIPLES_OF_5 => {
                 let current_digit = self.digit_at(magnitude);
                 match (current_digit % 5).cmp(&2) {
                     Ordering::Equal => {
@@ -424,7 +457,7 @@ impl FixedDecimal {
                     ord => ord,
                 }
             }
-            RoundingIncrement::MultiplesOf25 => {
+            x if x == R::MULTIPLES_OF_25 => {
                 let current_digit = self.digit_at(magnitude);
                 let prev_digit = self.digit_at_previous_position(magnitude);
                 let number = prev_digit * 10 + current_digit;
@@ -439,24 +472,28 @@ impl FixedDecimal {
                     ord => ord,
                 }
             }
+            _ => {
+                debug_assert!(false, "increment should be 1, 2, 5, or 25");
+                Ordering::Equal
+            }
         }
     }
 
     /// Checks if this number is already rounded to the specified magnitude and
     /// increment.
-    fn is_rounded(&self, position: i16, increment: RoundingIncrement) -> bool {
+    fn is_rounded<R: IncrementLike>(&self, position: i16, increment: R) -> bool {
         // The number is rounded if it's already zero, since zero is a multiple of
         // all increments.
         if self.is_zero() {
             return true;
         }
 
-        match increment {
-            RoundingIncrement::MultiplesOf1 => {
+        match Some(increment) {
+            x if x == R::MULTIPLES_OF_1 => {
                 // The number is rounded if `position` is the last digit
                 position <= self.nonzero_magnitude_end()
             }
-            RoundingIncrement::MultiplesOf2 => {
+            x if x == R::MULTIPLES_OF_2 => {
                 // The number is rounded if the digit at `position` is zero or
                 // the position is the last digit and the digit is a multiple of the increment
                 // already.
@@ -466,7 +503,7 @@ impl FixedDecimal {
                     Ordering::Greater => false,
                 }
             }
-            RoundingIncrement::MultiplesOf5 => {
+            x if x == R::MULTIPLES_OF_5 => {
                 // The number is rounded if the digit at `position` is zero or
                 // the position is the last digit and the digit is a multiple of the increment
                 // already.
@@ -476,7 +513,7 @@ impl FixedDecimal {
                     Ordering::Greater => false,
                 }
             }
-            RoundingIncrement::MultiplesOf25 => {
+            x if x == R::MULTIPLES_OF_25 => {
                 // The number is rounded if the digits at `position` and `position + 1` are
                 // both zeroes or if the last two digits are a multiple of the increment already.
                 match position.cmp(&self.nonzero_magnitude_end()) {
@@ -500,6 +537,10 @@ impl FixedDecimal {
                     }
                     Ordering::Greater => false,
                 }
+            }
+            _ => {
+                debug_assert!(false, "INCREMENT should be 1, 2, 5, or 25");
+                false
             }
         }
     }
@@ -1129,33 +1170,6 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Truncate the number on the right to a particular position, deleting
-    /// digits if necessary.
-    ///
-    /// Also see [`FixedDecimal::padded_end()`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("0", dec.trunced(0).to_string());
-    /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.trunced(0).to_string());
-    /// ```
-    pub fn trunced(mut self, position: i16) -> Self {
-        self.trunc(position);
-        self
-    }
-
     /// Truncates the number on the right to a particular position, deleting
     /// digits if necessary.
     ///
@@ -1184,7 +1198,186 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
-        self.trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.trunc_to_increment_internal(position, NoIncrement)
+    }
+
+    /// Truncates the number on the right to a particular position and rounding
+    /// increment, deleting digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
+    /// dec.trunc_to_increment(0, RoundingIncrement::MultiplesOf2);
+    /// assert_eq!("-2", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
+    /// dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf5);
+    /// assert_eq!("7.5", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
+    /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf25);
+    /// assert_eq!("5.25", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
+    /// dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf25);
+    /// assert_eq!("7.5", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
+    /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    /// assert_eq!("9.98", dec.to_string());
+    /// ```
+    pub fn trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.trunc_to_increment_internal(position, increment)
+    }
+
+    fn trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, inner_increment: R) {
+        let increment = Some(inner_increment);
+
+        // 1. Set upper and lower magnitude
+        self.lower_magnitude = cmp::min(position, 0);
+
+        match position.cmp(&i16::MIN) {
+            // Don't return if the increment is not one, because we
+            // also need to round to the next increment if necessary.
+            Ordering::Equal if increment == R::MULTIPLES_OF_1 => {
+                // Nothing more to do
+                #[cfg(debug_assertions)]
+                self.check_invariants();
+                return;
+            }
+            Ordering::Greater => {
+                self.upper_magnitude = cmp::max(self.upper_magnitude, position - 1);
+            }
+            _ => {
+                // Ordering::Less is unreachable, and Ordering::Equal needs to apply roundings
+                // when the increment is not equal to 1.
+                // We don't override `self.upper_magnitude` because `self.upper_magnitude` is
+                // always equal or bigger than `i16::MIN`.
+            }
+        }
+
+        // 2. If the number is already rounded, exit early.
+        if self.is_rounded(position, inner_increment) {
+            #[cfg(debug_assertions)]
+            self.check_invariants();
+            return;
+        }
+
+        // 3. If the rounding position is *in the middle* of the nonzero digits
+        if position <= self.magnitude {
+            // 3a. Calculate the number of digits to retain and remove the rest
+            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, position) + 1;
+            self.digits.truncate(digits_to_retain as usize);
+
+            // 3b. Truncate to the previous multiple.
+            match increment {
+                x if x == R::MULTIPLES_OF_1 => {
+                    // No need to do more work, trailing zeroes are removed below.
+                }
+                x if x == R::MULTIPLES_OF_2 => {
+                    let Some(last_digit) = self.digits.last_mut() else {
+                        debug_assert!(false, "`self.digits` should have at least a digit");
+                        return;
+                    };
+
+                    // Equivalent to (n / 2) * 2, which truncates to the previous
+                    // multiple of two
+                    *last_digit &= 0xFE;
+                }
+                x if x == R::MULTIPLES_OF_5 => {
+                    let Some(last_digit) = self.digits.last_mut() else {
+                        debug_assert!(false, "`self.digits` should have at least a digit");
+                        return;
+                    };
+
+                    *last_digit = if *last_digit < 5 { 0 } else { 5 };
+                }
+                x if x == R::MULTIPLES_OF_25 => {
+                    // Extend with zeroes to have the correct trailing digits.
+                    self.digits.resize(digits_to_retain as usize, 0);
+
+                    let Some((last_digit, digits)) = self.digits.split_last_mut() else {
+                        debug_assert!(false, "`self.digits` should have at least a digit");
+                        return;
+                    };
+
+                    if let Some(second_last_digit) = digits.last_mut() {
+                        let number = *second_last_digit * 10 + *last_digit;
+
+                        // Trailing zeroes will be removed below. We can defer
+                        // the deletion to there.
+                        (*second_last_digit, *last_digit) = if number < 25 {
+                            (0, 0)
+                        } else if number < 50 {
+                            (2, 5)
+                        } else if number < 75 {
+                            (5, 0)
+                        } else {
+                            (7, 5)
+                        };
+                    } else {
+                        // The number has no other digits aside from the last,
+                        // making it strictly less than 25.
+                        *last_digit = 0;
+                    };
+                }
+                _ => {
+                    debug_assert!(false, "INCREMENT should be 1, 2, 5, or 25");
+                    return;
+                }
+            }
+
+            // 3c. Handle the case where `digits` has trailing zeroes after
+            // truncating to the previous multiple.
+            let position_last_nonzero_digit = self
+                .digits
+                .iter()
+                .rposition(|x| *x != 0)
+                .map(|x| x + 1)
+                .unwrap_or(0);
+            self.digits.truncate(position_last_nonzero_digit);
+
+            // 3d. If `digits` had only trailing zeroes after truncating,
+            // reset to zero.
+            if self.digits.is_empty() {
+                self.magnitude = 0;
+            }
+        } else {
+            // 4. If the rounding position is *above* the leftmost nonzero
+            // digit, set to zero
+            self.digits.clear();
+            self.magnitude = 0;
+        }
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Truncate the number on the right to a particular position, deleting
+    /// digits if necessary.
+    ///
+    /// Also see [`FixedDecimal::padded_end()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-1", dec.trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("0", dec.trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("1", dec.trunced(0).to_string());
+    /// ```
+    pub fn trunced(mut self, position: i16) -> Self {
+        self.trunc(position);
+        self
     }
 
     /// Truncates the number on the right to a particular position and rounding
@@ -1232,148 +1425,6 @@ impl FixedDecimal {
         self
     }
 
-    /// Truncates the number on the right to a particular position and rounding
-    /// increment, deleting digits if necessary.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// dec.trunc_to_increment(0, RoundingIncrement::MultiplesOf2);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf5);
-    /// assert_eq!("7.5", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf25);
-    /// assert_eq!("5.25", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf25);
-    /// assert_eq!("7.5", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    /// assert_eq!("9.98", dec.to_string());
-    /// ```
-    pub fn trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
-        // 1. Set upper and lower magnitude
-        self.lower_magnitude = cmp::min(position, 0);
-
-        match position.cmp(&i16::MIN) {
-            // Don't return if the increment is not one, because we
-            // also need to round to the next increment if necessary.
-            Ordering::Equal if increment == RoundingIncrement::MultiplesOf1 => {
-                // Nothing more to do
-                #[cfg(debug_assertions)]
-                self.check_invariants();
-                return;
-            }
-            Ordering::Greater => {
-                self.upper_magnitude = cmp::max(self.upper_magnitude, position - 1);
-            }
-            _ => {
-                // Ordering::Less is unreachable, and Ordering::Equal needs to apply roundings
-                // when the increment is not equal to 1.
-                // We don't override `self.upper_magnitude` because `self.upper_magnitude` is
-                // always equal or bigger than `i16::MIN`.
-            }
-        }
-
-        // 2. If the number is already rounded, exit early.
-        if self.is_rounded(position, increment) {
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return;
-        }
-
-        // 3. If the rounding position is *in the middle* of the nonzero digits
-        if position <= self.magnitude {
-            // 3a. Calculate the number of digits to retain and remove the rest
-            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, position) + 1;
-            self.digits.truncate(digits_to_retain as usize);
-
-            // 3b. Truncate to the previous multiple.
-            match increment {
-                RoundingIncrement::MultiplesOf1 => {
-                    // No need to do more work, trailing zeroes are removed below.
-                }
-                RoundingIncrement::MultiplesOf2 => {
-                    let Some(last_digit) = self.digits.last_mut() else {
-                        debug_assert!(false, "`self.digits` should have at least a digit");
-                        return;
-                    };
-
-                    // Equivalent to (n / 2) * 2, which truncates to the previous
-                    // multiple of two
-                    *last_digit &= 0xFE;
-                }
-                RoundingIncrement::MultiplesOf5 => {
-                    let Some(last_digit) = self.digits.last_mut() else {
-                        debug_assert!(false, "`self.digits` should have at least a digit");
-                        return;
-                    };
-
-                    *last_digit = if *last_digit < 5 { 0 } else { 5 };
-                }
-                RoundingIncrement::MultiplesOf25 => {
-                    // Extend with zeroes to have the correct trailing digits.
-                    self.digits.resize(digits_to_retain as usize, 0);
-
-                    let Some((last_digit, digits)) = self.digits.split_last_mut() else {
-                        debug_assert!(false, "`self.digits` should have at least a digit");
-                        return;
-                    };
-
-                    if let Some(second_last_digit) = digits.last_mut() {
-                        let number = *second_last_digit * 10 + *last_digit;
-
-                        // Trailing zeroes will be removed below. We can defer
-                        // the deletion to there.
-                        (*second_last_digit, *last_digit) = if number < 25 {
-                            (0, 0)
-                        } else if number < 50 {
-                            (2, 5)
-                        } else if number < 75 {
-                            (5, 0)
-                        } else {
-                            (7, 5)
-                        };
-                    } else {
-                        // The number has no other digits aside from the last,
-                        // making it strictly less than 25.
-                        *last_digit = 0;
-                    };
-                }
-            }
-
-            // 3c. Handle the case where `digits` has trailing zeroes after
-            // truncating to the previous multiple.
-            let position_last_nonzero_digit = self
-                .digits
-                .iter()
-                .rposition(|x| *x != 0)
-                .map(|x| x + 1)
-                .unwrap_or(0);
-            self.digits.truncate(position_last_nonzero_digit);
-
-            // 3d. If `digits` had only trailing zeroes after truncating,
-            // reset to zero.
-            if self.digits.is_empty() {
-                self.magnitude = 0;
-            }
-        } else {
-            // 4. If the rounding position is *above* the leftmost nonzero
-            // digit, set to zero
-            self.digits.clear();
-            self.magnitude = 0;
-        }
-
-        #[cfg(debug_assertions)]
-        self.check_invariants();
-    }
-
     /// Half Truncates the number on the right to a particular position, deleting
     /// digits if necessary.
     ///
@@ -1403,7 +1454,7 @@ impl FixedDecimal {
     /// assert_eq!("4", dec.to_string());
     /// ```
     pub fn half_trunc(&mut self, position: i16) {
-        self.half_trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.half_trunc_to_increment_internal(position, NoIncrement);
     }
 
     /// Half Truncates the number on the right to a particular position and rounding increment,
@@ -1432,15 +1483,19 @@ impl FixedDecimal {
     /// assert_eq!("9.98", dec.to_string());
     /// ```
     pub fn half_trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.half_trunc_to_increment_internal(position, increment)
+    }
+
+    fn half_trunc_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         // Only expand if the rounding position is strictly greater than the half increment.
         // At the half increment, `half_trunc` always truncates.
         let should_expand =
             self.half_increment_at_magnitude(position, increment) == Ordering::Greater;
 
         if should_expand {
-            self.expand_to_increment(position, increment);
+            self.expand_to_increment_internal(position, increment);
         } else {
-            self.trunc_to_increment(position, increment);
+            self.trunc_to_increment_internal(position, increment);
         }
     }
 
@@ -1545,7 +1600,7 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
-        self.expand_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.expand_to_increment_internal(position, NoIncrement)
     }
 
     /// Take the expand of the number at a particular position and rounding increment.
@@ -1573,6 +1628,14 @@ impl FixedDecimal {
     /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.expand_to_increment_internal(position, increment)
+    }
+
+    fn expand_to_increment_internal<R: IncrementLike>(
+        &mut self,
+        position: i16,
+        inner_increment: R,
+    ) {
         /// Modifies `number` to signal that an overflow happened.
         fn overflow(number: &mut FixedDecimal) {
             // TODO(#2297): Decide on behavior here
@@ -1582,13 +1645,15 @@ impl FixedDecimal {
             number.check_invariants();
         }
 
+        let increment = Some(inner_increment);
+
         // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
 
         match position.cmp(&i16::MIN) {
             // Don't return if the increment is not one, because we
             // also need to round to the next increment if necessary.
-            Ordering::Equal if increment == RoundingIncrement::MultiplesOf1 => {
+            Ordering::Equal if increment == R::MULTIPLES_OF_1 => {
                 // Nothing more to do
                 #[cfg(debug_assertions)]
                 self.check_invariants();
@@ -1606,7 +1671,7 @@ impl FixedDecimal {
         }
 
         // 2. If the number is already rounded, exit early.
-        if self.is_rounded(position, increment) {
+        if self.is_rounded(position, inner_increment) {
             #[cfg(debug_assertions)]
             self.check_invariants();
             return;
@@ -1620,12 +1685,12 @@ impl FixedDecimal {
 
             // 3b. Handle the last digit considering the increment.
             let iter = match increment {
-                RoundingIncrement::MultiplesOf1 => {
+                x if x == R::MULTIPLES_OF_1 => {
                     // Can just execute the algorithm normally.
 
                     self.digits.iter_mut().rev().enumerate()
                 }
-                RoundingIncrement::MultiplesOf2 => {
+                x if x == R::MULTIPLES_OF_2 => {
                     let mut iter = self.digits.iter_mut().rev().enumerate();
 
                     // Must round the last digit to the next increment.
@@ -1647,7 +1712,7 @@ impl FixedDecimal {
 
                     iter
                 }
-                RoundingIncrement::MultiplesOf5 => {
+                x if x == R::MULTIPLES_OF_5 => {
                     let mut iter = self.digits.iter_mut().rev().enumerate();
 
                     // Must round the last digit to the next increment.
@@ -1669,7 +1734,7 @@ impl FixedDecimal {
 
                     iter
                 }
-                RoundingIncrement::MultiplesOf25 => {
+                x if x == R::MULTIPLES_OF_25 => {
                     // Extend the digits to have the correct
                     // number of trailing zeroes.
                     self.digits.resize(digits_to_retain as usize, 0);
@@ -1733,6 +1798,10 @@ impl FixedDecimal {
 
                     iter
                 }
+                _ => {
+                    debug_assert!(false, "INCREMENT should be 1, 2, 5, or 25");
+                    return;
+                }
             };
 
             // 3b. Increment the rightmost remaining digit since we are rounding up; this might
@@ -1770,7 +1839,7 @@ impl FixedDecimal {
         // set the value to the next increment at the appropriate position.
 
         // Check if we have enough available spaces to push a `25` at the start.
-        if increment == RoundingIncrement::MultiplesOf25 && position == i16::MAX {
+        if increment == R::MULTIPLES_OF_25 && position == i16::MAX {
             // Need an extra digit to push a 25, which we don't have.
             overflow(self);
             return;
@@ -1782,16 +1851,20 @@ impl FixedDecimal {
         // and we also need to adjust the magnitude to the
         // new upper magnitude.
         let increment_digits = match increment {
-            RoundingIncrement::MultiplesOf1 => [1].as_slice(),
-            RoundingIncrement::MultiplesOf2 => [2].as_slice(),
-            RoundingIncrement::MultiplesOf5 => [5].as_slice(),
-            RoundingIncrement::MultiplesOf25 => [2, 5].as_slice(),
+            x if x == R::MULTIPLES_OF_1 => [1].as_slice(),
+            x if x == R::MULTIPLES_OF_2 => [2].as_slice(),
+            x if x == R::MULTIPLES_OF_5 => [5].as_slice(),
+            x if x == R::MULTIPLES_OF_25 => [2, 5].as_slice(),
+            _ => {
+                debug_assert!(false, "INCREMENT should be 1, 2, 5, or 25");
+                return;
+            }
         };
         self.digits.extend_from_slice(increment_digits);
 
         // Could also be derived from `increment_digits.len() - 1`, but it makes
         // the logic a bit harder to follow.
-        self.magnitude = if increment == RoundingIncrement::MultiplesOf25 {
+        self.magnitude = if increment == R::MULTIPLES_OF_25 {
             position + 1
         } else {
             position
@@ -1896,7 +1969,7 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_expand(&mut self, position: i16) {
-        self.half_expand_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.half_expand_to_increment_internal(position, NoIncrement)
     }
 
     /// Take the half expand of the number at a particular position and rounding increment.
@@ -1924,14 +1997,18 @@ impl FixedDecimal {
     /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn half_expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.half_expand_to_increment_internal(position, increment)
+    }
+
+    fn half_expand_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         // Only truncate if the rounding position is strictly less than the half increment.
         // At the half increment, `half_expand` always expands.
         let should_trunc = self.half_increment_at_magnitude(position, increment) == Ordering::Less;
 
         if should_trunc {
-            self.trunc_to_increment(position, increment);
+            self.trunc_to_increment_internal(position, increment);
         } else {
-            self.expand_to_increment(position, increment);
+            self.expand_to_increment_internal(position, increment);
         }
     }
 
@@ -2032,7 +2109,7 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn ceil(&mut self, position: i16) {
-        self.ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.ceil_to_increment_internal(position, NoIncrement);
     }
 
     /// Take the ceiling of the number at a particular position and rounding increment.
@@ -2060,12 +2137,16 @@ impl FixedDecimal {
     /// assert_eq!("-9.98", dec.to_string());
     /// ```
     pub fn ceil_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.ceil_to_increment_internal(position, increment)
+    }
+
+    fn ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         if self.sign == Sign::Negative {
-            self.trunc_to_increment(position, increment);
+            self.trunc_to_increment_internal(position, increment);
             return;
         }
 
-        self.expand_to_increment(position, increment);
+        self.expand_to_increment_internal(position, increment);
     }
 
     /// Take the ceiling of the number at a particular position.
@@ -2161,7 +2242,7 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_ceil(&mut self, position: i16) {
-        self.half_ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.half_ceil_to_increment_internal(position, NoIncrement);
     }
 
     /// Take the half ceiling of the number at a particular position and rounding increment.
@@ -2189,12 +2270,16 @@ impl FixedDecimal {
     /// assert_eq!("-9.98", dec.to_string());
     /// ```
     pub fn half_ceil_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.half_ceil_to_increment_internal(position, increment)
+    }
+
+    fn half_ceil_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         if self.sign == Sign::Negative {
-            self.half_trunc_to_increment(position, increment);
+            self.half_trunc_to_increment_internal(position, increment);
             return;
         }
 
-        self.half_expand_to_increment(position, increment);
+        self.half_expand_to_increment_internal(position, increment);
     }
 
     /// Take the half ceiling of the number at a particular position.
@@ -2290,7 +2375,7 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn floor(&mut self, position: i16) {
-        self.floor_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.floor_to_increment_internal(position, NoIncrement);
     }
 
     /// Take the floor of the number at a particular position and rounding increment.
@@ -2318,12 +2403,16 @@ impl FixedDecimal {
     /// assert_eq!("-10.00", dec.to_string());
     /// ```
     pub fn floor_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.floor_to_increment_internal(position, increment)
+    }
+
+    fn floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         if self.sign == Sign::Negative {
-            self.expand_to_increment(position, increment);
+            self.expand_to_increment_internal(position, increment);
             return;
         }
 
-        self.trunc_to_increment(position, increment);
+        self.trunc_to_increment_internal(position, increment);
     }
 
     /// Take the floor of the number at a particular position.
@@ -2419,7 +2508,7 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn half_floor(&mut self, position: i16) {
-        self.half_floor_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.half_floor_to_increment_internal(position, NoIncrement);
     }
 
     /// Take the half floor of the number at a particular position and rounding increment.
@@ -2447,12 +2536,16 @@ impl FixedDecimal {
     /// assert_eq!("-10.00", dec.to_string());
     /// ```
     pub fn half_floor_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.half_floor_to_increment_internal(position, increment)
+    }
+
+    fn half_floor_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         if self.sign == Sign::Negative {
-            self.half_expand_to_increment(position, increment);
+            self.half_expand_to_increment_internal(position, increment);
             return;
         }
 
-        self.half_trunc_to_increment(position, increment);
+        self.half_trunc_to_increment_internal(position, increment);
     }
 
     /// Take the half floor of the number at a particular position.
@@ -2552,7 +2645,7 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_even(&mut self, position: i16) {
-        self.half_even_to_increment(position, RoundingIncrement::MultiplesOf1);
+        self.half_even_to_increment_internal(position, NoIncrement);
     }
 
     /// Take the half even of the number at a particular position and rounding increment.
@@ -2580,15 +2673,19 @@ impl FixedDecimal {
     /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn half_even_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
+        self.half_even_to_increment_internal(position, increment)
+    }
+
+    fn half_even_to_increment_internal<R: IncrementLike>(&mut self, position: i16, increment: R) {
         let should_expand = match self.half_increment_at_magnitude(position, increment) {
             Ordering::Greater => true,
             Ordering::Less => false,
-            Ordering::Equal => match increment {
-                RoundingIncrement::MultiplesOf1 => {
+            Ordering::Equal => match Some(increment) {
+                x if x == R::MULTIPLES_OF_1 => {
                     // Expand if odd, truncate if even.
                     self.digit_at(position) & 0x01 == 1
                 }
-                RoundingIncrement::MultiplesOf2 => {
+                x if x == R::MULTIPLES_OF_2 => {
                     let current_digit = self.digit_at(position);
                     let previous_digit = self.digit_at_previous_position(position);
                     let full = previous_digit * 10 + current_digit;
@@ -2605,11 +2702,11 @@ impl FixedDecimal {
                     //   83 / 2 = 41, which is odd.
                     (full >> 1) & 0x01 == 1
                 }
-                RoundingIncrement::MultiplesOf5 => {
+                x if x == R::MULTIPLES_OF_5 => {
                     // Expand 7.5 to 10 and truncate 2.5 to 0.
                     self.digit_at(position) == 7
                 }
-                RoundingIncrement::MultiplesOf25 => {
+                x if x == R::MULTIPLES_OF_25 => {
                     let current_digit = self.digit_at(position);
                     let prev_digit = self.digit_at_previous_position(position);
                     let full_number = prev_digit * 10 + current_digit;
@@ -2618,13 +2715,17 @@ impl FixedDecimal {
                     // Truncate `12.5` to 0 and `62.5` to 50.
                     full_number == 37 || full_number == 87
                 }
+                _ => {
+                    debug_assert!(false, "INCREMENT should be 1, 2, 5, or 25");
+                    return;
+                }
             },
         };
 
         if should_expand {
-            self.expand_to_increment(position, increment);
+            self.expand_to_increment_internal(position, increment);
         } else {
-            self.trunc_to_increment(position, increment);
+            self.trunc_to_increment_internal(position, increment);
         }
     }
 
