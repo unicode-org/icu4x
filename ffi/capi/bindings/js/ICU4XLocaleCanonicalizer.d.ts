@@ -32,8 +32,6 @@ export class ICU4XLocaleCanonicalizer {
 
   /**
 
-   * FFI version of `LocaleCanonicalizer::canonicalize()`.
-
    * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize Rust documentation for `canonicalize`} for more information.
    */
   canonicalize(locale: ICU4XLocale): ICU4XTransformResult;

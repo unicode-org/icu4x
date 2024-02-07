@@ -5,8 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// FFI version of `PluralOperands`.
-///
 /// See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
 final class PluralOperands implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
