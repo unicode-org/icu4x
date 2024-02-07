@@ -1197,6 +1197,7 @@ impl FixedDecimal {
     /// dec.trunc(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn trunc(&mut self, position: i16) {
         self.trunc_to_increment_internal(position, NoIncrement)
     }
@@ -1226,6 +1227,7 @@ impl FixedDecimal {
     /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("9.98", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.trunc_to_increment_internal(position, increment)
     }
@@ -1453,6 +1455,7 @@ impl FixedDecimal {
     /// dec.half_trunc(0);
     /// assert_eq!("4", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_trunc(&mut self, position: i16) {
         self.half_trunc_to_increment_internal(position, NoIncrement);
     }
@@ -1482,6 +1485,7 @@ impl FixedDecimal {
     /// dec.half_trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("9.98", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.half_trunc_to_increment_internal(position, increment)
     }
@@ -1599,6 +1603,7 @@ impl FixedDecimal {
     /// dec.expand(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn expand(&mut self, position: i16) {
         self.expand_to_increment_internal(position, NoIncrement)
     }
@@ -1627,6 +1632,7 @@ impl FixedDecimal {
     /// dec.expand_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("10.00", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.expand_to_increment_internal(position, increment)
     }
@@ -1968,6 +1974,7 @@ impl FixedDecimal {
     /// dec.half_expand(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_expand(&mut self, position: i16) {
         self.half_expand_to_increment_internal(position, NoIncrement)
     }
@@ -1996,6 +2003,7 @@ impl FixedDecimal {
     /// dec.half_expand_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("10.00", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.half_expand_to_increment_internal(position, increment)
     }
@@ -2108,6 +2116,7 @@ impl FixedDecimal {
     /// dec.ceil(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn ceil(&mut self, position: i16) {
         self.ceil_to_increment_internal(position, NoIncrement);
     }
@@ -2136,6 +2145,7 @@ impl FixedDecimal {
     /// dec.ceil_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-9.98", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn ceil_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.ceil_to_increment_internal(position, increment)
     }
@@ -2241,6 +2251,7 @@ impl FixedDecimal {
     /// dec.half_ceil(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_ceil(&mut self, position: i16) {
         self.half_ceil_to_increment_internal(position, NoIncrement);
     }
@@ -2269,6 +2280,7 @@ impl FixedDecimal {
     /// dec.half_ceil_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-9.98", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_ceil_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.half_ceil_to_increment_internal(position, increment)
     }
@@ -2374,6 +2386,7 @@ impl FixedDecimal {
     /// dec.floor(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn floor(&mut self, position: i16) {
         self.floor_to_increment_internal(position, NoIncrement);
     }
@@ -2402,6 +2415,7 @@ impl FixedDecimal {
     /// dec.floor_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-10.00", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn floor_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.floor_to_increment_internal(position, increment)
     }
@@ -2507,6 +2521,7 @@ impl FixedDecimal {
     /// dec.half_floor(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_floor(&mut self, position: i16) {
         self.half_floor_to_increment_internal(position, NoIncrement);
     }
@@ -2535,6 +2550,7 @@ impl FixedDecimal {
     /// dec.half_floor_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("-10.00", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_floor_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.half_floor_to_increment_internal(position, increment)
     }
@@ -2644,6 +2660,7 @@ impl FixedDecimal {
     /// dec.half_even(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_even(&mut self, position: i16) {
         self.half_even_to_increment_internal(position, NoIncrement);
     }
@@ -2672,6 +2689,7 @@ impl FixedDecimal {
     /// dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
     /// assert_eq!("10.00", dec.to_string());
     /// ```
+    #[inline(never)]
     pub fn half_even_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         self.half_even_to_increment_internal(position, increment)
     }
