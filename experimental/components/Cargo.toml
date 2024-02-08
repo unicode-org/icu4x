@@ -57,7 +57,7 @@ criterion = "0.4.0"
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }
-num = "0.4.1"
+num-traits = "0.2.18"
 
 [features]
 default = ["compiled_data"]
