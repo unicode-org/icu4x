@@ -901,7 +901,7 @@ impl Serializer {
             resources_end,
             bundle_end: resources_end,
             largest_table_entry_count: self.largest_table_entry_count,
-            bundle_attributes: Some(!bundle.is_locale_fallback_enabled() as u32),
+            bundle_attributes: Some(!bundle.is_locale_fallback_enabled as u32),
             data_16_bit_end: Some(data_16_bit_end),
             pool_checksum: None,
         }

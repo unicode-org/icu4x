@@ -10,8 +10,8 @@
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie;
 use icu_properties::{
-    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
-    SentenceBreak, WordBreak,
+    maps, sets, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
+    IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -115,6 +115,12 @@ fn generate_rule_break_data(
 
     let data = sets::load_extended_pictographic(provider).expect("The data should be valid!");
     let extended_pictographic = data.as_borrowed();
+
+    let data = maps::load_indic_syllabic_category(provider).expect("The data should be valid!");
+    let insc = data.as_borrowed();
+
+    let data = maps::load_canonical_combining_class(provider).expect("The data should be valid!");
+    let ccc = data.as_borrowed();
 
     let data =
         GraphemeClusterBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
@@ -249,6 +255,52 @@ fn generate_rule_break_data(
                             if let Some(c) = char::from_u32(i) {
                                 if extended_pictographic.contains(c) {
                                     properties_map[c as usize] = property_index
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
+                    // The Indic_Conjunct_Break property is separate from the Grapheme_Cluster_Break property.
+                    // See https://unicode.org/reports/tr44/#Indic_Conjunct_Break
+                    if p.name == "InCBConsonant" || p.name == "InCBLinker" || p.name == "InCBExtend"
+                    {
+                        let gcb_extend = gcb_name_to_enum
+                            .get_loose("Extend")
+                            .expect("property name should be valid!");
+
+                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if let Some(c) = char::from_u32(i) {
+                                let insc_value = insc.get(c);
+                                let sc = script.get(c);
+                                let is_gb9c_script = sc == Script::Bengali
+                                    || sc == Script::Devanagari
+                                    || sc == Script::Gujarati
+                                    || sc == Script::Malayalam
+                                    || sc == Script::Oriya
+                                    || sc == Script::Telugu;
+                                let is_incb_consonant = insc_value
+                                    == IndicSyllabicCategory::Consonant
+                                    && is_gb9c_script;
+                                let is_incb_linker =
+                                    insc_value == IndicSyllabicCategory::Virama && is_gb9c_script;
+                                // InCB = Linker or InCB = Consonant
+                                if (p.name == "InCBConsonant" && is_incb_consonant)
+                                    || (p.name == "InCBLinker" && is_incb_linker)
+                                    // ZWJ is InCB=Extend, but is in a different GCB class anyway so
+                                    // it needs to be special-cased in the tables.
+                                    // NOTE(eggrobin): UAX #44, Version 15.1, instead excludes based
+                                    // on InSC.
+                                    // I believe that to be a defect in that version of Unicode.
+                                    // This has been brought to the attention of the Properties and
+                                    // Algorithms Group.
+                                    || (p.name == "InCBExtend"
+                                        && (gb.get32(i) == gcb_extend
+                                            && ccc.get32(i) != CanonicalCombiningClass::NotReordered
+                                            && !is_incb_consonant
+                                            && !is_incb_linker))
+                                {
+                                    properties_map[c as usize] = property_index;
                                 }
                             }
                         }
@@ -571,6 +623,11 @@ fn hardcoded_segmenter_provider() -> crate::DatagenProvider {
                 Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
                     [
                         (
+                            "uprops/small/ccc.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/ccc.toml")
+                                .as_slice(),
+                        ),
+                        (
                             "uprops/small/ea.toml",
                             include_bytes!("../../../data/segmenter/uprops/small/ea.toml")
                                 .as_slice(),
@@ -588,6 +645,11 @@ fn hardcoded_segmenter_provider() -> crate::DatagenProvider {
                         (
                             "uprops/small/GCB.toml",
                             include_bytes!("../../../data/segmenter/uprops/small/GCB.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/InSC.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/InSC.toml")
                                 .as_slice(),
                         ),
                         (
