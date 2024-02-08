@@ -6,6 +6,7 @@ pub mod measureunit;
 pub mod power;
 pub mod provider;
 pub mod si_prefix;
+pub mod converter;
 
 /// Represents the possible errors that can occur during the measurement unit operations.
 #[derive(Debug)]

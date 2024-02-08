@@ -3,11 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_unitsconversion::converter::ConverterFactory;
+use icu_experimental::unitsconversion::converter::ConverterFactory;
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_rational::Ratio;
-use num_rational::Signed;
 use zerotrie::ZeroTrieSimpleAscii;
 
 // TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
@@ -64,7 +63,7 @@ fn test_cldr_unit_tests() {
         result: BigRational,
     }
 
-    let data = std::fs::read_to_string("tests/data/unitsTest.txt").unwrap();
+    let data = include_str!("data/units/unitsTest.txt");
     let tests: Vec<UnitsTest> = data
         .lines()
         .filter(|line| !line.starts_with('#') && !line.is_empty())
@@ -79,14 +78,14 @@ fn test_cldr_unit_tests() {
         })
         .collect();
 
-    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+    let store = icu_experimental::unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
         .units_conversion_trie
         .clone() // cheap since store is a borrowed ZeroVec
         .take_store();
 
     let payload_store = &ZeroTrieSimpleAscii::from_store(store);
     let converter_factory = ConverterFactory::from_payload(
-        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        icu_experimental::unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
         payload_store,
     );
     let parser = converter_factory.parser();
@@ -131,14 +130,14 @@ fn test_units_not_parsable() {
         "kilo-squared-meter",
     ];
 
-    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+    let store = icu_experimental::unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
         .units_conversion_trie
         .clone() // cheap since store is a borrowed ZeroVec
         .take_store();
 
     let payload_store = &ZeroTrieSimpleAscii::from_store(store);
     let converter_factory = ConverterFactory::from_payload(
-        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        icu_experimental::unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
         payload_store,
     );
     let parser = converter_factory.parser();

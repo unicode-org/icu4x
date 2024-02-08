@@ -1264,7 +1264,7 @@ mod tests {
     use super::*;
 
     use crate as icu_experimental;
-    include!("../../../tests/transliterate/data/baked/mod.rs");
+    include!("../../../tests/data/transliterate/baked/mod.rs");
 
     #[test]
     fn test_empty_matches() {

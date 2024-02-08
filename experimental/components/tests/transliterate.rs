@@ -6,34 +6,34 @@
 
 use icu_experimental::transliterate::Transliterator;
 
-include!("data/baked/mod.rs");
+include!("data/transliterate/baked/mod.rs");
 
 #[test]
 fn test_all_cldr() {
     for (locale, data) in [
         (
             "de-t-de-d0-ascii",
-            include_str!("data/fixtures/de-t-de-d0-ascii.txt"),
+            include_str!("data/transliterate/fixtures/de-t-de-d0-ascii.txt"),
         ),
         (
             "el-Latn-t-el-m0-bgn",
-            include_str!("data/fixtures/el-Latn-t-el-m0-bgn.txt"),
+            include_str!("data/transliterate/fixtures/el-Latn-t-el-m0-bgn.txt"),
         ),
         (
             "und-Arab-t-und-beng",
-            include_str!("data/fixtures/und-Arab-t-und-beng.txt"),
+            include_str!("data/transliterate/fixtures/und-Arab-t-und-beng.txt"),
         ),
         (
             "und-t-d0-publish",
-            include_str!("data/fixtures/und-t-d0-publish.txt"),
+            include_str!("data/transliterate/fixtures/und-t-d0-publish.txt"),
         ),
         (
             "und-t-s0-publish",
-            include_str!("data/fixtures/und-t-s0-publish.txt"),
+            include_str!("data/transliterate/fixtures/und-t-s0-publish.txt"),
         ),
         (
             "und-t-und-latn-d0-ascii",
-            include_str!("data/fixtures/und-t-und-latn-d0-ascii.txt"),
+            include_str!("data/transliterate/fixtures/und-t-und-latn-d0-ascii.txt"),
         ),
     ] {
         let t =
