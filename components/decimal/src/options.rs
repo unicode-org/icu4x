@@ -6,7 +6,7 @@
 
 /// A bag of options defining how numbers will be formatted by
 /// [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
-#[derive(Debug, Eq, PartialEq, Clone, Default)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default, Hash)]
 #[non_exhaustive]
 pub struct FixedDecimalFormatterOptions {
     /// When to render grouping separators.
@@ -43,7 +43,7 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// assert_writeable_eq!(fdf.format(&ten_thousand), "10,000");
 /// ```
 #[non_exhaustive]
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
 pub enum GroupingStrategy {
     /// Render grouping separators according to locale preferences.
     Auto,

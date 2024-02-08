@@ -10,7 +10,9 @@ Issues are open to everyone to discuss and can be used to jump-start Pull Reques
 
 In most cases, the first step is to find or file a new issue related to your planned contribution, discuss it, and once you received a feedback indicating that the pull request would be welcomed you can start working on it.
 
-## Installing dependencies
+## Development Environment
+
+### Installing dependencies
 
 To build ICU4X, you will need the following dependencies:
 
@@ -19,6 +21,26 @@ To build ICU4X, you will need the following dependencies:
  - `cargo-rdme` installed via `cargo install cargo-rdme`
 
 Certain tests may need further dependencies, these are documented below in the [Testing](#testing) section.
+
+### IDE setup
+
+ICU4X can be edited using any text editor capable of editing Rust code.
+
+#### Visual Studio Code
+
+Many ICU4X engineers use [Visual Studio Code](https://code.visualstudio.com/) with the [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension.
+
+To build all code paths and improve build times in VSCode, we recommend the following settings. (Note: The second setting causes VSCode to build ICU4X with only the `und` locale, which reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.) To add these settings, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
+
+```javascript
+"settings": {
+	"rust-analyzer.cargo.features": "all",
+	"rust-analyzer.cargo.extraEnv": {
+		// Path relative to `provider/baked/*/src/lib.rs`
+		"ICU4X_DATA_DIR": "../../../../provider/datagen/tests/data/baked"
+	}
+}
+```
 
 ## Contributing a Pull Request
 
@@ -35,6 +57,8 @@ Practically, this means that new components or improvements to existing componen
 If working on a new component, consider starting it in the `experimental/` directory. We allow contributions to that directory even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved from `experimental/` into `components/` or `utils/` as a separate pull request.
 
 If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"experimental"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"experimental"` feature can be removed from the crate.
+
+When adding non-experimental code to main, also update the "unreleased" section of the changelog. This simplifies releases and gives us a better overview of what unreleased features we have.
 
 Note that the actual Cargo.toml version bumps will be done at release time, and crates under `utils/` may follow a different release cadence than those under other directory trees.
 

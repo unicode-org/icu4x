@@ -8,11 +8,11 @@ use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Ma
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
-const JSON_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/json");
-const BINCODE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/bincode");
-const POSTCARD_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/postcard");
-
-const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
+const PATHS: &[&str] = &[
+    "tests/data/json",
+    "tests/data/bincode",
+    "tests/data/postcard",
+];
 
 #[test]
 fn test_provider() {

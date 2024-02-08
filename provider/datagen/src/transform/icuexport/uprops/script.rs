@@ -27,7 +27,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvid
                 self.trie_type(),
             ))?
             .script_extensions
-            .get(0)
+            .first()
             .ok_or_else(|| {
                 DataError::custom("Could not parse Script_Extensions data from TOML")
                     .with_path_context("scx.toml")

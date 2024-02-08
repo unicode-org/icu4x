@@ -230,7 +230,7 @@ Hint: You can use `Default::default()` for the `DateTimeFormatterOptions` argume
 
 ### JavaScript Part 4
 
-Use the API documentation for [`ICU4XDateTime`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_ffi.html) and [`ICU4XDateTimeFormatter`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_formatter_ffi.html) to expand your app to format both a date and a time.
+Use the API documentation for [`ICU4XDateTime`](https://unicode-org.github.io/icu4x/tsdoc/classes/ICU4XDateTime.html) and [`ICU4XDateTimeFormatter`](https://unicode-org.github.io/icu4x/tsdoc/classes/ICU4XDateTimeFormatter.html) to expand your app to format both a date and a time.
 
 Hint: You can create an HTML time picker with
 

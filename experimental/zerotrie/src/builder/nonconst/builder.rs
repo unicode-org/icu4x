@@ -2,44 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::cmp::Ordering;
+
 use super::super::branch_meta::BranchMeta;
 use super::store::NonConstLengthsStack;
 use super::store::TrieBuilderStore;
 use crate::builder::bytestr::ByteStr;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
 use crate::error::Error;
+use crate::options::*;
 use crate::varint;
+use alloc::borrow::Cow;
 use alloc::vec::Vec;
-
-/// Whether to use the perfect hash function in the ZeroTrie.
-pub enum PhfMode {
-    /// Use binary search for all branch nodes.
-    BinaryOnly,
-    /// Use the perfect hash function for large branch nodes.
-    UsePhf,
-}
-
-/// Whether to support non-ASCII data in the ZeroTrie.
-pub enum AsciiMode {
-    /// Support only ASCII, returning an error if non-ASCII is found.
-    AsciiOnly,
-    /// Support all data, creating span nodes for non-ASCII bytes.
-    BinarySpans,
-}
-
-/// Whether to enforce a limit to the capacity of the ZeroTrie.
-pub enum CapacityMode {
-    /// Return an error if the trie requires a branch of more than 2^32 bytes.
-    Normal,
-    /// Construct the trie without returning an error.
-    Extended,
-}
-
-pub struct ZeroTrieBuilderOptions {
-    pub phf_mode: PhfMode,
-    pub ascii_mode: AsciiMode,
-    pub capacity_mode: CapacityMode,
-}
 
 /// A low-level builder for ZeroTrie. Supports all options.
 pub(crate) struct ZeroTrieBuilder<S> {
@@ -129,13 +103,14 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .iter()
             .map(|(k, v)| (k.as_ref(), *v))
             .collect::<Vec<(&[u8], usize)>>();
-        items.sort();
+        items.sort_by(|a, b| cmp_keys_values(&options, *a, *b));
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
-        Self::from_sorted_tuple_slice(byte_str_slice, options)
+        Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
     }
 
-    /// Builds a ZeroTrie with the given items and options. Assumes that the items are sorted.
+    /// Builds a ZeroTrie with the given items and options. Assumes that the items are sorted,
+    /// except for a case-insensitive trie where the items are re-sorted.
     ///
     /// # Panics
     ///
@@ -144,6 +119,29 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         items: &[(&ByteStr, usize)],
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, Error> {
+        let mut items = Cow::Borrowed(items);
+        if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
+            // We need to re-sort the items with our custom comparator.
+            items.to_mut().sort_by(|a, b| {
+                cmp_keys_values(&options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
+            });
+        }
+        Self::from_sorted_tuple_slice_impl(&items, options)
+    }
+
+    /// Internal constructor that does not re-sort the items.
+    fn from_sorted_tuple_slice_impl(
+        items: &[(&ByteStr, usize)],
+        options: ZeroTrieBuilderOptions,
+    ) -> Result<Self, Error> {
+        for ab in items.windows(2) {
+            debug_assert!(cmp_keys_values(
+                &options,
+                (ab[0].0.as_bytes(), ab[0].1),
+                (ab[1].0.as_bytes(), ab[1].1)
+            )
+            .is_lt());
+        }
         let mut result = Self {
             data: S::atbs_new_empty(),
             phf_cache: PerfectByteHashMapCacheOwned::new_empty(),
@@ -239,7 +237,17 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             if ascii_i == key_ascii && ascii_j == key_ascii {
                 let len = self.prepend_ascii(key_ascii)?;
                 current_len += len;
-                debug_assert!(i == new_i || i == new_i + 1);
+                if matches!(self.options.case_sensitivity, CaseSensitivity::IgnoreCase)
+                    && i == new_i + 2
+                {
+                    // This can happen if two strings were picked up, each with a different case
+                    return Err(Error::MixedCase);
+                }
+                debug_assert!(
+                    i == new_i || i == new_i + 1,
+                    "only the exact prefix string can be picked up at this level: {}",
+                    key_ascii
+                );
                 i = new_i;
                 debug_assert_eq!(j, new_j);
                 continue;
@@ -288,6 +296,20 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             };
             let mut branch_metas = lengths_stack.pop_many_or_panic(total_count);
             let original_keys = branch_metas.map_to_ascii_bytes();
+            if matches!(self.options.case_sensitivity, CaseSensitivity::IgnoreCase) {
+                // Check to see if we have the same letter in two different cases
+                let mut seen_ascii_alpha = [false; 26];
+                for c in original_keys.as_const_slice().as_slice() {
+                    if c.is_ascii_alphabetic() {
+                        let i = (c.to_ascii_lowercase() - b'a') as usize;
+                        if seen_ascii_alpha[i] {
+                            return Err(Error::MixedCase);
+                        } else {
+                            seen_ascii_alpha[i] = true;
+                        }
+                    }
+                }
+            }
             let use_phf = matches!(self.options.phf_mode, PhfMode::UsePhf);
             let opt_phf_vec = if total_count > 15 && use_phf {
                 let phf_vec = self
@@ -378,4 +400,19 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         assert!(lengths_stack.is_empty());
         Ok(current_len)
     }
+}
+
+fn cmp_keys_values(
+    options: &ZeroTrieBuilderOptions,
+    a: (&[u8], usize),
+    b: (&[u8], usize),
+) -> Ordering {
+    if matches!(options.case_sensitivity, CaseSensitivity::Sensitive) {
+        a.0.cmp(b.0)
+    } else {
+        let a_iter = a.0.iter().map(|x| x.to_ascii_lowercase());
+        let b_iter = b.0.iter().map(|x| x.to_ascii_lowercase());
+        Iterator::cmp(a_iter, b_iter)
+    }
+    .then_with(|| a.1.cmp(&b.1))
 }

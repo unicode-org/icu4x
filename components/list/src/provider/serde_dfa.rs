@@ -34,7 +34,8 @@ impl databake::Bake for SerdeDFA<'_> {
         env.insert("icu_list");
         let le_bytes = databake::Bake::bake(&self.deref().to_bytes_little_endian().as_slice(), env);
         let be_bytes = databake::Bake::bake(&self.deref().to_bytes_big_endian().as_slice(), env);
-        // Safe because of `to_bytes_little_endian`/`to_bytes_big_endian`'s invariant.
+        // Safe because of `to_bytes_little_endian`/`to_bytes_big_endian`'s invariant: They produce
+        // valid DFA representations, and we consume them correctly taking care of the endianness of the target platform.
         databake::quote! {
             unsafe {
                 icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(

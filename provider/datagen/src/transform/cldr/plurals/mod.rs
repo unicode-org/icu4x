@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use zerovec::ZeroMap;
 
 impl crate::DatagenProvider {
     fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
@@ -61,14 +63,12 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
                     .keys()
-                    // TODO(#568): Avoid the clone
-                    .cloned()
                     .map(DataLocale::from)
                     .collect())
             }
@@ -99,27 +99,35 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
         self.check_req::<PluralRangesV1Marker>(req)?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(PluralRangesV1::from(
-                self.get_plural_ranges()?
-                    .0
-                    .get(&req.locale.get_langid())
-                    .ok_or(DataErrorKind::MissingLocale.into_error())?,
-            ))),
-        })
+        if req.locale.is_und() {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_owned(PluralRangesV1 {
+                    ranges: ZeroMap::default(),
+                })),
+            })
+        } else {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_owned(PluralRangesV1::from(
+                    self.get_plural_ranges()?
+                        .0
+                        .get(&req.locale.get_langid())
+                        .ok_or(DataErrorKind::MissingLocale.into_error())?,
+                ))),
+            })
+        }
     }
 }
 
-impl IterableDataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<PluralRangesV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
             .keys()
-            // TODO(#568): Avoid the clone
-            .cloned()
             .map(DataLocale::from)
+            .chain([DataLocale::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
     }
 }

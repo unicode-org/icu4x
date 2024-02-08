@@ -137,6 +137,10 @@ impl ExceptionULE {
     #[inline]
     fn empty_exception() -> &'static Self {
         static EMPTY_BYTES: &[u8] = &[0, 0];
+        // Safety:
+        // ExceptionULE is a packed DST with `(u8, u8, unsized)` fields. All bit patterns are valid for the two u8s
+        //
+        // An "empty" one can be constructed from a slice of two u8s
         unsafe {
             let slice: *const [u8] = ptr::slice_from_raw_parts(EMPTY_BYTES.as_ptr(), 0);
             &*(slice as *const Self)

@@ -10,7 +10,6 @@ use icu_collections::codepointtrie::*;
 use test_util::UnicodeEnumeratedProperty;
 
 use core::convert::TryFrom;
-use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use zerovec::ZeroVec;
@@ -23,33 +22,11 @@ fn planes_trie_deserialize_check_test() {
 
     // Compute actual planes trie from planes.toml
 
-    let path = Path::new("tests/testdata/planes.toml");
-    let display = path.display();
-
-    let mut file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
-        Ok(file) => file,
-    };
-
-    let mut toml_str = String::new();
-
-    if let Err(why) = file.read_to_string(&mut toml_str) {
-        panic!("couldn't read {}: {}", display, why)
-    }
-
-    let planes_enum_prop: UnicodeEnumeratedProperty = ::toml::from_str(&toml_str).unwrap();
-
-    let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
-
-    let trie_type_enum = match TrieType::try_from(code_point_trie_struct.trie_type_enum_val) {
-        Ok(enum_val) => enum_val,
-        _ => {
-            panic!(
-                "Could not parse trie_type serialized enum value in test data file: {}",
-                code_point_trie_struct.name
-            );
-        }
-    };
+    let code_point_trie_struct =
+        toml::from_str::<UnicodeEnumeratedProperty>(include_str!("tests/testdata/planes.toml"))
+            .unwrap()
+            .code_point_trie
+            .trie_struct;
 
     let trie_header = CodePointTrieHeader {
         high_start: code_point_trie_struct.high_start,
@@ -57,7 +34,14 @@ fn planes_trie_deserialize_check_test() {
         index3_null_offset: code_point_trie_struct.index3_null_offset,
         data_null_offset: code_point_trie_struct.data_null_offset,
         null_value: code_point_trie_struct.null_value,
-        trie_type: trie_type_enum,
+        trie_type: TrieType::try_from(code_point_trie_struct.trie_type_enum_val).unwrap_or_else(
+            || {
+                panic!(
+                    "Could not parse trie_type serialized enum value in test data file: {}",
+                    code_point_trie_struct.name
+                )
+            },
+        ),
     };
 
     let data = ZeroVec::from_slice_or_alloc(code_point_trie_struct.data_8.as_ref().unwrap());

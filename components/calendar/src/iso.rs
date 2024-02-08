@@ -59,30 +59,32 @@ pub struct Iso;
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
 impl CalendarArithmetic for Iso {
-    fn month_days(year: i32, month: u8) -> u8 {
+    type YearInfo = ();
+
+    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year) => 29,
+            2 if Self::is_leap_year(year, ()) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32) -> u8 {
+    fn months_for_every_year(_: i32, _data: ()) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(year: i32, _data: ()) -> bool {
         calendrical_calculations::iso::is_leap_year(year)
     }
 
-    fn last_month_day_in_year(_year: i32) -> (u8, u8) {
+    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
+        if Self::is_leap_year(year, ()) {
             366
         } else {
             365
@@ -143,7 +145,7 @@ impl Calendar for Iso {
 
         // Corresponding months from
         // https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Corresponding_months
-        let month_offset = if Self::is_leap_year(date.0.year) {
+        let month_offset = if Self::is_leap_year(date.0.year, ()) {
             match date.0.month {
                 10 => 0,
                 5 => 1,
@@ -174,7 +176,7 @@ impl Calendar for Iso {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset);
+        date.0.offset_date(offset, &());
     }
 
     #[allow(clippy::field_reassign_with_default)]
@@ -192,6 +194,10 @@ impl Calendar for Iso {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Self::year_as_iso(date.0.year)
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0.year, ())
     }
 
     /// The calendar-specific month represented by `date`
@@ -280,6 +286,15 @@ impl DateTime<Iso> {
         })
     }
 
+    /// Constructs an ISO datetime representing the UNIX epoch on January 1, 1970
+    /// at midnight.
+    pub fn local_unix_epoch() -> Self {
+        DateTime {
+            date: Date::unix_epoch(),
+            time: types::Time::midnight(),
+        }
+    }
+
     /// Minute count representation of calendars starting from 00:00:00 on Jan 1st, 1970.
     ///
     /// ```rust
@@ -359,14 +374,14 @@ impl Iso {
     fn days_in_month(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year) => 29,
+            2 if Self::is_leap_year(year, ()) => 29,
             2 => 28,
             _ => 31,
         }
     }
 
     pub(crate) fn days_in_year_direct(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+        if Self::is_leap_year(year, ()) {
             366
         } else {
             365
@@ -417,7 +432,7 @@ impl Iso {
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
         #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
         let mut offset = month_offset[date.0.month as usize - 1];
-        if Self::is_leap_year(date.0.year) && date.0.month > 2 {
+        if Self::is_leap_year(date.0.year, ()) && date.0.month > 2 {
             // Months after February in a leap year are offset by one less
             offset += 1;
         }

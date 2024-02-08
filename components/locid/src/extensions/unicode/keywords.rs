@@ -6,10 +6,12 @@ use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
 use litemap::LiteMap;
+use writeable::Writeable;
 
 use super::Key;
 use super::Value;
 use crate::helpers::ShortSlice;
+#[allow(deprecated)]
 use crate::ordering::SubtagOrderingResult;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
@@ -303,7 +305,7 @@ impl Keywords {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+        self.write_cmp_bytes(other)
     }
 
     /// Compare this [`Keywords`] with an iterator of BCP-47 subtags.
@@ -340,6 +342,8 @@ impl Keywords {
     ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     /// ```
+    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
+    #[allow(deprecated)]
     pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
     where
         I: Iterator<Item = &'l [u8]>,

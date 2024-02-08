@@ -5,7 +5,6 @@
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
 use std::any::Any;
-#[cfg(feature = "legacy_api")]
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -101,7 +100,6 @@ pub(crate) struct ZipData {
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipData, String>>),
-    #[cfg(feature = "legacy_api")]
     Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
@@ -204,7 +202,6 @@ impl AbstractFs {
                     .read_to_end(&mut buf)?;
                 Ok(buf)
             }
-            #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
                 DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
             }),
@@ -240,10 +237,11 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
-            #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map
                 .keys()
                 .copied()
+                .filter_map(|p| p.strip_prefix(path))
+                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
@@ -262,7 +260,6 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_list
                 .contains(path),
-            #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map.contains_key(path),
         })
     }

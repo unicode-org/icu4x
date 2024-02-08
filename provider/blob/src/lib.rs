@@ -5,13 +5,13 @@
 //! `icu_provider_blob` contains [`BlobDataProvider`], a [`BufferProvider`] implementation that
 //! supports loading data from a single serialized blob.
 //!
-//! To build blob data, use the `--format blob` option of [`icu_datagen`]:
+//! To build blob data, use the `--format blob2` option of [`icu_datagen`]:
 //!
 //! ```bash
-//! $ icu4x-datagen --keys all --locales full --format blob --out data.postcard
+//! $ icu4x-datagen --keys all --locales full --format blob2 --out data.postcard
 //! ```
 //!
-//! For examples, see the specific data providers.
+//! You can also use `--format blob` if you need to support ICU4X versions prior to 1.4.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`BufferProvider`]: icu_provider::BufferProvider

@@ -10,7 +10,6 @@ use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
 use std::collections::HashMap;
-use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::{ule::UnvalidatedStr, ZeroVec};
 

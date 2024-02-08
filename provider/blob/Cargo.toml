@@ -49,6 +49,9 @@ export = [
     "zerotrie/litemap",
 ]
 
+[lib]
+bench = false  # This option is required for Benchmark CI
+
 [[bench]]
 name = "blob_version_bench"
 harness = false

@@ -15,30 +15,12 @@ fn main() -> std::io::Result<()> {
         &capi.join("src/lib.rs"),
         &lang,
         &{
-            let include = capi.join(&lang).join(match lang.as_str() {
-                "js" => "package/lib",
-                "dart" => "package/lib/src",
-                _ => "include",
-            });
+            let include = capi.join("bindings").join(&lang);
             std::fs::remove_dir_all(&include)?;
             std::fs::create_dir(&include)?;
             include
         },
-        if lang == "cpp" || lang == "js" {
-            let docs = capi.join(&lang).join(if lang == "cpp" {
-                "docs/source"
-            } else {
-                "package/docs/source"
-            });
-            let conf = std::fs::read_to_string(docs.join("conf.py"))?;
-            std::fs::remove_dir_all(&docs)?;
-            std::fs::create_dir(&docs)?;
-            std::fs::write(docs.join("conf.py"), conf)?;
-            Some(docs)
-        } else {
-            None
-        }
-        .as_deref(),
+        None,
         &Default::default(),
         None,
         false,

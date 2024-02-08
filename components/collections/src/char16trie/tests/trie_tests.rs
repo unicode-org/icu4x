@@ -9,7 +9,10 @@ use zerovec::ZeroVec;
 
 #[test]
 fn char16trie_test_empty() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/empty.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/empty.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
     let res = trie.iter().next('h');
     assert_eq!(res, TrieResult::NoMatch);
@@ -17,7 +20,10 @@ fn char16trie_test_empty() {
 
 #[test]
 fn char16trie_test_a() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_a.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_a.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
@@ -33,7 +39,10 @@ fn char16trie_test_a() {
 
 #[test]
 fn char16trie_test_a_b() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_a_ab.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_a_ab.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
@@ -53,7 +62,10 @@ fn char16trie_test_a_b() {
 
 #[test]
 fn char16trie_test_shortest_branch() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_shortest_branch.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_shortest_branch.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
@@ -71,7 +83,10 @@ fn char16trie_test_shortest_branch() {
 
 #[test]
 fn char16trie_test_branches() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_branches.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_branches.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
@@ -104,7 +119,10 @@ fn char16trie_test_branches() {
 
 #[test]
 fn char16trie_test_long_sequence() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_long_sequence.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_long_sequence.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
@@ -145,7 +163,10 @@ fn char16trie_test_long_sequence() {
 
 #[test]
 fn char16trie_test_long_branch() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_long_branch.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_long_branch.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
@@ -196,7 +217,10 @@ fn char16trie_test_long_branch() {
 
 #[test]
 fn char16trie_test_compact() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/test_compact.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_compact.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
@@ -235,7 +259,10 @@ fn char16trie_test_compact() {
 
 #[test]
 fn char16trie_test_months() {
-    let trie_data = test_util::load_char16trie_data("tests/testdata/months.toml");
+    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/months.toml"))
+        .unwrap()
+        .ucharstrie
+        .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();

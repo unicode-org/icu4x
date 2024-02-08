@@ -1396,6 +1396,7 @@ impl Script {
     pub const Nabataean: Script = Script(143);
     pub const NagMundari: Script = Script(199);
     pub const Nandinagari: Script = Script(187);
+    pub const Nastaliq: Script = Script(200);
     pub const NewTaiLue: Script = Script(59);
     pub const Newa: Script = Script(170);
     pub const Nko: Script = Script(87);
@@ -1685,6 +1686,13 @@ impl LineBreak {
     pub const EBase: LineBreak = LineBreak(40); // name="EB"
     pub const EModifier: LineBreak = LineBreak(41); // name="EM"
     pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ"
+
+    // Added in ICU 74:
+    pub const Aksara: LineBreak = LineBreak(43); // name="AK"
+    pub const AksaraPrebase: LineBreak = LineBreak(44); // name=AP"
+    pub const AksaraStart: LineBreak = LineBreak(45); // name=AS"
+    pub const ViramaFinal: LineBreak = LineBreak(46); // name=VF"
+    pub const Virama: LineBreak = LineBreak(47); // name=VI"
 }
 
 impl_value_getter! {

@@ -41,6 +41,12 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
     }
 }
 
+impl From<Weekday> for icu_calendar::types::IsoWeekday {
+    fn from(day: Weekday) -> Self {
+        (&day).into()
+    }
+}
+
 /// The territory that data is keyed by.
 ///
 /// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }
@@ -118,6 +124,8 @@ impl TryFrom<String> for U8 {
 pub struct WeekData {
     pub min_days: BTreeMap<Territory, U8>,
     pub first_day: BTreeMap<Territory, Weekday>,
+    pub weekend_start: BTreeMap<Territory, Weekday>,
+    pub weekend_end: BTreeMap<Territory, Weekday>,
 }
 
 #[derive(Deserialize)]
