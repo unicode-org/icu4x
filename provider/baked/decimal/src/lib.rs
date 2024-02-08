@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data for the icu_decimal crate
+//! Data for the `icu_decimal` crate
 //!
 //! This data was generated with CLDR version 44.1.0, ICU version release-74-2, and
 //! LSTM segmenter version v0.1.0.
