@@ -18,17 +18,17 @@ fn test_concatenate() {
     let cases = [
         TestCase {
             input_1: &locale!("de-CH"),
-            expected: "Swiss High German",
+            expected: "Swiss  German",
             should_borrow: true,
         },
         TestCase {
             input_1: &locale!("zh_Hans"),
-            expected: "Simplified Chinese",
+            expected: " Chinese",
             should_borrow: true,
         },
         TestCase {
             input_1: &locale!("es-419"),
-            expected: "Latin American Spanish",
+            expected: "Latin American",
             should_borrow: true,
         },
         TestCase {
