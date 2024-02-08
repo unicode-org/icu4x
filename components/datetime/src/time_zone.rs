@@ -963,7 +963,7 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
 impl FormatTimeZone for GenericNonLocationLongFormat {
     /// Writes the time zone in long generic non-location format as defined by the UTS-35 spec.
     /// e.g. Pacific Time
-    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
@@ -1001,7 +1001,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
 impl FormatTimeZone for GenericNonLocationShortFormat {
     /// Writes the time zone in short generic non-location format as defined by the UTS-35 spec.
     /// e.g. PT
-    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
@@ -1039,7 +1039,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
 impl FormatTimeZone for SpecificNonLocationShortFormat {
     /// Writes the time zone in short specific non-location format as defined by the UTS-35 spec.
     /// e.g. PDT
-    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
@@ -1081,7 +1081,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
 impl FormatTimeZone for SpecificNonLocationLongFormat {
     /// Writes the time zone in long specific non-location format as defined by the UTS-35 spec.
     /// e.g. Pacific Daylight Time
-    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
@@ -1126,7 +1126,7 @@ impl FormatTimeZone for LocalizedGmtFormat {
     /// GMT formats regardless of locale.
     ///
     /// You can see more information about our decision to resolve this conflict here:
-    /// https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing
+    /// <https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing>
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
@@ -1192,7 +1192,7 @@ impl FormatTimeZone for LocalizedGmtFormat {
 impl FormatTimeZone for GenericLocationFormat {
     /// Writes the time zone in generic location format as defined by the UTS-35 spec.
     /// e.g. France Time
-    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
