@@ -46,25 +46,64 @@ log = { version = "0.4", optional = true }
 num-bigint = "0.4.4"
 num-rational = "0.4.1"
 num-traits = "0.2.17"
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { version = "1.0", default-features = false, features = [
+    "derive",
+    "alloc",
+], optional = true }
 smallvec = "1.11.2"
 
 icu_experimental_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+icu_locid_transform = { workspace = true, optional = true, features = [
+    "compiled_data",
+] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4.0"
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }
+num = "0.4.1"
 
 [features]
 default = ["compiled_data"]
-compiled_data = ["dep:icu_experimental_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data"]
-datagen = ["serde", "std", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_collections/databake", "std", "log", "icu_provider/datagen"]
+compiled_data = [
+    "dep:icu_experimental_data",
+    "dep:icu_locid_transform",
+    "icu_decimal/compiled_data",
+    "icu_plurals/compiled_data",
+    "icu_properties/compiled_data",
+    "icu_normalizer/compiled_data",
+]
+datagen = [
+    "serde",
+    "std",
+    "dep:databake",
+    "zerovec/databake",
+    "zerotrie/databake",
+    "tinystr/databake",
+    "icu_collections/databake",
+    "std",
+    "log",
+    "icu_provider/datagen",
+]
 ryu = ["fixed_decimal/ryu"]
-serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_collections/serde", "icu_decimal/serde", "icu_plurals/serde", "icu_provider/serde", "zerotrie/serde"]
-std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/std", "icu_locid/std"]
+serde = [
+    "dep:serde",
+    "zerovec/serde",
+    "tinystr/serde",
+    "icu_collections/serde",
+    "icu_decimal/serde",
+    "icu_plurals/serde",
+    "icu_provider/serde",
+    "zerotrie/serde",
+]
+std = [
+    "fixed_decimal/std",
+    "icu_decimal/std",
+    "icu_plurals/std",
+    "icu_provider/std",
+    "icu_locid/std",
+]
 
 bench = []
 
@@ -72,3 +111,11 @@ bench = []
 name = "transliterate"
 path = "benches/transliterate/bench.rs"
 harness = false
+
+[[test]]
+name = "displaynames_test"
+path = "tests/displaynames/tests.rs"
+
+[[test]]
+name = "units_test"
+path = "tests/unitsconversion/units_test.rs"
