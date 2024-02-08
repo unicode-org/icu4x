@@ -43,9 +43,9 @@ zerovec = { workspace = true, features = ["derive", "yoke"] }
 
 displaydoc = { version = "0.2.3", default-features = false }
 log = { version = "0.4", optional = true }
-num-bigint = "0.4.4"
-num-rational = "0.4.1"
-num-traits = "0.2.18"
+num-bigint = { version = "0.4.4", default-features = false }
+num-rational = { version = "0.4.1", default-features = false }
+num-traits = { version = "0.2.18", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 smallvec = "1.11.2"
 
@@ -57,6 +57,8 @@ criterion = "0.4.0"
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }
+#TODO: remove this once we are not using `BigRational` anymore.
+num-rational = "0.4.1"
 
 [features]
 default = ["compiled_data"]
