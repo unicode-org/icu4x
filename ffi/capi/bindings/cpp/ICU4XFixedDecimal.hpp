@@ -15,7 +15,7 @@ class ICU4XFixedDecimal;
 #include "ICU4XError.hpp"
 #include "ICU4XFixedDecimalSign.hpp"
 #include "ICU4XFixedDecimalSignDisplay.hpp"
-#include "ICU4XFixedDecimalRoundingIncrement.hpp"
+#include "ICU4XRoundingIncrement.hpp"
 
 /**
  * A destruction policy for using ICU4XFixedDecimal with std::unique_ptr.
@@ -198,7 +198,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
    */
-  void trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
@@ -208,7 +208,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `half_trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment) for more information.
    */
-  void half_trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void half_trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
@@ -218,7 +218,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
    */
-  void expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void expand_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
@@ -228,7 +228,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `half_expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment) for more information.
    */
-  void half_expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void half_expand_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
@@ -238,7 +238,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment) for more information.
    */
-  void ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `half_ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
@@ -248,7 +248,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `half_ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment) for more information.
    */
-  void half_ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void half_ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
@@ -258,7 +258,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment) for more information.
    */
-  void floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void floor_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `half_floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
@@ -268,7 +268,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `half_floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment) for more information.
    */
-  void half_floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void half_floor_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * See the [Rust documentation for `half_even`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
@@ -278,7 +278,7 @@ class ICU4XFixedDecimal {
   /**
    * See the [Rust documentation for `half_even_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment) for more information.
    */
-  void half_even_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment);
+  void half_even_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
    * Concatenates `other` to the end of `self`.
@@ -425,56 +425,56 @@ inline void ICU4XFixedDecimal::set_max_position(int16_t position) {
 inline void ICU4XFixedDecimal::trunc(int16_t position) {
   capi::ICU4XFixedDecimal_trunc(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_trunc_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_trunc_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::half_trunc(int16_t position) {
   capi::ICU4XFixedDecimal_half_trunc(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::half_trunc_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_trunc_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::half_trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_half_trunc_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::expand(int16_t position) {
   capi::ICU4XFixedDecimal_expand(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_expand_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::expand_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_expand_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::half_expand(int16_t position) {
   capi::ICU4XFixedDecimal_half_expand(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::half_expand_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_expand_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::half_expand_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_half_expand_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::ceil(int16_t position) {
   capi::ICU4XFixedDecimal_ceil(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_ceil_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_ceil_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::half_ceil(int16_t position) {
   capi::ICU4XFixedDecimal_half_ceil(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::half_ceil_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_ceil_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::half_ceil_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_half_ceil_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::floor(int16_t position) {
   capi::ICU4XFixedDecimal_floor(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_floor_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::floor_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_floor_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::half_floor(int16_t position) {
   capi::ICU4XFixedDecimal_half_floor(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::half_floor_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_floor_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::half_floor_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_half_floor_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::half_even(int16_t position) {
   capi::ICU4XFixedDecimal_half_even(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::half_even_to_increment(int16_t position, ICU4XFixedDecimalRoundingIncrement increment) {
-  capi::ICU4XFixedDecimal_half_even_to_increment(this->inner.get(), position, static_cast<capi::ICU4XFixedDecimalRoundingIncrement>(increment));
+inline void ICU4XFixedDecimal::half_even_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_half_even_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline diplomat::result<std::monostate, std::monostate> ICU4XFixedDecimal::concatenate_end(ICU4XFixedDecimal& other) {
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_concatenate_end(this->inner.get(), other.AsFFIMut());

@@ -1,5 +1,5 @@
-#ifndef ICU4XFixedDecimalRoundingIncrement_HPP
-#define ICU4XFixedDecimalRoundingIncrement_HPP
+#ifndef ICU4XRoundingIncrement_HPP
+#define ICU4XRoundingIncrement_HPP
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XFixedDecimalRoundingIncrement.h"
+#include "ICU4XRoundingIncrement.h"
 
 
 
@@ -18,7 +18,7 @@
  * 
  * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
  */
-enum struct ICU4XFixedDecimalRoundingIncrement {
+enum struct ICU4XRoundingIncrement {
   MultiplesOf1 = 0,
   MultiplesOf2 = 1,
   MultiplesOf5 = 2,

@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// Increment used in a rounding operation.
 ///
 /// See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
-enum FixedDecimalRoundingIncrement {
+enum RoundingIncrement {
   multiplesOf1,
 
   multiplesOf2,
