@@ -2838,10 +2838,6 @@ name = "icu_pattern"
 version = "0.1.5"
 
 [[patch.unused]]
-name = "icu_unitsconversion"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "ixdtf"
 version = "0.1.0"
 
