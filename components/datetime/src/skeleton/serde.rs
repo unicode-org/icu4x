@@ -25,7 +25,7 @@ pub mod reference {
         }
 
         /// A [`Skeleton`] serialized into a string follows UTS-35.
-        /// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+        /// <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
         /// This string consists of a symbol that is repeated N times. This string is
         /// deserialized here into the Skeleton format which is used in memory
         /// when working with formatting datetimes.
