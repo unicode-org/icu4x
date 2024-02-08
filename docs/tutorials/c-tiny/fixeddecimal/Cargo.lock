@@ -2824,7 +2824,6 @@ version = "1.4.0"
 name = "icu_timezone_data"
 version = "1.4.0"
 
-
 [[patch.unused]]
 name = "ixdtf"
 version = "0.1.0"
