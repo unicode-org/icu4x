@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_unitsconversion::converter::ConverterFactory;
+use icu_units::converter::ConverterFactory;
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_rational::Ratio;
@@ -79,14 +79,14 @@ fn test_cldr_unit_tests() {
         })
         .collect();
 
-    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+    let store = icu_units::provider::Baked::SINGLETON_UNITS_INFO_V1
         .units_conversion_trie
         .clone() // cheap since store is a borrowed ZeroVec
         .take_store();
 
     let payload_store = &ZeroTrieSimpleAscii::from_store(store);
     let converter_factory = ConverterFactory::from_payload(
-        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        icu_units::provider::Baked::SINGLETON_UNITS_INFO_V1,
         payload_store,
     );
     let parser = converter_factory.parser();
@@ -131,14 +131,14 @@ fn test_units_not_parsable() {
         "kilo-squared-meter",
     ];
 
-    let store = icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1
+    let store = icu_units::provider::Baked::SINGLETON_UNITS_INFO_V1
         .units_conversion_trie
         .clone() // cheap since store is a borrowed ZeroVec
         .take_store();
 
     let payload_store = &ZeroTrieSimpleAscii::from_store(store);
     let converter_factory = ConverterFactory::from_payload(
-        icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1,
+        icu_units::provider::Baked::SINGLETON_UNITS_INFO_V1,
         payload_store,
     );
     let parser = converter_factory.parser();

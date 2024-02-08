@@ -487,7 +487,7 @@ registry!(
     icu_experimental::transliterate::provider::TransliteratorRulesV1Marker =
         "transliterator/rules@1",
     #[cfg(feature = "experimental_components")]
-    icu_experimental::unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
+    icu_experimental::units::provider::UnitsInfoV1Marker = "units/info@1",
 );
 
 /// Same as `all_keys`.

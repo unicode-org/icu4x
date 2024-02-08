@@ -7,7 +7,7 @@ use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-use crate::unitsconversion::{
+use crate::units::{
     power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
     si_prefix::get_si_prefix,
