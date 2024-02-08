@@ -117,5 +117,13 @@ name = "displaynames_test"
 path = "tests/displaynames/tests.rs"
 
 [[test]]
+name = "personnames_test"
+path = "tests/personnames/tests.rs"
+
+[[test]]
+name = "relativetime_test"
+path = "tests/relativetime/tests.rs"
+
+[[test]]
 name = "units_test"
 path = "tests/unitsconversion/units_test.rs"
