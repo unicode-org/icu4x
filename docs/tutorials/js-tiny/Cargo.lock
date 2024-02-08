@@ -1025,10 +1025,6 @@ name = "icu_unicodeset_parse"
 version = "0.1.2"
 
 [[patch.unused]]
-name = "icu_unitsconversion"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "ixdtf"
 version = "0.1.0"
 
