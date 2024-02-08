@@ -528,7 +528,7 @@ impl Reader {
 
         let (final_state, bundle) = bundle::<VerboseError<ParseState>>(input.clone())
             .finish()
-            .unwrap_or_else(|err| TextParserError {
+            .map_err(|err| TextParserError {
                 trace: convert_error(input, err),
             })?;
 
