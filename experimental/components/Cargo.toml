@@ -125,5 +125,9 @@ name = "relativetime_test"
 path = "tests/relativetime/tests.rs"
 
 [[test]]
+name = "transliterate_test"
+path = "tests/transliterate/cldr.rs"
+
+[[test]]
 name = "units_test"
 path = "tests/unitsconversion/units_test.rs"
