@@ -92,7 +92,8 @@ mod trievalue;
 
 pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
+    GraphemeClusterBreak, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
+    WordBreak,
 };
 
 /// Module for working with the names of property values

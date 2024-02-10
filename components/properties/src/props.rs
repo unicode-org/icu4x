@@ -2364,3 +2364,27 @@ impl_value_getter! {
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }
 }
+/// Enumerated property Joining_Type.
+/// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of
+/// each property value.
+///
+/// The numeric value is compatible with `UJoiningType` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(JoiningTypeULE)]
+pub struct JoiningType(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl JoiningType {
+    pub const NonJoining: JoiningType = JoiningType(0); // name="U"
+    pub const JoinCausing: JoiningType = JoiningType(1); // name="C"
+    pub const DualJoining: JoiningType = JoiningType(2); // name="D"
+    pub const LeftJoining: JoiningType = JoiningType(3); // name="L"
+    pub const RightJoining: JoiningType = JoiningType(4); // name="R"
+    pub const Transparent: JoiningType = JoiningType(5); // name="T"
+}

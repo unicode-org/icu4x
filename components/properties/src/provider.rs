@@ -896,6 +896,16 @@ expand!(
             "InSC",
             IndicSyllabicCategory
         ),
+        (
+            JoiningTypeV1Marker,
+            JoiningTypeNameToValueV1Marker,
+            (
+                linear: JoiningTypeValueToShortNameV1Marker,
+                JoiningTypeValueToLongNameV1Marker
+            ),
+            "jt",
+            JoiningType
+        ),
         // note: the names key for the GCM mask is handled above
     )
 );
