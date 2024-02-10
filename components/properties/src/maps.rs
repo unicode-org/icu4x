@@ -600,3 +600,30 @@ make_map_property! {
     pub const indic_syllabic_category => SINGLETON_PROPS_INSC_V1;
     pub fn load_indic_syllabic_category();
 }
+
+make_map_property! {
+    property: "Joining_Type";
+    marker: JoiningTypeProperty;
+    value: crate::JoiningType;
+    keyed_data_marker: JoiningTypeV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
+    /// property. See [`JoiningType`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, JoiningType};
+    ///
+    /// assert_eq!(maps::joining_type().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
+    /// assert_eq!(maps::joining_type().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
+    /// ```
+    pub const joining_type => SINGLETON_PROPS_JT_V1;
+    pub fn load_joining_type();
+}
