@@ -614,8 +614,6 @@ make_map_property! {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
-    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
-    ///
     /// # Example
     ///
     /// ```
