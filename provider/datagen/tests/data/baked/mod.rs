@@ -129,6 +129,7 @@ macro_rules! impl_data_provider {
         impl_propnames_from_ea_v1!($provider);
         impl_propnames_from_gc_v1!($provider);
         impl_propnames_from_gcm_v1!($provider);
+        impl_propnames_from_jt_v1!($provider);
         impl_propnames_from_lb_v1!($provider);
         impl_propnames_from_sc_v1!($provider);
         impl_propnames_to_long_linear_gcb_v1!($provider);
@@ -138,6 +139,7 @@ macro_rules! impl_data_provider {
         impl_propnames_to_long_linear_bc_v1!($provider);
         impl_propnames_to_long_linear_ea_v1!($provider);
         impl_propnames_to_long_linear_gc_v1!($provider);
+        impl_propnames_to_long_linear_jt_v1!($provider);
         impl_propnames_to_long_linear_lb_v1!($provider);
         impl_propnames_to_long_linear_sc_v1!($provider);
         impl_propnames_to_long_sparse_ccc_v1!($provider);
@@ -148,6 +150,7 @@ macro_rules! impl_data_provider {
         impl_propnames_to_short_linear_bc_v1!($provider);
         impl_propnames_to_short_linear_ea_v1!($provider);
         impl_propnames_to_short_linear_gc_v1!($provider);
+        impl_propnames_to_short_linear_jt_v1!($provider);
         impl_propnames_to_short_linear_lb_v1!($provider);
         impl_propnames_to_short_linear4_sc_v1!($provider);
         impl_propnames_to_short_sparse_ccc_v1!($provider);
@@ -226,6 +229,7 @@ macro_rules! impl_data_provider {
         impl_props_exemplarchars_punctuation_v1!($provider);
         impl_props_gc_v1!($provider);
         impl_props_graph_v1!($provider);
+        impl_props_jt_v1!($provider);
         impl_props_lb_v1!($provider);
         impl_props_nfcinert_v1!($provider);
         impl_props_nfdinert_v1!($provider);
@@ -413,6 +417,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::names::GeneralCategoryMaskNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::names::GeneralCategoryMaskNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::JoiningTypeNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphemeClusterBreakValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -422,6 +427,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::BidiClassValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::JoiningTypeValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::CanonicalCombiningClassValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -432,6 +438,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::BidiClassValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::EastAsianWidthValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::JoiningTypeValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::CanonicalCombiningClassValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -510,6 +517,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::ExemplarCharactersPunctuationV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::JoiningTypeV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::NfcInertV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::NfcInertV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::NfdInertV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::NfdInertV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
