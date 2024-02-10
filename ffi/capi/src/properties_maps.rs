@@ -225,6 +225,18 @@ pub mod ffi {
                 provider,
             )?))
         }
+
+        #[diplomat::rust_link(icu::properties::maps::joining_type, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_joining_type, Fn, hidden)]
+        pub fn load_joining_type(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+            Ok(convert_8(call_constructor_unstable!(
+                maps::joining_type [r => Ok(r.static_to_owned())],
+                maps::load_joining_type,
+                provider,
+            )?))
+        }
     }
 
     #[diplomat::opaque]

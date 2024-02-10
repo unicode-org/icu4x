@@ -169,6 +169,17 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
     return CodePointMapData8._(result.union.ok, true);
   }
+
+  /// See the [Rust documentation for `joining_type`](https://docs.rs/icu/latest/icu/properties/maps/fn.joining_type.html) for more information.
+  ///
+  /// Throws [Error] on failure.
+  factory CodePointMapData8.loadJoiningType(DataProvider provider) {
+    final result = _ICU4XCodePointMapData8_load_joining_type(provider._underlying);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok, true);
+  }
 }
 
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_destroy')
@@ -230,3 +241,7 @@ external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_word_break(ffi.Pointer<
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_sentence_break')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_sentence_break(ffi.Pointer<ffi.Opaque> provider);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_joining_type')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_joining_type(ffi.Pointer<ffi.Opaque> provider);

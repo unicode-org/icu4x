@@ -134,4 +134,11 @@ export class ICU4XCodePointMapData8 {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_sentence_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.joining_type.html Rust documentation for `joining_type`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_joining_type(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 }
