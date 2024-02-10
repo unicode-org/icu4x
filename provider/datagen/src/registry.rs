@@ -376,7 +376,6 @@ registry!(
         "propnames/to/short/linear/InSC@1",
     icu_properties::provider::GraphV1Marker = "props/graph@1",
     icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
-    icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
     icu_properties::provider::JoiningTypeV1Marker = "props/jt@1",
     icu_properties::provider::JoiningTypeNameToValueV1Marker = "propnames/from/jt@1",
     icu_properties::provider::JoiningTypeValueToLongNameV1Marker = "propnames/to/long/linear/jt@1",
