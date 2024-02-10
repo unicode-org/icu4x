@@ -2389,7 +2389,6 @@ impl JoiningType {
     pub const Transparent: JoiningType = JoiningType(5); // name="T"
 }
 
-
 impl_value_getter! {
     markers: JoiningTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_JT_V1, JoiningTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1, JoiningTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_JT_V1;
     impl JoiningType {
