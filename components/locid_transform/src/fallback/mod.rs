@@ -19,7 +19,7 @@ mod algorithms;
 ///
 /// Note that this implementation performs some additional steps compared to the *UTS #35*
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
-/// https://github.com/unicode-org/icu4x/issues/2243) to track aligment with *UTS #35*.
+/// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
 /// If running fallback in a loop, use [`DataLocale::is_und()`] to break from the loop.
 ///

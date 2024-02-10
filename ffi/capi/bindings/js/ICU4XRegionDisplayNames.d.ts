@@ -20,7 +20,7 @@ export class ICU4XRegionDisplayNames {
 
   /**
 
-   * Returns the locale specific display name of a region. Note that the funtion returns an empty string in case the display name for a given region code is not found.
+   * Returns the locale specific display name of a region. Note that the function returns an empty string in case the display name for a given region code is not found.
 
    * See the {@link https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of Rust documentation for `of`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
