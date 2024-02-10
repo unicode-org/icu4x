@@ -51,7 +51,7 @@ We also need to enable the `serde` feature on the `icu` crate to enable deserial
 cargo add icu --features serde
 ```
 
-Now, update the instatiation of the datetime formatter to load data from the blob if the
+Now, update the instantiation of the datetime formatter to load data from the blob if the
 locale is Chakma:
 
 ```rust
