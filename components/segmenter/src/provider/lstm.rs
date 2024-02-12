@@ -180,7 +180,7 @@ impl<'data> LstmDataFloat32<'data> {
     }
 
     #[cfg(any(feature = "serde", feature = "datagen"))]
-    /// Creates a LstmDataFloat32 with the given data. Fails if the matrix dimensions are inconsisent.
+    /// Creates a LstmDataFloat32 with the given data. Fails if the matrix dimensions are inconsistent.
     #[allow(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,

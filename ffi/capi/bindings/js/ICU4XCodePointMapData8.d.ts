@@ -37,7 +37,7 @@ export class ICU4XCodePointMapData8 {
 
    * Converts a general category to its corresponding mask value
 
-   * Nonexistant general categories will map to the empty mask
+   * Nonexistent general categories will map to the empty mask
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html Rust documentation for `GeneralCategoryGroup`} for more information.
    */

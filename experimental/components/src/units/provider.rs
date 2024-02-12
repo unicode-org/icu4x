@@ -35,7 +35,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -57,7 +57,7 @@ pub struct UnitsInfoV1<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(
     feature = "datagen",
@@ -108,7 +108,7 @@ pub struct ConversionInfo<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -124,7 +124,7 @@ pub enum Sign {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -139,7 +139,7 @@ pub enum Exactness {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -162,7 +162,7 @@ pub enum Base {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MeasureUnitItem {
@@ -183,7 +183,7 @@ pub struct MeasureUnitItem {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::unitsconversion::provider),
+    databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SiPrefix {

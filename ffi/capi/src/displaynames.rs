@@ -111,7 +111,7 @@ pub mod ffi {
         }
 
         /// Returns the locale specific display name of a region.
-        /// Note that the funtion returns an empty string in case the display name for a given
+        /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
         pub fn of(

@@ -56,7 +56,7 @@ pub mod ffi {
 
         /// Converts a general category to its corresponding mask value
         ///
-        /// Nonexistant general categories will map to the empty mask
+        /// Nonexistent general categories will map to the empty mask
         #[diplomat::rust_link(icu::properties::GeneralCategoryGroup, Struct)]
         pub fn general_category_to_mask(gc: u8) -> u32 {
             if let Ok(gc) = GeneralCategory::try_from(gc) {

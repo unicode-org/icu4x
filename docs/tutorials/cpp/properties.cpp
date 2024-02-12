@@ -199,7 +199,7 @@ int main() {
     }
     mask = mask_mapper.get_strict("EverythingLol");
     if (mask != 0) {
-        std::cout << "Expected no mask for nonexistant name `EverythingLol`, found " << mask << std::endl;
+        std::cout << "Expected no mask for nonexistent name `EverythingLol`, found " << mask << std::endl;
         result = 1;
     }
 

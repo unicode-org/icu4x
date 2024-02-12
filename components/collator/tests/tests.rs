@@ -896,7 +896,7 @@ fn test_th_reordering() {
         // supplementary composition decomps to supplementary
         "\u{0E41}\u{1D15F}",
         // supplementary composition decomps to BMP
-        "\u{0E41}\u{2F802}", /* omit bacward iteration tests
+        "\u{0E41}\u{2F802}", /* omit backward iteration tests
                               * contraction bug
                               * "\u{0E24}\u{0E41}",
                               * TODO: Support contracting starters, then add more here */

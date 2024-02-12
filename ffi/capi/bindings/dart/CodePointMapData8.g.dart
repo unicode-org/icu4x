@@ -35,7 +35,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
 
   /// Converts a general category to its corresponding mask value
   ///
-  /// Nonexistant general categories will map to the empty mask
+  /// Nonexistent general categories will map to the empty mask
   ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html) for more information.
   static int generalCategoryToMask(int gc) {
