@@ -9720,12 +9720,10 @@ class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val =
       _capi<
-                  ffi
-                  .NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(
-                          ffi.Pointer<ffi.Opaque>,
-                          ffi
-                              .Uint32)>>(
+                  ffi.NativeFunction<
+                      ffi.Pointer<
+                              ffi.Opaque>
+                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
@@ -9761,12 +9759,10 @@ class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set =
       _capi<
-                  ffi
-                  .NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(
-                          ffi.Pointer<ffi.Opaque>,
-                          ffi
-                              .Uint16)>>(
+                  ffi.NativeFunction<
+                      ffi.Pointer<
+                              ffi.Opaque>
+                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
