@@ -2364,3 +2364,95 @@ impl_value_getter! {
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }
 }
+/// Enumerated property Joining_Type.
+/// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of
+/// each property value.
+///
+/// The numeric value is compatible with `UJoiningType` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(JoiningTypeULE)]
+pub struct JoiningType(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl JoiningType {
+    pub const NonJoining: JoiningType = JoiningType(0); // name="U"
+    pub const JoinCausing: JoiningType = JoiningType(1); // name="C"
+    pub const DualJoining: JoiningType = JoiningType(2); // name="D"
+    pub const LeftJoining: JoiningType = JoiningType(3); // name="L"
+    pub const RightJoining: JoiningType = JoiningType(4); // name="R"
+    pub const Transparent: JoiningType = JoiningType(5); // name="T"
+}
+
+impl_value_getter! {
+    markers: JoiningTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_JT_V1, JoiningTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1, JoiningTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_JT_V1;
+    impl JoiningType {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `Joining_Type` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::JoiningType;
+        ///
+        /// let lookup = JoiningType::name_to_enum_mapper();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("T"), Some(JoiningType::Transparent));
+        /// assert_eq!(lookup.get_strict("D"), Some(JoiningType::DualJoining));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Join_Causing"), Some(JoiningType::JoinCausing));
+        /// assert_eq!(lookup.get_strict("Non_Joining"), Some(JoiningType::NonJoining));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("LEFT_JOINING"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("LEFT_JOINING"), Some(JoiningType::LeftJoining));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Inner_Joining"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
+        /// for values of the `Joining_Type` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::JoiningType;
+        ///
+        /// let lookup = JoiningType::enum_to_short_name_mapper();
+        /// assert_eq!(lookup.get(JoiningType::JoinCausing), Some("C"));
+        /// assert_eq!(lookup.get(JoiningType::LeftJoining), Some("L"));
+        /// ```
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
+        /// for values of the `Joining_Type` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::JoiningType;
+        ///
+        /// let lookup = JoiningType::enum_to_long_name_mapper();
+        /// assert_eq!(lookup.get(JoiningType::Transparent), Some("Transparent"));
+        /// assert_eq!(lookup.get(JoiningType::NonJoining), Some("Non_Joining"));
+        /// assert_eq!(lookup.get(JoiningType::RightJoining), Some("Right_Joining"));
+        /// ```
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+    }
+}

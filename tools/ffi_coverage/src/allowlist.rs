@@ -233,6 +233,7 @@ lazy_static::lazy_static! {
         "icu::properties::Script",
         "icu::properties::SentenceBreak",
         "icu::properties::WordBreak",
+        "icu::properties::JoiningType",
 
         // Experimental
         "icu::properties::maps::canonical_combining_class",
