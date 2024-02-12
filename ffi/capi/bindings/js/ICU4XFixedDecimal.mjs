@@ -3,6 +3,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
 import { ICU4XFixedDecimalSign_js_to_rust, ICU4XFixedDecimalSign_rust_to_js } from "./ICU4XFixedDecimalSign.mjs"
 import { ICU4XFixedDecimalSignDisplay_js_to_rust, ICU4XFixedDecimalSignDisplay_rust_to_js } from "./ICU4XFixedDecimalSignDisplay.mjs"
+import { ICU4XRoundingIncrement_js_to_rust, ICU4XRoundingIncrement_rust_to_js } from "./ICU4XRoundingIncrement.mjs"
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XFixedDecimal_destroy(underlying);
@@ -186,36 +187,72 @@ export class ICU4XFixedDecimal {
     wasm.ICU4XFixedDecimal_trunc(this.underlying, arg_position);
   }
 
+  trunc_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_trunc_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_trunc(arg_position) {
     wasm.ICU4XFixedDecimal_half_trunc(this.underlying, arg_position);
+  }
+
+  half_trunc_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_half_trunc_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   expand(arg_position) {
     wasm.ICU4XFixedDecimal_expand(this.underlying, arg_position);
   }
 
+  expand_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_expand_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_expand(arg_position) {
     wasm.ICU4XFixedDecimal_half_expand(this.underlying, arg_position);
+  }
+
+  half_expand_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_half_expand_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   ceil(arg_position) {
     wasm.ICU4XFixedDecimal_ceil(this.underlying, arg_position);
   }
 
+  ceil_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_ceil_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_ceil(arg_position) {
     wasm.ICU4XFixedDecimal_half_ceil(this.underlying, arg_position);
+  }
+
+  half_ceil_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_half_ceil_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   floor(arg_position) {
     wasm.ICU4XFixedDecimal_floor(this.underlying, arg_position);
   }
 
+  floor_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_floor_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_floor(arg_position) {
     wasm.ICU4XFixedDecimal_half_floor(this.underlying, arg_position);
   }
 
+  half_floor_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_half_floor_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_even(arg_position) {
     wasm.ICU4XFixedDecimal_half_even(this.underlying, arg_position);
+  }
+
+  half_even_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_half_even_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   concatenate_end(arg_other) {
