@@ -8,7 +8,7 @@ In C and C++, the bindings in `ffi/capi/bindings` can be directly used and linke
 
 For JS/TS we provide an NPM package in `ffi/npm`. This is currently not published on NPM.
 
-For Dart we provide a package in `ffi/dart`. This needs to be initialised with `make`. It is not currenlty published on `pub.dev`.
+For Dart we provide a package in `ffi/dart`. This needs to be initialised with `make`. It is not currently published on `pub.dev`.
 
 For use in FreeRTOS, we provide a special wrapper in `ffi/freertos`. This uses the FreeRTOS allocator and can be linked directly with a FreeRTOS firmware.
 
