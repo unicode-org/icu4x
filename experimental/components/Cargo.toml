@@ -93,4 +93,4 @@ path = "tests/transliterate/cldr.rs"
 
 [[test]]
 name = "units_test"
-path = "tests/unitsconversion/units_test.rs"
+path = "tests/units/units_test.rs"
