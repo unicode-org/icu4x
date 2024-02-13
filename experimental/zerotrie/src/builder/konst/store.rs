@@ -163,7 +163,14 @@ impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
     /// fully initialized.
     pub const fn const_take_or_panic(self) -> [T; N] {
         if self.start != 0 || self.limit != N {
-            panic!("AsciiTrieBuilder buffer too large");
+            let actual_len = self.limit - self.start;
+            const PREFIX: &[u8; 31] = b"Buffer too large. Size needed: ";
+            let len_bytes: [u8; PREFIX.len() + crate::helpers::MAX_USIZE_LEN_AS_DIGITS] =
+                crate::helpers::const_fmt_int(*PREFIX, actual_len);
+            let Ok(len_str) = core::str::from_utf8(&len_bytes) else {
+                unreachable!()
+            };
+            panic!("{}", len_str);
         }
         self.full_array
     }
@@ -171,7 +178,7 @@ impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
     /// Prepends an element to the front of the builder, panicking if there is no room.
     pub const fn const_push_front_or_panic(mut self, value: T) -> Self {
         if self.start == 0 {
-            panic!("AsciiTrieBuilder buffer too small");
+            panic!("Buffer too small");
         }
         self.start -= 1;
         self.full_array[self.start] = value;
@@ -181,7 +188,7 @@ impl<const N: usize, T: Copy> ConstArrayBuilder<N, T> {
     /// Prepends multiple elements to the front of the builder, panicking if there is no room.
     pub const fn const_extend_front_or_panic(mut self, other: ConstSlice<T>) -> Self {
         if self.start < other.len() {
-            panic!("AsciiTrieBuilder buffer too small");
+            panic!("Buffer too small");
         }
         self.start -= other.len();
         let mut i = self.start;

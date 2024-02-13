@@ -168,6 +168,7 @@ pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
 pub use crate::response::Cart;
 pub use crate::response::DataPayload;
+pub use crate::response::DataPayloadOr;
 pub use crate::response::DataResponse;
 pub use crate::response::DataResponseMetadata;
 #[cfg(feature = "macros")]

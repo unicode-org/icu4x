@@ -31,7 +31,7 @@ impl DatagenProvider {
     {
         if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supported_locales()?.contains(req.locale) {
+        } else if !self.supports_locale(req.locale)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())

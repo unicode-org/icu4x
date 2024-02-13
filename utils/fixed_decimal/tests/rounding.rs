@@ -338,7 +338,6 @@ pub fn extra_rounding_mode_cases() {
 }
 
 #[test]
-#[cfg(feature = "experimental")]
 pub fn test_ecma402_table_with_increments() {
     use fixed_decimal::RoundingIncrement;
 

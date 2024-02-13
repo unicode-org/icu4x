@@ -1,0 +1,17 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "unused"
+version = "0.0.0"
+
+[lib]
+path = "unused"
+
+[dependencies]
+icu_capi = { version = "1.4", default-features = false }
+
+[build-dependencies]
+# Required to bring icu_datagen into the crate graph
+icu_datagen = { version = "1.4", optional = true }

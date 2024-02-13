@@ -23,7 +23,7 @@ impl crate::DatagenProvider {
                 key
             ))?
             .enum_property
-            .get(0)
+            .first()
             .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
     }
     fn get_mask_prop<'a>(
@@ -37,7 +37,7 @@ impl crate::DatagenProvider {
                 key
             ))?
             .mask_property
-            .get(0)
+            .first()
             .ok_or(DataError::custom(
                 "Loading icuexport property data failed: \
                  Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)",
@@ -516,6 +516,15 @@ expand!(
             SentenceBreakValueToLongNameV1Marker
         ),
         "SB"
+    ),
+    (
+        JoiningTypeV1Marker,
+        JoiningTypeNameToValueV1Marker,
+        (
+            linear: JoiningTypeValueToShortNameV1Marker,
+            JoiningTypeValueToLongNameV1Marker
+        ),
+        "jt"
     ),
 );
 

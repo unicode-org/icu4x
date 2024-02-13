@@ -637,7 +637,7 @@ where
                 i += 1;
                 // Half-width kana and iota subscript don't occur in the tails
                 // of these multicharacter decompositions.
-                if decomposition_starts_with_non_starter(trie_value) {
+                if !decomposition_starts_with_non_starter(trie_value) {
                     combining_start = i;
                 }
             }
@@ -676,7 +676,7 @@ where
                 i += 1;
                 // Half-width kana and iota subscript don't occur in the tails
                 // of these multicharacter decompositions.
-                if decomposition_starts_with_non_starter(trie_value) {
+                if !decomposition_starts_with_non_starter(trie_value) {
                     combining_start = i;
                 }
             }

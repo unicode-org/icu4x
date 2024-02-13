@@ -154,6 +154,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_julian_date",
         "icu::calendar::Date::try_new_chinese_date_with_calendar",
         "icu::calendar::Date::try_new_dangi_date_with_calendar",
+        "icu::calendar::Date::try_new_hebrew_date",
         "icu::calendar::Date::try_new_hebrew_date_with_calendar",
         "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
         "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
@@ -172,6 +173,7 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::try_new_julian_datetime",
         "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_hebrew_datetime",
         "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
@@ -231,6 +233,7 @@ lazy_static::lazy_static! {
         "icu::properties::Script",
         "icu::properties::SentenceBreak",
         "icu::properties::WordBreak",
+        "icu::properties::JoiningType",
 
         // Experimental
         "icu::properties::maps::canonical_combining_class",
@@ -313,24 +316,6 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralRulesWithRanges::try_new",
         "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
         "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
-        "fixed_decimal::FixedDecimal::expand_to_increment",
-        "fixed_decimal::FixedDecimal::expanded_to_increment",
-        "fixed_decimal::FixedDecimal::trunc_to_increment",
-        "fixed_decimal::FixedDecimal::trunced_to_increment",
-        "fixed_decimal::FixedDecimal::ceil_to_increment",
-        "fixed_decimal::FixedDecimal::ceiled_to_increment",
-        "fixed_decimal::FixedDecimal::floor_to_increment",
-        "fixed_decimal::FixedDecimal::floored_to_increment",
-        "fixed_decimal::FixedDecimal::half_ceil_to_increment",
-        "fixed_decimal::FixedDecimal::half_ceiled_to_increment",
-        "fixed_decimal::FixedDecimal::half_even_to_increment",
-        "fixed_decimal::FixedDecimal::half_evened_to_increment",
-        "fixed_decimal::FixedDecimal::half_expand_to_increment",
-        "fixed_decimal::FixedDecimal::half_expanded_to_increment",
-        "fixed_decimal::FixedDecimal::half_floor_to_increment",
-        "fixed_decimal::FixedDecimal::half_floored_to_increment",
-        "fixed_decimal::FixedDecimal::half_trunc_to_increment",
-        "fixed_decimal::FixedDecimal::half_trunced_to_increment",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -398,6 +383,9 @@ lazy_static::lazy_static! {
         "icu::segmenter::Error",
         "icu::timezone::Error",
         "icu::transliterator::Error",
+
+        // ULE types that are not in provider modules
+        "icu::plurals::PluralCategoryULE",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",

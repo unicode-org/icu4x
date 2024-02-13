@@ -50,7 +50,11 @@ serde_json = "1.0"
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_locid_transform = { path = "../../components/locid_transform" }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
+
 [features]
+bench = []
 std = ["icu_locid/std"]
 sync = []
 experimental = []
@@ -75,3 +79,10 @@ datagen = ["serde", "dep:erased-serde", "dep:databake", "std", "sync"]
 denylist = ["macros"]
 # We have tons of features here, limit the amount of tests we run
 max_combination_size = 3
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+
+[[bench]]
+name = "data_locale_bench"
+harness = false

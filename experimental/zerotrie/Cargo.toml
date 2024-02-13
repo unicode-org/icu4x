@@ -27,7 +27,7 @@ denylist = ["bench"]
 databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 litemap = { workspace = true, features = ["alloc"], optional = true }
-serde = { version = "1.0", optional = true }
+serde = { version = "1.0", default-features = false, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }

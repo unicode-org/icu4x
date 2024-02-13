@@ -181,7 +181,7 @@ pub struct ScriptExtensionsSet<'a> {
     values: &'a ZeroSlice<Script>,
 }
 
-impl ScriptExtensionsSet<'_> {
+impl<'a> ScriptExtensionsSet<'a> {
     /// Returns whether this set contains the given script.
     ///
     /// # Example
@@ -213,7 +213,7 @@ impl ScriptExtensionsSet<'_> {
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + 'a {
         ZeroSlice::iter(self.values)
     }
 

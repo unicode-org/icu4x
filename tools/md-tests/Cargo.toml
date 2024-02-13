@@ -1,0 +1,29 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "md-tests"
+publish = false
+version = "0.0.0"
+edition = "2021"
+
+[dev-dependencies]
+icu = { workspace = true, features = ["compiled_data"] }
+icu_datagen = { workspace = true }
+icu_provider = { workspace = true, features = ["deserialize_json"] }
+icu_provider_adapters = { workspace = true, features = ["serde"] }
+icu_provider_blob = { workspace = true }
+icu_provider_fs = { workspace = true }
+
+databake = { workspace = true, features = ["derive"] }
+litemap = { workspace = true }
+tinystr = { workspace = true, features = ["alloc"] }
+writeable = { workspace = true }
+
+displaydoc = "0.2.3"
+itertools = "0.10"
+lru = "0.8.1"
+serde = { version = "1.0", features = ["derive", "alloc", "std"] }
+serde-aux = { version = "4.1.2", default-features = false }
+time = { version = "0.3", features = ["local-offset"] }

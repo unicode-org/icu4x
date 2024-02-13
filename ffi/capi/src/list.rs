@@ -31,8 +31,8 @@ pub mod ffi {
 
         /// Push a string to the list
         ///
-        /// For C++ users, potentially invalid UTF8 will be handled via
-        /// REPLACEMENT CHARACTERs
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         pub fn push(&mut self, val: &DiplomatStr) {
             self.0.push(String::from_utf8_lossy(val).into_owned());
         }

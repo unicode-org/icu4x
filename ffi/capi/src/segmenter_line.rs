@@ -38,6 +38,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
+    #[diplomat::attr(dart, rename = "LineBreakOptions")]
     pub struct ICU4XLineBreakOptionsV1 {
         pub strictness: ICU4XLineBreakStrictness,
         pub word_option: ICU4XLineBreakWordOption,
@@ -109,6 +110,7 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]
+        #[diplomat::attr(dart, rename = "create_auto_with_options")]
         pub fn create_auto_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
@@ -125,6 +127,7 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm_with_options, FnInStruct)]
+        #[diplomat::attr(dart, rename = "create_lstm_with_options")]
         pub fn create_lstm_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
@@ -144,6 +147,7 @@ pub mod ffi {
             icu::segmenter::LineSegmenter::new_dictionary_with_options,
             FnInStruct
         )]
+        #[diplomat::attr(dart, rename = "create_dictionary_with_options")]
         pub fn create_dictionary_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
@@ -157,7 +161,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Segments a (potentially ill-formed) UTF-8 string.
+        /// Segments a string.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_str, FnInStruct, hidden)]
         #[diplomat::attr(dart, disable)]
@@ -168,7 +175,10 @@ pub mod ffi {
             Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
-        /// Segments a UTF-16 string.
+        /// Segments a string.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf16, FnInStruct)]
         #[diplomat::attr(dart, rename = "segment")]
         pub fn segment_utf16<'a>(

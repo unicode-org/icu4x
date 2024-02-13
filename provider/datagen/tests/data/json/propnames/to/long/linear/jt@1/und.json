@@ -1,0 +1,10 @@
+{
+  "map": [
+    "Non_Joining",
+    "Join_Causing",
+    "Dual_Joining",
+    "Left_Joining",
+    "Right_Joining",
+    "Transparent"
+  ]
+}

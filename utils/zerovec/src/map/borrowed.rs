@@ -8,8 +8,8 @@ use crate::ZeroSlice;
 use core::cmp::Ordering;
 use core::fmt;
 
-pub use super::kv::ZeroMapKV;
-pub use super::vecs::{MutableZeroVecLike, ZeroVecLike};
+use super::kv::ZeroMapKV;
+use super::vecs::ZeroVecLike;
 
 /// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
 ///

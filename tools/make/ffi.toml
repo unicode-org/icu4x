@@ -9,13 +9,8 @@
 [tasks.test-c]
 description = "Run C API tests"
 category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-exec --fail-on-error make -C ffi/capi/c/examples/pluralrules
-exec --fail-on-error make -C ffi/capi/c/examples/fixeddecimal
-exec --fail-on-error make -C ffi/capi/c/examples/locale
-'''
+command = "make"
+args = ["-C", "docs/tutorials/c", "test"]
 
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
@@ -25,35 +20,25 @@ dependencies = ["install-nightly", "install-unknown-linux"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error make -C ffi/capi/c/examples/fixeddecimal_tiny
-exec --fail-on-error make -C ffi/capi/c/examples/segmenter_tiny
+exec --fail-on-error make -C docs/tutorials/c-tiny/fixeddecimal
+exec --fail-on-error make -C docs/tutorials/c-tiny/segmenter
 '''
 
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-exec --fail-on-error make -C ffi/capi/cpp/examples/properties
-exec --fail-on-error make -C ffi/capi/cpp/examples/segmenter 
-exec --fail-on-error make -C ffi/capi/cpp/examples/datetime 
-exec --fail-on-error make -C ffi/capi/cpp/examples/fixeddecimal 
-exec --fail-on-error make -C ffi/capi/cpp/examples/locale 
-exec --fail-on-error make -C ffi/capi/cpp/examples/pluralrules 
-exec --fail-on-error make -C ffi/capi/cpp/examples/bidi 
-exec --fail-on-error make -C ffi/capi/cpp/examples/fixeddecimal_wasm test-host
-'''
+command = "make"
+args = ["-C", "docs/tutorials/cpp", "test"]
 
 
 # JS/WASM tasks
 
-[tasks.test-js]
+[tasks.test-npm]
 description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-nightly", "install-wasm"]
 command = "npm"
-args = ["-C", "ffi/capi/js/package", "install-ci-test"]
+args = ["-C", "ffi/npm", "install-ci-test"]
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
@@ -61,7 +46,7 @@ category = "ICU4X Development"
 condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-nightly", "install-wasm"]
 command = "make"
-args = ["-C", "ffi/capi/js/examples/tinywasm", "build", "test"]
+args = ["-C", "docs/tutorials/js-tiny", "test"]
 
 
 # Dart tasks
@@ -69,8 +54,12 @@ args = ["-C", "ffi/capi/js/examples/tinywasm", "build", "test"]
 [tasks.test-dart]
 description = "Run Dart tests"
 category = "ICU4X Development"
-command = "make"
-args = ["-C", "ffi/capi/dart/package", "test"]
+cwd = "ffi/dart"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error dart --enable-experiment=native-assets pub get
+exec --fail-on-error dart --enable-experiment=native-assets test
+'''
 
 # no_std tasks
 
@@ -194,12 +183,3 @@ dependencies = ["install-nightly"]
 toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 command = "rustup"
 args = ["target", "add", "thumbv8m.main-none-eabihf"]
-
-# Unused tasks
-
-[tasks.test-cpp-emscripten]
-description = "Run the C++-emscripten test (needs emsdk)"
-category = "ICU4X Development"
-dependencies = ["install-nightly", "install-emscripten"]
-command = "make"
-args = ["-C", "ffi/capi/cpp/examples/fixeddecimal_wasm", "test"]

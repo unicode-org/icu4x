@@ -26,7 +26,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X utils
     "calendrical_calculations",
     "fixed_decimal",
-    "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
     "litemap",
     "shortvec",
@@ -88,22 +87,11 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
-pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
-    "icu_displaynames",
-    "icu_personnames",
-    "icu_relativetime",
-    "icu_compactdecimal",
-    "icu_transliterate",
-    "icu_unicodeset_parse",
-];
+pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &["icu_experimental"];
 
 /// Dependencies allowed when opting in to compiled data
 /// for experimental crates.
-pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
-    "icu_displaynames_data",
-    "icu_relativetime_data",
-    "icu_compactdecimal_data",
-];
+pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &["icu_experimental_data"];
 
 /// Dependencies allowed when opting in to LSTM segmenter
 pub const EXTRA_LSTM_DEPS: &[&str] = &[];
@@ -114,7 +102,12 @@ pub const EXTRA_RYU_DEPS: &[&str] = &["ryu"];
 
 /// Runtime dependencies allowed when building `icu_capi`
 /// This shuld almost never change
-pub const EXTRA_CAPI_DEPS: &[&str] = &["diplomat-runtime", "icu_capi", "unicode-bidi"];
+pub const EXTRA_CAPI_DEPS: &[&str] = &[
+    "diplomat-runtime",
+    "icu_capi",
+    "icu_provider_adapters",
+    "unicode-bidi",
+];
 
 /// Build-time dependencies allowed when building `icu_capi`
 /// This may change as Diplomat evolves, but care should be taken to keep this small
@@ -143,18 +136,14 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "databake-derive",
     "elsa",
     "erased-serde",
-    "fraction",
     "icu_codepointtrie_builder",
+    "icu_provider_adapters",
     "itertools",
     "itoa",
     "matrixmultiply",
     "ndarray",
-    "num",
-    "num-bigint",
     "num-complex",
     "num-integer",
-    "num-iter",
-    "num-rational",
     "num-traits",
     "once_cell",
     "rawpointer",

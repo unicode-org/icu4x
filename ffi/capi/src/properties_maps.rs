@@ -56,7 +56,7 @@ pub mod ffi {
 
         /// Converts a general category to its corresponding mask value
         ///
-        /// Nonexistant general categories will map to the empty mask
+        /// Nonexistent general categories will map to the empty mask
         #[diplomat::rust_link(icu::properties::GeneralCategoryGroup, Struct)]
         pub fn general_category_to_mask(gc: u8) -> u32 {
             if let Ok(gc) = GeneralCategory::try_from(gc) {
@@ -192,7 +192,6 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::grapheme_cluster_break, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn, hidden)]
-        #[diplomat::attr(dart, rename = "grapheme_cluster_break")]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -223,6 +222,18 @@ pub mod ffi {
             Ok(convert_8(call_constructor_unstable!(
                 maps::sentence_break [r => Ok(r.static_to_owned())],
                 maps::load_sentence_break,
+                provider,
+            )?))
+        }
+
+        #[diplomat::rust_link(icu::properties::maps::joining_type, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_joining_type, Fn, hidden)]
+        pub fn load_joining_type(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+            Ok(convert_8(call_constructor_unstable!(
+                maps::joining_type [r => Ok(r.static_to_owned())],
+                maps::load_joining_type,
                 provider,
             )?))
         }

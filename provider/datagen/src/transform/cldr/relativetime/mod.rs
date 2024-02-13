@@ -4,12 +4,12 @@
 
 use std::borrow::Borrow;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use icu_provider::datagen::IterableDataProvider;
+use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
-use icu_relativetime::provider::*;
 use once_cell::sync::OnceCell;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 pub static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> = OnceCell::new();
 
@@ -94,8 +94,8 @@ macro_rules! make_data_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
@@ -123,9 +123,9 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
     }
 }
 
-/// Try to convert an Option<String> to SingularSubPattern.
-/// If pattern is None, we return None
-/// If pattern is Some(pattern), we try to parse the pattern as SingularSubPattern failing
+/// Try to convert an `Option<String>` to [`SingularSubPattern`].
+/// If pattern is `None`, we return `None`
+/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SingularSubPattern`] failing
 /// if an error is encountered
 fn optional_convert<'a, B: Borrow<Option<String>>>(
     pattern: B,

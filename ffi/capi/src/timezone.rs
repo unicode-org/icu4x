@@ -147,13 +147,15 @@ pub mod ffi {
             mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
             id: &DiplomatStr,
         ) -> Result<(), ICU4XError> {
-            match mapper.0.as_borrowed().get_bytes(id) {
-                Some(id) => {
-                    self.0.time_zone_id = Some(id);
-                    Ok(())
-                }
-                None => Err(ICU4XError::TimeZoneInvalidIdError),
-            }
+            let id = core::str::from_utf8(id).map_err(|_| ICU4XError::TimeZoneInvalidIdError)?;
+            self.0.time_zone_id = Some(
+                mapper
+                    .0
+                    .as_borrowed()
+                    .get(id)
+                    .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
+            );
+            Ok(())
         }
 
         /// Clears the `time_zone_id` field.

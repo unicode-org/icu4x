@@ -256,6 +256,22 @@ fn test_linear_varint_values() {
 }
 
 #[test]
+fn test_bug() {
+    let litemap: LiteMap<&[u8], usize> = [(&b"abc"[..], 100), (b"abcd", 500), (b"abcde", 5000)]
+        .into_iter()
+        .collect();
+    let trie = ZeroTrieSimpleAscii::try_from(&litemap.as_sliced()).unwrap();
+    assert_eq!(trie.get(b"ab"), None);
+    assert_eq!(trie.get(b"abd"), None);
+    assert_eq!(trie.get(b"abCD"), None);
+    check_simple_ascii_trie(&litemap, &trie);
+
+    let litemap_bytes = litemap.to_borrowed_keys::<[u8], Vec<_>>();
+    let trie_phf = ZeroTriePerfectHash::try_from(&litemap_bytes).unwrap();
+    check_phf_ascii_trie(&litemap, &trie_phf);
+}
+
+#[test]
 fn test_varint_branch() {
     let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     let litemap: LiteMap<&[u8], usize> = (0..chars.len())

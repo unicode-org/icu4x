@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::baked_exporter;
 use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
@@ -46,6 +47,18 @@ fn generate_json_and_verify_postcard() {
         ),
     });
 
+    let stubdata_out = Box::new(BakedStubdataExporter(
+        baked_exporter::BakedExporter::new(
+            "tests/data/baked".into(),
+            baked_exporter::Options {
+                overwrite: true,
+                pretty: true,
+                ..Default::default()
+            },
+        )
+        .unwrap(),
+    ));
+
     DatagenDriver::new()
         .with_keys(crate::all_keys())
         .with_locales(LOCALES.iter().cloned())
@@ -55,9 +68,65 @@ fn generate_json_and_verify_postcard() {
         ])
         .export(
             &DatagenProvider::new_testing(),
-            MultiExporter::new(vec![json_out, postcard_out]),
+            MultiExporter::new(vec![json_out, postcard_out, stubdata_out]),
         )
         .unwrap();
+}
+
+/// Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
+/// for faster development and debugging. For example, put the following in
+/// VSCode settings.json:
+///
+/// ```javascript
+/// "rust-analyzer.cargo.extraEnv": {
+///   // Relative to provider/baked/x/src
+///   "ICU4X_DATA_DIR": "../../../datagen/tests/data/stub"
+/// },
+/// ```
+struct BakedStubdataExporter(baked_exporter::BakedExporter);
+
+impl DataExporter for BakedStubdataExporter {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        // put `und-*` but not any other locales
+        if locale.is_langid_und() {
+            self.0.put_payload(key, locale, payload)
+        } else {
+            Ok(())
+        }
+    }
+
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0.flush_singleton(key, payload)
+    }
+
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.0.flush(key)
+    }
+
+    fn flush_with_built_in_fallback(
+        &self,
+        key: DataKey,
+        fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
+        self.0.flush_with_built_in_fallback(key, fallback_mode)
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.0.close()
+    }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        self.0.supports_built_in_fallback()
+    }
 }
 
 struct PostcardTestingExporter {

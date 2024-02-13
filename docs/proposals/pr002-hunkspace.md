@@ -702,7 +702,7 @@ already transferred:
 
 This proposal glosses over the gritty detail of setting up the two-way
 communication over a common context, such as cache invalidation, context
-cleaning and availability concerns.  The designers would neeed to take them
+cleaning and availability concerns.  The designers would need to take them
 into account when developing a production version of this proposal.  The URI
 encoding approach still favors statically defined messaging where such
 messaging is viable.

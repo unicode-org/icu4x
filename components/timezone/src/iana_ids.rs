@@ -105,15 +105,10 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
     pub fn get(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        self.get_bytes(iana_id.as_bytes())
-    }
-
-    #[doc(hidden)]
-    pub fn get_bytes(&self, iana_id: &[u8]) -> Option<TimeZoneBcp47Id> {
         // The longest IANA name in CLDR appears to be "America/Argentina/ComodRivadavia"
         // which is 32 characters long, so 48 should be plenty. Add a debug assertion
         // just in case.
-        let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_bytes(iana_id) {
+        let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_bytes(iana_id.as_bytes()) {
             Ok(tinystr) => tinystr.to_ascii_lowercase(),
             Err(tinystr::TinyStrError::TooLarge { .. }) => {
                 debug_assert!(false, "IANA string too long for lookup");
