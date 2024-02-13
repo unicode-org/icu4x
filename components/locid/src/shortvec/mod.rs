@@ -319,6 +319,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(clippy::get_first)]
     fn test_new_single_const() {
         const MY_CONST_SLICE: ShortBoxSlice<i32> = ShortBoxSlice::new_single(42);
 
@@ -327,6 +328,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::redundant_pattern_matching)]
     fn test_get_single() {
         let mut vec = ShortBoxSlice::new();
         assert!(matches!(vec.single(), None));
