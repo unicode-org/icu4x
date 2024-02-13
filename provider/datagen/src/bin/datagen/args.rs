@@ -56,6 +56,13 @@ enum Fallback {
     Preresolved,
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum BaseLanguageHandling {
+    Auto,
+    Retain,
+    Strip,
+}
+
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
@@ -232,7 +239,16 @@ pub struct Cli {
 
     // TODO(#2856): Change the default to Auto in 2.0
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
+    #[arg(help = "The fallback mode to use in the generated data. \
+                For details, read the Rust docs for FallbackMode.")]
     fallback: Fallback,
+
+    #[arg(long, value_enum, default_value_t = BaseLanguageHandling::Auto)]
+    #[arg(
+        help = "--fallback=runtime[-manual] only: Whether to retain or strip base languages. \
+                For details, read the Rust docs for BaseLanguageHandling."
+    )]
+    base_language_handling: BaseLanguageHandling,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -279,6 +295,11 @@ impl Cli {
                 Fallback::Runtime => config::FallbackMode::Runtime,
                 Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
                 Fallback::Preresolved => config::FallbackMode::Preresolved,
+            },
+            base_language_handling: match self.base_language_handling {
+                BaseLanguageHandling::Auto => Default::default(),
+                BaseLanguageHandling::Retain => icu_datagen::BaseLanguageHandling::Retain,
+                BaseLanguageHandling::Strip => icu_datagen::BaseLanguageHandling::Strip,
             },
             overwrite: self.overwrite,
         })

@@ -225,6 +225,9 @@ pub enum FallbackMode {
     /// they contain the same value, only "en" will be included, since "en-US" falls back to
     /// "en" at runtime.
     ///
+    /// By default, locales that inherit directly from "und" will be retained even if their data
+    /// is equal to "und". To override this behavior, see [`BaseLanguageHandling`].
+    ///
     /// If an explicit list of locales is used, this mode includes all ancestors and descendants
     /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
     /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included. Note that the
@@ -274,6 +277,26 @@ pub enum FallbackMode {
     ///
     /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
     Hybrid,
+}
+
+/// Defines whether _base languages_ should be exported by the [`DatagenDriver`].
+///
+/// A _base language_ is a locale that inherits directly from `und`. For example, `en` and
+/// `zh-Hant` inherit directly from `und`.
+///
+/// Removing base languages whose data equals `und` may reduce data size (TODO: add numbers),
+/// but it may cause supported-locale queries to fail.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+#[serde(rename_all = "camelCase")]
+pub enum BaseLanguageHandling {
+    /// Retain base languages even if their data equals the data in `und`.
+    #[default]
+    Retain,
+    /// Strip base languages if their data equals the data in `und`.
+    ///
+    /// By using this option, data size is reduced but supported-locale queries may fail.
+    Strip,
 }
 
 /// Specifies the collation Han database to use.
