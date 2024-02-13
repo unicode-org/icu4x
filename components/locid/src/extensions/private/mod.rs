@@ -37,7 +37,7 @@ pub use other::{subtag, Subtag};
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 
 /// A list of [`Private Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.

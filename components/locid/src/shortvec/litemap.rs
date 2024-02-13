@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ShortBoxSlice;
-use crate::ShortBoxSliceInner;
-use crate::ShortBoxSliceIntoIter;
+use super::ShortBoxSlice;
+use super::ShortBoxSliceInner;
+use super::ShortBoxSliceIntoIter;
 use alloc::vec::Vec;
 use litemap::store::*;
 

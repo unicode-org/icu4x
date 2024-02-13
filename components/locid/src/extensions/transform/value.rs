@@ -5,7 +5,7 @@
 use crate::parser::{ParserError, SubtagIterator};
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 use tinystr::TinyAsciiStr;
 
 /// A value used in a list of [`Fields`](super::Fields).

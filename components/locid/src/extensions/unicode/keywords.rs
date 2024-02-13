@@ -12,7 +12,7 @@ use super::Key;
 use super::Value;
 #[allow(deprecated)]
 use crate::ordering::SubtagOrderingResult;
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
 /// about locale's internationalization preferences.

@@ -8,7 +8,7 @@ use crate::extensions::ExtensionType;
 use crate::parser::SubtagIterator;
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Clone, Copy)]

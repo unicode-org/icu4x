@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This crate includes variable-length data types that are const-constructible for single
+//! This module includes variable-length data types that are const-constructible for single
 //! values and overflow to the heap.
 //!
 //! # Why?
 //!
-//! This crate is far from the first stack-or-heap vector in the Rust ecosystem. It was created
+//! This module is far from the first stack-or-heap vector in the Rust ecosystem. It was created
 //! with the following value proposition:
 //!
 //! 1. Enable safe const construction of stack collections.
@@ -21,7 +21,7 @@
 //! ```
 //! use core::mem::size_of;
 //!
-//! // NonZeroU64 has a niche that this crate utilizes
+//! // NonZeroU64 has a niche that this module utilizes
 //! use core::num::NonZeroU64;
 //!
 //! // ShortBoxSlice is the same size as `Box<[]>` for small or nichey values
@@ -37,27 +37,8 @@
 //! assert_eq!(24, size_of::<tinyvec::TinyVec::<[u64; 1]>>());
 //! ```
 //!
-//! The crate is `no_std` with `alloc`.
+//! The module is `no_std` with `alloc`.
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
-
-extern crate alloc;
-
-#[cfg(feature = "litemap")]
 mod litemap;
 
 use alloc::boxed::Box;
@@ -108,7 +89,7 @@ impl<T> ShortBoxSlice<T> {
     /// Create a const [`ShortBoxSlice`]:
     ///
     /// ```
-    /// use shortvec::ShortBoxSlice;
+    /// use crate::shortvec::ShortBoxSlice;
     ///
     /// const my_const_slice: ShortBoxSlice<i32> = ShortBoxSlice::new_single(42);
     ///
@@ -144,7 +125,7 @@ impl<T> ShortBoxSlice<T> {
     /// # Examples
     ///
     /// ```
-    /// use shortvec::ShortBoxSlice;
+    /// use crate::shortvec::ShortBoxSlice;
     ///
     /// let mut vec = ShortBoxSlice::new();
     /// assert!(matches!(vec.single(), None));

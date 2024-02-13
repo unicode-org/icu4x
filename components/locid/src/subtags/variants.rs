@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Variant;
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 
 use alloc::vec::Vec;
 use core::ops::Deref;

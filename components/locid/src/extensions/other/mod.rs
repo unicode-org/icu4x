@@ -24,7 +24,7 @@ mod subtag;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use alloc::vec::Vec;
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 #[doc(inline)]
 pub use subtag::{subtag, Subtag};
 

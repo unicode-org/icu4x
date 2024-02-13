@@ -44,7 +44,7 @@ use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode
 use crate::subtags::Language;
 use crate::LanguageIdentifier;
 use litemap::LiteMap;
-use shortvec::ShortBoxSlice;
+use crate::shortvec::ShortBoxSlice;
 
 /// A list of [`Unicode BCP47 T Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
