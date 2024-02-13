@@ -124,7 +124,7 @@ impl DateTimeFormatter {
     /// Construct a new [`DateTimeFormatter`] from compiled data.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    /// calendar for the locale. See [`AnyCalendarKind`](icu_calendar::AnyCalendarKind) for a list of supported calendars.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
