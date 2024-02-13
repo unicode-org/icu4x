@@ -13,6 +13,37 @@ use num_traits::identities::One;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
+pub enum Converter {
+    Linear(LinearConverter),
+    Offset(OffsetConverter),
+}
+
+impl Converter {
+    pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+        match self {
+            Converter::Linear(converter) => converter.convert(value),
+            Converter::Offset(converter) => converter.convert(value),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct OffsetConverter {
+    /// The conversion rate between the input and output units.
+    conversion_rate: Ratio<BigInt>,
+
+    /// The offset value to be added to the result.
+    offset: Ratio<BigInt>,
+}
+
+impl OffsetConverter {
+    /// Converts the given value from the input unit to the output unit.
+    pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+        let result = value * &self.conversion_rate + &self.offset;
+        result
+    }
+}
+
 // TODO(#4576): Bikeshed the name of the converter.
 /// LinearConverter is responsible for converting between two units that are linearly related.
 /// For example: 1- `meter` to `foot`.
@@ -212,7 +243,7 @@ impl<'data> ConverterFactory<'data> {
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Option<LinearConverter> {
+    ) -> Option<Converter> {
         let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
 
         // Determine the sign of the powers of the units from root to unit2.
@@ -228,10 +259,10 @@ impl<'data> ConverterFactory<'data> {
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
 
-        Some(LinearConverter {
+        Some(Converter::Linear(LinearConverter {
             conversion_rate,
             is_reciprocal,
-        })
+        }))
     }
 }
 
