@@ -43,8 +43,8 @@ pub use value::{value, Value};
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
-use litemap::LiteMap;
 use crate::shortvec::ShortBoxSlice;
+use litemap::LiteMap;
 
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///

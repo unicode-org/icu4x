@@ -6,9 +6,9 @@ pub use super::errors::ParserError;
 use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
 use crate::parser::SubtagIterator;
+use crate::shortvec::ShortBoxSlice;
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
-use crate::shortvec::ShortBoxSlice;
 use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Clone, Copy)]

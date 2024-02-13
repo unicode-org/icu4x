@@ -18,7 +18,7 @@
 //!
 //! Additionally, [`ShortBoxSlice`] has a smaller stack size than any of these:
 //!
-//! ```
+//! ```ignore
 //! use core::mem::size_of;
 //!
 //! // NonZeroU64 has a niche that this module utilizes
@@ -66,7 +66,7 @@ impl<T> Default for ShortBoxSliceInner<T> {
 ///
 /// Supports mutation but always reallocs when mutated.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct ShortBoxSlice<T>(ShortBoxSliceInner<T>);
+pub(crate) struct ShortBoxSlice<T>(ShortBoxSliceInner<T>);
 
 impl<T> Default for ShortBoxSlice<T> {
     fn default() -> Self {
@@ -83,19 +83,6 @@ impl<T> ShortBoxSlice<T> {
     }
 
     /// Creates a new [`ShortBoxSlice`] containing a single element.
-    ///
-    /// # Examples
-    ///
-    /// Create a const [`ShortBoxSlice`]:
-    ///
-    /// ```
-    /// use crate::shortvec::ShortBoxSlice;
-    ///
-    /// const my_const_slice: ShortBoxSlice<i32> = ShortBoxSlice::new_single(42);
-    ///
-    /// assert_eq!(my_const_slice.len(), 1);
-    /// assert_eq!(my_const_slice.get(0), Some(&42));
-    /// ```
     #[inline]
     pub const fn new_single(item: T) -> Self {
         use ShortBoxSliceInner::*;
@@ -121,21 +108,6 @@ impl<T> ShortBoxSlice<T> {
     /// Gets a single element from the [`ShortBoxSlice`].
     ///
     /// Returns `None` if empty or more than one element.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use crate::shortvec::ShortBoxSlice;
-    ///
-    /// let mut vec = ShortBoxSlice::new();
-    /// assert!(matches!(vec.single(), None));
-    ///
-    /// vec.push(100);
-    /// assert!(matches!(vec.single(), Some(_)));
-    ///
-    /// vec.push(200);
-    /// assert!(matches!(vec.single(), None));
-    /// ```
     #[inline]
     pub const fn single(&self) -> Option<&T> {
         use ShortBoxSliceInner::*;
@@ -339,5 +311,30 @@ impl<T> IntoIterator for ShortBoxSlice<T> {
                 ShortBoxSliceIntoIterInner::Multi(boxed_slice.into_vec().into_iter()),
             ),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_single_const() {
+        const MY_CONST_SLICE: ShortBoxSlice<i32> = ShortBoxSlice::new_single(42);
+
+        assert_eq!(MY_CONST_SLICE.len(), 1);
+        assert_eq!(MY_CONST_SLICE.get(0), Some(&42));
+    }
+
+    #[test]
+    fn test_get_single() {
+        let mut vec = ShortBoxSlice::new();
+        assert!(matches!(vec.single(), None));
+
+        vec.push(100);
+        assert!(matches!(vec.single(), Some(_)));
+
+        vec.push(200);
+        assert!(matches!(vec.single(), None));
     }
 }

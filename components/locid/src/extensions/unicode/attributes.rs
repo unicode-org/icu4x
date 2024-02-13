@@ -4,9 +4,9 @@
 
 use super::Attribute;
 
+use crate::shortvec::ShortBoxSlice;
 use alloc::vec::Vec;
 use core::ops::Deref;
-use crate::shortvec::ShortBoxSlice;
 
 /// A set of [`Attribute`] elements as defined in [`Unicode Extension Attributes`].
 ///

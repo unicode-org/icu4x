@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::{ParserError, SubtagIterator};
+use crate::shortvec::ShortBoxSlice;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
-use crate::shortvec::ShortBoxSlice;
 use tinystr::TinyAsciiStr;
 
 /// A value used in a list of [`Fields`](super::Fields).
