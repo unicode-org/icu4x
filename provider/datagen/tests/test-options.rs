@@ -362,6 +362,7 @@ fn explicit_hybrid() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
             .with_fallback_mode(FallbackMode::Hybrid),
         &TestingProvider::new([
@@ -391,7 +392,7 @@ fn explicit_hybrid() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
@@ -411,6 +412,7 @@ fn explicit_hybrid() {
         // "sr", // not reachable from sr-ME
         "sr-Latn", // ancestor of sr-ME
         "sr-ME",   // explicit locale not in supported locales
+        "tlh-001", // Earth Klingon, inheriting from Klingon inheriting from und
         "und",     // ancestor of everything
     ];
 
@@ -431,6 +433,7 @@ fn explicit_runtime_retain() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
             .with_fallback_mode(FallbackMode::RuntimeManual)
             .with_base_language_handling(icu_datagen::BaseLanguageHandling::Retain),
@@ -461,7 +464,7 @@ fn explicit_runtime_retain() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
@@ -480,6 +483,7 @@ fn explicit_runtime_retain() {
         // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
+        // "tlh-001", (same as 'und', not retained since it is not a base language)
         "und",
     ];
 
@@ -500,6 +504,7 @@ fn explicit_runtime_strip() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
             .with_fallback_mode(FallbackMode::RuntimeManual)
             .with_base_language_handling(icu_datagen::BaseLanguageHandling::Strip),
@@ -530,7 +535,7 @@ fn explicit_runtime_strip() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
@@ -549,6 +554,7 @@ fn explicit_runtime_strip() {
         // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
+        // "tlh-001", (same as 'und', not retained since it is not a base language)
         "und",
     ];
 
@@ -569,6 +575,7 @@ fn explicit_preresolved() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
             .with_fallback_mode(FallbackMode::Preresolved),
         &TestingProvider::new([
@@ -598,7 +605,7 @@ fn explicit_preresolved() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
@@ -609,6 +616,7 @@ fn explicit_preresolved() {
         "es",
         "ru-Cyrl-RU",
         "sr-ME",
+        "tlh-001",
     ];
 
     // Should return the exact explicit locales set.
