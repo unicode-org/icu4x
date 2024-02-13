@@ -28,7 +28,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "fixed_decimal",
     "icu_provider",
     "litemap",
-    "shortvec",
     "tinystr",
     "writeable",
     "yoke",

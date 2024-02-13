@@ -321,7 +321,6 @@ version = "1.4.0"
 dependencies = [
  "displaydoc",
  "litemap",
- "shortvec",
  "tinystr",
  "writeable",
  "zerovec",
@@ -658,13 +657,6 @@ dependencies = [
  "log",
  "time",
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "shortvec"
-version = "0.0.0"
-dependencies = [
- "litemap",
 ]
 
 [[package]]
