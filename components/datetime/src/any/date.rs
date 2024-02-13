@@ -182,7 +182,6 @@ impl DateFormatter {
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
-            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
