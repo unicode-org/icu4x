@@ -81,7 +81,6 @@ impl OffsetConverter {
     }
 }
 
-// TODO(#4576): Bikeshed the name of the converter.
 /// ProportionalConverter is responsible for converting between two units that are proportionally related.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
