@@ -40,7 +40,7 @@ use tinystr::TinyStrError;
 pub mod ffi {
     use alloc::boxed::Box;
 
-    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     /// A common enum for errors that ICU4X may return, organized by API
     ///
@@ -362,6 +362,7 @@ impl From<ParserError> for ICU4XError {
             ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
             ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
+            ParserError::DuplicatedExtension => ICU4XError::LocaleParserExtensionError,
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)

@@ -4,8 +4,6 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use core::str::{self};
-
     use alloc::boxed::Box;
 
     use fixed_decimal::FixedDecimal;
@@ -15,7 +13,6 @@ pub mod ffi {
 
     use crate::errors::ffi::ICU4XError;
 
-    /// FFI version of `PluralCategory`.
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(PluralCategory)]
     pub enum ICU4XPluralCategory {
@@ -32,15 +29,13 @@ pub mod ffi {
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
-        pub fn get_for_cldr_string(s: &str) -> Result<ICU4XPluralCategory, ()> {
-            let s = s.as_bytes(); // #2520
+        pub fn get_for_cldr_string(s: &DiplomatStr) -> Result<ICU4XPluralCategory, ()> {
             PluralCategory::get_for_cldr_bytes(s)
                 .ok_or(())
                 .map(Into::into)
         }
     }
 
-    /// FFI version of `PluralRules`.
     #[diplomat::rust_link(icu::plurals::PluralRules, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XPluralRules(PluralRules);
@@ -95,7 +90,6 @@ pub mod ffi {
         }
     }
 
-    /// FFI version of `PluralOperands`.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::plurals::PluralOperands, Struct)]
     pub struct ICU4XPluralOperands(pub icu_plurals::PluralOperands);
@@ -103,8 +97,7 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        pub fn create_from_string(s: &str) -> Result<Box<ICU4XPluralOperands>, ICU4XError> {
-            let s = s.as_bytes(); // #2520
+        pub fn create_from_string(s: &DiplomatStr) -> Result<Box<ICU4XPluralOperands>, ICU4XError> {
             Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
                 // XXX should this have its own errors?
                 &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
@@ -112,7 +105,7 @@ pub mod ffi {
         }
     }
 
-    /// FFI version of `PluralRules::categories()` data.
+    #[diplomat::out]
     pub struct ICU4XPluralCategories {
         pub zero: bool,
         pub one: bool,

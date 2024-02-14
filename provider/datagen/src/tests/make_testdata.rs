@@ -37,18 +37,39 @@ fn make_testdata() {
         Box::new(MultiExporter::new(vec![
             #[cfg(feature = "fs_provider")]
             Box::new(
-                icu_provider_fs::export::FilesystemExporter::try_new(
-                    Box::new(icu_provider_fs::export::serializers::Json::pretty()),
+                crate::fs_provider::FilesystemExporter::try_new(
+                    Box::new(crate::fs_provider::serializers::Json::pretty()),
                     {
-                        let mut options = icu_provider_fs::export::ExporterOptions::default();
+                        let mut options = crate::fs_provider::ExporterOptions::default();
                         options.root = "tests/data/json".into();
-                        options.overwrite =
-                            icu_provider_fs::export::OverwriteOption::RemoveAndReplace;
+                        options.overwrite = crate::fs_provider::OverwriteOption::RemoveAndReplace;
                         options
                     },
                 )
                 .unwrap(),
             ),
+            #[cfg(feature = "baked_provider")]
+            // Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
+            // for faster development and debugging. For example, put the following in
+            // VSCode settings.json:
+            //
+            // ```javascript
+            // "rust-analyzer.cargo.extraEnv": {
+            //   // Relative to provider/baked/x/src
+            //   "ICU4X_DATA_DIR": "../../../datagen/tests/data/stub"
+            // },
+            // ```
+            Box::new(BakedStubdataExporter(
+                crate::baked_exporter::BakedExporter::new(
+                    "tests/data/baked".into(),
+                    crate::baked_exporter::Options {
+                        overwrite: true,
+                        pretty: true,
+                        ..Default::default()
+                    },
+                )
+                .unwrap(),
+            )),
             Box::new(PostcardTestingExporter {
                 size_hash: Default::default(),
                 zero_copy_violations: Default::default(),
@@ -70,6 +91,52 @@ fn make_testdata() {
         ])
         .export(&DatagenProvider::new_testing(), exporter)
         .unwrap()
+}
+
+struct StubExporter<E>(E);
+
+impl<E: DataExporter> DataExporter for StubExporter<E> {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        // put `und-*` but not any other locales
+        if locale.is_langid_und() {
+            self.0.put_payload(key, locale, payload)
+        } else {
+            Ok(())
+        }
+    }
+
+    fn flush_singleton(
+        &self,
+        key: DataKey,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        self.0.flush_singleton(key, payload)
+    }
+
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
+        self.0.flush(key)
+    }
+
+    fn flush_with_built_in_fallback(
+        &self,
+        key: DataKey,
+        fallback_mode: BuiltInFallbackMode,
+    ) -> Result<(), DataError> {
+        self.0.flush_with_built_in_fallback(key, fallback_mode)
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        self.0.close()
+    }
+
+    fn supports_built_in_fallback(&self) -> bool {
+        self.0.supports_built_in_fallback()
+    }
 }
 
 struct PostcardTestingExporter<F> {

@@ -65,14 +65,13 @@ pub mod ffi {
             not(any(target_arch = "wasm32", target_os = "none"))
         ))]
         #[diplomat::attr(dart, disable)]
-        pub fn create_fs(path: &str) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
-            // #2520
-            // In the future we can start using OsString APIs to support non-utf8 paths
-            core::str::from_utf8(path.as_bytes())
-                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
-
+        pub fn create_fs(path: &DiplomatStr) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
             Ok(Box::new(convert_buffer_provider(
-                icu_provider_fs::FsDataProvider::try_new(path)?,
+                icu_provider_fs::FsDataProvider::try_new(
+                    // In the future we can start using OsString APIs to support non-utf8 paths
+                    core::str::from_utf8(path)
+                        .map_err(|e| ICU4XError::DataIoError.log_original(&e))?,
+                )?,
             )))
         }
 
@@ -92,7 +91,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_from_byte_slice(
-            blob: &'static [u8],
+            blob: &'static [DiplomatByte],
         ) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
             Ok(Box::new(convert_buffer_provider(
                 icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)?,

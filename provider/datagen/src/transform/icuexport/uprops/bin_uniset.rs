@@ -21,7 +21,7 @@ impl crate::DatagenProvider {
                 key
             ))?
             .binary_property
-            .get(0)
+            .first()
             .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
     }
 }
@@ -39,7 +39,7 @@ macro_rules! expand {
 
                     let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
-                        builder.add_range_u32(&(start..=end));
+                        builder.add_range32(&(start..=end));
                     }
                     let inv_list = builder.build();
 

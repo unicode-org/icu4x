@@ -240,6 +240,8 @@ impl AbstractFs {
             Self::Memory(map) => map
                 .keys()
                 .copied()
+                .filter_map(|p| p.strip_prefix(path))
+                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),

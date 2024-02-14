@@ -103,7 +103,7 @@ There are several aspects of a data file that could undergo version updates:
 
 ### V. Constructor Versioning
 
-*Also see: [icu_provider::constructors](https://unicode-org.github.io/icu4x/docs/icu_provider/constructors/index.html)*
+*Also see: [icu_provider::constructors](https://unicode-org.github.io/icu4x/rustdoc/icu_provider/constructors/index.html)*
 
 All ICU4X functions that take a data provider should expose three signatures:
 

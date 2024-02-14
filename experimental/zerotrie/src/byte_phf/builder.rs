@@ -130,13 +130,12 @@ mod tests {
     use std::println;
 
     fn print_byte_to_stdout(byte: u8) {
-        if let Ok(c) = char::try_from(byte) {
-            if c.is_ascii_alphanumeric() {
-                print!("'{c}'");
-                return;
-            }
+        let c = char::from(byte);
+        if c.is_ascii_alphanumeric() {
+            print!("'{c}'");
+        } else {
+            print!("0x{byte:X}");
         }
-        print!("0x{byte:X}");
     }
 
     fn random_alphanums(seed: u64, len: usize) -> Vec<u8> {

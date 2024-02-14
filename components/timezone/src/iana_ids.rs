@@ -108,7 +108,7 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
         // The longest IANA name in CLDR appears to be "America/Argentina/ComodRivadavia"
         // which is 32 characters long, so 48 should be plenty. Add a debug assertion
         // just in case.
-        let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_str(iana_id) {
+        let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_bytes(iana_id.as_bytes()) {
             Ok(tinystr) => tinystr.to_ascii_lowercase(),
             Err(tinystr::TinyStrError::TooLarge { .. }) => {
                 debug_assert!(false, "IANA string too long for lookup");

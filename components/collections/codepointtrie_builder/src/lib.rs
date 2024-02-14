@@ -5,7 +5,7 @@
 //! `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 //!
 //! This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
-//! Because it is normally expected for CodePointTrie data to be pre-compiled, this crate is not
+//! Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 //! optimized for speed; it should be used during a build phase.
 //!
 //! Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
@@ -93,9 +93,11 @@ mod wasm;
 #[cfg(feature = "icu4c")]
 mod native;
 
-/// Wrapper over the data to be encoded into a CodePointTrie.
+/// Wrapper over the data to be encoded into a [`CodePointTrie`].
 ///
 /// There is currently only one variant, but more may be added in the future.
+///
+/// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum CodePointTrieBuilderData<'a, T> {
@@ -106,7 +108,9 @@ pub enum CodePointTrieBuilderData<'a, T> {
     ValuesByCodePoint(&'a [T]),
 }
 
-/// Settings for building a CodePointTrie.
+/// Settings for building a [`CodePointTrie`].
+///
+/// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 #[allow(clippy::exhaustive_structs)]
 #[derive(Debug)]
 pub struct CodePointTrieBuilder<'a, T> {

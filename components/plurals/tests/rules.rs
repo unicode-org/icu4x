@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
 
 use icu_plurals::rules::{
     reference::test_condition,
@@ -13,9 +12,8 @@ use icu_plurals::PluralOperands;
 
 #[test]
 fn test_parsing_operands() {
-    let path = "./tests/fixtures/rules.json";
-    let test_set: fixtures::RuleTestSet =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+    let test_set: fixtures::RuleTestSet = serde_json::from_str(include_str!("fixtures/rules.json"))
+        .expect("Failed to read a fixture");
 
     for test in test_set.0 {
         match test.output {

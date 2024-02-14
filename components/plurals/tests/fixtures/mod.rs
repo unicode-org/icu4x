@@ -7,8 +7,6 @@ use fixed_decimal::FixedDecimal;
 use icu_plurals::PluralOperands;
 use icu_plurals::{PluralCategory, PluralRuleType};
 use serde::Deserialize;
-#[cfg(feature = "experimental")]
-use std::convert::TryInto;
 
 /// Defines the data-driven test sets for the operands.
 #[derive(Deserialize)]
@@ -95,9 +93,7 @@ impl From<PluralOperandsInput> for PluralOperands {
             PluralOperandsInput::String(num) => num
                 .parse()
                 .expect("Failed to parse a number into operands."),
-            PluralOperandsInput::Number(num) => num
-                .try_into()
-                .expect("Failed to parse a number into operands."),
+            PluralOperandsInput::Number(num) => num.into(),
         }
     }
 }

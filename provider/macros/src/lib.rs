@@ -293,7 +293,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
 
     let name = &input.ident;
 
-    let name_with_lt = if lifetimes.get(0).is_some() {
+    let name_with_lt = if !lifetimes.is_empty() {
         quote!(#name<'static>)
     } else {
         quote!(#name)

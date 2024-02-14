@@ -154,6 +154,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_julian_date",
         "icu::calendar::Date::try_new_chinese_date_with_calendar",
         "icu::calendar::Date::try_new_dangi_date_with_calendar",
+        "icu::calendar::Date::try_new_hebrew_date",
         "icu::calendar::Date::try_new_hebrew_date_with_calendar",
         "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
         "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
@@ -172,6 +173,7 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::try_new_julian_datetime",
         "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_hebrew_datetime",
         "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
@@ -398,6 +400,9 @@ lazy_static::lazy_static! {
         "icu::segmenter::Error",
         "icu::timezone::Error",
         "icu::transliterator::Error",
+
+        // ULE types that are not in provider modules
+        "icu::plurals::PluralCategoryULE",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",

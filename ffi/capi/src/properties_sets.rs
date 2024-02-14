@@ -26,8 +26,8 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::contains,
             FnInStruct
         )]
-        pub fn contains(&self, cp: char) -> bool {
-            self.0.as_borrowed().contains(cp)
+        pub fn contains(&self, cp: DiplomatChar) -> bool {
+            self.0.as_borrowed().contains32(cp)
         }
         /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
         #[diplomat::rust_link(
@@ -37,7 +37,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(dart, disable)]
         pub fn contains32(&self, cp: u32) -> bool {
-            self.0.as_borrowed().contains32(cp)
+            self.contains(cp)
         }
 
         /// Produces an iterator over ranges of code points contained in this set
@@ -868,10 +868,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262, Fn, hidden)]
         pub fn load_for_ecma262(
             provider: &ICU4XDataProvider,
-            property_name: &str,
+            property_name: &DiplomatStr,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
-            let name = property_name.as_bytes(); // #2520
-            let name = if let Ok(s) = str::from_utf8(name) {
+            let name = if let Ok(s) = str::from_utf8(property_name) {
                 s
             } else {
                 return Err(ICU4XError::TinyStrNonAsciiError);

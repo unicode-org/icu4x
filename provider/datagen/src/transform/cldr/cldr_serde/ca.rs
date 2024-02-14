@@ -9,6 +9,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
+use icu_datetime::provider::neo::aux::{Context, Length, PatternLength};
 use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -42,23 +43,6 @@ pub struct Contexts<Symbols> {
     pub stand_alone: Option<StandAloneWidths<Symbols>>,
     // currently only found on monthPatterns
     pub numeric: Option<Numeric<Symbols>>,
-}
-
-/// A length, for querying Contexts
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Length {
-    Abbr,
-    Narrow,
-    Wide,
-    Short,
-    Numeric,
-}
-
-/// A context, for querying Contexts
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Context {
-    Format,
-    Standalone,
 }
 
 impl<Symbols> Contexts<Symbols> {
@@ -206,14 +190,6 @@ pub struct DateTimeFormats {
     pub available_formats: AvailableFormats,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum PatternLength {
-    Full,
-    Long,
-    Medium,
-    Short,
-}
-
 impl LengthPatterns {
     pub fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {
@@ -248,7 +224,7 @@ pub struct CyclicNameSets {
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
 ///
 /// e.g.
-/// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
+/// <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Dates {
     pub months: Contexts<MonthSymbols>,

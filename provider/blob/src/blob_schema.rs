@@ -163,10 +163,11 @@ impl<'data> BlobSchemaV2<'data> {
             .locales
             .get(key_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
-        // TODO(#4249): Add a lookup function to zerotrie so we don't need to stringify
-        let locale_str = req.locale.write_to_string();
-        let blob_index = ZeroTrieSimpleAscii::from_store(zerotrie)
-            .get(locale_str.as_bytes())
+        let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
+        #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
+        req.locale.write_to(&mut cursor).unwrap();
+        let blob_index = cursor
+            .take_value()
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;
         let buffer = self
             .buffers

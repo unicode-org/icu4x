@@ -92,6 +92,7 @@ jobs:
     - name: Check
       run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
+
   # ci-job-test
   test:
     strategy:
@@ -120,7 +121,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -129,11 +129,8 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
-      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
-    - name: Run `cargo make ci-job-test-windows`
-      if: matrix.os == 'windows-latest'
-      run: cargo make ci-job-test-windows
+
 
   # ci-job-test-docs
   test-docs:
@@ -159,7 +156,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -169,6 +165,42 @@ jobs:
     # Actual job
     - name: Run `cargo make ci-job-test-docs`
       run: cargo make ci-job-test-docs
+
+
+  # ci-job-test-gigo
+  test-gigo:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-gigo`
+      run: cargo make ci-job-test-gigo
+
 
   # ci-job-test-tutorials
   test-tutorials:
@@ -198,7 +230,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -215,6 +246,7 @@ jobs:
     # Actual job
     - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
       run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
+
 
   # ci-job-testdata
   testdata:
@@ -256,10 +288,13 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
+    - name: Install rustfmt
+      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
       run: cargo make ci-job-testdata
+
 
   # ci-job-testdata-legacy
   testdata-legacy:
@@ -321,6 +356,7 @@ jobs:
     - name: Run `cargo make ci-job-testdata-legacy`
       run: cargo make ci-job-testdata-legacy
 
+
   # ci-job-full-datagen
   full-datagen:
     runs-on: ubuntu-latest
@@ -345,7 +381,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -364,6 +399,7 @@ jobs:
     # Actual job
     - name: Run `cargo make ci-job-full-datagen`
       run: cargo make ci-job-full-datagen
+
 
   # ci-job-test-c
   test-c:
@@ -398,7 +434,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -415,6 +450,9 @@ jobs:
     - name: Install GCC 11
       run: |
         apt-get install -y gcc-11 g++-11
+    - name: Install jq
+      run: |
+        apt-get install -y jq
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
@@ -426,6 +464,7 @@ jobs:
       run: cargo make ci-job-test-c
       env:
         CXX: "g++-11"
+
 
   # ci-job-test-js
   test-js:
@@ -460,7 +499,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -480,10 +518,14 @@ jobs:
     - name: Install lld-15
       run: |
         apt-get install -y lld-15
+    - name: Install jq
+      run: |
+        apt-get install -y jq
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
       run: cargo make ci-job-test-js
+
 
   # ci-job-test-dart
   test-dart:
@@ -516,7 +558,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -525,11 +566,14 @@ jobs:
 
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 3.3.0-279.1.beta
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
  
+
   # ci-job-nostd
   nostd:
     runs-on: ubuntu-latest
@@ -554,7 +598,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -564,6 +607,7 @@ jobs:
     # Actual job
     - name: Run `cargo make ci-job-nostd`
       run: cargo make ci-job-nostd
+
 
   # ci-job-diplomat
   diplomat:
@@ -589,21 +633,16 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - uses: dart-lang/setup-dart@v1
-      with:
-        sdk: 3.1.5
-
     # Actual job
     - name: Run `cargo make ci-job-diplomat`
       run: cargo make ci-job-diplomat
+
 
   # ci-job-gn
   gn:
@@ -630,7 +669,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -643,8 +681,8 @@ jobs:
       id: gn-third-party-tools-cache
       with:
         path: |
-          ffi/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'ffi/gn/Cargo.lock') }}
+          docs/tutorials/gn/third_party_tools
+        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'docs/tutorials/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
@@ -673,6 +711,7 @@ jobs:
     - name: Run `cargo make ci-job-gn`
       run: cargo make ci-job-gn
 
+
   # ci-job-fmt
   fmt:
     runs-on: ubuntu-latest
@@ -697,7 +736,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -711,6 +749,7 @@ jobs:
     # Actual job
     - name: Check Format
       run: cargo make ci-job-fmt
+
 
   # ci-job-tidy
   tidy:
@@ -735,7 +774,6 @@ jobs:
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
-
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -767,6 +805,7 @@ jobs:
     # Actual job
     - name: Tidy
       run: cargo make ci-job-tidy
+
 
   # ci-job-clippy
   clippy:
@@ -809,6 +848,7 @@ jobs:
     - name: Run `ci-job-clippy`
       run: cargo make ci-job-clippy
 
+
   # ci-job-doc
   doc:
     runs-on: ubuntu-latest
@@ -833,7 +873,6 @@ jobs:
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
-
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly

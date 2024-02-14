@@ -11,7 +11,7 @@ use core::hash::Hash;
 use core::str::FromStr;
 use icu_locid::extensions::unicode as unicode_ext;
 use icu_locid::subtags::{Language, Region, Script, Variants};
-use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
+use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 
 #[cfg(feature = "experimental")]
@@ -342,34 +342,7 @@ impl DataLocale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let subtags = other.split(|b| *b == b'-');
-        let mut subtag_result = self.langid.strict_cmp_iter(subtags);
-        if self.has_unicode_ext() {
-            let mut subtags = match subtag_result {
-                SubtagOrderingResult::Subtags(s) => s,
-                SubtagOrderingResult::Ordering(o) => return o,
-            };
-            match subtags.next() {
-                Some(b"u") => (),
-                Some(s) => return s.cmp(b"u").reverse(),
-                None => return Ordering::Greater,
-            }
-            subtag_result = self.keywords.strict_cmp_iter(subtags);
-        }
-        #[cfg(feature = "experimental")]
-        if let Some(aux) = self.get_aux() {
-            let mut subtags = match subtag_result {
-                SubtagOrderingResult::Subtags(s) => s,
-                SubtagOrderingResult::Ordering(o) => return o,
-            };
-            match subtags.next() {
-                Some(b"x") => (),
-                Some(s) => return s.cmp(b"x").reverse(),
-                None => return Ordering::Greater,
-            }
-            subtag_result = aux.strict_cmp_iter(subtags);
-        }
-        subtag_result.end()
+        self.write_cmp_bytes(other)
     }
 }
 
@@ -985,23 +958,6 @@ impl AuxiliaryKeys {
                     None
                 }
             })
-    }
-
-    pub(crate) fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
-    where
-        I: Iterator<Item = &'l [u8]>,
-    {
-        for subtag in self.value.split(Self::separator()) {
-            if let Some(other) = subtags.next() {
-                match subtag.as_bytes().cmp(other) {
-                    Ordering::Equal => (),
-                    not_equal => return SubtagOrderingResult::Ordering(not_equal),
-                }
-            } else {
-                return SubtagOrderingResult::Ordering(Ordering::Greater);
-            }
-        }
-        SubtagOrderingResult::Subtags(subtags)
     }
 
     /// Returns the internal separator byte used for auxiliary keys in data locales.

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::reader::*;
+use crate::reader;
 
 use core::borrow::Borrow;
 
@@ -96,6 +96,17 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 ///
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
+///
+/// The trie can only store ASCII bytes; a string with non-ASCII always returns None:
+///
+/// ```
+/// use zerotrie::ZeroTrieSimpleAscii;
+///
+/// // A trie with two values: "abc" and "abcdef"
+/// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+///
+/// assert!(matches!(trie.get(b"ab\xFF"), None));
+/// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
@@ -104,6 +115,64 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
     pub store: Store,
 }
+
+impl<Store> ZeroTrieSimpleAscii<Store> {
+    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    #[inline]
+    pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
+        ZeroTrie(ZeroTrieFlavor::SimpleAscii(self))
+    }
+}
+
+/// A data structure that compactly maps from ASCII strings to integers
+/// in a case-insensitive way.
+///
+/// # Examples
+///
+/// ```
+/// use litemap::LiteMap;
+/// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+///
+/// let mut map = LiteMap::new_vec();
+/// map.insert(&b"foo"[..], 1);
+/// map.insert(b"Bar", 2);
+/// map.insert(b"Bazzoo", 3);
+///
+/// let trie = ZeroAsciiIgnoreCaseTrie::try_from(&map)?;
+///
+/// assert_eq!(trie.get(b"foo"), Some(1));
+/// assert_eq!(trie.get(b"bar"), Some(2));
+/// assert_eq!(trie.get(b"bazzoo"), Some(3));
+/// assert_eq!(trie.get(b"unknown"), None);
+///
+/// # Ok::<_, zerotrie::ZeroTrieError>(())
+/// ```
+///
+/// Strings with different cases of the same character at the same offset are not allowed:
+///
+/// ```
+/// use litemap::LiteMap;
+/// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+///
+/// let mut map = LiteMap::new_vec();
+/// map.insert(&b"bar"[..], 1);
+/// // OK: 'r' and 'Z' are different letters
+/// map.insert(b"baZ", 2);
+/// // Bad: we already inserted 'r' so we cannot also insert 'R' at the same position
+/// map.insert(b"baR", 2);
+///
+/// ZeroAsciiIgnoreCaseTrie::try_from(&map).expect_err("mixed-case strings!");
+/// ```
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
+pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
+}
+
+// Note: ZeroAsciiIgnoreCaseTrie is not a variant of ZeroTrie so there is no `into_zerotrie`
 
 /// A data structure that compactly maps from byte strings to integers.
 ///
@@ -138,6 +207,14 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store> ZeroTriePerfectHash<Store> {
+    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    #[inline]
+    pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
+        ZeroTrie(ZeroTrieFlavor::PerfectHash(self))
+    }
+}
+
 /// A data structure that maps from a large number of byte strings to integers.
 ///
 /// For more information, see [`ZeroTrie`].
@@ -150,14 +227,17 @@ pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store> ZeroTrieExtendedCapacity<Store> {
+    /// Wrap this specific ZeroTrie variant into a ZeroTrie.
+    #[inline]
+    pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
+        ZeroTrie(ZeroTrieFlavor::ExtendedCapacity(self))
+    }
+}
+
 macro_rules! impl_zerotrie_subtype {
-    ($name:ident, $variant:ident, $getter_fn:path, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
+    ($name:ident, $iter_ty:ty, $iter_fn:path, $cnv_fn:path) => {
         impl<Store> $name<Store> {
-            /// Wrap this specific ZeroTrie variant into a ZeroTrie.
-            #[inline]
-            pub const fn into_zerotrie(self) -> ZeroTrie<Store> {
-                ZeroTrie(ZeroTrieFlavor::$variant(self))
-            }
             /// Create a trie directly from a store.
             ///
             /// If the store does not contain valid bytes, unexpected behavior may occur.
@@ -194,10 +274,9 @@ macro_rules! impl_zerotrie_subtype {
         Store: AsRef<[u8]> + ?Sized,
         {
             /// Queries the trie for a string.
-            #[inline]
             pub fn get<K>(&self, key: K) -> Option<usize> where K: AsRef<[u8]> {
                 // TODO: Should this be AsRef or Borrow?
-                $getter_fn(self.store.as_ref(), key.as_ref())
+                reader::get_parameterized::<Self>(self.store.as_ref(), key.as_ref())
             }
             /// Returns `true` if the trie is empty.
             #[inline]
@@ -230,6 +309,20 @@ macro_rules! impl_zerotrie_subtype {
             #[inline]
             pub fn as_borrowed(&self) -> &$name<[u8]> {
                 $name::from_bytes(self.store.as_ref())
+            }
+            /// Returns a trie with a store borrowing from this trie.
+            #[inline]
+            pub fn as_borrowed_slice(&self) -> $name<&[u8]> {
+                $name::from_store(self.store.as_ref())
+            }
+        }
+        impl<Store> AsRef<$name<[u8]>> for $name<Store>
+        where
+        Store: AsRef<[u8]> + ?Sized,
+        {
+            #[inline]
+            fn as_ref(&self) -> &$name<[u8]> {
+                self.as_borrowed()
             }
         }
         #[cfg(feature = "alloc")]
@@ -293,9 +386,10 @@ macro_rules! impl_zerotrie_subtype {
         #[cfg(feature = "alloc")]
         impl $name<Vec<u8>> {
             pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, Error> {
+                use crate::options::ZeroTrieWithOptions;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_sorted_tuple_slice(
                     items,
-                    Self::BUILDER_OPTIONS,
+                    Self::OPTIONS,
                 )
                 .map(|s| Self {
                     store: s.to_bytes(),
@@ -308,10 +402,11 @@ macro_rules! impl_zerotrie_subtype {
             K: AsRef<[u8]>
         {
             fn from_iter<T: IntoIterator<Item = (K, usize)>>(iter: T) -> Self {
+                use crate::options::ZeroTrieWithOptions;
                 use crate::builder::nonconst::ZeroTrieBuilder;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_bytes_iter(
                     iter,
-                    Self::BUILDER_OPTIONS
+                    Self::OPTIONS
                 )
                 .map(|s| Self {
                     store: s.to_bytes(),
@@ -362,6 +457,7 @@ macro_rules! impl_zerotrie_subtype {
             pub fn to_btreemap(&self) -> BTreeMap<$iter_ty, usize> {
                 self.iter().collect()
             }
+            #[allow(dead_code)] // not needed for ZeroAsciiIgnoreCaseTrie
             pub(crate) fn to_btreemap_bytes(&self) -> BTreeMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
             }
@@ -421,6 +517,7 @@ macro_rules! impl_zerotrie_subtype {
             pub fn to_litemap(&self) -> LiteMap<$iter_ty, usize> {
                 self.iter().collect()
             }
+            #[allow(dead_code)] // not needed for ZeroAsciiIgnoreCaseTrie
             pub(crate) fn to_litemap_bytes(&self) -> LiteMap<Box<[u8]>, usize> {
                 self.iter().map(|(k, v)| ($cnv_fn(k), v)).collect()
             }
@@ -528,26 +625,26 @@ fn string_to_box_u8(input: String) -> Box<[u8]> {
 
 impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
-    SimpleAscii,
-    get_bsearch_only,
     String,
-    get_iter_ascii_or_panic,
+    reader::get_iter_ascii_or_panic,
+    string_to_box_u8
+);
+impl_zerotrie_subtype!(
+    ZeroAsciiIgnoreCaseTrie,
+    String,
+    reader::get_iter_ascii_or_panic,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroTriePerfectHash,
-    PerfectHash,
-    get_phf_limited,
     Vec<u8>,
-    get_iter_phf,
+    reader::get_iter_phf,
     Vec::into_boxed_slice
 );
 impl_zerotrie_subtype!(
     ZeroTrieExtendedCapacity,
-    ExtendedCapacity,
-    get_phf_extended,
     Vec<u8>,
-    get_iter_phf,
+    reader::get_iter_phf,
     Vec::into_boxed_slice
 );
 
