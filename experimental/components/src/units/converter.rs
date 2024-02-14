@@ -2,13 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-
-
 use num_bigint::BigInt;
 use num_rational::Ratio;
-
-
-
 
 /// A converter for converting between two single or compound units.
 /// For example:
