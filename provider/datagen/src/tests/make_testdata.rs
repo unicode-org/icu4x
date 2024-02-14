@@ -216,7 +216,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&key) {
-                // eprintln!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
@@ -224,7 +224,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 .insert(key);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&key) {
-                // eprintln!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()
