@@ -426,6 +426,10 @@ jobs:
       run: cargo make ci-job-test-c
       env:
         CXX: "g++-11"
+    - name: Test C++ with clang
+      run: cargo make test-cpp
+      env:
+        CXX: "clang++"
 
   # ci-job-test-js
   test-js:
