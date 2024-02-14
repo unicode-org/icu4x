@@ -18,6 +18,11 @@ include!("../../tests/locales.rs.data");
 #[test]
 #[cfg(feature = "use_wasm")]
 fn make_testdata() {
+    simple_logger::SimpleLogger::new()
+        .env()
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
     // Only produce output if the variable is set. Test is hermetic otherwise.
     let exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
         Box::new(PostcardTestingExporter {
@@ -28,11 +33,6 @@ fn make_testdata() {
             fingerprints: std::io::sink(),
         })
     } else {
-        simple_logger::SimpleLogger::new()
-            .env()
-            .with_level(log::LevelFilter::Info)
-            .init()
-            .unwrap();
 
         Box::new(MultiExporter::new(vec![
             #[cfg(feature = "fs_provider")]
