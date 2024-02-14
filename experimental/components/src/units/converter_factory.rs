@@ -5,7 +5,7 @@
 use litemap::LiteMap;
 use num_bigint::BigInt;
 use num_rational::Ratio;
-use num_traits::One;
+use num_traits::{One, Zero};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::AsULE;
 use zerovec::{ZeroSlice, ZeroVec};
@@ -13,7 +13,10 @@ use zerovec::{ZeroSlice, ZeroVec};
 use crate::units::provider::{MeasureUnitItem, SignULE};
 
 use super::{
-    converter::{ProportionalConverter, ReciprocalConverter, UnitsConverter, UnitsConverterInner},
+    converter::{
+        OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
+        UnitsConverterInner,
+    },
     measureunit::{MeasureUnit, MeasureUnitParser},
     provider::{Base, SiPrefix, Sign, UnitsInfoV1},
 };
@@ -49,6 +52,89 @@ impl<'data> ConverterFactory<'data> {
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::from_payload(self.payload_store)
+    }
+
+    /// Computes the offset between the input and output units.
+    /// To calculate the offset, we follow these steps:
+    /// 1. Assume the conversion rate for unit 1 to the root is: N1/D1 + OffsetN1/OffsetD1.
+    /// 2. Assume the conversion rate for unit 2 to the root is: N2/D2 + OffsetN2/OffsetD2.
+    /// 3. To convert from the root to unit 2, the formula is: D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 4. Given a value V to be converted from unit 1 to unit 2, the conversion to the root is:
+    ///    (V * N1/D1) + OffsetN1/OffsetD1, denoted as V_Root.
+    /// 5. To convert V_Root to unit 2, the formula is: V_Root * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 6. Substituting V_Root from step 4 into step 5 yields:
+    ///    ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 7. Simplifying the equation gives:
+    ///    V * (N1/D1) * (D2/N2) + OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 * (D2/N2).
+    /// 8. Focusing on the constants (offsets), we derive the offset formula:
+    ///    Offset = (OffsetN1/OffsetD1 - OffsetN2/OffsetD2) * (D2/N2).
+    ///    This simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
+    ///
+    /// NOTE:
+    ///   In order to have an offset, the input and output units should be simple.
+    /// This means, the input and output units should have only one unit item with power 1 and si prefix 0.
+    /// For example:
+    ///           1 - `meter` and `foot` are simple units.
+    ///           2 - `meter-per-second` and `foot-per-second` are not simple units.
+    fn compute_offset(
+        &self,
+        input_unit: &MeasureUnit,
+        output_unit: &MeasureUnit,
+    ) -> Option<Ratio<BigInt>> {
+        if !(input_unit.contained_units.len() == 1
+            && output_unit.contained_units.len() == 1
+            && input_unit.contained_units[0].power == 1
+            && output_unit.contained_units[0].power == 1
+            && input_unit.contained_units[0].si_prefix.power == 0
+            && output_unit.contained_units[0].si_prefix.power == 0)
+        {
+            return Some(Ratio::<BigInt>::from_integer(0.into()));
+        }
+
+        let input_conversion_info = self
+            .payload
+            .convert_infos
+            .get(input_unit.contained_units[0].unit_id as usize);
+        debug_assert!(
+            input_conversion_info.is_some(),
+            "Failed to get input conversion info"
+        );
+        let input_conversion_info = input_conversion_info?;
+
+        let output_conversion_info = self
+            .payload
+            .convert_infos
+            .get(output_unit.contained_units[0].unit_id as usize);
+        debug_assert!(
+            output_conversion_info.is_some(),
+            "Failed to get output conversion info"
+        );
+        let output_conversion_info = output_conversion_info?;
+
+        let input_offset = Self::extract_ratio_from_unaligned(
+            &input_conversion_info.offset_sign,
+            input_conversion_info.offset_num(),
+            input_conversion_info.offset_den(),
+        );
+
+        let output_offset = Self::extract_ratio_from_unaligned(
+            &output_conversion_info.offset_sign,
+            output_conversion_info.offset_num(),
+            output_conversion_info.offset_den(),
+        );
+
+        if input_offset.is_zero() && output_offset.is_zero() {
+            return Some(Ratio::<BigInt>::from_integer(0.into()));
+        }
+
+        let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
+            &output_conversion_info.factor_sign,
+            // Because we are computing the reciprocal, the numerator and denominator are swapped.
+            output_conversion_info.factor_den(),
+            output_conversion_info.factor_num(),
+        );
+
+        Some((input_offset - output_offset) * output_conversion_rate_recip)
     }
 
     // TODO(#4512): the need needs to be bikeshedded.
@@ -212,15 +298,32 @@ impl<'data> ConverterFactory<'data> {
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
 
+        let offset = self.compute_offset(input_unit, output_unit)?;
+
+        if is_reciprocal && !offset.is_zero() {
+            debug_assert!(
+                false,
+                "The units are reciprocal, but the offset is not zero. This is should not happen!.",
+            );
+            return None;
+        }
+
         if is_reciprocal {
             Some(UnitsConverter(UnitsConverterInner::Reciprocal(
                 ReciprocalConverter {
                     proportional: ProportionalConverter { conversion_rate },
                 },
             )))
-        } else {
+        } else if offset.is_zero() {
             Some(UnitsConverter(UnitsConverterInner::Proportional(
                 ProportionalConverter { conversion_rate },
+            )))
+        } else {
+            Some(UnitsConverter(UnitsConverterInner::Offset(
+                OffsetConverter {
+                    proportional: ProportionalConverter { conversion_rate },
+                    offset,
+                },
             )))
         }
     }
