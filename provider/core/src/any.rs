@@ -437,10 +437,7 @@ where
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0
-            .load_any(M::KEY, req)?
-            .downcast()
-            .map_err(|e| e.with_req(M::KEY, req))
+        self.load_data(M::KEY, req)
     }
 }
 
@@ -454,10 +451,21 @@ where
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0
-            .load_any(key, req)?
-            .downcast()
-            .map_err(|e| e.with_req(key, req))
+        let any_response = AnyProvider::load_any(self.0, key, req)?;
+        Ok(DataResponse {
+            metadata: any_response.metadata,
+            payload: any_response
+                .payload
+                .and_then(|p| {
+                    if req.metadata.drop_payload {
+                        None
+                    } else {
+                        Some(p.downcast())
+                    }
+                })
+                .transpose()
+                .map_err(|e| e.with_req(key, req))?,
+        })
     }
 }
 

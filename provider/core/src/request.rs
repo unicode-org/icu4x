@@ -52,6 +52,9 @@ impl fmt::Display for DataRequest<'_> {
 pub struct DataRequestMetadata {
     /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
     pub silent: bool,
+    /// Whether to drop the payload from the [`DataResponse`](crate::DataResponse). This can be used
+    /// for exploratory queries where the returned data is not of interest.
+    pub drop_payload: bool,
 }
 
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.

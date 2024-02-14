@@ -85,9 +85,15 @@ impl BufferProvider for FsDataProvider {
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingLocale.with_req(key, req));
         }
-        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
+        if req.metadata.drop_payload {
+            return Ok(DataResponse {
+                metadata,
+                payload: None,
+            });
+        }
+        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned_buffer(buffer.into_boxed_slice())),
