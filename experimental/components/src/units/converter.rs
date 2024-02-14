@@ -307,7 +307,7 @@ impl<'data> ConverterFactory<'data> {
 impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
-        let mut result: Ratio<BigInt> = value * &self.conversion_rate;
+        let result: Ratio<BigInt> = value * &self.conversion_rate;
         result
     }
 }

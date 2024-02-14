@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_experimental::units::converter;
+
 use icu_experimental::units::converter::ConverterFactory;
 use num_bigint::BigInt;
 use num_rational::BigRational;
