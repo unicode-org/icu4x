@@ -34,6 +34,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+mod num_pattern;
 #[cfg(feature = "alloc")]
 mod parser;
 
