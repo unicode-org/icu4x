@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Cow;
+use alloc::borrow::Cow;
 
 /// A token returned by the [`Parser`].
 ///
@@ -50,7 +50,7 @@ use std::borrow::Cow;
 /// - `s`: The life time of an input string slice being parsed.
 ///
 /// [`Parser`]: crate::Parser
-/// [`FromStr`]: std::str::FromStr
+/// [`FromStr`]: core::str::FromStr
 #[derive(PartialEq, Debug, Clone)]
 pub enum PatternToken<'s, P> {
     Placeholder(P),

@@ -7,7 +7,8 @@ pub mod token;
 
 pub use token::PatternToken;
 pub use error::ParserError;
-use std::{borrow::Cow, fmt::Debug, marker::PhantomData, str::FromStr};
+use alloc::{borrow::Cow, vec, vec::Vec};
+use core::{fmt::Debug, marker::PhantomData, str::FromStr};
 
 #[derive(PartialEq, Debug)]
 enum ParserState {
@@ -243,8 +244,8 @@ pub struct ParserOptions {
 ///
 /// [`TR35 2.6.1]: https://unicode.org/reports/tr35/tr35-dates.html#dateTimeFormat
 /// [`RFC 2924`]: https://github.com/rust-lang/rfcs/pull/2924
-/// [`Item`]: std::iter::Iterator::Item
-/// [`TryFrom`]: std::convert::TryFrom
+/// [`Item`]: core::iter::Iterator::Item
+/// [`TryFrom`]: core::convert::TryFrom
 /// [`ReplacementProvider`]: crate::ReplacementProvider
 #[derive(Debug)]
 pub struct Parser<'p, P> {
@@ -389,7 +390,7 @@ impl<'p, P> Parser<'p, P> {
         }
     }
 
-    fn advance_state(&mut self, idx: usize, next_state: ParserState) -> std::ops::Range<usize> {
+    fn advance_state(&mut self, idx: usize, next_state: ParserState) -> core::ops::Range<usize> {
         let range = self.start_idx..idx;
         self.idx = idx + 1;
         self.start_idx = self.idx;
@@ -414,7 +415,7 @@ impl<'p, P> Parser<'p, P> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::ops::Deref;
+    use core::ops::Deref;
 
     #[test]
     fn pattern_parse_placeholders() {
@@ -557,7 +558,7 @@ mod tests {
             assert_eq!(result.deref(), expected,);
         }
 
-        let broken: Vec<(_, Option<ParserError<std::num::ParseIntError>>)> = vec![
+        let broken: Vec<(_, Option<ParserError<core::num::ParseIntError>>)> = vec![
             ("{", Some(ParserError::UnclosedPlaceholder)),
             ("{0", Some(ParserError::UnclosedPlaceholder)),
             ("{01", Some(ParserError::UnclosedPlaceholder)),
@@ -567,7 +568,7 @@ mod tests {
                 // ```
                 // ParserError::InvalidPlaceholder(
                 //     ParseIntError {
-                //         kind: std::num::IntErrorKind::InvalidDigit
+                //         kind: core::num::IntErrorKind::InvalidDigit
                 //     }
                 // ),
                 // ```

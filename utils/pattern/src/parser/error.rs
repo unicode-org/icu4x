@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use std::fmt::Debug;
+use core::fmt::Debug;
 
 /// An error returned when parsing a pattern.
 ///
@@ -24,7 +24,7 @@ use std::fmt::Debug;
 ///
 /// - `E`: An error of the replacement type which implements [`FromStr`].
 ///
-/// [`FromStr`]: std::str::FromStr
+/// [`FromStr`]: core::str::FromStr
 #[derive(Display, Debug, PartialEq)]
 pub enum ParserError<E>
 where
@@ -47,4 +47,5 @@ where
     UnclosedQuotedLiteral,
 }
 
+#[cfg(feature = "std")]
 impl<E: Debug> std::error::Error for ParserError<E> {}
