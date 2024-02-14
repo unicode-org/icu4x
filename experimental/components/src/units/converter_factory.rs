@@ -59,16 +59,16 @@ impl<'data> ConverterFactory<'data> {
     /// 1. Assume the conversion rate for unit 1 to the root is: N1/D1 + OffsetN1/OffsetD1.
     /// 2. Assume the conversion rate for unit 2 to the root is: N2/D2 + OffsetN2/OffsetD2.
     /// 3. To convert from the root to unit 2, the formula is: D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
-    /// 4. Given a value V to be converted from unit 1 to unit 2, the conversion to the root is:
+    /// 4. Given a value V to be converted from unit 1 to unit 2, the conversion will be the root:
     ///    (V * N1/D1) + OffsetN1/OffsetD1, denoted as V_Root.
-    /// 5. To convert V_Root to unit 2, the formula is: V_Root * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// 5. To convert V_Root to unit 2, the formula is: V_Root * D2/N2 - OffsetN2/OffsetD2 * D2/N2.
     /// 6. Substituting V_Root from step 4 into step 5 yields:
     ///    ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
     /// 7. Simplifying the equation gives:
     ///    V * (N1/D1) * (D2/N2) + OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 * (D2/N2).
     /// 8. Focusing on the constants (offsets), we derive the offset formula:
     ///    Offset = (OffsetN1/OffsetD1 - OffsetN2/OffsetD2) * (D2/N2).
-    ///    This simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
+    ///    This simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate of Unit2).
     ///
     /// NOTE:
     ///   In order to have an offset, the input and output units should be simple.
