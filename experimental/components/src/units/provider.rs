@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use zerotrie::ZeroTrie;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{VarZeroVec, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
@@ -38,11 +38,10 @@ pub use crate::provider::Baked;
     databake(path = icu_experimental::units::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
 pub struct UnitsInfoV1<'data> {
     /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_conversion_trie: ZeroTrie<ZeroVec<'data, u8>>,
+    pub units_conversion_trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
