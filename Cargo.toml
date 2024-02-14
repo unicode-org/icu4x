@@ -233,7 +233,7 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 diplomat = "0.7"
 diplomat-runtime = "0.7"
 diplomat_core = "0.7"
-diplomat-tool = "0.7"
+diplomat-tool = "0.7.1"
 
 # Size optimized builds
 [profile.release-opt-size]

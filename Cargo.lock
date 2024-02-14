@@ -823,9 +823,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat-tool"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c62ab7c863bef0c72ffd4b86a36413980e5ee06f0455961a5d98ffd8567a5908"
+checksum = "34f1263dda940160e29884a3195efc4143a626e92cd9e24ebb2082cf6cfdd01a"
 dependencies = [
  "askama",
  "clap 3.2.25",
