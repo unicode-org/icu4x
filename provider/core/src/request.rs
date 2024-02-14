@@ -246,6 +246,22 @@ impl FromStr for DataLocale {
     }
 }
 
+impl PartialOrd for DataLocale {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for DataLocale {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.langid
+            .as_tuple()
+            .cmp(&other.langid.as_tuple())
+            .then_with(|| self.keywords.cmp(&other.keywords))
+            .then_with(|| self.aux.cmp(&other.aux))
+    }
+}
+
 impl DataLocale {
     /// Compare this [`DataLocale`] with BCP-47 bytes.
     ///
@@ -755,7 +771,7 @@ impl DataLocale {
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
-#[derive(Debug, PartialEq, Clone, Eq, Hash)]
+#[derive(Debug, PartialEq, Clone, Eq, Hash, PartialOrd, Ord)]
 #[cfg(feature = "experimental")]
 pub struct AuxiliaryKeys {
     value: AuxiliaryKeysInner,
@@ -806,6 +822,22 @@ impl Hash for AuxiliaryKeysInner {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl PartialOrd for AuxiliaryKeysInner {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.deref().partial_cmp(other.deref())
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl Ord for AuxiliaryKeysInner {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.deref().cmp(other.deref())
     }
 }
 

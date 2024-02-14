@@ -146,6 +146,30 @@ impl LanguageIdentifier {
         variants: subtags::Variants::new(),
     };
 
+    /// Borrows the fields of this [`LanguageIdentifier`] in a tuple.
+    pub fn as_tuple(
+        &self,
+    ) -> (
+        subtags::Language,
+        Option<subtags::Script>,
+        Option<subtags::Region>,
+        &subtags::Variants,
+    ) {
+        (self.language, self.script, self.region, &self.variants)
+    }
+
+    /// Takes the fields of this [`LanguageIdentifier`] and returns them as a tuple.
+    pub fn into_tuple(
+        self,
+    ) -> (
+        subtags::Language,
+        Option<subtags::Script>,
+        Option<subtags::Region>,
+        subtags::Variants,
+    ) {
+        (self.language, self.script, self.region, self.variants)
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
