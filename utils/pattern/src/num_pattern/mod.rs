@@ -21,22 +21,16 @@ use alloc::string::String;
 ///
 /// The pattern is stored as a string with the following encoding:
 ///
-/// - String literals are stored as regular UTF-8.
-/// - Placeholder numbers are stored in the context where they occur as varints.
+/// - The first code point is the byte offset of the start of the string literals.
+/// - Code points 1 through N are the byte offsets of those placeholders.
+/// - The remainder of the string contains the string literals.
 ///
-/// The placeholder varint encoding is as follows:
-///
-/// - Code point `\x06` = add 5 and read the next code point.
-/// - Code points `\x01 - \x05` = add the code point value minus 1 and stop.
-///
-/// For example, the placeholder 12 is encoded as `\x06\x06\x03`, or 5+5+2.
+/// For example, a string with one placeholder, like "A{0}B", is encoded as: `"\x02\x03AB"`
 ///
 /// Consequences of this encoding:
 ///
-/// 1. String literals cannot contain code points in the range `\x01` through `\x06`. If they do,
-///    GIGO behavior will occur.
-/// 2. Small numeric placeholder values are stored much more efficiently than large ones.
-/// 3. The same numeric placeholder value could occur multiple times in the same pattern.
+/// 1. The largest placeholder index is the largest valid char numeric value.
+/// 2. Each placeholder from 1 to N occurs exactly once.
 ///
 /// # Examples
 ///
