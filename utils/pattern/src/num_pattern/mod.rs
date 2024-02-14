@@ -118,6 +118,71 @@ where
             store: self.store.as_ref(),
         }
     }
+
+    /// Returns a [`Writeable`] that interpolates items from the given replacement provider
+    /// into this pattern string.
+    pub fn interpolate<'a, P>(&'a self, replacements: P) -> impl Writeable + fmt::Display + 'a
+    where
+        P: NumericPlaceholderProvider + 'a,
+    {
+        WriteableNumericPlaceholderPattern {
+            pattern: self.as_borrowed_store(),
+            replacements,
+        }
+    }
+
+    /// Interpolates items with [writeable::Part]s.
+    ///
+    /// Two parts are used:
+    ///
+    /// 1. `literal_part` for [`NumericPlaceholderPatternItem::Literal`]
+    /// 2. `element_part` for [`NumericPlaceholderPatternItem::Placeholder`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern_2::NumericPlaceholderPattern;
+    /// use writeable::assert_writeable_parts_eq;
+    ///
+    /// let pattern = NumericPlaceholderPattern::from_store("Hello, \x01 and \x02!");
+    ///
+    /// const LITERAL_PART: writeable::Part = writeable::Part {
+    ///     category: "demo",
+    ///     value: "literal",
+    /// };
+    /// const ELEMENT_PART: writeable::Part = writeable::Part {
+    ///     category: "demo",
+    ///     value: "element",
+    /// };
+    ///
+    /// assert_writeable_parts_eq!(
+    ///     pattern.interpolate_with_parts(["Alice", "Bob"], LITERAL_PART, ELEMENT_PART),
+    ///     "Hello, Alice and Bob!",
+    ///     [
+    ///         (0, 7, LITERAL_PART),
+    ///         (7, 12, ELEMENT_PART),
+    ///         (12, 17, LITERAL_PART),
+    ///         (17, 20, ELEMENT_PART),
+    ///         (20, 21, LITERAL_PART),
+    ///     ]
+    /// );
+    /// ```
+    pub fn interpolate_with_parts<'a, P>(
+        &'a self,
+        replacements: P,
+        literal_part: writeable::Part,
+        element_part: writeable::Part,
+    ) -> impl Writeable + fmt::Display + 'a
+    where
+        P: NumericPlaceholderProvider + 'a,
+    {
+        WriteableNumericPlaceholderPatternWithParts {
+            pattern: self.as_borrowed_store(),
+            replacements,
+            literal_part,
+            element_part,
+        }
+    }
 }
 
 /// A type that returns [`Writeable`]s for interpolating into a [`NumericPlaceholderPattern`].
