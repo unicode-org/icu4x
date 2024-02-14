@@ -196,6 +196,46 @@ impl Locale {
         self.write_cmp_bytes(other)
     }
 
+    pub(crate) fn as_tuple(
+        &self,
+    ) -> (
+        (
+            subtags::Language,
+            Option<subtags::Script>,
+            Option<subtags::Region>,
+            &subtags::Variants,
+        ),
+        (
+            (
+                &extensions::unicode::Attributes,
+                &extensions::unicode::Keywords,
+            ),
+            (
+                Option<(
+                    subtags::Language,
+                    Option<subtags::Script>,
+                    Option<subtags::Region>,
+                    &subtags::Variants,
+                )>,
+                &extensions::transform::Fields,
+            ),
+            &extensions::private::Private,
+            &[extensions::other::Other],
+        ),
+    ) {
+        (self.id.as_tuple(), self.extensions.as_tuple())
+    }
+
+    /// Returns an ordering suitable for use in [`BTreeSet`].
+    ///
+    /// The ordering may or may not be equivalent to string ordering, and it
+    /// may or may not be stable across ICU4X releases.
+    ///
+    /// [`BTreeSet`]: alloc::collections::BTreeSet
+    pub fn total_cmp(&self, other: &Self) -> Ordering {
+        self.as_tuple().cmp(&other.as_tuple())
+    }
+
     /// Compare this [`Locale`] with an iterator of BCP-47 subtags.
     ///
     /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
