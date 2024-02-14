@@ -133,6 +133,7 @@ impl Transform {
         self.fields.clear();
     }
 
+    #[allow(clippy::type_complexity)]
     pub(crate) fn as_tuple(
         &self,
     ) -> (

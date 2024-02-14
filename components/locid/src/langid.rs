@@ -203,7 +203,6 @@ impl LanguageIdentifier {
         self.write_cmp_bytes(other)
     }
 
-    /// Borrows the fields of this [`LanguageIdentifier`] in a tuple.
     pub(crate) fn as_tuple(
         &self,
     ) -> (

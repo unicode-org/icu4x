@@ -196,6 +196,7 @@ impl Locale {
         self.write_cmp_bytes(other)
     }
 
+    #[allow(clippy::type_complexity)]
     pub(crate) fn as_tuple(
         &self,
     ) -> (
