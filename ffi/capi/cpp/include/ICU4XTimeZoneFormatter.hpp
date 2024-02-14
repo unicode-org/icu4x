@@ -163,7 +163,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_generic_non_location_long(this->inner.get(), provider.AsFFI());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -173,7 +173,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_generic_non_location_short(this->inner.get(), provider.AsFFI());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -183,7 +183,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_specific_non_location_long(this->inner.get(), provider.AsFFI());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -193,7 +193,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_specific_non_location_short(this->inner.get(), provider.AsFFI());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -203,7 +203,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_generic_location_format(this->inner.get(), provider.AsFFI());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -213,7 +213,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::incl
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_include_localized_gmt_format(this->inner.get());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -224,7 +224,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_iso_8601_format(this->inner.get(), capi::ICU4XIsoTimeZoneOptions{ .format = static_cast<capi::ICU4XIsoTimeZoneFormat>(diplomat_wrapped_struct_options.format), .minutes = static_cast<capi::ICU4XIsoTimeZoneMinuteDisplay>(diplomat_wrapped_struct_options.minutes), .seconds = static_cast<capi::ICU4XIsoTimeZoneSecondDisplay>(diplomat_wrapped_struct_options.seconds) });
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -235,7 +235,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XTi
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_format_custom_time_zone(this->inner.get(), value.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -247,7 +247,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneFormatter::format_
   auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_format_custom_time_zone(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
