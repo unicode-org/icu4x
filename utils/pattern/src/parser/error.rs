@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use displaydoc::Display;
 use core::fmt::Debug;
+use displaydoc::Display;
 
 /// An error returned when parsing a pattern.
 ///

@@ -108,8 +108,13 @@ where
     /// Iterate over the contents of this pattern string, returning instances of
     /// [`NumericPlaceholderPatternItem`].
     pub fn iter(&self) -> impl Iterator<Item = NumericPlaceholderPatternItem> + '_ {
-        todo!();
-        *&[].into_iter() // required for type resolution
+        let first_placeholder_offset_char = self.store.as_ref().chars().next().unwrap_or('\0');
+        NumericPlaceholderPatternIterator::<N> {
+            pattern: self.store.as_ref(),
+            offset: first_placeholder_offset_char as usize,
+            placeholder_index: 0,
+            placeholder_position: char::len_utf8(first_placeholder_offset_char),
+        }
     }
 
     /// Convert this pattern's store to `&str`.
@@ -117,6 +122,10 @@ where
         NumericPlaceholderPattern {
             store: self.store.as_ref(),
         }
+    }
+
+    pub fn byte_len(&self) -> usize {
+        self.store.as_ref().len()
     }
 
     /// Returns a [`Writeable`] that interpolates items from the given replacement provider
@@ -141,10 +150,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_pattern_2::NumericPlaceholderPattern;
+    /// use icu_pattern::NumericPlaceholderPattern;
     /// use writeable::assert_writeable_parts_eq;
     ///
-    /// let pattern = NumericPlaceholderPattern::from_store("Hello, \x01 and \x02!");
+    /// let pattern = NumericPlaceholderPattern::<&str, 2>::from_store("\x03\x0A\x0FHello,  and !");
     ///
     /// const LITERAL_PART: writeable::Part = writeable::Part {
     ///     category: "demo",
@@ -185,6 +194,47 @@ where
     }
 }
 
+struct NumericPlaceholderPatternIterator<'a, const N: usize> {
+    pattern: &'a str,
+    offset: usize,
+    placeholder_position: usize,
+    placeholder_index: usize,
+}
+
+impl<'a, const N: usize> Iterator for NumericPlaceholderPatternIterator<'a, N> {
+    type Item = NumericPlaceholderPatternItem<'a>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.placeholder_index == N {
+            if self.offset == self.pattern.len() {
+                // End of iteration
+                return None;
+            } else {
+                // Suffix
+                let retval = self.pattern.get(self.offset..);
+                self.offset = self.pattern.len();
+                return retval.map(NumericPlaceholderPatternItem::Literal);
+            }
+        }
+        let placeholder_offset_char = self
+            .pattern
+            .get(self.placeholder_position..)?
+            .chars()
+            .next()?;
+        let placeholder_offset = placeholder_offset_char as usize;
+        if self.offset < placeholder_offset {
+            // Prefix or Infix
+            let retval = self.pattern.get(self.offset..placeholder_offset);
+            self.offset = placeholder_offset;
+            return retval.map(NumericPlaceholderPatternItem::Literal);
+        }
+        // Placeholder
+        let retval = self.placeholder_index;
+        self.placeholder_position += char::len_utf8(placeholder_offset_char);
+        self.placeholder_index += 1;
+        return Some(NumericPlaceholderPatternItem::Placeholder(retval));
+    }
+}
+
 /// A type that returns [`Writeable`]s for interpolating into a [`NumericPlaceholderPattern`].
 ///
 /// This trait is implemented on slices of [`Writeable`]s, including `[W]`, `[W; N]`, and `&[W]`.
@@ -197,7 +247,7 @@ where
 /// use icu_pattern::NumericPlaceholderPattern;
 /// use writeable::assert_writeable_eq;
 ///
-/// let pattern = NumericPlaceholderPattern::from_store("Your lucky numbers are: \x01, \x02, and \x03");
+/// let pattern = NumericPlaceholderPattern::<&str, 3>::from_store("\x04\x1C\x1E\x24Your lucky numbers are: , , and ");
 ///
 /// assert_writeable_eq!(
 ///     pattern.interpolate(&[55, 46, 91] as &[i32]),

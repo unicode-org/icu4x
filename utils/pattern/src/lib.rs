@@ -38,5 +38,8 @@ mod num_pattern;
 #[cfg(feature = "alloc")]
 mod parser;
 
+pub use num_pattern::{
+    NumericPlaceholderPattern, NumericPlaceholderPatternItem, NumericPlaceholderProvider,
+};
 #[cfg(feature = "alloc")]
 pub use parser::{Parser, ParserError, ParserOptions, PatternToken};

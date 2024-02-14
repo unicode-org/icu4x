@@ -5,10 +5,10 @@
 pub mod error;
 pub mod token;
 
-pub use token::PatternToken;
-pub use error::ParserError;
 use alloc::{borrow::Cow, vec, vec::Vec};
 use core::{fmt::Debug, marker::PhantomData, str::FromStr};
+pub use error::ParserError;
+pub use token::PatternToken;
 
 #[derive(PartialEq, Debug)]
 enum ParserState {
@@ -399,7 +399,9 @@ impl<'p, P> Parser<'p, P> {
     }
 
     /// Mutates this parser and collects all [`PatternToken`]s into a vector.
-    pub fn try_collect_into_vec(mut self) -> Result<Vec<PatternToken<'p, P>>, ParserError<<P as FromStr>::Err>>
+    pub fn try_collect_into_vec(
+        mut self,
+    ) -> Result<Vec<PatternToken<'p, P>>, ParserError<<P as FromStr>::Err>>
     where
         P: FromStr,
         P::Err: Debug,
@@ -554,7 +556,9 @@ mod tests {
                     allow_raw_letters: true,
                 },
             );
-            let result = parser.try_collect_into_vec().expect("Failed to parse a pattern");
+            let result = parser
+                .try_collect_into_vec()
+                .expect("Failed to parse a pattern");
             assert_eq!(result.deref(), expected,);
         }
 
