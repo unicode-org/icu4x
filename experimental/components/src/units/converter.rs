@@ -13,9 +13,21 @@ use num_traits::identities::One;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-pub enum Converter {
-    Linear(LinearConverter),
+pub struct UnitsConverter(UnitsConverterInner);
+
+enum UnitsConverter {
+    Proportional(ProportionalConverter),
+    Reciprocal(ReciprocalConverter)
     Offset(OffsetConverter),
+}
+
+struct ReciprocalConverter {
+    proportional: ProportionalConverter,
+}
+
+struct OffsetConverter {
+    proportional: ProportionalConverter,
+    offset: IcuRational,
 }
 
 impl Converter {
