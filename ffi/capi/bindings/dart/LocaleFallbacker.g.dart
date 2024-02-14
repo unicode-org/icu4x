@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class LocaleFallbacker implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleFallbacker._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  LocaleFallbacker._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -29,7 +37,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleFallbacker._(result.union.ok, true);
+    return LocaleFallbacker._(result.union.ok, true, []);
   }
 
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
@@ -37,7 +45,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory LocaleFallbacker.withoutData() {
     final result = _ICU4XLocaleFallbacker_create_without_data();
-    return LocaleFallbacker._(result, true);
+    return LocaleFallbacker._(result, true, []);
   }
 
   /// Associates this `LocaleFallbacker` with configuration options.
@@ -47,12 +55,14 @@ final class LocaleFallbacker implements ffi.Finalizable {
   /// Throws [Error] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final temp = ffi2.Arena();
+    // This lifetime edge depends on lifetimes: 'a
+    core.List<Object> edge_a = [this];
     final result = _ICU4XLocaleFallbacker_for_config(_underlying, config._pointer(temp));
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleFallbackerWithConfig._(result.union.ok, true);
+    return LocaleFallbackerWithConfig._(result.union.ok, true, [], edge_a);
   }
 }
 

@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleExpander._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  LocaleExpander._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -29,7 +37,7 @@ final class LocaleExpander implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleExpander._(result.union.ok, true);
+    return LocaleExpander._(result.union.ok, true, []);
   }
 
   /// Create a new [`LocaleExpander`] with extended data.
@@ -42,7 +50,7 @@ final class LocaleExpander implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleExpander._(result.union.ok, true);
+    return LocaleExpander._(result.union.ok, true, []);
   }
 
   /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
