@@ -225,6 +225,12 @@ final class Locale implements ffi.Finalizable {
     temp.releaseAll();
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
+
+  /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.total_cmp) for more information.
+  Ordering totalCmp(Locale other) {
+    final result = _ICU4XLocale_total_cmp(_underlying, other._underlying);
+    return Ordering.values.firstWhere((v) => v._underlying == result);
+  }
 }
 
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocale_destroy')
@@ -290,3 +296,7 @@ external bool _ICU4XLocale_normalizing_eq(ffi.Pointer<ffi.Opaque> self, ffi.Poin
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_strict_cmp')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocale_strict_cmp(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_total_cmp')
+// ignore: non_constant_identifier_names
+external int _ICU4XLocale_total_cmp(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);

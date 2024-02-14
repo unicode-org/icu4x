@@ -52,6 +52,8 @@ bool ICU4XLocale_normalizing_eq(const ICU4XLocale* self, const char* other_data,
 
 ICU4XOrdering ICU4XLocale_strict_cmp(const ICU4XLocale* self, const char* other_data, size_t other_len);
 
+ICU4XOrdering ICU4XLocale_total_cmp(const ICU4XLocale* self, const ICU4XLocale* other);
+
 ICU4XLocale* ICU4XLocale_create_en();
 
 ICU4XLocale* ICU4XLocale_create_bn();
