@@ -12,7 +12,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: '*'
+    branches: '**'
   workflow_dispatch:
     inputs:
       nightly:
