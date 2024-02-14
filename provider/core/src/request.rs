@@ -381,7 +381,12 @@ impl DataLocale {
         self.langid
             .total_cmp(&other.langid)
             .then_with(|| self.keywords.cmp(&other.keywords))
-            .then_with(|| self.aux.cmp(&other.aux))
+            .then_with(|| {
+                #[cfg(feature = "experimental")]
+                return self.aux.cmp(&other.aux);
+                #[cfg(not(feature = "experimental"))]
+                return Ordering::Equal;
+            })
     }
 
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
