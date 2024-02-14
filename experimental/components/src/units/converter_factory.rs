@@ -277,7 +277,16 @@ impl<'data> ConverterFactory<'data> {
         )
     }
 
-    /// Creates a converter for converting between two units in the form of CLDR identifiers.
+    /// Creates a converter for converting between two single or compound units.
+    /// For example:
+    ///    1 - `meter` to `foot` --> Simple
+    ///    2 - `kilometer-per-hour` to `mile-per-hour` --> Compound
+    ///    3 - `mile-per-gallon` to `liter-per-100-kilometer` --> Reciprocal
+    ///    4 - `celsius` to `fahrenheit` --> Needs an offset
+    ///
+    /// NOTE:
+    ///    This converter does not support conversions between mixed units,
+    ///    such as, from "meter" to "foot-and-inch".
     pub fn converter(
         &self,
         input_unit: &MeasureUnit,
