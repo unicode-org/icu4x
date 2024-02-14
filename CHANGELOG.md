@@ -21,6 +21,7 @@
     - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
     - Never use fallback for baked segmentation data (https://github.com/unicode-org/icu4x/pull/4510)
     - Propagate extension keywords and auxiliary keys to explicit locales (https://github.com/unicode-org/icu4x/pull/4533)
+    - Retain base languages in `Runtime` and `RuntimeManual` modes with option to opt-in to the old behavior (https://github.com/unicode-org/icu4x/pull/4606)
   - `icu_provider`
     - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
   - `icu_provider_blob`
