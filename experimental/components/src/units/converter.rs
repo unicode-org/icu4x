@@ -13,12 +13,15 @@ use num_traits::identities::One;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-/// A converter for converting between two units.
-/// For example, `meter` to `foot` and `mile-per-gallon` to `liter-per-100-kilometer`.
+/// A converter for converting between two single or compound units.
+/// For example:
+///     1 - `meter` to `foot`
+///     2 - `mile-per-gallon` to `liter-per-100-kilometer`.
+///     3 - `celsius` to `fahrenheit`.
 ///
 /// NOTE:
-///     The converter is not able to convert between two units that are not single.
-///     such as "meter" to "foot-and-inch".
+///     This converter does not support conversions between mixed units,
+///     for example, from "meter" to "foot-and-inch".
 pub struct UnitsConverter(UnitsConverterInner);
 
 impl UnitsConverter {
