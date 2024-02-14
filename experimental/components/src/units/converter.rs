@@ -13,68 +13,88 @@ use num_traits::identities::One;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
+/// A converter for converting between two units.
+/// For example, `meter` to `foot` and `mile-per-gallon` to `liter-per-100-kilometer`.
+///
+/// NOTE:
+///     The converter is not able to convert between two units that are not single.
+///     such as "meter" to "foot-and-inch".
 pub struct UnitsConverter(UnitsConverterInner);
 
-enum UnitsConverter {
+impl UnitsConverter {
+    /// Converts the given value from the input unit to the output unit.
+    pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+        self.0.convert(value)
+    }
+}
+
+/// Enum containing different types of converters: Proportional, Reciprocal, and Offset converters.
+#[derive(Debug)]
+enum UnitsConverterInner {
     Proportional(ProportionalConverter),
-    Reciprocal(ReciprocalConverter)
+    Reciprocal(ReciprocalConverter),
     Offset(OffsetConverter),
 }
 
+/// A converter for converting between two units that are reciprocal.
+/// For example:
+///    1 - `meter-per-second` to `second-per-meter`.
+///    2 - `mile-per-gallon` to `liter-per-100-kilometer`.
+#[derive(Debug)]
 struct ReciprocalConverter {
     proportional: ProportionalConverter,
 }
 
-struct OffsetConverter {
-    proportional: ProportionalConverter,
-    offset: IcuRational,
-}
-
-impl Converter {
+impl ReciprocalConverter {
+    /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
-        match self {
-            Converter::Linear(converter) => converter.convert(value),
-            Converter::Offset(converter) => converter.convert(value),
-        }
+        self.proportional.convert(value).recip()
     }
 }
 
+/// A converter for converting between two units that require an offset.
 #[derive(Debug)]
-pub struct OffsetConverter {
-    /// The conversion rate between the input and output units.
-    conversion_rate: Ratio<BigInt>,
+struct OffsetConverter {
+    /// The proportional converter.
+    proportional: ProportionalConverter,
 
-    /// The offset value to be added to the result.
+    /// The offset value to be added to the result of the proportional converter.
     offset: Ratio<BigInt>,
+}
+
+impl UnitsConverterInner {
+    /// Converts the given value from the input unit to the output unit based on the inner converter type.
+    fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+        match self {
+            UnitsConverterInner::Proportional(converter) => converter.convert(value),
+            UnitsConverterInner::Reciprocal(converter) => converter.convert(value),
+            UnitsConverterInner::Offset(converter) => converter.convert(value),
+        }
+    }
 }
 
 impl OffsetConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
-        let result = value * &self.conversion_rate + &self.offset;
-        result
+        let result = self.proportional.convert(value);
+        result + &self.offset
     }
 }
 
 // TODO(#4576): Bikeshed the name of the converter.
-/// LinearConverter is responsible for converting between two units that are linearly related.
+/// ProportionalConverter is responsible for converting between two units that are proportionally related.
 /// For example: 1- `meter` to `foot`.
 ///              2- `square-meter` to `square-foot`.
-///              3- `mile-per-gallon` and `liter-per-100-kilometer`.
 ///
-/// However, it cannot convert between two units that are not linearly related such as `celsius` to `fahrenheit`.
-/// NOTE:
-///    The converter is not able to convert between two units that are not single. such as "foot-and-inch" to "meter".
+/// However, it cannot convert between two units that are not proportionally related,
+/// such as `celsius` to `fahrenheit` and `mile-per-gallon` to `liter-per-100-kilometer`.
+///
+/// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
 #[derive(Debug)]
-pub struct LinearConverter {
+pub struct ProportionalConverter {
     // TODO(#4554): Implement a New Struct `IcuRatio` to Encapsulate `Ratio<BigInt>`.
     /// The conversion rate between the input and output units.
     conversion_rate: Ratio<BigInt>,
-
-    /// Determines if the units are reciprocal or not.
-    /// For example, `meter-per-second` and `second-per-meter` are reciprocal.
-    /// Real world case, `mile-per-gallon` and `liter-per-100-kilometer` which are reciprocal.
-    is_reciprocal: bool,
 }
 
 /// ConverterFactory is a factory for creating a converter.
@@ -255,7 +275,7 @@ impl<'data> ConverterFactory<'data> {
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Option<Converter> {
+    ) -> Option<UnitsConverter> {
         let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
 
         // Determine the sign of the powers of the units from root to unit2.
@@ -271,21 +291,24 @@ impl<'data> ConverterFactory<'data> {
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
 
-        Some(Converter::Linear(LinearConverter {
-            conversion_rate,
-            is_reciprocal,
-        }))
+        if is_reciprocal {
+            Some(UnitsConverter(UnitsConverterInner::Reciprocal(
+                ReciprocalConverter {
+                    proportional: ProportionalConverter { conversion_rate },
+                },
+            )))
+        } else {
+            Some(UnitsConverter(UnitsConverterInner::Proportional(
+                ProportionalConverter { conversion_rate },
+            )))
+        }
     }
 }
 
-impl LinearConverter {
+impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
         let mut result: Ratio<BigInt> = value * &self.conversion_rate;
-        if self.is_reciprocal {
-            result = result.recip();
-        }
-
         result
     }
 }
