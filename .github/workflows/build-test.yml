@@ -10,9 +10,10 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'release/**'
   pull_request:
-    branches: '*'
   workflow_dispatch:
     inputs:
       nightly:
