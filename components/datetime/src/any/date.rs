@@ -18,12 +18,7 @@ use icu_provider::prelude::*;
 use icu_provider::DataLocale;
 use writeable::Writeable;
 
-size_test!(
-    DateFormatter,
-    date_formatter_size,
-    pinned = 4600,
-    nightly = 4456
-);
+size_test!(DateFormatter, date_formatter_size, 4456);
 
 /// [`DateFormatter`] is a formatter capable of formatting
 /// dates from any calendar, selected at runtime. For the difference between this and [`TypedDateFormatter`](crate::TypedDateFormatter),

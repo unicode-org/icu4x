@@ -57,7 +57,7 @@ fn varzeroslice_get_unchecked() -> &'static str {
 iai::main!(
     sum_slice,
     sum_zerovec,
-    binarysearch_slice,
+    // binarysearch_slice,
     binarysearch_zerovec,
     varzeroslice_parse_get,
     varzeroslice_get,
