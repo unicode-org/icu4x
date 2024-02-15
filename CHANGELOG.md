@@ -8,6 +8,9 @@
    with a lower Canonical Combining Class than the last character of the decomposition. (https://github.com/unicode-org/icu4x/pull/4530)
    - `icu_normalizer@1.4.1`
 
+ - Fix issue in C++ bindings where `diplomat::result::Ok` and `Err` have ambiguous template deduction errors in their constructors, on Clang. (https://github.com/unicode-org/icu4x/pull/4615)
+   - `icu_capi@1.4.1`
+
 ## icu4x 1.4 (Nov 16, 2023)
 
 - General

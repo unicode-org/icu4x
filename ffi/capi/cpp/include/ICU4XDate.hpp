@@ -244,7 +244,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDa
   auto diplomat_result_raw_out_value = capi::ICU4XDate_month_code(this->inner.get(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -256,7 +256,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XDate::month_code() const {
   auto diplomat_result_raw_out_value = capi::ICU4XDate_month_code(this->inner.get(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -270,7 +270,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDa
   auto diplomat_result_raw_out_value = capi::ICU4XDate_era(this->inner.get(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -282,7 +282,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XDate::era() const {
   auto diplomat_result_raw_out_value = capi::ICU4XDate_era(this->inner.get(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

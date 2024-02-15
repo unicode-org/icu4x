@@ -113,7 +113,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XGr
   auto diplomat_result_raw_out_value = capi::ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this->inner.get(), datetime.AsFFI(), time_zone.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -125,7 +125,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XGregorianZonedDateTimeForm
   auto diplomat_result_raw_out_value = capi::ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this->inner.get(), datetime.AsFFI(), time_zone.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
