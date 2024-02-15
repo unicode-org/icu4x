@@ -265,7 +265,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -403,7 +403,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
