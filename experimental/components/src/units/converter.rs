@@ -23,7 +23,10 @@ impl UnitsConverter {
     }
 }
 
-/// Enum containing different types of converters: Proportional, Reciprocal, and Offset converters.
+/// Enum containing all the of converters: Proportional, Reciprocal, and Offset converters as follows:
+///    1 - Proportional: Converts between two units that are proportionally related (e.g. `meter` to `foot`).
+///    2 - Reciprocal: Converts between two units that are reciprocal (e.g. `mile-per-gallon` to `liter-per-100-kilometer`).
+///    3 - Offset: Converts between two units that require an offset (e.g. `celsius` to `fahrenheit`).
 #[derive(Debug)]
 pub(crate) enum UnitsConverterInner {
     Proportional(ProportionalConverter),
