@@ -218,7 +218,7 @@ fn main() -> eyre::Result<()> {
         .collect::<Vec<_>>()
         .join(",\n                            ");
 
-    write!(&mut File::create(out_root.join("src/tests/data.rs")).unwrap(), "\
+    write!(&mut crlify::BufWriterWithLineEndingFix::new(File::create(out_root.join("src/tests/data.rs")).unwrap()), "\
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
