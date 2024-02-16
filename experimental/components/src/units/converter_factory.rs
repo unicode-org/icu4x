@@ -53,29 +53,29 @@ impl<'data> ConverterFactory<'data> {
     pub fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::from_payload(self.payload_store)
     }
-
-    /// Computes the offset between the input and output units.
-    /// To calculate the offset, we follow these steps:
-    /// 1. Assume the conversion rate for unit 1 to the root is: N1/D1 + OffsetN1/OffsetD1.
-    /// 2. Assume the conversion rate for unit 2 to the root is: N2/D2 + OffsetN2/OffsetD2.
-    /// 3. To convert from the root to unit 2, the formula is: D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
-    /// 4. Given a value V to be converted from unit 1 to unit 2, the conversion will be the root:
-    ///    (V * N1/D1) + OffsetN1/OffsetD1, denoted as V_Root.
-    /// 5. To convert V_Root to unit 2, the formula is: V_Root * D2/N2 - OffsetN2/OffsetD2 * D2/N2.
-    /// 6. Substituting V_Root from step 4 into step 5 yields:
-    ///    ((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2 - OffsetN2/OffsetD2 * (D2/N2).
+    /// Calculates the offset between two units by performing the following steps:
+    /// 1. Identify the conversion rate from the first unit to the base unit as ConversionRate1: N1/D1 with an Offset1: OffsetN1/OffsetD1.
+    /// 2. Identify the conversion rate from the second unit to the base unit as ConversionRate2: N2/D2 with an Offset2: OffsetN2/OffsetD2.
+    /// 3. The conversion from the base unit to the second unit is represented by ConversionRateBaseToUnit2: (D2/N2) and an OffsetBaseToUnit2: - (OffsetN2/OffsetD2) * (D2/N2).
+    /// 4. To convert a value V from the first unit to the second unit, first convert V to the base unit using:
+    ///    (V * N1/D1) + OffsetN1/OffsetD1, referred to as V_TO_Base.
+    /// 5. Then, convert V_TO_Base to the second unit using the formula: CR: (D2/N2) and Offset: - (OffsetN2/OffsetD2) * (D2/N2).
+    ///    The result is: (V_TO_Base * (D2/N2)) - (OffsetN2/OffsetD2) * (D2/N2).
+    /// 6. By inserting V_TO_Base from step 4 into step 5, the equation becomes:
+    ///    (((V * N1/D1) + OffsetN1/OffsetD1) * D2/N2) - (OffsetN2/OffsetD2) * (D2/N2).
     /// 7. Simplifying the equation gives:
-    ///    V * (N1/D1) * (D2/N2) + OffsetN1/OffsetD1 * (D2/N2) - OffsetN2/OffsetD2 * (D2/N2).
-    /// 8. Focusing on the constants (offsets), we derive the offset formula:
-    ///    Offset = (OffsetN1/OffsetD1 - OffsetN2/OffsetD2) * (D2/N2).
-    ///    This simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate of Unit2).
+    ///    (V * (N1/D1) * (D2/N2)) + (OffsetN1/OffsetD1 * (D2/N2)) - (OffsetN2/OffsetD2) * (D2/N2).
+    /// 8. Focusing on the constants to find the offset formula, we get:
+    ///    Offset = ((OffsetN1/OffsetD1) - (OffsetN2/OffsetD2)) * (D2/N2),
+    ///    which simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
     ///
     /// NOTE:
-    ///   In order to have an offset, the input and output units should be simple.
-    /// This means, the input and output units should have only one unit item with power 1 and si prefix 0.
-    /// For example:
-    ///           1 - `meter` and `foot` are simple units.
-    ///           2 - `meter-per-second` and `foot-per-second` are not simple units.
+    ///   An offset is only applicable when both the input and output units are simple.
+    ///   A unit is considered simple if it is made up of a single unit item, with a power of 1 and an SI prefix of 0.
+    ///   
+    ///   For example:
+    ///     `meter` and `foot` are simple units.
+    ///     `meter-per-second` and `foot-per-second` are not simple units.
     fn compute_offset(
         &self,
         input_unit: &MeasureUnit,
@@ -218,10 +218,10 @@ impl<'data> ConverterFactory<'data> {
 
         let (power_sums_are_zero, power_diffs_are_zero) =
             map.iter_values()
-                .fold((true, true), |(sums, diffs), determine_convertibility| {
+                .fold((true, true), |(sums, diffs), powers_info| {
                     (
-                        sums && determine_convertibility.sums == 0,
-                        diffs && determine_convertibility.diffs == 0,
+                        sums && powers_info.sums == 0,
+                        diffs && powers_info.diffs == 0,
                     )
                 });
 
