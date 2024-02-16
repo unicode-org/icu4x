@@ -53,11 +53,12 @@ impl<'data> ConverterFactory<'data> {
     pub fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::from_payload(self.payload_store)
     }
+
     /// Calculates the offset between two units by performing the following steps:
     /// 1. Identify the conversion rate from the first unit to the base unit as ConversionRate1: N1/D1 with an Offset1: OffsetN1/OffsetD1.
     /// 2. Identify the conversion rate from the second unit to the base unit as ConversionRate2: N2/D2 with an Offset2: OffsetN2/OffsetD2.
     /// 3. The conversion from the base unit to the second unit is represented by ConversionRateBaseToUnit2: (D2/N2) and an OffsetBaseToUnit2: - (OffsetN2/OffsetD2) * (D2/N2).
-    /// 4. To convert a value V from the first unit to the second unit, first convert V to the base unit using:
+    /// 4. To convert a value V from the first unit to the second unit, first convert V to the base unit using ConversionRate1:
     ///    (V * N1/D1) + OffsetN1/OffsetD1, referred to as V_TO_Base.
     /// 5. Then, convert V_TO_Base to the second unit using the formula: CR: (D2/N2) and Offset: - (OffsetN2/OffsetD2) * (D2/N2).
     ///    The result is: (V_TO_Base * (D2/N2)) - (OffsetN2/OffsetD2) * (D2/N2).
@@ -70,7 +71,7 @@ impl<'data> ConverterFactory<'data> {
     ///    which simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
     ///
     /// NOTE:
-    ///   An offset is only applicable when both the input and output units are simple.
+    ///   An offset can be calculated if both the input and output units are simple.
     ///   A unit is considered simple if it is made up of a single unit item, with a power of 1 and an SI prefix of 0.
     ///   
     ///   For example:
@@ -137,12 +138,11 @@ impl<'data> ConverterFactory<'data> {
         Some((input_offset - output_offset) * output_conversion_rate_recip)
     }
 
-    // TODO(#4512): the need needs to be bikeshedded.
-    /// Checks if the given units are reciprocal or not.
-    /// If it is not reciprocal, this means that the units are convertible.
+    /// Checks whether the given units are reciprocal.
+    /// If they are not reciprocal, it implies that the units are proportional.
     /// NOTE:
-    ///   If the units are not convertible or reciprocal, the function will return `None`
-    ///   which means that the units are not compatible.
+    ///   If the units are neither proportional nor reciprocal, the function will return `None`,
+    ///   indicating that the units are incompatible.
     fn is_reciprocal(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Option<bool> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
