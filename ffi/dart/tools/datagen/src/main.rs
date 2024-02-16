@@ -22,8 +22,7 @@ pub struct Cli {
     #[arg(long, short, num_args = 1..)]
     #[arg(
         help = "Include these resource keys in the output. Accepts multiple arguments.\n\
-                  Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
-                  or 'none' for no keys."
+                  Set to 'all' for all keys, or 'none' for no keys."
     )]
     keys: Vec<String>,
 
@@ -36,12 +35,7 @@ pub struct Cli {
     locales: Vec<String>,
 
     #[arg(long = "out", short, value_name = "PATH")]
-    #[arg(
-        help = "Path to output directory or file. Must be empty or non-existent, unless \
-                  --overwrite is present, in which case the directory is deleted first. \
-                  For --format={blob,blob2}, omit this option to dump to stdout. \
-                  For --format={dir,mod} defaults to 'icu4x_data'."
-    )]
+    #[arg(help = "Path to output file. Must be non-existent.")]
     output: PathBuf,
 }
 
