@@ -161,7 +161,7 @@ fn main() -> eyre::Result<()> {
                     .strip_prefix(out_root.join("tests/data/cldr"))
                     .unwrap()
                     .to_string_lossy()
-                    .into_owned(),
+                    .replace('\\', "/"),
             );
         }
     }
