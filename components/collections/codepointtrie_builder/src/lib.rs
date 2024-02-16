@@ -142,9 +142,9 @@ where
         {
             use icu_collections::codepointtrie::toml::CodePointTrieToml;
 
-            let toml_str = wasm::run_wasm(&self);
+            let toml_str = wasm::run_wasmer(&self);
             let toml_obj: CodePointTrieToml =
-                toml::from_str(&toml_str).expect("the tool should produce valid TOML");
+                toml::from_slice(&toml_str).expect("the tool should produce valid TOML");
             (&toml_obj)
                 .try_into()
                 .expect("the toml should be a valid CPT")

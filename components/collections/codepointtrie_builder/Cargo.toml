@@ -31,7 +31,7 @@ independent = true
 [features]
 # Use the wasm builder
 default = ["wasm"]
-wasm = ["wasmer", "wasmer-wasi", "once_cell"]
+wasm = ["wasmer", "wasmer-wasix", "once_cell"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
 # containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
@@ -43,29 +43,31 @@ icu_collections = { workspace = true, features = ["serde"] }
 once_cell = { version = "1.18.0", optional = true }
 toml = "0.5"
 zerovec = { workspace = true, optional = true }
+# wasmtime = "17"
+# wasmtime-wasi = { version = "17" }
+# wasi-common = { version = "17" }
+tokio = "1"
 
 [dependencies.wasmer]
-version = "2.2.1"
+version = "4"
 default-features = false
 optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
     # By default, use the Singlepass compiler for faster startup time
-    "default-singlepass",
-    # By default, use the Universal engine for in-memory compiled code
-    "default-universal"
+    "singlepass",
 ]
 
-[dependencies.wasmer-wasi]
-version = "2.2.1"
+[dependencies.wasmer-wasix]
+version = "0.18"
 default-features = false
 optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
-    # We don't need real filesystem access, so use mem-fs
-    "mem-fs"
+    # Bug: wasmer doesn't compile without this feature
+    "sys-thread",
 ]
 
 [dev-dependencies]
