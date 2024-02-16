@@ -63,7 +63,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git diff --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data provider/datagen/src/tests
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data provider/datagen/src/tests
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
@@ -71,6 +71,7 @@ if greater_than ${output_length} 0
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
     msg = array_join ${msg} "\n"
+    exec git diff
     trigger_error ${msg}
 end
 '''
