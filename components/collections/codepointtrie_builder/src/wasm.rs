@@ -6,10 +6,76 @@ use crate::CodePointTrieBuilder;
 use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
-use once_cell::sync::OnceCell;
 
 const WASM_BYTES: &[u8] = include_bytes!("../list_to_ucptrie.wasm");
 
+pub(crate) fn run_wasmi<T>(builder: &CodePointTrieBuilder<T>) -> Vec<u8>
+where
+    T: TrieValue + Into<u32>,
+{
+    use std::io::Write;
+    use wasi_cap_std_sync::WasiCtxBuilder;
+    use wasmi::{Config, Engine, Extern, Linker, Module, Store};
+    use wasmi_wasi::{add_to_linker, WasiCtx};
+    use wasi_common::pipe::{ReadPipe, WritePipe};
+
+    let mut input_content = Vec::new();
+    let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
+    writeln!(input_content, "{}", values.len()).expect("valid pipe");
+    for value in values {
+        let num: u32 = (*value).into();
+        writeln!(input_content, "{num}").expect("valid pipe");
+    }
+
+    let stdout_stream = WritePipe::new_in_memory();
+    let wasi_stdin = ReadPipe::from(input_content);
+    let wasi_stdout = stdout_stream.clone();
+    let args = &[
+        "".to_string(),
+        format!("{}", builder.default_value.into()),
+        format!("{}", builder.error_value.into()),
+        match builder.trie_type {
+            TrieType::Fast => "fast",
+            TrieType::Small => "small",
+        }
+        .to_owned(),
+        format!("{}", std::mem::size_of::<T::ULE>() * 8),
+    ];
+
+    {
+        let config = Config::default();
+        let engine = Engine::new(&config);
+        let module = Module::new(&engine, WASM_BYTES).unwrap();
+        let mut linker = <Linker<WasiCtx>>::new(&engine);
+        // add wasi to linker
+        let wasi = WasiCtxBuilder::new()
+            .stdin(Box::new(wasi_stdin))
+            .stdout(Box::new(wasi_stdout))
+            .inherit_stderr()
+            .args(args)
+            .unwrap()
+            .build();
+        let mut store = Store::new(&engine, wasi);
+
+        add_to_linker(&mut linker, |ctx| ctx).unwrap();
+        let instance = linker
+            .instantiate(&mut store, &module)
+            .unwrap()
+            .start(&mut store)
+            .unwrap();
+        
+        let f = instance
+            .get_export(&store, "_start")
+            .and_then(Extern::into_func)
+            .unwrap();
+        let mut result = [];
+        f.call(&mut store, &[], &mut result).unwrap();
+    }
+
+    stdout_stream.try_into_inner().expect("sole remaining reference to WritePipe").into_inner()
+}
+
+#[cfg(feature = "false")]
 pub(crate) fn run_wasmer<T>(builder: &CodePointTrieBuilder<T>) -> Vec<u8>
 where
     T: TrieValue + Into<u32>,
