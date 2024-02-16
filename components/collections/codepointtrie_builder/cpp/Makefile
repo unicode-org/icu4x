@@ -11,7 +11,6 @@ all: list_to_ucptrie list_to_ucptrie.wasm
 
 icu4c_obj/wasm/%.o: $(ICU4C_SOURCE)/%.cpp
 	mkdir -p icu4c_obj/wasm/common
-	mkdir -p icu4c_obj/wasm/tools/toolutil
 	$(CXX) --target=wasm32-unknown-wasi \
 		-I/usr/include/wasm32-wasi \
 		-DTRUE=1 \
@@ -19,7 +18,6 @@ icu4c_obj/wasm/%.o: $(ICU4C_SOURCE)/%.cpp
 		-c \
 		-flto \
 		-I$(ICU4C_SOURCE)/common \
-		-I$(ICU4C_SOURCE)/tools/toolutil \
 		$< \
 		-o $@
 
@@ -29,10 +27,9 @@ icu4c_obj_wasm_files = \
 	icu4c_obj/wasm/common/ucptrie.o \
 	icu4c_obj/wasm/common/umutablecptrie.o \
 	icu4c_obj/wasm/common/uobject.o \
-	icu4c_obj/wasm/common/utypes.o \
-	icu4c_obj/wasm/tools/toolutil/writesrc.o
+	icu4c_obj/wasm/common/utypes.o
 
-reexport.wasm: reexport.cpp $(icu4c_obj_wasm_files)
+ucptrie_wrap.wasm: ucptrie_wrap.cpp $(icu4c_obj_wasm_files)
 	$(CXX) --target=wasm32-unknown-wasi \
 		-DTRUE=1 \
 		-flto \
@@ -57,9 +54,9 @@ reexport.wasm: reexport.cpp $(icu4c_obj_wasm_files)
 		-I$(ICU4C_SOURCE)/common \
 		-I$(ICU4C_SOURCE)/tools/toolutil \
 		$(icu4c_obj_wasm_files) \
-		reexport.cpp \
-		-o reexport.wasm
+		ucptrie_wrap.cpp \
+		-o ucptrie_wrap.wasm
 
 clean:
 	rm -rf icu4c_obj
-	rm -f reexport.wasm
+	rm -f ucptrie_wrap.wasm

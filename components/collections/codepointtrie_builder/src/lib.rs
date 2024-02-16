@@ -138,23 +138,9 @@ where
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {
-        /*
         #[cfg(feature = "wasm")]
         {
-            use icu_collections::codepointtrie::toml::CodePointTrieToml;
-
-            let toml_str = wasm::run_wasmi(&self);
-            let toml_obj: CodePointTrieToml =
-                toml::from_slice(&toml_str).expect("the tool should produce valid TOML");
-            (&toml_obj)
-                .try_into()
-                .expect("the toml should be a valid CPT")
-        }
-        */
-
-        #[cfg(feature = "wasm")]
-        {
-            wasm::run_wasmi_reexport(&self)
+            wasm::run_wasmi_ucptrie_wrap(&self)
         }
 
         #[cfg(all(feature = "icu4c", not(feature = "wasm")))]
