@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class DataProvider implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  DataProvider._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  DataProvider._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -27,7 +35,7 @@ final class DataProvider implements ffi.Finalizable {
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
   factory DataProvider.compiled() {
     final result = _ICU4XDataProvider_create_compiled();
-    return DataProvider._(result, true);
+    return DataProvider._(result, true, []);
   }
 
   /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
@@ -43,7 +51,7 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return DataProvider._(result.union.ok, true);
+    return DataProvider._(result.union.ok, true, []);
   }
 
   /// Constructs an empty [`DataProvider`].
@@ -51,7 +59,7 @@ final class DataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
   factory DataProvider.empty() {
     final result = _ICU4XDataProvider_create_empty();
-    return DataProvider._(result, true);
+    return DataProvider._(result, true, []);
   }
 
   /// Creates a provider that tries the current provider and then, if the current provider

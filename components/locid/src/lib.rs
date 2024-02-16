@@ -72,6 +72,7 @@ mod locale;
 mod macros;
 mod ordering;
 mod parser;
+mod shortvec;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;

@@ -203,10 +203,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "98ac7ad0382e4544fe7a58811a54cbe32d9e490c" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "98ac7ad0382e4544fe7a58811a54cbe32d9e490c" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "98ac7ad0382e4544fe7a58811a54cbe32d9e490c" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "98ac7ad0382e4544fe7a58811a54cbe32d9e490c" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "05ddab1026b3e10c3bd0d6f848f9067afec92a91" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "05ddab1026b3e10c3bd0d6f848f9067afec92a91" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "05ddab1026b3e10c3bd0d6f848f9067afec92a91" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "05ddab1026b3e10c3bd0d6f848f9067afec92a91" }
 
 # Size optimized builds
 [profile.release-opt-size]

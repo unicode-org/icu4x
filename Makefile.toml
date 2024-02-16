@@ -309,23 +309,41 @@ if not ${event_name}
     exit 1
 end
 
-needs_nightly = eq "${event_name}" "schedule"
+needs_override = set false
+override_channel = set "nightly"
 
-if eq "${event_name}" "workflow_dispatch"
+# We need to parse the channel information for dispatch/schedule events
+if eq "${event_name}" "workflow_dispatch" or eq "${event_name}" "schedule"
     event_path = get_env GITHUB_EVENT_PATH
     event_file = readfile ${event_path}
     event_json = json_parse ${event_file}
-    if ${event_json.inputs.nightly}
-        needs_nightly = set true
+    # For dispatch events
+    if eq "${event_name}" "workflow_dispatch"
+        if not eq "${event_json.inputs.channel}" "pinned-stable"
+            needs_override = set true
+            override_channel = set "${event_json.inputs.channel}"
+        end
+    else
+        # Schedule events always override
+        needs_override = set true
+        # For schedule events, the cronjob on minute 1 is the beta job
+        if eq "${event_json.schedule}" "1 14 * * *"
+            override_channel = set "beta"
+        end
     end
 end
 
-if ${needs_nightly}
-    echo "Setting up CI environment for forced-nightly Rust build"
-    appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=nightly\n"
+
+if ${needs_override}
+    echo "Setting up CI environment for forced-${override_channel} Rust build"
     appendfile ${env_file} "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1\n"
     appendfile ${env_file} "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY\n"
-    exec rustup override set nightly
+    exec rustup override set ${override_channel}
+
+    if starts_with "${override_channel}" "nightly"
+        # This affects tasks that can only be built on nightly
+        appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=${override_channel}\n"
+    end
 else
     echo "forced-nightly environment not required"
 end
