@@ -149,6 +149,7 @@ fn main() -> eyre::Result<()> {
         out_root.join("tests/data/cldr-transforms-full"),
         out_root.join("tests/data/cldr/cldr-transforms-full"),
     )?;
+    let transform_index = cldr_data.len();
     for entry in
         std::fs::read_dir(out_root.join("tests/data/cldr/cldr-transforms-full/main")).unwrap()
     {
@@ -164,6 +165,7 @@ fn main() -> eyre::Result<()> {
             );
         }
     }
+    cldr_data[transform_index..].sort();
 
     std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     let mut icuexport_data = Vec::new();
@@ -198,7 +200,7 @@ fn main() -> eyre::Result<()> {
             format!(r#"("{path}", include_bytes!("../../tests/data/cldr/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
-        .join(", ");
+        .join(",\n                            ");
     let icuexport_data = icuexport_data
         .iter()
         .map(|path| {
@@ -206,7 +208,7 @@ fn main() -> eyre::Result<()> {
             format!(r#"("{path}", include_bytes!("../../tests/data/icuexport/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
-        .join(", ");
+        .join(",\n                            ");
     let lstm_data = LSTM_GLOB
         .iter()
         .map(|path| {
@@ -214,7 +216,7 @@ fn main() -> eyre::Result<()> {
             format!(r#"("{path}", include_bytes!("../../tests/data/lstm/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
-        .join(", ");
+        .join(",\n                            ");
 
     write!(&mut File::create(out_root.join("src/tests/data.rs")).unwrap(), "\
 // This file is part of ICU4X. For terms of use, please see the file
@@ -240,13 +242,19 @@ impl DatagenProvider {{
             .get_or_init(|| Self {{
                 source: SourceData {{
                     cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::Memory(
-                        [{cldr_data}].into_iter().collect(),
+                        [
+                            {cldr_data}
+                        ].into_iter().collect(),
                     ))))),
                     icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                        [{icuexport_data}].into_iter().collect(),
+                        [
+                            {icuexport_data}
+                        ].into_iter().collect(),
                     )))),
                     segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                        [{lstm_data}].into_iter().collect(),
+                        [
+                            {lstm_data}
+                        ].into_iter().collect(),
                     )))),
                     ..DatagenProvider::new_custom().source
                 }},
