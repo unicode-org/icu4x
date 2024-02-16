@@ -1385,10 +1385,7 @@ version = "0.3.7"
 dependencies = [
  "icu",
  "icu_collections",
- "once_cell",
  "toml",
- "wasi-cap-std-sync",
- "wasi-common",
  "wasmi",
  "wasmi_wasi",
  "zerovec",

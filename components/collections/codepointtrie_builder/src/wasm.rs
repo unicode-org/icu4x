@@ -8,8 +8,8 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
-use wasi_cap_std_sync::WasiCtxBuilder;
 use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
+use wasmi_wasi::sync::WasiCtxBuilder;
 use wasmi_wasi::{add_to_linker, WasiCtx};
 use zerovec::ZeroSlice;
 
