@@ -289,7 +289,9 @@ where
     let mut cp = 0;
     for value in values {
         let num: u32 = (*value).into();
-        my_wasmi_instance.umutablecptrie_set(&trie_ptr, cp, num, &error_code_ptr);
+        if num != builder.default_value.into() {
+            my_wasmi_instance.umutablecptrie_set(&trie_ptr, cp, num, &error_code_ptr);
+        }
         cp += 1;
     }
 
