@@ -13,7 +13,7 @@ all: list_to_ucptrie list_to_ucptrie.wasm
 icu4c_obj/wasm/%.o: $(ICU4C_SOURCE)/%.cpp
 	mkdir -p icu4c_obj/wasm/common
 	mkdir -p icu4c_obj/wasm/tools/toolutil
-	$(WASICXX) -DTRUE=1 -c -flto -I$(ICU4C_SOURCE)/common -I$(ICU4C_SOURCE)/tools/toolutil $< -o $@
+	$(CXX) --target=wasm32-unknown-wasi -I/usr/include/wasm32-wasi -DTRUE=1 -DU_DISABLE_RENAMING=1 -c -flto -I$(ICU4C_SOURCE)/common -I$(ICU4C_SOURCE)/tools/toolutil $< -o $@
 
 icu4c_obj_wasm_files = \
 icu4c_obj/wasm/common/cmemory.o \
@@ -29,6 +29,9 @@ list_to_ucptrie: list_to_ucptrie.cpp $(icu4c_obj_native_files)
 
 list_to_ucptrie.wasm: list_to_ucptrie.cpp $(icu4c_obj_wasm_files)
 	$(WASICXX) -DTRUE=1 -flto -Wl,--gc-sections -Wl,--strip-all -I$(ICU4C_SOURCE)/common -I$(ICU4C_SOURCE)/tools/toolutil $(icu4c_obj_wasm_files) list_to_ucptrie.cpp -o list_to_ucptrie.wasm
+
+reexport.wasm: reexport.cpp $(icu4c_obj_wasm_files)
+	$(CXX) --target=wasm32-unknown-wasi -DTRUE=1 -flto -Wl,--gc-sections -Wl,--strip-all -Wl,--export=umutablecptrie_open -Wl,--export=umutablecptrie_set -Wl,--export=umutablecptrie_buildImmutable -Wl,--export=ucptrie_close -Wl,--export=umutablecptrie_close -Wl,--export=create_uerrorcode -Wl,--export=read_uerrorcode -Wl,--export=read_ucptrie_highStart -Wl,--export=read_ucptrie_shifted12HighStart -Wl,--export=read_ucptrie_index3NullOffset -Wl,--export=read_ucptrie_dataNullOffset -Wl,--export=read_ucptrie_nullValue -Wl,--export=get_index_ptr -Wl,--export=get_index_length -Wl,--export=get_data_ptr -Wl,--export=get_data_length -I$(ICU4C_SOURCE)/common -I$(ICU4C_SOURCE)/tools/toolutil $(icu4c_obj_wasm_files) reexport.cpp -o reexport.wasm
 
 clean:
 	rm -rf icu4c_obj
