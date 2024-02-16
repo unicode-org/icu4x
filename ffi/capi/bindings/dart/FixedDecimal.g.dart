@@ -185,9 +185,19 @@ final class FixedDecimal implements ffi.Finalizable {
     _ICU4XFixedDecimal_trunc(_underlying, position);
   }
 
+  /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
+  void truncToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_trunc_to_increment(_underlying, position, increment.index);
+  }
+
   /// See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
   void halfTrunc(int position) {
     _ICU4XFixedDecimal_half_trunc(_underlying, position);
+  }
+
+  /// See the [Rust documentation for `half_trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment) for more information.
+  void halfTruncToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_half_trunc_to_increment(_underlying, position, increment.index);
   }
 
   /// See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
@@ -195,9 +205,19 @@ final class FixedDecimal implements ffi.Finalizable {
     _ICU4XFixedDecimal_expand(_underlying, position);
   }
 
+  /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
+  void expandToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_expand_to_increment(_underlying, position, increment.index);
+  }
+
   /// See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
   void halfExpand(int position) {
     _ICU4XFixedDecimal_half_expand(_underlying, position);
+  }
+
+  /// See the [Rust documentation for `half_expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment) for more information.
+  void halfExpandToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_half_expand_to_increment(_underlying, position, increment.index);
   }
 
   /// See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
@@ -205,9 +225,19 @@ final class FixedDecimal implements ffi.Finalizable {
     _ICU4XFixedDecimal_ceil(_underlying, position);
   }
 
+  /// See the [Rust documentation for `ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment) for more information.
+  void ceilToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_ceil_to_increment(_underlying, position, increment.index);
+  }
+
   /// See the [Rust documentation for `half_ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
   void halfCeil(int position) {
     _ICU4XFixedDecimal_half_ceil(_underlying, position);
+  }
+
+  /// See the [Rust documentation for `half_ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment) for more information.
+  void halfCeilToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_half_ceil_to_increment(_underlying, position, increment.index);
   }
 
   /// See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
@@ -215,14 +245,29 @@ final class FixedDecimal implements ffi.Finalizable {
     _ICU4XFixedDecimal_floor(_underlying, position);
   }
 
+  /// See the [Rust documentation for `floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment) for more information.
+  void floorToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_floor_to_increment(_underlying, position, increment.index);
+  }
+
   /// See the [Rust documentation for `half_floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
   void halfFloor(int position) {
     _ICU4XFixedDecimal_half_floor(_underlying, position);
   }
 
+  /// See the [Rust documentation for `half_floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment) for more information.
+  void halfFloorToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_half_floor_to_increment(_underlying, position, increment.index);
+  }
+
   /// See the [Rust documentation for `half_even`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
   void halfEven(int position) {
     _ICU4XFixedDecimal_half_even(_underlying, position);
+  }
+
+  /// See the [Rust documentation for `half_even_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment) for more information.
+  void halfEvenToIncrement(int position, RoundingIncrement increment) {
+    _ICU4XFixedDecimal_half_even_to_increment(_underlying, position, increment.index);
   }
 
   /// Concatenates `other` to the end of `self`.
@@ -340,37 +385,73 @@ external void _ICU4XFixedDecimal_set_max_position(ffi.Pointer<ffi.Opaque> self, 
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_trunc(ffi.Pointer<ffi.Opaque> self, int position);
 
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trunc_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_trunc_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_trunc')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_trunc(ffi.Pointer<ffi.Opaque> self, int position);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_trunc_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_half_trunc_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_expand')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_expand(ffi.Pointer<ffi.Opaque> self, int position);
 
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_expand_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_expand_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_expand')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_expand(ffi.Pointer<ffi.Opaque> self, int position);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_expand_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_half_expand_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_ceil')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_ceil(ffi.Pointer<ffi.Opaque> self, int position);
 
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_ceil_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_ceil_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_ceil')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_ceil(ffi.Pointer<ffi.Opaque> self, int position);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_ceil_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_half_ceil_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_floor')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_floor(ffi.Pointer<ffi.Opaque> self, int position);
 
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_floor_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_floor_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_floor')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_floor(ffi.Pointer<ffi.Opaque> self, int position);
 
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_floor_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_half_floor_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_even')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_even(ffi.Pointer<ffi.Opaque> self, int position);
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_even_to_increment')
+// ignore: non_constant_identifier_names
+external void _ICU4XFixedDecimal_half_even_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_concatenate_end')
 // ignore: non_constant_identifier_names

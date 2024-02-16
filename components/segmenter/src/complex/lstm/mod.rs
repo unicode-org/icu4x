@@ -325,7 +325,7 @@ mod tests {
     use serde::Deserialize;
 
     /// `TestCase` is a struct used to store a single test case.
-    /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
+    /// Each test case has two attributes: `unseg` which denotes the unsegmented line, and `true_bies` which indicates the Bies
     /// sequence representing the true segmentation.
     #[derive(PartialEq, Debug, Deserialize)]
     struct TestCase {

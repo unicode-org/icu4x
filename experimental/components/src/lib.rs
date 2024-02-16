@@ -21,7 +21,7 @@ pub mod personnames;
 pub mod relativetime;
 pub mod transliterate;
 pub mod unicodeset_parse;
-pub mod unitsconversion;
+pub mod units;
 
 #[doc(hidden)]
 // Compiled constructors look for the baked provider at crate::provider::Baked,
@@ -32,8 +32,9 @@ pub mod provider {
 
     #[cfg(feature = "compiled_data")]
     const _: () = {
+        pub use crate as icu_experimental;
+
         pub mod icu {
-            pub use crate as experimental;
             #[allow(unused_imports)] // baked data may or may not need this
             pub use icu_locid_transform as locid_transform;
         }
@@ -113,6 +114,6 @@ pub mod provider {
         super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY,
-        super::unitsconversion::provider::UnitsInfoV1Marker::KEY,
+        super::units::provider::UnitsInfoV1Marker::KEY,
     ];
 }

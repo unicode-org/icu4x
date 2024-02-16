@@ -517,6 +517,15 @@ expand!(
         ),
         "SB"
     ),
+    (
+        JoiningTypeV1Marker,
+        JoiningTypeNameToValueV1Marker,
+        (
+            linear: JoiningTypeValueToShortNameV1Marker,
+            JoiningTypeValueToLongNameV1Marker
+        ),
+        "jt"
+    ),
 );
 
 #[cfg(test)]

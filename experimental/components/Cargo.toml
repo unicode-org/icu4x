@@ -43,9 +43,9 @@ zerovec = { workspace = true, features = ["derive", "yoke"] }
 
 displaydoc = { version = "0.2.3", default-features = false }
 log = { version = "0.4", optional = true }
-num-bigint = "0.4.4"
-num-rational = "0.4.1"
-num-traits = "0.2.17"
+num-bigint = { version = "0.4.1", default-features = false }
+num-rational = { version = "0.4.1", default-features = false }
+num-traits = { version = "0.2.17", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 smallvec = "1.11.2"
 
@@ -57,6 +57,8 @@ criterion = "0.4.0"
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }
+#TODO: remove this once we are not using `BigRational` anymore.
+num-rational = "0.4.1"
 
 [features]
 default = ["compiled_data"]
@@ -72,3 +74,23 @@ bench = []
 name = "transliterate"
 path = "benches/transliterate/bench.rs"
 harness = false
+
+[[test]]
+name = "displaynames_test"
+path = "tests/displaynames/tests.rs"
+
+[[test]]
+name = "personnames_test"
+path = "tests/personnames/tests.rs"
+
+[[test]]
+name = "relativetime_test"
+path = "tests/relativetime/tests.rs"
+
+[[test]]
+name = "transliterate_test"
+path = "tests/transliterate/cldr.rs"
+
+[[test]]
+name = "units_test"
+path = "tests/units/units_test.rs"

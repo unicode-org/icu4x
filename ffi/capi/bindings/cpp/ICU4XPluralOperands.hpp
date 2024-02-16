@@ -24,8 +24,6 @@ struct ICU4XPluralOperandsDeleter {
 };
 
 /**
- * FFI version of `PluralOperands`.
- * 
  * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
  */
 class ICU4XPluralOperands {

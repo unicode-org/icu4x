@@ -254,7 +254,8 @@ impl BakedExporter {
         if !self.use_separate_crates {
             formatted = formatted
                 .replace("icu_", "icu::")
-                .replace("icu::provider", "icu_provider");
+                .replace("icu::provider", "icu_provider")
+                .replace("icu::experimental", "icu_experimental");
         }
 
         std::fs::create_dir_all(path.parent().unwrap())?;

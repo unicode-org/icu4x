@@ -20,7 +20,6 @@ final class _PluralCategoriesFfi extends ffi.Struct {
   external bool other;
 }
 
-/// FFI version of `PluralRules::categories()` data.
 final class PluralCategories {
   final bool zero;
   final bool one;

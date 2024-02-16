@@ -384,6 +384,11 @@ registry!(
         "propnames/to/short/linear/InSC@1",
     icu_properties::provider::GraphV1Marker = "props/graph@1",
     icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
+    icu_properties::provider::JoiningTypeV1Marker = "props/jt@1",
+    icu_properties::provider::JoiningTypeNameToValueV1Marker = "propnames/from/jt@1",
+    icu_properties::provider::JoiningTypeValueToLongNameV1Marker = "propnames/to/long/linear/jt@1",
+    icu_properties::provider::JoiningTypeValueToShortNameV1Marker =
+        "propnames/to/short/linear/jt@1",
     icu_properties::provider::LineBreakV1Marker = "props/lb@1",
     icu_properties::provider::LineBreakNameToValueV1Marker = "propnames/from/lb@1",
     icu_properties::provider::LineBreakValueToLongNameV1Marker = "propnames/to/long/linear/lb@1",
@@ -495,7 +500,7 @@ registry!(
     icu_experimental::transliterate::provider::TransliteratorRulesV1Marker =
         "transliterator/rules@1",
     #[cfg(feature = "experimental_components")]
-    icu_experimental::unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
+    icu_experimental::units::provider::UnitsInfoV1Marker = "units/info@1",
 );
 
 /// Same as `all_keys`.

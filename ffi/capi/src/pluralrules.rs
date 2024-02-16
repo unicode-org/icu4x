@@ -13,7 +13,6 @@ pub mod ffi {
 
     use crate::errors::ffi::ICU4XError;
 
-    /// FFI version of `PluralCategory`.
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(PluralCategory)]
     pub enum ICU4XPluralCategory {
@@ -37,7 +36,6 @@ pub mod ffi {
         }
     }
 
-    /// FFI version of `PluralRules`.
     #[diplomat::rust_link(icu::plurals::PluralRules, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XPluralRules(PluralRules);
@@ -92,7 +90,6 @@ pub mod ffi {
         }
     }
 
-    /// FFI version of `PluralOperands`.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::plurals::PluralOperands, Struct)]
     pub struct ICU4XPluralOperands(pub icu_plurals::PluralOperands);
@@ -108,7 +105,6 @@ pub mod ffi {
         }
     }
 
-    /// FFI version of `PluralRules::categories()` data.
     #[diplomat::out]
     pub struct ICU4XPluralCategories {
         pub zero: bool,
