@@ -226,13 +226,11 @@ where
     );
 
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
-    let mut cp = 0;
-    for value in values {
+    for (cp, value) in values.iter().enumerate() {
         let num: u32 = (*value).into();
         if num != builder.default_value.into() {
-            wasm.umutablecptrie_set(&trie_ptr, cp, num, &error_code_ptr);
+            wasm.umutablecptrie_set(&trie_ptr, cp as u32, num, &error_code_ptr);
         }
-        cp += 1;
     }
 
     let trie_type = match builder.trie_type {

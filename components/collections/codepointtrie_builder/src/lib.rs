@@ -71,10 +71,11 @@
 #![cfg_attr(
     not(test),
     deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
+        // This Datagen-only builder code may panic when interacting with WASM
+        // clippy::indexing_slicing,
+        // clippy::unwrap_used,
+        // clippy::expect_used,
+        // clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
         missing_debug_implementations,
