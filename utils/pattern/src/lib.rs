@@ -34,12 +34,46 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+mod frontend;
 mod num_pattern;
 #[cfg(feature = "alloc")]
 mod parser;
+mod single;
+
+use alloc::borrow::Cow;
 
 pub use num_pattern::{
     NumericPlaceholderPattern, NumericPlaceholderPatternItem, NumericPlaceholderProvider,
 };
 #[cfg(feature = "alloc")]
 pub use parser::{Parser, ParserError, ParserOptions, PatternToken};
+
+#[derive(Debug, Copy, Clone)]
+pub enum PatternItem<'a, T> {
+    Placeholder(T),
+    Literal(&'a str),
+}
+
+#[derive(Debug)]
+#[non_exhaustive]
+pub enum PatternError {
+    InvalidPattern,
+}
+
+pub trait PatternBackend {
+    type PlaceholderKey<'a>: Clone + 'a
+    where
+        Self: 'a;
+    type Store: ToOwned + ?Sized;
+    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>
+    where
+        Self: 'a;
+
+    fn validate_store(store: &Self::Store) -> Result<(), PatternError>;
+    fn try_from_items<'a, I: Iterator<Item = Cow<'a, PatternItem<'a, Self::PlaceholderKey<'a>>>>>(
+        items: I,
+    ) -> Result<Cow<'a, Self::Store>, PatternError>
+    where
+        Self: 'a;
+    fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a>;
+}
