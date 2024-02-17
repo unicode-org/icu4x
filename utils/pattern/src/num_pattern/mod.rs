@@ -39,7 +39,8 @@ use alloc::string::String;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern = NumericPlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
+/// let pattern =
+///     NumericPlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(
@@ -147,7 +148,9 @@ where
     /// use icu_pattern::NumericPlaceholderPattern;
     /// use writeable::assert_writeable_parts_eq;
     ///
-    /// let pattern = NumericPlaceholderPattern::<&str, 2>::from_store("\x03\x0A\x0FHello,  and !");
+    /// let pattern = NumericPlaceholderPattern::<&str, 2>::from_store(
+    ///     "\x03\x0A\x0FHello,  and !",
+    /// );
     ///
     /// const LITERAL_PART: writeable::Part = writeable::Part {
     ///     category: "demo",
@@ -159,7 +162,11 @@ where
     /// };
     ///
     /// assert_writeable_parts_eq!(
-    ///     pattern.interpolate_with_parts(["Alice", "Bob"], LITERAL_PART, ELEMENT_PART),
+    ///     pattern.interpolate_with_parts(
+    ///         ["Alice", "Bob"],
+    ///         LITERAL_PART,
+    ///         ELEMENT_PART
+    ///     ),
     ///     "Hello, Alice and Bob!",
     ///     [
     ///         (0, 7, LITERAL_PART),
@@ -241,7 +248,9 @@ impl<'a, const N: usize> Iterator for NumericPlaceholderPatternIterator<'a, N> {
 /// use icu_pattern::NumericPlaceholderPattern;
 /// use writeable::assert_writeable_eq;
 ///
-/// let pattern = NumericPlaceholderPattern::<&str, 3>::from_store("\x04\x1C\x1E\x24Your lucky numbers are: , , and ");
+/// let pattern = NumericPlaceholderPattern::<&str, 3>::from_store(
+///     "\x04\x1C\x1E\x24Your lucky numbers are: , , and ",
+/// );
 ///
 /// assert_writeable_eq!(
 ///     pattern.interpolate(&[55, 46, 91] as &[i32]),

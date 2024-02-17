@@ -96,12 +96,10 @@ pub trait PatternBackend {
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+/// let pattern =
+///     SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
 ///
 /// // Interpolate some values into the pattern:
-/// assert_writeable_eq!(
-///     pattern.interpolate(["Alice"]),
-///     "Hello, Alice!"
-/// );
+/// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
 /// ```
 pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;

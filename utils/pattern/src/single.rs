@@ -14,15 +14,26 @@ use super::{PatternBackend, PatternError, PatternItem, PatternItemCow};
 ///
 /// ```
 /// use core::cmp::Ordering;
-/// use icu_pattern::SinglePlaceholderPattern;
-/// use icu_pattern::SinglePlaceholderKey;
-/// use icu_pattern::SinglePlaceholder;
 /// use icu_pattern::PatternItem;
+/// use icu_pattern::SinglePlaceholder;
+/// use icu_pattern::SinglePlaceholderKey;
+/// use icu_pattern::SinglePlaceholderPattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+/// let pattern =
+///     SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
 ///
-/// assert_eq!(pattern.iter().cmp([PatternItem::Literal("Hello, "), PatternItem::Placeholder(SinglePlaceholderKey::Singleton), PatternItem::Literal("!")].into_iter()), Ordering::Equal);
+/// assert_eq!(
+///     pattern.iter().cmp(
+///         [
+///             PatternItem::Literal("Hello, "),
+///             PatternItem::Placeholder(SinglePlaceholderKey::Singleton),
+///             PatternItem::Literal("!")
+///         ]
+///         .into_iter()
+///     ),
+///     Ordering::Equal
+/// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum SinglePlaceholderKey {
@@ -64,7 +75,9 @@ where
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap().take_store();
+/// let store = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!")
+///     .unwrap()
+///     .take_store();
 ///
 /// assert_eq!("\x07Hello, !", store);
 /// ```
