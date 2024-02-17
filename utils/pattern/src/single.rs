@@ -3,14 +3,28 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use writeable::Writeable;
 use core::{cmp::Ordering, str::FromStr};
+use writeable::Writeable;
 
 use crate::PlaceholderValueProvider;
 
 use super::{PatternBackend, PatternError, PatternItem, PatternItemCow};
 
-#[derive(Debug)]
+/// # Examples
+///
+/// ```
+/// use core::cmp::Ordering;
+/// use icu_pattern::SinglePlaceholderPattern;
+/// use icu_pattern::SinglePlaceholderKey;
+/// use icu_pattern::SinglePlaceholder;
+/// use icu_pattern::PatternItem;
+///
+/// // Parse the string syntax and check the resulting data store:
+/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+///
+/// assert_eq!(pattern.iter().cmp([PatternItem::Literal("Hello, "), PatternItem::Placeholder(SinglePlaceholderKey::Singleton), PatternItem::Literal("!")].into_iter()), Ordering::Equal);
+/// ```
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum SinglePlaceholderKey {
     Singleton,
 }

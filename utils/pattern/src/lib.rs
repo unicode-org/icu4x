@@ -52,13 +52,13 @@ pub use num_pattern::{
 pub use parser::{Parser, ParserError, ParserOptions, PatternToken};
 pub use single::{SinglePlaceholder, SinglePlaceholderKey};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PatternItem<'a, T> {
     Placeholder(T),
     Literal(&'a str),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PatternItemCow<'a, T> {
     Placeholder(T),
     Literal(Cow<'a, str>),

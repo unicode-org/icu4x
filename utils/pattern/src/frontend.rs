@@ -7,9 +7,7 @@ use core::{fmt, marker::PhantomData, str::FromStr};
 use alloc::borrow::Cow;
 use writeable::Writeable;
 
-use crate::{
-    Parser, ParserOptions, PatternError, PatternItem, PatternItemCow,
-};
+use crate::{Parser, ParserOptions, PatternError, PatternItem, PatternItemCow};
 
 use super::PatternBackend;
 
