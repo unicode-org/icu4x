@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
+use writeable::Writeable;
 use core::{cmp::Ordering, str::FromStr};
+
+use crate::PlaceholderValueProvider;
 
 use super::{PatternBackend, PatternError, PatternItem, PatternItemCow};
 
@@ -16,6 +19,27 @@ impl FromStr for SinglePlaceholderKey {
     type Err = core::convert::Infallible;
     fn from_str(_: &str) -> Result<Self, Self::Err> {
         Ok(Self::Singleton)
+    }
+}
+
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for (W,)
+where
+    W: Writeable,
+{
+    type W<'a> = &'a W where W: 'a;
+    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
+        &self.0
+    }
+}
+
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for [W; 1]
+where
+    W: Writeable,
+{
+    type W<'a> = &'a W where W: 'a;
+    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
+        let [value] = self;
+        &value
     }
 }
 

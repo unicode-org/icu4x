@@ -8,7 +8,7 @@ use alloc::borrow::Cow;
 use writeable::Writeable;
 
 use crate::{
-    Parser, ParserOptions, PatternError, PatternItem, PatternItemCow, SinglePlaceholderKey,
+    Parser, ParserOptions, PatternError, PatternItem, PatternItemCow,
 };
 
 use super::PatternBackend;
@@ -104,27 +104,6 @@ pub trait PlaceholderValueProvider<K> {
 
     /// Returns the [`Writeable`] to substitute for the given placeholder.
     fn value_for<'a>(&'a self, key: K) -> Self::W<'a>;
-}
-
-impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for (W,)
-where
-    W: Writeable,
-{
-    type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
-        &self.0
-    }
-}
-
-impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for [W; 1]
-where
-    W: Writeable,
-{
-    type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
-        let [value] = self;
-        &value
-    }
 }
 
 impl<W> PlaceholderValueProvider<bool> for (W, W)
