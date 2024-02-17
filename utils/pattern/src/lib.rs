@@ -54,6 +54,12 @@ pub enum PatternItem<'a, T> {
     Literal(&'a str),
 }
 
+#[derive(Debug, Clone)]
+pub enum PatternItemCow<'a, T> {
+    Placeholder(T),
+    Literal(Cow<'a, str>),
+}
+
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum PatternError {
@@ -61,16 +67,14 @@ pub enum PatternError {
 }
 
 pub trait PatternBackend {
-    type PlaceholderKey<'a>: Clone + 'a
-    where
-        Self: 'a;
+    type PlaceholderKey;
     type Store: ToOwned + ?Sized;
-    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>
+    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey>>
     where
         Self: 'a;
 
     fn validate_store(store: &Self::Store) -> Result<(), PatternError>;
-    fn try_from_items<'a, I: Iterator<Item = Cow<'a, PatternItem<'a, Self::PlaceholderKey<'a>>>>>(
+    fn try_from_items<'a, I: Iterator<Item = PatternItemCow<'a, Self::PlaceholderKey>>>(
         items: I,
     ) -> Result<Cow<'a, Self::Store>, PatternError>
     where

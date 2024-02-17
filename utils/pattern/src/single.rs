@@ -5,14 +5,14 @@
 use alloc::borrow::Cow;
 use core::cmp::Ordering;
 
-use super::{PatternBackend, PatternError, PatternItem};
+use super::{PatternBackend, PatternError, PatternItem, PatternItemCow};
 
 pub struct SinglePlaceholderPatternBackend {
     _not_constructible: core::convert::Infallible,
 }
 
 impl PatternBackend for SinglePlaceholderPatternBackend {
-    type PlaceholderKey<'a> = ();
+    type PlaceholderKey = ();
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
@@ -42,18 +42,15 @@ impl PatternBackend for SinglePlaceholderPatternBackend {
         }
     }
 
-    fn try_from_items<
-        'a,
-        I: Iterator<Item = Cow<'a, PatternItem<'a, Self::PlaceholderKey<'a>>>>,
-    >(
+    fn try_from_items<'a, I: Iterator<Item = PatternItemCow<'a, Self::PlaceholderKey>>>(
         items: I,
     ) -> Result<Cow<'a, Self::Store>, PatternError> {
         let mut result = String::new();
         let mut seen_placeholder = false;
         for item in items {
-            match &*item {
-                PatternItem::Literal(s) => result.push_str(s),
-                PatternItem::Placeholder(()) if !seen_placeholder => {
+            match item {
+                PatternItemCow::Literal(s) => result.push_str(&s),
+                PatternItemCow::Placeholder(()) if !seen_placeholder => {
                     seen_placeholder = true;
                     let placeholder_offset =
                         u32::try_from(result.len()).map_err(|_| PatternError::InvalidPattern)?;
@@ -61,7 +58,7 @@ impl PatternBackend for SinglePlaceholderPatternBackend {
                         .map_err(|_| PatternError::InvalidPattern)?;
                     result.insert(0, placeholder_offset_char);
                 }
-                PatternItem::Placeholder(()) => {
+                PatternItemCow::Placeholder(()) => {
                     return Err(PatternError::InvalidPattern);
                 }
             }
