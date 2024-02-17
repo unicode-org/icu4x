@@ -34,6 +34,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+mod builder;
 mod frontend;
 mod num_pattern;
 #[cfg(feature = "alloc")]
@@ -42,11 +43,14 @@ mod single;
 
 use alloc::borrow::Cow;
 
+pub use frontend::Pattern;
+pub use frontend::PlaceholderValueProvider;
 pub use num_pattern::{
     NumericPlaceholderPattern, NumericPlaceholderPatternItem, NumericPlaceholderProvider,
 };
 #[cfg(feature = "alloc")]
 pub use parser::{Parser, ParserError, ParserOptions, PatternToken};
+pub use single::{SinglePlaceholder, SinglePlaceholderKey};
 
 #[derive(Debug, Copy, Clone)]
 pub enum PatternItem<'a, T> {
@@ -74,10 +78,30 @@ pub trait PatternBackend {
         Self: 'a;
 
     fn validate_store(store: &Self::Store) -> Result<(), PatternError>;
-    fn try_from_items<'a, I: Iterator<Item = PatternItemCow<'a, Self::PlaceholderKey>>>(
+    fn try_from_items<
+        'a,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
+    >(
         items: I,
     ) -> Result<Cow<'a, Self::Store>, PatternError>
     where
         Self: 'a;
     fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a>;
 }
+
+/// # Examples
+///
+/// ```
+/// use icu_pattern::SinglePlaceholderPattern;
+/// use writeable::assert_writeable_eq;
+///
+/// // Create a pattern from the string syntax:
+/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+///
+/// // Interpolate some values into the pattern:
+/// assert_writeable_eq!(
+///     pattern.interpolate(["Alice"]),
+///     "Hello, Alice!"
+/// );
+/// ```
+pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;

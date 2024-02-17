@@ -3,16 +3,40 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use core::cmp::Ordering;
+use core::{cmp::Ordering, str::FromStr};
 
 use super::{PatternBackend, PatternError, PatternItem, PatternItemCow};
 
-pub struct SinglePlaceholderPatternBackend {
+#[derive(Debug)]
+pub enum SinglePlaceholderKey {
+    Singleton,
+}
+
+impl FromStr for SinglePlaceholderKey {
+    type Err = core::convert::Infallible;
+    fn from_str(_: &str) -> Result<Self, Self::Err> {
+        Ok(Self::Singleton)
+    }
+}
+
+/// # Examples
+///
+/// ```
+/// use icu_pattern::Pattern;
+/// use icu_pattern::SinglePlaceholder;
+///
+/// // Parse the string syntax and check the resulting data store:
+/// let store = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap().take_store();
+///
+/// assert_eq!("\x07Hello, !", store);
+/// ```
+#[derive(Debug)]
+pub struct SinglePlaceholder {
     _not_constructible: core::convert::Infallible,
 }
 
-impl PatternBackend for SinglePlaceholderPatternBackend {
-    type PlaceholderKey = ();
+impl PatternBackend for SinglePlaceholder {
+    type PlaceholderKey = SinglePlaceholderKey;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
@@ -42,15 +66,18 @@ impl PatternBackend for SinglePlaceholderPatternBackend {
         }
     }
 
-    fn try_from_items<'a, I: Iterator<Item = PatternItemCow<'a, Self::PlaceholderKey>>>(
+    fn try_from_items<
+        'a,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
+    >(
         items: I,
     ) -> Result<Cow<'a, Self::Store>, PatternError> {
         let mut result = String::new();
         let mut seen_placeholder = false;
         for item in items {
-            match item {
+            match item? {
                 PatternItemCow::Literal(s) => result.push_str(&s),
-                PatternItemCow::Placeholder(()) if !seen_placeholder => {
+                PatternItemCow::Placeholder(_) if !seen_placeholder => {
                     seen_placeholder = true;
                     let placeholder_offset =
                         u32::try_from(result.len()).map_err(|_| PatternError::InvalidPattern)?;
@@ -58,7 +85,7 @@ impl PatternBackend for SinglePlaceholderPatternBackend {
                         .map_err(|_| PatternError::InvalidPattern)?;
                     result.insert(0, placeholder_offset_char);
                 }
-                PatternItemCow::Placeholder(()) => {
+                PatternItemCow::Placeholder(_) => {
                     return Err(PatternError::InvalidPattern);
                 }
             }
@@ -72,6 +99,7 @@ impl PatternBackend for SinglePlaceholderPatternBackend {
 }
 
 // should be hidden
+#[derive(Debug)]
 pub struct SinglePlaceholderPatternIterator<'a> {
     store: &'a str,
     placeholder_offset: usize,
@@ -79,7 +107,7 @@ pub struct SinglePlaceholderPatternIterator<'a> {
 }
 
 impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
-    type Item = PatternItem<'a, ()>;
+    type Item = PatternItem<'a, SinglePlaceholderKey>;
     fn next(&mut self) -> Option<Self::Item> {
         match self.current_offset.cmp(&self.placeholder_offset) {
             Ordering::Less => {
@@ -94,13 +122,14 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
             Ordering::Equal => {
                 // Placeholder
                 self.placeholder_offset = 0;
-                Some(PatternItem::Placeholder(()))
+                Some(PatternItem::Placeholder(SinglePlaceholderKey::Singleton))
             }
             Ordering::Greater => {
                 // Suffix or end of string
                 let result = self
                     .store
                     .get(self.current_offset..)
+                    .and_then(|s| if s.is_empty() { None } else { Some(s) })
                     .map(PatternItem::Literal);
                 self.current_offset = self.store.len();
                 result

@@ -2,28 +2,98 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::{fmt, marker::PhantomData};
+use core::{fmt, marker::PhantomData, str::FromStr};
 
+use alloc::borrow::Cow;
 use writeable::Writeable;
 
-use crate::PatternItem;
+use crate::{
+    Parser, ParserOptions, PatternError, PatternItem, PatternItemCow, SinglePlaceholderKey,
+};
 
 use super::PatternBackend;
 
+#[derive(Debug)]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
     store: Store,
 }
 
 impl<Backend, Store> Pattern<Backend, Store> {
-    pub fn from_store(store: Store) -> Self {
-        Self {
-            _backend: PhantomData,
-            store,
-        }
-    }
     pub fn take_store(self) -> Store {
         self.store
+    }
+}
+
+impl<B, Store> Pattern<B, Store>
+where
+    B: PatternBackend,
+    Store: AsRef<B::Store>,
+{
+    pub fn try_from_store(store: Store) -> Result<Self, PatternError> {
+        B::validate_store(store.as_ref())?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<'a, B> Pattern<B, Cow<'a, B::Store>>
+where
+    B: PatternBackend + 'a,
+{
+    pub fn try_from_items<I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>>(
+        items: I,
+    ) -> Result<Self, PatternError> {
+        let store = B::try_from_items(items.map(Ok))?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<'a, B> Pattern<B, Cow<'a, B::Store>>
+where
+    B: PatternBackend + 'a,
+    B::PlaceholderKey: FromStr,
+    <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
+{
+    pub fn try_from_str(pattern: &'a str) -> Result<Self, PatternError> {
+        let parser = Parser::new(
+            pattern,
+            ParserOptions {
+                allow_raw_letters: true,
+            },
+        );
+        let store = B::try_from_items(parser)?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<B, Store> Pattern<B, Store>
+where
+    B: PatternBackend,
+    Store: AsRef<B::Store> + ?Sized,
+{
+    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey>> + '_ {
+        B::iter_items(self.store.as_ref())
+    }
+
+    /// Returns a [`Writeable`] that interpolates items from the given replacement provider
+    /// into this pattern string.
+    pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
+    where
+        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
+    {
+        WriteablePattern::<B, P> {
+            store: self.store.as_ref(),
+            value_provider,
+        }
     }
 }
 
@@ -36,22 +106,22 @@ pub trait PlaceholderValueProvider<K> {
     fn value_for<'a>(&'a self, key: K) -> Self::W<'a>;
 }
 
-impl<W> PlaceholderValueProvider<()> for (W,)
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for (W,)
 where
     W: Writeable,
 {
     type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, _key: ()) -> Self::W<'a> {
+    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
         &self.0
     }
 }
 
-impl<W> PlaceholderValueProvider<()> for [W; 1]
+impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for [W; 1]
 where
     W: Writeable,
 {
     type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, _key: ()) -> Self::W<'a> {
+    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
         let [value] = self;
         &value
     }
@@ -99,24 +169,6 @@ where
 struct WriteablePattern<'a, B: PatternBackend, P> {
     store: &'a B::Store,
     value_provider: P,
-}
-
-impl<B: PatternBackend, Store: AsRef<B::Store> + ?Sized> Pattern<B, Store> {
-    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey>> + '_ {
-        B::iter_items(self.store.as_ref())
-    }
-
-    /// Returns a [`Writeable`] that interpolates items from the given replacement provider
-    /// into this pattern string.
-    pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
-    where
-        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
-    {
-        WriteablePattern::<B, P> {
-            store: self.store.as_ref(),
-            value_provider,
-        }
-    }
 }
 
 impl<B, P> Writeable for WriteablePattern<'_, B, P>
