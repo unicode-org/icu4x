@@ -68,7 +68,7 @@ description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
 dependencies = ["install-nightly", "install-cortex-8"]
 toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
-env = { RUSTFLAGS = "-Cpanic=abort -Copt-level=s" }
+env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort -Copt-level=s" }
 command = "cargo"
 args = ["check", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
