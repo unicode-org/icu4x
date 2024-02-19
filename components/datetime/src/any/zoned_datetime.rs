@@ -22,12 +22,7 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use writeable::Writeable;
 
-size_test!(
-    ZonedDateTimeFormatter,
-    zoned_date_time_formatter_size,
-    pinned = 6520,
-    nightly = 6248
-);
+size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 
 /// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times with time zones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
