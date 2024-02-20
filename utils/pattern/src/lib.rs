@@ -77,10 +77,12 @@ trait Sealed {}
 /// The trait has no public methods and is not implementable outside of this crate.
 #[allow(private_bounds)]
 pub trait PatternBackend: Sealed {
-    #[doc(hidden)] // TODO(#4467): Should be internal
+    /// The type to be used as the placeholder key in code.
     type PlaceholderKey;
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    type Store: ToOwned + ?Sized;
+
+    /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
+    type Store: ?Sized;
+
     #[doc(hidden)] // TODO(#4467): Should be internal
     type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey>>
     where
@@ -88,6 +90,7 @@ pub trait PatternBackend: Sealed {
 
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn validate_store(store: &Self::Store) -> Result<(), PatternError>;
+
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn try_from_items<
         'a,
@@ -96,7 +99,9 @@ pub trait PatternBackend: Sealed {
         items: I,
     ) -> Result<Cow<'a, Self::Store>, PatternError>
     where
-        Self: 'a;
+        Self: 'a,
+        Self::Store: ToOwned;
+
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a>;
 }

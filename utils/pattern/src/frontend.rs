@@ -11,6 +11,30 @@ use crate::{Parser, ParserOptions, PatternError, PatternItem, PatternItemCow};
 
 use super::PatternBackend;
 
+/// A string pattern with placeholders.
+///
+/// There are 2 generic parameters: `Backend` and `Store`.
+///
+/// # Backend
+///
+/// This determines the nature of placeholders and serialized encoding of the pattern.
+///
+/// The following backends are available:
+///
+/// - [`SinglePlaceholder`] for patterns with one placeholder: `"{0} days ago"`
+///
+/// # Store
+///
+/// The data structure has a flexible backing data store. The only requirement for most
+/// functionality is that it implement `AsRef<str>` (backend-dependent).
+///
+/// Example stores:
+///
+/// - `&str` for a fully borrowed pattern
+/// - `String` for a fully owned pattern
+/// - `Cow<str>` for an owned-or-borrowed pattern
+///
+/// [`SinglePlaceholder`]: crate::SinglePlaceholder
 #[derive(Debug)]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
@@ -40,6 +64,7 @@ where
 impl<'a, B> Pattern<B, Cow<'a, B::Store>>
 where
     B: PatternBackend + 'a,
+    B::Store: ToOwned,
 {
     pub fn try_from_items<I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>>(
         items: I,
@@ -56,6 +81,7 @@ impl<'a, B> Pattern<B, Cow<'a, B::Store>>
 where
     B: PatternBackend + 'a,
     B::PlaceholderKey: FromStr,
+    B::Store: ToOwned,
     <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
 {
     pub fn try_from_str(pattern: &'a str) -> Result<Self, PatternError> {
