@@ -8,7 +8,6 @@ use core::{
     str::FromStr,
 };
 
-use alloc::borrow::Cow;
 use writeable::{PartsWrite, Writeable};
 
 use crate::{Parser, ParserOptions, PatternError, PatternItem, PatternItemCow};

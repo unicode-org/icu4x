@@ -36,7 +36,6 @@ extern crate alloc;
 
 mod builder;
 mod frontend;
-mod num_pattern;
 #[cfg(feature = "alloc")]
 mod parser;
 mod single;
@@ -45,22 +44,33 @@ use alloc::borrow::Cow;
 
 pub use frontend::Pattern;
 pub use frontend::PlaceholderValueProvider;
-pub use num_pattern::{
-    NumericPlaceholderPattern, NumericPlaceholderPatternItem, NumericPlaceholderProvider,
-};
 #[cfg(feature = "alloc")]
 pub use parser::{Parser, ParserError, ParserOptions, PatternToken};
 pub use single::{SinglePlaceholder, SinglePlaceholderKey};
 
+/// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PatternItem<'a, T> {
+    /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),
+    /// A string literal. This can occur in one of three places:
+    ///
+    /// 1. Between the start of the string and the first placeholder (prefix)
+    /// 2. Between two placeholders (infix)
+    /// 3. Between the final placeholder and the end of the string (suffix)
     Literal(&'a str),
 }
 
+/// A borrowed-or-owned item in a [`Pattern`]. Items are either string literals or placeholders.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PatternItemCow<'a, T> {
+    /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),
+    /// A string literal. This can occur in one of three places:
+    ///
+    /// 1. Between the start of the string and the first placeholder (prefix)
+    /// 2. Between two placeholders (infix)
+    /// 3. Between the final placeholder and the end of the string (suffix)
     Literal(Cow<'a, str>),
 }
 
