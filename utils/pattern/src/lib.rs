@@ -35,86 +35,30 @@
 extern crate alloc;
 
 mod builder;
+mod common;
+mod error;
 mod frontend;
 #[cfg(feature = "alloc")]
 mod parser;
 mod single;
 
-use alloc::borrow::Cow;
-
+pub use common::PatternBackend;
+pub use common::PatternItem;
+pub use common::PatternItemCow;
+pub use common::PlaceholderValueProvider;
+pub use error::PatternError;
 pub use frontend::Pattern;
-pub use frontend::PlaceholderValueProvider;
 #[cfg(feature = "alloc")]
-pub use parser::{Parser, ParserError, ParserOptions, PatternToken};
-pub use single::{SinglePlaceholder, SinglePlaceholderKey};
-
-/// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum PatternItem<'a, T> {
-    /// A placeholder of the type specified on this [`PatternItemCow`].
-    Placeholder(T),
-    /// A string literal. This can occur in one of three places:
-    ///
-    /// 1. Between the start of the string and the first placeholder (prefix)
-    /// 2. Between two placeholders (infix)
-    /// 3. Between the final placeholder and the end of the string (suffix)
-    Literal(&'a str),
-}
-
-/// A borrowed-or-owned item in a [`Pattern`]. Items are either string literals or placeholders.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum PatternItemCow<'a, T> {
-    /// A placeholder of the type specified on this [`PatternItemCow`].
-    Placeholder(T),
-    /// A string literal. This can occur in one of three places:
-    ///
-    /// 1. Between the start of the string and the first placeholder (prefix)
-    /// 2. Between two placeholders (infix)
-    /// 3. Between the final placeholder and the end of the string (suffix)
-    Literal(Cow<'a, str>),
-}
-
-#[derive(Debug)]
-#[non_exhaustive]
-pub enum PatternError {
-    InvalidPattern,
-}
+pub use parser::Parser;
+pub use parser::ParserError;
+pub use parser::ParserOptions;
+pub use parser::PatternToken;
+pub use single::SinglePlaceholder;
+pub use single::SinglePlaceholderKey;
+#[doc(no_inline)]
+pub use PatternError as Error;
 
 trait Sealed {}
-
-/// Types that implement backing data models for [`Pattern`] implement this trait.
-///
-/// The trait has no public methods and is not implementable outside of this crate.
-#[allow(private_bounds)]
-pub trait PatternBackend: Sealed {
-    /// The type to be used as the placeholder key in code.
-    type PlaceholderKey;
-
-    /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
-    type Store: ?Sized;
-
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey>>
-    where
-        Self: 'a;
-
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    fn validate_store(store: &Self::Store) -> Result<(), PatternError>;
-
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    fn try_from_items<
-        'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
-    >(
-        items: I,
-    ) -> Result<<Self::Store as ToOwned>::Owned, PatternError>
-    where
-        Self: 'a,
-        Self::Store: ToOwned;
-
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a>;
-}
 
 /// # Examples
 ///

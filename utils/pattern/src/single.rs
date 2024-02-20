@@ -5,9 +5,8 @@
 use core::{cmp::Ordering, str::FromStr};
 use writeable::Writeable;
 
-use crate::PlaceholderValueProvider;
-
-use super::{PatternBackend, PatternError, PatternItem, PatternItemCow};
+use crate::common::*;
+use crate::Error;
 
 /// # Examples
 ///
@@ -132,12 +131,12 @@ impl PatternBackend for SinglePlaceholder {
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
-    fn validate_store(store: &Self::Store) -> Result<(), PatternError> {
-        let placeholder_offset_char = store.chars().next().ok_or(PatternError::InvalidPattern)?;
+    fn validate_store(store: &Self::Store) -> Result<(), Error> {
+        let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;
         let initial_offset = char::len_utf8(placeholder_offset_char);
         let placeholder_offset = placeholder_offset_char as usize;
         if placeholder_offset > store.len() - initial_offset + 1 {
-            return Err(PatternError::InvalidPattern);
+            return Err(Error::InvalidPattern);
         }
         Ok(())
     }
@@ -160,10 +159,10 @@ impl PatternBackend for SinglePlaceholder {
 
     fn try_from_items<
         'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
     >(
         items: I,
-    ) -> Result<String, PatternError> {
+    ) -> Result<String, Error> {
         let mut result = String::new();
         let mut seen_placeholder = false;
         for item in items {
@@ -172,13 +171,13 @@ impl PatternBackend for SinglePlaceholder {
                 PatternItemCow::Placeholder(_) if !seen_placeholder => {
                     seen_placeholder = true;
                     let placeholder_offset =
-                        u32::try_from(result.len() + 1).map_err(|_| PatternError::InvalidPattern)?;
-                    let placeholder_offset_char = char::try_from(placeholder_offset)
-                        .map_err(|_| PatternError::InvalidPattern)?;
+                        u32::try_from(result.len() + 1).map_err(|_| Error::InvalidPattern)?;
+                    let placeholder_offset_char =
+                        char::try_from(placeholder_offset).map_err(|_| Error::InvalidPattern)?;
                     result.insert(0, placeholder_offset_char);
                 }
                 PatternItemCow::Placeholder(_) => {
-                    return Err(PatternError::InvalidPattern);
+                    return Err(Error::InvalidPattern);
                 }
             }
         }

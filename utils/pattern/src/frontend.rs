@@ -10,9 +10,9 @@ use core::{
 
 use writeable::{PartsWrite, Writeable};
 
-use crate::{Parser, ParserOptions, PatternError, PatternItem, PatternItemCow};
-
-use super::PatternBackend;
+use crate::common::*;
+use crate::Error;
+use crate::{Parser, ParserOptions};
 
 /// A string pattern with placeholders.
 ///
@@ -55,7 +55,7 @@ where
     B: PatternBackend,
     Store: AsRef<B::Store>,
 {
-    pub fn try_from_store(store: Store) -> Result<Self, PatternError> {
+    pub fn try_from_store(store: Store) -> Result<Self, Error> {
         B::validate_store(store.as_ref())?;
         Ok(Self {
             _backend: PhantomData,
@@ -69,7 +69,7 @@ where
     B: PatternBackend,
     B::Store: ToOwned,
 {
-    pub fn try_from_items<'a, I>(items: I) -> Result<Self, PatternError>
+    pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
     where
         B: 'a,
         I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>,
@@ -89,7 +89,7 @@ where
     B::Store: ToOwned,
     <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
 {
-    pub fn try_from_str(pattern: &str) -> Result<Self, PatternError> {
+    pub fn try_from_str(pattern: &str) -> Result<Self, Error> {
         let parser = Parser::new(
             pattern,
             ParserOptions {
@@ -127,9 +127,11 @@ where
 
     pub fn interpolate_to_string<P>(&self, value_provider: P) -> String
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey>
+        P: PlaceholderValueProvider<B::PlaceholderKey>,
     {
-        self.interpolate(value_provider).write_to_string().into_owned()
+        self.interpolate(value_provider)
+            .write_to_string()
+            .into_owned()
     }
 
     /// Interpolates items with [writeable::Part]s.
@@ -186,54 +188,6 @@ where
             literal_part,
             element_part: placeholder_value_part,
         }
-    }
-}
-
-pub trait PlaceholderValueProvider<K> {
-    type W<'a>: Writeable
-    where
-        Self: 'a;
-
-    /// Returns the [`Writeable`] to substitute for the given placeholder.
-    fn value_for<'a>(&'a self, key: K) -> Self::W<'a>;
-}
-
-impl<W> PlaceholderValueProvider<bool> for (W, W)
-where
-    W: Writeable,
-{
-    type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, key: bool) -> Self::W<'a> {
-        if key {
-            &self.1
-        } else {
-            &self.0
-        }
-    }
-}
-
-impl<W> PlaceholderValueProvider<bool> for [W; 2]
-where
-    W: Writeable,
-{
-    type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, key: bool) -> Self::W<'a> {
-        let [v0, v1] = self;
-        if key {
-            &v1
-        } else {
-            &v0
-        }
-    }
-}
-
-impl<'b, K, T> PlaceholderValueProvider<K> for &'b T
-where
-    T: PlaceholderValueProvider<K> + ?Sized,
-{
-    type W<'a> = T::W<'a> where T: 'a, 'b: 'a;
-    fn value_for<'a>(&'a self, key: K) -> Self::W<'a> {
-        (*self).value_for(key)
     }
 }
 
