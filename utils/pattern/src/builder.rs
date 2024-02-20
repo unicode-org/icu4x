@@ -4,13 +4,13 @@
 
 use core::{fmt, str::FromStr};
 
-use crate::{Parser, PatternError, PatternItemCow, PatternToken};
+use crate::{Parser, PatternError, PatternItemCow, ParsedPatternItem};
 
-impl<'a, K> From<PatternToken<'a, K>> for PatternItemCow<'a, K> {
-    fn from(value: PatternToken<'a, K>) -> Self {
+impl<'a, K> From<ParsedPatternItem<'a, K>> for PatternItemCow<'a, K> {
+    fn from(value: ParsedPatternItem<'a, K>) -> Self {
         match value {
-            PatternToken::Literal { content, .. } => PatternItemCow::Literal(content),
-            PatternToken::Placeholder(key) => PatternItemCow::Placeholder(key),
+            ParsedPatternItem::Literal { content, .. } => PatternItemCow::Literal(content),
+            ParsedPatternItem::Placeholder(key) => PatternItemCow::Placeholder(key),
         }
     }
 }

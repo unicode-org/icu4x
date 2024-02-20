@@ -52,7 +52,7 @@ pub use frontend::Pattern;
 pub use parser::Parser;
 pub use parser::ParserError;
 pub use parser::ParserOptions;
-pub use parser::PatternToken;
+pub use parser::ParsedPatternItem;
 pub use single::SinglePlaceholder;
 pub use single::SinglePlaceholderKey;
 #[doc(no_inline)]
