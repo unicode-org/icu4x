@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::{fmt, marker::PhantomData, str::FromStr};
+use core::{fmt::{self, Write}, marker::PhantomData, str::FromStr};
 
 use alloc::borrow::Cow;
-use writeable::Writeable;
+use writeable::{PartsWrite, Writeable};
 
 use crate::{Parser, ParserOptions, PatternError, PatternItem, PatternItemCow};
 
@@ -93,6 +93,62 @@ where
             value_provider,
         }
     }
+
+    /// Interpolates items with [writeable::Part]s.
+    ///
+    /// Two parts are used:
+    ///
+    /// 1. `literal_part` for [`PatternItem::Literal`]
+    /// 2. `element_part` for [`PatternItem::Placeholder`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    /// use writeable::assert_writeable_parts_eq;
+    ///
+    /// let pattern = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap();
+    ///
+    /// const LITERAL_PART: writeable::Part = writeable::Part {
+    ///     category: "demo",
+    ///     value: "literal",
+    /// };
+    /// const ELEMENT_PART: writeable::Part = writeable::Part {
+    ///     category: "demo",
+    ///     value: "element",
+    /// };
+    ///
+    /// assert_writeable_parts_eq!(
+    ///     pattern.interpolate_with_parts(
+    ///         ["Alice"],
+    ///         LITERAL_PART,
+    ///         ELEMENT_PART
+    ///     ),
+    ///     "Hello, Alice!",
+    ///     [
+    ///         (0, 7, LITERAL_PART),
+    ///         (7, 12, ELEMENT_PART),
+    ///         (12, 13, LITERAL_PART),
+    ///     ]
+    /// );
+    /// ```
+    pub fn interpolate_with_parts<'a, P>(
+        &'a self,
+        value_provider: P,
+        literal_part: writeable::Part,
+        placeholder_value_part: writeable::Part,
+    ) -> impl Writeable + fmt::Display + 'a
+    where
+    P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
+    {
+        WriteablePatternWithParts::<B, P> {
+            store: self.store.as_ref(),
+            value_provider,
+            literal_part,
+            element_part: placeholder_value_part,
+        }
+    }
 }
 
 pub trait PlaceholderValueProvider<K> {
@@ -170,6 +226,45 @@ where
 }
 
 impl<B, P> fmt::Display for WriteablePattern<'_, B, P>
+where
+    B: PatternBackend,
+    P: PlaceholderValueProvider<B::PlaceholderKey>,
+{
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.write_to(f)
+    }
+}
+
+struct WriteablePatternWithParts<'a, B: PatternBackend, P> {
+    store: &'a B::Store,
+    value_provider: P,
+    literal_part: writeable::Part,
+    element_part: writeable::Part,
+}
+
+impl<B, P> Writeable for WriteablePatternWithParts<'_, B, P>
+where
+    B: PatternBackend,
+    P: PlaceholderValueProvider<B::PlaceholderKey>,
+{
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        for item in B::iter_items(self.store) {
+            match item {
+                PatternItem::Literal(s) => {
+                    sink.with_part(self.literal_part, |w| w.write_str(s))?;
+                }
+                PatternItem::Placeholder(key) => {
+                    let element_writeable = self.value_provider.value_for(key);
+                    sink.with_part(self.element_part, |w| element_writeable.write_to_parts(w))?;
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+impl<B, P> fmt::Display for WriteablePatternWithParts<'_, B, P>
 where
     B: PatternBackend,
     P: PlaceholderValueProvider<B::PlaceholderKey>,
