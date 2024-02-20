@@ -72,8 +72,8 @@ where
 ///
 /// # Encoding Details
 ///
-/// The first code point of the string is the byte offset of the placeholder counting from the
-/// beginning of the string. If zero, there is no placeholder.
+/// The first code point of the string is 1 plus the byte offset of the placeholder counting from
+/// after that initial code point. If zero, there is no placeholder.
 ///
 /// # Examples
 ///
@@ -88,7 +88,7 @@ where
 ///     .unwrap()
 ///     .take_store();
 ///
-/// assert_eq!("\x07Hello, !", store);
+/// assert_eq!("\u{8}Hello, !", store);
 /// ```
 ///
 /// Example patterns supported by this backend:
@@ -115,7 +115,7 @@ where
 ///     "yesterday",
 /// );
 ///
-/// // Escaped placeholder with a real placeholder:
+/// // Escaped placeholder and a real placeholder:
 /// assert_eq!(
 ///     Pattern::<SinglePlaceholder, _>::try_from_str("'{escaped}' {interpolated}").unwrap().interpolate_to_string(["hi"]),
 ///     "{escaped} hi",
@@ -136,8 +136,8 @@ impl PatternBackend for SinglePlaceholder {
     fn validate_store(store: &Self::Store) -> Result<(), PatternError> {
         let placeholder_offset_char = store.chars().next().ok_or(PatternError::InvalidPattern)?;
         let initial_offset = char::len_utf8(placeholder_offset_char);
-        let pattern_len = store.len() - initial_offset;
-        if placeholder_offset_char as usize > pattern_len {
+        let placeholder_offset = placeholder_offset_char as usize;
+        if placeholder_offset > store.len() - initial_offset + 1 {
             return Err(PatternError::InvalidPattern);
         }
         Ok(())
@@ -154,7 +154,7 @@ impl PatternBackend for SinglePlaceholder {
         let initial_offset = char::len_utf8(placeholder_offset_char);
         SinglePlaceholderPatternIterator {
             store,
-            placeholder_offset: (placeholder_offset_char as usize) + initial_offset,
+            placeholder_offset: placeholder_offset_char as usize + initial_offset - 1,
             current_offset: initial_offset,
         }
     }
@@ -173,7 +173,7 @@ impl PatternBackend for SinglePlaceholder {
                 PatternItemCow::Placeholder(_) if !seen_placeholder => {
                     seen_placeholder = true;
                     let placeholder_offset =
-                        u32::try_from(result.len()).map_err(|_| PatternError::InvalidPattern)?;
+                        u32::try_from(result.len() + 1).map_err(|_| PatternError::InvalidPattern)?;
                     let placeholder_offset_char = char::try_from(placeholder_offset)
                         .map_err(|_| PatternError::InvalidPattern)?;
                     result.insert(0, placeholder_offset_char);
@@ -184,10 +184,9 @@ impl PatternBackend for SinglePlaceholder {
             }
         }
         if !seen_placeholder {
-            Err(PatternError::InvalidPattern)
-        } else {
-            Ok(result)
+            result.insert(0, '\0');
         }
+        Ok(result)
     }
 }
 
