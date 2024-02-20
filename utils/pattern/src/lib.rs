@@ -72,6 +72,9 @@ pub enum PatternError {
 
 trait Sealed {}
 
+/// Types that implement backing data models for [`Pattern`] implement this trait.
+///
+/// The trait has no public methods and is not implementable outside of this crate.
 #[allow(private_bounds)]
 pub trait PatternBackend: Sealed {
     #[doc(hidden)] // TODO(#4467): Should be internal
