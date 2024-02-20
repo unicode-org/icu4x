@@ -42,6 +42,7 @@ macro_rules! handle_literal {
 
 /// Options passed to the constructor of [`Parser`].
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct ParserOptions {
     /// Controls whether ASCII letters can appear in the raw
     /// pattern.
@@ -51,7 +52,17 @@ pub struct ParserOptions {
     ///
     /// If set to `false`, ASCII letters can only appear in quoted literals,
     /// like "{0} 'days'".
+    ///
+    /// Default is `true`.
     pub allow_raw_letters: bool,
+}
+
+impl Default for ParserOptions {
+    fn default() -> Self {
+        Self {
+            allow_raw_letters: true,
+        }
+    }
 }
 
 /// Placeholder pattern parser.
@@ -72,9 +83,7 @@ pub struct ParserOptions {
 ///
 /// let mut parser = Parser::new(
 ///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
+///     ParserOptions::default(),
 /// );
 ///
 /// let mut result = vec![];
@@ -110,9 +119,7 @@ pub struct ParserOptions {
 ///
 /// let mut parser = Parser::new(
 ///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
+///     ParserOptions::default(),
 /// );
 ///
 /// let mut result = vec![];
@@ -178,9 +185,7 @@ pub struct ParserOptions {
 ///
 /// let mut parser = Parser::new(
 ///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
+///     ParserOptions::default(),
 /// );
 ///
 /// let mut result = vec![];
@@ -272,9 +277,7 @@ impl<'p, P> Parser<'p, P> {
     /// use icu_pattern::{Parser, ParserOptions};
     /// let mut parser = Parser::<usize>::new(
     ///     "{0}, {1}",
-    ///     ParserOptions {
-    ///         allow_raw_letters: false,
-    ///     },
+    ///     ParserOptions::default(),
     /// );
     /// ```
     pub fn new(input: &'p str, options: ParserOptions) -> Self {
@@ -301,9 +304,7 @@ impl<'p, P> Parser<'p, P> {
     ///
     /// let mut parser = Parser::<usize>::new(
     ///     "{0}, {1}",
-    ///     ParserOptions {
-    ///         allow_raw_letters: false,
-    ///     },
+    ///     ParserOptions::default(),
     /// );
     ///
     /// // A call to try_next() returns the next value…

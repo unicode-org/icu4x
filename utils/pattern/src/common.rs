@@ -8,6 +8,7 @@ use writeable::Writeable;
 
 /// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_enums)] // Part of core data model
 pub enum PatternItem<'a, T> {
     /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),
@@ -21,6 +22,7 @@ pub enum PatternItem<'a, T> {
 
 /// A borrowed-or-owned item in a [`Pattern`]. Items are either string literals or placeholders.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_enums)] // Part of core data model
 pub enum PatternItemCow<'a, T> {
     /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),

@@ -15,9 +15,7 @@ use alloc::borrow::Cow;
 ///
 /// let mut parser = Parser::new(
 ///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
+///     ParserOptions::default(),
 /// );
 ///
 /// let mut result = vec![];
@@ -53,6 +51,7 @@ use alloc::borrow::Cow;
 /// [`PatternItem`]: crate::PatternItem
 /// [`FromStr`]: core::str::FromStr
 #[derive(PartialEq, Debug, Clone)]
+#[non_exhaustive]
 pub enum ParsedPatternItem<'s, P> {
     Placeholder(P),
     Literal { content: Cow<'s, str>, quoted: bool },

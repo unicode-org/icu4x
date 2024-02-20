@@ -13,9 +13,7 @@ use displaydoc::Display;
 ///
 /// let mut parser = Parser::<usize>::new(
 ///     "{0",
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
+///     ParserOptions::default(),
 /// );
 /// assert_eq!(Err(ParserError::UnclosedPlaceholder), parser.try_next());
 /// ```
@@ -26,6 +24,7 @@ use displaydoc::Display;
 ///
 /// [`FromStr`]: core::str::FromStr
 #[derive(Display, Debug, PartialEq)]
+#[non_exhaustive]
 pub enum ParserError<E>
 where
     E: Debug,

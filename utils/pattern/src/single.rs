@@ -34,6 +34,7 @@ use crate::Error;
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_enums)] // Singleton
 pub enum SinglePlaceholderKey {
     Singleton,
 }
