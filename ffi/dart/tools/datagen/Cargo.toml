@@ -1,0 +1,49 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_datagen_dart"
+
+publish = false
+
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+icu_provider_blob = { workspace = true, features = ["export"] }
+icu_provider = { workspace = true, features = ["datagen"] }
+icu_datagen.workspace = true
+
+clap = { version = "4", features = ["derive"] }
+eyre = "0.6"
+log = "0.4"
+serde = "1"
+simple_logger = { version = "4.1.0", default-features = false }
+
+# These are required to make the make_exportable_provider macro work
+icu_calendar.workspace = true
+icu_casemap.workspace = true
+icu_collator.workspace = true
+icu_datetime.workspace = true
+icu_decimal.workspace = true
+icu_list.workspace = true
+icu_locid_transform.workspace = true
+icu_normalizer.workspace = true
+icu_plurals.workspace = true
+icu_properties.workspace = true
+icu_segmenter.workspace = true
+icu_timezone.workspace = true
+
+[build-dependencies]
+icu_datagen = { workspace = true, features = ["networking", "use_wasm"] }
+icu_provider_blob = { workspace = true, features = ["export"] }
+log = "0.4"
+simple_logger = { version = "4.1.0", default-features = false }
