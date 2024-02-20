@@ -63,7 +63,7 @@ pub trait PatternBackend: crate::Sealed {
         Self::Store: ToOwned;
 
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a>;
+    fn iter_items(store: &Self::Store) -> Self::Iter<'_>;
 }
 
 pub trait PlaceholderValueProvider<K> {
@@ -72,7 +72,7 @@ pub trait PlaceholderValueProvider<K> {
         Self: 'a;
 
     /// Returns the [`Writeable`] to substitute for the given placeholder.
-    fn value_for<'a>(&'a self, key: K) -> Self::W<'a>;
+    fn value_for(&self, key: K) -> Self::W<'_>;
 }
 
 #[cfg(disabled)]
@@ -111,7 +111,7 @@ where
     T: PlaceholderValueProvider<K> + ?Sized,
 {
     type W<'a> = T::W<'a> where T: 'a, 'b: 'a;
-    fn value_for<'a>(&'a self, key: K) -> Self::W<'a> {
+    fn value_for(&self, key: K) -> Self::W<'_> {
         (*self).value_for(key)
     }
 }

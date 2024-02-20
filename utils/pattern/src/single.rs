@@ -50,7 +50,7 @@ where
     W: Writeable,
 {
     type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
+    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         &self.0
     }
 }
@@ -60,9 +60,9 @@ where
     W: Writeable,
 {
     type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, _key: SinglePlaceholderKey) -> Self::W<'a> {
+    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
         let [value] = self;
-        &value
+        value
     }
 }
 
@@ -141,7 +141,7 @@ impl PatternBackend for SinglePlaceholder {
         Ok(())
     }
 
-    fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a> {
+    fn iter_items(store: &Self::Store) -> Self::Iter<'_> {
         let placeholder_offset_char = match store.chars().next() {
             Some(i) => i,
             None => {
