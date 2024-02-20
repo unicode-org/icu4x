@@ -1544,7 +1544,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_datagen_precompiled"
+name = "icu_datagen_dart"
 version = "1.4.0"
 dependencies = [
  "clap 4.2.1",

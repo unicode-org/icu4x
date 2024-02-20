@@ -1,4 +1,4 @@
-# icu_datagen_precompiled [![crates.io](https://img.shields.io/crates/v/icu_datagen_precompiled)](https://crates.io/crates/icu_datagen_precompiled)
+# icu_datagen_dart [![crates.io](https://img.shields.io/crates/v/icu_datagen_dart)](https://crates.io/crates/icu_datagen_dart)
 
 <!-- cargo-rdme start -->
 
