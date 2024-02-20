@@ -227,3 +227,5 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
         }
     }
 }
+
+// TODO(#1668):  Add more tests
