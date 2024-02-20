@@ -70,14 +70,22 @@ pub enum PatternError {
     InvalidPattern,
 }
 
-pub trait PatternBackend {
+trait Sealed {}
+
+#[allow(private_bounds)]
+pub trait PatternBackend: Sealed {
+    #[doc(hidden)] // TODO(#4467): Should be internal
     type PlaceholderKey;
+    #[doc(hidden)] // TODO(#4467): Should be internal
     type Store: ToOwned + ?Sized;
+    #[doc(hidden)] // TODO(#4467): Should be internal
     type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey>>
     where
         Self: 'a;
 
+    #[doc(hidden)] // TODO(#4467): Should be internal
     fn validate_store(store: &Self::Store) -> Result<(), PatternError>;
+    #[doc(hidden)] // TODO(#4467): Should be internal
     fn try_from_items<
         'a,
         I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
@@ -86,6 +94,7 @@ pub trait PatternBackend {
     ) -> Result<Cow<'a, Self::Store>, PatternError>
     where
         Self: 'a;
+    #[doc(hidden)] // TODO(#4467): Should be internal
     fn iter_items<'a>(store: &'a Self::Store) -> Self::Iter<'a>;
 }
 
