@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::{fmt::{self, Write}, marker::PhantomData, str::FromStr};
+use core::{
+    fmt::{self, Write},
+    marker::PhantomData,
+    str::FromStr,
+};
 
 use alloc::borrow::Cow;
 use writeable::{PartsWrite, Writeable};
@@ -61,14 +65,16 @@ where
     }
 }
 
-impl<'a, B> Pattern<B, Cow<'a, B::Store>>
+impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
-    B: PatternBackend + 'a,
+    B: PatternBackend,
     B::Store: ToOwned,
 {
-    pub fn try_from_items<I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>>(
-        items: I,
-    ) -> Result<Self, PatternError> {
+    pub fn try_from_items<'a, I>(items: I) -> Result<Self, PatternError>
+    where
+        B: 'a,
+        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>,
+    {
         let store = B::try_from_items(items.map(Ok))?;
         Ok(Self {
             _backend: PhantomData,
@@ -77,14 +83,14 @@ where
     }
 }
 
-impl<'a, B> Pattern<B, Cow<'a, B::Store>>
+impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
-    B: PatternBackend + 'a,
+    B: PatternBackend,
     B::PlaceholderKey: FromStr,
     B::Store: ToOwned,
     <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
 {
-    pub fn try_from_str(pattern: &'a str) -> Result<Self, PatternError> {
+    pub fn try_from_str(pattern: &str) -> Result<Self, PatternError> {
         let parser = Parser::new(
             pattern,
             ParserOptions {
@@ -118,6 +124,13 @@ where
             store: self.store.as_ref(),
             value_provider,
         }
+    }
+
+    pub fn interpolate_to_string<P>(&self, value_provider: P) -> String
+    where
+        P: PlaceholderValueProvider<B::PlaceholderKey>
+    {
+        self.interpolate(value_provider).write_to_string().into_owned()
     }
 
     /// Interpolates items with [writeable::Part]s.
@@ -166,7 +179,7 @@ where
         placeholder_value_part: writeable::Part,
     ) -> impl Writeable + fmt::Display + 'a
     where
-    P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
     {
         WriteablePatternWithParts::<B, P> {
             store: self.store.as_ref(),

@@ -97,7 +97,7 @@ pub trait PatternBackend: Sealed {
         I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
     >(
         items: I,
-    ) -> Result<Cow<'a, Self::Store>, PatternError>
+    ) -> Result<<Self::Store as ToOwned>::Owned, PatternError>
     where
         Self: 'a,
         Self::Store: ToOwned;

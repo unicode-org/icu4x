@@ -68,7 +68,16 @@ where
     }
 }
 
+/// For patterns containing zero or one placeholder.
+///
+/// # Encoding Details
+///
+/// The first code point of the string is the byte offset of the placeholder counting from the
+/// beginning of the string. If zero, there is no placeholder.
+///
 /// # Examples
+///
+/// Parsing a pattern into the encoding:
 ///
 /// ```
 /// use icu_pattern::Pattern;
@@ -80,6 +89,37 @@ where
 ///     .take_store();
 ///
 /// assert_eq!("\x07Hello, !", store);
+/// ```
+///
+/// Example patterns supported by this backend:
+///
+/// ```
+/// use icu_pattern::Pattern;
+/// use icu_pattern::SinglePlaceholder;
+///
+/// // Single numeric placeholder:
+/// assert_eq!(
+///     Pattern::<SinglePlaceholder, _>::try_from_str("{0} days ago").unwrap().interpolate_to_string([5]),
+///     "5 days ago",
+/// );
+///
+/// // Single named placeholder:
+/// assert_eq!(
+///     Pattern::<SinglePlaceholder, _>::try_from_str("{name}").unwrap().interpolate_to_string(["Alice"]),
+///     "Alice",
+/// );
+///
+/// // No placeholder:
+/// assert_eq!(
+///     Pattern::<SinglePlaceholder, _>::try_from_str("yesterday").unwrap().interpolate_to_string([0]),
+///     "yesterday",
+/// );
+///
+/// // Escaped placeholder with a real placeholder:
+/// assert_eq!(
+///     Pattern::<SinglePlaceholder, _>::try_from_str("'{escaped}' {interpolated}").unwrap().interpolate_to_string(["hi"]),
+///     "{escaped} hi",
+/// );
 /// ```
 #[derive(Debug)]
 pub struct SinglePlaceholder {
@@ -124,7 +164,7 @@ impl PatternBackend for SinglePlaceholder {
         I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, PatternError>>,
     >(
         items: I,
-    ) -> Result<Cow<'a, Self::Store>, PatternError> {
+    ) -> Result<String, PatternError> {
         let mut result = String::new();
         let mut seen_placeholder = false;
         for item in items {
@@ -146,7 +186,7 @@ impl PatternBackend for SinglePlaceholder {
         if !seen_placeholder {
             Err(PatternError::InvalidPattern)
         } else {
-            Ok(Cow::Owned(result))
+            Ok(result)
         }
     }
 }
