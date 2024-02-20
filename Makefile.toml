@@ -17,10 +17,6 @@ default_to_workspace = false
 
 [env]
 ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-12-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
-# To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
-# https://chrome-infra-packages.appspot.com/p/gn/gn
-# TODO: Choose the correct distribution of GN automatically.
-ICU4X_GN_PACKAGE = { value = "gn/gn/linux-amd64", condition = { env_not_set = ["ICU4X_GN_PACKAGE"] } }
 ICU4X_BUILDING_WITH_FORCED_NIGHTLY = { value = "1", condition = { env_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] } }
 
 [tasks.quick]
@@ -273,15 +269,6 @@ dependencies = [
 
     # benchmarking and coverage jobs not included
 ]
-
-[tasks.install-nightly]
-description = "Installs $ICU4X_NIGHTLY_TOOLCHAIN"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install ${ICU4X_NIGHTLY_TOOLCHAIN} --profile minimal
-exec --fail-on-error rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
 
 # For the nightly CI, we set three environment variables, and set a rustup override to nightly.
 # Each env var has a different purpose:

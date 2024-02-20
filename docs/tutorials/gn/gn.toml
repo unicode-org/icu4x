@@ -4,6 +4,12 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[env]
+# To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
+# https://chrome-infra-packages.appspot.com/p/gn/gn
+# TODO: Choose the correct distribution of GN automatically.
+ICU4X_GN_PACKAGE = { value = "gn/gn/linux-amd64", condition = { env_not_set = ["ICU4X_GN_PACKAGE"] } }
+
 [tasks.gn-install]
 description = "Install tools required for GN locally in the icu4x project"
 category = "ICU4X Development"
