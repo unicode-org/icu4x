@@ -5,14 +5,17 @@
 use core::{
     fmt::{self, Write},
     marker::PhantomData,
-    str::FromStr,
 };
 
 use writeable::{PartsWrite, Writeable};
 
 use crate::common::*;
 use crate::Error;
+
+#[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
+#[cfg(feature = "alloc")]
+use alloc::{borrow::ToOwned, str::FromStr, string::String};
 
 /// A string pattern with placeholders.
 ///
@@ -55,6 +58,24 @@ where
     B: PatternBackend,
     Store: AsRef<B::Store>,
 {
+    /// Creates a pattern from a serialized backing store.
+    ///
+    /// To parse a pattern string, use [`Self::try_from_str()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// // Create a pattern from a valid store:
+    /// Pattern::<SinglePlaceholder, _>::try_from_store("\x01 days")
+    ///     .expect("valid pattern");
+    ///
+    /// // Error on an invalid pattern:
+    /// Pattern::<SinglePlaceholder, _>::try_from_store("\x09 days")
+    ///     .expect_err("9 is out of bounds");
+    /// ```
     pub fn try_from_store(store: Store) -> Result<Self, Error> {
         B::validate_store(store.as_ref())?;
         Ok(Self {
@@ -64,11 +85,34 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
     B::Store: ToOwned,
 {
+    /// Creates a pattern from an iterator of pattern items.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::PatternItemCow;
+    /// use icu_pattern::SinglePlaceholder;
+    /// use icu_pattern::SinglePlaceholderKey;
+    /// use std::borrow::Cow;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_items(
+    ///     [
+    ///         PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
+    ///         PatternItemCow::Literal(Cow::Borrowed(" days")),
+    ///     ]
+    ///     .into_iter(),
+    /// )
+    /// .expect("valid pattern items");
+    /// ```
     pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
     where
         B: 'a,
@@ -82,6 +126,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
@@ -89,6 +134,26 @@ where
     B::Store: ToOwned,
     <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
 {
+    /// Creates a pattern by parsing a syntax string.
+    ///
+    /// To construct from a serialized pattern string, use [`Self::try_from_store()`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// // Create a pattern from a valid string:
+    /// Pattern::<SinglePlaceholder, _>::try_from_str("{0} days")
+    ///     .expect("valid pattern");
+    ///
+    /// // Error on an invalid pattern:
+    /// Pattern::<SinglePlaceholder, _>::try_from_str("{0 days")
+    ///     .expect_err("mismatched braces");
+    /// ```
     pub fn try_from_str(pattern: &str) -> Result<Self, Error> {
         let parser = Parser::new(
             pattern,
@@ -125,6 +190,10 @@ where
         }
     }
 
+    #[cfg(feature = "alloc")]
+    /// Interpolates the pattern directly to a string.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn interpolate_to_string<P>(&self, value_provider: P) -> String
     where
         P: PlaceholderValueProvider<B::PlaceholderKey>,
@@ -148,7 +217,8 @@ where
     /// use icu_pattern::SinglePlaceholder;
     /// use writeable::assert_writeable_parts_eq;
     ///
-    /// let pattern = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap();
+    /// let pattern =
+    ///     Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap();
     ///
     /// const LITERAL_PART: writeable::Part = writeable::Part {
     ///     category: "demo",
@@ -160,11 +230,7 @@ where
     /// };
     ///
     /// assert_writeable_parts_eq!(
-    ///     pattern.interpolate_with_parts(
-    ///         ["Alice"],
-    ///         LITERAL_PART,
-    ///         ELEMENT_PART
-    ///     ),
+    ///     pattern.interpolate_with_parts(["Alice"], LITERAL_PART, ELEMENT_PART),
     ///     "Hello, Alice!",
     ///     [
     ///         (0, 7, LITERAL_PART),

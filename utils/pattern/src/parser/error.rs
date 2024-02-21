@@ -7,14 +7,13 @@ use displaydoc::Display;
 
 /// An error returned when parsing a pattern.
 ///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
+///
 /// # Examples
 /// ```
 /// use icu_pattern::{Parser, ParserError, ParserOptions};
 ///
-/// let mut parser = Parser::<usize>::new(
-///     "{0",
-///     ParserOptions::default(),
-/// );
+/// let mut parser = Parser::<usize>::new("{0", ParserOptions::default());
 /// assert_eq!(Err(ParserError::UnclosedPlaceholder), parser.try_next());
 /// ```
 ///

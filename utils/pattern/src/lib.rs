@@ -34,6 +34,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+#[cfg(feature = "alloc")]
 mod builder;
 mod common;
 mod error;
@@ -44,15 +45,19 @@ mod single;
 
 pub use common::PatternBackend;
 pub use common::PatternItem;
+#[cfg(feature = "alloc")]
 pub use common::PatternItemCow;
 pub use common::PlaceholderValueProvider;
 pub use error::PatternError;
 pub use frontend::Pattern;
 #[cfg(feature = "alloc")]
-pub use parser::Parser;
-pub use parser::ParserError;
-pub use parser::ParserOptions;
 pub use parser::ParsedPatternItem;
+#[cfg(feature = "alloc")]
+pub use parser::Parser;
+#[cfg(feature = "alloc")]
+pub use parser::ParserError;
+#[cfg(feature = "alloc")]
+pub use parser::ParserOptions;
 pub use single::SinglePlaceholder;
 pub use single::SinglePlaceholderKey;
 #[doc(no_inline)]

@@ -6,17 +6,16 @@ use alloc::borrow::Cow;
 
 /// A [`PatternItem`] with additional detail returned by the [`Parser`].
 ///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
+///
 /// # Examples
 ///
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, ParsedPatternItem};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions::default(),
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///

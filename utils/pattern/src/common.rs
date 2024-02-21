@@ -3,14 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::Error;
-use alloc::borrow::Cow;
 use writeable::Writeable;
+
+#[cfg(feature = "alloc")]
+use alloc::{borrow::Cow, borrow::ToOwned};
 
 /// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
 pub enum PatternItem<'a, T> {
-    /// A placeholder of the type specified on this [`PatternItemCow`].
+    /// A placeholder of the type specified on this [`PatternItem`].
     Placeholder(T),
     /// A string literal. This can occur in one of three places:
     ///
@@ -21,8 +23,11 @@ pub enum PatternItem<'a, T> {
 }
 
 /// A borrowed-or-owned item in a [`Pattern`]. Items are either string literals or placeholders.
+///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
+#[cfg(feature = "alloc")]
 pub enum PatternItemCow<'a, T> {
     /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),
@@ -53,7 +58,10 @@ pub trait PatternBackend: crate::Sealed {
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn validate_store(store: &Self::Store) -> Result<(), Error>;
 
-    #[doc(hidden)] // TODO(#4467): Should be internal
+    #[doc(hidden)]
+    // TODO(#4467): Should be internal
+    // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
+    #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
         I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,

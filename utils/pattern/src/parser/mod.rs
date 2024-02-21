@@ -41,6 +41,8 @@ macro_rules! handle_literal {
 }
 
 /// Options passed to the constructor of [`Parser`].
+///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct ParserOptions {
@@ -74,17 +76,16 @@ impl Default for ParserOptions {
 ///
 /// At the moment the parser is written as a custom fallible iterator.
 ///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
+///
 /// # Examples
 ///
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, ParsedPatternItem};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions::default(),
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -113,14 +114,11 @@ impl Default for ParserOptions {
 ///
 /// ## Examples
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, ParsedPatternItem};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{start}, {end}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions::default(),
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -179,14 +177,11 @@ impl Default for ParserOptions {
 ///
 /// ### Examples
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, ParsedPatternItem};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions::default(),
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -275,10 +270,7 @@ impl<'p, P> Parser<'p, P> {
     /// # Examples
     /// ```
     /// use icu_pattern::{Parser, ParserOptions};
-    /// let mut parser = Parser::<usize>::new(
-    ///     "{0}, {1}",
-    ///     ParserOptions::default(),
-    /// );
+    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions::default());
     /// ```
     pub fn new(input: &'p str, options: ParserOptions) -> Self {
         Self {
@@ -300,15 +292,15 @@ impl<'p, P> Parser<'p, P> {
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, ParserOptions, ParsedPatternItem};
+    /// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
     ///
-    /// let mut parser = Parser::<usize>::new(
-    ///     "{0}, {1}",
-    ///     ParserOptions::default(),
-    /// );
+    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions::default());
     ///
     /// // A call to try_next() returns the next value…
-    /// assert_eq!(Ok(Some(ParsedPatternItem::Placeholder(0))), parser.try_next());
+    /// assert_eq!(
+    ///     Ok(Some(ParsedPatternItem::Placeholder(0))),
+    ///     parser.try_next()
+    /// );
     /// assert_eq!(
     ///     Ok(Some(ParsedPatternItem::Literal {
     ///         content: ", ".into(),
@@ -316,7 +308,10 @@ impl<'p, P> Parser<'p, P> {
     ///     })),
     ///     parser.try_next()
     /// );
-    /// assert_eq!(Ok(Some(ParsedPatternItem::Placeholder(1))), parser.try_next());
+    /// assert_eq!(
+    ///     Ok(Some(ParsedPatternItem::Placeholder(1))),
+    ///     parser.try_next()
+    /// );
     ///
     /// // … and then `None` once it's over.
     /// assert_eq!(Ok(None), parser.try_next());
@@ -426,7 +421,10 @@ mod tests {
             ("{0}", vec![ParsedPatternItem::Placeholder(0)]),
             (
                 "{0}{1}",
-                vec![ParsedPatternItem::Placeholder(0), ParsedPatternItem::Placeholder(1)],
+                vec![
+                    ParsedPatternItem::Placeholder(0),
+                    ParsedPatternItem::Placeholder(1),
+                ],
             ),
             (
                 "{0} 'at' {1}",

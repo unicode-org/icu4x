@@ -8,6 +8,9 @@ use writeable::Writeable;
 use crate::common::*;
 use crate::Error;
 
+#[cfg(feature = "alloc")]
+use alloc::string::String;
+
 /// # Examples
 ///
 /// ```
@@ -98,25 +101,35 @@ where
 ///
 /// // Single numeric placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("{0} days ago").unwrap().interpolate_to_string([5]),
+///     Pattern::<SinglePlaceholder, _>::try_from_str("{0} days ago")
+///         .unwrap()
+///         .interpolate_to_string([5]),
 ///     "5 days ago",
 /// );
 ///
 /// // Single named placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("{name}").unwrap().interpolate_to_string(["Alice"]),
+///     Pattern::<SinglePlaceholder, _>::try_from_str("{name}")
+///         .unwrap()
+///         .interpolate_to_string(["Alice"]),
 ///     "Alice",
 /// );
 ///
 /// // No placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("yesterday").unwrap().interpolate_to_string([0]),
+///     Pattern::<SinglePlaceholder, _>::try_from_str("yesterday")
+///         .unwrap()
+///         .interpolate_to_string([0]),
 ///     "yesterday",
 /// );
 ///
 /// // Escaped placeholder and a real placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("'{escaped}' {interpolated}").unwrap().interpolate_to_string(["hi"]),
+///     Pattern::<SinglePlaceholder, _>::try_from_str(
+///         "'{escaped}' {interpolated}"
+///     )
+///     .unwrap()
+///     .interpolate_to_string(["hi"]),
 ///     "{escaped} hi",
 /// );
 /// ```
@@ -158,6 +171,7 @@ impl PatternBackend for SinglePlaceholder {
         }
     }
 
+    #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
         I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,

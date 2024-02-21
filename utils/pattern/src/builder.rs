@@ -4,7 +4,7 @@
 
 use core::{fmt, str::FromStr};
 
-use crate::{Parser, PatternError, PatternItemCow, ParsedPatternItem};
+use crate::{ParsedPatternItem, Parser, PatternError, PatternItemCow};
 
 impl<'a, K> From<ParsedPatternItem<'a, K>> for PatternItemCow<'a, K> {
     fn from(value: ParsedPatternItem<'a, K>) -> Self {
