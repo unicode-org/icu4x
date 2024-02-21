@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Code for the [`SinglePlaceholder`] pattern backend.
+
 use core::{cmp::Ordering, str::FromStr};
 use writeable::Writeable;
 
@@ -11,6 +13,8 @@ use crate::Error;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 
+/// A singleton enum for the [`SinglePlaceholder`] pattern backend.
+///
 /// # Examples
 ///
 /// ```
@@ -70,7 +74,7 @@ where
     }
 }
 
-/// For patterns containing zero or one placeholder.
+/// Backend for patterns containing zero or one placeholder.
 ///
 /// # Placeholder Keys
 ///
@@ -209,7 +213,7 @@ impl PatternBackend for SinglePlaceholder {
     }
 }
 
-// should be hidden
+#[doc(hidden)] // TODO(#4467): Should be internal
 #[derive(Debug)]
 pub struct SinglePlaceholderPatternIterator<'a> {
     store: &'a str,

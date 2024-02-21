@@ -188,6 +188,7 @@ where
     B: PatternBackend,
     Store: AsRef<B::Store> + ?Sized,
 {
+    /// Returns an iterator over the [`PatternItem`]s in this pattern.
     pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey>> + '_ {
         B::iter_items(self.store.as_ref())
     }
