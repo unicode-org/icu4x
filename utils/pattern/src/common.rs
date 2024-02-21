@@ -48,8 +48,7 @@ pub enum PatternItemCow<'a, T> {
 /// The trait has no public methods and is not implementable outside of this crate.
 ///
 /// [`Pattern`]: crate::Pattern
-#[allow(private_bounds)]
-pub trait PatternBackend: crate::Sealed {
+pub trait PatternBackend: crate::private::Sealed {
     /// The type to be used as the placeholder key in code.
     type PlaceholderKey;
 

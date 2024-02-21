@@ -78,7 +78,9 @@ pub use single::SinglePlaceholderKey;
 #[doc(no_inline)]
 pub use PatternError as Error;
 
-trait Sealed {}
+mod private {
+    pub trait Sealed {}
+}
 
 /// # Examples
 ///

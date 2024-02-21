@@ -148,7 +148,7 @@ pub struct SinglePlaceholder {
     _not_constructible: core::convert::Infallible,
 }
 
-impl crate::Sealed for SinglePlaceholder {}
+impl crate::private::Sealed for SinglePlaceholder {}
 
 impl PatternBackend for SinglePlaceholder {
     type PlaceholderKey = SinglePlaceholderKey;
