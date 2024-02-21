@@ -9,6 +9,8 @@ use writeable::Writeable;
 use alloc::{borrow::Cow, borrow::ToOwned};
 
 /// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
+///
+/// [`Pattern`]: crate::Pattern
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
 pub enum PatternItem<'a, T> {
@@ -25,6 +27,8 @@ pub enum PatternItem<'a, T> {
 /// A borrowed-or-owned item in a [`Pattern`]. Items are either string literals or placeholders.
 ///
 /// ✨ *Enabled with the `alloc` Cargo feature.*
+///
+/// [`Pattern`]: crate::Pattern
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
 #[cfg(feature = "alloc")]
@@ -42,6 +46,8 @@ pub enum PatternItemCow<'a, T> {
 /// Types that implement backing data models for [`Pattern`] implement this trait.
 ///
 /// The trait has no public methods and is not implementable outside of this crate.
+///
+/// [`Pattern`]: crate::Pattern
 #[allow(private_bounds)]
 pub trait PatternBackend: crate::Sealed {
     /// The type to be used as the placeholder key in code.

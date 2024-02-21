@@ -4,14 +4,29 @@
 
 //! `icu_pattern` is a utility crate of the [`ICU4X`] project.
 //!
-//! It includes a [`NumericPlaceholderPattern`] struct which allows for parsing and interpolation
-//! of ICU placeholder patterns, like "{0} days" or "{0}, {1}" with custom values.
+//! It includes a [`Pattern`] type which supports patterns with various storage backends.
 //!
-//! # Placeholders & Elements
+//! The types are tightly coupled with the [`writeable`] crate.
 //!
-//! The [`Parser`] is generic over any `Placeholder` which implements [`FromStr`]
-//! allowing the consumer to parse placeholder patterns such as "{0}, {1}",
-//! "{date}, {time}" or any other.
+//! # Examples
+//!
+//! Parsing and interpolating with a single-placeholder pattern:
+//!
+//! ```
+//! use icu_pattern::SinglePlaceholderPattern;
+//! use writeable::assert_writeable_eq;
+//!
+//! // Parse a pattern string:
+//! let pattern = "Hello, {0}!"
+//!     .parse::<SinglePlaceholderPattern<_>>()
+//!     .unwrap();
+//!
+//! // Interpolate into the pattern string:
+//! assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
+//!
+//! // Introspect the serialized form of the pattern string:
+//! assert_eq!(pattern.take_store(), "\x08Hello, !");
+//! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`FromStr`]: std::str::FromStr

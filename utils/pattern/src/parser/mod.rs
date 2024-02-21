@@ -71,8 +71,11 @@ impl Default for ParserOptions {
 ///
 /// The parser allows for handling flexible range of generic patterns
 /// with placeholders.
-/// A placeholder may be anything that can be parsed from an `&str` and
-/// must be enclosed in `{` and `}` characters in the input pattern string.
+///
+/// The [`Parser`] is generic over any placeholder which implements [`FromStr`]
+/// allowing the consumer to parse placeholder patterns such as "{0}, {1}",
+/// "{date}, {time}" or any other. A placeholder must be enclosed in `{` and `}`
+/// characters in the input pattern string.
 ///
 /// At the moment the parser is written as a custom fallible iterator.
 ///
@@ -143,7 +146,7 @@ impl Default for ParserOptions {
 ///
 /// # Type parameters
 ///
-/// - `P`: The type of the placeholder used as a key for the [`ReplacementProvider`].
+/// - `P`: The type of the placeholder used as a key for the [`PlaceholderValueProvider`].
 ///
 /// # Lifetimes
 ///
@@ -246,7 +249,7 @@ impl Default for ParserOptions {
 /// [`RFC 2924`]: https://github.com/rust-lang/rfcs/pull/2924
 /// [`Item`]: core::iter::Iterator::Item
 /// [`TryFrom`]: core::convert::TryFrom
-/// [`ReplacementProvider`]: crate::ReplacementProvider
+/// [`PlaceholderValueProvider`]: crate::PlaceholderValueProvider
 #[derive(Debug)]
 pub struct Parser<'p, P> {
     input: &'p str,

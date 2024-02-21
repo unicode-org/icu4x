@@ -169,6 +169,20 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
+impl<B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
+where
+    B: PatternBackend,
+    B::PlaceholderKey: FromStr,
+    B::Store: ToOwned,
+    <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
+{
+    type Err = Error;
+    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(pattern)
+    }
+}
+
 impl<B, Store> Pattern<B, Store>
 where
     B: PatternBackend,

@@ -72,6 +72,12 @@ where
 
 /// For patterns containing zero or one placeholder.
 ///
+/// # Placeholder Keys
+///
+/// The placeholder is always [`SinglePlaceholderKey::Singleton`].
+///
+/// In [`Pattern::interpolate()`], pass a single-element array or tuple.
+///
 /// # Encoding Details
 ///
 /// The first code point of the string is 1 plus the byte offset of the placeholder counting from
@@ -115,24 +121,24 @@ where
 ///     "Alice",
 /// );
 ///
-/// // No placeholder:
+/// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
 ///     Pattern::<SinglePlaceholder, _>::try_from_str("yesterday")
 ///         .unwrap()
-///         .interpolate_to_string([0]),
+///         .interpolate_to_string(["hi"]),
 ///     "yesterday",
 /// );
 ///
 /// // Escaped placeholder and a real placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str(
-///         "'{escaped}' {interpolated}"
-///     )
-///     .unwrap()
-///     .interpolate_to_string(["hi"]),
-///     "{escaped} hi",
+///     Pattern::<SinglePlaceholder, _>::try_from_str("'{0}' {1}")
+///         .unwrap()
+///         .interpolate_to_string(("hi",)),
+///     "{0} hi",
 /// );
 /// ```
+///
+/// [`Pattern::interpolate()`]: crate::Pattern::interpolate
 #[derive(Debug)]
 pub struct SinglePlaceholder {
     _not_constructible: core::convert::Infallible,
