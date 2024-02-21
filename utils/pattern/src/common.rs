@@ -55,14 +55,17 @@ pub trait PatternBackend: crate::private::Sealed {
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
     type Store: ?Sized;
 
+    /// The iterator type returned by [`Self::try_from_items`].
     #[doc(hidden)] // TODO(#4467): Should be internal
     type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey>>
     where
         Self: 'a;
 
+    /// Checks a store for validity, returning an error if invalid.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn validate_store(store: &Self::Store) -> Result<(), Error>;
 
+    /// Constructs a store from pattern items.
     #[doc(hidden)]
     // TODO(#4467): Should be internal
     // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
@@ -77,6 +80,7 @@ pub trait PatternBackend: crate::private::Sealed {
         Self: 'a,
         Self::Store: ToOwned;
 
+    /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn iter_items(store: &Self::Store) -> Self::Iter<'_>;
 }
@@ -88,37 +92,6 @@ pub trait PlaceholderValueProvider<K> {
 
     /// Returns the [`Writeable`] to substitute for the given placeholder.
     fn value_for(&self, key: K) -> Self::W<'_>;
-}
-
-#[cfg(disabled)]
-impl<W> PlaceholderValueProvider<bool> for (W, W)
-where
-    W: Writeable,
-{
-    type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, key: bool) -> Self::W<'a> {
-        if key {
-            &self.1
-        } else {
-            &self.0
-        }
-    }
-}
-
-#[cfg(disabled)]
-impl<W> PlaceholderValueProvider<bool> for [W; 2]
-where
-    W: Writeable,
-{
-    type W<'a> = &'a W where W: 'a;
-    fn value_for<'a>(&'a self, key: bool) -> Self::W<'a> {
-        let [v0, v1] = self;
-        if key {
-            &v1
-        } else {
-            &v0
-        }
-    }
 }
 
 impl<'b, K, T> PlaceholderValueProvider<K> for &'b T
