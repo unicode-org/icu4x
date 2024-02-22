@@ -18,6 +18,9 @@ Follow these guidelines when opening an issue:
 5. **Isolate the problem.** Small, reproducible issues are more actionable than large, vague ones.
     - If reporting a bug, follow this template: "I did X, and I expected Y, but I observed Z."
     - Provide as much detail as possible to reproduce the state where you observed the unexpected behavior.
+6. **Consider attaching code in a pull request.** If you open a pull request with a failing test case, it makes it easier to reproduce the problem.
+    - Of course, you are also welcome to fix the issue in the pull request.
+    - For more information on contributing pull requests, see [CONTRIBUTING.md](https://github.com/unicode-org/icu4x/blob/main/CONTRIBUTING.md).
 
 Once you are ready to file your issue, proceed to [the "Issues" tab](https://github.com/unicode-org/icu4x/issues) and click "New issue".
 
