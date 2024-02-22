@@ -43,6 +43,8 @@ To build all code paths and improve build times in VSCode, we recommend the foll
 
 Note: the path in `ICU4X_DATA_DIR` is relative to `provider/baked/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
 
+Note: you might also consider setting a custom value to the `CARGO_TARGET_DIR` environment variable so that VSCode writes to a different target directory than other programs or the command line.
+
 ## Contributing a Pull Request
 
 The first step is to fork the repository to your namespace and create a branch off of the `main` branch to work with.
