@@ -71,6 +71,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `gmt_offset` field.
@@ -176,6 +177,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Sets the `time_zone_id` field from an IANA string by looking up
@@ -194,6 +196,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `time_zone_id` field.
@@ -240,6 +243,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `metazone_id` field.
@@ -286,6 +290,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `zone_variant` field.

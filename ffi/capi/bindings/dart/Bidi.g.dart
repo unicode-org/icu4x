@@ -46,12 +46,11 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
   BidiInfo forText(String text, int defaultLevel) {
-    final temp = ffi2.Arena();
     final textView = text.utf8View;
+    final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
-    core.List<Object> edge_text = [textView];
-    final result = _ICU4XBidi_for_text(_underlying, textView.pointer(temp), textView.length, defaultLevel);
-    temp.releaseAll();
+    core.List<Object> edge_text = [textArena];
+    final result = _ICU4XBidi_for_text(_underlying, textView.pointer(textArena.arena), textView.length, defaultLevel);
     return BidiInfo._(result, true, [], edge_text);
   }
 

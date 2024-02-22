@@ -122,6 +122,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Write a string representation of [`Locale`] region to `write`
@@ -151,6 +152,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Write a string representation of [`Locale`] script to `write`
@@ -180,6 +182,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Best effort locale canonicalizer that doesn't need any data
