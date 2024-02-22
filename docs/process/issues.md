@@ -6,7 +6,7 @@ The team welcomes well-researched bug reports and feature requests in the GitHub
 Follow these guidelines when opening an issue:
 
 1. **Search the issue tracker** to find if there is already an issue for the problem or feature request. Include closed issues in case the bug had previously been closed as Working As Intended.
-    - If you find an issue, you can post a thumbs-up reaction to the original post to "vote" for the issue.
+    - If you find an issue, you can add a thumbs-up reaction to the original message to "vote" for the issue.
     - It is useful for the team to understand _use cases_ when evaluating bugs and feature requests. Please post your use cases in a reply to the issue you found.
     - Please refrain from posting comments such as "+1" or "Is there an update on this?" unless the last comment on the issue is at least 6 months ago.
 2. **Post clarifying questions** in [the "Discussions" tab](https://github.com/unicode-org/icu4x/discussions).
