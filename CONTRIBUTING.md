@@ -36,7 +36,7 @@ To build all code paths and improve build times in VSCode, we recommend the foll
 "settings": {
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
-		"ICU4X_DATA_DIR": "../../../../provider/datagen/tests/data/baked"
+		"ICU4X_DATA_DIR": "../../../datagen/tests/data/baked"
 	}
 }
 ```
