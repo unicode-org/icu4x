@@ -47,12 +47,10 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   /// Get script at index, returning an error if out of bounds
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  int scriptAt(int index) {
+  int? scriptAt(int index) {
     final result = _ICU4XScriptExtensionsSet_script_at(_underlying, index);
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return result.union.ok;
   }
