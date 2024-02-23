@@ -130,7 +130,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -165,7 +165,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -200,7 +200,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -239,7 +239,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -285,7 +285,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -348,7 +348,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -390,7 +390,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -443,7 +443,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -515,7 +515,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -574,7 +574,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -614,7 +614,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -649,7 +649,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -685,7 +685,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -752,7 +752,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -791,7 +791,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -850,7 +850,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -890,7 +890,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
