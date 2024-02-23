@@ -79,6 +79,7 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Same as `fork_by_key` but forks by locale instead of key.
@@ -91,6 +92,7 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Enables locale fallbacking for data requests made to this provider.
@@ -107,6 +109,7 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
@@ -119,6 +122,7 @@ final class DataProvider implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 }
 

@@ -38,6 +38,7 @@ final class BidiParagraph implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// The primary direction of this paragraph

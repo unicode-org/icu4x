@@ -73,6 +73,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Loads generic non-location short format. Example: "PT"
@@ -85,6 +86,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Loads specific non-location long format. Example: "Pacific Standard Time"
@@ -97,6 +99,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Loads specific non-location short format. Example: "PST"
@@ -109,6 +112,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Loads generic location format. Example: "Los Angeles Time"
@@ -121,6 +125,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Loads localized GMT format. Example: "GMT-07:00"
@@ -133,6 +138,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Loads ISO-8601 format. Example: "-07:00"
@@ -147,6 +153,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Formats a [`CustomTimeZone`] to a string.

@@ -285,13 +285,9 @@ final class FixedDecimal implements ffi.Finalizable {
   /// If not successful, `other` will be unchanged and an error is returned.
   ///
   /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  void concatenateEnd(FixedDecimal other) {
+  bool concatenateEnd(FixedDecimal other) {
     final result = _ICU4XFixedDecimal_concatenate_end(_underlying, other._underlying);
-    if (!result.isOk) {
-      throw VoidError();
-    }
+    return result.isOk;
   }
 
   /// Format the [`FixedDecimal`] as a string.
