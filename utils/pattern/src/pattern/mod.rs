@@ -41,7 +41,6 @@ impl<'s, P> Pattern<'s, P> {
     /// # Example
     ///
     /// ```
-    /// #![warn(unused_imports)]
     /// use icu_pattern::{InterpolatedKind, Pattern};
     /// use std::ops::Deref;
     ///
