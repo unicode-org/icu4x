@@ -22,6 +22,6 @@ Follow these guidelines when opening an issue:
     - Of course, you are also welcome to fix the issue in the pull request.
     - For more information on contributing pull requests, see [CONTRIBUTING.md](https://github.com/unicode-org/icu4x/blob/main/CONTRIBUTING.md).
 
-Once you are ready to file your issue, proceed to [the "Issues" tab](https://github.com/unicode-org/icu4x/issues) and click "New issue".
+Once you are ready, [file your new issue](https://github.com/unicode-org/icu4x/issues/new/choose).
 
 If you follow these steps, you are more likely to receive a timely and productive response from the development team.
