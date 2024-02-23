@@ -43,9 +43,8 @@ macro_rules! size_test {
             let success = match option_env!("CI_TOOLCHAIN") {
                 // Manual invocation: match either size
                 None => matches!(size, $pinned | $beta),
-                Some("beta") => size == $beta,
+                Some("beta") | Some("nightly") => size == $beta,
                 Some("pinned-stable") => size == $pinned,
-                // nightly, don't care
                 _ => true,
             };
             assert!(
