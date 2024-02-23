@@ -15,7 +15,6 @@ args = ["-C", "docs/tutorials/c", "test"]
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
-condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-unknown-linux-nightly"]
 script_runner = "@duckscript"
 script = '''
@@ -43,7 +42,6 @@ args = ["-C", "ffi/npm", "install-ci-test"]
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
 category = "ICU4X Development"
-condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-wasm-nightly"]
 command = "make"
 args = ["-C", "docs/tutorials/js-tiny", "test"]

@@ -451,9 +451,12 @@ jobs:
     - name: Run apt-get update
       run: |
         apt-get update
-    - name: Install Clang-15
+    - name: Install LLVM 16
       run: |
-        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
+        apt-get install -y clang-16 lld-16 llvm-16-dev libc++-16-dev
+    - name: Install LLVM 16 nightly
+      run: |
+        rustup install nightly-2023-08-08
     - name: Install GCC 11
       run: |
         apt-get install -y gcc-11 g++-11
