@@ -33,7 +33,6 @@ use crate::shortvec::ShortBoxSlice;
 /// ```
 /// use icu::locid::{
 ///     extensions::unicode::{key, value, Keywords},
-///     locale,
 /// };
 ///
 /// let keywords = [(key!("hc"), value!("h23"))]
@@ -98,7 +97,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::locale;
     /// use icu::locid::Locale;
     ///
@@ -187,8 +185,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Key;
-    /// use icu::locid::extensions::unicode::Value;
     /// use icu::locid::extensions::unicode::{key, value};
     /// use icu::locid::Locale;
     ///
@@ -213,7 +209,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{key, Key};
+    /// use icu::locid::extensions::unicode::key;
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
@@ -283,7 +279,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
     ///
@@ -318,7 +313,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///

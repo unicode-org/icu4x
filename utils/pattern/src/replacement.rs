@@ -23,7 +23,7 @@ use std::collections::HashMap;
 ///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern,
 ///     ReplacementProvider,
 /// };
-/// use std::{borrow::Cow, collections::HashMap, convert::TryInto};
+/// use std::collections::HashMap;
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
@@ -79,7 +79,7 @@ pub trait ReplacementProvider<'r, E: 'r> {
     /// # Examples
     /// ```
     /// use icu_pattern::ReplacementProvider;
-    /// use std::{collections::HashMap, convert::TryInto};
+    /// use std::collections::HashMap;
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {

@@ -151,7 +151,6 @@ where
     /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
     ///
     /// ```rust
-    /// use zerovec::maps::ZeroMapBorrowed;
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
@@ -173,7 +172,6 @@ where
     /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
     ///
     /// ```rust
-    /// use zerovec::maps::ZeroMapBorrowed;
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
@@ -191,7 +189,6 @@ where
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::maps::ZeroMapBorrowed;
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();

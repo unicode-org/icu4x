@@ -773,7 +773,6 @@ where
     /// # Example
     ///
     /// ```
-    /// use zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
@@ -799,7 +798,6 @@ where
     /// # Example
     ///
     /// ```
-    /// use zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];

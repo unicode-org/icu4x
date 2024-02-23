@@ -49,7 +49,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// Using a GMT time zone:
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::CustomTimeZone;
@@ -82,7 +82,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// Using a non-GMT time zone, specified by id:
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
@@ -147,12 +147,11 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::options::components;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
@@ -306,10 +305,10 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::options::length;
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;

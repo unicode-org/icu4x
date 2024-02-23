@@ -194,8 +194,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Examples
     ///
     /// ```
-    /// use core::ops::RangeInclusive;
-    /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::maps;
     /// use icu::properties::GeneralCategory;
     ///
     /// let gc = maps::general_category();
@@ -218,8 +217,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     ///
     /// ```
-    /// use core::ops::RangeInclusive;
-    /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::maps;
     /// use icu::properties::GeneralCategory;
     ///
     /// let gc = maps::general_category();

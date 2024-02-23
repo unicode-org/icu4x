@@ -1079,7 +1079,6 @@ impl GeneralCategoryGroup {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let gc = maps::general_category();
     ///

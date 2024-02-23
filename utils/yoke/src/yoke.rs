@@ -56,7 +56,7 @@ use alloc::sync::Arc;
 /// For example, we can use this to store zero-copy deserialized data in a cache:
 ///
 /// ```rust
-/// # use yoke::{Yoke, Yokeable};
+/// # use yoke::Yoke;
 /// # use std::rc::Rc;
 /// # use std::borrow::Cow;
 /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
@@ -128,7 +128,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use yoke::{Yoke, Yokeable};
+    /// # use yoke::Yoke;
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
     /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
@@ -216,7 +216,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # Example
     ///
     /// ```rust
-    /// # use yoke::{Yoke, Yokeable};
+    /// # use yoke::Yoke;
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
     /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
@@ -449,7 +449,6 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// ```rust
     /// # use yoke::Yoke;
     /// # use std::borrow::Cow;
-    /// # use std::rc::Rc;
     ///
     /// let owned: Cow<str> = "hello".to_owned().into();
     /// // this yoke can be intermingled with actually-borrowed Yokes
@@ -546,7 +545,6 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// ```
     /// use yoke::Yoke;
     /// use yoke::cartable_ptr::CartableOptionPointer;
-    /// use std::borrow::Cow;
     /// use std::mem::size_of;
     /// use std::rc::Rc;
     ///
@@ -707,7 +705,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// This can also be used to create a yoke for a subfield
     ///
     /// ```
-    /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
     /// # use std::rc::Rc;
@@ -806,7 +803,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// This can also be used to create a yoke for a subfield
     ///
     /// ```
-    /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
     /// # use std::rc::Rc;
@@ -1382,7 +1378,7 @@ const _: () = ();
 /// Here's a broken `attach_to_cart()` that attempts to borrow from a local:
 ///
 /// ```rust,compile_fail
-/// use yoke::{Yoke, Yokeable};
+/// use yoke::Yoke;
 ///
 /// let cart = vec![1, 2, 3, 4].into_boxed_slice();
 /// let local = vec![4, 5, 6, 7];
@@ -1394,7 +1390,7 @@ const _: () = ();
 /// And here's a working one with a local borrowed cart that does not do any sneaky borrows whilst attaching.
 ///
 /// ```rust
-/// use yoke::{Yoke, Yokeable};
+/// use yoke::Yoke;
 ///
 /// let cart = vec![1, 2, 3, 4].into_boxed_slice();
 /// let local = vec![4, 5, 6, 7];
@@ -1406,7 +1402,7 @@ const _: () = ();
 /// were implemented. It is technically a safe operation:
 ///
 /// ```rust,compile_fail
-/// use yoke::{Yoke, Yokeable};
+/// use yoke::Yoke;
 /// // longer lived
 /// let local = vec![4, 5, 6, 7];
 ///

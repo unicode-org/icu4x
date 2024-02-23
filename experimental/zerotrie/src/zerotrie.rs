@@ -576,7 +576,6 @@ macro_rules! impl_zerotrie_subtype {
             /// # Examples
             ///
             /// ```
-            /// use std::borrow::Cow;
             #[doc = concat!("use zerotrie::", stringify!($name), ";")]
             ///
             #[doc = concat!("let trie: Cow<", stringify!($name), "<[u8]>> = Cow::Borrowed(", stringify!($name), "::from_bytes(b\"abc\\x85\"));")]
