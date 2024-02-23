@@ -16,7 +16,7 @@ extend = [
 default_to_workspace = false
 
 [env]
-ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-12-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
+PINNED_CI_NIGHTLY = { value = "nightly-2022-12-26", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
@@ -271,7 +271,7 @@ dependencies = [
 
 # For the nightly CI, we set three environment variables, and set a rustup override to nightly.
 # Each env var has a different purpose:
-# - ICU4X_NIGHTLY_TOOLCHAIN: This overrides the nightly used by this makefile
+# - PINNED_CI_NIGHTLY: This overrides the nightly used by this makefile
 # - ICU4X_BUILDING_WITH_FORCED_NIGHTLY: This lets tests know that we're building with forced nightly, in case of tests testing the behavior of specific Rust versions.
 # - `RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY`: Same as previously, but works for disabling doctests. Use ICU4X_BUILDING_WITH_FORCED_NIGHTLY where possible.
 #
@@ -328,7 +328,7 @@ if ${needs_override}
 
     if starts_with "${override_channel}" "nightly"
         # This affects tasks that can only be built on nightly
-        appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=${override_channel}\n"
+        appendfile ${env_file} "PINNED_CI_NIGHTLY=${override_channel}\n"
     end
 else
     echo "forced-nightly environment not required"

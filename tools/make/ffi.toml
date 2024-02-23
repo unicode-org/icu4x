@@ -65,7 +65,7 @@ exec --fail-on-error dart --enable-experiment=native-assets test
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
 dependencies = ["install-cortex-8-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+toolchain = "${PINNED_CI_NIGHTLY}"
 env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort -Copt-level=s" }
 command = "cargo"
 args = ["check", "--package", "icu_freertos",
@@ -152,19 +152,19 @@ end
 # Install tasks
 
 [tasks.install-nightly]
-description = "Installs $ICU4X_NIGHTLY_TOOLCHAIN"
+description = "Installs $PINNED_CI_NIGHTLY"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install ${ICU4X_NIGHTLY_TOOLCHAIN} --profile minimal
-exec --fail-on-error rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+exec --fail-on-error rustup install ${PINNED_CI_NIGHTLY} --profile minimal
+exec --fail-on-error rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
 '''
 
 [tasks.install-unknown-linux-nightly]
 description = "Installs the unknown-linux target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "x86_64-unknown-linux-gnu"]
 
@@ -172,7 +172,7 @@ args = ["target", "add", "x86_64-unknown-linux-gnu"]
 description = "Installs the emscripten target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "wasm32-unknown-emscripten"]
 
@@ -180,7 +180,7 @@ args = ["target", "add", "wasm32-unknown-emscripten"]
 description = "Installs the wasm target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "wasm32-unknown-unknown"]
 
@@ -188,6 +188,6 @@ args = ["target", "add", "wasm32-unknown-unknown"]
 description = "Install the thumbv8m target"
 category = "ICU4X FFI"
 dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "thumbv8m.main-none-eabihf"]
