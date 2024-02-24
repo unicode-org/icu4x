@@ -284,8 +284,8 @@ pub enum FallbackMode {
 /// A _base language_ is a locale that inherits directly from `und`. For example, `en` and
 /// `zh-Hant` inherit directly from `und`.
 ///
-/// Removing base languages whose data equals `und` may reduce data size, but it may cause
-/// supported-locale queries to fail.
+/// Removing base languages whose data equals `und` may reduce data size, but it makes it
+/// impossible to determine at runtime whether that language is supported or missing.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
