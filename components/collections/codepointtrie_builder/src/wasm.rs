@@ -9,15 +9,13 @@ use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
-use wasmi_wasi::sync::WasiCtxBuilder;
-use wasmi_wasi::{add_to_linker, WasiCtx};
 use zerovec::ZeroSlice;
 
 const UCPTRIE_WRAP_BYTES: &[u8] = include_bytes!("../ucptrie_wrap.wasm");
 
 pub(crate) struct WasmWrap {
     instance: Instance,
-    store: Store<WasiCtx>,
+    store: Store<()>,
 }
 
 #[derive(Debug)]
@@ -38,11 +36,9 @@ impl WasmWrap {
         let config = Config::default();
         let engine = Engine::new(&config);
         let module = Module::new(&engine, UCPTRIE_WRAP_BYTES).unwrap();
-        let mut linker = <Linker<WasiCtx>>::new(&engine);
-        let wasi = WasiCtxBuilder::new().inherit_stdio().build();
-        let mut store = Store::new(&engine, wasi);
+        let linker = <Linker<()>>::new(&engine);
+        let mut store = Store::new(&engine, ());
 
-        add_to_linker(&mut linker, |ctx| ctx).unwrap();
         let instance = linker
             .instantiate(&mut store, &module)
             .unwrap()

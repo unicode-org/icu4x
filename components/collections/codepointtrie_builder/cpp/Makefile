@@ -3,16 +3,14 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 ICU4C_SOURCE ?= $(HOME)/icu/icu4c/source
-ICU4C_BUILD ?= $(ICU4C_SOURCE)
 CXX := clang++
 
 .PHONY: all clean
-all: list_to_ucptrie list_to_ucptrie.wasm
+all: ucptrie_wrap.wasm
 
-icu4c_obj/wasm/%.o: $(ICU4C_SOURCE)/%.cpp
-	mkdir -p icu4c_obj/wasm/common
+wasm_obj/icu4c/%.o: $(ICU4C_SOURCE)/%.cpp
+	mkdir -p wasm_obj/icu4c/common
 	$(CXX) --target=wasm32-unknown-wasi \
-		-I/usr/include/wasm32-wasi \
 		-DTRUE=1 \
 		-DU_DISABLE_RENAMING=1 \
 		-c \
@@ -21,16 +19,31 @@ icu4c_obj/wasm/%.o: $(ICU4C_SOURCE)/%.cpp
 		$< \
 		-o $@
 
-icu4c_obj_wasm_files = \
-	icu4c_obj/wasm/common/cmemory.o \
-	icu4c_obj/wasm/common/errorcode.o \
-	icu4c_obj/wasm/common/ucptrie.o \
-	icu4c_obj/wasm/common/umutablecptrie.o \
-	icu4c_obj/wasm/common/uobject.o \
-	icu4c_obj/wasm/common/utypes.o
-
-ucptrie_wrap.wasm: ucptrie_wrap.cpp $(icu4c_obj_wasm_files)
+wasm_obj/ucptrie_wrap.o: ucptrie_wrap.cpp
+	mkdir -p wasm_obj
 	$(CXX) --target=wasm32-unknown-wasi \
+		-I/usr/include/wasm32-wasi \
+		-c \
+		-flto \
+		-I$(ICU4C_SOURCE)/common \
+		$< \
+		-o $@
+
+wasm_obj_files = \
+	wasm_obj/icu4c/common/cmemory.o \
+	wasm_obj/icu4c/common/errorcode.o \
+	wasm_obj/icu4c/common/ucptrie.o \
+	wasm_obj/icu4c/common/umutablecptrie.o \
+	wasm_obj/icu4c/common/uobject.o \
+	wasm_obj/icu4c/common/utypes.o \
+	wasm_obj/ucptrie_wrap.o
+
+# Compile as a Reactor Module so we don't need a main function.
+# This also means we don't need WASI imports at runtime.
+# <https://dylibso.com/blog/wasi-command-reactor/>
+ucptrie_wrap.wasm: $(wasm_obj_files)
+	$(CXX) --target=wasm32-unknown-wasi \
+		-mexec-model=reactor \
 		-DTRUE=1 \
 		-flto \
 		-Wl,--gc-sections \
@@ -53,10 +66,9 @@ ucptrie_wrap.wasm: ucptrie_wrap.cpp $(icu4c_obj_wasm_files)
 		-Wl,--export=get_data_length \
 		-I$(ICU4C_SOURCE)/common \
 		-I$(ICU4C_SOURCE)/tools/toolutil \
-		$(icu4c_obj_wasm_files) \
-		ucptrie_wrap.cpp \
+		$(wasm_obj_files) \
 		-o ucptrie_wrap.wasm
 
 clean:
-	rm -rf icu4c_obj
+	rm -rf wasm_obj
 	rm -f ucptrie_wrap.wasm

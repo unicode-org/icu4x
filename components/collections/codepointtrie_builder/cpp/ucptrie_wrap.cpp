@@ -6,10 +6,6 @@
 #include "unicode/ucptrie.h"
 #include <memory>
 
-int main(int argc, char const *argv[]) {
-    return 0;
-}
-
 extern "C" UErrorCode* create_uerrorcode() {
     return (UErrorCode*) calloc(1, sizeof(UErrorCode));
 }

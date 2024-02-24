@@ -43,7 +43,6 @@ icu_collections = { workspace = true, features = ["serde"] }
 toml = "0.5"
 zerovec = { workspace = true }
 wasmi = "0.31.2"
-wasmi_wasi = "0.31.2"
 
 [dev-dependencies]
 icu = { workspace = true }
