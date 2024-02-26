@@ -8,7 +8,7 @@ version = "1.0.3"
 keywords = ["io", "crlf", "windows", "line", "ending"]
 description = "A std::io::Write wrapper that replaces \n with \r\n on Windows."
 documentation = "https://docs.rs/litemap"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true

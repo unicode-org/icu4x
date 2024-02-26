@@ -6,7 +6,7 @@
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
 version = "0.3.7"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 include = [
     "src/**/*",
     "examples/**/*",

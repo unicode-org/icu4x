@@ -12,7 +12,7 @@ edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
