@@ -18,7 +18,7 @@
 /// named arguments version of this macro to specify both sizes:
 ///
 /// ```ignore
-/// size_test!(MyType, my_type_size, pinned = 32, beta = 24);
+/// size_test!(MyType, my_type_size, pinned = 32, beta = 24, nightly = 24);
 /// ```
 ///
 /// The test is ignored by default but runs in CI. To run the test locally,
