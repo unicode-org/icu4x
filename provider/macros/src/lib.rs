@@ -64,6 +64,9 @@ mod tests;
 /// # }
 /// use icu::locid_transform::fallback::*;
 /// use icu::locid::extensions::unicode::key;
+/// use icu_provider::KeyedDataMarker;
+/// use icu_provider::yoke;
+/// use icu_provider::zerofrom;
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(
