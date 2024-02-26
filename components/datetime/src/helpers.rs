@@ -24,7 +24,7 @@
 /// The test is ignored by default but runs in CI. To run the test locally,
 /// run `cargo test -- --include-ignored`
 macro_rules! size_test {
-    ($ty:ty, $id:ident, pinned = $pinned:literal, beta = $beta:literal) => {
+    ($ty:ty, $id:ident, pinned = $pinned:literal, beta = $beta:literal, nightly = $nightly:literal) => {
         macro_rules! $id {
             () => {
                 concat!(
@@ -41,10 +41,11 @@ macro_rules! size_test {
         fn $id() {
             let size = core::mem::size_of::<$ty>();
             let success = match option_env!("CI_TOOLCHAIN") {
-                // Manual invocation: match either size
-                Some("beta") | Some("nightly") => size == $beta,
+                Some("nightly") => size == $nightly,
+                Some("beta") => size == $beta,
                 Some("pinned-stable") => size == $pinned,
-                _ => matches!(size, $pinned | $beta),
+                // Manual invocation: match either size
+                _ => matches!(size, $pinned | $beta | $nightly),
             };
             assert!(
                 success,
