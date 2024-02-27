@@ -12,7 +12,7 @@ authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
-license-file.workspace = true
+license.workspace = true
 categories.workspace = true
 include.workspace = true
 

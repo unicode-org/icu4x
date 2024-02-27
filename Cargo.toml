@@ -108,7 +108,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 categories = ["internationalization"]
 include = [
     "data/**/*",

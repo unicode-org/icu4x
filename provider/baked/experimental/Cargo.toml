@@ -5,7 +5,7 @@
 [package]
 name = "icu_experimental_data"
 description = "Data for the icu_experimental crate"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 version = "0.0.0"
 
 authors.workspace = true

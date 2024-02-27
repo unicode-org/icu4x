@@ -6,7 +6,7 @@
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
 version = "0.8.1"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
