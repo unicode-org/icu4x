@@ -418,7 +418,7 @@ impl UnicodeFuncs {
                         unicode: hb_codepoint_t,
                         user_data: *mut c_void,
                     ) -> hb_unicode_combining_class_t {
-                        unsafe { &*(user_data as *mut CanonicalCombiningClassMap) }
+                        unsafe { &*(user_data as *const CanonicalCombiningClassMap) }
                             .get32(unicode)
                             .0 as hb_unicode_combining_class_t
                     }
@@ -452,7 +452,7 @@ impl UnicodeFuncs {
                         // matches the number of enum items, so the index will always be in range here.
                         #![allow(clippy::indexing_slicing)]
                         ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ[unsafe {
-                            &*(user_data as *mut CodePointMapData<GeneralCategory>)
+                            &*(user_data as *const CodePointMapData<GeneralCategory>)
                         }
                         .as_borrowed()
                         .get32(unicode)
@@ -489,7 +489,7 @@ impl UnicodeFuncs {
                         unicode: hb_codepoint_t,
                         user_data: *mut c_void,
                     ) -> hb_codepoint_t {
-                        unsafe { &*(user_data as *mut BidiAuxiliaryProperties) }
+                        unsafe { &*(user_data as *const BidiAuxiliaryProperties) }
                             .as_borrowed()
                             .get32_mirroring_props(unicode)
                             .mirroring_glyph
@@ -522,11 +522,11 @@ impl UnicodeFuncs {
                         unicode: hb_codepoint_t,
                         user_data: *mut c_void,
                     ) -> hb_script_t {
-                        let script = unsafe { &*(user_data as *mut ScriptDataForHarfBuzz) }
+                        let script = unsafe { &*(user_data as *const ScriptDataForHarfBuzz) }
                             .script_map
                             .as_borrowed()
                             .get32(unicode);
-                        let name = unsafe { &*(user_data as *mut ScriptDataForHarfBuzz) }
+                        let name = unsafe { &*(user_data as *const ScriptDataForHarfBuzz) }
                             .enum_to_name_mapper
                             .as_borrowed()
                             .get(script)
@@ -581,7 +581,7 @@ impl UnicodeFuncs {
                             debug_assert!(false);
                             return false as hb_bool_t;
                         };
-                        let Some(c) = unsafe { &*(user_data as *mut CanonicalComposition) }
+                        let Some(c) = unsafe { &*(user_data as *const CanonicalComposition) }
                             .compose(first, second)
                         else {
                             return false as hb_bool_t;
@@ -625,7 +625,7 @@ impl UnicodeFuncs {
                             debug_assert!(false);
                             return false as hb_bool_t;
                         };
-                        match unsafe { &*(user_data as *mut CanonicalDecomposition) }
+                        match unsafe { &*(user_data as *const CanonicalDecomposition) }
                             .decompose(composed)
                         {
                             Decomposed::Default => false as hb_bool_t,
