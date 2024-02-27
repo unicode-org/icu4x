@@ -277,7 +277,7 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
                 {
                     Some(s) => s,
                     None => {
-                        debug_assert!(false, "unreachable");
+                        debug_assert!(false, "offsets are in range");
                         ""
                     }
                 };
