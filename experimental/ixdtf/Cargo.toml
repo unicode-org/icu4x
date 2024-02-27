@@ -6,7 +6,7 @@
 name = "ixdtf"
 description = "Parser for Internet eXtended DateTime Format"
 version = "0.1.0"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true

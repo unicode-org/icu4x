@@ -242,7 +242,6 @@ impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// Normalize the case of a value by stepping through an ignore-case trie:
     ///
     /// ```
-    /// use core::fmt::Write;
     /// use std::borrow::Cow;
     /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
     ///

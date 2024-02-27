@@ -82,7 +82,6 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu_locid::locale;
-/// use icu_experimental::relativetime::options::Numeric;
 /// use icu_experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };

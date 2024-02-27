@@ -69,7 +69,6 @@ impl CompactDecimal {
     /// Returns the exponent of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
-    /// # use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     /// #
     /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().exponent(), 6);

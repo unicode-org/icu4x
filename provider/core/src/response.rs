@@ -707,7 +707,6 @@ where
     /// # Examples
     ///
     /// ```no_run
-    /// use icu_locid::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///

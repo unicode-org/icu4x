@@ -8,7 +8,7 @@ description = "Zero-copy vector backed by a byte array"
 version = "0.10.1"
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true

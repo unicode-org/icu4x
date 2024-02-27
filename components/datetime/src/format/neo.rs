@@ -119,8 +119,7 @@ impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
 size_test!(
     TypedDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
-    pinned = 504,
-    nightly = 488
+    488
 );
 
 /// A low-level type that formats datetime patterns with localized symbols.

@@ -468,7 +468,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use core::convert::Infallible;
     /// use icu_collections::codepointtrie::planes;
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
@@ -526,7 +525,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(trie.get32(exp_end), start_val);
     /// assert_ne!(trie.get32(exp_end + 1), start_val);
     ///
-    /// use core::ops::RangeInclusive;
     /// use icu_collections::codepointtrie::CodePointMapRange;
     ///
     /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();

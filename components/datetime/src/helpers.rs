@@ -14,25 +14,25 @@
 ///
 /// The size should correspond to the Rust version in rust-toolchain.toml.
 ///
-/// If the size on latest nightly differs from rust-toolchain.toml, use the
+/// If the size on latest beta differs from rust-toolchain.toml, use the
 /// named arguments version of this macro to specify both sizes:
 ///
 /// ```ignore
-/// size_test!(MyType, my_type_size, pinned = 32, nightly = 24);
+/// size_test!(MyType, my_type_size, pinned = 32, beta = 24, nightly = 24);
 /// ```
 ///
 /// The test is ignored by default but runs in CI. To run the test locally,
 /// run `cargo test -- --include-ignored`
 macro_rules! size_test {
-    ($ty:ty, $id:ident, pinned = $pinned:literal, nightly = $nightly:literal) => {
+    ($ty:ty, $id:ident, pinned = $pinned:literal, beta = $beta:literal, nightly = $nightly:literal) => {
         macro_rules! $id {
             () => {
                 concat!(
                     "📏 This item has a stack size of <b>",
                     stringify!($pinned),
-                    " bytes</b> in the default ICU4X Rust stable toolchain and <b>",
-                    stringify!($nightly),
-                    " bytes</b> on nightly at release date."
+                    " bytes</b> on the stable toolchain and <b>",
+                    stringify!($beta),
+                    " bytes</b> on beta toolchain at release date."
                 )
             };
         }
@@ -40,15 +40,12 @@ macro_rules! size_test {
         #[cfg_attr(not(icu4x_run_size_tests), ignore)]
         fn $id() {
             let size = core::mem::size_of::<$ty>();
-            let success = if cfg!(not(icu4x_run_size_tests)) {
+            let success = match option_env!("CI_TOOLCHAIN") {
+                Some("nightly") => size == $nightly,
+                Some("beta") => size == $beta,
+                Some("pinned-stable") => size == $pinned,
                 // Manual invocation: match either size
-                matches!(size, $pinned | $nightly)
-            } else if option_env!("ICU4X_BUILDING_WITH_FORCED_NIGHTLY").is_some() {
-                // CI invocation: match nightly size
-                size == $nightly
-            } else {
-                // CI invocation: match pinned stable size
-                size == $pinned
+                _ => matches!(size, $pinned | $beta | $nightly),
             };
             assert!(
                 success,
@@ -64,7 +61,7 @@ macro_rules! size_test {
                 concat!(
                     "📏 This item has a stack size of <b>",
                     stringify!($size),
-                    " bytes</b> in the default ICU4X Rust stable toolchain."
+                    " bytes</b> on the stable toolchain at release date."
                 )
             };
         }

@@ -69,7 +69,6 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 /// use icu_pattern::{
 ///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern,
 /// };
-/// use std::convert::TryInto;
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
@@ -173,7 +172,6 @@ where
     /// # Examples
     /// ```
     /// use icu_pattern::{Interpolator, Parser, ParserOptions, Pattern};
-    /// use std::convert::TryInto;
     ///
     /// enum Element {
     ///     Literal(String),
@@ -209,7 +207,6 @@ where
     /// use icu_pattern::{
     ///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern,
     /// };
-    /// use std::convert::TryInto;
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {

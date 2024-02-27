@@ -152,16 +152,6 @@ typedef Rune = int;
 // ignore: unused_element
 final _callocFree = core.Finalizer(ffi2.calloc.free);
 
-/// An unspecified error value
-// ignore: unused_element
-class VoidError {
-  @override
-  bool operator ==(Object other) => other is VoidError;
-
-  @override
-  int get hashCode => 1;
-}
-
 extension _View on ByteBuffer {
   // ignore: unused_element
   ffi.Pointer<ffi.Uint8> pointer(ffi.Allocator alloc) {
@@ -440,6 +430,15 @@ class _Float64ListView {
   }
 
   int get length => _values.length;
+}
+
+class _FinalizedArena {
+  final ffi2.Arena arena;
+  static final core.Finalizer<ffi2.Arena> _finalizer = core.Finalizer((arena) => arena.releaseAll());
+
+  _FinalizedArena() : this.arena = ffi2.Arena() {
+    _finalizer.attach(this, this.arena);
+  }
 }
 
 final class _ResultBoolInt32Union extends ffi.Union {

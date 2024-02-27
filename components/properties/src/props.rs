@@ -647,7 +647,7 @@ macro_rules! impl_value_getter {
 /// These are the categories required by the Unicode Bidirectional Algorithm.
 /// For the property values, see [Bidirectional Class Values](https://unicode.org/reports/tr44/#Bidi_Class_Values).
 /// For more information, see [Unicode Standard Annex #9](https://unicode.org/reports/tr41/tr41-28.html#UAX9).
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -781,7 +781,7 @@ impl_value_getter! {
 ///
 /// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -1079,7 +1079,6 @@ impl GeneralCategoryGroup {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
-    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let gc = maps::general_category();
     ///
@@ -1285,7 +1284,7 @@ impl From<GeneralCategoryGroup> for u32 {
 ///
 /// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
 /// See `UScriptCode` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -1538,7 +1537,7 @@ impl_value_getter! {
 /// <https://www.unicode.org/reports/tr11/#Definitions>
 ///
 /// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -1631,7 +1630,7 @@ impl_value_getter! {
 /// value: <https://www.unicode.org/reports/tr14/#Properties>
 ///
 /// The numeric value is compatible with `ULineBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -1769,7 +1768,7 @@ impl_value_getter! {
 /// <https://www.unicode.org/reports/tr29/#Default_Grapheme_Cluster_Table>
 ///
 /// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -1879,7 +1878,7 @@ impl_value_getter! {
 /// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
 ///
 /// The numeric value is compatible with `UWordBreakValues` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -1996,7 +1995,7 @@ impl_value_getter! {
 /// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
 ///
 /// The numeric value is compatible with `USentenceBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -2103,7 +2102,7 @@ impl_value_getter! {
 // of this struct. Please do not change the bit layout
 // or the crate-module-qualified name of this struct
 // without coordination.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -2251,7 +2250,7 @@ impl_value_getter! {
 /// <https://www.unicode.org/reports/tr44/#Indic_Syllabic_Category>.
 ///
 /// The numeric value is compatible with `UIndicSyllabicCategory` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties))]
@@ -2360,6 +2359,98 @@ impl_value_getter! {
         /// let lookup = IndicSyllabicCategory::enum_to_long_name_mapper();
         /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
         /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
+        /// ```
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+    }
+}
+/// Enumerated property Joining_Type.
+/// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of
+/// each property value.
+///
+/// The numeric value is compatible with `UJoiningType` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(JoiningTypeULE)]
+pub struct JoiningType(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl JoiningType {
+    pub const NonJoining: JoiningType = JoiningType(0); // name="U"
+    pub const JoinCausing: JoiningType = JoiningType(1); // name="C"
+    pub const DualJoining: JoiningType = JoiningType(2); // name="D"
+    pub const LeftJoining: JoiningType = JoiningType(3); // name="L"
+    pub const RightJoining: JoiningType = JoiningType(4); // name="R"
+    pub const Transparent: JoiningType = JoiningType(5); // name="T"
+}
+
+impl_value_getter! {
+    markers: JoiningTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_JT_V1, JoiningTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1, JoiningTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_JT_V1;
+    impl JoiningType {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `Joining_Type` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::JoiningType;
+        ///
+        /// let lookup = JoiningType::name_to_enum_mapper();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("T"), Some(JoiningType::Transparent));
+        /// assert_eq!(lookup.get_strict("D"), Some(JoiningType::DualJoining));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Join_Causing"), Some(JoiningType::JoinCausing));
+        /// assert_eq!(lookup.get_strict("Non_Joining"), Some(JoiningType::NonJoining));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("LEFT_JOINING"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("LEFT_JOINING"), Some(JoiningType::LeftJoining));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Inner_Joining"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
+        /// for values of the `Joining_Type` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::JoiningType;
+        ///
+        /// let lookup = JoiningType::enum_to_short_name_mapper();
+        /// assert_eq!(lookup.get(JoiningType::JoinCausing), Some("C"));
+        /// assert_eq!(lookup.get(JoiningType::LeftJoining), Some("L"));
+        /// ```
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
+        /// for values of the `Joining_Type` enumerated property.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::JoiningType;
+        ///
+        /// let lookup = JoiningType::enum_to_long_name_mapper();
+        /// assert_eq!(lookup.get(JoiningType::Transparent), Some("Transparent"));
+        /// assert_eq!(lookup.get(JoiningType::NonJoining), Some("Non_Joining"));
+        /// assert_eq!(lookup.get(JoiningType::RightJoining), Some("Right_Joining"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }

@@ -157,7 +157,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_k
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_fork_by_key(this->inner.get(), other.AsFFIMut());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -167,7 +167,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_l
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_fork_by_locale(this->inner.get(), other.AsFFIMut());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -177,7 +177,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::enable_lo
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_enable_locale_fallback(this->inner.get());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -187,7 +187,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::enable_lo
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_enable_locale_fallback_with(this->inner.get(), fallbacker.AsFFI());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

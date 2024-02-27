@@ -10,19 +10,26 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'release/**'
   pull_request:
-    branches: '*'
   workflow_dispatch:
     inputs:
-      nightly:
-        description: "Test on latest nightly"
-        required: true
-        default: false
-        type: boolean
+      channel:
+        description: "Channel"
+        default: 'nightly'
+        type: choice
+        options:
+        - pinned-stable
+        - stable
+        - beta
+        - nightly
   schedule:
     # Run nightly cronjob CI every day at 14 UTC / 6AM PST / 3PM CET
     - cron:  '0 14 * * *'
+    # Run beta slightly later
+    - cron:  '1 14 * * *'
 
 concurrency:
   # Allow one run at a time for PRs, but multiple for other invocations
@@ -123,7 +130,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -158,7 +165,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -193,7 +200,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -232,7 +239,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -278,7 +285,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -341,7 +348,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -383,7 +390,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -436,7 +443,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -444,9 +451,12 @@ jobs:
     - name: Run apt-get update
       run: |
         apt-get update
-    - name: Install Clang-15
+    - name: Install LLVM 16
       run: |
-        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
+        apt-get install -y clang-16 lld-16 llvm-16-dev libc++-16-dev
+    - name: Install LLVM 16 nightly
+      run: |
+        rustup install nightly-2023-08-08
     - name: Install GCC 11
       run: |
         apt-get install -y gcc-11 g++-11
@@ -464,6 +474,10 @@ jobs:
       run: cargo make ci-job-test-c
       env:
         CXX: "g++-11"
+    - name: Test C++ with clang
+      run: cargo make test-cpp
+      env:
+        CXX: "clang++"
 
 
   # ci-job-test-js
@@ -501,7 +515,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -560,7 +574,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -600,7 +614,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -635,7 +649,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -671,7 +685,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -738,7 +752,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -777,7 +791,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -836,7 +850,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -876,7 +890,7 @@ jobs:
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -893,11 +907,23 @@ jobs:
     steps:
       - name: Notify slack of failure
         uses: ravsamhq/notify-slack-action@v1
+        # Only notify main slack of failure for beta runs and for failed main CI
+        if: (github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push'
         with:
           notify_when: failure
           status: failure # We do the filtering earlier
           notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Nightly' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notify nightly slack of failure
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          notify_when: failure
+          status: failure # We do the filtering earlier
+          notification_title: ''
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly') || (github.event_name == 'push') && 'Main' || 'Manually dispatched on `${{ inputs.channel }}`')) }}
+          footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_WEBHOOK_URL }}
