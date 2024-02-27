@@ -157,7 +157,7 @@ impl PatternBackend for SinglePlaceholder {
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;
-        let initial_offset = char::len_utf8(placeholder_offset_char);
+        let initial_offset = placeholder_offset_char.len_utf8();
         let placeholder_offset = placeholder_offset_char as usize;
         if placeholder_offset > store.len() - initial_offset + 1 {
             return Err(Error::InvalidPattern);
