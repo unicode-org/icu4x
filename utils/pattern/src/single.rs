@@ -233,12 +233,16 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
         match self.current_offset.cmp(&self.placeholder_offset) {
             Ordering::Less => {
                 // Prefix
-                let result = self
-                    .store
-                    .get(self.current_offset..self.placeholder_offset)
-                    .map(PatternItem::Literal);
+                let literal_str = match self.store.get(self.current_offset..self.placeholder_offset)
+                {
+                    Some(s) => s,
+                    None => {
+                        debug_assert!(false, "unreachable");
+                        ""
+                    }
+                };
                 self.current_offset = self.placeholder_offset;
-                result
+                Some(PatternItem::Literal(literal_str))
             }
             Ordering::Equal => {
                 // Placeholder
@@ -247,13 +251,21 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
             }
             Ordering::Greater => {
                 // Suffix or end of string
-                let result = self
-                    .store
-                    .get(self.current_offset..)
-                    .and_then(|s| if s.is_empty() { None } else { Some(s) })
-                    .map(PatternItem::Literal);
-                self.current_offset = self.store.len();
-                result
+                let literal_str = match self.store.get(self.current_offset..) {
+                    Some(s) => s,
+                    None => {
+                        debug_assert!(false, "unreachable");
+                        ""
+                    }
+                };
+                if literal_str.is_empty() {
+                    // End of string
+                    None
+                } else {
+                    // Suffix
+                    self.current_offset = self.store.len();
+                    Some(PatternItem::Literal(literal_str))
+                }
             }
         }
     }
