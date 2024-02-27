@@ -4,105 +4,35 @@
 
 //! `icu_pattern` is a utility crate of the [`ICU4X`] project.
 //!
-//! It includes a [`Pattern`] struct which wraps a paid of [`Parser`] and [`Interpolator`] allowing for parsing and interpolation of ICU placeholder patterns, like "{0} days" or
-//! "{0}, {1}" with custom elements and string literals.
+//! It includes a [`Pattern`] type which supports patterns with various storage backends.
 //!
-//! # Placeholders & Elements
-//!
-//! The [`Parser`] is generic over any `Placeholder` which implements [`FromStr`]
-//! allowing the consumer to parse placeholder patterns such as "{0}, {1}",
-//! "{date}, {time}" or any other.
-//!
-//! The [`Interpolator`] can interpolate the [`Pattern`] against any
-//! iterator over `Element`.
+//! The types are tightly coupled with the [`writeable`] crate.
 //!
 //! # Examples
 //!
-//! In the following example we're going to use a custom `Token` type,
-//! and an `Element` type which will be either a `Token` or a string slice.
-//!
-//! For the purpose of the example, a higher level
-//! [`interpolate_to_string`](Pattern::interpolate_to_string) method
-//! is being used.
+//! Parsing and interpolating with a single-placeholder pattern:
 //!
 //! ```
-//! use icu_pattern::Pattern;
-//! use std::{borrow::Cow, convert::TryInto, fmt::Display};
+//! use icu_pattern::SinglePlaceholderPattern;
+//! use writeable::assert_writeable_eq;
 //!
-//! #[derive(Debug, PartialEq)]
-//! enum ExampleToken {
-//!     Year,
-//!     Month,
-//!     Day,
-//!     Hour,
-//!     Minute,
-//! }
+//! // Parse a pattern string:
+//! let pattern = "Hello, {0}!"
+//!     .parse::<SinglePlaceholderPattern<_>>()
+//!     .unwrap();
 //!
-//! impl Display for ExampleToken {
-//!     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//!         write!(f, "[{:?}]", self)
-//!     }
-//! }
+//! // Interpolate into the pattern string:
+//! assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
 //!
-//! #[derive(Debug, PartialEq)]
-//! enum ExampleElement<'s> {
-//!     Token(ExampleToken),
-//!     Literal(Cow<'s, str>),
-//! }
-//!
-//! impl Display for ExampleElement<'_> {
-//!     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//!         match self {
-//!             Self::Token(token) => token.fmt(f),
-//!             Self::Literal(lit) => lit.fmt(f),
-//!         }
-//!     }
-//! }
-//!
-//! let pattern: Pattern<usize> =
-//!     "{0}, {1}".try_into().expect("Failed to parse a pattern.");
-//!
-//! let replacements = vec![
-//!     vec![
-//!         ExampleElement::Token(ExampleToken::Year),
-//!         ExampleElement::Literal("-".into()),
-//!         ExampleElement::Token(ExampleToken::Month),
-//!         ExampleElement::Literal("-".into()),
-//!         ExampleElement::Token(ExampleToken::Day),
-//!     ],
-//!     vec![
-//!         ExampleElement::Token(ExampleToken::Hour),
-//!         ExampleElement::Literal(":".into()),
-//!         ExampleElement::Token(ExampleToken::Minute),
-//!     ],
-//! ];
-//!
-//! assert_eq!(
-//!     pattern
-//!         .interpolate_to_string::<ExampleElement, _>(&replacements)
-//!         .expect("Failed to interpolate a pattern."),
-//!     "[Year]-[Month]-[Day], [Hour]:[Minute]"
-//! );
+//! // Introspect the serialized form of the pattern string:
+//! assert_eq!(pattern.take_store(), "\x08Hello, !");
 //! ```
-//!
-//! # Combinators
-//!
-//! In the example above, the replacements will be parsed at compile time and stored on a [`Vec`],
-//! which is a collection type that has an implementation for [`ReplacementProvider`]
-//! trait.
-//!
-//! In real use, the consumer may want to use different models of replacement provider,
-//! and different element schemas.
-//! Because the replacement is an iterator itself, it allows for other, more specialized parsers,
-//! to be used to lazily parse particular patterns that are meant to replace the placeholders.
-//! This allows for lazy parsing of those specialized patterns to be triggered
-//! only if the placeholder pattern encounters a placeholder key that requires given
-//! pattern to be used.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`FromStr`]: std::str::FromStr
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -110,20 +40,59 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // TODO(#1668): enable clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
         missing_debug_implementations,
     )
 )]
 
-mod interpolator;
-mod parser;
-mod pattern;
-mod replacement;
-mod token;
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
-pub use interpolator::{InterpolatedKind, Interpolator, InterpolatorError};
-pub use parser::{Parser, ParserError, ParserOptions};
-pub use pattern::{InterpolatedPattern, Pattern, PatternError};
-pub use replacement::ReplacementProvider;
-pub use token::PatternToken;
+#[cfg(feature = "alloc")]
+mod builder;
+mod common;
+mod error;
+mod frontend;
+#[cfg(feature = "alloc")]
+mod parser;
+mod single;
+
+pub use common::PatternBackend;
+pub use common::PatternItem;
+#[cfg(feature = "alloc")]
+pub use common::PatternItemCow;
+pub use common::PlaceholderValueProvider;
+pub use error::PatternError;
+pub use frontend::Pattern;
+#[cfg(feature = "alloc")]
+pub use parser::ParsedPatternItem;
+#[cfg(feature = "alloc")]
+pub use parser::Parser;
+#[cfg(feature = "alloc")]
+pub use parser::ParserError;
+#[cfg(feature = "alloc")]
+pub use parser::ParserOptions;
+pub use single::SinglePlaceholder;
+pub use single::SinglePlaceholderKey;
+#[doc(no_inline)]
+pub use PatternError as Error;
+
+mod private {
+    pub trait Sealed {}
+}
+
+/// # Examples
+///
+/// ```
+/// use icu_pattern::SinglePlaceholderPattern;
+/// use writeable::assert_writeable_eq;
+///
+/// // Create a pattern from the string syntax:
+/// let pattern =
+///     SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+///
+/// // Interpolate some values into the pattern:
+/// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
+/// ```
+pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;

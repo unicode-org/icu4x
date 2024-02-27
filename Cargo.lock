@@ -1603,7 +1603,6 @@ name = "icu_pattern"
 version = "0.1.5"
 dependencies = [
  "displaydoc",
- "iai",
  "writeable",
 ]
 

@@ -2,23 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Cow;
+use alloc::borrow::Cow;
 
-/// A token returned by the [`Parser`].
+/// A [`PatternItem`] with additional detail returned by the [`Parser`].
+///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 ///
 /// # Examples
 ///
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, PatternToken};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -31,12 +28,12 @@ use std::borrow::Cow;
 /// assert_eq!(
 ///     result,
 ///     &[
-///         PatternToken::Placeholder(0),
-///         PatternToken::Literal {
+///         ParsedPatternItem::Placeholder(0),
+///         ParsedPatternItem::Literal {
 ///             content: ", ".into(),
 ///             quoted: false
 ///         },
-///         PatternToken::Placeholder(1),
+///         ParsedPatternItem::Placeholder(1),
 ///     ]
 /// );
 /// ```
@@ -50,14 +47,16 @@ use std::borrow::Cow;
 /// - `s`: The life time of an input string slice being parsed.
 ///
 /// [`Parser`]: crate::Parser
-/// [`FromStr`]: std::str::FromStr
+/// [`PatternItem`]: crate::PatternItem
+/// [`FromStr`]: core::str::FromStr
 #[derive(PartialEq, Debug, Clone)]
-pub enum PatternToken<'s, P> {
+#[non_exhaustive]
+pub enum ParsedPatternItem<'s, P> {
     Placeholder(P),
     Literal { content: Cow<'s, str>, quoted: bool },
 }
 
-impl<'s, P> From<(&'s str, bool)> for PatternToken<'s, P> {
+impl<'s, P> From<(&'s str, bool)> for ParsedPatternItem<'s, P> {
     fn from(input: (&'s str, bool)) -> Self {
         Self::Literal {
             content: Cow::Borrowed(input.0),
