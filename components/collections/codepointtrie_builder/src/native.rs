@@ -107,7 +107,8 @@ where
         }
     }
 
-    let (trie_type, width) = crate::common::args_for_build_immutable::<T::ULE>(builder.trie_type);
+    let (trie_type, width) =
+        crate::common::args_for_build_immutable::<T::ULE>(cpt_builder.trie_type);
 
     // safety: `builder` is a valid UMutableCPTrie
     // safety: we're passing a valid error pointer
