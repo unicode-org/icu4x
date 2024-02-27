@@ -146,6 +146,7 @@ where
 ///
 /// [`Pattern::interpolate()`]: crate::Pattern::interpolate
 #[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // Empty Enum
 pub enum SinglePlaceholder {}
 
 impl crate::private::Sealed for SinglePlaceholder {}
