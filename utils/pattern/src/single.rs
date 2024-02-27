@@ -227,6 +227,46 @@ pub struct SinglePlaceholderPatternIterator<'a> {
     current_offset: usize,
 }
 
+impl SinglePlaceholderPatternIterator<'_> {
+    fn len(&self) -> usize {
+        let placeholder_offset_char = match self.store.chars().next() {
+            Some(i) => i,
+            None => {
+                debug_assert!(false);
+                '\0'
+            }
+        };
+        let initial_offset = char::len_utf8(placeholder_offset_char);
+        let placeholder_offset = placeholder_offset_char as usize + initial_offset - 1;
+        let store_len = self.store.len();
+        if placeholder_offset < initial_offset {
+            // No placeholder
+            if initial_offset < store_len {
+                // No placeholder, non-empty literal
+                1
+            } else {
+                // No placeholder, empty literal
+                0
+            }
+        } else if placeholder_offset == initial_offset {
+            // Has placeholder, empty prefix
+            if initial_offset < store_len {
+                // Has placeholder, empty prefix, non-empty suffix
+                2
+            } else {
+                // Has placeholder, empty prefix, empty suffix
+                1
+            }
+        } else if placeholder_offset < store_len {
+            // Has placeholder, non-empty prefix, non-empty suffix
+            3
+        } else {
+            // Has placeholder, non-empty prefix, empty suffix
+            2
+        }
+    }
+}
+
 impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
     type Item = PatternItem<'a, SinglePlaceholderKey>;
     fn next(&mut self) -> Option<Self::Item> {
@@ -268,6 +308,11 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
                 }
             }
         }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let len = self.len();
+        (len, Some(len))
     }
 }
 

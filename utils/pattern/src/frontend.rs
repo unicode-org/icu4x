@@ -283,7 +283,10 @@ where
     P: PlaceholderValueProvider<B::PlaceholderKey>,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        for item in B::iter_items(self.store) {
+        let it = B::iter_items(self.store);
+        #[cfg(debug_assertions)]
+        let mut expected_len = it.size_hint().0;
+        for item in it {
             match item {
                 PatternItem::Literal(s) => {
                     sink.write_str(s)?;
@@ -293,7 +296,13 @@ where
                     element_writeable.write_to(sink)?;
                 }
             }
+            #[cfg(debug_assertions)]
+            {
+                expected_len -= 1;
+            }
         }
+        #[cfg(debug_assertions)]
+        debug_assert_eq!(expected_len, 0);
         Ok(())
     }
 }
