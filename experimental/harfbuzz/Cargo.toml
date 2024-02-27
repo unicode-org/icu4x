@@ -44,6 +44,5 @@ harfbuzz = { version = "0.4.0" }
 [features]
 default = []
 compiled_data = ["icu_normalizer/compiled_data", "icu_properties/compiled_data"]
-alloc = []
 std = []
 serde = ["icu_properties/serde", "icu_normalizer/serde", "icu_provider/serde"]
