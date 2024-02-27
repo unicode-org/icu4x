@@ -300,7 +300,7 @@ where
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let it = B::iter_items(self.store);
         #[cfg(debug_assertions)]
-        let mut expected_len = it.size_hint().0;
+        let (size_hint, mut actual_len) = (it.size_hint(), 0);
         for item in it {
             match item {
                 PatternItem::Literal(s) => {
@@ -313,11 +313,16 @@ where
             }
             #[cfg(debug_assertions)]
             {
-                expected_len -= 1;
+                actual_len += 1;
             }
         }
         #[cfg(debug_assertions)]
-        debug_assert_eq!(expected_len, 0);
+        {
+            debug_assert!(actual_len >= size_hint.0);
+            if let Some(max_len) = size_hint.1 {
+                debug_assert!(actual_len <= max_len);
+            }
+        }
         Ok(())
     }
 }
