@@ -295,7 +295,7 @@ impl<'a> Iterator for SinglePlaceholderPatternIterator<'a> {
                 let literal_str = match self.store.get(self.current_offset..) {
                     Some(s) => s,
                     None => {
-                        debug_assert!(false, "unreachable");
+                        debug_assert!(false, "offsets are in range");
                         ""
                     }
                 };
