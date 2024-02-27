@@ -76,6 +76,8 @@ where
 
 /// Backend for patterns containing zero or one placeholder.
 ///
+/// This empty type is not constructible.
+///
 /// # Placeholder Keys
 ///
 /// The placeholder is always [`SinglePlaceholderKey::Singleton`].
