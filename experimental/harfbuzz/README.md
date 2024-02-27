@@ -11,7 +11,7 @@ use harfbuzz::{Buffer, Direction, sys};
 
 let mut b = Buffer::with("مساء الخير");
 
-let unicode_funcs = icu_harfbuzz::new_hb_unicode_funcs().unwrap();
+let unicode_funcs = icu_harfbuzz::UnicodeFuncs::new().unwrap();
 
 // NOTE: This currently requires `unsafe` code. For progress toward a safe abstraction, see:
 // <https://github.com/servo/rust-harfbuzz/pull/197>

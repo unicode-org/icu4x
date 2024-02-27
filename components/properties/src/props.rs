@@ -585,7 +585,7 @@ macro_rules! impl_value_getter {
         impl $ty {
             $(#[$attr_n2e])*
             #[cfg(feature = "compiled_data")]
-            $vis_n2e fn $cname_n2e() -> PropertyValueNameToEnumMapperBorrowed<'static, $ty> {
+            $vis_n2e const fn $cname_n2e() -> PropertyValueNameToEnumMapperBorrowed<'static, $ty> {
                 PropertyValueNameToEnumMapperBorrowed {
                     map: crate::provider::Baked::$singleton_n2e,
                     markers: PhantomData,
@@ -604,7 +604,7 @@ macro_rules! impl_value_getter {
             $(
                 $(#[$attr_e2sn])*
                 #[cfg(feature = "compiled_data")]
-                $vis_e2sn fn $cname_e2sn() -> $mapper_e2snb<'static, $ty> {
+                $vis_e2sn const fn $cname_e2sn() -> $mapper_e2snb<'static, $ty> {
                     $mapper_e2snb {
                         map: crate::provider::Baked::$singleton_e2sn,
                         markers: PhantomData,
@@ -622,7 +622,7 @@ macro_rules! impl_value_getter {
 
                 $(#[$attr_e2ln])*
                 #[cfg(feature = "compiled_data")]
-                $vis_e2ln fn $cname_e2ln() -> $mapper_e2lnb<'static, $ty> {
+                $vis_e2ln const fn $cname_e2ln() -> $mapper_e2lnb<'static, $ty> {
                     $mapper_e2lnb {
                         map: crate::provider::Baked::$singleton_e2ln,
                         markers: PhantomData,
