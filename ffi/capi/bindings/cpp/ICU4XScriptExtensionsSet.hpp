@@ -48,7 +48,7 @@ class ICU4XScriptExtensionsSet {
    * 
    * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
    */
-  std::optional<uint16_t> script_at(size_t index) const;
+  diplomat::result<uint16_t, std::monostate> script_at(size_t index) const;
   inline const capi::ICU4XScriptExtensionsSet* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptExtensionsSet* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XScriptExtensionsSet(capi::ICU4XScriptExtensionsSet* i) : inner(i) {}
@@ -66,13 +66,13 @@ inline bool ICU4XScriptExtensionsSet::contains(uint16_t script) const {
 inline size_t ICU4XScriptExtensionsSet::count() const {
   return capi::ICU4XScriptExtensionsSet_count(this->inner.get());
 }
-inline std::optional<uint16_t> ICU4XScriptExtensionsSet::script_at(size_t index) const {
+inline diplomat::result<uint16_t, std::monostate> ICU4XScriptExtensionsSet::script_at(size_t index) const {
   auto diplomat_result_raw_out_value = capi::ICU4XScriptExtensionsSet_script_at(this->inner.get(), index);
-  std::optional<uint16_t> diplomat_result_out_value;
+  diplomat::result<uint16_t, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = std::optional<uint16_t>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = diplomat::Ok<uint16_t>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err<std::monostate>(std::monostate());
   }
   return diplomat_result_out_value;
 }

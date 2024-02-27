@@ -30,7 +30,7 @@ export class ICU4XScriptExtensionsSet {
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 2);
       if (!is_ok) {
         wasm.diplomat_free(diplomat_receive_buffer, 3, 2);
-        return null;
+        return;
       }
       const value = (new Uint16Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0];
       wasm.diplomat_free(diplomat_receive_buffer, 3, 2);
