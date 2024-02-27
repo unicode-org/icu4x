@@ -11,6 +11,9 @@
 //! Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
 //! For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
 //!
+//! Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
+//! to be panic-free.
+//!
 //! # Build configuration
 //!
 //! This crate has two primary modes it can be used in: `"wasm"` and `"icu4c"`, exposed as
@@ -71,21 +74,22 @@
 #![cfg_attr(
     not(test),
     deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
+        // The crate is documented to allow panics.
+        // clippy::indexing_slicing,
+        // clippy::unwrap_used,
+        // clippy::expect_used,
+        // clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
         missing_debug_implementations,
     )
 )]
-// This is a build tool with many invariants being enforced
-#![allow(clippy::panic)]
-#![allow(clippy::expect_used)]
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
+
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+mod common;
 
 #[cfg(feature = "wasm")]
 mod wasm;
@@ -140,14 +144,7 @@ where
     pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {
         #[cfg(feature = "wasm")]
         {
-            use icu_collections::codepointtrie::toml::CodePointTrieToml;
-
-            let toml_str = wasm::run_wasm(&self);
-            let toml_obj: CodePointTrieToml =
-                toml::from_str(&toml_str).expect("the tool should produce valid TOML");
-            (&toml_obj)
-                .try_into()
-                .expect("the toml should be a valid CPT")
+            wasm::run_wasmi_ucptrie_wrap(&self)
         }
 
         #[cfg(all(feature = "icu4c", not(feature = "wasm")))]
