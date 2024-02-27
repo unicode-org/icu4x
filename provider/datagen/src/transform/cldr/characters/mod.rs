@@ -74,14 +74,7 @@ macro_rules! exemplar_chars_impls {
 
                 let chars_str = match source_data_chars {
                     Some(chars_str) => chars_str,
-                    None => {
-                        log::warn!(concat!(
-                            "Data missing for ",
-                            stringify!($cldr_serde_field_name),
-                            " set exemplar characters"
-                        ));
-                        "[]"
-                    }
+                    None => "[]",
                 };
                 Ok(string_to_prop_unicodeset(chars_str))
             }
