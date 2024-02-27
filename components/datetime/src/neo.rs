@@ -68,8 +68,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
 size_test!(
     TypedNeoDateFormatter<icu_calendar::Gregorian>,
     typed_neo_date_formatter_size,
-    pinned = 512,
-    nightly = 496
+    496
 );
 
 /// [`TypedNeoDateFormatter`] can format dates from a calendar selected at compile time.
@@ -219,12 +218,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 }
 
-size_test!(
-    NeoDateFormatter,
-    neo_date_formatter_size,
-    pinned = 568,
-    nightly = 552
-);
+size_test!(NeoDateFormatter, neo_date_formatter_size, 552);
 
 /// [`NeoDateFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
@@ -513,12 +507,7 @@ impl<'a> FormattedNeoDate<'a> {
     }
 }
 
-size_test!(
-    NeoTimeFormatter,
-    neo_time_formatter_size,
-    pinned = 464,
-    nightly = 448
-);
+size_test!(NeoTimeFormatter, neo_time_formatter_size, 448);
 
 /// [`NeoTimeFormatter`] can format times of day.
 /// It supports both 12-hour and 24-hour formats.
@@ -684,8 +673,7 @@ impl<'a> FormattedNeoTime<'a> {
 size_test!(
     TypedNeoDateTimeFormatter<icu_calendar::Gregorian>,
     typed_neo_date_time_formatter_size,
-    pinned = 584,
-    nightly = 568
+    568
 );
 
 /// [`TypedNeoDateTimeFormatter`] can format dates with times of day. The dates must be in
@@ -1101,12 +1089,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     }
 }
 
-size_test!(
-    NeoDateTimeFormatter,
-    neo_date_time_formatter_size,
-    pinned = 640,
-    nightly = 624
-);
+size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 624);
 
 /// [`NeoDateTimeFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the

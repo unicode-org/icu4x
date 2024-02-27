@@ -30,17 +30,20 @@ ICU4X can be edited using any text editor capable of editing Rust code.
 
 Many ICU4X engineers use [Visual Studio Code](https://code.visualstudio.com/) with the [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension.
 
-To build all code paths and improve build times in VSCode, we recommend the following settings. (Note: The second setting causes VSCode to build ICU4X with only the `und` locale, which reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.) To add these settings, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
+To build all code paths and improve build times in VSCode, we recommend the following settings. To add them, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
 
-```javascript
+```json
 "settings": {
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
-		// Path relative to `provider/baked/*/src/lib.rs`
-		"ICU4X_DATA_DIR": "../../../../provider/datagen/tests/data/baked"
+		"ICU4X_DATA_DIR": "../../../datagen/tests/data/baked"
 	}
 }
 ```
+
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/baked/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+
+Note: you might also consider setting a custom value to the `CARGO_TARGET_DIR` environment variable so that VSCode writes to a different target directory than other programs or the command line.
 
 ## Contributing a Pull Request
 
@@ -109,7 +112,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 <br/>
  
  - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
-     + Requires `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`).
+     + Requires `clang-16` and `lld-16` with the `gold` plugin (APT packages `llvm-16` and `lld-16`).
  - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.

@@ -791,7 +791,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f#a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -809,7 +809,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f#a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f"
 dependencies = [
  "log",
 ]
@@ -817,7 +817,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f#a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -837,9 +837,10 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=98ac7ad0382e4544fe7a58811a54cbe32d9e490c#98ac7ad0382e4544fe7a58811a54cbe32d9e490c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f#a47173bb7af0b284ed18fdca0a1ce4a9fae08e6f"
 dependencies = [
  "displaydoc",
+ "either",
  "lazy_static",
  "proc-macro2",
  "quote",
@@ -1541,6 +1542,32 @@ dependencies = [
  "zerotrie",
  "zerovec",
  "zip",
+]
+
+[[package]]
+name = "icu_datagen_dart"
+version = "1.4.0"
+dependencies = [
+ "clap 4.2.1",
+ "eyre",
+ "icu_calendar",
+ "icu_casemap",
+ "icu_collator",
+ "icu_datagen",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_blob",
+ "icu_segmenter",
+ "icu_timezone",
+ "log",
+ "serde",
+ "simple_logger",
 ]
 
 [[package]]

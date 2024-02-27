@@ -6,7 +6,7 @@
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
 version = "0.1.2"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 rust-version.workspace = true
 authors.workspace = true

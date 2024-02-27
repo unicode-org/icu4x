@@ -268,7 +268,6 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::IsoWeekday;
     /// use icu::calendar::week::RelativeUnit;
     /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::week::WeekOf;

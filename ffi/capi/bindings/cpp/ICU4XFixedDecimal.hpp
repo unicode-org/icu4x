@@ -480,9 +480,9 @@ inline diplomat::result<std::monostate, std::monostate> ICU4XFixedDecimal::conca
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_concatenate_end(this->inner.get(), other.AsFFIMut());
   diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err<std::monostate>(std::monostate());
   }
   return diplomat_result_out_value;
 }

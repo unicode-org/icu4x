@@ -351,3 +351,8 @@ fn run_sentence_break_test() {
 fn run_sentence_break_extra_test() {
     sentence_break_test(include_str!("testdata/SentenceBreakExtraTest.txt"));
 }
+
+#[test]
+fn run_sentence_break_random_test() {
+    sentence_break_test(include_str!("testdata/SentenceBreakRandomTest.txt"));
+}

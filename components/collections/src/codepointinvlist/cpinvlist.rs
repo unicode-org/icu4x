@@ -248,7 +248,6 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use icu_collections::codepointinvlist::CodePointInversionListError;
-    /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let result = CodePointInversionList::try_from_inversion_list_slice(&valid);
     /// assert!(matches!(result, CodePointInversionList));
@@ -281,8 +280,6 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use std::vec::Vec;
-    /// use zerovec::ZeroVec;
     ///
     /// let bmp_list = &[0x0, 0x10000];
     /// let smp_list = &[0x10000, 0x20000];
@@ -332,7 +329,6 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use zerovec::ZeroVec;
     ///
     /// let expected = [0x0, (char::MAX as u32) + 1];
     /// assert_eq!(
@@ -359,7 +355,6 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use zerovec::ZeroVec;
     ///
     /// const BMP_MAX: u32 = 0xFFFF;
     ///

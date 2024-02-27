@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class Date implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Date._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  Date._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -30,7 +38,7 @@ final class Date implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Date._(result.union.ok, true);
+    return Date._(result.union.ok, true, []);
   }
 
   /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
@@ -47,7 +55,7 @@ final class Date implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Date._(result.union.ok, true);
+    return Date._(result.union.ok, true, []);
   }
 
   /// Convert this date to one in a different calendar
@@ -55,7 +63,7 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
   Date toCalendar(Calendar calendar) {
     final result = _ICU4XDate_to_calendar(_underlying, calendar._underlying);
-    return Date._(result, true);
+    return Date._(result, true, []);
   }
 
   /// Converts this date to ISO
@@ -63,7 +71,7 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
   IsoDate toIso() {
     final result = _ICU4XDate_to_iso(_underlying);
-    return IsoDate._(result, true);
+    return IsoDate._(result, true, []);
   }
 
   /// Returns the 1-indexed day in the month for this date
@@ -186,7 +194,7 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
   Calendar get calendar {
     final result = _ICU4XDate_calendar(_underlying);
-    return Calendar._(result, true);
+    return Calendar._(result, true, []);
   }
 }
 

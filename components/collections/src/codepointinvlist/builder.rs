@@ -528,9 +528,7 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{
-    ///     CodePointInversionList, CodePointInversionListBuilder,
-    /// };
+    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     /// let mut builder = CodePointInversionListBuilder::new();
     /// let check = builder.build();
     /// assert!(check.is_empty());

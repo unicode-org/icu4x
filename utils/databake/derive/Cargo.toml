@@ -8,7 +8,7 @@ description = "Custom derive for the databake crate"
 version = "0.1.7"
 categories = ["rust-patterns", "memory-management", "development-tools::procedural-macro-helpers", "development-tools::build-utils"]
 keywords = ["zerocopy", "serialization", "const", "proc"]
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true

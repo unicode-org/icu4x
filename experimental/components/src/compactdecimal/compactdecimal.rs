@@ -455,7 +455,6 @@ impl CompactDecimalFormatter {
     /// rounded towards the number with an even least significant digit.
     ///
     /// ```
-    /// # use fixed_decimal::FixedDecimal;
     /// # use icu_experimental::compactdecimal::CompactDecimalFormatter;
     /// # use icu_locid::locale;
     /// # use writeable::assert_writeable_eq;
