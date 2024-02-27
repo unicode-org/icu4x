@@ -8,12 +8,19 @@ CXX := clang++
 .PHONY: all clean
 all: ucptrie_wrap.wasm
 
+# The objects are built with the following flags:
+# --target=wasm32-unknown-wasi to build with WASI for system symbols
+# -DTRUE=1 to fix error use of undeclared identifier 'TRUE'
+# -DU_DISABLE_RENAMING so the same WASM module works across ICU versions
+# --compile to skip the linking step
+# -flto to include LTO (link-time optimization) metadata
+
 wasm_obj/icu4c/%.o: $(ICU4C_SOURCE)/%.cpp
 	mkdir -p wasm_obj/icu4c/common
 	$(CXX) --target=wasm32-unknown-wasi \
 		-DTRUE=1 \
 		-DU_DISABLE_RENAMING=1 \
-		-c \
+		--compile \
 		-flto \
 		-I$(ICU4C_SOURCE)/common \
 		$< \
@@ -23,7 +30,7 @@ wasm_obj/ucptrie_wrap.o: ucptrie_wrap.cpp
 	mkdir -p wasm_obj
 	$(CXX) --target=wasm32-unknown-wasi \
 		-I/usr/include/wasm32-wasi \
-		-c \
+		--compile \
 		-flto \
 		-I$(ICU4C_SOURCE)/common \
 		$< \
