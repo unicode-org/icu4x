@@ -299,28 +299,23 @@ impl UnicodeFuncs {
                         // If we treated `hb_buffer_add_codepoints` as conceptually
                         // `unsafe`, it would be appropriate not to do scalar value
                         // validation here.
-                        let first = if let Some(first) = core::char::from_u32(a) {
-                            first
-                        } else {
+                        let Some(first) = char::from_u32(a) else {
                             // GIGO case
                             debug_assert!(false);
                             return false as hb_bool_t;
                         };
-                        let second = if let Some(second) = core::char::from_u32(b) {
-                            second
-                        } else {
+                        let Some(second) = char::from_u32(b) else {
                             // GIGO case
                             debug_assert!(false);
                             return false as hb_bool_t;
                         };
-                        if let Some(c) = CanonicalComposition::new().compose(first, second) {
-                            unsafe {
-                                core::ptr::write(ab, c as hb_codepoint_t);
-                            }
-                            true as hb_bool_t
-                        } else {
-                            false as hb_bool_t
+                        let Some(c) = CanonicalComposition::new().compose(first, second) else {
+                            return false as hb_bool_t;
+                        };
+                        unsafe {
+                            core::ptr::write(ab, c as hb_codepoint_t);
                         }
+                        true as hb_bool_t
                     }
                     cb
                 }),
@@ -346,9 +341,7 @@ impl UnicodeFuncs {
                         // If we treated `hb_buffer_add_codepoints` as conceptually
                         // `unsafe`, it would be appropriate not to do scalar value
                         // validation here.
-                        let composed = if let Some(composed) = core::char::from_u32(ab) {
-                            composed
-                        } else {
+                        let Some(composed) = char::from_u32(ab) else {
                             // GIGO case
                             debug_assert!(false);
                             return false as hb_bool_t;
@@ -392,7 +385,7 @@ impl UnicodeFuncs {
         Ok(ufuncs)
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, new_hb_unicode_funcs)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn new_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
     where
         D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
@@ -405,8 +398,6 @@ impl UnicodeFuncs {
             + DataProvider<ScriptV1Marker>
             + ?Sized,
     {
-        let ufuncs = Self::empty()?;
-
         let canonical_combining_class_map = CanonicalCombiningClassMap::try_new_unstable(provider)?;
         let general_category_map = maps::load_general_category(provider)?;
         let bidi_auxiliary_props_map =
@@ -415,6 +406,8 @@ impl UnicodeFuncs {
         let script_enum_to_short_name_lookup = Script::get_enum_to_short_name_mapper(provider)?;
         let canonical_composition = CanonicalComposition::try_new_unstable(provider)?;
         let canonical_decomposition = CanonicalDecomposition::try_new_unstable(provider)?;
+
+        let ufuncs = Self::empty()?;
 
         unsafe {
             hb_unicode_funcs_set_combining_class_func(
@@ -578,30 +571,25 @@ impl UnicodeFuncs {
                         // If we treated `hb_buffer_add_codepoints` as conceptually
                         // `unsafe`, it would be appropriate not to do scalar value
                         // validation here.
-                        let first = if let Some(first) = core::char::from_u32(a) {
-                            first
-                        } else {
+                        let Some(first) = char::from_u32(a) else {
                             // GIGO case
                             debug_assert!(false);
                             return false as hb_bool_t;
                         };
-                        let second = if let Some(second) = core::char::from_u32(b) {
-                            second
-                        } else {
+                        let Some(second) = char::from_u32(b) else {
                             // GIGO case
                             debug_assert!(false);
                             return false as hb_bool_t;
                         };
-                        if let Some(c) = unsafe { &*(user_data as *mut CanonicalComposition) }
+                        let Some(c) = unsafe { &*(user_data as *mut CanonicalComposition) }
                             .compose(first, second)
-                        {
-                            unsafe {
-                                core::ptr::write(ab, c as hb_codepoint_t);
-                            }
-                            true as hb_bool_t
-                        } else {
-                            false as hb_bool_t
+                        else {
+                            return false as hb_bool_t;
+                        };
+                        unsafe {
+                            core::ptr::write(ab, c as hb_codepoint_t);
                         }
+                        true as hb_bool_t
                     }
                     cb
                 }),
@@ -632,9 +620,7 @@ impl UnicodeFuncs {
                         // If we treated `hb_buffer_add_codepoints` as conceptually
                         // `unsafe`, it would be appropriate not to do scalar value
                         // validation here.
-                        let composed = if let Some(composed) = core::char::from_u32(ab) {
-                            composed
-                        } else {
+                        let Some(composed) = char::from_u32(ab) else {
                             // GIGO case
                             debug_assert!(false);
                             return false as hb_bool_t;
