@@ -228,7 +228,10 @@ pub struct SinglePlaceholderPatternIterator<'a> {
     current_offset: usize,
 }
 
-impl SinglePlaceholderPatternIterator<'_> {
+// Note: This impl is not exported via public bounds, but it might be in the
+// future, and the compiler might be able to find it. The code is also
+// reachable from `Iterator::size_hint`.
+impl ExactSizeIterator for SinglePlaceholderPatternIterator<'_> {
     fn len(&self) -> usize {
         let placeholder_offset_char = match self.store.chars().next() {
             Some(i) => i,
