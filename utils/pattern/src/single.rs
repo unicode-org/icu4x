@@ -144,9 +144,7 @@ where
 ///
 /// [`Pattern::interpolate()`]: crate::Pattern::interpolate
 #[derive(Debug)]
-pub struct SinglePlaceholder {
-    _not_constructible: core::convert::Infallible,
-}
+pub enum SinglePlaceholder {}
 
 impl crate::private::Sealed for SinglePlaceholder {}
 
