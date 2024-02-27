@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::{
-    borrow::Borrow,
     fmt::{self, Write},
     marker::PhantomData,
 };
@@ -121,7 +120,7 @@ where
     {
         let store = B::try_from_items(items.map(Ok))?;
         #[cfg(debug_assertions)]
-        match B::validate_store(store.borrow()) {
+        match B::validate_store(core::borrow::Borrow::borrow(&store)) {
             Ok(()) => (),
             Err(e) => {
                 debug_assert!(false, "{:?}", e);
@@ -171,7 +170,7 @@ where
         );
         let store = B::try_from_items(parser)?;
         #[cfg(debug_assertions)]
-        match B::validate_store(store.borrow()) {
+        match B::validate_store(core::borrow::Borrow::borrow(&store)) {
             Ok(()) => (),
             Err(e) => {
                 debug_assert!(false, "{:?} for pattern {:?}", e, pattern);
