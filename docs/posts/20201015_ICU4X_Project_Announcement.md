@@ -61,7 +61,7 @@ Rust provides strong bindings to [WebAssembly](https://webassembly.org/), and we
 While it’s early to have exact scope settled, ICU4X aims to expose a superset of `ECMA-402` scope of APIs to a wide range of platforms such as:
 
 * Web Platform (V8, SpiderMonkey, JSC)
-* Software platforms (Fuschia, Gecko)
+* Software platforms (Fuchsia, Gecko)
 * Mobile OSes (iOS, Android)
 * Low-power OSes with alloc (WearOS, WatchOS)
 * Client-side toolkits (Flutter)

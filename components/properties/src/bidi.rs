@@ -81,7 +81,7 @@ pub struct BidiClassAdapter<'a> {
 
 impl<'a> BidiClassAdapter<'a> {
     /// Creates new instance of `BidiClassAdapter`.
-    pub fn new(data: CodePointMapDataBorrowed<'a, BidiClass>) -> BidiClassAdapter<'a> {
+    pub const fn new(data: CodePointMapDataBorrowed<'a, BidiClass>) -> BidiClassAdapter<'a> {
         BidiClassAdapter { data }
     }
 }

@@ -49,15 +49,11 @@ class ICU4XLocaleExpander {
   static diplomat::result<ICU4XLocaleExpander, ICU4XError> create_extended(const ICU4XDataProvider& provider);
 
   /**
-   * FFI version of `LocaleExpander::maximize()`.
-   * 
    * See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
    */
   ICU4XTransformResult maximize(ICU4XLocale& locale) const;
 
   /**
-   * FFI version of `LocaleExpander::minimize()`.
-   * 
    * See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
    */
   ICU4XTransformResult minimize(ICU4XLocale& locale) const;

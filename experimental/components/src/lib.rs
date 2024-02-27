@@ -21,6 +21,7 @@ pub mod personnames;
 pub mod relativetime;
 pub mod transliterate;
 pub mod unicodeset_parse;
+pub mod units;
 
 #[doc(hidden)]
 // Compiled constructors look for the baked provider at crate::provider::Baked,
@@ -31,19 +32,20 @@ pub mod provider {
 
     #[cfg(feature = "compiled_data")]
     const _: () = {
+        pub use crate as icu_experimental;
+
         pub mod icu {
-            pub use crate as experimental;
             #[allow(unused_imports)] // baked data may or may not need this
             pub use icu_locid_transform as locid_transform;
         }
         icu_experimental_data::make_provider!(Baked);
+        icu_experimental_data::impl_compactdecimal_long_v1!(Baked);
+        icu_experimental_data::impl_compactdecimal_short_v1!(Baked);
         icu_experimental_data::impl_displaynames_languages_v1!(Baked);
         icu_experimental_data::impl_displaynames_locales_v1!(Baked);
         icu_experimental_data::impl_displaynames_regions_v1!(Baked);
         icu_experimental_data::impl_displaynames_scripts_v1!(Baked);
         icu_experimental_data::impl_displaynames_variants_v1!(Baked);
-        icu_experimental_data::impl_compactdecimal_long_v1!(Baked);
-        icu_experimental_data::impl_compactdecimal_short_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_day_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_hour_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_minute_v1!(Baked);
@@ -68,6 +70,7 @@ pub mod provider {
         icu_experimental_data::impl_relativetime_short_second_v1!(Baked);
         icu_experimental_data::impl_relativetime_short_week_v1!(Baked);
         icu_experimental_data::impl_relativetime_short_year_v1!(Baked);
+        icu_experimental_data::impl_units_info_v1!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -76,6 +79,8 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const KEYS: &[DataKey] = &[
+        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
+        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
         super::dimension::provider::CurrencyEssentialsV1Marker::KEY,
@@ -109,5 +114,6 @@ pub mod provider {
         super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY,
+        super::units::provider::UnitsInfoV1Marker::KEY,
     ];
 }

@@ -1,8 +1,8 @@
-# icu_unitsconversion [![crates.io](https://img.shields.io/crates/v/icu_unitsconversion)](https://crates.io/crates/icu_unitsconversion)
+# icu_datagen_dart [![crates.io](https://img.shields.io/crates/v/icu_datagen_dart)](https://crates.io/crates/icu_datagen_dart)
 
 <!-- cargo-rdme start -->
 
-Experimental.
+Precompiled datagen
 
 <!-- cargo-rdme end -->
 

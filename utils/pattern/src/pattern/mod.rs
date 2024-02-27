@@ -42,7 +42,7 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::{InterpolatedKind, Pattern};
-    /// use std::{convert::TryFrom, ops::Deref};
+    /// use std::ops::Deref;
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
@@ -93,7 +93,7 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::Pattern;
-    /// use std::{convert::TryFrom, fmt::Display};
+    /// use std::fmt::Display;
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
@@ -139,7 +139,7 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::Pattern;
-    /// use std::{convert::TryFrom, fmt::Display};
+    /// use std::fmt::Display;
     ///
     /// #[derive(Debug, PartialEq)]
     /// struct Element(usize);
@@ -186,7 +186,6 @@ impl<'s, P> Pattern<'s, P> {
     ///
     /// ```
     /// use icu_pattern::Pattern;
-    /// use std::convert::TryFrom;
     ///
     /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///

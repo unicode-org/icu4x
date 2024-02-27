@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true

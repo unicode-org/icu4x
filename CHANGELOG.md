@@ -11,7 +11,8 @@
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
-    - Made additional constructors `const` (https://github.com/unicode-org/icu4x/pull/4574)
+    - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
+    - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
 - Data model and providers
@@ -39,12 +40,16 @@
         - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar. (https://github.com/unicode-org/icu4x/pull/4504)
         - Expose `Hebrew` as a unit struct, add `Date::try_new_hebrew_date()`, `DateTime::try_new_hebrew_datetime()`. (https://github.com/unicode-org/icu4x/pulls/4532)
         - Deprecate `Hebrew::new_always_precomputing()`, `Date::try_new_hebrew_date_with_calendar()`, `DateTime::try_new_hebrew_datetime_with_calendar()`. The new implementation of the Hebrew calendar is faster and we do not need APIs for precomputation. (https://github.com/unicode-org/icu4x/pulls/4532)
+    - `litemap`
+        - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
         - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
     - `zerotrie`
         - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
         - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
+    - `zerovec`
+        - Change `ZeroHashMap` to use `twox-hash` (https://github.com/unicode-org/icu4x/pull/4592)
 
 ## icu4x 1.4.x
 

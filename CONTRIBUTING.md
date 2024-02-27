@@ -30,17 +30,20 @@ ICU4X can be edited using any text editor capable of editing Rust code.
 
 Many ICU4X engineers use [Visual Studio Code](https://code.visualstudio.com/) with the [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension.
 
-To build all code paths and improve build times in VSCode, we recommend the following settings. (Note: The second setting causes VSCode to build ICU4X with only the `und` locale, which reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.) To add these settings, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
+To build all code paths and improve build times in VSCode, we recommend the following settings. To add them, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
 
-```javascript
+```json
 "settings": {
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
-		// Path relative to `provider/baked/*/src/lib.rs`
-		"ICU4X_DATA_DIR": "../../../../provider/datagen/tests/data/baked"
+		"ICU4X_DATA_DIR": "../../../datagen/tests/data/baked"
 	}
 }
 ```
+
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/baked/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+
+Note: you might also consider setting a custom value to the `CARGO_TARGET_DIR` environment variable so that VSCode writes to a different target directory than other programs or the command line.
 
 ## Contributing a Pull Request
 
@@ -109,7 +112,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 <br/>
  
  - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
-     + Requires `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`).
+     + Requires `clang-16` and `lld-16` with the `gold` plugin (APT packages `llvm-16` and `lld-16`).
  - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.
@@ -244,13 +247,15 @@ The following PR has one non-blocking review, one blocking review, one approval,
 
 ### Contributor License Agreement
 
-In order to contribute to this project, the Unicode Consortium must have on file a Contributor License Agreement (CLA) covering your contributions, either an individual or a corporate CLA. Pull Requests will not be merged until the correct CLA is signed. Which version needs to be signed depends on who owns the contribution being made: you as the individual making the contribution or your employer. _It is your responsibility to determine whether your contribution is owned by your employer._ Please review [The Unicode Consortium Intellectual Property, Licensing, and Technical Contribution Policies][policies] for further guidance on which CLA to sign, as well as other information and guidelines regarding the Consortium’s licensing and technical contribution policies and procedures.
+In order to contribute to this project, the Unicode Consortium must have on file a Contributor License Agreement (CLA) covering your contributions, either an individual or a corporate CLA. Pull Requests, issues, and other contributions will not be merged/accepted until the correct CLA is signed. Which version needs to be signed depends on who owns the contribution being made: you as the individual making the contribution or your employer. **It is your responsibility to determine whether your contribution is owned by your employer.** Please review the [Unicode Intellectual Property, Licensing, & Technical Contribution Policy][policies] for further guidance on which CLA to sign, as well as other information and guidelines regarding the Consortium’s licensing and technical contribution policies and procedures.
 
-- **Individual CLA**: If you have determined that the Individual CLA is appropriate, just open a Pull Request and you will have the opportunity to click to accept the Individual CLA.
+To sign the CLA in Github, open a Pull Request (a comment will be automatically added with a link to the CLA Form), or go directly to [the CLA Form][sign-cla]. You may need to sign in to Github to see the entire CLA Form.
 
-- **Corporate CLA**: If you have determined that a Corporate CLA is appropriate, please check the [public list of Corporate CLAs][unicode-corporate-clas] that the Consortium has on file. If your employer has already signed a CLA, then just open a Pull Request and you will have the opportunity to click that your employer has already signed a CLA. If your employer has not already signed a CLA, you will need to arrange for your employer to sign the Corporate CLA, as described in [How to Sign a Unicode CLA][signing].
+- **Individual CLA**: If you have determined that the Individual CLA is appropriate, then when you access the CLA Form, click the Individual CLA and complete the Form.
 
-Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the free and open-source [Unicode License][unicode-license], also known as Unicode, Inc. License Agreement - Data Files and Software.
+- **Corporate CLA**: If you have determined that a Corporate CLA is appropriate, please first check the [public list of Corporate CLAs][unicode-corporate-clas] that the Consortium has on file. If your employer is listed, then when you access the CLA Form, you can click the box indicating that you are covered by your employer’s corporate CLA. If your employer is not on the list, then it has not already signed a CLA and you will need to arrange for your employer to do so before you contribute, as described in [How to Sign a Unicode CLA][signing].
+
+Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the [OSI-approved][osi-Unicode-License-3.0] free and open-source [Unicode License v3][unicode-license].
 
 ### New files
 
@@ -326,3 +331,5 @@ Please discuss first.
 [unicode-corporate-clas]: https://www.unicode.org/policies/corporate-cla-list/
 [signing]: https://www.unicode.org/policies/licensing_policy.html#signing
 [unicode-license]: https://www.unicode.org/license.txt
+[sign-cla]: https://cla-assistant.io/unicode-org/.github
+[osi-Unicode-License-3.0]: https://opensource.org/license/unicode-license-v3/

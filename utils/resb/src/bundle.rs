@@ -11,10 +11,7 @@
 //! tools for working with bundles.
 
 extern crate alloc;
-use alloc::{
-    borrow::Cow,
-    collections::{btree_map, BTreeMap},
-};
+use alloc::{borrow::Cow, collections::BTreeMap};
 
 use crate::MASK_28_BIT;
 
@@ -27,7 +24,13 @@ use crate::MASK_28_BIT;
 pub struct ResourceBundle<'a> {
     name: Cow<'a, str>,
     root: Resource<'a>,
-    is_locale_fallback_enabled: bool,
+
+    /// Whether fallback is enabled for this resource bundle.
+    ///
+    /// A resource bundle storing locale data may omit some data in order to
+    /// reduce duplication, allowing fallback to more general locales which
+    /// use the same values.
+    pub is_locale_fallback_enabled: bool,
 }
 
 impl<'a> ResourceBundle<'a> {
@@ -41,6 +44,9 @@ impl<'a> ResourceBundle<'a> {
     }
 
     /// Gets the name of the resource bundle.
+    ///
+    /// This name is used as the "key" of the root resource in a text format
+    /// bundle, but is not used in building binary resource bundles.
     pub fn name(&self) -> &str {
         &self.name
     }
@@ -48,15 +54,6 @@ impl<'a> ResourceBundle<'a> {
     /// Gets the root resource in the resource tree.
     pub fn root(&self) -> &Resource {
         &self.root
-    }
-
-    /// Returns `true` if fallback is enabled for this resource bundle.
-    ///
-    /// A resource bundle storing locale data may omit some data in order to
-    /// reduce duplication, allowing fallback to more general locales which
-    /// use the same values.
-    pub fn is_locale_fallback_enabled(&self) -> bool {
-        self.is_locale_fallback_enabled
     }
 }
 
@@ -86,117 +83,10 @@ pub enum Resource<'a> {
     IntVector(Vec<u32>),
 }
 
-/// A table of [`Resource`]s indexed by a string [`Key`].
-///
-/// Resources may be accessed either by key or by integer index.
-#[derive(Debug)]
-pub struct Table<'a> {
-    // Table entries are sorted by key, so a BTreeMap is preferred over a
-    // HashMap, which makes no ordering guarantees.
-    map: BTreeMap<Key<'a>, Resource<'a>>,
-}
-
-impl<'a> Table<'a> {
-    /// Makes a new, empty table.
-    pub fn new() -> Self {
-        Self {
-            map: BTreeMap::new(),
-        }
-    }
-
-    /// Returns a reference to the resource corresponding to the key, if any.
-    pub fn get(&self, k: &Key<'a>) -> Option<&Resource> {
-        self.map.get(k)
-    }
-
-    /// Inserts a new resource into the table.
-    ///
-    /// Returns `None` if this key was not already present in the table.
-    /// Otherwise, updates the resource in the table and returns the previous
-    /// resource.
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// use resb::bundle::{Resource, Table};
-    ///
-    /// let mut table = Table::new();
-    /// let previous = table.insert("foo".into(), Resource::String("bar".into()));
-    /// assert!(previous.is_none());
-    ///
-    /// let previous = table.insert("foo".into(), Resource::String("baz".into()));
-    /// if let Some(Resource::String(inner)) = previous {
-    ///     assert_eq!(String::from(inner), "bar");
-    /// } else {
-    ///     panic!();
-    /// }
-    /// ```
-    pub fn insert(&mut self, k: Key<'a>, v: Resource<'a>) -> Option<Resource> {
-        self.map.insert(k, v)
-    }
-
-    /// Returns `true` if there are no resources in the table.
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// use resb::bundle::{Resource, Table};
-    ///
-    /// let mut table = Table::new();
-    /// assert!(table.is_empty());
-    /// table.insert("foo".into(), Resource::String("bar".into()));
-    /// assert!(!table.is_empty());
-    /// ```
-    pub fn is_empty(&self) -> bool {
-        self.map.is_empty()
-    }
-
-    /// Gets an iterator over the entries in the table, sorted by key.
-    pub fn iter(&self) -> TableIter {
-        TableIter {
-            iter: self.map.iter(),
-        }
-    }
-
-    /// Gets an iterator over the sorted keys in the table.
-    pub fn keys(&self) -> Keys {
-        Keys {
-            iter: self.map.keys(),
-        }
-    }
-
-    /// Returns the number of resources in the table.
-    pub fn len(&self) -> usize {
-        self.map.len()
-    }
-
-    /// Gets an iterator over the resources in the table, sorted by key.
-    pub fn values(&self) -> Values {
-        Values {
-            iter: self.map.values(),
-        }
-    }
-}
-
-impl Default for Table<'_> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl<'a> IntoIterator for &'a Table<'a> {
-    type Item = (&'a Key<'a>, &'a Resource<'a>);
-
-    type IntoIter = TableIter<'a>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.iter()
-    }
-}
+/// A table of [`Resource`]s indexed by a string-based [`Key`].
+// Ordering of keys in a table is significant, so `HashMap` isn't appropriate
+// here.
+pub type Table<'a> = BTreeMap<Key<'a>, Resource<'a>>;
 
 /// A key for a [`Resource`] within a [`Table`].
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -224,71 +114,6 @@ impl<'a> From<String> for Key<'a> {
 impl<'a> From<Key<'a>> for String {
     fn from(value: Key<'a>) -> Self {
         value.0.into_owned()
-    }
-}
-
-/// An iterator over the sorted [`Key`]s of a [`Table`].
-#[derive(Debug)]
-pub struct Keys<'a> {
-    iter: btree_map::Keys<'a, Key<'a>, Resource<'a>>,
-}
-
-impl<'a> Iterator for Keys<'a> {
-    type Item = &'a Key<'a>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next()
-    }
-}
-
-impl<'a> DoubleEndedIterator for Keys<'a> {
-    fn next_back(&mut self) -> Option<Self::Item> {
-        self.iter.next_back()
-    }
-}
-
-/// An iterator over the [`Resource`] values of a [`Table`], sorted by [`Key`].
-#[derive(Debug)]
-pub struct Values<'a> {
-    iter: btree_map::Values<'a, Key<'a>, Resource<'a>>,
-}
-
-impl<'a> Iterator for Values<'a> {
-    type Item = &'a Resource<'a>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next()
-    }
-}
-
-impl<'a> DoubleEndedIterator for Values<'a> {
-    fn next_back(&mut self) -> Option<Self::Item> {
-        self.iter.next_back()
-    }
-}
-
-/// An iterator over the entries of a `Table`, sorted by [`Key`].
-///
-/// This `struct` is created by the [`iter`] method on [`Table`]. See its
-/// documentation for more.
-///
-/// [`iter`]: Table::iter
-#[derive(Debug)]
-pub struct TableIter<'a> {
-    iter: btree_map::Iter<'a, Key<'a>, Resource<'a>>,
-}
-
-impl<'a> Iterator for TableIter<'a> {
-    type Item = (&'a Key<'a>, &'a Resource<'a>);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next()
-    }
-}
-
-impl<'a> DoubleEndedIterator for TableIter<'a> {
-    fn next_back(&mut self) -> Option<Self::Item> {
-        self.iter.next_back()
     }
 }
 

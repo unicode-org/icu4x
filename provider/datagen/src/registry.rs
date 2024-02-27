@@ -4,33 +4,7 @@
 
 use icu_provider::prelude::*;
 
-macro_rules! make_check_all_keys {
-    ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
-        fn check_all_keys() {
-            #[cfg(not(all($($feature,)+)))]
-            log::warn!("The icu_datagen crates has not been built with all components, so `all_keys` only returns a subset of keys");
-        }
-    };
-}
-
-/// This macro contains special handling for `#[cfg(test)]` because it is not
-/// a warning if that cfg is not enabled.
-///
-/// The first cfg should be `#[cfg(test)]`, followed by all test markers,
-/// followed by `#[cfg(feature = "...")]` and all remaining markers.
-///
-/// If there are no test markers, `#[cfg(test)]` should be replaced by
-/// `no_cfg_test,` followed by the first `#[cfg(feature = "...")]`.
 macro_rules! registry {
-    (#[cfg(test)] $($marker_test:path = $path_test:literal,)+ $(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
-        make_check_all_keys!($(#[cfg($feature)] $($marker = $path,)+)+);
-        // Call the macro again with #[cfg(any(test))] to get the normal code path
-        registry!(#[cfg(any(test))] $($marker_test = $path_test,)+ $(#[cfg($feature)] $($marker = $path,)+)+);
-    };
-    (no_cfg_test, $(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
-        make_check_all_keys!($(#[cfg($feature)] $($marker = $path,)+)+);
-        registry!($(#[cfg($feature)] $($marker = $path,)+)+);
-    };
     ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
         /// List of all keys that are available.
         ///
@@ -38,7 +12,8 @@ macro_rules! registry {
         /// corresponding Cargo features has been enabled.
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
-            check_all_keys();
+            #[cfg(features = "experimental_components")]
+            log::warn!("The icu_datagen crates has been built with the `experimental_components` feature, so `all_keys` returns experimental keys");
             vec![
                 $(
                     $(
@@ -101,18 +76,26 @@ macro_rules! registry {
             )+
         }
 
-        icu_provider::make_exportable_provider!(
-            crate::DatagenProvider,
-            [
-                icu_provider::hello_world::HelloWorldV1Marker,
-                $(
-                    $(
-                        #[cfg($feature)]
-                        $marker,
-                    )+
-                )+
-            ]
-        );
+        #[macro_export]
+        #[doc(hidden)]
+        macro_rules! make_exportable_provider {
+            ($ty:ty) => {
+                icu_provider::make_exportable_provider!(
+                    $ty,
+                    [
+                        icu_provider::hello_world::HelloWorldV1Marker,
+                        $(
+                            $(
+                                #[cfg($feature)]
+                                $marker,
+                            )+
+                        )+
+                    ]
+                );
+            }
+        }
+        pub(crate) use make_exportable_provider;
+
 
         #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
@@ -153,10 +136,7 @@ macro_rules! registry {
     }
 }
 
-// If `#[cfg(test)]` becomes empty, replace it with `no_cfg_test,`
 registry!(
-    #[cfg(test)]
-    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(all())]
     icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
     icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",
@@ -404,6 +384,11 @@ registry!(
         "propnames/to/short/linear/InSC@1",
     icu_properties::provider::GraphV1Marker = "props/graph@1",
     icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
+    icu_properties::provider::JoiningTypeV1Marker = "props/jt@1",
+    icu_properties::provider::JoiningTypeNameToValueV1Marker = "propnames/from/jt@1",
+    icu_properties::provider::JoiningTypeValueToLongNameV1Marker = "propnames/to/long/linear/jt@1",
+    icu_properties::provider::JoiningTypeValueToShortNameV1Marker =
+        "propnames/to/short/linear/jt@1",
     icu_properties::provider::LineBreakV1Marker = "props/lb@1",
     icu_properties::provider::LineBreakNameToValueV1Marker = "propnames/from/lb@1",
     icu_properties::provider::LineBreakValueToLongNameV1Marker = "propnames/to/long/linear/lb@1",
@@ -514,6 +499,8 @@ registry!(
     #[cfg(feature = "experimental_components")]
     icu_experimental::transliterate::provider::TransliteratorRulesV1Marker =
         "transliterator/rules@1",
+    #[cfg(feature = "experimental_components")]
+    icu_experimental::units::provider::UnitsInfoV1Marker = "units/info@1",
 );
 
 /// Same as `all_keys`.

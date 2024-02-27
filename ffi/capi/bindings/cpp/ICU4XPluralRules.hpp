@@ -29,8 +29,6 @@ struct ICU4XPluralRulesDeleter {
 };
 
 /**
- * FFI version of `PluralRules`.
- * 
  * See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
  */
 class ICU4XPluralRules {

@@ -15,8 +15,7 @@ args = ["-C", "docs/tutorials/c", "test"]
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
-condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
-dependencies = ["install-nightly", "install-unknown-linux"]
+dependencies = ["install-unknown-linux-nightly"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -36,15 +35,14 @@ args = ["-C", "docs/tutorials/cpp", "test"]
 [tasks.test-npm]
 description = "Run JS tests"
 category = "ICU4X Development"
-dependencies = ["install-nightly", "install-wasm"]
+dependencies = ["install-wasm-nightly"]
 command = "npm"
 args = ["-C", "ffi/npm", "install-ci-test"]
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
 category = "ICU4X Development"
-condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
-dependencies = ["install-nightly", "install-wasm"]
+dependencies = ["install-wasm-nightly"]
 command = "make"
 args = ["-C", "docs/tutorials/js-tiny", "test"]
 
@@ -66,8 +64,8 @@ exec --fail-on-error dart --enable-experiment=native-assets test
 [tasks.check-freertos-wearos]
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
-dependencies = ["install-nightly", "install-cortex-8"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+dependencies = ["install-cortex-8-nightly"]
+toolchain = "${PINNED_CI_NIGHTLY}"
 env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort -Copt-level=s" }
 command = "cargo"
 args = ["check", "--package", "icu_freertos",
@@ -132,8 +130,6 @@ args = ["run", "-p", "diplomat-gen", "dart"]
 [tasks.diplomat-coverage]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
-condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
-dependencies = ["install-nightly"]
 command = "cargo"
 args = ["run", "-p=icu_ffi_coverage", "--", "ffi/capi/tests/missing_apis.txt"]
 
@@ -155,31 +151,43 @@ end
 
 # Install tasks
 
-[tasks.install-unknown-linux]
+[tasks.install-nightly]
+description = "Installs $PINNED_CI_NIGHTLY"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install ${PINNED_CI_NIGHTLY} --profile minimal
+exec --fail-on-error rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
+'''
+
+[tasks.install-unknown-linux-nightly]
 description = "Installs the unknown-linux target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
-args = ["target", "add", "x86_64-unknown-linux-gnu", "--toolchain=${ICU4X_NIGHTLY_TOOLCHAIN}"]
+args = ["target", "add", "x86_64-unknown-linux-gnu"]
 
-[tasks.install-emscripten]
+[tasks.install-emscripten-nightly]
 description = "Installs the emscripten target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
-args = ["target", "add", "wasm32-unknown-emscripten", "--toolchain=${ICU4X_NIGHTLY_TOOLCHAIN}"]
+args = ["target", "add", "wasm32-unknown-emscripten"]
 
-[tasks.install-wasm]
+[tasks.install-wasm-nightly]
 description = "Installs the wasm target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
-args = ["target", "add", "wasm32-unknown-unknown", "--toolchain=${ICU4X_NIGHTLY_TOOLCHAIN}"]
+args = ["target", "add", "wasm32-unknown-unknown"]
 
-[tasks.install-cortex-8]
+[tasks.install-cortex-8-nightly]
 description = "Install the thumbv8m target"
 category = "ICU4X FFI"
 dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "thumbv8m.main-none-eabihf"]

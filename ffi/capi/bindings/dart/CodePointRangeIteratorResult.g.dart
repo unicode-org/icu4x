@@ -27,6 +27,12 @@ final class CodePointRangeIteratorResult {
   final bool done;
 
   // ignore: unused_element
+  // Internal constructor from FFI.
+  // This struct contains borrowed fields, so this takes in a list of
+  // "edges" corresponding to where each lifetime's data may have been borrowed from
+  // and passes it down to individual fields containing the borrow.
+  // This method does not attempt to handle any dependencies between lifetimes, the caller
+  // should handle this when constructing edge arrays.
   CodePointRangeIteratorResult._(_CodePointRangeIteratorResultFfi underlying) :
     start = underlying.start,
     end = underlying.end,
@@ -35,6 +41,9 @@ final class CodePointRangeIteratorResult {
   // ignore: unused_element
   _CodePointRangeIteratorResultFfi _pointer(ffi.Allocator temp) {
     final pointer = temp<_CodePointRangeIteratorResultFfi>();
+    pointer.ref.start = start;
+    pointer.ref.end = end;
+    pointer.ref.done = done;
     return pointer.ref;
   }
 
