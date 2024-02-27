@@ -177,7 +177,7 @@ impl PatternBackend for SinglePlaceholder {
                 '\0'
             }
         };
-        let initial_offset = char::len_utf8(placeholder_offset_char);
+        let initial_offset = placeholder_offset_char.len_utf8();
         SinglePlaceholderPatternIterator {
             store,
             placeholder_offset: placeholder_offset_char as usize + initial_offset - 1,
@@ -237,7 +237,7 @@ impl SinglePlaceholderPatternIterator<'_> {
                 '\0'
             }
         };
-        let initial_offset = char::len_utf8(placeholder_offset_char);
+        let initial_offset = placeholder_offset_char.len_utf8();
         let placeholder_offset = placeholder_offset_char as usize + initial_offset - 1;
         let store_len = self.store.len();
         if placeholder_offset < initial_offset {
