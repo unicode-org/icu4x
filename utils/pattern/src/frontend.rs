@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::{
-    fmt::{self, Write},
-    marker::PhantomData,
+    borrow::Borrow, fmt::{self, Write}, marker::PhantomData
 };
 
 use writeable::{PartsWrite, Writeable};
@@ -119,6 +118,13 @@ where
         I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>,
     {
         let store = B::try_from_items(items.map(Ok))?;
+        #[cfg(debug_assertions)]
+        match B::validate_store(store.borrow()) {
+            Ok(()) => (),
+            Err(e) => {
+                debug_assert!(false, "{:?}", e);
+            }
+        };
         Ok(Self {
             _backend: PhantomData,
             store,
@@ -162,6 +168,13 @@ where
             },
         );
         let store = B::try_from_items(parser)?;
+        #[cfg(debug_assertions)]
+        match B::validate_store(store.borrow()) {
+            Ok(()) => (),
+            Err(e) => {
+                debug_assert!(false, "{:?} for pattern {:?}", e, pattern);
+            }
+        };
         Ok(Self {
             _backend: PhantomData,
             store,
