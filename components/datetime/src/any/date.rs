@@ -37,10 +37,9 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
+/// use icu::calendar:: Date;
 /// use icu::datetime::{options::length, DateFormatter};
 /// use icu::locid::locale;
-/// use std::str::FromStr;
 /// use writeable::assert_writeable_eq;
 ///
 /// let length = length::Date::Medium;
@@ -80,11 +79,9 @@ impl DateFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
+    /// use icu::calendar::Date;
     /// use icu::datetime::{options::length, DateFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;

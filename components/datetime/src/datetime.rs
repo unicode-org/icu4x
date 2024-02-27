@@ -626,7 +626,6 @@ where {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -775,8 +774,7 @@ where {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::{components, length},
-    ///     DateTimeFormatterOptions, TypedDateTimeFormatter,
+    ///     options::{components, length}, TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///

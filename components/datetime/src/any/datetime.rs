@@ -40,7 +40,6 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
-/// use std::str::FromStr;
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
@@ -68,13 +67,11 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
+/// use icu::calendar::{AnyCalendar, DateTime, types::Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
-/// # use std::str::FromStr;
 /// # use std::rc::Rc;
-/// # use std::convert::TryInto;
 ///
 /// let locale = locale!("en-u-ca-japanese").into(); // English with the Japanese calendar
 ///
@@ -131,8 +128,6 @@ impl DateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(
@@ -299,9 +294,6 @@ impl DateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::components, DateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use icu_provider::AsDeserializingBufferProvider;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -434,8 +426,6 @@ impl DateTimeFormatter {
     ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
     /// };
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
@@ -523,13 +513,11 @@ where {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
     ///     options::{components, length},
-    ///     DateTimeFormatter, DateTimeFormatterOptions,
+    ///     DateTimeFormatter,
     /// };
     /// use icu::locid::locale;
-    /// use std::str::FromStr;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///

@@ -45,7 +45,7 @@ pub(crate) mod preferences;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::{options::length, DateTimeFormatterOptions};
+/// use icu::datetime::options::length;
 ///
 /// let bag = length::Bag::from_date_time_style(
 ///     length::Date::Medium,

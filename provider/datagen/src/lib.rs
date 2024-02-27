@@ -363,7 +363,6 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_file("keys.txt")?,
@@ -402,7 +401,6 @@ fn keys_from_file_inner<R: std::io::Read>(source: R) -> std::io::Result<Vec<Data
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,
