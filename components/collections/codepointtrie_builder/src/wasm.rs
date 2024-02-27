@@ -6,7 +6,6 @@ use crate::CodePointTrieBuilder;
 use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
-use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
 use zerovec::ZeroSlice;
@@ -229,16 +228,7 @@ where
         }
     }
 
-    let trie_type = match builder.trie_type {
-        TrieType::Fast => 0,
-        TrieType::Small => 1,
-    };
-    let width = match core::mem::size_of::<T::ULE>() {
-        2 => 0, // UCPTRIE_VALUE_BITS_16
-        4 => 1, // UCPTRIE_VALUE_BITS_32
-        1 => 2, // UCPTRIE_VALUE_BITS_8
-        other => panic!("Don't know how to make trie with width {other}"),
-    };
+    let (trie_type, width) = crate::common::args_for_build_immutable::<T::ULE>(builder.trie_type);
 
     let ucptrie_ptr =
         wasm.umutablecptrie_buildImmutable(&trie_ptr, trie_type, width, &error_code_ptr);

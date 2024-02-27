@@ -88,6 +88,9 @@
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+mod common;
+
 #[cfg(feature = "wasm")]
 mod wasm;
 
