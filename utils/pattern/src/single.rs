@@ -162,6 +162,9 @@ impl PatternBackend for SinglePlaceholder {
         if placeholder_offset > store.len() - initial_offset + 1 {
             return Err(Error::InvalidPattern);
         }
+        if placeholder_offset >= 0xD800 {
+            return Err(Error::InvalidPattern);
+        }
         Ok(())
     }
 
@@ -197,6 +200,9 @@ impl PatternBackend for SinglePlaceholder {
                     seen_placeholder = true;
                     let placeholder_offset =
                         u32::try_from(result.len() + 1).map_err(|_| Error::InvalidPattern)?;
+                    if placeholder_offset >= 0xD800 {
+                        return Err(Error::InvalidPattern);
+                    }
                     let placeholder_offset_char =
                         char::try_from(placeholder_offset).map_err(|_| Error::InvalidPattern)?;
                     result.insert(0, placeholder_offset_char);
