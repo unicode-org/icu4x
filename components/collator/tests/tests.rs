@@ -661,7 +661,7 @@ fn test_reordering() {
 }
 
 #[test]
-fn vi() {
+fn test_vi() {
     {
         let locale = langid!("vi");
         let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
