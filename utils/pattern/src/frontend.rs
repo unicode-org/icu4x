@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::{
-    borrow::Borrow, fmt::{self, Write}, marker::PhantomData
+    borrow::Borrow,
+    fmt::{self, Write},
+    marker::PhantomData,
 };
 
 use writeable::{PartsWrite, Writeable};
