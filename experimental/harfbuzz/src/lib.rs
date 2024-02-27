@@ -202,7 +202,6 @@ impl UnicodeFuncs {
             hb_unicode_funcs_set_general_category_func(
                 ufuncs.raw,
                 Some({
-                    #[allow(clippy::indexing_slicing)]
                     extern "C" fn cb(
                         _: *mut hb_unicode_funcs_t,
                         unicode: hb_codepoint_t,
@@ -213,6 +212,7 @@ impl UnicodeFuncs {
                         // values (which would be UB to materialize). `GeneralCategory` is a
                         // stable exhaustive enum, and the length of `ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ`
                         // matches the number of enum items, so the index will always be in range here.
+                        #![allow(clippy::indexing_slicing)]
                         ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ
                             [maps::general_category().get32(unicode) as usize]
                             as hb_unicode_general_category_t
@@ -447,7 +447,6 @@ impl UnicodeFuncs {
             hb_unicode_funcs_set_general_category_func(
                 ufuncs.raw,
                 Some({
-                    #[allow(clippy::indexing_slicing)]
                     extern "C" fn cb(
                         _: *mut hb_unicode_funcs_t,
                         unicode: hb_codepoint_t,
@@ -458,6 +457,7 @@ impl UnicodeFuncs {
                         // values (which would be UB to materialize). `GeneralCategory` is a
                         // stable exhaustive enum, and the length of `ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ`
                         // matches the number of enum items, so the index will always be in range here.
+                        #![allow(clippy::indexing_slicing)]
                         ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ[unsafe {
                             &*(user_data as *mut CodePointMapData<GeneralCategory>)
                         }
