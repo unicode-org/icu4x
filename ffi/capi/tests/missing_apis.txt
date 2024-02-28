@@ -37,4 +37,6 @@ icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStr
 icu::segmenter::GraphemeClusterBreakIteratorUtf8#Typedef
 icu::segmenter::LineBreakIteratorUtf8#Typedef
 icu::segmenter::SentenceBreakIteratorUtf8#Typedef
+icu::segmenter::WordBreakIterator::iter_with_word_type#FnInStruct
 icu::segmenter::WordBreakIteratorUtf8#Typedef
+icu::segmenter::WordType::is_word_like#FnInEnum
