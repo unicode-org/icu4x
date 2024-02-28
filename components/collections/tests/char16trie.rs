@@ -60,10 +60,11 @@ fn a_b() {
 
 #[test]
 fn shortest_branch() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_shortest_branch.toml"))
-        .unwrap()
-        .ucharstrie
-        .data;
+    let trie_data =
+        toml::from_str::<TestFile>(include_str!("data/char16trie/test_shortest_branch.toml"))
+            .unwrap()
+            .ucharstrie
+            .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     let mut iter = trie.iter();
@@ -117,10 +118,11 @@ fn branches() {
 
 #[test]
 fn long_sequence() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_long_sequence.toml"))
-        .unwrap()
-        .ucharstrie
-        .data;
+    let trie_data =
+        toml::from_str::<TestFile>(include_str!("data/char16trie/test_long_sequence.toml"))
+            .unwrap()
+            .ucharstrie
+            .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
@@ -161,10 +163,11 @@ fn long_sequence() {
 
 #[test]
 fn long_branch() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_long_branch.toml"))
-        .unwrap()
-        .ucharstrie
-        .data;
+    let trie_data =
+        toml::from_str::<TestFile>(include_str!("data/char16trie/test_long_branch.toml"))
+            .unwrap()
+            .ucharstrie
+            .data;
     let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
 
     for (query, expected) in [
