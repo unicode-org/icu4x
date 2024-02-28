@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::str::FromStr;
-use icu_experimental::units::converter::ConverterFactory;
+
+use icu_experimental::units::converter_factory::ConverterFactory;
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_rational::Ratio;
@@ -92,11 +93,6 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        // TODO: remove this exception once the full converter is implemented.
-        if test.category == "temperature" {
-            continue;
-        }
-
         let input_unit = parser
             .try_from_identifier(test.input_unit.as_str())
             .unwrap();

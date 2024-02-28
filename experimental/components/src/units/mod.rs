@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod converter;
+pub mod converter_factory;
 pub mod measureunit;
 pub mod power;
 pub mod provider;
