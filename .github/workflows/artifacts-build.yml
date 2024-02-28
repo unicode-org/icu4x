@@ -312,17 +312,17 @@ jobs:
         component:
           - components/collections
           - components/datetime
+          # - components/experimental
           - components/locid
           - components/locid_transform
           - components/plurals
           - components/segmenter
-          # - experimental/transliterate
-          - experimental/zerotrie
           - provider/blob
           - utils/fixed_decimal
           - utils/litemap
           - utils/tinystr
           - utils/writeable
+          - utils/zerotrie
           - utils/zerovec
     concurrency:
       # Allow one run at a time to include the previous run's results
