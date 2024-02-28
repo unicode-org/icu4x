@@ -50,7 +50,7 @@ pub enum WordType {
 
 impl WordType {
     /// Whether the segment is word-like; word-like segments include numbers, as
-    // well as segments made up of letters (including CJKV ideographs).
+    /// well as segments made up of letters (including CJKV ideographs).
     pub fn is_word_like(&self) -> bool {
         self != &WordType::None
     }
