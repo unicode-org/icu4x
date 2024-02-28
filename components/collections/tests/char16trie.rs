@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod test_util;
-
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 use zerovec::ZeroVec;
 
 #[test]
-fn char16trie_test_empty() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/empty.toml"))
+fn empty() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/empty.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -19,8 +17,8 @@ fn char16trie_test_empty() {
 }
 
 #[test]
-fn char16trie_test_a() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_a.toml"))
+fn a() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_a.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -38,8 +36,8 @@ fn char16trie_test_a() {
 }
 
 #[test]
-fn char16trie_test_a_b() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_a_ab.toml"))
+fn a_b() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_a_ab.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -61,8 +59,8 @@ fn char16trie_test_a_b() {
 }
 
 #[test]
-fn char16trie_test_shortest_branch() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_shortest_branch.toml"))
+fn shortest_branch() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_shortest_branch.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -82,8 +80,8 @@ fn char16trie_test_shortest_branch() {
 }
 
 #[test]
-fn char16trie_test_branches() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_branches.toml"))
+fn branches() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_branches.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -118,8 +116,8 @@ fn char16trie_test_branches() {
 }
 
 #[test]
-fn char16trie_test_long_sequence() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_long_sequence.toml"))
+fn long_sequence() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_long_sequence.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -162,8 +160,8 @@ fn char16trie_test_long_sequence() {
 }
 
 #[test]
-fn char16trie_test_long_branch() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_long_branch.toml"))
+fn long_branch() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_long_branch.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -216,8 +214,8 @@ fn char16trie_test_long_branch() {
 }
 
 #[test]
-fn char16trie_test_compact() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/test_compact.toml"))
+fn compact() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/test_compact.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -258,8 +256,8 @@ fn char16trie_test_compact() {
 }
 
 #[test]
-fn char16trie_test_months() {
-    let trie_data = toml::from_str::<TestFile>(include_str!("testdata/months.toml"))
+fn months() {
+    let trie_data = toml::from_str::<TestFile>(include_str!("data/char16trie/months.toml"))
         .unwrap()
         .ucharstrie
         .data;
@@ -290,4 +288,14 @@ fn char16trie_test_months() {
     }
     let res = iter.next('h');
     assert_eq!(res, TrieResult::NoMatch);
+}
+
+#[derive(serde::Deserialize)]
+pub struct TestFile {
+    ucharstrie: Char16TrieVec,
+}
+
+#[derive(serde::Deserialize)]
+pub struct Char16TrieVec {
+    data: Vec<u16>,
 }

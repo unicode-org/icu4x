@@ -2,19 +2,237 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_collections::codepointtrie::error::Error;
+use icu_collections::codepointtrie::planes::get_planes_trie;
+use icu_collections::codepointtrie::Error;
 use icu_collections::codepointtrie::*;
-
-use core::convert::TryFrom;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-use std::path::Path;
 use zerovec::ZeroVec;
+
+#[test]
+fn planes_trie_deserialize_check_test() {
+    // Get expected planes trie from crate::planes::get_planes_trie()
+
+    let exp_planes_trie = get_planes_trie();
+
+    // Compute actual planes trie from planes.toml
+
+    let planes_enum_prop =
+        ::toml::from_str::<UnicodeEnumeratedProperty>(include_str!("data/cpt/planes.toml"))
+            .unwrap();
+
+    let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
+
+    let trie_header = CodePointTrieHeader {
+        high_start: code_point_trie_struct.high_start,
+        shifted12_high_start: code_point_trie_struct.shifted12_high_start,
+        index3_null_offset: code_point_trie_struct.index3_null_offset,
+        data_null_offset: code_point_trie_struct.data_null_offset,
+        null_value: code_point_trie_struct.null_value,
+        trie_type: TrieType::try_from(code_point_trie_struct.trie_type_enum_val).unwrap_or_else(
+            |_| {
+                panic!(
+                    "Could not parse trie_type serialized enum value in test data file: {}",
+                    code_point_trie_struct.name
+                )
+            },
+        ),
+    };
+
+    let data = ZeroVec::from_slice_or_alloc(code_point_trie_struct.data_8.as_ref().unwrap());
+    let index = ZeroVec::from_slice_or_alloc(&code_point_trie_struct.index);
+    let trie_result: Result<CodePointTrie<u8>, Error> =
+        CodePointTrie::try_new(trie_header, index, data);
+    let act_planes_trie = trie_result.unwrap();
+
+    // Get check ranges (inversion map-style sequence of range+value) and
+    // apply the trie validation test fn on expected and actual tries
+
+    let serialized_ranges: Vec<(u32, u32, u32)> = planes_enum_prop.code_point_map.data.ranges;
+    let mut check_ranges: Vec<u32> = vec![];
+    for range_tuple in serialized_ranges {
+        let range_end = range_tuple.1 + 1;
+        let value = range_tuple.2;
+        check_ranges.push(range_end);
+        check_ranges.push(value);
+    }
+
+    check_trie(&act_planes_trie, &check_ranges);
+    check_trie(&exp_planes_trie, &check_ranges);
+}
+
+#[test]
+fn free_blocks_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/free-blocks.16.toml"));
+}
+
+#[test]
+fn free_blocks_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/free-blocks.32.toml"));
+}
+
+#[test]
+fn free_blocks_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/free-blocks.8.toml"));
+}
+
+#[test]
+fn free_blocks_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/free-blocks.small16.toml"));
+}
+
+#[test]
+fn grow_data_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/grow-data.16.toml"));
+}
+
+#[test]
+fn grow_data_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/grow-data.32.toml"));
+}
+
+#[test]
+fn grow_data_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/grow-data.8.toml"));
+}
+
+#[test]
+fn grow_data_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/grow-data.small16.toml"));
+}
+
+#[test]
+fn set1_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set1.16.toml"));
+}
+
+#[test]
+fn set1_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set1.32.toml"));
+}
+
+#[test]
+fn set1_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set1.8.toml"));
+}
+
+#[test]
+fn set1_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set1.small16.toml"));
+}
+
+#[test]
+fn set2_overlap_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set2-overlap.16.toml"));
+}
+
+#[test]
+fn set2_overlap_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set2-overlap.32.toml"));
+}
+
+#[test]
+fn set2_overlap_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set2-overlap.small16.toml"));
+}
+
+#[test]
+fn set3_initial_9_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set3-initial-9.16.toml"));
+}
+
+#[test]
+fn set3_initial_9_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set3-initial-9.32.toml"));
+}
+
+#[test]
+fn set3_initial_9_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set3-initial-9.8.toml"));
+}
+
+#[test]
+fn set3_initial_9_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set3-initial-9.small16.toml"));
+}
+
+#[test]
+fn set_empty_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-empty.16.toml"));
+}
+
+#[test]
+fn set_empty_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-empty.32.toml"));
+}
+
+#[test]
+fn set_empty_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-empty.8.toml"));
+}
+
+#[test]
+fn set_empty_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-empty.small16.toml"));
+}
+
+#[test]
+fn set_single_value_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-single-value.16.toml"));
+}
+
+#[test]
+fn set_single_value_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-single-value.32.toml"));
+}
+
+#[test]
+fn set_single_value_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-single-value.8.toml"));
+}
+
+#[test]
+fn set_single_value_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/set-single-value.small16.toml"));
+}
+
+#[test]
+fn short_all_same_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/short-all-same.16.toml"));
+}
+
+#[test]
+fn short_all_same_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/short-all-same.8.toml"));
+}
+
+#[test]
+fn short_all_same_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/short-all-same.small16.toml"));
+}
+
+#[test]
+fn small0_in_fast_16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/small0-in-fast.16.toml"));
+}
+
+#[test]
+fn small0_in_fast_32() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/small0-in-fast.32.toml"));
+}
+
+#[test]
+fn small0_in_fast_8() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/small0-in-fast.8.toml"));
+}
+
+#[test]
+fn small0_in_fast_small16() {
+    run_deserialize_test_from_test_data(include_str!("data/cpt/small0-in-fast.small16.toml"));
+}
 
 /// The width of the elements in the data array of a [`CodePointTrie`].
 /// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ValueWidthEnum {
     Bits16 = 0,
     Bits32 = 1,
@@ -39,7 +257,7 @@ pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_range
         let range_value = range_tuple[1];
         // Check all values in this range, one-by-one
         while i < range_limit {
-            assert_eq!(range_value, trie.get32(i), "trie_get({})", i,);
+            assert_eq!(range_value, trie.get32(i).into(), "trie_get({})", i,);
             i += 1;
         }
     }
@@ -191,10 +409,9 @@ pub fn run_deserialize_test_from_test_data(test_file: &str) {
         check_ranges: Vec<u32>,
     }
 
-    let test_struct = toml::from_str::<TestFile>(&test_file)
-        .unwrap()
-        .code_point_trie
-        .trie_struct;
+    let test_file = ::toml::from_str::<TestFile>(&test_file).unwrap();
+
+    let test_struct = test_file.code_point_trie.trie_struct;
 
     println!(
         "Running CodePointTrie reader logic test on test data file: {}",
