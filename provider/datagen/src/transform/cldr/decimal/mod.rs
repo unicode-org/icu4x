@@ -2,16 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashSet;
+
 use crate::transform::cldr::cldr_serde;
+use icu_locid::extensions::unicode::key;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_key as key;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
+#[cfg(feature = "experimental_components")]
 mod compact;
+#[cfg(feature = "experimental_components")]
 mod compact_decimal_pattern;
-mod decimal_pattern;
+pub(crate) mod decimal_pattern;
 mod symbols;
 
 impl crate::DatagenProvider {
@@ -21,7 +25,6 @@ impl crate::DatagenProvider {
         nsname: TinyAsciiStr<8>,
     ) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/numberingSystems.json")?;
@@ -56,17 +59,11 @@ impl crate::DatagenProvider {
         langid: &LanguageIdentifier,
     ) -> Result<Vec<TinyAsciiStr<8>>, DataError> {
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         Ok(numbers
             .numsys_data
@@ -77,9 +74,8 @@ impl crate::DatagenProvider {
             .collect())
     }
 
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_for_numbers(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .numbers()
             .list_langs()?
@@ -97,7 +93,7 @@ impl crate::DatagenProvider {
                         );
                         data_locale
                     })
-                    .chain(core::iter::once(last))
+                    .chain([last])
             })
             .collect())
     }

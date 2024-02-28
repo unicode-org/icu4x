@@ -49,7 +49,7 @@
 //! ).unwrap();
 //! ```
 //!
-//! [`ICU4X`]: ../icu/index.html
+//! [`ICU4X`]: https://docs.rs/icu/latest/icu/
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -67,12 +67,15 @@
 )]
 #![warn(missing_docs)]
 #![allow(unused_imports)] // too many feature combinations too keep track of
+#![allow(deprecated)]
+#![deprecated(since = "1.3.0", note = "this crate has been superseded by `ICU4X`'s `compiled_data` feature. Data for new components will not be added, and it will not be updated for `ICU4X` 2.0.")]
 
 extern crate alloc;
 
 #[path = "../data/metadata.rs.data"]
 mod metadata;
 
+#[deprecated(since = "1.3.0")]
 pub mod versions {
     //! Functions to access version info of the ICU test data.
 
@@ -81,8 +84,9 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("43.0.0-BETA3", icu_testdata::versions::cldr_tag());
+    /// assert_eq!("44.0.0", icu_testdata::versions::cldr_tag());
     /// ```
+    #[deprecated(since = "1.3.0")]
     pub fn cldr_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::CLDR_TAG)
     }
@@ -92,8 +96,9 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("icu4x/2023-03-22a/72.x", icu_testdata::versions::icu_tag());
+    /// assert_eq!("release-74-1", icu_testdata::versions::icu_tag());
     /// ```
+    #[deprecated(since = "1.3.0")]
     pub fn icu_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
     }
@@ -108,13 +113,43 @@ pub mod versions {
 /// assert!(icu_testdata::locales().contains(&langid!("es-AR")));
 /// assert!(icu_testdata::locales().len() > 10);
 /// ```
+#[deprecated(since = "1.3.0")]
 pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
     alloc::vec::Vec::from(metadata::LOCALES)
 }
 
 #[cfg(feature = "std")]
-#[deprecated]
-pub mod paths;
+#[deprecated(since = "1.3.0")]
+/// Get paths to the test data directories. Some of these paths do not
+/// exist anymore, and data should only be accessed through the functions
+/// provided by this crate.
+pub mod paths {
+    use std::path::PathBuf;
+
+    #[deprecated(since = "1.3.0")]
+    /// Returns the absolute path to the top-level data directory.
+    pub fn data_root() -> PathBuf {
+        PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data")
+    }
+
+    #[deprecated(since = "1.3.0")]
+    /// Returns the absolute path to the CLDR JSON root directory.
+    pub fn cldr_json_root() -> PathBuf {
+        data_root().join("cldr")
+    }
+
+    #[deprecated(since = "1.3.0")]
+    /// Returns the absolute path to the icuexport TOML root directory.
+    pub fn icuexport_toml_root() -> PathBuf {
+        data_root().join("icuexport")
+    }
+
+    #[deprecated(since = "1.3.0")]
+    /// Returns the absolute path to the collation tailoring TOML root directory.
+    pub fn coll_toml_root() -> PathBuf {
+        data_root().join("coll")
+    }
+}
 
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -124,6 +159,8 @@ use icu_provider_adapters::fallback::LocaleFallbackProvider;
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
+#[cfg(feature = "icu_locid_transform")]
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -135,11 +172,14 @@ pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub fn unstable_no_fallback() -> UnstableDataProvider {
     UnstableDataProvider
 }
 
 /// An [`AnyProvider`] backed by baked data.
+#[cfg(feature = "icu_locid_transform")]
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub fn any() -> impl AnyProvider {
     // The baked data is valid.
     #[allow(clippy::unwrap_used)]
@@ -147,6 +187,7 @@ pub fn any() -> impl AnyProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub fn any_no_fallback() -> impl AnyProvider {
     UnstableDataProvider
 }
@@ -156,6 +197,7 @@ pub fn any_no_fallback() -> impl AnyProvider {
 /// This deserializes a large data blob from static memory, please cache the result if you
 /// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -167,6 +209,7 @@ pub fn buffer() -> impl BufferProvider {
 /// This deserializes a large data blob from static memory, please cache the result if you
 /// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
     #[allow(clippy::unwrap_used)] // The statically compiled data file is valid.
     icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(
@@ -178,6 +221,7 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 #[doc(hidden)]
 #[non_exhaustive]
 #[derive(Debug)]
+#[deprecated(since = "1.3.0", note = "use `compiled_data`")]
 pub struct UnstableDataProvider;
 
 mod baked {

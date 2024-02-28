@@ -8,13 +8,16 @@
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
-use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
-use zerovec::ZeroMap;
+use zerovec::{ule::UnvalidatedStr, ZeroMap};
+
+size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+#[doc = date_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -22,13 +25,19 @@ use zerovec::ZeroMap;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
     marker(BuddhistDateSymbolsV1Marker, "datetime/buddhist/datesymbols@1"),
+    marker(ChineseDateSymbolsV1Marker, "datetime/chinese/datesymbols@1"),
+    marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),
+    marker(DangiDateSymbolsV1Marker, "datetime/dangi/datesymbols@1"),
+    marker(EthiopianDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1"),
+    marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
+    marker(HebrewDateSymbolsV1Marker, "datetime/hebrew/datesymbols@1"),
+    marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
+    marker(IslamicDateSymbolsV1Marker, "datetime/islamic/datesymbols@1"),
     marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
     marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
-    marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),
-    marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
-    marker(EthiopianDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1")
+    marker(PersianDateSymbolsV1Marker, "datetime/persian/datesymbols@1"),
+    marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -59,9 +68,13 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
+size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
+
 /// Symbol data for the day periods needed to format a time.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
+///
+#[doc = time_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -112,17 +125,17 @@ pub struct Eras<'data> {
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub names: ZeroMap<'data, str, str>,
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
     /// Symbol data for era abbreviations.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, str, str>,
+    pub abbr: ZeroMap<'data, UnvalidatedStr, str>,
     /// Symbol data for era narrow forms.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, str, str>,
+    pub narrow: ZeroMap<'data, UnvalidatedStr, str>,
 }
 
 // Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to
@@ -246,6 +259,27 @@ macro_rules! symbols {
                 /// The symbol data for "stand-alone" style symbols.
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
+            }
+
+            #[cfg(any(feature = "datagen", feature = "experimental"))]
+            impl<'data> ContextsV1<'data> {
+                /// Convenience function to return stand-alone abbreviated as an `Option<&>`.
+                pub(crate) fn stand_alone_abbreviated(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref())
+                }
+                /// Convenience function to return stand-alone wide as an `Option<&>`.
+                pub(crate) fn stand_alone_wide(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.wide.as_ref())
+                }
+                /// Convenience function to return stand-alone narrow as an `Option<&>`.
+                pub(crate) fn stand_alone_narrow(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.narrow.as_ref())
+                }
+                /// Convenience function to return stand-alone short as an `Option<&>`.
+                #[allow(dead_code)] // not all symbols have a short variant
+                pub(crate) fn stand_alone_short(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.short.as_ref())
+                }
             }
         }
     };

@@ -34,6 +34,30 @@ All ICU4X code must conform to the [style guide](../process/style_guide.md), inc
 
 *Why:* One of the big problems for existing ICU users is that ICU data cannot be shared among different versions of code, forcing clients to carry hefty duplicates with small deltas.
 
+## Runtime Customizability of Locale Data
+
+*What:* Locale data should be customizable at a fine-grained level at runtime by individual applications.
+
+*Why:* Applications have a variety of reasons to customize their locale data, including:
+
+1. User-specific settings may override items such as datetime or decimal separators
+2. Policies may require displaying certain words or phrases according to a style guide that differs from CLDR
+3. Patching data can sometimes fill in certain behavior/functionality unavailable in older ICU4X versions
+4. Stability of testing
+
+Changes to data often need to happen at runtime because:
+
+1. Application-specific overrides are independent of the central data (from the operating system, for example)
+2. The data might be dynamically generated, such as application/user preferences
+
+ICU4C/ICU4J exposes certain pieces of data through user-facing APIs such as DateFormatSymbols. ICU4X departs from this approach (making the data resources modifiable when being loaded) to solve the following problems:
+
+1. User-facing APIs do not cover all data that users may need to mutate; those APIs must be perpetually maintained and updated
+2. Mutating data is a power-user feature; putting it front and center tempts users to mutate it in ways they shouldn't
+3. Mutable symbols objects does not lend itself well to internal immutability of formatters (this has been a problem in the past)
+
+Runtime customizability of locale data can sometimes come at a performance or memory cost.
+
 ## Modular Code and Data with static analysis
 
 *What:* Both the code and the data should be written so that you only bring what you need.  Code and data should be modular not only on a "class" level, but also within a class, such that you don't carry code and data for a feature of a class that you aren't using. Code and data slicing should be able to be determined using static code analysis. We should be able to look at the functions being called, and from that, build exactly the code and data bundle that the app needs.

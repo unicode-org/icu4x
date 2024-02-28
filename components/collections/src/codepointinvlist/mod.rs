@@ -15,7 +15,7 @@
 //!
 //! ## Creating a `CodePointInversionList`
 //!
-//! CodePointSets are created from either serialized [`CodePointSets`](CodePointInversionList),
+//! `CodePointSets` are created from either serialized [`CodePointSets`](CodePointInversionList),
 //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
@@ -64,13 +64,13 @@ mod utils;
 use alloc::vec::Vec;
 
 pub use builder::CodePointInversionListBuilder;
-pub use conversions::*;
 pub use cpinvlist::CodePointInversionList;
+pub use cpinvlist::CodePointInversionListULE;
 use displaydoc::Display;
 
 /// Custom Errors for [`CodePointInversionList`].
 ///
-/// Re-exported as [`Error`](Error).
+/// Re-exported as [`Error`].
 #[derive(Display, Debug)]
 pub enum CodePointInversionListError {
     /// A CodePointInversionList was constructed with an invalid inversion list
@@ -84,5 +84,5 @@ pub enum CodePointInversionListError {
 #[cfg(feature = "std")]
 impl std::error::Error for CodePointInversionListError {}
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CodePointInversionListError as Error;

@@ -5,24 +5,22 @@
 [package]
 name = "icu_freertos"
 description = "C interface to ICU4X"
-version = "1.1.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-resolver = "2"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
+license = "Unicode-3.0"
 include = [
+    "build.rs",
     "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "include/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md"
 ]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -32,7 +30,7 @@ crate-type = ["staticlib", "rlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "1.1.0", path = "../diplomat", default-features = false }
+icu_capi = { workspace = true }
 
 [target.'cfg(target_os = "none")'.dependencies]
 cortex-m = "0.7.3"
@@ -42,3 +40,6 @@ freertos-rust = "0.1.2"
 # Currently we don't enable anything here as WearOS loads data manually, but the feature remains for future use
 wearos = []
 default = ["icu_capi/default_components"]
+
+[build-dependencies]
+rustc_version = "0.4"

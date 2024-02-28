@@ -53,6 +53,14 @@ impl<K, V> Store<K, V> for Vec<(K, V)> {
     }
 }
 
+impl<K, V> StoreSlice<K, V> for Vec<(K, V)> {
+    type Slice = [(K, V)];
+
+    fn lm_get_range(&self, range: Range<usize>) -> Option<&Self::Slice> {
+        self.get(range)
+    }
+}
+
 impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_with_capacity(capacity: usize) -> Self {
@@ -98,6 +106,39 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
     }
 }
 
+impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let iter = iter.into_iter();
+        let mut container = match iter.size_hint() {
+            (_, Some(upper)) => Self::with_capacity(upper),
+            (lower, None) => Self::with_capacity(lower),
+        };
+
+        for (key, value) in iter {
+            if let Some(last) = container.lm_last() {
+                if last.0 >= &key {
+                    match container.lm_binary_search_by(|k| k.cmp(&key)) {
+                        #[allow(clippy::unwrap_used)] // Index came from binary_search
+                        Ok(found) => {
+                            let _ =
+                                core::mem::replace(container.lm_get_mut(found).unwrap().1, value);
+                        }
+                        Err(ins) => {
+                            container.insert(ins, (key, value));
+                        }
+                    }
+                } else {
+                    container.push((key, value))
+                }
+            } else {
+                container.push((key, value))
+            }
+        }
+
+        container
+    }
+}
+
 impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {
     type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<K, V>>;
 
@@ -109,12 +150,15 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {
 
 impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for Vec<(K, V)> {
     type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<K, V>>;
-    type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
 
     #[inline]
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
         self.as_mut_slice().iter_mut().map(map_f_mut)
     }
+}
+
+impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
+    type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
 
     #[inline]
     fn lm_into_iter(self) -> Self::KeyValueIntoIter {

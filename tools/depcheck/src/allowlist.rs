@@ -3,42 +3,48 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! These arrays all list dependencies that are allowed in various contexts
-//!
 
 /// Dependencies that are always allowed as runtime dependencies
 /// In general it is fine to add new ICU4X components or utils here
 /// For other crates, please get approval from @unicode-org/icu4x-owners
 pub const BASIC_RUNTIME_DEPS: &[&str] = &[
-    "either",
-    "fixed_decimal",
-    "icu",
+    // ICU4X components
     "icu_calendar",
+    "icu_casemap",
     "icu_collator",
     "icu_collections",
     "icu_datetime",
     "icu_decimal",
     "icu_list",
-    "icu_locid",
     "icu_locid_transform",
+    "icu_locid",
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
-    "icu_provider",
-    "icu_provider_adapters", // not included in icu, but needed generally
+    "icu_segmenter",
     "icu_timezone",
+    // ICU4X utils
+    "calendrical_calculations",
+    "fixed_decimal",
+    "icu_provider",
     "litemap",
+    "tinystr",
+    "writeable",
+    "yoke",
+    "zerofrom",
+    "zerotrie",
+    "zerovec",
+    // 3P dependencies
+    "core_maths",
+    "either",
+    "libm",
     "memchr",
     "regex-automata",
     "smallvec",
     "stable_deref_trait",
-    "tinystr",
     "utf16_iter",
     "utf8_iter",
     "write16",
-    "writeable",
-    "yoke",
-    "zerofrom",
-    "zerovec",
 ];
 
 /// Dependencies that are always allowed as buildtime dependencies
@@ -62,26 +68,32 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
 /// This should almost never change
 pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_derive"];
 
-/// Dependencies allowed when opting in to experimental code
-/// This will likely grow when we add experimental crates
-pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
-    "icu_casemapping",
-    "icu_displaynames",
-    "icu_relativetime",
-    "icu_segmenter",
-    "icu_compactdecimal",
+/// Dependencies allowed when opting in to compiled data
+pub const EXTRA_DATA_DEPS: &[&str] = &[
+    "icu_calendar_data",
+    "icu_casemap_data",
+    "icu_collator_data",
+    "icu_datetime_data",
+    "icu_decimal_data",
+    "icu_list_data",
+    "icu_locid_transform_data",
+    "icu_normalizer_data",
+    "icu_plurals_data",
+    "icu_properties_data",
+    "icu_segmenter_data",
+    "icu_timezone_data",
 ];
 
+/// Dependencies allowed when opting in to experimental code
+/// This will likely grow when we add experimental crates
+pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &["icu_experimental"];
+
+/// Dependencies allowed when opting in to compiled data
+/// for experimental crates.
+pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &["icu_experimental_data"];
+
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &[
-    "libm",
-    "matrixmultiply",
-    "ndarray",
-    "num-complex",
-    "num-integer",
-    "num-traits",
-    "rawpointer",
-];
+pub const EXTRA_LSTM_DEPS: &[&str] = &[];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
@@ -89,7 +101,12 @@ pub const EXTRA_RYU_DEPS: &[&str] = &["ryu"];
 
 /// Runtime dependencies allowed when building `icu_capi`
 /// This shuld almost never change
-pub const EXTRA_CAPI_DEPS: &[&str] = &["diplomat-runtime", "icu_capi", "unicode-bidi"];
+pub const EXTRA_CAPI_DEPS: &[&str] = &[
+    "diplomat-runtime",
+    "icu_capi",
+    "icu_provider_adapters",
+    "unicode-bidi",
+];
 
 /// Build-time dependencies allowed when building `icu_capi`
 /// This may change as Diplomat evolves, but care should be taken to keep this small
@@ -109,10 +126,6 @@ pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 /// This shuld rarely change
 pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 
-/// Dependencies allowed when opting in to test data on FFI
-/// This shuld rarely change
-pub const EXTRA_TEST_DEPS: &[&str] = &["icu_testdata"];
-
 /// Dependencies needed by datagen (not counting `log`, `zip`, and `rayon` deps)
 /// This might change semi frequently but we should try and keep this small.
 pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
@@ -123,16 +136,23 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "elsa",
     "erased-serde",
     "icu_codepointtrie_builder",
-    "icu_datagen",
+    "icu_provider_adapters",
     "itertools",
     "itoa",
-    "lazy_static",
+    "matrixmultiply",
+    "ndarray",
+    "num-complex",
+    "num-integer",
+    "num-traits",
+    "once_cell",
+    "rawpointer",
     "regex-syntax",
-    "rust-format",
     "ryu",
     "serde-aux",
     "serde_json",
+    "static_assertions",
     "toml",
+    "twox-hash",
 ];
 
 /// Dependencies needed by the `log` crate

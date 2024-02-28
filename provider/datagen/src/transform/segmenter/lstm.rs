@@ -4,7 +4,7 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
-use icu_locid::locale;
+use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
@@ -90,17 +90,19 @@ impl RawLstmData {
         // Unwraps okay: dimensions checked above
         let mut fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
         let mut fw_u = fw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let mut fw_b = fw_b.into_shape((4, hunits)).unwrap();
+        let fw_b = fw_b.into_shape((4, hunits)).unwrap();
         let mut bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
         let mut bw_u = bw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let mut bw_b = bw_b.into_shape((4, hunits)).unwrap();
+        let bw_b = bw_b.into_shape((4, hunits)).unwrap();
         let mut time_w = time_w.into_shape((2, hunits, 4)).unwrap();
         fw_w.swap_axes(0, 2);
+        fw_w.swap_axes(0, 1);
         fw_u.swap_axes(0, 2);
-        fw_b.swap_axes(0, 1);
+        fw_u.swap_axes(0, 1);
         bw_w.swap_axes(0, 2);
+        bw_w.swap_axes(0, 1);
         bw_u.swap_axes(0, 2);
-        bw_b.swap_axes(0, 1);
+        bw_u.swap_axes(0, 1);
         time_w.swap_axes(1, 2);
         let fw_w = fw_w.as_standard_layout().into_owned();
         let fw_u = fw_u.as_standard_layout().into_owned();
@@ -109,6 +111,15 @@ impl RawLstmData {
         let bw_u = bw_u.as_standard_layout().into_owned();
         let bw_b = bw_b.as_standard_layout().into_owned();
         let time_w = time_w.as_standard_layout().into_owned();
+
+        assert_eq!(fw_w.shape(), [4, hunits, embedd_dim]);
+        assert_eq!(fw_u.shape(), [4, hunits, hunits]);
+        assert_eq!(fw_b.shape(), [4, hunits]);
+        assert_eq!(bw_w.shape(), [4, hunits, embedd_dim]);
+        assert_eq!(bw_u.shape(), [4, hunits, hunits]);
+        assert_eq!(bw_b.shape(), [4, hunits]);
+        assert_eq!(time_w.shape(), [2, 4, hunits]);
+        assert_eq!(time_b.shape(), [4]);
 
         let model = if self.model.contains("_codepoints") {
             ModelType::Codepoints
@@ -170,15 +181,39 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
+fn model_name_to_data_locale(name: &str) -> Option<DataLocale> {
+    match name {
+        "Burmese_codepoints_exclusive_model4_heavy" => Some(langid!("my").into()),
+        "Khmer_codepoints_exclusive_model4_heavy" => Some(langid!("km").into()),
+        "Lao_codepoints_exclusive_model4_heavy" => Some(langid!("lo").into()),
+        "Thai_codepoints_exclusive_model4_heavy" => Some(langid!("th").into()),
+        _ => None,
+    }
+}
+
+pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+    match locale.get_langid() {
+        id if id == langid!("my") => Some("Burmese_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("km") => Some("Khmer_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("lo") => Some("Lao_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("th") => Some("Thai_codepoints_exclusive_model4_heavy"),
+        _ => None,
+    }
+}
+
 impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
+        self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
+
+        let model = data_locale_to_model_name(req.locale)
+            .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
+
         let lstm_data = self
-            .source
             .segmenter_lstm()?
-            .read_and_parse_json::<RawLstmData>(&format!("lstm_{}.json", req.locale))
+            .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
         let data = lstm_data.try_convert()?;
@@ -192,12 +227,15 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
-            locale!("km").into(),
-            locale!("lo").into(),
-            locale!("my").into(),
-            locale!("th").into(),
-        ])
+        Ok([
+            "Burmese_codepoints_exclusive_model4_heavy",
+            "Khmer_codepoints_exclusive_model4_heavy",
+            "Lao_codepoints_exclusive_model4_heavy",
+            "Thai_codepoints_exclusive_model4_heavy",
+        ]
+        .into_iter()
+        .filter_map(model_name_to_data_locale)
+        .collect())
     }
 }
 
@@ -208,30 +246,30 @@ mod tests {
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_segmenter::LineSegmenter;
 
-    fn load_lstm_data_directly(filename: &str) -> DataPayload<LstmForWordLineAutoV1Marker> {
-        let json_str = std::fs::read(filename).unwrap();
-        let raw_data: RawLstmData = serde_json::from_slice(&json_str).unwrap();
-        let data = raw_data.try_convert().unwrap();
-        DataPayload::from_owned(data)
-    }
-
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
-        // The keys of Lstm JSON data has to be sorted. So this JSON is generated by converter.py in data directory.
-        let filename =
-            "tests/data/segmenter/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
-        let lstm_data = load_lstm_data_directly(filename);
+        let provider = crate::DatagenProvider::new_testing();
+        let raw_data = provider
+            .segmenter_lstm()
+            .unwrap()
+            .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
+            .unwrap();
         let provider = ForkByKeyProvider::new(
-            AnyPayloadProvider::from_payload(lstm_data),
-            crate::DatagenProvider::for_test(),
+            AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
+                raw_data.try_convert().unwrap(),
+            ),
+            provider.as_any_provider(),
         );
+
         let segmenter = LineSegmenter::try_new_lstm_with_any_provider(&provider).unwrap();
+
+        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
-        assert_eq!(
-            breaks,
-            [6, 12, 21, 27, 33, TEST_STR.len()],
-            "Thai test with grapheme model"
-        );
+        assert_eq!(breaks, [0, 6, 12, 21, 27, 33, TEST_STR.len()],);
+
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [0, 2, 4, 7, 9, 11, utf16.len()],);
     }
 }

@@ -8,7 +8,8 @@ use crate::provider::bidi_data::{
 use crate::script::ScriptWithExt;
 use crate::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    GraphemeClusterBreak, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
+    WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
@@ -152,6 +153,18 @@ impl TrieValue for CheckedBidiPairedBracketType {
     }
 }
 
+impl TrieValue for IndicSyllabicCategory {
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
+}
+
 // GCG is not used inside tries, but it is used in the name lookup type, and we want
 // to squeeze it into a u16 for storage. Its named mask values are specced so we can
 // do this in code.
@@ -232,5 +245,17 @@ impl TrieValue for MirroredPairedBracketData {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
+    }
+}
+
+impl TrieValue for JoiningType {
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
     }
 }

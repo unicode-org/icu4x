@@ -26,9 +26,8 @@ use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
-use zerovec::ule::CharULE;
 use zerovec::ule::RawBytesULE;
-use zerovec::ZeroSlice;
+use zerovec::{zeroslice, ZeroSlice};
 
 use crate::provider::CollationDataV1;
 
@@ -148,18 +147,13 @@ pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
 pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
 pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
 
-pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
+pub(crate) const EMPTY_U16: &ZeroSlice<u16> = zeroslice![];
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-        REPLACEMENT_CHARACTER as u16
-    ]));
+    zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [REPLACEMENT_CHARACTER as u16]);
 
-pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
-
-const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[unsafe {
-    core::mem::transmute::<[u8; 3], CharULE>([0xFDu8, 0xFFu8, 0u8])
-}]);
+pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = zeroslice![];
+const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> =
+    zeroslice!(char; <char as AsULE>::ULE::from_aligned; [REPLACEMENT_CHARACTER]);
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -271,7 +265,7 @@ pub(crate) enum Tag {
     /// Tag for a lead surrogate code unit.
     /// Optional optimization for UTF-16 string processing.
     /// Bits 31..10: Unused, 0.
-    ///       9.. 8: =0: All associated supplementary code points are unassigned-implict.
+    ///       9.. 8: =0: All associated supplementary code points are unassigned-implicit.
     ///              =1: All associated supplementary code points fall back to the base data.
     ///              else: (Normally 2) Look up the data for the supplementary code point.
     /// Not used by ICU4X.
@@ -1986,7 +1980,7 @@ where
                                         //   `head[len - 2]` isn't a leading zero.
                                         // * If `len == 1`: The loop condition is false, because
                                         //   `head[len - 1]` isn't a leading zero, and `&&`
-                                        //   short-circuts, so the `head[len - 2]` access doesn't
+                                        //   short-circuits, so the `head[len - 2]` access doesn't
                                         //   occur.
                                         #[allow(clippy::indexing_slicing)]
                                         while head[len - 1] == 0 && head[len - 2] == 0 {

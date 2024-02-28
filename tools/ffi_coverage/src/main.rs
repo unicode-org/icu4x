@@ -6,7 +6,7 @@ use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
-use std::fs;
+use std::fs::{self, File};
 use std::path::PathBuf;
 mod allowlist;
 use allowlist::{IGNORED_ASSOCIATED_ITEMS, IGNORED_PATHS, IGNORED_SUBSTRINGS, IGNORED_TRAITS};
@@ -41,17 +41,14 @@ impl fmt::Display for RustLinkInfo {
 }
 
 fn main() {
+    let out_path = std::env::args().nth(1);
     let doc_types = ["icu", "fixed_decimal", "icu_provider_adapters"]
         .into_iter()
         .flat_map(collect_public_types)
-        .map(|(path, typ)| RustLinkInfo {
-            path: ast::Path {
-                elements: path
-                    .into_iter()
-                    .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
-                    .collect(),
-            },
-            typ,
+        .map(|(path_vec, typ)| {
+            let mut path = ast::Path::empty();
+            path.elements = path_vec.into_iter().map(ast::Ident::from).collect();
+            RustLinkInfo { path, typ }
         })
         .filter(|rl| {
             ![
@@ -63,25 +60,34 @@ fn main() {
         })
         .collect::<BTreeSet<_>>();
 
-    let diplomat_crate = PathBuf::from(concat!(
+    let capi_crate = PathBuf::from(concat!(
         std::env!("CARGO_MANIFEST_DIR"),
-        "/../../ffi/diplomat/src/lib.rs"
+        "/../../ffi/capi/src/lib.rs"
     ));
-    eprintln!("Loading icu_capi crate from {diplomat_crate:?}");
-    let diplomat_types =
-        ast::File::from(&syn_inline_mod::parse_and_inline_modules(&diplomat_crate))
-            .all_rust_links()
-            .into_iter()
-            .cloned()
-            .map(|rl| RustLinkInfo {
-                path: rl.path,
-                typ: rl.typ,
-            })
-            .collect::<BTreeSet<_>>();
-    println!("{FILE_HEADER}");
+    eprintln!("Loading icu_capi crate from {capi_crate:?}");
+    let capi_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(&capi_crate))
+        .all_rust_links()
+        .into_iter()
+        .cloned()
+        .map(|rl| RustLinkInfo {
+            path: rl.path,
+            typ: rl.typ,
+        })
+        .collect::<BTreeSet<_>>();
+
+    let mut file_anchor = None;
+    let mut stdout_anchor = None;
+    let out_stream = if let Some(out_path) = out_path {
+        let stream = file_anchor.insert(File::create(out_path).expect("opening output file"));
+        stream as &mut dyn std::io::Write
+    } else {
+        let stream = stdout_anchor.insert(std::io::stdout());
+        stream as &mut dyn std::io::Write
+    };
+    writeln!(out_stream, "{FILE_HEADER}").unwrap();
     doc_types
-        .difference(&diplomat_types)
-        .for_each(|item| println!("{item}"));
+        .difference(&capi_types)
+        .for_each(|item| writeln!(out_stream, "{item}").unwrap());
 }
 
 fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
@@ -92,10 +98,14 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
+            std::process::Command::new("rustup")
+                .args(["install", "nightly-2022-12-26"])
+                .output()
+                .expect("failed to install nightly");
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2022-08-25",
+                    "nightly-2022-12-26",
                     "cargo",
                     "rustdoc",
                     "-p",
@@ -184,6 +194,42 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 if let Some(item) = &krate.index.get(import.id.as_ref().unwrap()) {
                     recurse(item, krate, types, path, true, None);
                 } else if let Some(item) = &krate.paths.get(import.id.as_ref().unwrap()) {
+                    // This is a reexport of a hidden module, which works fine in HTML doc but
+                    // doesn't seem to be reachable anywhere in JSON.
+                    if matches!(import.source.as_str(), "icu_provider::fallback") {
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackConfig".to_string(),
+                            ],
+                            ast::DocType::Struct,
+                        );
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackPriority".to_string(),
+                            ],
+                            ast::DocType::Enum,
+                        );
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackSupplement".to_string(),
+                            ],
+                            ast::DocType::Enum,
+                        );
+                        return;
+                    }
+
                     // External crate. This is quite complicated and while it works, I'm not sure
                     // it's correct. This basically handles the case `pub use other_crate::module::Struct`,
                     // which means we have to parse `other_crate`, then look for `module`, then look
@@ -209,7 +255,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         }
                                         _ => item.name.as_deref() == Some(segment),
                                     })
-                                    .unwrap();
+                                    .expect(&import.source);
                             }
                             _ => unreachable!(),
                         }
@@ -304,15 +350,6 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(types, path, ast::DocType::Constant);
                     }
                     ItemEnum::Function(_) => {
-                        insert_ty(types, path, ast::DocType::Fn);
-                    }
-                    ItemEnum::Macro(_) => {
-                        insert_ty(types, path, ast::DocType::Macro);
-                    }
-                    ItemEnum::Typedef(_) => {
-                        insert_ty(types, path, ast::DocType::Typedef);
-                    }
-                    ItemEnum::Method(_) => {
                         let doc_type = match inside {
                             Some(In::Enum(tr)) | Some(In::Struct(tr))
                                 if check_ignored_assoc_item(item_name, tr) =>
@@ -322,9 +359,15 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             Some(In::Enum(_)) => ast::DocType::FnInEnum,
                             Some(In::Trait) => ast::DocType::FnInTrait,
                             Some(In::Struct(_)) => ast::DocType::FnInStruct,
-                            _ => panic!("Method needs In"),
+                            _ => ast::DocType::Fn,
                         };
                         insert_ty(types, path, doc_type);
+                    }
+                    ItemEnum::Macro(_) => {
+                        insert_ty(types, path, ast::DocType::Macro);
+                    }
+                    ItemEnum::Typedef(_) => {
+                        insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Variant(_) => {
                         insert_ty(types, path, ast::DocType::EnumVariant);
@@ -357,6 +400,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         };
                         insert_ty(types, path, doc_type);
                     }
+                    ItemEnum::ProcMacro(..) => {}
                     _ => todo!("{:?}", item),
                 }
             }

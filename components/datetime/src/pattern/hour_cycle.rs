@@ -4,9 +4,9 @@
 
 use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences};
-#[cfg(all(feature = "datagen"))]
+#[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
@@ -56,7 +56,7 @@ impl CoarseHourCycle {
     /// Invoke the pattern matching machinery to transform the hour cycle of a pattern. This provides
     /// a safe mapping from a h11/h12 to h23/h24 for transforms.
     #[doc(hidden)]
-    #[cfg(all(feature = "datagen"))]
+    #[cfg(feature = "datagen")]
     pub fn apply_on_pattern<'data>(
         &self,
         date_time: &provider::calendar::patterns::GenericLengthPatternsV1<'data>,
@@ -110,6 +110,14 @@ impl CoarseHourCycle {
                 )))
             }
             skeleton::BestSkeleton::NoMatch => None,
+        }
+    }
+
+    /// Get the other coarse hour cycle (map h11/h12 to h23/h24, and vice versa)
+    pub fn invert(self) -> Self {
+        match self {
+            CoarseHourCycle::H11H12 => CoarseHourCycle::H23H24,
+            CoarseHourCycle::H23H24 => CoarseHourCycle::H11H12,
         }
     }
 }

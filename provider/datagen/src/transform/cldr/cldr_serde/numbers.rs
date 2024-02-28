@@ -7,7 +7,6 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json>
 
-use icu_locid::LanguageIdentifier;
 use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
@@ -23,6 +22,8 @@ pub struct Symbols {
     pub minus_sign: String,
     #[serde(rename = "plusSign")]
     pub plus_sign: String,
+    #[serde(rename = "percentSign")]
+    pub percent_sign: String,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -87,12 +88,32 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
     }
 }
 
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct CurrencyFormattingPatterns {
+    /// Standard pattern
+    pub standard: String,
+
+    /// Standard alphaNextToNumber pattern
+    #[serde(rename = "standard-alphaNextToNumber")]
+    pub standard_alpha_next_to_number: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct PercentFormattingPatterns {
+    /// Standard pattern
+    pub standard: String,
+}
+
 #[derive(PartialEq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
     pub symbols: HashMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
     pub formats: HashMap<TinyStr8, DecimalFormats>,
+    /// Map from numbering system to patterns
+    pub currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
+    /// Map from numbering system to percent patterns
+    pub percent_patterns: HashMap<TinyStr8, PercentFormattingPatterns>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -127,6 +148,14 @@ impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
                 "decimalFormats" => {
                     let value: DecimalFormats = access.next_value()?;
                     result.formats.insert(numsys, value);
+                }
+                "currencyFormats" => {
+                    let value: CurrencyFormattingPatterns = access.next_value()?;
+                    result.currency_patterns.insert(numsys, value);
+                }
+                "percentFormats" => {
+                    let value: PercentFormattingPatterns = access.next_value()?;
+                    result.percent_patterns.insert(numsys, value);
                 }
                 _ => {
                     // When needed, consume "scientificFormats", "percentFormats", ...
@@ -163,10 +192,4 @@ pub struct LangNumbers {
     pub numbers: Numbers,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::LocaleResource<LangNumbers>;

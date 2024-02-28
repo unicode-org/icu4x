@@ -1,5 +1,7 @@
 # icu_calendar [![crates.io](https://img.shields.io/crates/v/icu_calendar)](https://crates.io/crates/icu_calendar)
 
+<!-- cargo-rdme start -->
+
 Types for dealing with dates, times, and custom calendars.
 
 This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
@@ -90,6 +92,8 @@ assert_eq!(datetime_iso.time.second.number(), 0);
 assert_eq!(datetime_iso.time.nanosecond.number(), 0);
 ```
 [`ICU4X`]: ../icu/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

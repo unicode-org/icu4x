@@ -1,6 +1,30 @@
 # icu_harfbuzz [![crates.io](https://img.shields.io/crates/v/icu_harfbuzz)](https://crates.io/crates/icu_harfbuzz)
 
+<!-- cargo-rdme start -->
+
 Using ICU4X as the Unicode Database back end for HarfBuzz.
+
+## Examples
+
+```rust
+use harfbuzz::{Buffer, Direction, sys};
+
+let mut b = Buffer::with("مساء الخير");
+
+let unicode_funcs = icu_harfbuzz::UnicodeFuncs::new().unwrap();
+
+// NOTE: This currently requires `unsafe` code. For progress toward a safe abstraction, see:
+// <https://github.com/servo/rust-harfbuzz/pull/197>
+unsafe {
+    harfbuzz::sys::hb_buffer_set_unicode_funcs(b.as_ptr(), unicode_funcs.as_ptr());
+}
+
+b.guess_segment_properties();
+assert_eq!(b.get_direction(), Direction::RTL);
+assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
+```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

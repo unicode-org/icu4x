@@ -10,12 +10,15 @@ mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
-use icu_provider::{yoke, zerofrom};
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub use skeletons::*;
 pub use symbols::*;
 
+size_test!(DateLengthsV1, date_lengths_v1_size, 224);
+
 /// Pattern data for dates.
+///
+#[doc = date_lengths_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -23,13 +26,19 @@ pub use symbols::*;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
     marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
+    marker(ChineseDateLengthsV1Marker, "datetime/chinese/datelengths@1"),
+    marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
+    marker(DangiDateLengthsV1Marker, "datetime/dangi/datelengths@1"),
+    marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1"),
+    marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
+    marker(HebrewDateLengthsV1Marker, "datetime/hebrew/datelengths@1"),
+    marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
+    marker(IslamicDateLengthsV1Marker, "datetime/islamic/datelengths@1"),
     marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
     marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
-    marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
-    marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
-    marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1")
+    marker(PersianDateLengthsV1Marker, "datetime/persian/datelengths@1"),
+    marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -54,7 +63,11 @@ impl DataMarker for ErasedDateLengthsV1Marker {
     type Yokeable = DateLengthsV1<'static>;
 }
 
+size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
+
 /// Pattern data for times.
+///
+#[doc = time_lengths_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -91,7 +104,6 @@ pub struct TimeLengthsV1<'data> {
 pub mod patterns {
     use super::*;
     use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
-    use icu_provider::{yoke, zerofrom};
 
     /// Data struct for date/time patterns broken down by pattern length.
     ///

@@ -5,11 +5,14 @@
 //! `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 //!
 //! This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
-//! Because it is normally expected for CodePointTrie data to be pre-compiled, this crate is not
+//! Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 //! optimized for speed; it should be used during a build phase.
 //!
 //! Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
 //! For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
+//!
+//! Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
+//! to be panic-free.
 //!
 //! # Build configuration
 //!
@@ -65,26 +68,28 @@
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
+//! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
 #![cfg_attr(
     not(test),
     deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
+        // The crate is documented to allow panics.
+        // clippy::indexing_slicing,
+        // clippy::unwrap_used,
+        // clippy::expect_used,
+        // clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
         missing_debug_implementations,
     )
 )]
-// This is a build tool with many invariants being enforced
-#![allow(clippy::panic)]
-#![allow(clippy::expect_used)]
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
+
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
+mod common;
 
 #[cfg(feature = "wasm")]
 mod wasm;
@@ -92,9 +97,11 @@ mod wasm;
 #[cfg(feature = "icu4c")]
 mod native;
 
-/// Wrapper over the data to be encoded into a CodePointTrie.
+/// Wrapper over the data to be encoded into a [`CodePointTrie`].
 ///
 /// There is currently only one variant, but more may be added in the future.
+///
+/// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum CodePointTrieBuilderData<'a, T> {
@@ -105,7 +112,9 @@ pub enum CodePointTrieBuilderData<'a, T> {
     ValuesByCodePoint(&'a [T]),
 }
 
-/// Settings for building a CodePointTrie.
+/// Settings for building a [`CodePointTrie`].
+///
+/// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 #[allow(clippy::exhaustive_structs)]
 #[derive(Debug)]
 pub struct CodePointTrieBuilder<'a, T> {
@@ -128,19 +137,14 @@ where
     /// Under the hood, this function runs ICU4C code compiled into WASM,
     /// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
     ///
-    /// This function needs either the `"wasm"` or `"icu4c"` feature
+    /// ✨ *Enabled with either the `wasm` or the `icu4c` Cargo feature.*
+    ///
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {
         #[cfg(feature = "wasm")]
         {
-            use icu_collections::codepointtrie::toml::CodePointTrieToml;
-
-            let toml_str = wasm::run_wasm(&self);
-            let toml_obj: CodePointTrieToml =
-                toml::from_str(&toml_str).expect("the tool should produce valid TOML");
-            (&toml_obj)
-                .try_into()
-                .expect("the toml should be a valid CPT")
+            wasm::run_wasmi_ucptrie_wrap(&self)
         }
 
         #[cfg(all(feature = "icu4c", not(feature = "wasm")))]

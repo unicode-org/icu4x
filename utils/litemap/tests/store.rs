@@ -52,6 +52,13 @@ impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
     }
 }
 
+impl<K: Ord, V> StoreFromIterable<K, V> for VecWithDefaults<(K, V)> {
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let v: Vec<_> = Vec::lm_sort_from_iter(iter);
+        Self(v)
+    }
+}
+
 impl<K, V> StoreMut<K, V> for VecWithDefaults<(K, V)> {
     #[inline]
     fn lm_with_capacity(capacity: usize) -> Self {
@@ -101,12 +108,15 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for VecWithDefaults<(K, V)> {
 
 impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for VecWithDefaults<(K, V)> {
     type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<K, V>>;
-    type KeyValueIntoIter = std::vec::IntoIter<(K, V)>;
 
     #[inline]
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
         self.0.as_mut_slice().iter_mut().map(map_f_mut)
     }
+}
+
+impl<K, V> StoreIntoIterator<K, V> for VecWithDefaults<(K, V)> {
+    type KeyValueIntoIter = std::vec::IntoIter<(K, V)>;
 
     #[inline]
     fn lm_into_iter(self) -> Self::KeyValueIntoIter {

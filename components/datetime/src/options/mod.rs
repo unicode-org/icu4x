@@ -45,7 +45,7 @@ pub(crate) mod preferences;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::{options::length, DateTimeFormatterOptions};
+/// use icu::datetime::options::length;
 ///
 /// let bag = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -55,12 +55,14 @@ pub(crate) mod preferences;
 ///
 /// At the moment only the [`length::Bag`] works, and we plan to extend that to support
 /// `ECMA402` like components bag later.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum DateTimeFormatterOptions {
     /// Bag of lengths for date and time.
     Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed.
+    ///
+    /// ✨ *Enabled with the `experimental` Cargo feature.*
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,

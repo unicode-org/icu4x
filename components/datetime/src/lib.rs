@@ -48,16 +48,11 @@
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-//! let dtf = DateTimeFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
-//!     &locale.into(),
-//!     options.clone(),
-//! )
-//! .expect("Failed to create DateTimeFormatter instance.");
+//! let dtf = DateTimeFormatter::try_new(&locale.into(), options.clone())
+//!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 //!     &locale!("en").into(),
 //!     options,
 //! )
@@ -97,8 +92,7 @@
 //! )
 //! .into();
 //!
-//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 //!     &locale!("en").into(),
 //!     options,
 //! );
@@ -136,12 +130,20 @@
 
 extern crate alloc;
 
+mod any;
 mod calendar;
 mod datetime;
 mod error;
+mod external_loaders;
 pub mod fields;
 mod format;
+#[macro_use]
+pub(crate) mod helpers;
 pub mod input;
+#[cfg(feature = "experimental")]
+pub mod neo;
+#[cfg(feature = "experimental")]
+pub mod neo_pattern;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
@@ -154,17 +156,20 @@ pub mod skeleton;
 pub mod time_zone;
 mod zoned_datetime;
 
-mod any;
-
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
+#[cfg(feature = "experimental")]
+pub use calendar::InternalCldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
+pub use error::MismatchedCalendarError;
 pub use format::datetime::FormattedDateTime;
+#[cfg(feature = "experimental")]
+pub use format::neo::{FormattedDateTimePattern, TypedDateTimeNames};
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use DateTimeError as Error;

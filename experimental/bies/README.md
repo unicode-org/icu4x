@@ -1,5 +1,7 @@
 # bies [![crates.io](https://img.shields.io/crates/v/bies)](https://crates.io/crates/bies)
 
+<!-- cargo-rdme start -->
+
 The algorithms in this project convert from a BIES matrix (the output of the LSTM segmentation neural network) to concrete segment boundaries.  In BIES, B = beginning of segment; I = inside segment; E = end of segment; and S = single segment (both beginning and end).
 
 These algorithms always produce valid breakpoint positions (at grapheme cluster boundaries); they don't assume that the neural network always predicts valid positions.
@@ -43,6 +45,8 @@ The following algorithms are implemented:
 **2a:** Step through each element in the BIES sequence. For each element, look at the triplet containing the element and both of its neighbors. By induction, assume the first element in the triplet is correct. Now, depending on whether there is a code point boundary following the element, calculate the probabilities of all valid BIES for the triplet, and based on those results, pick the most likely value for the current element.
 
 **3a:** Exhaustively check the probabilities of all possible BIES for the string. This algorithm has exponential runtime.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

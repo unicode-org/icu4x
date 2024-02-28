@@ -2,285 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::source::CldrCache;
-pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 use std::any::Any;
+use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
+#[cfg(feature = "networking")]
+use std::fs::File;
+#[cfg(feature = "networking")]
+use std::io::BufWriter;
 use std::io::Cursor;
 use std::io::Read;
-use std::ops::Deref;
 use std::path::Path;
 use std::path::PathBuf;
-use std::sync::Arc;
 use std::sync::RwLock;
 use zip::ZipArchive;
 
-/// Bag of options for datagen source data.
-#[derive(Clone, Debug)]
-#[non_exhaustive]
-pub struct SourceData {
-    cldr_paths: Option<Arc<CldrCache>>,
-    icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_paths: Arc<SerdeCache>,
-    segmenter_lstm_paths: Arc<SerdeCache>,
-    trie_type: IcuTrieType,
-    collation_han_database: CollationHanDatabase,
-    collations: Vec<String>,
-}
-
-impl Default for SourceData {
-    fn default() -> Self {
-        let segmenter_path =
-            PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/data/segmenter"));
-        Self {
-            cldr_paths: None,
-            icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(&segmenter_path).expect("valid dir"),
-            )),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(segmenter_path.join("lstm")).expect("valid dir"),
-            )),
-            trie_type: IcuTrieType::Small,
-            collation_han_database: CollationHanDatabase::Implicit,
-            collations: vec![],
-        }
-    }
-}
-
-impl SourceData {
-    /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.0.0-BETA3";
-
-    /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-03-22a/72.x";
-
-    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
-    ///
-    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
-    pub fn latest_tested() -> Self {
-        Self::default()
-            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-            .unwrap()
-            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-            .unwrap()
-    }
-
-    #[cfg(test)]
-    // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn repo() -> Self {
-        Self::default()
-            .with_cldr(repodata::paths::cldr(), Default::default())
-            .unwrap()
-            .with_icuexport(repodata::paths::icuexport())
-            .unwrap()
-    }
-
-    /// Adds CLDR data to this `DataSource`. The root should point to a local
-    /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
-    /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    ///
-    /// The `_locale_subset` variable is ignored.
-    pub fn with_cldr(
-        self,
-        root: PathBuf,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
-        let root = AbstractFs::new(root)?;
-        Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(root)))),
-            ..self
-        })
-    }
-
-    /// Adds ICU export data to this `DataSource`. The path should point to a local
-    /// `icuexportdata_uprops_full.zip` directory or ZIP file (see [GitHub releases](
-    /// https://github.com/unicode-org/icu/releases)).
-    pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
-        Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
-            ..self
-        })
-    }
-
-    /// Adds CLDR data to this `DataSource`. The data will be downloaded from GitHub
-    /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    ///
-    /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
-    pub fn with_cldr_for_tag(
-        self,
-        tag: &str,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
-        Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
-                )))
-            ))),
-            ..self
-        })
-    }
-
-    /// Adds ICU export data to this `DataSource`. The data will be downloaded from GitHub
-    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
-    ///
-    /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
-    pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
-        if tag == "release-71-1" {
-            tag = "icu4x/2022-08-17/71.x";
-        }
-        Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
-                format!(
-                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
-                    tag.replace('/', "-")
-                ),
-            )))),
-            ..self
-        })
-    }
-
-    #[deprecated(
-        since = "1.1.0",
-        note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
-    )]
-    /// Deprecated
-    pub fn with_cldr_latest(
-        self,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
-        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-    }
-
-    #[deprecated(
-        since = "1.1.0",
-        note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
-    )]
-    /// Deprecated
-    pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
-        self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-    }
-
-    /// Set this to use tries optimized for speed instead of data size
-    pub fn with_fast_tries(self) -> Self {
-        Self {
-            trie_type: IcuTrieType::Fast,
-            ..self
-        }
-    }
-
-    /// Set the [`CollationHanDatabase`] version.
-    pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
-        Self {
-            collation_han_database,
-            ..self
-        }
-    }
-
-    /// Set the list of BCP-47 collation IDs to include beyond the default set.
-    ///
-    /// If a list was already set, this function overwrites the previous list.
-    ///
-    /// The special string `"search*"` causes all search collation tables to be included.
-    pub fn with_collations(self, collations: Vec<String>) -> Self {
-        Self { collations, ..self }
-    }
-
-    /// Paths to CLDR source data.
-    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
-        self.cldr_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_CLDR_ERROR)
-    }
-
-    /// Path to Unicode Properties source data.
-    pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
-        self.icuexport_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
-    }
-
-    /// Path to segmenter data.
-    pub(crate) fn segmenter(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_paths)
-    }
-
-    pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_lstm_paths)
-    }
-
-    pub(crate) fn trie_type(&self) -> IcuTrieType {
-        self.trie_type
-    }
-
-    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
-    }
-
-    pub(crate) fn collations(&self) -> &[String] {
-        &self.collations
-    }
-
-    /// List the locales for the given CLDR coverage levels
-    pub fn locales(
-        &self,
-        levels: &[CoverageLevel],
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
-        self.cldr()?.locales(levels)
-    }
-}
-
-#[derive(Clone, Copy, Debug)]
-pub(crate) enum IcuTrieType {
-    Fast,
-    Small,
-}
-
-impl IcuTrieType {
-    pub(crate) fn to_internal(self) -> icu_collections::codepointtrie::TrieType {
-        match self {
-            IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-            IcuTrieType::Small => icu_collections::codepointtrie::TrieType::Small,
-        }
-    }
-}
-
-impl std::fmt::Display for IcuTrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            IcuTrieType::Fast => write!(f, "fast"),
-            IcuTrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Clone, Copy, Debug)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    Implicit,
-    /// Unihan
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
-
 pub(crate) struct SerdeCache {
-    root: AbstractFs,
+    pub(crate) root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
 }
 
@@ -328,7 +68,8 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes).map_err(DataError::from)
+            serde_json::from_slice(bytes)
+                .map_err(|e| DataError::custom("JSON deserialize").with_display_context(&e))
         })
     }
 
@@ -337,7 +78,8 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            toml::from_slice(bytes).map_err(crate::error::data_error_from_toml)
+            toml::from_slice(bytes)
+                .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
         })
     }
 
@@ -350,9 +92,15 @@ impl SerdeCache {
     }
 }
 
+pub(crate) struct ZipData {
+    archive: ZipArchive<Cursor<Vec<u8>>>,
+    file_list: HashSet<String>,
+}
+
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
-    Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
+    Zip(RwLock<Result<ZipData, String>>),
+    Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
 impl Debug for AbstractFs {
@@ -362,92 +110,110 @@ impl Debug for AbstractFs {
 }
 
 impl AbstractFs {
-    fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
+    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
         if std::fs::metadata(root.as_ref())
             .map_err(|e| DataError::from(e).with_path_context(root.as_ref()))?
             .is_dir()
         {
             Ok(Self::Fs(root.as_ref().to_path_buf()))
         } else {
-            Ok(Self::Zip(RwLock::new(Ok(ZipArchive::new(Cursor::new(
-                std::fs::read(&root)?,
-            ))
-            .map_err(|e| {
-                DataError::custom("Zip").with_display_context(&e)
-            })?))))
+            let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
+                DataError::custom("Invalid ZIP file")
+                    .with_display_context(&e)
+                    .with_path_context(&root)
+            })?;
+            let file_list = archive.file_names().map(String::from).collect();
+            Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
         }
     }
 
-    fn new_from_url(path: String) -> Self {
+    #[cfg(feature = "networking")]
+    pub fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
     }
 
     fn init(&self) -> Result<(), DataError> {
-        match self {
-            Self::Zip(lock) => {
-                if lock.read().expect("poison").is_ok() {
-                    return Ok(());
-                }
-                let mut lock = lock.write().expect("poison");
-                let resource = if let Err(resource) = lock.deref() {
-                    resource
-                } else {
-                    return Ok(());
-                };
-
-                let root: PathBuf = {
-                    #[cfg(not(feature = "networking"))]
-                    unreachable!("AbstractFs URL mode only possible when using CLDR/ICU tags, which cannot be set without the `networking` feature");
-
-                    #[cfg(feature = "networking")]
-                    {
-                        lazy_static::lazy_static! {
-                            static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                                .freshness_lifetime(u64::MAX)
-                                .progress_bar(None)
-                                .build()
-                                .unwrap();
-                        }
-
-                        CACHE
-                            .cached_path(resource)
-                            .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-                    }
-                };
-                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
-                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
-                Ok(())
+        #[cfg(feature = "networking")]
+        if let Self::Zip(lock) = self {
+            if lock.read().expect("poison").is_ok() {
+                return Ok(());
             }
-            _ => Ok(()),
+            let mut lock = lock.write().expect("poison");
+            let resource = if let Err(resource) = &*lock {
+                resource
+            } else {
+                return Ok(());
+            };
+
+            let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+                .map(PathBuf::from)
+                .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
+                .join(resource.rsplit("//").next().unwrap());
+
+            if !root.exists() {
+                log::info!("Downloading {resource}");
+                std::fs::create_dir_all(root.parent().unwrap())?;
+                std::io::copy(
+                    &mut ureq::get(resource)
+                        .call()
+                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                        .into_reader(),
+                    &mut BufWriter::new(File::create(&root)?),
+                )?;
+            }
+
+            let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
+                DataError::custom("Invalid ZIP file")
+                    .with_display_context(&e)
+                    .with_path_context(&root)
+            })?;
+
+            let file_list = archive.file_names().map(String::from).collect();
+
+            *lock = Ok(ZipData { archive, file_list });
         }
+        Ok(())
     }
 
     fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {
-                log::trace!("Reading: {}/{}", root.display(), path);
+                log::debug!("Reading: {}/{}", root.display(), path);
                 std::fs::read(root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
             Self::Zip(zip) => {
-                log::trace!("Reading: <zip>/{}", path);
+                log::debug!("Reading: <zip>/{}", path);
                 let mut buf = Vec::new();
                 zip.write()
                     .expect("poison")
                     .as_mut()
                     .ok()
                     .unwrap() // init called
+                    .archive
                     .by_name(path)
                     .map_err(|e| {
-                        DataError::custom("Zip")
+                        DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                            .into_error()
                             .with_display_context(&e)
                             .with_display_context(path)
                     })?
                     .read_to_end(&mut buf)?;
                 Ok(buf)
             }
+            Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
+                DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
+            }),
         }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
+        let vec = self.read_to_buf(path)?;
+        let s = String::from_utf8(vec)
+            .map_err(|e| DataError::custom("Invalid UTF-8").with_display_context(&e))?;
+        Ok(s)
     }
 
     fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
@@ -464,7 +230,16 @@ impl AbstractFs {
                 .as_ref()
                 .ok()
                 .unwrap() // init called
-                .file_names()
+                .file_list
+                .iter()
+                .filter_map(|p| p.strip_prefix(path))
+                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+                .map(String::from)
+                .collect::<HashSet<_>>()
+                .into_iter(),
+            Self::Memory(map) => map
+                .keys()
+                .copied()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
                 .map(String::from)
@@ -483,8 +258,9 @@ impl AbstractFs {
                 .as_ref()
                 .ok()
                 .unwrap() // init called
-                .file_names()
-                .any(|p| p == path),
+                .file_list
+                .contains(path),
+            Self::Memory(map) => map.contains_key(path),
         })
     }
 }

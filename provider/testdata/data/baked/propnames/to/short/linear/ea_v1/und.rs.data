@@ -1,7 +1,0 @@
-::icu_properties::provider::names::PropertyEnumToValueNameLinearMapV1 {
-    map: unsafe {
-        ::zerovec::VarZeroVec::from_bytes_unchecked(
-            b"\x05\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0NAHFNa",
-        )
-    },
-}

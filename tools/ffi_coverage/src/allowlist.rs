@@ -94,9 +94,10 @@ lazy_static::lazy_static! {
     // Ignore if this is a substring of any path
     // keep this small
     pub static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
-        // _unstable constructors cover these
-        "with_any_provider",
-        "with_buffer_provider",
+        // compiled data constructors cover these
+        "_with_any_provider",
+        "_with_buffer_provider",
+        "_unstable",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
@@ -130,27 +131,56 @@ lazy_static::lazy_static! {
         // Individual calendars: Currently the main entry point is AnyCalendar
         "icu::calendar::buddhist",
         "icu::calendar::coptic",
+        "icu::calendar::dangi",
         "icu::calendar::ethiopian",
         "icu::calendar::indian",
         "icu::calendar::japanese",
         "icu::calendar::julian",
+        "icu::calendar::islamic",
+        "icu::calendar::chinese",
+        "icu::calendar::dangi",
+        "icu::calendar::roc",
+        "icu::calendar::persian",
+        "icu::calendar::hebrew",
         "icu::calendar::any_calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_gregorian_date",
         "icu::calendar::Date::try_new_buddhist_date",
         "icu::calendar::Date::try_new_coptic_date",
+        "icu::calendar::Date::try_new_dangi_date",
         "icu::calendar::Date::try_new_ethiopian_date",
         "icu::calendar::Date::try_new_indian_date",
         "icu::calendar::Date::try_new_japanese_date",
         "icu::calendar::Date::try_new_japanese_extended_date",
         "icu::calendar::Date::try_new_julian_date",
+        "icu::calendar::Date::try_new_chinese_date_with_calendar",
+        "icu::calendar::Date::try_new_dangi_date_with_calendar",
+        "icu::calendar::Date::try_new_hebrew_date",
+        "icu::calendar::Date::try_new_hebrew_date_with_calendar",
+        "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
+        "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
+        "icu::calendar::Date::try_new_observational_islamic_date",
+        "icu::calendar::Date::try_new_persian_date",
+        "icu::calendar::Date::try_new_roc_date",
+        "icu::calendar::Date::try_new_ummalqura_date",
         "icu::calendar::DateTime::try_new_gregorian_datetime",
         "icu::calendar::DateTime::try_new_buddhist_datetime",
         "icu::calendar::DateTime::try_new_coptic_datetime",
+        "icu::calendar::DateTime::try_new_dangi_datetime",
         "icu::calendar::DateTime::try_new_ethiopian_datetime",
         "icu::calendar::DateTime::try_new_indian_datetime",
         "icu::calendar::DateTime::try_new_japanese_datetime",
         "icu::calendar::DateTime::try_new_japanese_extended_datetime",
         "icu::calendar::DateTime::try_new_julian_datetime",
+        "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_hebrew_datetime",
+        "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_observational_islamic_datetime",
+        "icu::calendar::DateTime::try_new_persian_datetime",
+        "icu::calendar::DateTime::try_new_roc_datetime",
+        "icu::calendar::DateTime::try_new_ummalqura_datetime",
 
         // Arithmetic APIs are still experimental/hidden for 1.0
         "icu::calendar::DateDuration",
@@ -161,10 +191,10 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeFormatter::try_new_experimental_unstable",
-        "icu::datetime::TypedDateTimeFormatter::try_new_experimental_unstable",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental_unstable",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental_unstable",
+        "icu::datetime::DateTimeFormatter::try_new_experimental",
+        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
         // Not necessary for now
         "icu::calendar::Date::day_of_year_info",
@@ -198,12 +228,15 @@ lazy_static::lazy_static! {
         "icu::properties::GeneralCategory",
         "icu::properties::GeneralCategoryGroup",
         "icu::properties::GraphemeClusterBreak",
+        "icu::properties::IndicSyllabicCategory",
         "icu::properties::LineBreak",
         "icu::properties::Script",
         "icu::properties::SentenceBreak",
         "icu::properties::WordBreak",
+        "icu::properties::JoiningType",
 
         // Experimental
+        "icu::properties::maps::canonical_combining_class",
         "icu::properties::maps::load_canonical_combining_class",
 
         // Not planned for 1.0
@@ -211,14 +244,13 @@ lazy_static::lazy_static! {
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
-        "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
-        "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
         "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
-        "icu::collections::codepointinvlist",
+        "icu::collections::codepointinvlist::CodePointInversionList",
+        "icu::collections::codepointinvlist::CodePointInversionListULE",
+        "icu::collections::codepointinvlist::CodePointInversionListError",
+        "icu::collections::codepointinvlist::Error",
         "icu::collections::codepointinvliststringlist",
         "icu::collections::codepointtrie",
         "icu::collections::char16trie",
@@ -229,7 +261,7 @@ lazy_static::lazy_static! {
         "icu::locid::LanguageIdentifier",
 
         // experimental
-        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_unstable",
+        "icu::normalizer::ComposingNormalizer::new_uts46_without_ignored_and_disallowed",
 
         // can't be exposed till Diplomat has Write16
         "icu::normalizer::ComposingNormalizer::normalize_utf16",
@@ -253,7 +285,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
         // We don't expose data keys directly over FFI, but when we do, we should add this
-        "icu_provider_adapters::fallback::LocaleFallbacker::for_key",
+        "icu::locid_transform::fallback::LocaleFallbackConfig::from_key",
 
         // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
         // filter_by_langid_allowlist_strict needs input iterators.
@@ -272,10 +304,18 @@ lazy_static::lazy_static! {
         "icu::list::FormattedList",
 
         // Experimental
-        "icu::casemapping",
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",
+        "icu::transliterate",
+        "icu::plurals::PluralRulesWithRanges",
+        "icu::plurals::PluralRulesWithRanges::categories",
+        "icu::plurals::PluralRulesWithRanges::category_for",
+        "icu::plurals::PluralRulesWithRanges::category_for_range",
+        "icu::plurals::PluralRulesWithRanges::resolve_range",
+        "icu::plurals::PluralRulesWithRanges::try_new",
+        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
+        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -286,6 +326,7 @@ lazy_static::lazy_static! {
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
         "icu::calendar::provider",
+        "icu::casemap::provider",
         "icu::collator::provider",
         "icu::datetime::provider",
         "icu::decimal::provider",
@@ -296,7 +337,29 @@ lazy_static::lazy_static! {
         "icu::properties::provider",
         "icu::segmenter::provider",
         "icu::timezone::provider",
-        "icu_provider_adapters::fallback::provider",
+        "icu::transliterate::provider",
+
+        // Borrowed <-> owned converters
+        "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
+        "icu::locid_transform::fallback::LocaleFallbackerBorrowed::static_to_owned",
+        "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
+        "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
+        "icu::properties::maps::CodePointMapData::as_borrowed",
+        "icu::properties::maps::CodePointMapDataBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameLinearMapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed",
+        "icu::properties::names::PropertyValueNameToEnumMapperBorrowed::static_to_owned",
+        "icu::properties::script::ScriptWithExtensions::as_borrowed",
+        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
+        "icu::properties::sets::CodePointSetData::as_borrowed",
+        "icu::properties::sets::CodePointSetDataBorrowed::static_to_owned",
+        "icu::properties::sets::UnicodeSetData::as_borrowed",
+        "icu::properties::sets::UnicodeSetDataBorrowed::static_to_owned",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
@@ -304,17 +367,25 @@ lazy_static::lazy_static! {
         "icu::datetime::options::DateTimeFormatterOptions",
 
         // Re-exports of errors
+        "fixed_decimal::Error",
         "icu::calendar::Error",
+        "icu::collator::Error",
+        "icu::compactdecimal::Error",
         "icu::datetime::Error",
         "icu::decimal::Error",
         "icu::list::Error",
         "icu::locid_transform::Error",
+        "icu::locid::Error",
         "icu::normalizer::Error",
         "icu::plurals::Error",
         "icu::properties::Error",
+        "icu::relativetime::Error",
         "icu::segmenter::Error",
         "icu::timezone::Error",
-        "icu::collator::Error",
+        "icu::transliterator::Error",
+
+        // ULE types that are not in provider modules
+        "icu::plurals::PluralCategoryULE",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -364,16 +435,16 @@ lazy_static::lazy_static! {
         // locid macros
         "icu::locid::langid",
         "icu::locid::locale",
-        "icu::locid::extensions_other_subtag",
-        "icu::locid::extensions_private_subtag",
-        "icu::locid::extensions_transform_key",
-        "icu::locid::extensions_unicode_attribute",
-        "icu::locid::extensions_unicode_key",
-        "icu::locid::extensions_unicode_value",
-        "icu::locid::subtags_language",
-        "icu::locid::subtags_region",
-        "icu::locid::subtags_script",
-        "icu::locid::subtags_variant",
+        "icu::locid::extensions::other::subtag",
+        "icu::locid::extensions::private::subtag",
+        "icu::locid::extensions::transform::key",
+        "icu::locid::extensions::unicode::attribute",
+        "icu::locid::extensions::unicode::key",
+        "icu::locid::extensions::unicode::value",
+        "icu::locid::subtags::language",
+        "icu::locid::subtags::region",
+        "icu::locid::subtags::script",
+        "icu::locid::subtags::variant",
         // assoc type
         "icu::locale::Locale::Err",
 
@@ -401,6 +472,11 @@ lazy_static::lazy_static! {
 
         // No macros in FFI
         "icu_provider_adapters::make_forking_provider",
+
+        // Rust-specific trait abstraction, handled as individual types over FFI
+        "icu::casemap::ClosureSink",
+        // Reexported
+        "icu::casemap::titlecase::TitlecaseMapper",
 
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }

@@ -6,14 +6,16 @@ use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
 use litemap::LiteMap;
+use writeable::Writeable;
 
 use super::Key;
 use super::Value;
-use crate::helpers::ShortVec;
+#[allow(deprecated)]
 use crate::ordering::SubtagOrderingResult;
+use crate::shortvec::ShortBoxSlice;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
-/// about locale's internationnalization preferences.
+/// about locale's internationalization preferences.
 ///
 /// Here are examples of fields used in Unicode:
 /// - `hc` - Hour Cycle (`h11`, `h12`, `h23`, `h24`)
@@ -30,11 +32,10 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions::unicode::Keywords, extensions_unicode_key as key,
-///     extensions_unicode_value as value, locale,
+///     extensions::unicode::{key, value, Keywords},
 /// };
 ///
-/// let keywords = vec![(key!("hc"), value!("h23"))]
+/// let keywords = [(key!("hc"), value!("h23"))]
 ///     .into_iter()
 ///     .collect::<Keywords>();
 ///
@@ -45,7 +46,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
+///     extensions::unicode::{key, value},
 ///     Locale,
 /// };
 ///
@@ -66,7 +67,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// [`Locale`]: crate::Locale
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(LiteMap<Key, Value, ShortVec<(Key, Value)>>);
+pub struct Keywords(LiteMap<Key, Value, ShortBoxSlice<(Key, Value)>>);
 
 impl Keywords {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -86,9 +87,9 @@ impl Keywords {
     /// Create a new list of key-value pairs having exactly one pair, callable in a `const` context.
     #[inline]
     pub const fn new_single(key: Key, value: Value) -> Self {
-        Self(LiteMap::from_sorted_store_unchecked(ShortVec::new_single(
-            (key, value),
-        )))
+        Self(LiteMap::from_sorted_store_unchecked(
+            ShortBoxSlice::new_single((key, value)),
+        ))
     }
 
     /// Returns `true` if there are no keywords.
@@ -96,7 +97,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::locale;
     /// use icu::locid::Locale;
     ///
@@ -116,12 +116,9 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let keywords = vec![(key!("ca"), value!("gregory"))]
+    /// let keywords = [(key!("ca"), value!("gregory"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -141,12 +138,9 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let keywords = vec![(key!("ca"), value!("buddhist"))]
+    /// let keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -167,12 +161,9 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
-    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
+    /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let mut keywords = vec![(key!("ca"), value!("buddhist"))]
+    /// let mut keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -194,12 +185,8 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Key;
-    /// use icu::locid::extensions::unicode::Value;
+    /// use icu::locid::extensions::unicode::{key, value};
     /// use icu::locid::Locale;
-    /// use icu::locid::{
-    ///     extensions_unicode_key as key, extensions_unicode_value as value,
-    /// };
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
@@ -222,8 +209,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Key;
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::extensions::unicode::key;
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
@@ -258,7 +244,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions_unicode_key as key;
+    /// use icu::locid::extensions::unicode::key;
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
@@ -293,7 +279,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
     ///
@@ -315,7 +300,7 @@ impl Keywords {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+        self.write_cmp_bytes(other)
     }
 
     /// Compare this [`Keywords`] with an iterator of BCP-47 subtags.
@@ -328,7 +313,6 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///
@@ -352,6 +336,8 @@ impl Keywords {
     ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     /// ```
+    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
+    #[allow(deprecated)]
     pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
     where
         I: Iterator<Item = &'l [u8]>,
@@ -390,8 +376,8 @@ impl Keywords {
     }
 }
 
-impl From<LiteMap<Key, Value, ShortVec<(Key, Value)>>> for Keywords {
-    fn from(map: LiteMap<Key, Value, ShortVec<(Key, Value)>>) -> Self {
+impl From<LiteMap<Key, Value, ShortBoxSlice<(Key, Value)>>> for Keywords {
+    fn from(map: LiteMap<Key, Value, ShortBoxSlice<(Key, Value)>>) -> Self {
         Self(map)
     }
 }

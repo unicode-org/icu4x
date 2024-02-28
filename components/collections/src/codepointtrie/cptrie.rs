@@ -58,19 +58,19 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     /// In most cases, the error value is read from the last element of the `data` array,
     /// this value is used for empty codepointtrie arrays
 
-    /// Error type when converting from a u32 to this TrieValue.
+    /// Error type when converting from a u32 to this `TrieValue`.
     type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
     /// When the serialization type width is smaller than 32 bits, then it is expected
     /// that the call site will widen the value to a `u32` first.
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error>;
 
-    /// A method for converting back to a u32 that can roundtrip through
+    /// A method for converting back to a `u32` that can roundtrip through
     /// [`Self::try_from_u32()`]. The default implementation of this trait
     /// method panics in debug mode and returns 0 in release mode.
     ///
     /// This method is allowed to have GIGO behavior when fed a value that has
-    /// no corresponding u32 (since such values cannot be stored in the trie)
+    /// no corresponding `u32` (since such values cannot be stored in the trie)
     fn to_u32(self) -> u32 {
         debug_assert!(
             false,
@@ -107,12 +107,12 @@ impl_primitive_trie_value!(i32, TryFromIntError);
 impl_primitive_trie_value!(char, CharTryFromError);
 
 /// Helper function used by [`get_range`]. Converts occurrences of trie's null
-/// value into the provided null_value.
+/// value into the provided `null_value`.
 ///
-/// Note: the ICU version of this helper function uses a ValueFilter function
+/// Note: the ICU version of this helper function uses a `ValueFilter` function
 /// to apply a transform on a non-null value. But currently, this implementation
 /// stops short of that functionality, and instead leaves the non-null trie value
-/// untouched. This is equivalent to having a ValueFilter function that is the
+/// untouched. This is equivalent to having a `ValueFilter` function that is the
 /// identity function.
 fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T) -> T {
     if value == trie_null_value {
@@ -122,7 +122,7 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
     }
 }
 
-/// This struct represents a de-serialized CodePointTrie that was exported from
+/// This struct represents a de-serialized [`CodePointTrie`] that was exported from
 /// ICU binary data.
 ///
 /// For more information:
@@ -308,7 +308,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// lookup: 3 lookups in the `index` array and one lookup in the `data`
     /// array. Lookups for code points in the range [`high_start`,
     /// `CODE_POINT_MAX`] are short-circuited to be a single lookup, see
-    /// [CodePointTrieHeader::high_start].
+    /// [`CodePointTrieHeader::high_start`].
     fn small_index(&self, code_point: u32) -> u32 {
         if code_point >= self.header.high_start {
             self.data.len() as u32 - HIGH_VALUE_NEG_DATA_OFFSET
@@ -412,7 +412,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         self.data.as_ule_slice().get(data_pos as usize)
     }
 
-    /// Converts the CodePointTrie into one that returns another type of the same size.
+    /// Converts the [`CodePointTrie`] into one that returns another type of the same size.
     ///
     /// Borrowed data remains borrowed, and owned data remains owned.
     ///
@@ -423,19 +423,18 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// Panics if `T` and `P` are different sizes.
     ///
-    /// More specifically, panics if [ZeroVec::try_into_converted()] panics when converting
+    /// More specifically, panics if [`ZeroVec::try_into_converted()`] panics when converting
     /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
     ///
     /// # Examples
     ///
     /// ```no_run
-    /// use icu_collections::codepointtrie::CodePointTrie;
     /// use icu_collections::codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
-    /// let planes_trie_i8: CodePointTrie<i8> = planes_trie_u8
-    ///     .try_into_converted()
-    ///     .expect("infallible");
+    /// let planes_trie_i8: CodePointTrie<i8> =
+    ///     planes_trie_u8.try_into_converted().expect("infallible");
     ///
     /// assert_eq!(planes_trie_i8.get32(0x30000), 3);
     /// ```
@@ -459,7 +458,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         })
     }
 
-    /// Maps the CodePointTrie into one that returns a different type.
+    /// Maps the [`CodePointTrie`] into one that returns a different type.
     ///
     /// This function returns owned data.
     ///
@@ -469,9 +468,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::CodePointTrie;
     /// use icu_collections::codepointtrie::planes;
-    /// use core::convert::Infallible;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_u16: CodePointTrie<u16> = planes_trie_u8
@@ -527,7 +525,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(trie.get32(exp_end), start_val);
     /// assert_ne!(trie.get32(exp_end + 1), start_val);
     ///
-    /// use core::ops::RangeInclusive;
     /// use icu_collections::codepointtrie::CodePointMapRange;
     ///
     /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
@@ -993,7 +990,7 @@ impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'tri
         let index = self.index.bake(env);
         let data = self.data.bake(env);
         let error_value = self.error_value.bake(env);
-        databake::quote! { ::icu_collections::codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
+        databake::quote! { icu_collections::codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
     }
 }
 
@@ -1272,8 +1269,8 @@ mod tests {
                     null_value: 5u32,
                     trie_type: crate::codepointtrie::TrieType::Small,
                 },
-                ::zerovec::ZeroVec::new(),
-                ::zerovec::ZeroVec::new(),
+                zerovec::ZeroVec::new(),
+                zerovec::ZeroVec::new(),
                 0u32,
             ),
             icu_collections,

@@ -9,10 +9,10 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807" }
+diplomat_core.workspace = true
 elsa = "1"
 lazy_static ="1"
-rustdoc-types = "0.14"
+rustdoc-types = "0.19"
 serde_json = "1"
-syn-inline-mod = "0.4.0"
+syn-inline-mod = "0.6.0"
 

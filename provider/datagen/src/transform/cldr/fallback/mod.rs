@@ -6,16 +6,15 @@ use crate::transform::cldr::cldr_serde;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use icu_locid::{
-    extensions::unicode::Key,
-    extensions_unicode_key, langid,
+    extensions::unicode::{key, Key},
+    langid,
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
+use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider_adapters::fallback::provider::*;
 use std::collections::BTreeMap;
-use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
 
@@ -24,13 +23,8 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
-        let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
+        self.check_req::<LocaleFallbackLikelySubtagsV1Marker>(req)?;
+        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         let metadata = DataResponseMetadata::default();
         Ok(DataResponse {
@@ -45,14 +39,8 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
-        // We treat searching for `und` as a request for all data. Other requests
-        // are not currently supported.
-        if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.into_error());
-        }
-
+        self.check_req::<LocaleFallbackParentsV1Marker>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/parentLocales.json")?;
@@ -68,8 +56,9 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
 impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _req: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
+        self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
         // TODO(#1964): Load this data from its proper sources. For now, it is copied from:
         // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml
         // as well as from CLDR XML.
@@ -79,12 +68,8 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
             ("yue".into(), (&langid!("zh-Hant")).into()), //
         ];
         let unicode_extension_defaults_list: [(Key, &UnvalidatedStr, &UnvalidatedStr); 2] = [
-            (extensions_unicode_key!("co"), "zh".into(), "pinyin".into()),
-            (
-                extensions_unicode_key!("co"),
-                "zh-Hant".into(),
-                "stroke".into(),
-            ),
+            (key!("co"), "zh".into(), "pinyin".into()),
+            (key!("co"), "zh-Hant".into(), "stroke".into()),
         ];
         let data = LocaleFallbackSupplementV1 {
             parents: parents_list.into_iter().collect(),
@@ -118,9 +103,9 @@ impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::Datage
 fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LocaleFallbackLikelySubtagsV1<'static> {
-    let mut l2s = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut l2s = BTreeMap::new();
     let mut lr2s = ZeroMap2d::new();
-    let mut l2r = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut l2r = BTreeMap::new();
     let mut ls2r = ZeroMap2d::new();
 
     let (part0, part1) = it
@@ -135,10 +120,10 @@ fn transform<'x>(
         let script = maximized.script.expect("maximized");
         let region = maximized.region.expect("maximized");
         if script != DEFAULT_SCRIPT {
-            l2s.insert(language.into(), script);
+            l2s.insert(language.into_tinystr().to_unvalidated(), script);
         }
         if region != DEFAULT_REGION {
-            l2r.insert(language.into(), region);
+            l2r.insert(language.into_tinystr().to_unvalidated(), region);
         }
     }
 
@@ -149,16 +134,30 @@ fn transform<'x>(
         let region = maximized.region.expect("maximized");
         if minimized.script.is_some() {
             assert!(minimized.region.is_none(), "{minimized:?}");
-            let region_for_lang = l2r.get(&language.into()).copied().unwrap_or(DEFAULT_REGION);
+            let region_for_lang = l2r
+                .get(&language.into_tinystr().to_unvalidated())
+                .copied()
+                .unwrap_or(DEFAULT_REGION);
             if region != region_for_lang {
-                ls2r.insert(&language.into(), &script.into(), &region);
+                ls2r.insert(
+                    &language.into_tinystr().to_unvalidated(),
+                    &script.into_tinystr().to_unvalidated(),
+                    &region,
+                );
             }
             continue;
         }
         if minimized.region.is_some() {
-            let script_for_lang = l2s.get(&language.into()).copied().unwrap_or(DEFAULT_SCRIPT);
+            let script_for_lang = l2s
+                .get(&language.into_tinystr().to_unvalidated())
+                .copied()
+                .unwrap_or(DEFAULT_SCRIPT);
             if script != script_for_lang {
-                lr2s.insert(&language.into(), &region.into(), &script);
+                lr2s.insert(
+                    &language.into_tinystr().to_unvalidated(),
+                    &region.into_tinystr().to_unvalidated(),
+                    &script,
+                );
             }
             continue;
         }
@@ -201,10 +200,11 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 #[test]
 fn test_basic() {
     use icu_locid::{
-        langid, subtags_language as language, subtags_region as region, subtags_script as script,
+        langid,
+        subtags::{language, region, script},
     };
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::new_testing();
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
         .load(Default::default())
         .unwrap()
@@ -212,25 +212,31 @@ fn test_basic() {
         .unwrap();
 
     assert_eq!(
-        likely_subtags.get().l2s.get_copied(&language!("zh").into()),
+        likely_subtags
+            .get()
+            .l2s
+            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(script!("Hans"))
     );
     assert_eq!(
-        likely_subtags
-            .get()
-            .lr2s
-            .get_copied_2d(&language!("zh").into(), &region!("TW").into()),
+        likely_subtags.get().lr2s.get_copied_2d(
+            &language!("zh").into_tinystr().to_unvalidated(),
+            &region!("TW").into_tinystr().to_unvalidated()
+        ),
         Some(script!("Hant"))
     );
     assert_eq!(
-        likely_subtags.get().l2r.get_copied(&language!("zh").into()),
+        likely_subtags
+            .get()
+            .l2r
+            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(region!("CN"))
     );
     assert_eq!(
-        likely_subtags
-            .get()
-            .ls2r
-            .get_copied_2d(&language!("zh").into(), &script!("Hant").into()),
+        likely_subtags.get().ls2r.get_copied_2d(
+            &language!("zh").into_tinystr().to_unvalidated(),
+            &script!("Hant").into_tinystr().to_unvalidated()
+        ),
         Some(region!("TW"))
     );
 

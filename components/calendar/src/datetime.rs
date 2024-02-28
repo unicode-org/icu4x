@@ -137,6 +137,32 @@ where
 // We can do this since DateInner is required to be Eq by the Calendar trait
 impl<A: AsCalendar> Eq for DateTime<A> {}
 
+impl<C, A, B> PartialOrd<DateTime<B>> for DateTime<A>
+where
+    C: Calendar,
+    C::DateInner: PartialOrd,
+    A: AsCalendar<Calendar = C>,
+    B: AsCalendar<Calendar = C>,
+{
+    fn partial_cmp(&self, other: &DateTime<B>) -> Option<core::cmp::Ordering> {
+        match self.date.partial_cmp(&other.date) {
+            Some(core::cmp::Ordering::Equal) => self.time.partial_cmp(&other.time),
+            other => other,
+        }
+    }
+}
+
+impl<C, A> Ord for DateTime<A>
+where
+    C: Calendar,
+    C::DateInner: Ord,
+    A: AsCalendar<Calendar = C>,
+{
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        (&self.date, &self.time).cmp(&(&other.date, &other.time))
+    }
+}
+
 impl<A: AsCalendar + Clone> Clone for DateTime<A> {
     fn clone(&self) -> Self {
         Self {
@@ -151,4 +177,30 @@ where
     A: AsCalendar + Copy,
     <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
 {
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ord() {
+        let dates_in_order = [
+            DateTime::try_new_iso_datetime(0, 1, 1, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso_datetime(0, 1, 1, 0, 0, 1).unwrap(),
+            DateTime::try_new_iso_datetime(0, 1, 1, 0, 1, 0).unwrap(),
+            DateTime::try_new_iso_datetime(0, 1, 1, 1, 0, 0).unwrap(),
+            DateTime::try_new_iso_datetime(0, 1, 2, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso_datetime(0, 2, 1, 0, 0, 0).unwrap(),
+            DateTime::try_new_iso_datetime(1, 1, 1, 0, 0, 0).unwrap(),
+        ];
+        for (i, i_date) in dates_in_order.iter().enumerate() {
+            for (j, j_date) in dates_in_order.iter().enumerate() {
+                let result1 = i_date.cmp(j_date);
+                let result2 = j_date.cmp(i_date);
+                assert_eq!(result1.reverse(), result2);
+                assert_eq!(i.cmp(&j), i_date.cmp(j_date));
+            }
+        }
+    }
 }

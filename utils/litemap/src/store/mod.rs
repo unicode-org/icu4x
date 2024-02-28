@@ -30,6 +30,7 @@ use core::cmp::Ordering;
 use core::iter::DoubleEndedIterator;
 use core::iter::FromIterator;
 use core::iter::Iterator;
+use core::ops::Range;
 
 /// Trait to enable const construction of empty store.
 pub trait StoreConstEmpty<K: ?Sized, V: ?Sized> {
@@ -53,7 +54,7 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
     /// Gets a key/value pair at the specified index.
     fn lm_get(&self, index: usize) -> Option<(&K, &V)>;
 
-    /// Gets the last element in the store, or None if the store is empty.
+    /// Gets the last element in the store, or `None` if the store is empty.
     fn lm_last(&self) -> Option<(&K, &V)> {
         let len = self.lm_len();
         if len == 0 {
@@ -71,6 +72,17 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
         F: FnMut(&K) -> Ordering;
 }
 
+pub trait StoreFromIterable<K, V>: Store<K, V> {
+    /// Create a sorted store from `iter`.
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self;
+}
+
+pub trait StoreSlice<K: ?Sized, V: ?Sized>: Store<K, V> {
+    type Slice: ?Sized;
+
+    fn lm_get_range(&self, range: Range<usize>) -> Option<&Self::Slice>;
+}
+
 pub trait StoreMut<K, V>: Store<K, V> {
     /// Creates a new store with the specified capacity hint.
     ///
@@ -84,6 +96,7 @@ pub trait StoreMut<K, V>: Store<K, V> {
 
     /// Gets a key/value pair at the specified index, with a mutable value.
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
+
     /// Pushes one additional item onto the store.
     fn lm_push(&mut self, key: K, value: V);
 
@@ -123,7 +136,7 @@ pub trait StoreMut<K, V>: Store<K, V> {
 }
 
 /// Iterator methods for the LiteMap store.
-pub trait StoreIterable<'a, K: 'a, V: 'a>: Store<K, V> {
+pub trait StoreIterable<'a, K: 'a + ?Sized, V: 'a + ?Sized>: Store<K, V> {
     type KeyValueIter: Iterator<Item = (&'a K, &'a V)> + DoubleEndedIterator + 'a;
 
     /// Returns an iterator over key/value pairs.
@@ -132,10 +145,13 @@ pub trait StoreIterable<'a, K: 'a, V: 'a>: Store<K, V> {
 
 pub trait StoreIterableMut<'a, K: 'a, V: 'a>: StoreMut<K, V> + StoreIterable<'a, K, V> {
     type KeyValueIterMut: Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator + 'a;
-    type KeyValueIntoIter: Iterator<Item = (K, V)>;
 
     /// Returns an iterator over key/value pairs, with a mutable value.
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut;
+}
+
+pub trait StoreIntoIterator<K, V>: StoreMut<K, V> {
+    type KeyValueIntoIter: Iterator<Item = (K, V)>;
 
     /// Returns an iterator that moves every item from this store.
     fn lm_into_iter(self) -> Self::KeyValueIntoIter;

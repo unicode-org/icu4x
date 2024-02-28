@@ -45,9 +45,11 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+pub mod cartable_ptr;
 pub mod either;
 #[cfg(feature = "alloc")]
 pub mod erased;
+mod kinda_sorta_dangling;
 mod macro_impls;
 pub mod trait_hack;
 mod yoke;

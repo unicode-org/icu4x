@@ -2,9 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cartable_ptr::{CartableOptionPointer, CartablePointerLike};
 use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
+use crate::kinda_sorta_dangling::KindaSortaDangling;
 use crate::trait_hack::YokeTraitHack;
 use crate::Yokeable;
 use core::marker::PhantomData;
@@ -54,7 +56,7 @@ use alloc::sync::Arc;
 /// For example, we can use this to store zero-copy deserialized data in a cache:
 ///
 /// ```rust
-/// # use yoke::{Yoke, Yokeable};
+/// # use yoke::Yoke;
 /// # use std::rc::Rc;
 /// # use std::borrow::Cow;
 /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
@@ -74,12 +76,42 @@ use alloc::sync::Arc;
 /// assert_eq!(&**yoke.get(), "hello");
 /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
 /// ```
-#[derive(Debug)]
 pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
-    yokeable: Y,
+    yokeable: KindaSortaDangling<Y>,
+    // Safety invariant: this type can be anything, but `yokeable` may only contain references to
+    // StableDeref parts of this cart, and those references must be valid for the lifetime of
+    // this cart (it must own or borrow them). It's ok for this cart to contain stack data as long as it
+    // is not referenced by `yokeable` during construction. `attach_to_cart`, the typical constructor
+    // of this type, upholds this invariant, but other constructors like `replace_cart` need to uphold it.
     cart: C,
+}
+
+// Manual `Debug` implementation, since the derived one would be unsound.
+// See https://github.com/unicode-org/icu4x/issues/3685
+impl<Y: for<'a> Yokeable<'a>, C: core::fmt::Debug> core::fmt::Debug for Yoke<Y, C>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: core::fmt::Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("Yoke")
+            .field("yokeable", self.get())
+            .field("cart", self.backing_cart())
+            .finish()
+    }
+}
+
+#[test]
+fn test_debug() {
+    let local_data = "foo".to_owned();
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(
+        Rc::new(local_data),
+    );
+    assert_eq!(
+        format!("{y1:?}"),
+        r#"Yoke { yokeable: "foo", cart: "foo" }"#,
+    );
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>
@@ -96,7 +128,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use yoke::{Yoke, Yokeable};
+    /// # use yoke::Yoke;
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
     /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
@@ -129,7 +161,7 @@ where
     {
         let deserialized = f(cart.deref());
         Self {
-            yokeable: unsafe { Y::make(deserialized) },
+            yokeable: KindaSortaDangling::new(unsafe { Y::make(deserialized) }),
             cart,
         }
     }
@@ -145,7 +177,7 @@ where
     {
         let deserialized = f(cart.deref())?;
         Ok(Self {
-            yokeable: unsafe { Y::make(deserialized) },
+            yokeable: KindaSortaDangling::new(unsafe { Y::make(deserialized) }),
             cart,
         })
     }
@@ -184,7 +216,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # Example
     ///
     /// ```rust
-    /// # use yoke::{Yoke, Yokeable};
+    /// # use yoke::Yoke;
     /// # use std::rc::Rc;
     /// # use std::borrow::Cow;
     /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
@@ -278,6 +310,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
     ///   returned cart type `C`.
+    ///
+    ///   For the purpose of determining this, `Yoke` guarantees that references from the Yokeable
+    ///   `Y` into the cart `C` will never be references into its stack data, only heap data protected
+    ///   by `StableDeref`. This does not necessarily mean that `C` implements `StableDeref`, rather that
+    ///   any data referenced by `Y` must be accessed through a `StableDeref` impl on something `C` owns.
+    ///
+    ///   Concretely, this means that if `C = Option<Rc<T>>`, `Y` may contain references to the `T` but not
+    ///   anything else.
     /// - Lifetimes inside C must not be lengthened, even if they are themselves contravariant.
     ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8),
     ///   even though that is typically safe.
@@ -409,7 +449,6 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// ```rust
     /// # use yoke::Yoke;
     /// # use std::borrow::Cow;
-    /// # use std::rc::Rc;
     ///
     /// let owned: Cow<str> = "hello".to_owned().into();
     /// // this yoke can be intermingled with actually-borrowed Yokes
@@ -418,7 +457,10 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
-        Self { yokeable, cart: () }
+        Self {
+            yokeable: KindaSortaDangling::new(yokeable),
+            cart: (),
+        }
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, ()>`
@@ -427,11 +469,13 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// fine for `Yoke<Y, ()>` since there are no actual internal
     /// references
     pub fn into_yokeable(self) -> Y {
-        self.yokeable
+        self.yokeable.into_inner()
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
+// C does not need to be StableDeref here, if the yoke was constructed it's valid,
+// and new_owned() doesn't construct a yokeable that uses references,
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, Option<C>> {
     /// Construct a new [`Yoke`] from static data. There will be no
     /// references to `cart` here since [`Yokeable`]s are `'static`,
     /// this is good for e.g. constructing fully owned
@@ -456,21 +500,103 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     ///
     /// assert_eq!(yoke.get(), "hello");
     /// ```
-    pub fn new_owned(yokeable: Y) -> Self {
+    pub const fn new_owned(yokeable: Y) -> Self {
         Self {
-            yokeable,
+            yokeable: KindaSortaDangling::new(yokeable),
             cart: None,
         }
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
     ///
-    /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
+    /// If the cart is `None`, this returns `Ok`, but if the cart is `Some`,
     /// this returns `self` as an error.
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
+        // Safety: if the cart is None there is no way for the yokeable to
+        // have references into it because of the cart invariant.
         match self.cart {
             Some(_) => Err(self),
-            None => Ok(self.yokeable),
+            None => Ok(self.yokeable.into_inner()),
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
+    /// Converts a `Yoke<Y, Option<C>>` to `Yoke<Y, CartableOptionPointer<C>>`
+    /// for better niche optimization when stored as a field.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///
+    /// let yoke: Yoke<Cow<[u8]>, Box<Vec<u8>>> = Yoke::attach_to_cart(
+    ///     vec![10, 20, 30].into(),
+    ///     |c| c.into(),
+    /// );
+    ///
+    /// let yoke_option = yoke.wrap_cart_in_option();
+    /// let yoke_option_pointer = yoke_option.convert_cart_into_option_pointer();
+    /// ```
+    ///
+    /// The niche improves stack sizes:
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use yoke::cartable_ptr::CartableOptionPointer;
+    /// use std::mem::size_of;
+    /// use std::rc::Rc;
+    ///
+    /// // The data struct is 6 words:
+    /// # #[derive(yoke::Yokeable)]
+    /// # struct MyDataStruct<'a> {
+    /// #     _s: (usize, usize, usize, usize),
+    /// #     _p: &'a str,
+    /// # }
+    /// const W: usize = core::mem::size_of::<usize>();
+    /// assert_eq!(W * 6, size_of::<MyDataStruct>());
+    ///
+    /// // An enum containing the data struct with an `Option<Rc>` cart is 8 words:
+    /// enum StaticOrYoke1 {
+    ///     Static(&'static MyDataStruct<'static>),
+    ///     Yoke(Yoke<MyDataStruct<'static>, Option<Rc<String>>>),
+    /// }
+    /// assert_eq!(W * 8, size_of::<StaticOrYoke1>());
+    ///
+    /// // When using `CartableOptionPointer``, we need only 7 words for the same behavior:
+    /// enum StaticOrYoke2 {
+    ///     Static(&'static MyDataStruct<'static>),
+    ///     Yoke(Yoke<MyDataStruct<'static>, CartableOptionPointer<Rc<String>>>),
+    /// }
+    /// assert_eq!(W * 7, size_of::<StaticOrYoke2>());
+    /// ```
+    #[inline]
+    pub fn convert_cart_into_option_pointer(self) -> Yoke<Y, CartableOptionPointer<C>> {
+        match self.cart {
+            Some(cart) => Yoke {
+                yokeable: self.yokeable,
+                cart: CartableOptionPointer::from_cartable(cart),
+            },
+            None => Yoke {
+                yokeable: self.yokeable,
+                cart: CartableOptionPointer::none(),
+            },
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, CartableOptionPointer<C>> {
+    /// Obtain the yokeable out of a `Yoke<Y, CartableOptionPointer<C>>` if possible.
+    ///
+    /// If the cart is `None`, this returns `Ok`, but if the cart is `Some`,
+    /// this returns `self` as an error.
+    #[inline]
+    pub fn try_into_yokeable(self) -> Result<Y, Self> {
+        if self.cart.is_none() {
+            Ok(self.yokeable.into_inner())
+        } else {
+            Err(self)
         }
     }
 }
@@ -484,10 +610,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 /// handle to the same data".
 ///
 /// # Safety
-/// This trait is safe to implement `StableDeref` types which, once `Clone`d, point to the same underlying data.
+/// This trait is safe to implement on `StableDeref` types which, once `Clone`d, point to the same underlying data and retain ownership.
 ///
-/// (This trait is also implemented on `Option<T>` and `()`, which are the two non-`StableDeref` cart types that
-/// Yokes can be constructed for)
+/// This trait can also be implemented on aggregates of such types like `Option<T: CloneableCart>` and `(T: CloneableCart, U: CloneableCart)`.
+///
+/// Essentially, all data that could be referenced by a Yokeable (i.e. data that is referenced via a StableDeref) must retain the same
+/// pointer and ownership semantics once cloned.
 pub unsafe trait CloneableCart: Clone {}
 
 #[cfg(feature = "alloc")]
@@ -516,7 +644,7 @@ where
         // We have an &T not a T, and we can clone YokeTraitHack<T>
         let this_hack = YokeTraitHack(this).into_ref();
         Yoke {
-            yokeable: unsafe { Y::make(this_hack.clone().0) },
+            yokeable: KindaSortaDangling::new(unsafe { Y::make(this_hack.clone().0) }),
             cart: self.cart.clone(),
         }
     }
@@ -577,7 +705,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// This can also be used to create a yoke for a subfield
     ///
     /// ```
-    /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
     /// # use std::rc::Rc;
@@ -630,9 +757,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
     {
-        let p = f(self.yokeable.transform_owned(), PhantomData);
+        let p = f(self.yokeable.into_inner().transform_owned(), PhantomData);
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         }
     }
@@ -653,7 +780,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), PhantomData);
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         }
     }
@@ -676,7 +803,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// This can also be used to create a yoke for a subfield
     ///
     /// ```
-    /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
     /// # use std::rc::Rc;
@@ -728,9 +854,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             PhantomData<&'a ()>,
         ) -> Result<<P as Yokeable<'a>>::Output, E>,
     {
-        let p = f(self.yokeable.transform_owned(), PhantomData)?;
+        let p = f(self.yokeable.into_inner().transform_owned(), PhantomData)?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         })
     }
@@ -751,7 +877,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), PhantomData)?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         })
     }
@@ -772,9 +898,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.yokeable.transform_owned(), capture, PhantomData);
+        let p = f(
+            self.yokeable.into_inner().transform_owned(),
+            capture,
+            PhantomData,
+        );
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         }
     }
@@ -799,7 +929,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), capture, PhantomData);
         Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         }
     }
@@ -822,9 +952,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.yokeable.transform_owned(), capture, PhantomData)?;
+        let p = f(
+            self.yokeable.into_inner().transform_owned(),
+            capture,
+            PhantomData,
+        )?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart,
         })
     }
@@ -850,7 +984,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         let p = f(self.get(), capture, PhantomData)?;
         Ok(Yoke {
-            yokeable: unsafe { P::make(p) },
+            yokeable: KindaSortaDangling::new(unsafe { P::make(p) }),
             cart: self.cart.clone(),
         })
     }
@@ -869,6 +1003,8 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     ///
     /// In case the cart type `C` is not already an `Rc<T>`, you can use
     /// [`Yoke::wrap_cart_in_rc()`] to wrap it.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Example
     ///
@@ -891,8 +1027,6 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
-    ///
-    /// Available with the `"alloc"` Cargo feature enabled.
     pub fn erase_rc_cart(self) -> Yoke<Y, ErasedRcCart> {
         unsafe {
             // safe because the cart is preserved, just
@@ -916,6 +1050,8 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     /// In case the cart type `C` is not already an `Arc<T>`, you can use
     /// [`Yoke::wrap_cart_in_arc()`] to wrap it.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Example
     ///
     /// ```rust
@@ -937,8 +1073,6 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
-    ///
-    /// Available with the `"alloc"` Cargo feature enabled.
     pub fn erase_arc_cart(self) -> Yoke<Y, ErasedArcCart> {
         unsafe {
             // safe because the cart is preserved, just
@@ -962,6 +1096,8 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// In case the cart type `C` is not already `Box<T>`, you can use
     /// [`Yoke::wrap_cart_in_box()`] to wrap it.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Example
     ///
     /// ```rust
@@ -983,8 +1119,6 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
-    ///
-    /// Available with the `"alloc"` Cargo feature enabled.
     pub fn erase_box_cart(self) -> Yoke<Y, ErasedBoxCart> {
         unsafe {
             // safe because the cart is preserved, just
@@ -999,7 +1133,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Helper function allowing one to wrap the cart type `C` in a `Box<T>`.
     /// Can be paired with [`Yoke::erase_box_cart()`]
     ///
-    /// Available with the `"alloc"` Cargo feature enabled.
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         unsafe {
@@ -1011,7 +1145,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Can be paired with [`Yoke::erase_rc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///
-    /// Available with the `"alloc"` Cargo feature enabled.
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
         unsafe {
@@ -1023,7 +1157,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Can be paired with [`Yoke::erase_arc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///
-    /// Available with the `"alloc"` Cargo feature enabled.
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_arc(self) -> Yoke<Y, Arc<C>> {
         unsafe {
@@ -1244,7 +1378,7 @@ const _: () = ();
 /// Here's a broken `attach_to_cart()` that attempts to borrow from a local:
 ///
 /// ```rust,compile_fail
-/// use yoke::{Yoke, Yokeable};
+/// use yoke::Yoke;
 ///
 /// let cart = vec![1, 2, 3, 4].into_boxed_slice();
 /// let local = vec![4, 5, 6, 7];
@@ -1256,7 +1390,7 @@ const _: () = ();
 /// And here's a working one with a local borrowed cart that does not do any sneaky borrows whilst attaching.
 ///
 /// ```rust
-/// use yoke::{Yoke, Yokeable};
+/// use yoke::Yoke;
 ///
 /// let cart = vec![1, 2, 3, 4].into_boxed_slice();
 /// let local = vec![4, 5, 6, 7];
@@ -1268,7 +1402,7 @@ const _: () = ();
 /// were implemented. It is technically a safe operation:
 ///
 /// ```rust,compile_fail
-/// use yoke::{Yoke, Yokeable};
+/// use yoke::Yoke;
 /// // longer lived
 /// let local = vec![4, 5, 6, 7];
 ///
@@ -1310,6 +1444,5 @@ const _: () = ();
 /// println!("pre-drop: {reference}");
 /// drop(local);
 /// println!("post-drop: {reference}");
-///
 /// ```
 const _: () = ();

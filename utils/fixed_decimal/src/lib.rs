@@ -59,19 +59,25 @@ mod scientific;
 mod uint_iterator;
 
 #[cfg(feature = "ryu")]
-pub use decimal::DoublePrecision;
+pub use decimal::FloatPrecision;
+
+#[cfg(feature = "ryu")]
+#[doc(no_inline)]
+pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
 pub use decimal::FixedDecimal;
+pub use decimal::RoundingIncrement;
 pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;
 pub use integer::FixedInteger;
 pub use scientific::ScientificDecimal;
 
-#[derive(Display, Debug, PartialEq)]
+/// An error involving FixedDecimal operations or conversion.
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
-pub enum Error {
+pub enum FixedDecimalError {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
     /// magnitude of the most significant digit is core::i16::MAX, and the lowest magnitude of the
     /// least significant digit is core::i16::MIN.
@@ -101,6 +107,9 @@ pub enum Error {
     #[displaydoc("Failed to parse the input string")]
     Syntax,
 }
+
+#[doc(no_inline)]
+pub use FixedDecimalError as Error;
 
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}

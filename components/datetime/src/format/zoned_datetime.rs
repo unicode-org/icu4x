@@ -10,7 +10,8 @@ use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, ExtractedTimeZoneInput,
     LocalizedDateTimeInput, TimeZoneInput,
 };
-use crate::pattern::{runtime, PatternItem};
+use crate::pattern::runtime::PatternMetadata;
+use crate::pattern::PatternItem;
 use crate::{raw, FormattedTimeZone};
 use core::fmt;
 use writeable::Writeable;
@@ -22,7 +23,7 @@ use crate::ZonedDateTimeFormatter;
 
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved
 /// as an output from [`ZonedDateTimeFormatter`].
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct FormattedZonedDateTime<'l> {
     pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormatter,
     pub(crate) datetime: ExtractedDateTimeInput,
@@ -69,11 +70,7 @@ where
     let patterns = &zoned_datetime_format.datetime_format.patterns;
     let loc_datetime = DateTimeInputWithWeekConfig::new(
         datetime,
-        zoned_datetime_format
-            .datetime_format
-            .week_data
-            .as_ref()
-            .map(|d| d.get().into()),
+        zoned_datetime_format.datetime_format.week_data.as_ref(),
     );
 
     let pattern = patterns.get().0.select(
@@ -85,7 +82,7 @@ where
     loop {
         match iter.next() {
             Some(PatternItem::Field(field)) => write_field(
-                pattern,
+                pattern.metadata,
                 field,
                 iter.peek(),
                 zoned_datetime_format,
@@ -101,7 +98,7 @@ where
 }
 
 fn write_field<D, Z, W>(
-    pattern: &runtime::Pattern,
+    pattern_metadata: PatternMetadata,
     field: fields::Field,
     next_item: Option<&PatternItem>,
     zoned_datetime_format: &raw::ZonedDateTimeFormatter,
@@ -133,7 +130,7 @@ where
         }
         .write_to(w)?,
         _ => datetime::write_field(
-            pattern,
+            pattern_metadata,
             field,
             next_item,
             date_symbols,

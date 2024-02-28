@@ -8,11 +8,11 @@ use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Ma
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
-const JSON_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/json");
-const BINCODE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/bincode");
-const POSTCARD_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/postcard");
-
-const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
+const PATHS: &[&str] = &[
+    "tests/data/json",
+    "tests/data/bincode",
+    "tests/data/postcard",
+];
 
 #[test]
 fn test_provider() {
@@ -26,14 +26,14 @@ fn test_provider() {
 
             let expected = HelloWorldProvider
                 .load(req)
-                .unwrap()
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
 
             let actual: DataPayload<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(req)
-                .unwrap()
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
             assert_eq!(actual.get(), expected.get());
@@ -41,7 +41,7 @@ fn test_provider() {
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
-                .unwrap()
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
             assert_eq!(actual.get(), expected.get());

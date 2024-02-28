@@ -10,9 +10,9 @@
 //!
 //! # Architecture
 //!
-//! ICU4X [`CodePointTrie`](crate::codepointtrie::CodePointTrie) is designed to provide a read-only view of CodePointTrie data that is exported
+//! ICU4X [`CodePointTrie`] is designed to provide a read-only view of [`CodePointTrie`] data that is exported
 //! from ICU4C. Detailed information about the design of the data structure can be found in the documentation
-//! for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
+//! for the [`CodePointTrie`] struct.
 //!
 //! # Examples
 //!
@@ -50,5 +50,5 @@ pub use cptrie::TrieType;
 pub use cptrie::TrieValue;
 pub use error::Error as CodePointTrieError;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CodePointTrieError as Error;

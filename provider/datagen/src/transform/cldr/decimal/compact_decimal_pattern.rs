@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde::numbers::DecimalFormat;
-use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
-use icu_compactdecimal::provider::*;
+use icu_experimental::compactdecimal::provider::CompactDecimalPatternDataV1;
+use icu_experimental::compactdecimal::provider::*;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -21,7 +21,7 @@ struct ParsedPattern {
     /// The unescaped literal text, e.g., " mille" for the pattern "00 mille",
     /// "mille" for the pattern "mille".
     pub literal_text: Cow<'static, str>,
-    /// The placeholder; None for patterns such as "mille".
+    /// The placeholder; `None` for patterns such as "mille".
     pub placeholder: Option<ParsedPlaceholder>,
 }
 
@@ -299,7 +299,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                                 .map_or(Some(u8::MAX), |p| {
                                     u8::try_from(p.index)
                                         .ok()
-                                        .and_then(|i| (i < u8::MAX).then(|| i))
+                                        .and_then(|i| (i < u8::MAX).then_some(i))
                                 })
                                 .ok_or_else(|| {
                                     format!(
@@ -371,7 +371,8 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_provider::zerofrom::ZeroFrom;
+    use icu_provider::prelude::*;
+    use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
 
     #[test]

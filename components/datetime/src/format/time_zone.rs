@@ -13,7 +13,7 @@ use crate::{
 use writeable::Writeable;
 
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved as an output from [`TimeZoneFormatter`].
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,
@@ -85,12 +85,9 @@ where
     /// use icu::timezone::CustomTimeZone;
     /// use tinystr::tinystr;
     ///
-    /// let mut tzf = TimeZoneFormatter::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
-    ///     Default::default(),
-    /// )
-    /// .unwrap();
+    /// let mut tzf =
+    ///     TimeZoneFormatter::try_new(&locale!("en").into(), Default::default())
+    ///         .unwrap();
     /// let mut buf = String::new();
     ///
     /// let mut time_zone = "Z".parse::<CustomTimeZone>().unwrap();
@@ -104,8 +101,7 @@ where
     /// assert!(buf.is_empty());
     ///
     /// // Enable a non-fallback format:
-    /// tzf.load_generic_location_format(&icu_testdata::unstable())
-    ///     .unwrap();
+    /// tzf.include_generic_location_format().unwrap();
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Ok(Ok(_))

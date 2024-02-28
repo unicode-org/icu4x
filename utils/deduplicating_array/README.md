@@ -1,5 +1,7 @@
 # deduplicating_array [![crates.io](https://img.shields.io/crates/v/deduplicating_array)](https://crates.io/crates/deduplicating_array)
 
+<!-- cargo-rdme start -->
+
 A serde serialization strategy that uses `PartialEq` to reduce serialized size.
 
 This create can be used with Serde derive like this:
@@ -23,6 +25,8 @@ target index, e.g. the Rust array `["Foo", "Bar", "Foo"]` will serialize to JSON
 
 This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
 but there's really not much point in using them).
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

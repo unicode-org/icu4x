@@ -16,7 +16,7 @@
 //! let data = [Some((18, Cow::Borrowed("hi")))];
 //! assert_eq!(
 //!     data.bake(&Default::default()).to_string(),
-//!     r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi") ,)) ,]"#,
+//!     r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi")))]"#,
 //! );
 //! ```
 //!
@@ -41,9 +41,10 @@
 //! ```
 //!
 //! # Testing
-//! The [`test_bake`] macro can be uses to assert that a particular expression is a `Bake` fixed point.
+//! The [`test_bake`] macro can be used to assert that a particular expression is a `Bake` fixed point.
 //!
-//! ```no_run https://github.com/rust-lang/rust/issues/98906
+//! ```no_run
+//! # // https://github.com/rust-lang/rust/issues/98906
 //! # use databake::*;
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
@@ -52,7 +53,6 @@
 //! #   string: &'static str,
 //! #   slice: &'static [bool],
 //! # }
-//! #
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
 //! # struct AnotherOne(MyStruct, char);
@@ -175,7 +175,7 @@ macro_rules! test_bake {
         let bake = $crate::Bake::bake(expr, &env).to_string();
         let expected_bake = $crate::quote!($expr).to_string();
         $(
-            let expected_bake = expected_bake.replace("crate", concat!(":: ", stringify!($krate)));
+            let expected_bake = expected_bake.replace("crate", stringify!($krate));
         )?
         assert_eq!(bake, expected_bake);
 

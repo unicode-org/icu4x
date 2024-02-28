@@ -10,17 +10,29 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
+#[cfg(feature = "experimental_components")]
+pub mod currencies;
+pub mod currency_data;
+#[cfg(feature = "experimental_components")]
 pub mod date_fields;
+pub mod directionality;
+#[cfg(feature = "experimental_components")]
+pub mod displaynames;
 pub mod exemplar_chars;
 pub mod japanese;
-pub mod language_displaynames;
 pub mod likely_subtags;
 pub mod list_patterns;
+pub mod locale_resource;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
+pub mod plural_ranges;
 pub mod plurals;
-pub mod region_displaynames;
-pub mod script_displaynames;
 pub mod time_zones;
+#[cfg(feature = "experimental_components")]
+pub mod transforms;
+#[cfg(feature = "experimental_components")]
+pub mod units;
 pub mod week_data;
+
+use locale_resource::LocaleResource;

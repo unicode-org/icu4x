@@ -34,6 +34,13 @@ pub enum SkeletonError {
 #[cfg(feature = "std")]
 impl std::error::Error for SkeletonError {}
 
+#[cfg(feature = "experimental")]
+impl From<SkeletonError> for crate::DateTimeError {
+    fn from(e: SkeletonError) -> Self {
+        crate::DateTimeError::Skeleton(e)
+    }
+}
+
 impl From<fields::Error> for SkeletonError {
     fn from(e: fields::Error) -> Self {
         SkeletonError::Fields(e)
@@ -56,8 +63,7 @@ impl From<fields::SymbolError> for SkeletonError {
             fields::SymbolError::InvalidIndex(_) => unimplemented!(),
             fields::SymbolError::Unknown(ch) => {
                 // NOTE: If you remove a symbol due to it now being supported,
-                //       make sure to regenerate the test data.
-                //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
+                //       make sure to regenerate data: cargo make bakeddata components/datetime.
                 match ch {
                     // TODO(#487) - Flexible day periods
                     'B'

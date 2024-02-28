@@ -119,17 +119,23 @@ pub mod any_calendar;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
+pub mod chinese;
+mod chinese_based;
 pub mod coptic;
+pub mod dangi;
 mod duration;
 mod error;
 pub mod ethiopian;
 pub mod gregorian;
-mod helpers;
+pub mod hebrew;
 pub mod indian;
+pub mod islamic;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
+pub mod persian;
 pub mod provider;
+pub mod roc;
 pub mod types;
 mod week_of;
 
@@ -141,6 +147,7 @@ pub mod week {
     pub use week_of::WeekOf;
 }
 
+#[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
@@ -148,9 +155,10 @@ pub use datetime::DateTime;
 #[doc(hidden)]
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::CalendarError;
+#[doc(no_inline)]
 pub use gregorian::Gregorian;
+#[doc(no_inline)]
 pub use iso::Iso;
 
-/// Re-export of [`CalendarError`].
 #[doc(no_inline)]
 pub use CalendarError as Error;

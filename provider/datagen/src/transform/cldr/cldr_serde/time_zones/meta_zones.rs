@@ -9,7 +9,7 @@
 
 use icu_datetime::provider::time_zones::MetazoneId;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazoneAliasData {
@@ -20,7 +20,7 @@ pub struct MetazoneAliasData {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct MetazoneIds(pub HashMap<MetazoneId, MetazoneAliasData>);
+pub struct MetazoneIds(pub BTreeMap<MetazoneId, MetazoneAliasData>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct UsesMetazone {
@@ -42,18 +42,18 @@ pub struct MetazoneForPeriod {
 #[serde(untagged)]
 pub enum MetaLocationOrSubRegion {
     Location(Vec<MetazoneForPeriod>),
-    SubRegion(HashMap<String, Vec<MetazoneForPeriod>>),
+    SubRegion(BTreeMap<String, Vec<MetazoneForPeriod>>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum ZonePeriod {
     Region(Vec<MetazoneForPeriod>),
-    LocationOrSubRegion(HashMap<String, MetaLocationOrSubRegion>),
+    LocationOrSubRegion(BTreeMap<String, MetaLocationOrSubRegion>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct TimeZonePeriod(pub HashMap<String, ZonePeriod>);
+pub struct TimeZonePeriod(pub BTreeMap<String, ZonePeriod>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazoneInfo {

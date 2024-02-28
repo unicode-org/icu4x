@@ -6,7 +6,7 @@
 
 /// A bag of options defining how numbers will be formatted by
 /// [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
-#[derive(Debug, Eq, PartialEq, Clone, Default)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default, Hash)]
 #[non_exhaustive]
 pub struct FixedDecimalFormatterOptions {
     /// When to render grouping separators.
@@ -26,19 +26,14 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// ```
 /// use icu_decimal::options;
 /// use icu_decimal::FixedDecimalFormatter;
-/// use icu_decimal::FormattedFixedDecimal;
 /// use icu_locid::Locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let locale = Locale::UND;
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
+/// let fdf = FixedDecimalFormatter::try_new(&locale.into(), options)
+///     .expect("locale should be present");
 ///
 /// let one_thousand = 1000.into();
 /// assert_writeable_eq!(fdf.format(&one_thousand), "1000");
@@ -47,7 +42,7 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// assert_writeable_eq!(fdf.format(&ten_thousand), "10,000");
 /// ```
 #[non_exhaustive]
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
 pub enum GroupingStrategy {
     /// Render grouping separators according to locale preferences.
     Auto,

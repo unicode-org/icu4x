@@ -42,9 +42,7 @@ where
             // `&T`, not `T` itself.
             // There are no types smaller than `u8`, so there won't be an alignment or allocation-length
             // issue even if T is not actually `[u8]`.
-            let bytes: &[u8] = unsafe { core::mem::transmute_copy(self) };
-            let byte_string = syn::LitByteStr::new(bytes, proc_macro2::Span::call_site());
-            return quote!(#byte_string);
+            return byte_string(unsafe { core::mem::transmute_copy(self) });
         }
         let t = <T as Bake>::bake(*self, ctx);
         quote! {
@@ -71,25 +69,49 @@ where
         {
             // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,
             // initialised, and well-alligned.
-            let bytes: &[u8] =
-                unsafe { core::slice::from_raw_parts(self.as_ptr() as *const u8, self.len()) };
-            let byte_string = syn::LitByteStr::new(bytes, proc_macro2::Span::call_site());
-            return quote!(*#byte_string);
+            return byte_string(unsafe {
+                core::slice::from_raw_parts(self.as_ptr() as *const u8, self.len())
+            });
         }
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
-            [#(#data,)*]
+            [#(#data),*]
         }
     }
+}
+
+fn byte_string(bytes: &[u8]) -> TokenStream {
+    let byte_string = proc_macro2::Literal::byte_string(bytes);
+    // Before clippy 1.70 there's a bug (https://github.com/rust-lang/rust-clippy/pull/10603) where a byte
+    // string like b"\0\\01" would incorrectly trigger this lint. This was due to it swallowing the slash's
+    // escape slash when trying to match the first "\0" with another digit, and then seeing b"\01".
+    // This workaround is conservative as it doesn't actually check for swallowing, only whether an escaped
+    // slash appears before 0[0-7].
+    let suppress_octal_false_positive = if bytes
+        .windows(3)
+        .any(|b| matches!(b, &[b'\\', b'0', b'0'..=b'7']))
+    {
+        quote!(#[allow(clippy::octal_escapes)])
+    } else {
+        quote!()
+    };
+    quote!(#suppress_octal_false_positive #byte_string)
 }
 
 #[test]
 fn slice() {
     // Cannot use test_bake! as it's not possible to write a closed slice expression (&[1] has type &[usize; 1])
+    let slice: &[bool] = &[];
+    assert_eq!(Bake::bake(&slice, &Default::default()).to_string(), "& []");
+    let slice: &[bool] = &[true];
+    assert_eq!(
+        Bake::bake(&slice, &Default::default()).to_string(),
+        "& [true]",
+    );
     let slice: &[bool] = &[true, false];
     assert_eq!(
         Bake::bake(&slice, &Default::default()).to_string(),
-        "& [true , false ,]",
+        "& [true , false]",
     );
 }
 
@@ -104,14 +126,17 @@ where
 
 #[test]
 fn array() {
-    // https://github.com/rust-lang/rust/issues/98906
-    // test_bake!(
-    //     &[bool; 2],
-    //     const: &[true, false,]
-    // );
-    assert_eq!(
-        [true, false].bake(&Default::default()).to_string(),
-        "[true , false ,]",
+    test_bake!(
+        &[bool; 0],
+        const: &[]
+    );
+    test_bake!(
+        &[bool; 1],
+        const: &[true]
+    );
+    test_bake!(
+        &[bool; 2],
+        const: &[true, false]
     );
 }
 
@@ -178,6 +203,16 @@ fn result() {
 }
 
 macro_rules! tuple {
+    ($ty:ident, $ident:ident) => {
+        impl<$ty> Bake for ($ty,) where $ty: Bake {
+            fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+                let $ident = self.0.bake(ctx);
+                quote! {
+                    (#$ident,)
+                }
+            }
+        }
+    };
     ($($ty:ident, $ident:ident),*) => {
         impl<$($ty),*> Bake for ($($ty,)*) where $($ty: Bake),* {
             fn bake(&self, _ctx: &CrateEnv) -> TokenStream {
@@ -186,7 +221,7 @@ macro_rules! tuple {
                     let $ident = $ident.bake(_ctx);
                 )*
                 quote! {
-                    ($(#$ident,)*)
+                    ($(#$ident),*)
                 }
             }
         }
@@ -207,13 +242,16 @@ tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i, J, j);
 
 #[test]
 fn tuple() {
-    // https://github.com/rust-lang/rust/issues/98906
-    // test_bake!(
-    //     (u8, i8),
-    //     const: (0u8, 0i8,)
-    // );
-    assert_eq!(
-        (0u8, 0i8).bake(&Default::default()).to_string(),
-        "(0u8 , 0i8 ,)",
+    test_bake!(
+        (),
+        const: ()
+    );
+    test_bake!(
+        (u8,),
+        const: (0u8,)
+    );
+    test_bake!(
+        (u8, i8),
+        const: (0u8, 0i8)
     );
 }

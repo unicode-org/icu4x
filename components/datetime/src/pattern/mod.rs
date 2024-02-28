@@ -12,7 +12,7 @@ pub mod runtime;
 use crate::fields;
 pub use error::PatternError;
 pub use hour_cycle::CoarseHourCycle;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};
 
 /// The granularity of time represented in a pattern item.
@@ -52,6 +52,30 @@ impl TimeGranularity {
             Self::Minutes => minute == 0,
             Self::Seconds => minute + second == 0,
             Self::Nanoseconds => minute as u32 + second as u32 + nanosecond == 0,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
+        use TimeGranularity::*;
+        match ordinal {
+            1 => Hours,
+            2 => Minutes,
+            3 => Seconds,
+            4 => Nanoseconds,
+            _ => None,
+        }
+    }
+
+    #[inline]
+    pub(crate) const fn ordinal(self) -> u8 {
+        use TimeGranularity::*;
+        match self {
+            None => 0,
+            Hours => 1,
+            Minutes => 2,
+            Seconds => 3,
+            Nanoseconds => 4,
         }
     }
 }

@@ -5,9 +5,9 @@
 #[cfg(feature = "experimental")]
 use crate::rules::reference::parser::ParserError;
 use displaydoc::Display;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
-/// A list of error outcomes for various operations in the `icu_plurals` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Clone, Copy, PartialEq)]

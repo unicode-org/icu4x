@@ -33,7 +33,11 @@ use zerovec::ZeroVecError;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(BidiAuxiliaryPropertiesV1Marker = "props/bidiauxiliaryprops@1")]
+#[icu_provider::data_struct(marker(
+    BidiAuxiliaryPropertiesV1Marker,
+    "props/bidiauxiliaryprops@1",
+    singleton
+))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -120,7 +124,7 @@ impl TryFrom<u32> for MirroredPairedBracketData {
 }
 
 /// A closed Rust enum representing a closed set of the incoming Bidi_Paired_Bracket_Type
-/// property values necessary in the internal representation of [`MirroredPairedBracketData`]
+/// property values necessary in the internal representation of `MirroredPairedBracketData`
 /// to satisfy the ULE invariants on valid values.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -280,6 +284,6 @@ mod tests {
 
         // deserialize from ULE bytes
         let ule_parse_result = MirroredPairedBracketDataULE::parse_byte_slice(ule_bytes);
-        assert!(matches!(ule_parse_result, Err(_)));
+        assert!(ule_parse_result.is_err());
     }
 }

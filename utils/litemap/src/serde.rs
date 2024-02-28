@@ -64,7 +64,7 @@ impl<'de, K, V, R> Visitor<'de> for LiteMapVisitor<K, V, R>
 where
     K: Deserialize<'de> + Ord,
     V: Deserialize<'de>,
-    R: StoreMut<K, V>,
+    R: StoreMut<K, V> + StoreFromIterable<K, V>,
 {
     type Value = LiteMap<K, V, R>;
 
@@ -127,7 +127,7 @@ impl<'de, K, V, R> Deserialize<'de> for LiteMap<K, V, R>
 where
     K: Ord + Deserialize<'de>,
     V: Deserialize<'de>,
-    R: StoreMut<K, V>,
+    R: StoreMut<K, V> + StoreFromIterable<K, V>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -148,10 +148,9 @@ mod test {
     use crate::LiteMap;
     use alloc::borrow::ToOwned;
     use alloc::string::String;
-    use alloc::vec;
 
     fn get_simple_map() -> LiteMap<u32, String> {
-        vec![
+        [
             (1, "one".to_owned()),
             (2, "two".to_owned()),
             (4, "four".to_owned()),
@@ -162,7 +161,7 @@ mod test {
     }
 
     fn get_tuple_map() -> LiteMap<(u32, String), String> {
-        vec![
+        [
             ((1, "en".to_owned()), "one".to_owned()),
             ((1, "zh".to_owned()), "一".to_owned()),
             ((2, "en".to_owned()), "two".to_owned()),

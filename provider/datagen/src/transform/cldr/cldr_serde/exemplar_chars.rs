@@ -7,9 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/de/characters.json>
 
-use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LocaleExemplarCharacters {
@@ -26,10 +24,4 @@ pub struct Characters {
     pub characters: LocaleExemplarCharacters,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, Characters>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::LocaleResource<Characters>;

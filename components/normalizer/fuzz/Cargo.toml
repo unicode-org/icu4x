@@ -17,14 +17,12 @@ rust_icu_unorm2 = { version = "3", features = ["use-bindgen", "icu_config"] }
 rust_icu_sys = { version = "3", features = ["use-bindgen", "icu_config"] }
 rust_icu_ustring = { version = "3", features = ["use-bindgen", "icu_config"] }
 encoding_rs = "0.8.31"
-icu_testdata = { path = "../../../provider/testdata" }
-icu_normalizer = { path = "..", features = ["serde"] }
+icu_normalizer = { path = ".." }
 utf8_iter = "1.0.1"
 utf16_iter = "1.0.3"
 
 # Prevent this from interfering with workspaces
 [workspace]
-members = ["."]
 
 [[bin]]
 name = "compare_utf16"

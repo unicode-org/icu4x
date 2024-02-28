@@ -11,14 +11,17 @@ use crate::options::{length, preferences, DateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
+use crate::provider::calendar::{months, DateLengthsV1, TimeLengthsV1};
 use crate::provider::calendar::{
     patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
     ErasedDateLengthsV1Marker, TimeLengthsV1Marker,
 };
-use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
+#[cfg(feature = "experimental")]
+use crate::provider::neo::SimpleSubstitutionPattern;
 #[cfg(feature = "experimental")]
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
-use icu_calendar::types::{Era, MonthCode};
+use icu_calendar::types::Era;
+use icu_calendar::types::MonthCode;
 use icu_locid::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
@@ -84,8 +87,8 @@ fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> P
 }
 
 /// Determine the appropriate `Pattern` for a given `options::length::Time` bag.
-/// If a preference for an hour cycle is set, it will look look up a pattern in the time_h11_12 or
-/// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
+/// If a preference for an hour cycle is set, it will look look up a pattern in the `time_h11_12` or
+/// `time_h23_h24` provider data, and then manually modify the symbol in the pattern if needed.
 pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
     locale: &'a DataLocale,
@@ -277,18 +280,25 @@ where
         )))
     }
 
-    #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
-        use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+        use icu_locid::extensions::unicode::{key, value};
+        use tinystr::tinystr;
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
         // Skeleton data for ethioaa is stored under ethiopic
         if cal_val == &value!("ethioaa") {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+        } else if cal_val == &value!("islamic")
+            || cal_val == &value!("islamicc")
+            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
+        {
+            // All islamic calendars store skeleton data under islamic, not their individual extension keys
+            locale.set_unicode_ext(key!("ca"), value!("islamic"));
         } else {
             locale.set_unicode_ext(key!("ca"), cal_val.clone());
         };
+
         let data = self
             .data_provider
             .load(DataRequest {
@@ -296,27 +306,80 @@ where
                 metadata: Default::default(),
             })?
             .take_payload()?;
+
         Ok(data)
     }
 }
 
-pub trait DateSymbols {
+/// Internal enum to represent the kinds of month symbols for interpolation
+pub(crate) enum MonthPlaceholderValue<'a> {
+    PlainString(&'a str),
+    StringNeedingLeapPrefix(&'a str),
+    #[cfg(feature = "experimental")]
+    Numeric,
+    #[cfg(feature = "experimental")]
+    NumericPattern(&'a SimpleSubstitutionPattern<'a>),
+}
+
+pub(crate) trait DateSymbols<'data> {
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<&str>;
+    ) -> Result<MonthPlaceholderValue>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str>;
-    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str;
+    /// Gets the era symbol, or `None` if data is loaded but symbol isn't found.
+    ///
+    /// `None` should fall back to the era code directly, if, for example,
+    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
+    fn get_symbol_for_era<'a>(
+        &'a self,
+        length: fields::FieldLength,
+        era_code: &'a Era,
+    ) -> Result<Option<&str>>;
 }
 
-impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
+impl<'data> provider::calendar::DateSymbolsV1<'data> {
+    fn get_symbols_map_for_month(
+        &self,
+        month: fields::Month,
+        length: fields::FieldLength,
+    ) -> Result<&months::SymbolsV1<'data>> {
+        let widths = match month {
+            fields::Month::Format => &self.months.format,
+            fields::Month::StandAlone => {
+                if let Some(ref widths) = self.months.stand_alone {
+                    let symbols = match length {
+                        fields::FieldLength::Wide => widths.wide.as_ref(),
+                        fields::FieldLength::Narrow => widths.narrow.as_ref(),
+                        _ => widths.abbreviated.as_ref(),
+                    };
+                    if let Some(symbols) = symbols {
+                        return Ok(symbols);
+                    } else {
+                        return self.get_symbols_map_for_month(fields::Month::Format, length);
+                    }
+                } else {
+                    return self.get_symbols_map_for_month(fields::Month::Format, length);
+                }
+            }
+        };
+        let symbols = match length {
+            fields::FieldLength::Wide => &widths.wide,
+            fields::FieldLength::Narrow => &widths.narrow,
+            _ => &widths.abbreviated,
+        };
+        Ok(symbols)
+    }
+}
+
+impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
@@ -370,53 +433,43 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<&str> {
-        let widths = match month {
-            fields::Month::Format => &self.months.format,
-            fields::Month::StandAlone => {
-                if let Some(ref widths) = self.months.stand_alone {
-                    let symbols = match length {
-                        fields::FieldLength::Wide => widths.wide.as_ref(),
-                        fields::FieldLength::Narrow => widths.narrow.as_ref(),
-                        _ => widths.abbreviated.as_ref(),
-                    };
-                    if let Some(symbols) = symbols {
-                        return symbols
-                            .get(code)
-                            .ok_or(DateTimeError::MissingMonthSymbol(code));
-                    } else {
-                        return self.get_symbol_for_month(fields::Month::Format, length, code);
-                    }
-                } else {
-                    return self.get_symbol_for_month(fields::Month::Format, length, code);
-                }
+    ) -> Result<MonthPlaceholderValue> {
+        let symbols_map = self.get_symbols_map_for_month(month, length)?;
+        let mut symbol_option = symbols_map.get(code);
+        let mut fallback = false;
+        if symbol_option.is_none() {
+            if let Some(code) = code.get_normal_if_leap() {
+                let symbols_map = self.get_symbols_map_for_month(month, length)?;
+                symbol_option = symbols_map.get(code);
+                fallback = true;
             }
-        };
-        let symbols = match length {
-            fields::FieldLength::Wide => &widths.wide,
-            fields::FieldLength::Narrow => &widths.narrow,
-            _ => &widths.abbreviated,
-        };
-        symbols
-            .get(code)
-            .ok_or(DateTimeError::MissingMonthSymbol(code))
+        }
+        let symbol = symbol_option.ok_or(DateTimeError::MissingMonthSymbol(code))?;
+        Ok(if fallback {
+            MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)
+        } else {
+            MonthPlaceholderValue::PlainString(symbol)
+        })
     }
 
-    /// Get the era symbol
-    ///
-    /// This will fall back to the era code directly, if, for example,
-    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
-    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str {
+    fn get_symbol_for_era<'a>(
+        &'a self,
+        length: fields::FieldLength,
+        era_code: &'a Era,
+    ) -> Result<Option<&str>> {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        symbols.get(&era_code.0).unwrap_or(&era_code.0)
+        Ok(symbols.get(era_code.0.as_str().into()))
     }
 }
 
-pub trait TimeSymbols {
+pub(crate) trait TimeSymbols {
+    /// Gets the day period symbol.
+    ///
+    /// Internally, 'noon' and 'midnight' should fall back to 'am' and 'pm'.
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,

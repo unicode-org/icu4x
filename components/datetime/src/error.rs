@@ -2,22 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fields::Field;
 use crate::fields::FieldSymbol;
 use crate::input::CalendarError;
 use crate::pattern::PatternError;
-#[cfg(feature = "experimental")]
-use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
 use icu_decimal::DecimalError;
 use icu_plurals::PluralsError;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
 
-/// A list of error outcomes for various operations in the `icu_datetime` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -39,10 +38,15 @@ pub enum DateTimeError {
     /// An error originating from skeleton matching.
     #[displaydoc("{0}")]
     #[cfg(feature = "experimental")]
-    Skeleton(SkeletonError),
+    Skeleton(crate::skeleton::SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+    /// An unsupported field with a field length.
+    // TODO(#2856): Consider renaming `UnsupportedField` to `UnsupportedFieldSymbol` so that
+    // this variant can be named `UnsupportedField`.
+    #[displaydoc("Unsupported field: {0:?}")]
+    UnsupportedFormattingField(Field),
     /// An error due to there being no patterns for the given options.
     #[displaydoc("Unsupported options")]
     UnsupportedOptions,
@@ -76,6 +80,24 @@ pub enum DateTimeError {
     /// ordinal_rules must be set for PatternPlurals::MultipleVariants
     #[displaydoc("ordinal_rules must be set for PatternPlurals::MultipleVariants")]
     MissingOrdinalRules,
+    /// The names for the given field are not loaded
+    #[displaydoc("Missing names for {0:?}")]
+    MissingNames(Field),
+    /// The same field occurs multiple times in a pattern or was loaded multiple times
+    #[displaydoc("Duplicate field: {0:?}")]
+    DuplicateField(Field),
+}
+
+/// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[displaydoc("DateTimeFormatter for {this_kind} calendar was given a {date_kind:?} calendar")]
+#[non_exhaustive]
+pub struct MismatchedCalendarError {
+    /// The calendar kind of the target object (formatter).
+    pub this_kind: AnyCalendarKind,
+    /// The calendar kind of the input object (date being formatted).
+    /// Can be `None` if the input calendar was not specified.
+    pub date_kind: Option<AnyCalendarKind>,
 }
 
 impl From<PatternError> for DateTimeError {
@@ -96,13 +118,6 @@ impl From<core::fmt::Error> for DateTimeError {
     }
 }
 
-#[cfg(feature = "experimental")]
-impl From<SkeletonError> for DateTimeError {
-    fn from(e: SkeletonError) -> Self {
-        DateTimeError::Skeleton(e)
-    }
-}
-
 impl From<PluralsError> for DateTimeError {
     fn from(e: PluralsError) -> Self {
         DateTimeError::PluralRules(e)
@@ -112,5 +127,17 @@ impl From<PluralsError> for DateTimeError {
 impl From<CalendarError> for DateTimeError {
     fn from(e: CalendarError) -> Self {
         DateTimeError::DateTimeInput(e)
+    }
+}
+
+impl From<DecimalError> for DateTimeError {
+    fn from(e: DecimalError) -> Self {
+        DateTimeError::FixedDecimalFormatter(e)
+    }
+}
+
+impl From<MismatchedCalendarError> for DateTimeError {
+    fn from(e: MismatchedCalendarError) -> Self {
+        DateTimeError::MismatchedAnyCalendar(e.this_kind, e.date_kind)
     }
 }

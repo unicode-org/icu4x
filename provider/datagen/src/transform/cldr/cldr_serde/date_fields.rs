@@ -9,7 +9,6 @@
 
 use std::collections::HashMap;
 
-use icu_locid::LanguageIdentifier;
 use serde::{
     de::{Error, IgnoredAny, Visitor},
     Deserialize,
@@ -133,10 +132,4 @@ pub struct RelativeTimeDates {
     pub dates: Dates,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, RelativeTimeDates>);
-
-#[derive(Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::LocaleResource<RelativeTimeDates>;

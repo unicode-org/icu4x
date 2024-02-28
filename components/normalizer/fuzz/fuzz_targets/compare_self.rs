@@ -13,14 +13,10 @@ fuzz_target!(|data: &[u8]| {
     let well_formed = String::from_utf8_lossy(data);
     let utf16: Vec<u16> = well_formed.encode_utf16().collect();
 
-    let nfd =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfc =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
+    let nfd = DecomposingNormalizer::new_nfd();
+    let nfkd = DecomposingNormalizer::new_nfkd();
+    let nfc = ComposingNormalizer::new_nfc();
+    let nfkc = ComposingNormalizer::new_nfkc();
 
     // Not macroizing these to get nice line numbers by default.
 

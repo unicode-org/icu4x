@@ -1,0 +1,11 @@
+{
+    "direction": "both",
+    "source": "Any",
+    "target": "Publishing",
+    "alias": [
+        "und-t-d0-publish"
+    ],
+    "backwardAlias": [
+        "und-t-s0-publish"
+    ]
+}

@@ -1,0 +1,7 @@
+{
+  "zero": null,
+  "one": "n % 10 = 1 and n % 100 != 11",
+  "two": "n % 10 = 2 and n % 100 != 12",
+  "few": "n % 10 = 3 and n % 100 != 13",
+  "many": null
+}

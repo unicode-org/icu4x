@@ -42,7 +42,7 @@ In the binary properties case, we can reduce the scope to there being only two d
 
 The use cases, or manner of data access, inform the designs of APIs and data structures.
 For regular expression parsers (regex), we need to support a text description of a _set of code points_ sharing a property.
-In this case, returning a [`CodePointInversionList`](https://unicode-org.github.io/icu4x/docs/icu/collections/codepointinvlist/struct.CodePointInversionList.html) (a set of code points, a.k.a. [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) in ICU) provides the most efficient usable data.
+In this case, returning a [`CodePointInversionList`](https://unicode-org.github.io/icu4x/rustdoc/icu/collections/codepointinvlist/struct.CodePointInversionList.html) (a set of code points, a.k.a. [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) in ICU) provides the most efficient usable data.
 For binary properties, the property name is enough for input to determine the output.
 For enumerated properties, the property name and a specific property value are required to uniquely determine a set of code points.
 In these cases, all dimensions except the code point dimension are fixed (given as inputs).
@@ -141,7 +141,7 @@ Building a `CodePointTrie` is expensive because several optimizations are applie
 In ICU, when trie data is built for Unicode properties, it is done in a compile-time step and stored statically, which therefore does not affect runtime performance.
 One example of an optimization is called compaction, in which subarrays which have identical contents can be collapsed and treated as being identical without affecting the trie lookup algorithm's result.
 However, the algorithm to detect redundant blocks is inherently a pairwise comparison, and thus O(n^2).
-The code to handle this and other optimziations is non-trivially complex.
+The code to handle this and other optimizations is non-trivially complex.
 
 Therefore, ICU4X implements the reader code for a trie, but it does not attempt to similarly port the ICU code for building a trie.
 However, as a convenience, some code may exist in ICU4X which uses a wrapper over the WASM binary to which the ICU4C trie builder code is compiled.

@@ -80,9 +80,6 @@
 //!
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
-//! If you need a testing provider that contains the actual resource keys used by ICU4X features,
-//! see the [`icu_testdata`] crate.
-//!
 //! ## Types and Lifetimes
 //!
 //! Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
@@ -116,7 +113,6 @@
 //! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_testdata`]: ../icu_testdata/index.html
 //! [`icu_datagen`]: ../icu_datagen/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
@@ -137,79 +133,170 @@
 
 extern crate alloc;
 
+mod data_provider;
+mod error;
+#[doc(hidden)]
+pub mod fallback;
+mod key;
+mod request;
+mod response;
+
 pub mod any;
 pub mod buf;
 pub mod constructors;
-mod data_provider;
 #[cfg(feature = "datagen")]
-#[macro_use]
 pub mod datagen;
-#[macro_use]
 pub mod dynutil;
-mod error;
 pub mod hello_world;
-mod helpers;
-#[macro_use]
-mod key;
 pub mod marker;
-mod request;
-mod response;
 #[cfg(feature = "serde")]
 pub mod serde;
 
+// Types from private modules
+pub use crate::data_provider::DataProvider;
+pub use crate::data_provider::DynamicDataProvider;
+pub use crate::error::DataError;
+pub use crate::error::DataErrorKind;
+pub use crate::key::DataKey;
+pub use crate::key::DataKeyHash;
+pub use crate::key::DataKeyMetadata;
+pub use crate::key::DataKeyPath;
+#[cfg(feature = "experimental")]
+pub use crate::request::AuxiliaryKeys;
+pub use crate::request::DataLocale;
+pub use crate::request::DataRequest;
+pub use crate::request::DataRequestMetadata;
+pub use crate::response::Cart;
+pub use crate::response::DataPayload;
+pub use crate::response::DataPayloadOr;
+pub use crate::response::DataResponse;
+pub use crate::response::DataResponseMetadata;
 #[cfg(feature = "macros")]
 pub use icu_provider_macros::data_struct;
 
+// Reexports from public modules
+pub use crate::any::AnyMarker;
+pub use crate::any::AnyPayload;
+pub use crate::any::AnyProvider;
+pub use crate::any::AnyResponse;
+pub use crate::any::AsDowncastingAnyProvider;
+pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
+pub use crate::any::MaybeSendSync;
+pub use crate::buf::BufferMarker;
+pub use crate::buf::BufferProvider;
+pub use crate::marker::DataMarker;
+pub use crate::marker::KeyedDataMarker;
+#[cfg(feature = "serde")]
+pub use crate::serde::AsDeserializingBufferProvider;
+
+/// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
-    //! Core selection of APIs and structures for the ICU4X data provider.
-    pub use crate::any::AnyMarker;
-    pub use crate::any::AnyPayload;
-    pub use crate::any::AnyProvider;
-    pub use crate::any::AnyResponse;
-    pub use crate::buf::BufferMarker;
-    pub use crate::buf::BufferProvider;
+    #[doc(no_inline)]
     pub use crate::data_key;
-    pub use crate::data_provider::DataProvider;
-    pub use crate::data_provider::DynamicDataProvider;
-    pub use crate::error::DataError;
-    pub use crate::error::DataErrorKind;
-    pub use crate::key::DataKey;
-    pub use crate::key::DataKeyHash;
-    pub use crate::marker::DataMarker;
-    pub use crate::marker::KeyedDataMarker;
-    pub use crate::request::DataLocale;
-    pub use crate::request::DataRequest;
-    pub use crate::request::DataRequestMetadata;
-    pub use crate::response::DataPayload;
-    pub use crate::response::DataResponse;
-    pub use crate::response::DataResponseMetadata;
-
-    pub use crate::any::AsDowncastingAnyProvider;
-    pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
+    #[doc(no_inline)]
+    pub use crate::AnyMarker;
+    #[doc(no_inline)]
+    pub use crate::AnyPayload;
+    #[doc(no_inline)]
+    pub use crate::AnyProvider;
+    #[doc(no_inline)]
+    pub use crate::AnyResponse;
+    #[doc(no_inline)]
     #[cfg(feature = "serde")]
-    pub use crate::serde::AsDeserializingBufferProvider;
+    pub use crate::AsDeserializingBufferProvider;
+    #[doc(no_inline)]
+    pub use crate::AsDowncastingAnyProvider;
+    #[doc(no_inline)]
+    pub use crate::AsDynamicDataProviderAnyMarkerWrap;
+    #[doc(no_inline)]
+    #[cfg(feature = "experimental")]
+    pub use crate::AuxiliaryKeys;
+    #[doc(no_inline)]
+    pub use crate::BufferMarker;
+    #[doc(no_inline)]
+    pub use crate::BufferProvider;
+    #[doc(no_inline)]
+    pub use crate::DataError;
+    #[doc(no_inline)]
+    pub use crate::DataErrorKind;
+    #[doc(no_inline)]
+    pub use crate::DataKey;
+    #[doc(no_inline)]
+    pub use crate::DataKeyHash;
+    #[doc(no_inline)]
+    pub use crate::DataLocale;
+    #[doc(no_inline)]
+    pub use crate::DataMarker;
+    #[doc(no_inline)]
+    pub use crate::DataPayload;
+    #[doc(no_inline)]
+    pub use crate::DataProvider;
+    #[doc(no_inline)]
+    pub use crate::DataRequest;
+    #[doc(no_inline)]
+    pub use crate::DataRequestMetadata;
+    #[doc(no_inline)]
+    pub use crate::DataResponse;
+    #[doc(no_inline)]
+    pub use crate::DataResponseMetadata;
+    #[doc(no_inline)]
+    pub use crate::DynamicDataProvider;
+    #[doc(no_inline)]
+    pub use crate::KeyedDataMarker;
 
-    /// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
     #[doc(hidden)]
     pub use yoke;
     #[doc(hidden)]
     pub use zerofrom;
 }
 
-// Also include the same symbols at the top level for selective inclusion
-pub use prelude::*;
-
-// Less important non-prelude items
-pub use crate::any::MaybeSendSync;
-pub use crate::key::DataKeyMetadata;
-pub use crate::key::DataKeyPath;
-pub use crate::key::FallbackPriority;
-pub use crate::key::FallbackSupplement;
-pub use crate::request::DataRequestMetadata;
-pub use crate::response::Cart;
+// Additional crate re-exports for compatibility
+#[doc(hidden)]
+pub use fallback::LocaleFallbackPriority as FallbackPriority;
+#[doc(hidden)]
+pub use fallback::LocaleFallbackSupplement as FallbackSupplement;
+#[doc(hidden)]
+pub use yoke;
+#[doc(hidden)]
+pub use zerofrom;
 
 // For macros
 #[doc(hidden)]
 pub mod _internal {
-    pub use icu_locid::extensions_unicode_key;
+    pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
+    pub use icu_locid as locid;
+
+    #[cfg(feature = "logging")]
+    pub use log;
+
+    #[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
+    pub mod log {
+        pub use std::eprintln as error;
+        pub use std::eprintln as warn;
+        pub use std::eprintln as info;
+        pub use std::eprintln as debug;
+        pub use std::eprintln as trace;
+    }
+
+    #[cfg(all(
+        not(feature = "logging"),
+        any(not(debug_assertions), not(feature = "std"))
+    ))]
+    pub mod log {
+        #[macro_export]
+        macro_rules! _internal_noop_log {
+            ($($t:expr),*) => {};
+        }
+        pub use crate::_internal_noop_log as error;
+        pub use crate::_internal_noop_log as warn;
+        pub use crate::_internal_noop_log as info;
+        pub use crate::_internal_noop_log as debug;
+        pub use crate::_internal_noop_log as trace;
+    }
+}
+
+#[test]
+fn test_logging() {
+    // This should compile on all combinations of features
+    crate::_internal::log::info!("Hello World");
 }

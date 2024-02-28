@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::blob_schema::{BlobSchema, BlobSchemaV1};
+use crate::blob_schema::BlobSchema;
 use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
@@ -36,10 +36,7 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let blob = std::fs::read(concat!(
-///     env!("CARGO_MANIFEST_DIR"),
-///     "/tests/data/hello_world.postcard",
-/// ))
+/// let blob = std::fs::read("tests/data/v2.postcard")
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
@@ -67,10 +64,7 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob statically:
-/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
-///     env!("CARGO_MANIFEST_DIR"),
-///     "/tests/data/hello_world.postcard"
-/// ));
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v2.postcard");
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
@@ -87,7 +81,7 @@ use yoke::*;
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchemaV1<'static>, Option<Cart>>,
+    pub(crate) data: Yoke<BlobSchema<'static>, Option<Cart>>,
 }
 
 impl core::fmt::Debug for BlobDataProvider {
@@ -103,7 +97,7 @@ impl BlobDataProvider {
     pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
             data: Cart::try_make_yoke(blob, |bytes| {
-                BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
+                BlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))
             })?,
         })
     }
@@ -112,7 +106,7 @@ impl BlobDataProvider {
     /// [`try_new_from_blob`](BlobDataProvider::try_new_from_blob) and is allocation-free.
     pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(Self {
-            data: Yoke::new_owned(BlobSchema::deserialize_v1(
+            data: Yoke::new_owned(BlobSchema::deserialize_and_check(
                 &mut postcard::Deserializer::from_bytes(blob),
             )?),
         })
@@ -134,5 +128,98 @@ impl BufferProvider for BlobDataProvider {
                     .try_map_project_cloned(|blob, _| blob.load(key, req))?,
             )),
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::export::*;
+    use icu_provider::datagen::*;
+    use icu_provider::hello_world::*;
+
+    #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
+    #[derive(Clone, Copy)]
+    pub struct HelloSingletonV1;
+
+    #[test]
+    fn test_empty() {
+        for version in [1, 2] {
+            let mut blob: Vec<u8> = Vec::new();
+
+            {
+                let mut exporter = if version == 1 {
+                    BlobExporter::new_with_sink(Box::new(&mut blob))
+                } else {
+                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
+                };
+
+                exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+
+                exporter.close().unwrap();
+            }
+
+            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+            assert!(
+                matches!(
+                    provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+                    Err(DataError {
+                        kind: DataErrorKind::MissingLocale,
+                        ..
+                    })
+                ),
+                "(version: {version})"
+            );
+        }
+    }
+
+    #[test]
+    fn test_singleton() {
+        for version in [1, 2] {
+            let mut blob: Vec<u8> = Vec::new();
+
+            {
+                let mut exporter = if version == 1 {
+                    BlobExporter::new_with_sink(Box::new(&mut blob))
+                } else {
+                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
+                };
+
+                exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+
+                exporter.close().unwrap();
+            }
+
+            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+            assert!(
+                matches!(
+                    provider.load_buffer(
+                        HelloSingletonV1Marker::KEY,
+                        DataRequest {
+                            locale: &icu_locid::locale!("de").into(),
+                            metadata: Default::default()
+                        }
+                    ),
+                    Err(DataError {
+                        kind: DataErrorKind::ExtraneousLocale,
+                        ..
+                    })
+                ),
+                "(version: {version})"
+            );
+
+            assert!(
+                matches!(
+                    provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+                    Err(DataError {
+                        kind: DataErrorKind::MissingLocale,
+                        ..
+                    })
+                ),
+                "(version: {version})"
+            );
+        }
     }
 }

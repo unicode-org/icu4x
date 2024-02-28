@@ -1,0 +1,11 @@
+{
+  "Eras": {
+    "bce": "n.e.",
+    "ce": "p.n.e.",
+    "heisei": "H",
+    "meiji": "M",
+    "reiwa": "R",
+    "showa": "S",
+    "taisho": "T"
+  }
+}

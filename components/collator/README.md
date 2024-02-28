@@ -1,5 +1,7 @@
 # icu_collator [![crates.io](https://img.shields.io/crates/v/icu_collator)](https://crates.io/crates/icu_collator)
 
+<!-- cargo-rdme start -->
+
 Comparing strings according to language-dependent conventions.
 
 This module is published as its own crate ([`icu_collator`](https://docs.rs/icu_collator/latest/icu_collator/))
@@ -24,12 +26,8 @@ use icu::locid::{locale, Locale};
 let locale_es: Locale = locale!("es-u-co-trad");
 let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
-let collator_es: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &locale_es.into(),
-    options,
-)
-.unwrap();
+let collator_es: Collator =
+    Collator::try_new(&locale_es.into(), options).unwrap();
 
 // "pollo" > "polvo" in traditional Spanish
 assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
@@ -37,12 +35,8 @@ assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
 let locale_en: Locale = locale!("en");
 let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
-let collator_en: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &locale_en.into(),
-    options,
-)
-.unwrap();
+let collator_en: Collator =
+    Collator::try_new(&locale_en.into(), options).unwrap();
 
 // "pollo" < "polvo" according to English rules
 assert_eq!(collator_en.compare("pollo", "polvo"), Ordering::Less);
@@ -65,12 +59,8 @@ use icu::collator::*;
 
 let mut options_l1 = CollatorOptions::new();
 options_l1.strength = Some(Strength::Primary);
-let collator_l1: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &Default::default(),
-    options_l1,
-)
-.unwrap();
+let collator_l1: Collator =
+    Collator::try_new(&Default::default(), options_l1).unwrap();
 
 assert_eq!(collator_l1.compare("a", "b"), Ordering::Less); // primary
 assert_eq!(collator_l1.compare("as", "às"), Ordering::Equal); // secondary
@@ -83,12 +73,8 @@ assert_eq!(collator_l1.compare("A", "Ⓐ"), Ordering::Equal);
 
 let mut options_l2 = CollatorOptions::new();
 options_l2.strength = Some(Strength::Secondary);
-let collator_l2: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &Default::default(),
-    options_l2,
-)
-.unwrap();
+let collator_l2: Collator =
+    Collator::try_new(&Default::default(), options_l2).unwrap();
 
 assert_eq!(collator_l2.compare("a", "b"), Ordering::Less); // primary
 assert_eq!(collator_l2.compare("as", "às"), Ordering::Less); // secondary
@@ -101,12 +87,8 @@ assert_eq!(collator_l2.compare("A", "Ⓐ"), Ordering::Equal);
 
 let mut options_l3 = CollatorOptions::new();
 options_l3.strength = Some(Strength::Tertiary);
-let collator_l3: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &Default::default(),
-    options_l3,
-)
-.unwrap();
+let collator_l3: Collator =
+    Collator::try_new(&Default::default(), options_l3).unwrap();
 
 assert_eq!(collator_l3.compare("a", "b"), Ordering::Less); // primary
 assert_eq!(collator_l3.compare("as", "às"), Ordering::Less); // secondary
@@ -138,7 +120,7 @@ let mut options_3n = CollatorOptions::new();
 options_3n.strength = Some(Strength::Tertiary);
 options_3n.alternate_handling = Some(AlternateHandling::NonIgnorable);
 let collator_3n: Collator =
-    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_3n).unwrap();
+    Collator::try_new(&Default::default(), options_3n).unwrap();
 
 assert_eq!(collator_3n.compare("di Silva", "Di Silva"), Ordering::Less);
 assert_eq!(collator_3n.compare("Di Silva", "diSilva"), Ordering::Less);
@@ -153,7 +135,7 @@ let mut options_3s = CollatorOptions::new();
 options_3s.strength = Some(Strength::Tertiary);
 options_3s.alternate_handling = Some(AlternateHandling::Shifted);
 let collator_3s: Collator =
-    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_3s).unwrap();
+    Collator::try_new(&Default::default(), options_3s).unwrap();
 
 assert_eq!(collator_3s.compare("di Silva", "diSilva"), Ordering::Equal);
 assert_eq!(collator_3s.compare("diSilva", "Di Silva"), Ordering::Less);
@@ -164,7 +146,7 @@ let mut options_4s = CollatorOptions::new();
 options_4s.strength = Some(Strength::Quaternary);
 options_4s.alternate_handling = Some(AlternateHandling::Shifted);
 let collator_4s: Collator =
-    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_4s).unwrap();
+    Collator::try_new(&Default::default(), options_4s).unwrap();
 
 assert_eq!(collator_4s.compare("di Silva", "diSilva"), Ordering::Less);
 assert_eq!(collator_4s.compare("diSilva", "Di Silva"), Ordering::Less);
@@ -187,8 +169,7 @@ let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
 options.case_level = Some(CaseLevel::Off);
 let primary =
-  Collator::try_new_unstable(&icu_testdata::unstable(),
-                    &Default::default(),
+  Collator::try_new(&Default::default(),
                     options).unwrap();
 
 assert_eq!(primary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
@@ -200,8 +181,7 @@ assert_eq!(primary.compare("dejavu", "déjavu"), Ordering::Equal);
 options.strength = Some(Strength::Primary);
 options.case_level = Some(CaseLevel::On);
 let primary_and_case =
-  Collator::try_new_unstable(&icu_testdata::unstable(),
-                    &Default::default(),
+  Collator::try_new(&Default::default(),
                     options).unwrap();
 
 assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
@@ -213,8 +193,7 @@ assert_eq!(primary_and_case.compare("dejavu", "déjavu"), Ordering::Equal);
 options.strength = Some(Strength::Secondary);
 options.case_level = Some(CaseLevel::On);
 let secondary_and_case =
-  Collator::try_new_unstable(&icu_testdata::unstable(),
-                    &Default::default(),
+  Collator::try_new(&Default::default(),
                     options).unwrap();
 
 assert_eq!(secondary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
@@ -226,8 +205,7 @@ assert_eq!(secondary_and_case.compare("dejavu", "déjavu"), Ordering::Less);  //
 options.strength = Some(Strength::Tertiary);
 options.case_level = Some(CaseLevel::Off);
 let tertiary =
-  Collator::try_new_unstable(&icu_testdata::unstable(),
-                    &Default::default(),
+  Collator::try_new(&Default::default(),
                     options).unwrap();
 
 assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
@@ -258,26 +236,20 @@ use icu::collator::*;
 
 let mut options_num_off = CollatorOptions::new();
 options_num_off.numeric = Some(Numeric::Off);
-let collator_num_off: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &Default::default(),
-    options_num_off,
-)
-.unwrap();
+let collator_num_off: Collator =
+    Collator::try_new(&Default::default(), options_num_off).unwrap();
 assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
 // Numerical sorting on
 
 let mut options_num_on = CollatorOptions::new();
 options_num_on.numeric = Some(Numeric::On);
-let collator_num_on: Collator = Collator::try_new_unstable(
-    &icu_testdata::unstable(),
-    &Default::default(),
-    options_num_on,
-)
-.unwrap();
+let collator_num_on: Collator =
+    Collator::try_new(&Default::default(), options_num_on).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

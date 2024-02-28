@@ -88,7 +88,6 @@ impl CustomTimeZone {
     /// ```
     /// use icu::timezone::CustomTimeZone;
     /// use icu::timezone::GmtOffset;
-    /// use icu::timezone::TimeZoneError;
     ///
     /// let tz0: CustomTimeZone = CustomTimeZone::try_from_bytes(b"Z")
     ///     .expect("Failed to parse a time zone");
@@ -121,14 +120,11 @@ impl CustomTimeZone {
     /// ```
     /// use icu::timezone::provider::{MetazoneId, TimeZoneBcp47Id};
     /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::GmtOffset;
     /// use icu::timezone::MetazoneCalculator;
     /// use icu_calendar::DateTime;
-    /// use icu_locid::locale;
     /// use tinystr::tinystr;
     ///
-    /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("data exists");
+    /// let mzc = MetazoneCalculator::new();
     /// let mut tz = CustomTimeZone {
     ///     gmt_offset: Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),

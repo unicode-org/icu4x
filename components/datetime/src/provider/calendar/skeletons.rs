@@ -7,8 +7,10 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use litemap::LiteMap;
+
+size_test!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
 // #[icu_provider::data_struct(marker(
@@ -19,6 +21,8 @@ use litemap::LiteMap;
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
+///
+#[doc = date_skeleton_patterns_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -106,26 +110,7 @@ impl databake::Bake for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
         databake::quote! {
-            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
         }
-    }
-}
-
-type BakedDateSkeletonPatternsV1 =
-    &'static [(&'static [crate::fields::Field], PatternPlurals<'static>)];
-
-impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
-    fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
-        Self(
-            other
-                .iter()
-                .map(|(fields, pattern)| {
-                    (
-                        SkeletonV1(Skeleton(fields.iter().cloned().collect())),
-                        zerofrom::ZeroFrom::zero_from(pattern),
-                    )
-                })
-                .collect(),
-        )
     }
 }

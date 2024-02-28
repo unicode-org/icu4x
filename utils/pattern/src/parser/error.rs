@@ -2,21 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::Debug;
 use displaydoc::Display;
-use std::fmt::Debug;
 
 /// An error returned when parsing a pattern.
+///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 ///
 /// # Examples
 /// ```
 /// use icu_pattern::{Parser, ParserError, ParserOptions};
 ///
-/// let mut parser = Parser::<usize>::new(
-///     "{0",
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
-/// );
+/// let mut parser = Parser::<usize>::new("{0", ParserOptions::default());
 /// assert_eq!(Err(ParserError::UnclosedPlaceholder), parser.try_next());
 /// ```
 ///
@@ -24,8 +21,9 @@ use std::fmt::Debug;
 ///
 /// - `E`: An error of the replacement type which implements [`FromStr`].
 ///
-/// [`FromStr`]: std::str::FromStr
+/// [`FromStr`]: core::str::FromStr
 #[derive(Display, Debug, PartialEq)]
+#[non_exhaustive]
 pub enum ParserError<E>
 where
     E: Debug,
@@ -47,4 +45,5 @@ where
     UnclosedQuotedLiteral,
 }
 
+#[cfg(feature = "std")]
 impl<E: Debug> std::error::Error for ParserError<E> {}

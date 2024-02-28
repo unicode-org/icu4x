@@ -2,6 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This crate is a shim that enables one to use icu4x on Cortex-M + FreeRTOS by setting up the
+//! relevant Rust runtime hooks.
+//!
+//! Note that compiling to this platform needs Rust nightly, and this crate attempts to
+//! build across multiple nightly versions.
+//!
+//! This crate has a build script that will attempt to detect the nightly version and configure
+//! things appropriately, where possible. Older nightlies will end up setting the
+//! `--cfg needs_alloc_error_handler` flag: if using a custom build system and a nightly from
+//! 2022 or earlier, please set this flag.
+
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![no_std]
 #![cfg_attr(
@@ -17,7 +28,10 @@
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
-#![cfg_attr(target_os = "none", feature(alloc_error_handler))]
+#![cfg_attr(
+    all(target_os = "none", needs_alloc_error_handler),
+    feature(alloc_error_handler)
+)]
 
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
@@ -27,21 +41,19 @@ extern crate icu_capi;
 mod stuff {
     extern crate alloc;
 
-    use alloc::alloc::Layout;
     use core::panic::PanicInfo;
-    use cortex_m::asm;
     use freertos_rust::FreeRtosAllocator;
 
     #[global_allocator]
     static GLOBAL: FreeRtosAllocator = FreeRtosAllocator;
 
+    #[cfg(needs_alloc_error_handler)] // this defaults to the panic handler on newer nightlies
     #[alloc_error_handler]
-    fn alloc_error(_layout: Layout) -> ! {
-        asm::bkpt();
+    fn alloc_error(_layout: alloc::alloc::Layout) -> ! {
+        cortex_m::asm::bkpt();
         loop {}
     }
 
-    #[cfg(target_os = "none")]
     #[panic_handler]
     fn panic(_info: &PanicInfo) -> ! {
         loop {}

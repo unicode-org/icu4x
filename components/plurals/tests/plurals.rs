@@ -9,13 +9,9 @@ use icu_provider::prelude::*;
 #[test]
 fn test_plural_rules() {
     assert_eq!(
-        PluralRules::try_new_unstable(
-            &icu_testdata::unstable(),
-            &locale!("en").into(),
-            PluralRuleType::Cardinal
-        )
-        .unwrap()
-        .category_for(5_usize),
+        PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+            .unwrap()
+            .category_for(5_usize),
         PluralCategory::Other
     );
 }
@@ -23,7 +19,7 @@ fn test_plural_rules() {
 #[test]
 fn test_static_load_works() {
     DataProvider::<CardinalV1Marker>::load(
-        &icu_testdata::unstable(),
+        &icu_plurals::provider::Baked,
         DataRequest {
             locale: &locale!("en").into(),
             metadata: Default::default(),
@@ -32,16 +28,6 @@ fn test_static_load_works() {
     .expect("Failed to load payload")
     .take_payload()
     .expect("Failed to retrieve payload");
-}
-
-#[test]
-fn test_plural_rules_missing() {
-    assert!(PluralRules::try_new_unstable(
-        &icu_testdata::unstable_no_fallback(),
-        &locale!("xx").into(),
-        PluralRuleType::Cardinal
-    )
-    .is_err());
 }
 
 #[test]

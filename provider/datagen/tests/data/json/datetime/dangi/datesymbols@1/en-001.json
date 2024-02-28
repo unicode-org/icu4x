@@ -1,0 +1,102 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "Mo1",
+          "Mo2",
+          "Mo3",
+          "Mo4",
+          "Mo5",
+          "Mo6",
+          "Mo7",
+          "Mo8",
+          "Mo9",
+          "Mo10",
+          "Mo11",
+          "Mo12"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "First Month",
+          "Second Month",
+          "Third Month",
+          "Fourth Month",
+          "Fifth Month",
+          "Sixth Month",
+          "Seventh Month",
+          "Eighth Month",
+          "Ninth Month",
+          "Tenth Month",
+          "Eleventh Month",
+          "Twelfth Month"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+      ],
+      "short": [
+        "Su",
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa"
+      ],
+      "wide": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {},
+    "abbr": {},
+    "narrow": {}
+  }
+}

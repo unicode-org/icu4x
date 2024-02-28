@@ -1,0 +1,114 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "tich.",
+          "M02": "hèch.",
+          "M03": "kis.",
+          "M04": "tév.",
+          "M05": "chev.",
+          "M05L": "ad.I",
+          "M06": "adar",
+          "M06L": "ad.II",
+          "M07": "nis.",
+          "M08": "iyar",
+          "M09": "siv.",
+          "M10": "tam.",
+          "M11": "av",
+          "M12": "él."
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M05L": "6",
+          "M06": "7",
+          "M06L": "7",
+          "M07": "8",
+          "M08": "9",
+          "M09": "10",
+          "M10": "11",
+          "M11": "12",
+          "M12": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "tichri",
+          "M02": "hèchvan",
+          "M03": "kislev",
+          "M04": "téveth",
+          "M05": "chevat",
+          "M05L": "adar I",
+          "M06": "adar",
+          "M06L": "adar II",
+          "M07": "nissan",
+          "M08": "iyar",
+          "M09": "sivan",
+          "M10": "tamouz",
+          "M11": "av",
+          "M12": "éloul"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "hebrew": "Anno Mundi"
+    },
+    "abbr": {
+      "hebrew": "A. M."
+    },
+    "narrow": {
+      "hebrew": "A. M."
+    }
+  }
+}

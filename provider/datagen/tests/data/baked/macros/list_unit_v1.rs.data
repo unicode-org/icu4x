@@ -1,0 +1,25 @@
+// @generated
+/// Implement `DataProvider<UnitListV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_list_unit_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::list::provider::UnitListV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::list::provider::UnitListV1Marker>, icu_provider::DataError> {
+                static UND: <icu::list::provider::UnitListV1Marker as icu_provider::DataMarker>::Yokeable = icu::list::provider::ListFormatterPatternsV1([icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(", ", 2u8), special_case: None }]);
+                static VALUES: [&<icu::list::provider::UnitListV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static KEYS: [&str; 1usize] = ["und"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::list::provider::UnitListV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

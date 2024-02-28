@@ -56,7 +56,6 @@ use super::*;
 /// # Example
 ///
 /// ```rust
-/// # use std::str::Utf8Error;
 /// # use zerovec::ule::ZeroVecError;
 /// use zerovec::VarZeroVec;
 ///
@@ -88,12 +87,9 @@ use super::*;
 /// Here's another example with `ZeroSlice<T>` (similar to `[T]`):
 ///
 /// ```rust
-/// # use std::str::Utf8Error;
 /// # use zerovec::ule::ZeroVecError;
-/// use zerovec::ule::*;
 /// use zerovec::VarZeroVec;
 /// use zerovec::ZeroSlice;
-/// use zerovec::ZeroVec;
 ///
 /// // The structured list correspond to the list of integers.
 /// let numbers: &[&[u32]] = &[
@@ -259,7 +255,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -293,7 +288,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -331,7 +325,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -369,7 +362,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -425,8 +417,12 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        if elements.is_empty() {
+            VarZeroSlice::new_empty().into()
+        } else {
+            #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
+            VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        }
     }
 }
 
@@ -451,8 +447,14 @@ where
 {
     #[inline]
     fn eq(&self, other: &VarZeroVec<'b, T, F>) -> bool {
-        // VarULE has an API guarantee that this is equivalent
-        // to `T::VarULE::eq()`
+        // VZV::from_elements used to produce a non-canonical representation of the
+        // empty VZV, so we cannot use byte equality for empty vecs.
+        if self.is_empty() || other.is_empty() {
+            return self.is_empty() && other.is_empty();
+        }
+        // VarULE has an API guarantee that byte equality is semantic equality.
+        // For non-empty VZVs, there's only a single metadata representation,
+        // so this guarantee extends to the whole VZV representation.
         self.as_bytes().eq(other.as_bytes())
     }
 }
@@ -502,4 +504,20 @@ impl<'a, T: VarULE + ?Sized + Ord, F: VarZeroVecFormat> Ord for VarZeroVec<'a, T
     fn cmp(&self, other: &Self) -> Ordering {
         self.iter().cmp(other.iter())
     }
+}
+
+#[test]
+fn assert_single_empty_representation() {
+    assert_eq!(
+        VarZeroVec::<str>::new().as_bytes(),
+        VarZeroVec::<str>::from(&[] as &[&str]).as_bytes()
+    );
+}
+
+#[test]
+fn weird_empty_representation_equality() {
+    assert_eq!(
+        VarZeroVec::<str>::parse_byte_slice(&[0, 0, 0, 0]).unwrap(),
+        VarZeroVec::<str>::parse_byte_slice(&[]).unwrap()
+    );
 }

@@ -1,9 +1,0 @@
-a.out
-optim*
-*.i64
-*.dot
-*.elf
-*.o
-a.out.dSYM
-decimal-bn-en.postcard
-decimal_bn_en.h

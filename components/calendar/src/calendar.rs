@@ -40,7 +40,7 @@ pub trait Calendar {
     fn months_in_year(&self, date: &Self::DateInner) -> u8;
     /// Count the number of days in a given year, specified by providing a date
     /// from that year
-    fn days_in_year(&self, date: &Self::DateInner) -> u32;
+    fn days_in_year(&self, date: &Self::DateInner) -> u16;
     /// Count the number of days in a given month, specified by providing a date
     /// from that year/month
     fn days_in_month(&self, date: &Self::DateInner) -> u8;
@@ -75,6 +75,9 @@ pub trait Calendar {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear;
 
+    /// Calculate if a date is in a leap year
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
+
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth;
 
@@ -85,7 +88,7 @@ pub trait Calendar {
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo;
 
     /// The [`AnyCalendarKind`] corresponding to this calendar,
-    /// if one exists. Implementors outside of icu_calendar should return None
+    /// if one exists. Implementors outside of `icu_calendar` should return `None`
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         None
     }

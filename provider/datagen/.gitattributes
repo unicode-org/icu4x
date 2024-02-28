@@ -1,0 +1,3 @@
+data/** linguist-generated=true
+tests/data/** linguist-generated=true
+tests/data/postcard/fingerprints.csv linguist-generated=false

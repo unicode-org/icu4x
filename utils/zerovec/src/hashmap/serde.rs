@@ -62,12 +62,12 @@ mod test {
     use crate::{VarZeroVec, ZeroHashMap, ZeroVec};
     use serde::{Deserialize, Serialize};
 
-    const JSON_STR: &str = "[[[0,1],[0,0],[0,1]],[2,1,0],[\"c\",\"b\",\"a\"]]";
+    const JSON_STR: &str = "[[[0,0],[0,1],[0,1]],[1,2,0],[\"b\",\"c\",\"a\"]]";
 
     const BINCODE_BYTES: &[u8] = &[
-        24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-        0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0,
-        3, 0, 0, 0, 0, 0, 1, 0, 2, 0, 99, 98, 97,
+        24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+        0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0,
+        3, 0, 0, 0, 0, 0, 1, 0, 2, 0, 98, 99, 97,
     ];
 
     #[derive(Serialize, Deserialize)]
@@ -77,7 +77,7 @@ mod test {
     }
 
     fn make_zerohashmap() -> ZeroHashMap<'static, u32, str> {
-        ZeroHashMap::from_iter(vec![(0, "a"), (1, "b"), (2, "c")].into_iter())
+        ZeroHashMap::from_iter([(0, "a"), (1, "b"), (2, "c")])
     }
 
     fn build_invalid_hashmap_str(

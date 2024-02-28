@@ -4,10 +4,10 @@
 
 mod fixtures;
 
-use crate::fixtures::structs::DateFixture;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
+use fixtures::DateFixture;
 use icu_calendar::{types::Time, AsCalendar, Calendar, DateDuration, DateTime};
 
 fn bench_datetime<A: AsCalendar>(datetime: &mut DateTime<A>) {
@@ -66,7 +66,7 @@ fn bench_calendar<C: Clone + Calendar>(
 
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
-    let fxs = fixtures::get_dates_fixture().unwrap();
+    let fxs = serde_json::from_str::<DateFixture>(include_str!("fixtures/datetimes.json")).unwrap();
 
     bench_calendar(
         &mut group,
@@ -117,6 +117,46 @@ fn datetime_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
+        "calendar/chinese_calculating",
+        &fxs,
+        icu::calendar::chinese::Chinese::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_chinese_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::chinese::Chinese::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/chinese_cached",
+        &fxs,
+        icu::calendar::chinese::Chinese::new(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_chinese_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::chinese::Chinese::new(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
         "calendar/gregorian",
         &fxs,
         icu::calendar::gregorian::Gregorian,
@@ -139,6 +179,86 @@ fn datetime_benches(c: &mut Criterion) {
         &fxs,
         icu::calendar::julian::Julian,
         |y, m, d, h, min, s| DateTime::try_new_julian_datetime(y, m, d, h, min, s).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/civil",
+        &fxs,
+        icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_islamic_civil_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/tabular",
+        &fxs,
+        icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_islamic_tabular_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/ummalqura",
+        &fxs,
+        icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_ummalqura_datetime(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/islamic/observational",
+        &fxs,
+        icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_observational_islamic_datetime(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     group.finish();

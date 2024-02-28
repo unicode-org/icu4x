@@ -3,10 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod error;
+pub mod token;
 
-use crate::token::PatternToken;
+use alloc::{borrow::Cow, vec, vec::Vec};
+use core::{fmt::Debug, marker::PhantomData, str::FromStr};
 pub use error::ParserError;
-use std::{borrow::Cow, fmt::Debug, marker::PhantomData, str::FromStr};
+pub use token::ParsedPatternItem;
 
 #[derive(PartialEq, Debug)]
 enum ParserState {
@@ -28,7 +30,7 @@ macro_rules! handle_literal {
         if !range.is_empty() {
             #[allow(clippy::indexing_slicing)]
             // TODO(#1668) Clippy exceptions need docs or fixing.
-            return Ok(Some(PatternToken::Literal {
+            return Ok(Some(ParsedPatternItem::Literal {
                 content: Cow::Borrowed(&$self.input[range]),
                 quoted: $quoted,
             }));
@@ -39,7 +41,10 @@ macro_rules! handle_literal {
 }
 
 /// Options passed to the constructor of [`Parser`].
+///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct ParserOptions {
     /// Controls whether ASCII letters can appear in the raw
     /// pattern.
@@ -49,31 +54,41 @@ pub struct ParserOptions {
     ///
     /// If set to `false`, ASCII letters can only appear in quoted literals,
     /// like "{0} 'days'".
+    ///
+    /// Default is `true`.
     pub allow_raw_letters: bool,
+}
+
+impl Default for ParserOptions {
+    fn default() -> Self {
+        Self {
+            allow_raw_letters: true,
+        }
+    }
 }
 
 /// Placeholder pattern parser.
 ///
 /// The parser allows for handling flexible range of generic patterns
 /// with placeholders.
-/// A placeholder may be anything that can be parsed from an `&str` and
-/// must be enclosed in `{` and `}` characters in the input pattern string.
+///
+/// The [`Parser`] is generic over any placeholder which implements [`FromStr`]
+/// allowing the consumer to parse placeholder patterns such as "{0}, {1}",
+/// "{date}, {time}" or any other. A placeholder must be enclosed in `{` and `}`
+/// characters in the input pattern string.
 ///
 /// At the moment the parser is written as a custom fallible iterator.
+///
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 ///
 /// # Examples
 ///
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, PatternToken};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -86,12 +101,12 @@ pub struct ParserOptions {
 /// assert_eq!(
 ///     result,
 ///     &[
-///         PatternToken::Placeholder(0),
-///         PatternToken::Literal {
+///         ParsedPatternItem::Placeholder(0),
+///         ParsedPatternItem::Literal {
 ///             content: ", ".into(),
 ///             quoted: false
 ///         },
-///         PatternToken::Placeholder(1),
+///         ParsedPatternItem::Placeholder(1),
 ///     ]
 /// );
 /// ```
@@ -102,16 +117,11 @@ pub struct ParserOptions {
 ///
 /// ## Examples
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, PatternToken};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{start}, {end}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -124,19 +134,19 @@ pub struct ParserOptions {
 /// assert_eq!(
 ///     result,
 ///     &[
-///         PatternToken::Placeholder("start".to_owned()),
-///         PatternToken::Literal {
+///         ParsedPatternItem::Placeholder("start".to_owned()),
+///         ParsedPatternItem::Literal {
 ///             content: ", ".into(),
 ///             quoted: false
 ///         },
-///         PatternToken::Placeholder("end".to_owned()),
+///         ParsedPatternItem::Placeholder("end".to_owned()),
 ///     ]
 /// );
 /// ```
 ///
 /// # Type parameters
 ///
-/// - `P`: The type of the placeholder used as a key for the [`ReplacementProvider`].
+/// - `P`: The type of the placeholder used as a key for the [`PlaceholderValueProvider`].
 ///
 /// # Lifetimes
 ///
@@ -170,16 +180,11 @@ pub struct ParserOptions {
 ///
 /// ### Examples
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, PatternToken};
+/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut parser = Parser::new(
-///     input,
-///     ParserOptions {
-///         allow_raw_letters: false,
-///     },
-/// );
+/// let mut parser = Parser::new(input, ParserOptions::default());
 ///
 /// let mut result = vec![];
 ///
@@ -192,20 +197,20 @@ pub struct ParserOptions {
 /// assert_eq!(
 ///     result,
 ///     &[
-///         PatternToken::Placeholder(0),
-///         PatternToken::Literal {
+///         ParsedPatternItem::Placeholder(0),
+///         ParsedPatternItem::Literal {
 ///             content: " ".into(),
 ///             quoted: false
 ///         },
-///         PatternToken::Literal {
+///         ParsedPatternItem::Literal {
 ///             content: "and".into(),
 ///             quoted: true
 ///         },
-///         PatternToken::Literal {
+///         ParsedPatternItem::Literal {
 ///             content: " ".into(),
 ///             quoted: false
 ///         },
-///         PatternToken::Placeholder(1),
+///         ParsedPatternItem::Placeholder(1),
 ///     ]
 /// );
 /// ```
@@ -242,9 +247,9 @@ pub struct ParserOptions {
 ///
 /// [`TR35 2.6.1]: https://unicode.org/reports/tr35/tr35-dates.html#dateTimeFormat
 /// [`RFC 2924`]: https://github.com/rust-lang/rfcs/pull/2924
-/// [`Item`]: std::iter::Iterator::Item
-/// [`TryFrom`]: std::convert::TryFrom
-/// [`ReplacementProvider`]: crate::ReplacementProvider
+/// [`Item`]: core::iter::Iterator::Item
+/// [`TryFrom`]: core::convert::TryFrom
+/// [`PlaceholderValueProvider`]: crate::PlaceholderValueProvider
 #[derive(Debug)]
 pub struct Parser<'p, P> {
     input: &'p str,
@@ -268,12 +273,7 @@ impl<'p, P> Parser<'p, P> {
     /// # Examples
     /// ```
     /// use icu_pattern::{Parser, ParserOptions};
-    /// let mut parser = Parser::<usize>::new(
-    ///     "{0}, {1}",
-    ///     ParserOptions {
-    ///         allow_raw_letters: false,
-    ///     },
-    /// );
+    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions::default());
     /// ```
     pub fn new(input: &'p str, options: ParserOptions) -> Self {
         Self {
@@ -295,32 +295,33 @@ impl<'p, P> Parser<'p, P> {
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, ParserOptions, PatternToken};
+    /// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
     ///
-    /// let mut parser = Parser::<usize>::new(
-    ///     "{0}, {1}",
-    ///     ParserOptions {
-    ///         allow_raw_letters: false,
-    ///     },
-    /// );
+    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions::default());
     ///
     /// // A call to try_next() returns the next value…
-    /// assert_eq!(Ok(Some(PatternToken::Placeholder(0))), parser.try_next());
     /// assert_eq!(
-    ///     Ok(Some(PatternToken::Literal {
+    ///     Ok(Some(ParsedPatternItem::Placeholder(0))),
+    ///     parser.try_next()
+    /// );
+    /// assert_eq!(
+    ///     Ok(Some(ParsedPatternItem::Literal {
     ///         content: ", ".into(),
     ///         quoted: false
     ///     })),
     ///     parser.try_next()
     /// );
-    /// assert_eq!(Ok(Some(PatternToken::Placeholder(1))), parser.try_next());
+    /// assert_eq!(
+    ///     Ok(Some(ParsedPatternItem::Placeholder(1))),
+    ///     parser.try_next()
+    /// );
     ///
-    /// // … and then None once it's over.
+    /// // … and then `None` once it's over.
     /// assert_eq!(Ok(None), parser.try_next());
     /// ```
     pub fn try_next(
         &mut self,
-    ) -> Result<Option<PatternToken<'p, P>>, ParserError<<P as FromStr>::Err>>
+    ) -> Result<Option<ParsedPatternItem<'p, P>>, ParserError<<P as FromStr>::Err>>
     where
         P: FromStr,
         P::Err: Debug,
@@ -333,7 +334,7 @@ impl<'p, P> Parser<'p, P> {
                     // TODO(#1668) Clippy exceptions need docs or fixing.
                     return self.input[range]
                         .parse()
-                        .map(|ret| Some(PatternToken::Placeholder(ret)))
+                        .map(|ret| Some(ParsedPatternItem::Placeholder(ret)))
                         .map_err(ParserError::InvalidPlaceholder);
                 }
                 ParserState::QuotedLiteral if *b == b'\'' => {
@@ -377,7 +378,7 @@ impl<'p, P> Parser<'p, P> {
                     self.start_idx = self.len;
                     #[allow(clippy::indexing_slicing)]
                     // TODO(#1668) Clippy exceptions need docs or fixing.
-                    Ok(Some(PatternToken::Literal {
+                    Ok(Some(ParsedPatternItem::Literal {
                         content: Cow::Borrowed(&self.input[range]),
                         quoted: false,
                     }))
@@ -388,79 +389,96 @@ impl<'p, P> Parser<'p, P> {
         }
     }
 
-    fn advance_state(&mut self, idx: usize, next_state: ParserState) -> std::ops::Range<usize> {
+    fn advance_state(&mut self, idx: usize, next_state: ParserState) -> core::ops::Range<usize> {
         let range = self.start_idx..idx;
         self.idx = idx + 1;
         self.start_idx = self.idx;
         self.state = next_state;
         range
     }
+
+    /// Mutates this parser and collects all [`ParsedPatternItem`]s into a vector.
+    pub fn try_collect_into_vec(
+        mut self,
+    ) -> Result<Vec<ParsedPatternItem<'p, P>>, ParserError<<P as FromStr>::Err>>
+    where
+        P: FromStr,
+        P::Err: Debug,
+    {
+        let mut result = vec![];
+        while let Some(token) = self.try_next()? {
+            result.push(token);
+        }
+        Ok(result)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::pattern::Pattern;
-    use std::{convert::TryInto, ops::Deref};
+    use core::ops::Deref;
 
     #[test]
     fn pattern_parse_placeholders() {
         let samples = vec![
-            ("{0}", vec![PatternToken::Placeholder(0)]),
+            ("{0}", vec![ParsedPatternItem::Placeholder(0)]),
             (
                 "{0}{1}",
-                vec![PatternToken::Placeholder(0), PatternToken::Placeholder(1)],
+                vec![
+                    ParsedPatternItem::Placeholder(0),
+                    ParsedPatternItem::Placeholder(1),
+                ],
             ),
             (
                 "{0} 'at' {1}",
                 vec![
-                    PatternToken::Placeholder(0),
-                    PatternToken::Literal {
+                    ParsedPatternItem::Placeholder(0),
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "at".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Placeholder(1),
+                    ParsedPatternItem::Placeholder(1),
                 ],
             ),
             (
                 "{0}'at'{1}",
                 vec![
-                    PatternToken::Placeholder(0),
-                    PatternToken::Literal {
+                    ParsedPatternItem::Placeholder(0),
+                    ParsedPatternItem::Literal {
                         content: "at".into(),
                         quoted: true,
                     },
-                    PatternToken::Placeholder(1),
+                    ParsedPatternItem::Placeholder(1),
                 ],
             ),
             (
                 "'{0}' 'at' '{1}'",
                 vec![
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "{0}".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "at".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "{1}".into(),
                         quoted: true,
                     },
@@ -469,33 +487,33 @@ mod tests {
             (
                 "'PRE' {0} 'and' {1} 'POST'",
                 vec![
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "PRE".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Placeholder(0),
-                    PatternToken::Literal {
+                    ParsedPatternItem::Placeholder(0),
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "and".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Placeholder(1),
-                    PatternToken::Literal {
+                    ParsedPatternItem::Placeholder(1),
+                    ParsedPatternItem::Literal {
                         content: " ".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "POST".into(),
                         quoted: true,
                     },
@@ -504,28 +522,28 @@ mod tests {
             (
                 "{0} o''clock and 'o''clock'",
                 vec![
-                    PatternToken::Placeholder(0),
-                    PatternToken::Literal {
+                    ParsedPatternItem::Placeholder(0),
+                    ParsedPatternItem::Literal {
                         content: " o".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "'".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "clock and ".into(),
                         quoted: false,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "o".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "'".into(),
                         quoted: true,
                     },
-                    PatternToken::Literal {
+                    ParsedPatternItem::Literal {
                         content: "clock".into(),
                         quoted: true,
                     },
@@ -540,11 +558,13 @@ mod tests {
                     allow_raw_letters: true,
                 },
             );
-            let result: Pattern<_> = parser.try_into().expect("Failed to parse a pattern");
+            let result = parser
+                .try_collect_into_vec()
+                .expect("Failed to parse a pattern");
             assert_eq!(result.deref(), expected,);
         }
 
-        let broken: Vec<(_, Option<ParserError<std::num::ParseIntError>>)> = vec![
+        let broken: Vec<(_, Option<ParserError<core::num::ParseIntError>>)> = vec![
             ("{", Some(ParserError::UnclosedPlaceholder)),
             ("{0", Some(ParserError::UnclosedPlaceholder)),
             ("{01", Some(ParserError::UnclosedPlaceholder)),
@@ -554,7 +574,7 @@ mod tests {
                 // ```
                 // ParserError::InvalidPlaceholder(
                 //     ParseIntError {
-                //         kind: std::num::IntErrorKind::InvalidDigit
+                //         kind: core::num::IntErrorKind::InvalidDigit
                 //     }
                 // ),
                 // ```
@@ -575,7 +595,7 @@ mod tests {
                     allow_raw_letters: false,
                 },
             );
-            let result: Result<Pattern<_>, _> = parser.try_into();
+            let result = parser.try_collect_into_vec();
             if let Some(error) = error {
                 assert_eq!(result.expect_err("Should have failed."), error,);
             } else {

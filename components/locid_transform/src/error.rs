@@ -4,12 +4,12 @@
 
 use core::fmt::Debug;
 use displaydoc::Display;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for LocaleTransformError {}
 
-/// A list of error outcomes for various operations in the `icu_timezone` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]

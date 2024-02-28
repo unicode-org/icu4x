@@ -5,7 +5,7 @@
 //! Data provider structs for time zones.
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 

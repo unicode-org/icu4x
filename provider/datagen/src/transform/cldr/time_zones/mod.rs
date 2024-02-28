@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
@@ -9,19 +10,20 @@ use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_timezone::provider::*;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 mod convert;
+mod names;
 
 #[derive(Debug, Copy, Clone)]
 struct CldrTimeZonesData<'a> {
     pub time_zone_names_resource: &'a TimeZoneNames,
-    pub bcp47_tzids_resource: &'a HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
-    pub meta_zone_ids_resource: &'a HashMap<MetazoneId, MetazoneAliasData>,
-    pub meta_zone_periods_resource: &'a HashMap<String, ZonePeriod>,
+    pub bcp47_tzids_resource: &'a BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    pub meta_zone_ids_resource: &'a BTreeMap<MetazoneId, MetazoneAliasData>,
+    pub meta_zone_periods_resource: &'a BTreeMap<String, ZonePeriod>,
 }
 
 macro_rules! impl_data_provider {
@@ -29,39 +31,30 @@ macro_rules! impl_data_provider {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
-                        .source
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
 
-                    let time_zone_names_resource = &resource
-                        .main
-                        .0
-                        .get(&langid)
-                        .expect("CLDR file contains the expected language")
-                        .dates
-                        .time_zone_names;
+                    let time_zone_names_resource = &resource.main.value.dates.time_zone_names;
 
-                    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
-                        .source
-                        .cldr()?
-                        .bcp47()
-                        .read_and_parse("timezone.json")?;
+                    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
+                        self.cldr()?.bcp47().read_and_parse("timezone.json")?;
 
                     let bcp47_tzids_resource = &resource.keyword.u.time_zones.values;
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
-                        .source
                         .cldr()?
                         .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
                     let meta_zone_ids_resource = &resource.supplemental.meta_zones.meta_zone_ids.0;
 
-                    let meta_zone_periods_resource = &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
+                    let meta_zone_periods_resource =
+                        &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -77,25 +70,22 @@ macro_rules! impl_data_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     if <$marker>::KEY == MetazonePeriodV1Marker::KEY {
                         // MetazonePeriodV1 does not require localized time zone data
-                        Ok(vec![Default::default()])
+                        Ok([Default::default()].into_iter().collect())
                     } else {
-
-                    Ok(self
-                        .source
-                        .cldr()?
-                        .dates("gregorian")
-                        .list_langs()?
-                        .map(DataLocale::from)
-                        .collect())
-}
+                        Ok(self
+                            .cldr()?
+                            .dates("gregorian")
+                            .list_langs()?
+                            .map(DataLocale::from)
+                            .collect())
+                    }
                 }
             }
         )+
-
     };
 }
 
@@ -120,7 +110,7 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {
@@ -256,10 +246,7 @@ mod tests {
         );
 
         let metazone_period: DataPayload<MetazonePeriodV1Marker> = provider
-            .load(DataRequest {
-                locale: &langid!("en").into(),
-                metadata: Default::default(),
-            })
+            .load(Default::default())
             .unwrap()
             .take_payload()
             .unwrap();

@@ -44,8 +44,10 @@ pub trait DateInput {
     /// Gets information on the position of the day within the year.
     fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
 
-    /// Gets the kind of calendar this date is for, if associated with AnyCalendar
-    /// In most cases you'll probably want to return AnyCalendarKind::Iso
+    /// Gets the kind of calendar this date is for, if associated with [`AnyCalendar`]
+    /// In most cases you'll probably want to return [`AnyCalendarKind::Iso`].
+    ///
+    /// [`AnyCalendar`]: icu_calendar::any_calendar::AnyCalendar
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
 
     /// Converts date to ISO
@@ -123,13 +125,13 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
 pub(crate) struct DateTimeInputWithWeekConfig<'data, T: DateTimeInput> {
     data: &'data T,
-    calendar: Option<WeekCalculator>,
+    calendar: Option<&'data WeekCalculator>,
 }
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Copy, Clone)]
 pub(crate) struct ExtractedDateTimeInput {
     year: Option<FormattableYear>,
     month: Option<FormattableMonth>,
@@ -146,7 +148,7 @@ pub(crate) struct ExtractedDateTimeInput {
 /// A [`TimeZoneInput`] type with all of the fields pre-extracted
 ///
 /// See [`TimeZoneInput`] for documentation on individual fields
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub(crate) struct ExtractedTimeZoneInput {
     gmt_offset: Option<GmtOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
@@ -264,7 +266,7 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithWeekConfig<'data, T> {
-    pub(crate) fn new(data: &'data T, calendar: Option<WeekCalculator>) -> Self {
+    pub(crate) fn new(data: &'data T, calendar: Option<&'data WeekCalculator>) -> Self {
         Self { data, calendar }
     }
 }

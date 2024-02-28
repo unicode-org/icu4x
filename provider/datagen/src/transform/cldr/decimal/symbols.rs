@@ -2,31 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_decimal::provider::*;
-use icu_locid::extensions_unicode_key as key;
-use icu_provider::datagen::IterableDataProvider;
+use icu_locid::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use tinystr::TinyAsciiStr;
 
 impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
+        self.check_req::<DecimalSymbolsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(&langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
@@ -52,12 +48,13 @@ impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales()
+impl IterableDataProviderInternal<DecimalSymbolsV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        self.supported_locales_for_numbers()
     }
 }
 
+#[derive(Debug)]
 struct NumbersWithNumsys<'a>(pub &'a cldr_serde::numbers::Numbers, pub TinyAsciiStr<8>);
 
 impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
@@ -99,7 +96,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 fn test_basic() {
     use icu_locid::locale;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::new_testing();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {

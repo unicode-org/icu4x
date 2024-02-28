@@ -7,6 +7,3 @@ name = "icu_benchmark_binsize"
 version = "0.0.0"
 publish = false
 edition = "2021"
-
-[dependencies]
-cargo_metadata = "0.13"

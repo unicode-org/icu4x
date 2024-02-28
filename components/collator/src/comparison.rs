@@ -21,10 +21,9 @@ use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
+use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_locid::extensions_unicode_value as value;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
@@ -69,14 +68,38 @@ pub struct Collator {
 }
 
 impl Collator {
-    /// Instantiates a collator for a given locale with the given options
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    /// Creates a collator for the given locale and options from compiled data.
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
+        Self::try_new_unstable_internal(
+            &crate::provider::Baked,
+            DataPayload::from_static_ref(
+                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+            ),
+            DataPayload::from_static_ref(
+                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+            ),
+            DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COLLATOR_JAMO_V1),
+            || {
+                Ok(DataPayload::from_static_ref(
+                    crate::provider::Baked::SINGLETON_COLLATOR_PRIM_V1,
+                ))
+            },
+            locale,
+            options,
+        )
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: CollatorOptions,
+        error: CollatorError,
+        #[cfg(skip)]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
@@ -91,53 +114,56 @@ impl Collator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,
     {
-        let locale = {
-            // Remove irrelevant extensions, i.e. everything but -u-co-.
-            //
-            // TODO: Revisit at least the default mapping here
-            // once the provider can perform fallback into more
-            // general locale. Once the provider can fall back to
-            // the default, the code here that omits the explicit
-            // variant if it matches the default should become
-            // unnecessary.
-            let original_locale = locale;
-            let mut filtered_locale = alloc::borrow::Cow::Borrowed(locale);
+        Self::try_new_unstable_internal(
+            provider,
+            provider.load(Default::default())?.take_payload()?,
+            provider.load(Default::default())?.take_payload()?,
+            provider.load(Default::default())?.take_payload()?,
+            || provider.load(Default::default())?.take_payload(),
+            locale,
+            options,
+        )
+    }
 
-            let key = icu_locid::extensions_unicode_key!("co");
-            if let Some(variant) = original_locale.get_unicode_ext(&key) {
-                let zh = filtered_locale.language() == icu_locid::subtags_language!("zh");
-                let sv = filtered_locale.language() == icu_locid::subtags_language!("sv");
-                // Omit the explicit collation variant if it is the default.
-                // "standard" is the default for all languages except zh and sv.
-                if !((!zh && !sv && variant == value!("standard"))
-                    || (zh && variant == value!("pinyin"))
-                    || (sv && variant == value!("reformed")))
-                {
-                    filtered_locale.to_mut().set_unicode_ext(key, variant);
-                }
-            }
-            filtered_locale
-        };
+    fn try_new_unstable_internal<D>(
+        provider: &D,
+        decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+        tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+        jamo: DataPayload<CollationJamoV1Marker>,
+        special_primaries: impl FnOnce() -> Result<
+            DataPayload<CollationSpecialPrimariesV1Marker>,
+            DataError,
+        >,
+        locale: &DataLocale,
+        options: CollatorOptions,
+    ) -> Result<Self, CollatorError>
+    where
+        D: DataProvider<CollationDataV1Marker>
+            + DataProvider<CollationDiacriticsV1Marker>
+            + DataProvider<CollationMetadataV1Marker>
+            + DataProvider<CollationReorderingV1Marker>
+            + ?Sized,
+    {
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            data_provider.load(req)?.take_payload()?;
+            provider.load(req)?.take_payload()?;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(data_provider.load(req)?.take_payload()?)
+                Some(provider.load(req)?.take_payload()?)
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(data_provider.load(req)?.take_payload()?)
+                Some(provider.load(req)?.take_payload()?)
             } else {
                 None
             };
@@ -149,10 +175,10 @@ impl Collator {
         }
 
         let root: DataPayload<CollationDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         let tailored_diacritics = metadata.tailored_diacritics();
-        let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
+        let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
             .load(if tailored_diacritics {
                 req
             } else {
@@ -173,19 +199,10 @@ impl Collator {
             return Err(CollatorError::MalformedData);
         }
 
-        let jamo: DataPayload<CollationJamoV1Marker> = data_provider
-            .load(Default::default())? // TODO: redesign Korean search collation handling
-            .take_payload()?;
-
+        // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
             return Err(CollatorError::MalformedData);
         }
-
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
-
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            data_provider.load(Default::default())?.take_payload()?;
 
         let mut altered_defaults = CollatorOptionsBitField::new();
 
@@ -205,8 +222,7 @@ impl Collator {
         let special_primaries = if merged_options.alternate_handling() == AlternateHandling::Shifted
             || merged_options.numeric()
         {
-            let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> =
-                data_provider.load(Default::default())?.take_payload()?;
+            let special_primaries = special_primaries()?;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
@@ -231,11 +247,11 @@ impl Collator {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: CollatorOptions,
-        error: CollatorError
-    );
+    /// The resolved options showing how the default options, the requested options,
+    /// and the options from locale data were combined.
+    pub fn resolved_options(&self) -> ResolvedCollatorOptions {
+        self.options.into()
+    }
 
     /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
     /// are compared as if each one was a REPLACEMENT CHARACTER.

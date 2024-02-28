@@ -10,7 +10,7 @@ Given the following goals…
 1. The ICU4X core library should not panic internally.
 1. Both baked and dynamically-loaded data are core features, and we seek to minimize the tradeoffs between them.
 
-…and the the following evidence…
+…and the following evidence…
 
 1. It is rare to be 100% confident about the safety of your data.[^1]
 1. Data loading and validation is known to be a performance bottleneck in prior-art libraries such as ICU4C.
@@ -58,7 +58,7 @@ impl MonthNamesBad {
     pub fn get_first_month_name(&self) -> &str {
         &self.month_names[0]
     }
-    /// Returns None only if `idx` is greater than the month count.
+    /// Returns `None`` only if `idx` is greater than the month count.
     pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
         if idx >= self.month_count {
             return None;

@@ -1,0 +1,102 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "1yuè",
+          "2yuè",
+          "3yuè",
+          "4yuè",
+          "5yuè",
+          "6yuè",
+          "7yuè",
+          "8yuè",
+          "9yuè",
+          "10yuè",
+          "11yuè",
+          "12yuè"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "zhēngyuè",
+          "èryuè",
+          "sānyuè",
+          "sìyuè",
+          "wǔyuè",
+          "liùyuè",
+          "qīyuè",
+          "bāyuè",
+          "jiǔyuè",
+          "shíyuè",
+          "shíyīyuè",
+          "shí’èryuè"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {},
+    "abbr": {},
+    "narrow": {}
+  }
+}

@@ -5,14 +5,8 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.3.4"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
+version = "0.3.7"
+license = "Unicode-3.0"
 include = [
     "src/**/*",
     "examples/**/*",
@@ -24,51 +18,34 @@ include = [
     "list_to_ucptrie.wasm"
 ]
 
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
 [package.metadata.workspaces]
 independent = true
 
 [features]
 # Use the wasm builder
 default = ["wasm"]
-wasm = ["wasmer", "wasmer-wasi"]
+wasm = ["dep:wasmi"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
 # containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
 # Will be silently disabled if the wasm feature is enabled
-icu4c = ["zerovec"]
+icu4c = []
 
 [dependencies]
-icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }
-zerovec = { version = "0.9.2", path = "../../../utils/zerovec", optional = true }
-lazy_static = "1.4.0"
+icu_collections = { workspace = true, features = ["serde"] }
 toml = "0.5"
-
-[dependencies.wasmer]
-version = "2.2.1"
-default-features = false
-optional = true
-features = [
-    # We are running on the local system (as opposed to JavaScript)
-    "sys",
-    # By default, use the Singlepass compiler for faster startup time
-    "default-singlepass",
-    # By default, use the Universal engine for in-memory compiled code
-    "default-universal"
-]
-
-[dependencies.wasmer-wasi]
-version = "2.2.1"
-default-features = false
-optional = true
-features = [
-    # We are running on the local system (as opposed to JavaScript)
-    "sys",
-    # We don't need real filesystem access, so use mem-fs
-    "mem-fs"
-]
+zerovec = { workspace = true }
+wasmi = { version = "0.31.2", optional = true }
 
 [dev-dependencies]
-icu = { path = "../../icu" }
+icu = { workspace = true }
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true

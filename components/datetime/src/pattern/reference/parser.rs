@@ -254,7 +254,7 @@ mod tests {
 
     #[test]
     fn pattern_parse_simple() {
-        let samples = vec![
+        let samples = [
             (
                 "dd/MM/y",
                 vec![
@@ -318,7 +318,7 @@ mod tests {
 
     #[test]
     fn pattern_parse_literals() {
-        let samples = vec![
+        let samples = [
             ("", ""),
             (" ", " "),
             ("  ", "  "),
@@ -350,7 +350,7 @@ mod tests {
             );
         }
 
-        let broken = vec![(" 'foo ", PatternError::UnclosedLiteral)];
+        let broken = [(" 'foo ", PatternError::UnclosedLiteral)];
 
         for (string, error) in broken {
             assert_eq!(Parser::new(string).parse(), Err(error),);
@@ -359,7 +359,7 @@ mod tests {
 
     #[test]
     fn pattern_parse_symbols() {
-        let samples = vec![
+        let samples = [
             (
                 "y",
                 vec![(fields::Year::Calendar.into(), FieldLength::One).into()],
@@ -541,7 +541,7 @@ mod tests {
             );
         }
 
-        let broken = vec![
+        let broken = [
             (
                 "yyyyyyy",
                 PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
@@ -559,7 +559,7 @@ mod tests {
 
     #[test]
     fn pattern_parse_placeholders() {
-        let samples = vec![
+        let samples = [
             ("{0}", vec![Pattern::from("ONE")], str2pis("ONE")),
             (
                 "{0}{1}",
@@ -592,7 +592,7 @@ mod tests {
             );
         }
 
-        let broken = vec![
+        let broken = [
             ("{0}", vec![], PatternError::UnknownSubstitution('0')),
             ("{a}", vec![], PatternError::UnknownSubstitution('a')),
             ("{", vec![], PatternError::UnclosedPlaceholder),

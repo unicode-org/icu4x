@@ -4,13 +4,18 @@
 
 //! Serializer configurations for the [`FilesystemExporter`].
 //!
-//! Each serializer is in a child module.
-//!
 //! [`FilesystemExporter`]: super::FilesystemExporter
 
 pub mod bincode;
 pub mod json;
 pub mod postcard;
+
+#[doc(no_inline)]
+pub use self::bincode::Serializer as Bincode;
+#[doc(no_inline)]
+pub use self::json::Serializer as Json;
+#[doc(no_inline)]
+pub use self::postcard::Serializer as Postcard;
 
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
@@ -18,6 +23,8 @@ use icu_provider::prelude::*;
 use std::io;
 
 /// A simple serializer trait that works on whole objects.
+///
+/// This trait is not meant to be implemented by clients.
 pub trait AbstractSerializer: core::fmt::Debug {
     /// Serializes an object to a sink.
     fn serialize(

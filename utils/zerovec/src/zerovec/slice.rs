@@ -65,10 +65,10 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        Self::from_ule_slice(core::mem::transmute((
-            bytes.as_ptr(),
+        Self::from_ule_slice(core::slice::from_raw_parts(
+            bytes.as_ptr() as *const T::ULE,
             bytes.len() / core::mem::size_of::<T::ULE>(),
-        )))
+        ))
     }
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
@@ -169,7 +169,7 @@ impl<T> ZeroSlice<T>
 where
     T: AsULE,
 {
-    /// Gets the element at the specified index. Returns None if out of range.
+    /// Gets the element at the specified index. Returns `None` if out of range.
     ///
     /// # Example
     ///
@@ -191,7 +191,7 @@ where
             .map(T::from_unaligned)
     }
 
-    /// Gets the entire slice as an array of length `N`. Returns None if the slice
+    /// Gets the entire slice as an array of length `N`. Returns `None` if the slice
     /// does not have exactly `N` elements.
     ///
     /// # Example
@@ -202,7 +202,8 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
     ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let array: [u16; 4] = zerovec.get_as_array().expect("should be 4 items in array");
+    /// let array: [u16; 4] =
+    ///     zerovec.get_as_array().expect("should be 4 items in array");
     ///
     /// assert_eq!(array[2], 421);
     /// ```
@@ -211,7 +212,7 @@ where
         Some(ule_array.map(|u| T::from_unaligned(u)))
     }
 
-    /// Gets a subslice of elements within a certain range. Returns None if the range
+    /// Gets a subslice of elements within a certain range. Returns `None` if the range
     /// is out of bounds of this `ZeroSlice`.
     ///
     /// # Example
@@ -306,7 +307,7 @@ where
         Ok(ZeroSlice::from_ule_slice(new_slice))
     }
 
-    /// Gets the first element. Returns None if empty.
+    /// Gets the first element. Returns `None` if empty.
     ///
     /// # Example
     ///
@@ -324,7 +325,7 @@ where
         self.as_ule_slice().first().copied().map(T::from_unaligned)
     }
 
-    /// Gets the last element. Returns None if empty.
+    /// Gets the last element. Returns `None` if empty.
     ///
     /// # Example
     ///
@@ -566,6 +567,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::zeroslice;
 
     #[test]
     fn test_split_first() {
@@ -576,20 +578,16 @@ mod test {
         {
             // single element slice
             const DATA: &ZeroSlice<u16> =
-                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([211]));
-            assert_eq!((211, ZeroSlice::new_empty()), DATA.split_first().unwrap());
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [211]);
+            assert_eq!((211, zeroslice![]), DATA.split_first().unwrap());
         }
         {
             // slice with many elements.
             const DATA: &ZeroSlice<u16> =
-                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-                    211, 281, 421, 32973,
-                ]));
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [211, 281, 421, 32973]);
             const EXPECTED_VALUE: (u16, &ZeroSlice<u16>) = (
                 211,
-                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
-                    281, 421, 32973,
-                ])),
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [281, 421, 32973]),
             );
 
             assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());

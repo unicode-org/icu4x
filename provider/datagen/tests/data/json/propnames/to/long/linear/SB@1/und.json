@@ -1,0 +1,19 @@
+{
+  "map": [
+    "Other",
+    "ATerm",
+    "Close",
+    "Format",
+    "Lower",
+    "Numeric",
+    "OLetter",
+    "Sep",
+    "Sp",
+    "STerm",
+    "Upper",
+    "CR",
+    "Extend",
+    "LF",
+    "SContinue"
+  ]
+}

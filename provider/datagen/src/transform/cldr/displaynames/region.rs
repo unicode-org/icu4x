@@ -2,27 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
-use icu_displaynames::provider::*;
-use icu_provider::datagen::IterableDataProvider;
+use icu_experimental::displaynames::provider::*;
+use icu_locid::subtags::Region;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
-use tinystr::TinyAsciiStr;
-use tinystr::TinyStrError;
+use std::collections::{BTreeMap, HashSet};
+use std::str::FromStr;
 
 impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
+        self.check_req::<RegionDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::region_displaynames::Resource =
-            self.source
-                .cldr()?
-                .displaynames()
-                .read_and_parse(&langid, "territories.json")?;
+        let data: &cldr_serde::displaynames::region::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(&langid, "territories.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -35,17 +35,15 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+impl IterableDataProviderInternal<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .displaynames()
             .list_langs()?
             .filter(|langid| {
                 // The directory might exist without territories.json
-                self.source
-                    .cldr()
+                self.cldr()
                     .unwrap()
                     .displaynames()
                     .file_exists(langid, "territories.json")
@@ -61,23 +59,30 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
 const SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV1<'static> {
-    type Error = TinyStrError;
-    fn try_from(other: &cldr_serde::region_displaynames::Resource) -> Result<Self, Self::Error> {
+impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
+    type Error = icu_locid::ParserError;
+    fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
-        for (_, lang_display_names) in other.main.0.iter() {
-            for (region, value) in lang_display_names.localedisplaynames.regions.iter() {
-                if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
-                    short_names.insert(TinyAsciiStr::from_str(region)?, value.as_ref());
-                } else if !region.contains(ALT_SUBSTRING) {
-                    names.insert(TinyAsciiStr::from_str(region)?, value.as_ref());
-                }
+        for (region, value) in other.main.value.localedisplaynames.regions.iter() {
+            if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
+                short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
+            } else if !region.contains(ALT_SUBSTRING) {
+                names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
             }
         }
         Ok(Self {
-            names: names.into_iter().collect(),
-            short_names: short_names.into_iter().collect(),
+            // Old CLDR versions may contain trivial entries, so filter
+            names: names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            short_names: short_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
         })
     }
 }
@@ -85,12 +90,11 @@ impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
-    use tinystr::tinystr;
+    use icu_locid::{locale, subtags::region};
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -102,14 +106,17 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().names.get(&tinystr!(3, "AE")).unwrap(),
+            data.get()
+                .names
+                .get(&region!("AE").into_tinystr().to_unvalidated())
+                .unwrap(),
             "United Arab Emirates"
         );
     }
 
     #[test]
     fn test_basic_short_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -121,7 +128,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().short_names.get(&tinystr!(3, "BA")).unwrap(),
+            data.get()
+                .short_names
+                .get(&region!("BA").into_tinystr().to_unvalidated())
+                .unwrap(),
             "Bosnia"
         );
     }

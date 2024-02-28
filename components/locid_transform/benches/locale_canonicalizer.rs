@@ -2,20 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod helpers;
-
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_locid::Locale;
 use icu_locid_transform::LocaleCanonicalizer;
 use icu_locid_transform::LocaleExpander;
 
 fn canonicalize_bench(c: &mut Criterion) {
-    let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleCanonicalizer::new();
 
     let mut group = c.benchmark_group("uncanonicalized");
 
-    let path = "./benches/fixtures/uncanonicalized-locales.json";
-    let data: Vec<String> = helpers::read_fixture(path).expect("Failed to read a fixture");
+    let data: Vec<String> =
+        serde_json::from_str(include_str!("fixtures/uncanonicalized-locales.json"))
+            .expect("Failed to read a fixture");
     let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
 
     group.bench_function("clone", |b| {
@@ -39,14 +38,14 @@ fn canonicalize_bench(c: &mut Criterion) {
 }
 
 fn canonicalize_noop_bench(c: &mut Criterion) {
-    let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleCanonicalizer::new();
 
     let mut group = c.benchmark_group("canonicalized");
 
     // None of these locales require canonicalization, so this measures the cost of calling
     // the canonicalizer on locales that will not be modified.
-    let path = "./benches/fixtures/locales.json";
-    let data: Vec<String> = helpers::read_fixture(path).expect("Failed to read a fixture");
+    let data: Vec<String> = serde_json::from_str(include_str!("fixtures/locales.json"))
+        .expect("Failed to read a fixture");
     let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
 
     group.bench_function("clone", |b| {
@@ -70,12 +69,12 @@ fn canonicalize_noop_bench(c: &mut Criterion) {
 }
 
 fn maximize_bench(c: &mut Criterion) {
-    let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleExpander::new();
 
     let mut group = c.benchmark_group("likelysubtags");
 
-    let path = "./benches/fixtures/locales.json";
-    let data: Vec<String> = helpers::read_fixture(path).expect("Failed to read a fixture");
+    let data: Vec<String> = serde_json::from_str(include_str!("fixtures/locales.json"))
+        .expect("Failed to read a fixture");
     let locales: Vec<Locale> = data.iter().map(|s| s.parse().unwrap()).collect();
 
     group.bench_function("maximize", |b| {

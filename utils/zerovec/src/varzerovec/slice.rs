@@ -38,8 +38,7 @@ use core::ops::Range;
 /// The following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
-/// use zerovec::ule::*;
-/// use zerovec::{VarZeroSlice, VarZeroVec, ZeroVec};
+/// use zerovec::{VarZeroSlice, VarZeroVec};
 /// let strings_1: Vec<&str> = vec!["foo", "bar", "baz"];
 /// let strings_2: Vec<&str> = vec!["twelve", "seventeen", "forty two"];
 /// let strings_3: Vec<&str> = vec!["我", "喜歡", "烏龍茶"];
@@ -108,8 +107,8 @@ pub struct VarZeroSlice<T: ?Sized, F = Index16> {
 impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// Construct a new empty VarZeroSlice
     pub const fn new_empty() -> &'static Self {
-        let arr: &[u8] = &[];
-        unsafe { mem::transmute(arr) }
+        // The empty VZV is special-cased to the empty slice
+        unsafe { mem::transmute(&[] as &[u8]) }
     }
 
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
@@ -136,7 +135,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -155,7 +153,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Examples
     ///
     /// ```
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -174,7 +171,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -192,12 +188,11 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
         self.as_components().iter()
     }
 
-    /// Get one of this slice's elements, returning None if the index is out of bounds
+    /// Get one of this slice's elements, returning `None` if the index is out of bounds
     ///
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -225,7 +220,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -259,7 +253,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -319,7 +312,6 @@ where
     /// # Example
     ///
     /// ```
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -347,7 +339,6 @@ where
     /// # Example
     ///
     /// ```
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -366,7 +357,7 @@ where
     /// assert_eq!(vec.binary_search_in_range("g", 1..6), Some(Ok(2)));
     /// assert_eq!(vec.binary_search_in_range("h", 1..6), Some(Err(3)));
     ///
-    /// // Will return None if the range is out of bounds:
+    /// // Will return `None` if the range is out of bounds:
     /// assert_eq!(vec.binary_search_in_range("x", 100..200), None);
     /// assert_eq!(vec.binary_search_in_range("x", 0..200), None);
     /// # Ok::<(), ZeroVecError>(())
@@ -395,7 +386,6 @@ where
     /// # Example
     ///
     /// ```
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -423,7 +413,6 @@ where
     /// # Example
     ///
     /// ```
-    /// # use std::str::Utf8Error;
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
@@ -460,7 +449,7 @@ where
     ///     Some(Err(3))
     /// );
     ///
-    /// // Will return None if the range is out of bounds:
+    /// // Will return `None` if the range is out of bounds:
     /// assert_eq!(
     ///     vec.binary_search_in_range_by(|v| v.cmp("x"), 100..200),
     ///     None

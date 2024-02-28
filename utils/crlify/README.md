@@ -1,6 +1,10 @@
 # crlify [![crates.io](https://img.shields.io/crates/v/crlify)](https://crates.io/crates/crlify)
 
+<!-- cargo-rdme start -->
+
 [`BufWriterWithLineEndingFix`].
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

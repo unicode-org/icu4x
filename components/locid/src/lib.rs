@@ -24,7 +24,8 @@
 //! ```
 //! use icu::locid::Locale;
 //! use icu::locid::{
-//!     locale, subtags_language as language, subtags_region as region,
+//!     locale,
+//!     subtags::{language, region},
 //! };
 //!
 //! let mut loc: Locale = locale!("en-US");
@@ -71,13 +72,19 @@ mod locale;
 mod macros;
 mod ordering;
 mod parser;
+mod shortvec;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
+#[allow(deprecated)]
 pub use ordering::SubtagOrderingResult;
 pub use parser::errors::ParserError;
 
+#[doc(no_inline)]
+pub use ParserError as Error;
+
 pub mod extensions;
+#[macro_use]
 pub mod subtags;
 pub mod zerovec;
 

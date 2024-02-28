@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[allow(deprecated)]
 use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
     parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
@@ -28,8 +29,9 @@ use writeable::Writeable;
 ///
 /// ```
 /// use icu_locid::{
-///     extensions_unicode_key as key, extensions_unicode_value as value,
-///     locale, subtags_language as language, subtags_region as region,
+///     extensions::unicode::{key, value},
+///     locale,
+///     subtags::{language, region},
 /// };
 ///
 /// let loc = locale!("en-US-u-ca-buddhist");
@@ -56,7 +58,8 @@ use writeable::Writeable;
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
 /// Any bogus subtags will cause the parsing to fail with an error.
-/// No subtag validation or canonicalization is performed.
+///
+/// No subtag validation or alias resolution is performed.
 ///
 /// # Examples
 ///
@@ -91,20 +94,20 @@ fn test_sizes() {
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
     assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Variant>(), 8);
-    assert_eq!(core::mem::size_of::<subtags::Variants>(), 24);
-    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 40);
+    assert_eq!(core::mem::size_of::<subtags::Variants>(), 16);
+    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 32);
 
-    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 64);
-    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 40);
+    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 56);
+    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 32);
     assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
 
-    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 32);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 16);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 24);
     assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 168);
+    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 16);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 136);
 
-    assert_eq!(core::mem::size_of::<Locale>(), 208);
+    assert_eq!(core::mem::size_of::<Locale>(), 168);
 }
 
 impl Locale {
@@ -190,7 +193,7 @@ impl Locale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+        self.write_cmp_bytes(other)
     }
 
     /// Compare this [`Locale`] with an iterator of BCP-47 subtags.
@@ -227,6 +230,8 @@ impl Locale {
     ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     /// ```
+    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
+    #[allow(deprecated)]
     pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
     where
         I: Iterator<Item = &'l [u8]>,
@@ -250,13 +255,12 @@ impl Locale {
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
-    /// BCP-47 string to a `Locale` and then performed a structucal comparison.
+    /// BCP-47 string to a `Locale` and then performed a structural comparison.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "pl-LaTn-pL",
@@ -369,6 +373,7 @@ impl From<Locale> for LanguageIdentifier {
 }
 
 impl AsRef<LanguageIdentifier> for Locale {
+    #[inline(always)]
     fn as_ref(&self) -> &LanguageIdentifier {
         &self.id
     }
@@ -422,7 +427,7 @@ fn test_writeable() {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{locale, subtags_language as language};
+/// use icu::locid::{locale, subtags::language};
 ///
 /// assert_eq!(Locale::from(language!("en")), locale!("en"));
 /// ```
@@ -439,7 +444,7 @@ impl From<subtags::Language> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{locale, subtags_script as script};
+/// use icu::locid::{locale, subtags::script};
 ///
 /// assert_eq!(Locale::from(Some(script!("latn"))), locale!("und-Latn"));
 /// ```
@@ -456,7 +461,7 @@ impl From<Option<subtags::Script>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{locale, subtags_region as region};
+/// use icu::locid::{locale, subtags::region};
 ///
 /// assert_eq!(Locale::from(Some(region!("US"))), locale!("und-US"));
 /// ```
@@ -474,8 +479,8 @@ impl From<Option<subtags::Region>> for Locale {
 /// ```
 /// use icu::locid::Locale;
 /// use icu::locid::{
-///     locale, subtags_language as language, subtags_region as region,
-///     subtags_script as script,
+///     locale,
+///     subtags::{language, region, script},
 /// };
 ///
 /// assert_eq!(

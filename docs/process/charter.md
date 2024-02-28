@@ -60,7 +60,7 @@ A viable subset of ICU4X will be targeting the [no_std] support and in the futur
 
 The ICU4X sub-committee (ICU4X-SC), a sub-committee of the ICU technical committee (ICU-TC), will be composed of members of the Unicode Consortium.  The ICU4X-SC will make architectural decisions consistent with this charter, and guide the development and maintenance of the project.
 
-ICU4X will have an independent code base from ICU, and will operate independently of the ICU-TC. It will need no support from the the core staff of the Unicode Consortium except an occasional announcement.
+ICU4X will have an independent code base from ICU, and will operate independently of the ICU-TC. It will need no support from the core staff of the Unicode Consortium except an occasional announcement.
 
 ### Is ICU4X going to replace ICU?
 

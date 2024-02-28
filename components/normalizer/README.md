@@ -1,5 +1,7 @@
 # icu_normalizer [![crates.io](https://img.shields.io/crates/v/icu_normalizer)](https://crates.io/crates/icu_normalizer)
 
+<!-- cargo-rdme start -->
+
 Normalizing text into Unicode Normalization Forms.
 
 This module is published as its own crate ([`icu_normalizer`](https://docs.rs/icu_normalizer/latest/icu_normalizer/))
@@ -46,6 +48,8 @@ passthrough (only one inversion list lookup per character in the best case) and 
 decompose-then-canonically-compose behavior, whereas ICU4C has other paths between these
 extremes. The ICU4X collator doesn't make use of the FCD concept at all in order to avoid
 doing the work of checking whether the FCD condition holds.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

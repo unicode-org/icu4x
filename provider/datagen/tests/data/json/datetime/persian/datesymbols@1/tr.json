@@ -1,0 +1,108 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "Ferverdin",
+          "Ordibeheşt",
+          "Hordad",
+          "Tir",
+          "Mordad",
+          "Şehriver",
+          "Mehr",
+          "Aban",
+          "Azer",
+          "Dey",
+          "Behmen",
+          "Esfend"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "Ferverdin",
+          "Ordibeheşt",
+          "Hordad",
+          "Tir",
+          "Mordad",
+          "Şehriver",
+          "Mehr",
+          "Aban",
+          "Azer",
+          "Dey",
+          "Behmen",
+          "Esfend"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Paz",
+        "Pzt",
+        "Sal",
+        "Çar",
+        "Per",
+        "Cum",
+        "Cmt"
+      ],
+      "narrow": [
+        "P",
+        "P",
+        "S",
+        "Ç",
+        "P",
+        "C",
+        "C"
+      ],
+      "short": [
+        "Pa",
+        "Pt",
+        "Sa",
+        "Ça",
+        "Pe",
+        "Cu",
+        "Ct"
+      ],
+      "wide": [
+        "Pazar",
+        "Pazartesi",
+        "Salı",
+        "Çarşamba",
+        "Perşembe",
+        "Cuma",
+        "Cumartesi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ah": "AP"
+    },
+    "abbr": {
+      "ah": "AP"
+    },
+    "narrow": {
+      "ah": "AP"
+    }
+  }
+}

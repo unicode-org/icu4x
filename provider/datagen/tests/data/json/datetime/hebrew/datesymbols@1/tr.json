@@ -1,0 +1,114 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "Tişri",
+          "M02": "Heşvan",
+          "M03": "Kislev",
+          "M04": "Tevet",
+          "M05": "Şevat",
+          "M05L": "Adar Rişon",
+          "M06": "Adar",
+          "M06L": "Veadar",
+          "M07": "Nisan",
+          "M08": "İyar",
+          "M09": "Sivan",
+          "M10": "Tamuz",
+          "M11": "Av",
+          "M12": "Elul"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M05L": "6",
+          "M06": "7",
+          "M06L": "7",
+          "M07": "8",
+          "M08": "9",
+          "M09": "10",
+          "M10": "11",
+          "M11": "12",
+          "M12": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "Tişri",
+          "M02": "Heşvan",
+          "M03": "Kislev",
+          "M04": "Tevet",
+          "M05": "Şevat",
+          "M05L": "Adar Rişon",
+          "M06": "Adar",
+          "M06L": "Veadar",
+          "M07": "Nisan",
+          "M08": "İyar",
+          "M09": "Sivan",
+          "M10": "Tamuz",
+          "M11": "Av",
+          "M12": "Elul"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Paz",
+        "Pzt",
+        "Sal",
+        "Çar",
+        "Per",
+        "Cum",
+        "Cmt"
+      ],
+      "narrow": [
+        "P",
+        "P",
+        "S",
+        "Ç",
+        "P",
+        "C",
+        "C"
+      ],
+      "short": [
+        "Pa",
+        "Pt",
+        "Sa",
+        "Ça",
+        "Pe",
+        "Cu",
+        "Ct"
+      ],
+      "wide": [
+        "Pazar",
+        "Pazartesi",
+        "Salı",
+        "Çarşamba",
+        "Perşembe",
+        "Cuma",
+        "Cumartesi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "hebrew": "AM"
+    },
+    "abbr": {
+      "hebrew": "AM"
+    },
+    "narrow": {
+      "hebrew": "AM"
+    }
+  }
+}

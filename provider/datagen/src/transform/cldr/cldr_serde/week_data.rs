@@ -8,7 +8,7 @@
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
 use core::convert::TryFrom;
-use icu_locid::{subtags::Region, subtags_region as region};
+use icu_locid::{subtags::region, subtags::Region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 use std::num::ParseIntError;
@@ -41,11 +41,17 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
     }
 }
 
+impl From<Weekday> for icu_calendar::types::IsoWeekday {
+    fn from(day: Weekday) -> Self {
+        (&day).into()
+    }
+}
+
 /// The territory that data is keyed by.
 ///
 /// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }
 ///
-/// The contained types are strings rather than [icu_locid::subtags::Region]
+/// The contained types are strings rather than [`icu_locid::subtags::Region`]
 /// to avoid an extra parsing step of the variant in data providers.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Territory {
@@ -118,6 +124,8 @@ impl TryFrom<String> for U8 {
 pub struct WeekData {
     pub min_days: BTreeMap<Territory, U8>,
     pub first_day: BTreeMap<Territory, Weekday>,
+    pub weekend_start: BTreeMap<Territory, Weekday>,
+    pub weekend_end: BTreeMap<Territory, Weekday>,
 }
 
 #[derive(Deserialize)]

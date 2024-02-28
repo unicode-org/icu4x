@@ -7,17 +7,20 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
+use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
 };
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+use crate::provider::date_time::MonthPlaceholderValue;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
-use icu_calendar::provider::WeekDataV1;
+use icu_calendar::week::WeekCalculator;
+use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
@@ -36,8 +39,7 @@ use writeable::Writeable;
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locid::locale;
-/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 ///     &locale!("en").into(),
 ///     Default::default(),
 /// )
@@ -50,13 +52,13 @@ use writeable::Writeable;
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct FormattedDateTime<'l> {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: ExtractedDateTimeInput,
-    pub(crate) week_data: Option<&'l WeekDataV1>,
+    pub(crate) week_data: Option<&'l WeekCalculator>,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
@@ -73,7 +75,10 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             self.fixed_decimal_format,
             sink,
         )
-        .map_err(|_| core::fmt::Error)
+        .map_err(|_e| {
+            icu_provider::_internal::log::warn!("{_e:?}");
+            core::fmt::Error
+        })
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -96,7 +101,7 @@ where
     W: fmt::Write + ?Sized,
 {
     match length {
-        FieldLength::One => {}
+        FieldLength::One | FieldLength::NumericOverride(_) => {}
         FieldLength::TwoDigit => {
             num.pad_start(2);
             num.set_max_position(2);
@@ -123,10 +128,11 @@ where
     formatted.write_to(result)
 }
 
-fn write_pattern<T, W>(
-    pattern: &crate::pattern::runtime::Pattern,
-    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
+pub(crate) fn write_pattern<'data, T, W, DS, TS>(
+    pattern_items: impl Iterator<Item = PatternItem>,
+    pattern_metadata: PatternMetadata,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -134,12 +140,14 @@ fn write_pattern<T, W>(
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
 {
-    let mut iter = pattern.items.iter().peekable();
+    let mut iter = pattern_items.peekable();
     loop {
         match iter.next() {
             Some(PatternItem::Field(field)) => write_field(
-                pattern,
+                pattern_metadata,
                 field,
                 iter.peek(),
                 date_symbols,
@@ -161,7 +169,7 @@ pub fn write_pattern_plurals<T, W>(
     date_symbols: Option<&provider::calendar::DateSymbolsV1>,
     time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
     datetime: &T,
-    week_data: Option<&WeekDataV1>,
+    week_data: Option<&WeekCalculator>,
     ordinal_rules: Option<&PluralRules>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -170,10 +178,11 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data.map(|v| v.into()));
+    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
-        pattern,
+        pattern.items.iter(),
+        pattern.metadata,
         date_symbols,
         time_symbols,
         &loc_datetime,
@@ -182,18 +191,36 @@ where
     )
 }
 
+const CHINESE_CYCLIC_YEARS: [&str; 60] = [
+    "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉", "甲戌", "乙亥",
+    "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥",
+    "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳", "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥",
+    "庚子", "辛丑", "壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
+    "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥",
+];
+const DANGI_CYCLIC_YEARS: [&str; 60] = [
+    "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미", "임신", "계유", "갑술", "을해",
+    "병자", "정축", "무인", "기묘", "경진", "신사", "임오", "계미", "갑신", "을유", "병술", "정해",
+    "무자", "기축", "경인", "신묘", "임진", "계사", "갑오", "을미", "병신", "정유", "무술", "기해",
+    "경자", "신축", "임인", "계묘", "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해",
+    "임자", "계축", "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
+];
+
+const CHINESE_LEAP_PREFIX: &str = "閏";
+const DANGI_LEAP_PREFIX: &str = "윤";
+const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // This function assumes that the correct decision has been
 // made regarding availability of symbols in the caller.
 //
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(super) fn write_field<T, W>(
-    pattern: &crate::pattern::runtime::Pattern,
+pub(super) fn write_field<'data, T, W, DS, TS>(
+    pattern_metadata: PatternMetadata,
     field: fields::Field,
     next_item: Option<&PatternItem>,
-    date_symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&crate::provider::calendar::TimeSymbolsV1>,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
     datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -201,6 +228,8 @@ pub(super) fn write_field<T, W>(
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
 {
     match field.symbol {
         FieldSymbol::Era => {
@@ -211,7 +240,8 @@ where
                 .era;
             let symbol = date_symbols
                 .ok_or(Error::MissingDateSymbols)?
-                .get_symbol_for_era(field.length, &era);
+                .get_symbol_for_era(field.length, &era)?
+                .unwrap_or(&era.0);
             w.write_str(symbol)?
         }
         FieldSymbol::Year(year) => match year {
@@ -233,6 +263,41 @@ where
                 FixedDecimal::from(datetime.week_of_year()?.0.number),
                 field.length,
             )?,
+            Year::Cyclic => {
+                let datetime = datetime.datetime();
+                let cyclic = datetime
+                    .year()
+                    .ok_or(Error::MissingInputField(Some("year")))?
+                    .cyclic
+                    .ok_or(Error::MissingInputField(Some("cyclic")))?;
+                // TODO(#3761): This is a hack, we should use actual data for cyclic years
+                let cyclics = match datetime.any_calendar_kind() {
+                    Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
+                    _ => &CHINESE_CYCLIC_YEARS, /* for now assume all other calendars use the stem-branch model */
+                };
+                let cyclic_str = cyclics.get(usize::from(cyclic.get()) - 1).ok_or(
+                    icu_calendar::CalendarError::Overflow {
+                        field: "cyclic",
+                        max: 60,
+                    },
+                )?;
+                w.write_str(cyclic_str)?;
+            }
+            Year::RelatedIso => {
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .related_iso
+                            .ok_or(Error::MissingInputField(Some("related_iso")))?,
+                    ),
+                    field.length,
+                )?;
+            }
         },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
@@ -248,18 +313,50 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = date_symbols
+                let datetime = datetime.datetime();
+                let formattable_month = datetime
+                    .month()
+                    .ok_or(Error::MissingInputField(Some("month")))?;
+
+                let month_placeholder_value = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_month(
-                        month,
-                        length,
-                        datetime
-                            .datetime()
-                            .month()
-                            .ok_or(Error::MissingInputField(Some("month")))?
-                            .code,
-                    )?;
-                w.write_str(symbol)?
+                    .get_symbol_for_month(month, length, formattable_month.code)?;
+
+                match month_placeholder_value {
+                    MonthPlaceholderValue::PlainString(symbol) => {
+                        w.write_str(symbol)?;
+                    }
+                    MonthPlaceholderValue::StringNeedingLeapPrefix(symbol) => {
+                        // FIXME (#3766) this should be using actual data for leap months
+                        let leap_str = match datetime.any_calendar_kind() {
+                            Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
+                            Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
+                            _ => PLACEHOLDER_LEAP_PREFIX,
+                        };
+                        w.write_str(leap_str)?;
+                        w.write_str(symbol)?;
+                    }
+                    #[cfg(feature = "experimental")]
+                    MonthPlaceholderValue::Numeric => {
+                        format_number(
+                            w,
+                            fixed_decimal_format,
+                            FixedDecimal::from(formattable_month.ordinal),
+                            field.length,
+                        )?;
+                    }
+                    #[cfg(feature = "experimental")]
+                    MonthPlaceholderValue::NumericPattern(substitution_pattern) => {
+                        w.write_str(substitution_pattern.get_prefix())?;
+                        format_number(
+                            w,
+                            fixed_decimal_format,
+                            FixedDecimal::from(formattable_month.ordinal),
+                            field.length,
+                        )?;
+                        w.write_str(substitution_pattern.get_suffix())?;
+                    }
+                }
             }
         },
         FieldSymbol::Week(week) => match week {
@@ -401,7 +498,7 @@ where
                         .datetime()
                         .hour()
                         .ok_or(Error::MissingInputField(Some("hour")))?,
-                    pattern.time_granularity.is_top_of_hour(
+                    pattern_metadata.time_granularity().is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                         datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
@@ -497,8 +594,10 @@ pub fn analyze_patterns(
 
 #[cfg(test)]
 #[allow(unused_imports)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
+    use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use icu_locid::Locale;
 
@@ -510,17 +609,14 @@ mod tests {
         use icu::datetime::DateFormatter;
 
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_with_length_unstable(
-            &icu_testdata::unstable(),
-            &locale.into(),
-            length::Date::Medium,
-        )
-        .expect("DateTimeFormat construction succeeds");
+        let dtf = DateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+            .expect("DateTimeFormat construction succeeds");
 
-        let japanext = JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
-            .expect("Cannot load japanext data");
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
-        let date = date.to_calendar(japanext).into_japanese_date().to_any();
+        let date = date
+            .to_calendar(JapaneseExtended::new())
+            .into_japanese_date()
+            .to_any();
 
         writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
     }
@@ -537,31 +633,26 @@ mod tests {
             locale: &locale,
             metadata: Default::default(),
         };
-        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
+        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
+        let time_data: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let pattern = "MMM".parse().unwrap();
+        let pattern: runtime::Pattern = "MMM".parse().unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            &icu_testdata::unstable(),
-            &locale,
-            Default::default(),
-        )
-        .unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
         write_pattern(
-            &pattern,
+            pattern.items.iter(),
+            pattern.metadata,
             Some(date_data.get()),
             Some(time_data.get()),
             &loc_datetime,
@@ -587,8 +678,7 @@ mod tests {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            &icu_testdata::unstable(),
+        let fixed_decimal_format = FixedDecimalFormatter::try_new(
             &icu_locid::locale!("en").into(),
             fixed_decimal_format_options,
         )

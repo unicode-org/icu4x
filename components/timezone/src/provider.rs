@@ -16,10 +16,42 @@
 //! Read more about data providers: [`icu_provider`]
 
 use core::str::FromStr;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
+
+pub mod names;
+
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as timezone;
+    }
+    icu_timezone_data::make_provider!(Baked);
+    icu_timezone_data::impl_time_zone_bcp47_to_iana_v1!(Baked);
+    icu_timezone_data::impl_time_zone_iana_to_bcp47_v1!(Baked);
+    icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+};
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    MetazonePeriodV1Marker::KEY,
+    names::Bcp47ToIanaMapV1Marker::KEY,
+    names::IanaToBcp47MapV1Marker::KEY,
+];
 
 /// TimeZone ID in BCP47 format
 ///
@@ -30,7 +62,7 @@ use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 
@@ -83,7 +115,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetazoneId(pub TinyAsciiStr<4>);
 
@@ -135,7 +167,11 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(MetazonePeriodV1Marker = "time_zone/metazone_period@1")]
+#[icu_provider::data_struct(marker(
+    MetazonePeriodV1Marker,
+    "time_zone/metazone_period@1",
+    singleton
+))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",

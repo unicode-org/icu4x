@@ -1,7 +1,0 @@
-::icu_plurals::provider::PluralRulesV1 {
-    zero: None,
-    one: None,
-    two: None,
-    few: None,
-    many: None,
-}
