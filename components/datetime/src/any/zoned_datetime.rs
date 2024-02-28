@@ -22,12 +22,7 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use writeable::Writeable;
 
-size_test!(
-    ZonedDateTimeFormatter,
-    zoned_date_time_formatter_size,
-    pinned = 6520,
-    nightly = 6248
-);
+size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 
 /// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times with time zones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
@@ -54,7 +49,7 @@ size_test!(
 /// Using a GMT time zone:
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::CustomTimeZone;
@@ -87,7 +82,7 @@ size_test!(
 /// Using a non-GMT time zone, specified by id:
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
@@ -152,12 +147,11 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::options::components;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
@@ -311,10 +305,10 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::options::length;
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;

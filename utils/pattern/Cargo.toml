@@ -6,7 +6,7 @@
 name = "icu_pattern"
 description = "ICU pattern utilities"
 version = "0.1.5"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true

@@ -175,8 +175,7 @@ pub struct Cli {
     #[arg(long, short, num_args = 1..)]
     #[arg(
         help = "Include these resource keys in the output. Accepts multiple arguments.\n\
-                  Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
-                  or 'none' for no keys."
+                Set to 'all' for all keys, or 'none' for no keys."
     )]
     keys: Vec<String>,
 

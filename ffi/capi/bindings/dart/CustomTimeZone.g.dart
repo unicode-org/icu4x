@@ -9,7 +9,15 @@ part of 'lib.g.dart';
 final class CustomTimeZone implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  CustomTimeZone._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  CustomTimeZone._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -30,7 +38,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return CustomTimeZone._(result.union.ok, true);
+    return CustomTimeZone._(result.union.ok, true, []);
   }
 
   /// Creates a time zone with no information.
@@ -38,7 +46,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
   factory CustomTimeZone.empty() {
     final result = _ICU4XCustomTimeZone_create_empty();
-    return CustomTimeZone._(result, true);
+    return CustomTimeZone._(result, true, []);
   }
 
   /// Creates a time zone for UTC.
@@ -46,7 +54,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
   factory CustomTimeZone.utc() {
     final result = _ICU4XCustomTimeZone_create_utc();
-    return CustomTimeZone._(result, true);
+    return CustomTimeZone._(result, true, []);
   }
 
   /// Sets the `gmt_offset` field from offset seconds.
@@ -63,6 +71,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `gmt_offset` field.
@@ -168,6 +177,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Sets the `time_zone_id` field from an IANA string by looking up
@@ -186,6 +196,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `time_zone_id` field.
@@ -232,6 +243,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `metazone_id` field.
@@ -278,6 +290,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Clears the `zone_variant` field.

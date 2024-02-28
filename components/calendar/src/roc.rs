@@ -215,7 +215,6 @@ impl DateTime<Roc> {
     /// Years are specified in the "roc" era, Before Minguo dates are negative (year 0 is 1 Before Minguo)
     ///
     /// ```rust
-    /// use icu::calendar::gregorian::Gregorian;
     /// use icu::calendar::DateTime;
     /// use tinystr::tinystr;
     ///

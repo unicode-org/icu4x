@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 include = [
     "data/**/*",
     "src/**/*",
@@ -47,6 +47,8 @@ icu_segmenter = { workspace = true, features = ["datagen", "lstm"] }
 icu_timezone = { workspace = true, features = ["datagen"] }
 
 icu_experimental = { workspace = true, features = ["datagen"], optional = true }
+num-bigint = { version = "0.4.4", default-features = false, optional = true }
+num-rational = { version = "0.4", default-features = false, optional = true }
 
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
@@ -99,11 +101,6 @@ icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
-# Pre-experimental components with limited data generation
-icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
-num-bigint = { version = "0.4.4", default-features = false }
-num-rational = { version = "0.4", default-features = false }
-
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
 baked_exporter = ["dep:crlify", "dep:databake", "dep:proc-macro2"]
@@ -120,7 +117,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
-experimental_components = ["dep:icu_experimental"]
+experimental_components = ["dep:icu_experimental", "dep:num-bigint", "dep:num-rational"]
 
 [[bin]]
 name = "icu4x-datagen"

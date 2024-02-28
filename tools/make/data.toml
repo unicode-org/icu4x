@@ -19,15 +19,15 @@ args = [
 description = "Run the testdata generation test in icu_datagen"
 category = "ICU4X Data"
 command = "cargo"
+env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
     "test",
     "-p=icu_datagen",
     "--no-default-features",
     "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components",
     "--",
-    "--ignored",
     "--nocapture",
-    "generate_json_and_verify_postcard",
+    "make_testdata",
 ]
 
 [tasks.testdata-hello-world]
@@ -63,7 +63,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data
+output = exec git status --porcelain=v1 provider/datagen/tests/data provider/fs/tests/data provider/blob/tests/data provider/adapters/tests/data provider/datagen/src/tests
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""

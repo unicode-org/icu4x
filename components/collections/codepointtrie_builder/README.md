@@ -5,11 +5,14 @@
 `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 
 This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
-Because it is normally expected for CodePointTrie data to be pre-compiled, this crate is not
+Because it is normally expected for [`CodePointTrie`] data to be pre-compiled, this crate is not
 optimized for speed; it should be used during a build phase.
 
 Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
 For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
+
+Unlike most of ICU4X, due in large part to the native dependency, this crate is not guaranteed
+to be panic-free.
 
 ## Build configuration
 

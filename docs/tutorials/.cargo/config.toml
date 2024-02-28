@@ -27,7 +27,6 @@ icu_properties = { path = "../../components/properties" }
 icu_segmenter = { path = "../../components/segmenter" }
 icu_timezone = { path = "../../components/timezone" }
 icu_experimental = { path = "../../experimental/components" }
-icu_unitsconversion = { path = "../../experimental/unitsconversion" }
 
 # FFI
 icu_capi = { path = "../../ffi/capi" }

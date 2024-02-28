@@ -5,8 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// FFI version of `PluralCategory`.
-///
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
 enum PluralCategory {
   zero,
@@ -27,15 +25,13 @@ enum PluralCategory {
   /// See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
   ///
   /// See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  factory PluralCategory.forCldrString(String s) {
+  static PluralCategory? getForCldrString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XPluralCategory_get_for_cldr_string(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return PluralCategory.values[result.union.ok];
   }

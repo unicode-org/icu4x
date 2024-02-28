@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_macros"
 description = "Proc macros for ICU data providers"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true

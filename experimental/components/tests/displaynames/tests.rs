@@ -5,7 +5,7 @@
 use icu_experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
 use icu_locid::locale;
 use icu_locid::Locale;
-use alloc::borrow::Cow;
+use std::borrow::Cow;
 
 #[test]
 fn test_concatenate() {

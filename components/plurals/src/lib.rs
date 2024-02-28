@@ -482,7 +482,6 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
-    /// use std::convert::TryFrom;
     /// #
     /// # let pr = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
     /// #     .expect("locale should be present");
@@ -581,7 +580,6 @@ impl PluralRules {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralOperands};
 /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
-/// use std::convert::TryFrom;
 ///
 /// let ranges = PluralRulesWithRanges::try_new(
 ///     &locale!("ar").into(),

@@ -27,5 +27,5 @@ pub mod source;
 pub mod time_zones;
 #[cfg(feature = "experimental_components")]
 pub mod transforms;
-#[cfg(test)]
+#[cfg(feature = "experimental_components")]
 pub mod units;

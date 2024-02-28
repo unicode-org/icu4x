@@ -660,6 +660,11 @@ mod propnames_from_gcm_v1;
 #[doc(inline)]
 pub use __impl_propnames_from_gcm_v1 as impl_propnames_from_gcm_v1;
 #[macro_use]
+#[path = "macros/propnames_from_jt_v1.rs.data"]
+mod propnames_from_jt_v1;
+#[doc(inline)]
+pub use __impl_propnames_from_jt_v1 as impl_propnames_from_jt_v1;
+#[macro_use]
 #[path = "macros/propnames_from_lb_v1.rs.data"]
 mod propnames_from_lb_v1;
 #[doc(inline)]
@@ -704,6 +709,11 @@ pub use __impl_propnames_to_long_linear_ea_v1 as impl_propnames_to_long_linear_e
 mod propnames_to_long_linear_gc_v1;
 #[doc(inline)]
 pub use __impl_propnames_to_long_linear_gc_v1 as impl_propnames_to_long_linear_gc_v1;
+#[macro_use]
+#[path = "macros/propnames_to_long_linear_jt_v1.rs.data"]
+mod propnames_to_long_linear_jt_v1;
+#[doc(inline)]
+pub use __impl_propnames_to_long_linear_jt_v1 as impl_propnames_to_long_linear_jt_v1;
 #[macro_use]
 #[path = "macros/propnames_to_long_linear_lb_v1.rs.data"]
 mod propnames_to_long_linear_lb_v1;
@@ -754,6 +764,11 @@ pub use __impl_propnames_to_short_linear_ea_v1 as impl_propnames_to_short_linear
 mod propnames_to_short_linear_gc_v1;
 #[doc(inline)]
 pub use __impl_propnames_to_short_linear_gc_v1 as impl_propnames_to_short_linear_gc_v1;
+#[macro_use]
+#[path = "macros/propnames_to_short_linear_jt_v1.rs.data"]
+mod propnames_to_short_linear_jt_v1;
+#[doc(inline)]
+pub use __impl_propnames_to_short_linear_jt_v1 as impl_propnames_to_short_linear_jt_v1;
 #[macro_use]
 #[path = "macros/propnames_to_short_linear_lb_v1.rs.data"]
 mod propnames_to_short_linear_lb_v1;
@@ -1144,6 +1159,11 @@ pub use __impl_props_gc_v1 as impl_props_gc_v1;
 mod props_graph_v1;
 #[doc(inline)]
 pub use __impl_props_graph_v1 as impl_props_graph_v1;
+#[macro_use]
+#[path = "macros/props_jt_v1.rs.data"]
+mod props_jt_v1;
+#[doc(inline)]
+pub use __impl_props_jt_v1 as impl_props_jt_v1;
 #[macro_use]
 #[path = "macros/props_lb_v1.rs.data"]
 mod props_lb_v1;

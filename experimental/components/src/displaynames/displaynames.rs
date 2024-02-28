@@ -314,7 +314,7 @@ impl LanguageDisplayNames {
 ///
 /// ```
 /// use icu_experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-/// use icu_locid::{locale, subtags::language};
+/// use icu_locid::locale;
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();

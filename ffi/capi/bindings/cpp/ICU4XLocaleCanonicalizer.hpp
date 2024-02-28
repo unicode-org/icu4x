@@ -49,8 +49,6 @@ class ICU4XLocaleCanonicalizer {
   static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create_extended(const ICU4XDataProvider& provider);
 
   /**
-   * FFI version of `LocaleCanonicalizer::canonicalize()`.
-   * 
    * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
   ICU4XTransformResult canonicalize(ICU4XLocale& locale) const;

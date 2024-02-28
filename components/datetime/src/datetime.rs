@@ -25,12 +25,7 @@ use crate::{
     DateTimeError, FormattedDateTime,
 };
 
-size_test!(
-    TimeFormatter,
-    time_formatter_size,
-    pinned = 1328,
-    nightly = 1200
-);
+size_test!(TimeFormatter, time_formatter_size, 1200);
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
@@ -191,8 +186,7 @@ impl TimeFormatter {
 size_test!(
     TypedDateFormatter<icu_calendar::Gregorian>,
     typed_date_formatter_size,
-    pinned = 4544,
-    nightly = 4400
+    4400
 );
 
 /// [`TypedDateFormatter`] is a formatter capable of formatting
@@ -412,8 +406,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 size_test!(
     TypedDateTimeFormatter<icu_calendar::Gregorian>,
     typed_date_time_formatter_size,
-    pinned = 5424,
-    nightly = 5152
+    5152
 );
 
 /// [`TypedDateTimeFormatter`] is a formatter capable of formatting
@@ -633,7 +626,6 @@ where {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -782,8 +774,7 @@ where {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::{components, length},
-    ///     DateTimeFormatterOptions, TypedDateTimeFormatter,
+    ///     options::{components, length}, TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///

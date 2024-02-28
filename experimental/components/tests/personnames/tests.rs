@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::locale;
 use icu_experimental::personnames::api::FieldModifierSet;
 use icu_experimental::personnames::api::NameFieldKind;
 use icu_experimental::personnames::api::PersonNamesFormatterError;
@@ -10,6 +9,7 @@ use icu_experimental::personnames::api::PreferredOrder;
 use icu_experimental::personnames::api::{FieldCapsStyle, NameField};
 use icu_experimental::personnames::api::{FieldFormality, FieldLength, FieldPart, PersonName};
 use icu_experimental::personnames::provided_struct::DefaultPersonName;
+use icu_locid::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 

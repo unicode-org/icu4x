@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class WeekCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  WeekCalculator._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  WeekCalculator._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -29,13 +37,13 @@ final class WeekCalculator implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return WeekCalculator._(result.union.ok, true);
+    return WeekCalculator._(result.union.ok, true, []);
   }
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
   factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(IsoWeekday firstWeekday, int minWeekDays) {
     final result = _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(firstWeekday._underlying, minWeekDays);
-    return WeekCalculator._(result, true);
+    return WeekCalculator._(result, true, []);
   }
 
   /// Returns the weekday that starts the week for this object's locale

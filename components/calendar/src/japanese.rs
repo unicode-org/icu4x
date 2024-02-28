@@ -423,7 +423,6 @@ impl Date<Japanese> {
     /// ```rust
     /// use icu::calendar::japanese::Japanese;
     /// use icu::calendar::{types, Date, Ref};
-    /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let japanese_calendar = Japanese::new();
@@ -478,7 +477,6 @@ impl Date<JapaneseExtended> {
     /// ```rust
     /// use icu::calendar::japanese::JapaneseExtended;
     /// use icu::calendar::{types, Date, Ref};
-    /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let japanext_calendar = JapaneseExtended::new();
@@ -525,7 +523,6 @@ impl DateTime<Japanese> {
     /// ```rust
     /// use icu::calendar::japanese::Japanese;
     /// use icu::calendar::{types, DateTime};
-    /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let japanese_calendar = Japanese::new();
@@ -580,7 +577,6 @@ impl DateTime<JapaneseExtended> {
     /// ```rust
     /// use icu::calendar::japanese::JapaneseExtended;
     /// use icu::calendar::{types, DateTime};
-    /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let japanext_calendar = JapaneseExtended::new();

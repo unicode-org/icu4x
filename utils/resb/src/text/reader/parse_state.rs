@@ -47,7 +47,7 @@ impl<'a> ParseState<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
             input,
-            keys_in_discovery_order: Rc::new(RefCell::new(IndexSet::new())),
+            keys_in_discovery_order: Default::default(),
         }
     }
 
@@ -66,8 +66,8 @@ impl<'a> ParseState<'a> {
 
     /// Takes the set of keys in order of discovery and replaces it with an
     /// empty set.
-    pub fn take_keys(&mut self) -> IndexSet<Key<'a>> {
-        self.keys_in_discovery_order.replace(IndexSet::new())
+    pub fn take_keys(self) -> IndexSet<Key<'a>> {
+        self.keys_in_discovery_order.take()
     }
 }
 
