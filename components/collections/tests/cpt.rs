@@ -305,7 +305,7 @@ pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
         range_start = range_limit;
     }
 
-    assert!(trie_ranges.next() == None, "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has");
+    assert!(trie_ranges.next().is_none(), "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has");
 }
 
 /// Run above tests that verify the validity of CodePointTrie methods
@@ -409,7 +409,7 @@ pub fn run_deserialize_test_from_test_data(test_file: &str) {
         check_ranges: Vec<u32>,
     }
 
-    let test_file = ::toml::from_str::<TestFile>(&test_file).unwrap();
+    let test_file = ::toml::from_str::<TestFile>(test_file).unwrap();
 
     let test_struct = test_file.code_point_trie.trie_struct;
 
