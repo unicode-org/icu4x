@@ -28,15 +28,13 @@ export class ICU4XScriptExtensionsSet {
       const diplomat_receive_buffer = wasm.diplomat_alloc(3, 2);
       wasm.ICU4XScriptExtensionsSet_script_at(diplomat_receive_buffer, this.underlying, arg_index);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 2);
-      if (is_ok) {
-        const ok_value = (new Uint16Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0];
+      if (!is_ok) {
         wasm.diplomat_free(diplomat_receive_buffer, 3, 2);
-        return ok_value;
-      } else {
-        const throw_value = {};
-        wasm.diplomat_free(diplomat_receive_buffer, 3, 2);
-        throw new diplomatRuntime.FFIError(throw_value);
+        return;
       }
+      const value = (new Uint16Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0];
+      wasm.diplomat_free(diplomat_receive_buffer, 3, 2);
+      return value;
     })();
   }
 }

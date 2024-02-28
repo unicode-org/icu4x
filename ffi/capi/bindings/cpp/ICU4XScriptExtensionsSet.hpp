@@ -44,7 +44,7 @@ class ICU4XScriptExtensionsSet {
   size_t count() const;
 
   /**
-   * Get script at index, returning an error if out of bounds
+   * Get script at index
    * 
    * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
    */

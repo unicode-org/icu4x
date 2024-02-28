@@ -23,7 +23,7 @@ export class ICU4XBidiInfo {
   paragraph_at(arg_n) {
     return (() => {
       const option_ptr = wasm.ICU4XBidiInfo_paragraph_at(this.underlying, arg_n);
-      return (option_ptr == 0) ? null : new ICU4XBidiParagraph(option_ptr, true, [this]);
+      return (option_ptr == 0) ? undefined : new ICU4XBidiParagraph(option_ptr, true, [this]);
     })();
   }
 
