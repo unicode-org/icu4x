@@ -150,6 +150,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "ryu",
     "serde-aux",
     "serde_json",
+    "serde-tuple-vec-map",
     "static_assertions",
     "toml",
     "twox-hash",

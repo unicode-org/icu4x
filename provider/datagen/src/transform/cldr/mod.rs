@@ -18,6 +18,8 @@ pub mod list;
 pub mod locale_canonicalizer;
 #[cfg(feature = "experimental_components")]
 pub mod percent;
+#[cfg(feature = "experimental_components")]
+pub mod personnames;
 pub mod plurals;
 #[cfg(feature = "experimental_components")]
 pub mod relativetime;

@@ -307,6 +307,7 @@ lazy_static::lazy_static! {
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",
+        "icu::personnames",
         "icu::transliterate",
         "icu::plurals::PluralRulesWithRanges",
         "icu::plurals::PluralRulesWithRanges::categories",

@@ -86,6 +86,7 @@ zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"
 
 rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
+serde-tuple-vec-map = { version = "1.0.1" }
 
 
 # Dependencies for "bin" feature
