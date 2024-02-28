@@ -11,7 +11,6 @@
 //!
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
-use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::sets::CodePointSetData;
 #[cfg(doc)]
@@ -321,8 +320,8 @@ macro_rules! make_map_property {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $name(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
-        ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
-            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
+        ) -> Result<CodePointMapData<$value_ty>, DataError> {
+            provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)
         }
         $(#[$doc])*
         #[cfg(feature = "compiled_data")]

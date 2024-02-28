@@ -5,7 +5,6 @@
 //! The collection of code for locale canonicalization.
 
 use crate::provider::*;
-use crate::LocaleTransformError;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
@@ -218,7 +217,7 @@ impl LocaleCanonicalizer {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<Self, LocaleTransformError> {
+    ) -> Result<Self, DataError> {
         let expander = LocaleExpander::try_new_with_any_provider(provider)?;
         Self::try_new_with_expander_compat(&provider.as_downcasting(), expander)
     }
@@ -228,13 +227,13 @@ impl LocaleCanonicalizer {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<Self, LocaleTransformError> {
+    ) -> Result<Self, DataError> {
         let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
         Self::try_new_with_expander_compat(&provider.as_deserializing(), expander)
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, LocaleTransformError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
@@ -263,7 +262,7 @@ impl LocaleCanonicalizer {
     fn try_new_with_expander_compat<P>(
         provider: &P,
         expander: LocaleExpander,
-    ) -> Result<Self, LocaleTransformError>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker> + DataProvider<AliasesV1Marker> + ?Sized,
     {
@@ -286,7 +285,7 @@ impl LocaleCanonicalizer {
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
-    ) -> Result<Self, LocaleTransformError>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker> + ?Sized,
     {
@@ -300,7 +299,7 @@ impl LocaleCanonicalizer {
     pub fn try_new_with_expander_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
         options: LocaleExpander,
-    ) -> Result<Self, LocaleTransformError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_with_expander_compat(&provider.as_downcasting(), options)
     }
 
@@ -309,7 +308,7 @@ impl LocaleCanonicalizer {
     pub fn try_new_with_expander_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
         options: LocaleExpander,
-    ) -> Result<Self, LocaleTransformError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_with_expander_compat(&provider.as_deserializing(), options)
     }
 

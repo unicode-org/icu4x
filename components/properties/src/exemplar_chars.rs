@@ -33,7 +33,6 @@
 
 use crate::provider::*;
 use crate::sets::UnicodeSetData;
-use crate::PropertiesError;
 use icu_provider::prelude::*;
 
 macro_rules! make_exemplar_chars_unicode_set_property {
@@ -52,30 +51,28 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
             locale: &DataLocale,
-        ) -> Result<UnicodeSetData, PropertiesError> {
-            Ok(provider.load(
+        ) -> Result<UnicodeSetData, DataError> {
+            provider.load(
                 DataRequest {
                     locale,
                     metadata: Default::default(),
                 })
                 .and_then(DataResponse::take_payload)
-                .map(UnicodeSetData::from_data)?
-            )
+                .map(UnicodeSetData::from_data)
         }
         $(#[$attr])*
         #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
             locale: &DataLocale,
-        ) -> Result<UnicodeSetData, PropertiesError> {
-            Ok(UnicodeSetData::from_data(
-                DataProvider::<$keyed_data_marker>::load(
-                    &crate::provider::Baked,
-                    DataRequest {
-                        locale,
-                        metadata: Default::default(),
-                    })
-                    .and_then(DataResponse::take_payload)?
-            ))
+        ) -> Result<UnicodeSetData, DataError> {
+            DataProvider::<$keyed_data_marker>::load(
+                &crate::provider::Baked,
+                DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })
+                .and_then(DataResponse::take_payload)
+                .map(UnicodeSetData::from_data)
         }
     }
 }

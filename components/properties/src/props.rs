@@ -10,7 +10,6 @@
 //! values represent code points.
 
 use crate::provider::{names::*, *};
-use crate::PropertiesError;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
@@ -597,8 +596,8 @@ macro_rules! impl_value_getter {
             /// [📚 Help choosing a constructor](icu_provider::constructors)
             $vis_n2e fn $name_n2e(
                 provider: &(impl DataProvider<$marker_n2e> + ?Sized)
-            ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
-                Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)?)
+            ) -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
+                provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)
             }
 
             $(
@@ -616,8 +615,8 @@ macro_rules! impl_value_getter {
                 /// [📚 Help choosing a constructor](icu_provider::constructors)
                 $vis_e2sn fn $name_e2sn(
                     provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
-                ) -> Result<$mapper_e2sn<$ty>, PropertiesError> {
-                    Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)?)
+                ) -> Result<$mapper_e2sn<$ty>, DataError> {
+                    provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)
                 }
 
                 $(#[$attr_e2ln])*
@@ -634,8 +633,8 @@ macro_rules! impl_value_getter {
                 /// [📚 Help choosing a constructor](icu_provider::constructors)
                 $vis_e2ln fn $name_e2ln(
                     provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
-                ) -> Result<$mapper_e2ln<$ty>, PropertiesError> {
-                    Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)?)
+                ) -> Result<$mapper_e2ln<$ty>, DataError> {
+                    provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)
                 }
             )?
         }

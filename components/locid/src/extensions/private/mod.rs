@@ -35,7 +35,7 @@ use core::ops::Deref;
 #[doc(inline)]
 pub use other::{subtag, Subtag};
 
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 
@@ -131,7 +131,7 @@ impl Private {
         self.0.clear();
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let keys = iter
             .map(Subtag::try_from_bytes)
             .collect::<Result<ShortBoxSlice<_>, _>>()?;

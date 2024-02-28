@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{provider::*, LocaleTransformError};
+use crate::provider::*;
 
 use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
@@ -231,9 +231,7 @@ impl LocaleExpander {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
-    pub fn try_new_extended_unstable<P>(
-        provider: &P,
-    ) -> Result<LocaleExpander, LocaleTransformError>
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
@@ -251,7 +249,7 @@ impl LocaleExpander {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: LocaleTransformError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
         new_extended,
@@ -264,7 +262,7 @@ impl LocaleExpander {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleExpander, LocaleTransformError> {
+    ) -> Result<LocaleExpander, DataError> {
         Self::try_new_compat(&provider.as_downcasting())
     }
 
@@ -272,12 +270,12 @@ impl LocaleExpander {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleExpander, LocaleTransformError> {
+    ) -> Result<LocaleExpander, DataError> {
         Self::try_new_compat(&provider.as_deserializing())
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
@@ -293,7 +291,7 @@ impl LocaleExpander {
         })
     }
 
-    fn try_new_compat<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
+    fn try_new_compat<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>

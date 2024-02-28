@@ -6,7 +6,7 @@
 
 use either::Either;
 use icu_calendar::{CalendarError, DateTime, Gregorian};
-use icu_timezone::{CustomTimeZone, TimeZoneError};
+use icu_timezone::{CustomTimeZone, InvalidOffsetError};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -90,13 +90,13 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Cale
 /// ```
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
-) -> Result<(DateTime<Gregorian>, CustomTimeZone), Either<CalendarError, TimeZoneError>> {
+) -> Result<(DateTime<Gregorian>, CustomTimeZone), Either<CalendarError, InvalidOffsetError>> {
     match input.rfind(&['+', '-', '\u{2212}', 'Z']) {
         #[allow(clippy::indexing_slicing)] // valid index
         Some(index) => Ok((
             parse_gregorian_from_str(&input[..index]).map_err(Either::Left)?,
             input[index..].parse().map_err(Either::Right)?,
         )),
-        None => Err(Either::Right(TimeZoneError::InvalidOffset)),
+        None => Err(Either::Right(InvalidOffsetError)),
     }
 }

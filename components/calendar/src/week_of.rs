@@ -52,7 +52,7 @@ impl WeekCalculator {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, CalendarError> {
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         Self::try_new_unstable(&crate::provider::Baked, locale)
     }
 
@@ -60,7 +60,7 @@ impl WeekCalculator {
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_downcasting(), locale).or_else(|e| {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_downcasting(),
@@ -80,7 +80,7 @@ impl WeekCalculator {
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
         locale: &DataLocale,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Self::try_new_unstable(&provider.as_deserializing(), locale).or_else(|e| {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_deserializing(),
@@ -96,7 +96,7 @@ impl WeekCalculator {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, CalendarError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
     {

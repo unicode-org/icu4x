@@ -67,14 +67,8 @@
 
 extern crate alloc;
 
-mod error;
 pub mod properties;
 pub mod provider;
-
-pub use crate::error::NormalizerError;
-
-#[doc(no_inline)]
-pub use NormalizerError as Error;
 
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
@@ -1539,7 +1533,7 @@ impl DecomposingNormalizer {
                     .scalars24
                     .const_len()
                 <= 0xFFF,
-            "NormalizerError::FutureExtension"
+            "future extension"
         );
 
         DecomposingNormalizer {
@@ -1559,7 +1553,7 @@ impl DecomposingNormalizer {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: NormalizerError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_nfd,
@@ -1571,7 +1565,7 @@ impl DecomposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
-    pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -1589,7 +1583,8 @@ impl DecomposingNormalizer {
             // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
-            return Err(NormalizerError::FutureExtension);
+            return Err(DataError::custom("future extension")
+                .with_key(CanonicalDecompositionTablesV1Marker::KEY));
         }
 
         Ok(DecomposingNormalizer {
@@ -1623,12 +1618,12 @@ impl DecomposingNormalizer {
                     .scalars24
                     .const_len()
                 <= 0xFFF,
-            "NormalizerError::FutureExtension"
+            "future extension"
         );
 
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_NFKD_V1.passthrough_cap <= 0x0300,
-            "NormalizerError::ValidationError"
+            "invalid"
         );
 
         let decomposition_capped =
@@ -1665,7 +1660,7 @@ impl DecomposingNormalizer {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: NormalizerError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_nfkd,
@@ -1677,7 +1672,7 @@ impl DecomposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
-    pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -1707,12 +1702,14 @@ impl DecomposingNormalizer {
             // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
-            return Err(NormalizerError::FutureExtension);
+            return Err(DataError::custom("future extension")
+                .with_key(CanonicalDecompositionTablesV1Marker::KEY));
         }
 
         let cap = supplementary_decompositions.get().passthrough_cap;
         if cap > 0x0300 {
-            return Err(NormalizerError::ValidationError);
+            return Err(DataError::custom("invalid")
+                .with_key(CompatibilityDecompositionSupplementV1Marker::KEY));
         }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
@@ -1746,12 +1743,12 @@ impl DecomposingNormalizer {
                     .scalars24
                     .const_len()
                 <= 0xFFF,
-            "NormalizerError::FutureExtension"
+            "future extension"
         );
 
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_UTS46D_V1.passthrough_cap <= 0x0300,
-            "NormalizerError::ValidationError"
+            "invalid"
         );
 
         let decomposition_capped =
@@ -1810,7 +1807,7 @@ impl DecomposingNormalizer {
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_decomposed_without_ignored_and_disallowed_unstable<D>(
         provider: &D,
-    ) -> Result<Self, NormalizerError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<Uts46DecompositionSupplementV1Marker>
@@ -1840,12 +1837,15 @@ impl DecomposingNormalizer {
             // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
-            return Err(NormalizerError::FutureExtension);
+            return Err(DataError::custom("future extension")
+                .with_key(CanonicalDecompositionTablesV1Marker::KEY));
         }
 
         let cap = supplementary_decompositions.get().passthrough_cap;
         if cap > 0x0300 {
-            return Err(NormalizerError::ValidationError);
+            return Err(
+                DataError::custom("invalid").with_key(Uts46DecompositionSupplementV1Marker::KEY)
+            );
         }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
@@ -2161,7 +2161,7 @@ impl ComposingNormalizer {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: NormalizerError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_nfc,
@@ -2173,7 +2173,7 @@ impl ComposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
-    pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -2209,7 +2209,7 @@ impl ComposingNormalizer {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: NormalizerError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_nfkc,
@@ -2221,7 +2221,7 @@ impl ComposingNormalizer {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
-    pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -2286,7 +2286,7 @@ impl ComposingNormalizer {
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(
         provider: &D,
-    ) -> Result<Self, NormalizerError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<Uts46DecompositionSupplementV1Marker>

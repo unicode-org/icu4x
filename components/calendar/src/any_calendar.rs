@@ -605,7 +605,7 @@ impl AnyCalendar {
     pub fn try_new_with_any_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DataError>
     where
         P: AnyProvider + ?Sized,
     {
@@ -650,7 +650,7 @@ impl AnyCalendar {
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DataError>
     where
         P: BufferProvider + ?Sized,
     {
@@ -691,7 +691,7 @@ impl AnyCalendar {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, CalendarError>
+    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -748,7 +748,7 @@ impl AnyCalendar {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: skip,
-        error: CalendarError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_for_locale,
@@ -763,7 +763,7 @@ impl AnyCalendar {
     pub fn try_new_for_locale_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>

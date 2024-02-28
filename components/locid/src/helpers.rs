@@ -36,7 +36,7 @@ macro_rules! impl_tinystr_subtag {
             #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($good_example), ").is_ok());")]
             #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($bad_example), ").is_err());")]
             /// ```
-            pub const fn try_from_bytes(v: &[u8]) -> Result<Self, crate::parser::errors::ParserError> {
+            pub const fn try_from_bytes(v: &[u8]) -> Result<Self, crate::parser::errors::ParseError> {
                 Self::try_from_bytes_manual_slice(v, 0, v.len())
             }
 
@@ -46,17 +46,17 @@ macro_rules! impl_tinystr_subtag {
                 v: &[u8],
                 start: usize,
                 end: usize,
-            ) -> Result<Self, crate::parser::errors::ParserError> {
+            ) -> Result<Self, crate::parser::errors::ParseError> {
                 let slen = end - start;
 
                 #[allow(clippy::double_comparisons)] // if len_start == len_end
                 if slen < $len_start || slen > $len_end {
-                    return Err(crate::parser::errors::ParserError::$error);
+                    return Err(crate::parser::errors::ParseError::$error);
                 }
 
                 match tinystr::TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
                     Ok($tinystr_ident) if $validate => Ok(Self($normalize)),
-                    _ => Err(crate::parser::errors::ParserError::$error),
+                    _ => Err(crate::parser::errors::ParseError::$error),
                 }
             }
 
@@ -65,15 +65,15 @@ macro_rules! impl_tinystr_subtag {
             /// this constructor only takes normalized values.
             pub const fn try_from_raw(
                 v: [u8; $len_end],
-            ) -> Result<Self, crate::parser::errors::ParserError> {
+            ) -> Result<Self, crate::parser::errors::ParseError> {
                 if let Ok($tinystr_ident) = tinystr::TinyAsciiStr::<$len_end>::try_from_raw(v) {
                     if $tinystr_ident.len() >= $len_start && $is_normalized {
                         Ok(Self($tinystr_ident))
                     } else {
-                        Err(crate::parser::errors::ParserError::$error)
+                        Err(crate::parser::errors::ParseError::$error)
                     }
                 } else {
-                    Err(crate::parser::errors::ParserError::$error)
+                    Err(crate::parser::errors::ParseError::$error)
                 }
             }
 
@@ -132,7 +132,7 @@ macro_rules! impl_tinystr_subtag {
         }
 
         impl core::str::FromStr for $name {
-            type Err = crate::parser::errors::ParserError;
+            type Err = crate::parser::errors::ParseError;
 
             fn from_str(source: &str) -> Result<Self, Self::Err> {
                 Self::try_from_bytes(source.as_bytes())

@@ -42,7 +42,7 @@ pub use key::{key, Key};
 pub use value::Value;
 
 use crate::parser::SubtagIterator;
-use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode};
+use crate::parser::{parse_language_identifier_from_iter, ParseError, ParserMode};
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{self, Language};
 use crate::LanguageIdentifier;
@@ -158,7 +158,7 @@ impl Transform {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut tlang = None;
         let mut tfields = LiteMap::new();
 
@@ -184,7 +184,7 @@ impl Transform {
                     }
                 } else {
                     if !has_current_tvalue {
-                        return Err(ParserError::InvalidExtension);
+                        return Err(ParseError::InvalidExtension);
                     }
                     tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
                     current_tkey = None;
@@ -203,7 +203,7 @@ impl Transform {
 
         if let Some(tkey) = current_tkey {
             if !has_current_tvalue {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
         }

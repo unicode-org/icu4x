@@ -110,7 +110,4 @@ pub mod names {
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }
 
-pub use error::PropertiesError;
-
-#[doc(no_inline)]
-pub use PropertiesError as Error;
+pub use error::*;
