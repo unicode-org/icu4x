@@ -48,6 +48,14 @@ pub enum WordType {
     Letter = 2,
 }
 
+impl WordType {
+    /// Whether the segment is word-like; word-like segments include numbers, as
+    // well as segments made up of letters (including CJKV ideographs).
+    pub fn is_word_like(&self) -> bool {
+        self != &WordType::None
+    }
+}
+
 impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
@@ -66,7 +74,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     /// such as letters, numbers, or CJKV ideographs.
     #[inline]
     pub fn is_word_like(&self) -> bool {
-        self.0.is_word_like()
+        self.word_type().is_word_like()
     }
 }
 
@@ -152,7 +160,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///     .segment_str(text)
 ///     .iter_with_word_type()
 ///     .tuple_windows()
-///     .filter(|(_, (_, status))| *status == WordType::Letter)
+///     .filter(|(_, (_, segment_type))| segment_type.is_word_like())
 ///     .map(|((i, _), (j, _))| &text[i..j])
 ///     .collect();
 /// assert_eq!(&words, &["Mark’d", "ye", "his", "words"]);
