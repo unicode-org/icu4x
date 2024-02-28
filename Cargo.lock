@@ -791,9 +791,9 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696#acc3e0280265274f217208aa88df792a1f795696"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=5ac15c097dad2d984b9adb3a976db3ff08f33534#5ac15c097dad2d984b9adb3a976db3ff08f33534"
 dependencies = [
- "diplomat_core 0.7.0 (git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696)",
+ "diplomat_core",
  "proc-macro2",
  "quote",
  "syn 2.0.37",
@@ -809,7 +809,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696#acc3e0280265274f217208aa88df792a1f795696"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=5ac15c097dad2d984b9adb3a976db3ff08f33534#5ac15c097dad2d984b9adb3a976db3ff08f33534"
 dependencies = [
  "log",
 ]
@@ -817,11 +817,12 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=5ac15c097dad2d984b9adb3a976db3ff08f33534#5ac15c097dad2d984b9adb3a976db3ff08f33534"
 dependencies = [
  "askama",
  "clap 3.2.25",
  "colored",
- "diplomat_core 0.7.0",
+ "diplomat_core",
  "displaydoc",
  "heck 0.4.1",
  "indenter",
@@ -836,23 +837,10 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=5ac15c097dad2d984b9adb3a976db3ff08f33534#5ac15c097dad2d984b9adb3a976db3ff08f33534"
 dependencies = [
  "displaydoc",
  "either",
- "lazy_static",
- "proc-macro2",
- "quote",
- "serde",
- "smallvec",
- "strck_ident",
- "syn 2.0.37",
-]
-
-[[package]]
-name = "diplomat_core"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696#acc3e0280265274f217208aa88df792a1f795696"
-dependencies = [
  "lazy_static",
  "proc-macro2",
  "quote",
@@ -1686,7 +1674,7 @@ version = "0.0.0"
 name = "icu_ffi_coverage"
 version = "0.0.0"
 dependencies = [
- "diplomat_core 0.7.0 (git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696)",
+ "diplomat_core",
  "elsa",
  "lazy_static",
  "rustdoc-types",
