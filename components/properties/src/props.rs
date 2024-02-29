@@ -642,6 +642,39 @@ macro_rules! impl_value_getter {
     }
 }
 
+/// Takes an impl block on an enum that defines constants that are of the same type as the enum,
+/// and defines `ALL_CONSTS` on the enum.
+/// Example input:
+/// ```ignore
+/// impl EastAsianWidth {
+///     pub const Neutral: EastAsianWidth = EastAsianWidth(0);
+///     pub const Ambiguous: EastAsianWidth = EastAsianWidth(1);
+///     ...
+/// }
+/// ```
+/// Produces `const ALL_CONSTS = &[("Neutral", EastAsianWidth::Neutral), ...];`
+macro_rules! create_const_array {
+    (
+        $ ( #[$meta:meta] )*
+        impl $enum_ty:ident {
+            $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; )*
+        }
+    ) => {
+        $( #[$meta] )*
+        impl $enum_ty {
+            $(
+                $(#[$const_meta])*
+                $v const $i: $t = $e;
+            )*
+
+            #[allow(dead_code)]
+            const ALL_CONSTS: &'static [(&'static str, $enum_ty)] = &[
+                $((stringify!($i), $enum_ty::$i)),*
+            ];
+        }
+    }
+}
+
 /// Enumerated property Bidi_Class
 ///
 /// These are the categories required by the Unicode Bidirectional Algorithm.
@@ -1546,6 +1579,7 @@ impl_value_getter! {
 #[zerovec::make_ule(EastAsianWidthULE)]
 pub struct EastAsianWidth(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl EastAsianWidth {
@@ -1555,6 +1589,7 @@ impl EastAsianWidth {
     pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); //name="F"
     pub const Narrow: EastAsianWidth = EastAsianWidth(4); //name="Na"
     pub const Wide: EastAsianWidth = EastAsianWidth(5); //name="W"
+}
 }
 
 impl_value_getter! {
@@ -2453,5 +2488,21 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(JoiningType::RightJoining), Some("Right_Joining"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn check_enumerated_property_completeness () {
+        fn check_enum (lookup: &PropertyValueNameToEnumMapV1<'_>, consts: impl Iterator<Item = (impl AsRef<str>, u16)>) {
+            let map = &lookup.map;
+            let data_max = map.iter_copied_values().max_by_key(|(_, v)| *v).unwrap();
+            let consts_max = consts.max_by_key(|(_, v)| *v).unwrap();
+            assert_eq!(data_max.1, consts_max.1, "The maximum value in the data (with key {}) does not match the maximum value of the constants defined on the enum (with key {}).", core::str::from_utf8(data_max.0.as_byte_slice()).unwrap(), consts_max.0.as_ref());
+        }
+
+        check_enum(crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1, EastAsianWidth::ALL_CONSTS.iter().map(|(name, val)| (name, val.0 as u16)));
     }
 }
