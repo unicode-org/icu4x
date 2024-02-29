@@ -47,7 +47,7 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 
 [dev-dependencies]
 serde_json = "1.0"
-icu_provider_adapters = { path = "../../provider/adapters" }
+icu_provider_adapters = { path = "../adapters" }
 icu_locid_transform = { path = "../../components/locid_transform" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
