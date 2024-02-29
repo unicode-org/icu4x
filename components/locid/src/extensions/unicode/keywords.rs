@@ -358,6 +358,11 @@ impl Keywords {
         }
     }
 
+    /// Produce an ordered iterator over key-value pairs
+    pub fn iter(&self) -> impl Iterator<Item = (&Key, &Value)> {
+        self.0.iter()
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,

@@ -76,6 +76,7 @@ members = [
     "experimental/bies",
     "experimental/ixdtf",
     "experimental/zerotrie",
+    "experimental/preferences",
 
     # Tools
     "tools/bakeddata-scripts",
