@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datagen::BaseLanguageHandling;
 pub use icu_datagen::{CollationHanDatabase, CoverageLevel, FallbackMode, TrieType};
 pub use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -13,6 +14,7 @@ use std::path::{Path, PathBuf};
 pub struct Config {
     pub keys: KeyInclude,
     pub fallback: FallbackMode,
+    pub base_language_handling: BaseLanguageHandling,
     pub locales: LocaleInclude,
     #[serde(
         default,

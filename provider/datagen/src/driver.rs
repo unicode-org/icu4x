@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rayon_prelude::*;
+use crate::BaseLanguageHandling;
 use crate::FallbackMode;
 use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
@@ -45,6 +46,7 @@ pub struct DatagenDriver {
     // `None` means not set, `Some(None)` means all
     locales: Option<Option<HashSet<LanguageIdentifier>>>,
     fallback: FallbackMode,
+    base_language_handling: BaseLanguageHandling,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
@@ -59,6 +61,7 @@ impl DatagenDriver {
             keys: None,
             locales: None,
             fallback: FallbackMode::default(),
+            base_language_handling: BaseLanguageHandling::Retain,
             additional_collations: HashSet::new(),
             segmenter_models: Vec::new(),
         }
@@ -107,6 +110,16 @@ impl DatagenDriver {
     /// If locale fallback is used at runtime, smaller data can be generated.
     pub fn with_fallback_mode(self, fallback: FallbackMode) -> Self {
         Self { fallback, ..self }
+    }
+
+    /// Sets the base language handling in runtime fallback mode.
+    ///
+    /// For more details, see [`BaseLanguageHandling`].
+    pub fn with_base_language_handling(self, base_language_handling: BaseLanguageHandling) -> Self {
+        Self {
+            base_language_handling,
+            ..self
+        }
     }
 
     /// This option is only relevant if using `icu::collator`.
@@ -200,6 +213,7 @@ impl DatagenDriver {
             keys,
             locales,
             fallback,
+            base_language_handling,
             additional_collations,
             segmenter_models,
         } = self;
@@ -238,8 +252,9 @@ impl DatagenDriver {
         };
 
         log::info!(
-            "Datagen configured with fallback mode {:?} and these locales: {}",
+            "Datagen configured with fallback mode {:?}, base language handling {:?}, and these locales: {}",
             fallback,
+            base_language_handling,
             match locales {
                 None => "ALL".to_string(),
                 Some(ref set) => {
@@ -370,12 +385,20 @@ impl DatagenDriver {
                         .iter()
                         .try_for_each(|(locale, (payload, _duration))| {
                             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                            let mut first = true;
                             while !iter.get().is_und() {
                                 iter.step();
                                 if let Some((inherited_payload, _duration)) =
                                     payloads.get(iter.get())
                                 {
-                                    if inherited_payload == payload {
+                                    if inherited_payload == payload
+                                        && (!first
+                                            || !iter.get().is_und()
+                                            || matches!(
+                                                base_language_handling,
+                                                BaseLanguageHandling::Strip
+                                            ))
+                                    {
                                         // Found a match: don't need to write anything
                                         log::trace!(
                                             "Deduplicating {key}/{locale} (inherits from {})",
@@ -383,10 +406,11 @@ impl DatagenDriver {
                                         );
                                         return Ok(());
                                     } else {
-                                        // Not a match: we must include this
+                                        // Not a match or a base language: we must include this
                                         break;
                                     }
                                 }
+                                first = false;
                             }
                             // Did not find a match: export this payload
                             sink.put_payload(key, locale, payload).map_err(|e| {

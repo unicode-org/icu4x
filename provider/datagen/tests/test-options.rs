@@ -218,12 +218,79 @@ fn all_hybrid() {
 }
 
 #[test]
-fn all_runtime() {
+fn all_runtime_retain() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
-            .with_fallback_mode(FallbackMode::RuntimeManual),
+            .with_fallback_mode(FallbackMode::RuntimeManual)
+            .with_base_language_handling(icu_datagen::BaseLanguageHandling::Retain),
+        &TestingProvider::new([
+            ("ar", "c3f15eb63fa35608"),
+            ("ar-EG", "c3f15eb63fa35608"),
+            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
+            ("ar-u-nu-latn", "29e2dc764329c56"),
+            ("bn", "31828215dcef2fcb"),
+            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
+            ("ccp", "c39715a84718596"),
+            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
+            ("en", "8df59f98704d3b0c"),
+            ("en-001", "8df59f98704d3b0c"),
+            ("en-ZA", "8df59f98704d3b0c"),
+            ("es", "2c22710b06ef69b6"),
+            ("es-AR", "3ec76252c7ed8d8c"),
+            ("fil", "8df59f98704d3b0c"),
+            ("fr", "bd076f44d0623175"),
+            ("ja", "8df59f98704d3b0c"),
+            ("ru", "8f773f51e85a65c1"),
+            ("sr", "3ec76252c7ed8d8c"),
+            ("sr-Latn", "3ec76252c7ed8d8c"),
+            ("th", "8df59f98704d3b0c"),
+            ("th-u-nu-thai", "db1d187d375ccfd2"),
+            ("tr", "3ec76252c7ed8d8c"),
+            ("und", "8df59f98704d3b0c"),
+        ]),
+    );
+
+    // These are all of the supported locales with deduplication applied.
+    let locales = [
+        "ar",
+        // "ar-EG", (same as 'ar')
+        "ar-EG-u-nu-latn", // (same as 'ar-u-nu-latn' but DIFFERENT than 'ar-EG')
+        "ar-u-nu-latn",
+        "bn",
+        "bn-u-nu-latn",
+        "ccp",
+        "ccp-u-nu-latn",
+        "en", // (same as 'und' but retained as base language)
+        // "en-001", (same as 'en')
+        // "en-ZA", (same as 'en')
+        "es",
+        "es-AR",
+        "fil", // (same as 'und' but retained as base language)
+        "fr",
+        "ja", // (same as 'und' but retained as base language)
+        "ru",
+        "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        "sr-Latn",
+        "th", // (same as 'und' but retained as base language)
+        "th-u-nu-thai",
+        "tr",
+        "und",
+    ];
+
+    // Should return the supported locales set with deduplication.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn all_runtime_strip() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_all_locales()
+            .with_fallback_mode(FallbackMode::RuntimeManual)
+            .with_base_language_handling(icu_datagen::BaseLanguageHandling::Strip),
         &TestingProvider::new([
             ("ar", "c3f15eb63fa35608"),
             ("ar-EG", "c3f15eb63fa35608"),
@@ -295,6 +362,7 @@ fn explicit_hybrid() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
             .with_fallback_mode(FallbackMode::Hybrid),
         &TestingProvider::new([
@@ -324,7 +392,7 @@ fn explicit_hybrid() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
@@ -344,6 +412,7 @@ fn explicit_hybrid() {
         // "sr", // not reachable from sr-ME
         "sr-Latn", // ancestor of sr-ME
         "sr-ME",   // explicit locale not in supported locales
+        "tlh-001", // Earth Klingon, inheriting from Klingon inheriting from und
         "und",     // ancestor of everything
     ];
 
@@ -352,7 +421,7 @@ fn explicit_hybrid() {
 }
 
 #[test]
-fn explicit_runtime() {
+fn explicit_runtime_retain() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
@@ -364,8 +433,10 @@ fn explicit_runtime() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
-            .with_fallback_mode(FallbackMode::RuntimeManual),
+            .with_fallback_mode(FallbackMode::RuntimeManual)
+            .with_base_language_handling(icu_datagen::BaseLanguageHandling::Retain),
         &TestingProvider::new([
             ("ar", "c3f15eb63fa35608"),
             ("ar-EG", "c3f15eb63fa35608"),
@@ -393,7 +464,78 @@ fn explicit_runtime() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
+    let locales = [
+        "ar",
+        // "ar-Arab-EG", (same as 'ar')
+        // "ar-EG", (same as 'ar')
+        "ar-EG-u-nu-latn",
+        // "ar-SA", (same as 'ar')
+        // "ar-SA-u-nu-latn", (same as 'ar-u-nu-latn')
+        "ar-u-nu-latn",
+        "arc", // (same as 'und' but retained as base language)
+        "en",  // (same as 'und' but retained as base language)
+        // "en-001", (same as 'en')
+        // "en-GB", (same as 'en')
+        "es",
+        "es-AR",
+        "ru",
+        // "ru-Cyrl-RU", (same as 'ru')
+        "sr-Latn",
+        // "sr-ME", (same as 'sr-Latn')
+        // "tlh-001", (same as 'und', not retained since it is not a base language)
+        "und",
+    ];
+
+    // Should return the expanded then deduplicated explicit locales set above.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_strip() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([
+                langid!("arc"), // Aramaic, not in supported list
+                langid!("ar-EG"),
+                langid!("ar-SA"),
+                langid!("en-GB"),
+                langid!("es"),
+                langid!("sr-ME"),
+                langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
+            ])
+            .with_fallback_mode(FallbackMode::RuntimeManual)
+            .with_base_language_handling(icu_datagen::BaseLanguageHandling::Strip),
+        &TestingProvider::new([
+            ("ar", "c3f15eb63fa35608"),
+            ("ar-EG", "c3f15eb63fa35608"),
+            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
+            ("ar-u-nu-latn", "29e2dc764329c56"),
+            ("bn", "31828215dcef2fcb"),
+            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
+            ("ccp", "c39715a84718596"),
+            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
+            ("en", "8df59f98704d3b0c"),
+            ("en-001", "8df59f98704d3b0c"),
+            ("en-ZA", "8df59f98704d3b0c"),
+            ("es", "2c22710b06ef69b6"),
+            ("es-AR", "3ec76252c7ed8d8c"),
+            ("fil", "8df59f98704d3b0c"),
+            ("fr", "bd076f44d0623175"),
+            ("ja", "8df59f98704d3b0c"),
+            ("ru", "8f773f51e85a65c1"),
+            ("sr", "3ec76252c7ed8d8c"),
+            ("sr-Latn", "3ec76252c7ed8d8c"),
+            ("th", "8df59f98704d3b0c"),
+            ("th-u-nu-thai", "db1d187d375ccfd2"),
+            ("tr", "3ec76252c7ed8d8c"),
+            ("und", "8df59f98704d3b0c"),
+        ]),
+    );
+
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
@@ -412,6 +554,7 @@ fn explicit_runtime() {
         // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn",
         // "sr-ME", (same as 'sr-Latn')
+        // "tlh-001", (same as 'und', not retained since it is not a base language)
         "und",
     ];
 
@@ -432,6 +575,7 @@ fn explicit_preresolved() {
                 langid!("es"),
                 langid!("sr-ME"),
                 langid!("ru-Cyrl-RU"),
+                langid!("tlh-001"), // Klingon, not in supported list
             ])
             .with_fallback_mode(FallbackMode::Preresolved),
         &TestingProvider::new([
@@ -461,7 +605,7 @@ fn explicit_preresolved() {
         ]),
     );
 
-    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU", "tlh-001"
     let locales = [
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
@@ -472,6 +616,7 @@ fn explicit_preresolved() {
         "es",
         "ru-Cyrl-RU",
         "sr-ME",
+        "tlh-001",
     ];
 
     // Should return the exact explicit locales set.
