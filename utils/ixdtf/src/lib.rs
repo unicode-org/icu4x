@@ -20,4 +20,11 @@
     )
 )]
 
-pub mod parser;
+mod error;
+mod parser;
+
+extern crate alloc;
+
+pub use error::ParserError;
+
+pub type ParserResult<T> = Result<T, ParserError>;
