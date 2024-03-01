@@ -651,7 +651,8 @@ macro_rules! impl_value_getter {
 ///     ...
 /// }
 /// ```
-/// Produces `const ALL_CONSTS = &[(0u16, "Neutral"), ...];` by explicitly casting first field to u16.
+/// Produces `const ALL_CONSTS = &[("Neutral", 0u16), ...];` by
+/// explicitly casting first field of the struct to u16.
 macro_rules! create_const_array {
     (
         $ ( #[$meta:meta] )*
@@ -667,8 +668,8 @@ macro_rules! create_const_array {
             )*
 
             #[allow(dead_code)]
-            const ALL_CONSTS: &'static [(u16, &'static str)] = &[
-                $(($enum_ty::$i.0 as u16, stringify!($i))),*
+            const ALL_CONSTS: &'static [(&'static str, u16)] = &[
+                $((stringify!($i), $enum_ty::$i.0 as u16)),*
             ];
         }
     }
@@ -2509,26 +2510,25 @@ mod test_enumerated_property_completeness {
 
     fn check_enum<'a>(
         lookup: &PropertyValueNameToEnumMapV1<'_>,
-        consts: impl Iterator<Item = &'a (u16, &'static str)>,
+        consts: impl Iterator<Item = &'a (&'static str, u16)>,
     ) {
         let mut data = lookup
             .map
             .iter_copied_values()
-            .map(|(n, v)| (v, n))
             .collect::<Vec<_>>();
-        data.sort_by_key(|(k, _)| *k);
-        data.dedup_by_key(|(k, _)| *k); // data may contain multiple entries for the same value
+        data.sort_by_key(|(_, v)| *v);
+        data.dedup_by_key(|(_, v)| *v); // data may contain multiple entries for the same value
 
         let mut consts = consts.collect::<Vec<_>>();
-        consts.sort_by_key(|(k, _)| *k);
+        consts.sort_by_key(|(_, v)| *v);
 
         let mut diff = Vec::new();
 
         // find difference between data and consts
         let (mut data_idx, mut consts_idx) = (0, 0);
         while data_idx < data.len() && consts_idx < consts.len() {
-            let (data_val, data_name) = data[data_idx];
-            let (consts_val, consts_name) = &consts[consts_idx];
+            let (data_name, data_val) = data[data_idx];
+            let (consts_name, consts_val) = &consts[consts_idx];
 
             match data_val.cmp(consts_val) {
                 Ordering::Less => {
