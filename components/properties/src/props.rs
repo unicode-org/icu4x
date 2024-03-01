@@ -642,8 +642,7 @@ macro_rules! impl_value_getter {
     }
 }
 
-/// Takes an impl block on an enum that defines constants that are of the same type as the enum,
-/// and defines `ALL_CONSTS` on the enum.
+/// See [`test_enumerated_property_completeness`] for usage.
 /// Example input:
 /// ```ignore
 /// impl EastAsianWidth {
@@ -652,7 +651,7 @@ macro_rules! impl_value_getter {
 ///     ...
 /// }
 /// ```
-/// Produces `const ALL_CONSTS = &[(EastAsianWidth::Neutral, "Neutral"), ...];`
+/// Produces `const ALL_CONSTS = &[(0u16, "Neutral"), ...];` by explicitly casting first field to u16.
 macro_rules! create_const_array {
     (
         $ ( #[$meta:meta] )*
@@ -668,8 +667,8 @@ macro_rules! create_const_array {
             )*
 
             #[allow(dead_code)]
-            const ALL_CONSTS: &'static [($enum_ty, &'static str)] = &[
-                $(($enum_ty::$i, stringify!($i))),*
+            const ALL_CONSTS: &'static [(u16, &'static str)] = &[
+                $(($enum_ty::$i.0 as u16, stringify!($i))),*
             ];
         }
     }
@@ -689,6 +688,7 @@ macro_rules! create_const_array {
 #[zerovec::make_ule(BidiClassULE)]
 pub struct BidiClass(pub u8);
 
+create_const_array! {
 #[allow(non_upper_case_globals)]
 impl BidiClass {
     /// (`L`) any strong left-to-right character
@@ -737,6 +737,7 @@ impl BidiClass {
     pub const RightToLeftIsolate: BidiClass = BidiClass(21);
     /// (`PDI`) U+2069: terminates an isolate control
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
+}
 }
 
 impl_value_getter! {
@@ -1922,6 +1923,7 @@ impl_value_getter! {
 #[zerovec::make_ule(WordBreakULE)]
 pub struct WordBreak(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl WordBreak {
@@ -1952,6 +1954,7 @@ impl WordBreak {
     pub const GlueAfterZwj: WordBreak = WordBreak(20); // name="GAZ"
     pub const ZWJ: WordBreak = WordBreak(21); // name="ZWJ"
     pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
+}
 }
 
 impl_value_getter! {
@@ -2039,6 +2042,7 @@ impl_value_getter! {
 #[zerovec::make_ule(SentenceBreakULE)]
 pub struct SentenceBreak(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl SentenceBreak {
@@ -2057,6 +2061,7 @@ impl SentenceBreak {
     pub const Extend: SentenceBreak = SentenceBreak(12); // name="EX"
     pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
     pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
+}
 }
 
 impl_value_getter! {
@@ -2296,6 +2301,7 @@ impl_value_getter! {
 #[zerovec::make_ule(IndicSyllabicCategoryULE)]
 pub struct IndicSyllabicCategory(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl IndicSyllabicCategory {
@@ -2335,6 +2341,7 @@ impl IndicSyllabicCategory {
     pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33);
     pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34);
     pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35);
+}
 }
 
 impl_value_getter! {
@@ -2414,6 +2421,7 @@ impl_value_getter! {
 #[zerovec::make_ule(JoiningTypeULE)]
 pub struct JoiningType(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl JoiningType {
@@ -2423,6 +2431,7 @@ impl JoiningType {
     pub const LeftJoining: JoiningType = JoiningType(3); // name="L"
     pub const RightJoining: JoiningType = JoiningType(4); // name="R"
     pub const Transparent: JoiningType = JoiningType(5); // name="T"
+}
 }
 
 impl_value_getter! {
@@ -2498,9 +2507,9 @@ mod test_enumerated_property_completeness {
 
     use super::*;
 
-    fn check_enum(
+    fn check_enum<'a>(
         lookup: &PropertyValueNameToEnumMapV1<'_>,
-        consts: impl Iterator<Item = (u16, impl AsRef<str>)>,
+        consts: impl Iterator<Item = &'a (u16, &'static str)>,
     ) {
         let mut data = lookup
             .map
@@ -2535,7 +2544,7 @@ mod test_enumerated_property_completeness {
                     consts_idx += 1;
                 }
                 Ordering::Greater => {
-                    diff.push((*consts_val, None, Some(consts_name.as_ref())));
+                    diff.push((*consts_val, None, Some(consts_name)));
                     consts_idx += 1;
                 }
             }
@@ -2552,9 +2561,7 @@ mod test_enumerated_property_completeness {
     fn test_ea() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1,
-            EastAsianWidth::ALL_CONSTS
-                .iter()
-                .map(|(val, name)| (val.0 as u16, name)),
+            EastAsianWidth::ALL_CONSTS.iter(),
         );
     }
 
@@ -2562,9 +2569,47 @@ mod test_enumerated_property_completeness {
     fn test_gc() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
-            CanonicalCombiningClass::ALL_CONSTS
-                .iter()
-                .map(|(val, name)| (val.0 as u16, name)),
+            CanonicalCombiningClass::ALL_CONSTS.iter(),
+        );
+    }
+
+    #[test]
+    fn test_jt() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_JT_V1,
+            JoiningType::ALL_CONSTS.iter(),
+        );
+    }
+
+    #[test]
+    fn test_insc() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_INSC_V1,
+            IndicSyllabicCategory::ALL_CONSTS.iter(),
+        );
+    }
+
+    #[test]
+    fn test_sb() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_SB_V1,
+            SentenceBreak::ALL_CONSTS.iter(),
+        );
+    }
+
+    #[test]
+    fn test_wb() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_WB_V1,
+            WordBreak::ALL_CONSTS.iter(),
+        );
+    }
+
+    #[test]
+    fn test_bc() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
+            BidiClass::ALL_CONSTS.iter(),
         );
     }
 }
