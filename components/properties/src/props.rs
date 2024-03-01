@@ -2549,6 +2549,8 @@ mod test_enumerated_property_completeness {
                 }
             }
         }
+        diff.extend(data[data_idx..].iter().map(|(name, val)| (*val, Some(core::str::from_utf8(name.as_byte_slice()).unwrap()), None)));
+        diff.extend(consts[consts_idx..].iter().map(|(n, v)| (*v, None, Some(n))));
 
         assert!(
             diff.is_empty(),
