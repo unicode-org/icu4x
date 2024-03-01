@@ -652,7 +652,7 @@ macro_rules! impl_value_getter {
 ///     ...
 /// }
 /// ```
-/// Produces `const ALL_CONSTS = &[("Neutral", EastAsianWidth::Neutral), ...];`
+/// Produces `const ALL_CONSTS = &[(EastAsianWidth::Neutral, "Neutral"), ...];`
 macro_rules! create_const_array {
     (
         $ ( #[$meta:meta] )*
