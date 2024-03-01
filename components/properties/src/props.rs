@@ -668,8 +668,8 @@ macro_rules! create_const_array {
             )*
 
             #[allow(dead_code)]
-            const ALL_CONSTS: &'static [(&'static str, $enum_ty)] = &[
-                $((stringify!($i), $enum_ty::$i)),*
+            const ALL_CONSTS: &'static [($enum_ty, &'static str)] = &[
+                $(($enum_ty::$i, stringify!($i))),*
             ];
         }
     }
@@ -2146,6 +2146,7 @@ impl_value_getter! {
 #[zerovec::make_ule(CanonicalCombiningClassULE)]
 pub struct CanonicalCombiningClass(pub u8);
 
+create_const_array! {
 // These constant names come from PropertyValueAliases.txt
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
@@ -2208,6 +2209,7 @@ impl CanonicalCombiningClass {
     pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); // name="DB"
     pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
     pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
+}
 }
 
 impl_value_getter! {
@@ -2491,18 +2493,78 @@ impl_value_getter! {
     }
 }
 #[cfg(test)]
-mod tests {
+mod test_enumerated_property_completeness {
+    use std::cmp::Ordering;
+
     use super::*;
 
-    #[test]
-    fn check_enumerated_property_completeness () {
-        fn check_enum (lookup: &PropertyValueNameToEnumMapV1<'_>, consts: impl Iterator<Item = (impl AsRef<str>, u16)>) {
-            let map = &lookup.map;
-            let data_max = map.iter_copied_values().max_by_key(|(_, v)| *v).unwrap();
-            let consts_max = consts.max_by_key(|(_, v)| *v).unwrap();
-            assert_eq!(data_max.1, consts_max.1, "The maximum value in the data (with key {}) does not match the maximum value of the constants defined on the enum (with key {}).", core::str::from_utf8(data_max.0.as_byte_slice()).unwrap(), consts_max.0.as_ref());
+    fn check_enum(
+        lookup: &PropertyValueNameToEnumMapV1<'_>,
+        consts: impl Iterator<Item = (u16, impl AsRef<str>)>,
+    ) {
+        let mut data = lookup
+            .map
+            .iter_copied_values()
+            .map(|(n, v)| (v, n))
+            .collect::<Vec<_>>();
+        data.sort_by_key(|(k, _)| *k);
+        data.dedup_by_key(|(k, _)| *k); // data may contain multiple entries for the same value
+
+        let mut consts = consts.collect::<Vec<_>>();
+        consts.sort_by_key(|(k, _)| *k);
+
+        let mut diff = Vec::new();
+
+        // find difference between data and consts
+        let (mut data_idx, mut consts_idx) = (0, 0);
+        while data_idx < data.len() && consts_idx < consts.len() {
+            let (data_val, data_name) = data[data_idx];
+            let (consts_val, consts_name) = &consts[consts_idx];
+
+            match data_val.cmp(consts_val) {
+                Ordering::Less => {
+                    diff.push((
+                        data_val,
+                        Some(core::str::from_utf8(data_name.as_byte_slice()).unwrap()),
+                        None,
+                    ));
+                    data_idx += 1;
+                }
+                Ordering::Equal => {
+                    data_idx += 1;
+                    consts_idx += 1;
+                }
+                Ordering::Greater => {
+                    diff.push((*consts_val, None, Some(consts_name.as_ref())));
+                    consts_idx += 1;
+                }
+            }
         }
 
-        check_enum(crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1, EastAsianWidth::ALL_CONSTS.iter().map(|(name, val)| (name, val.0 as u16)));
+        assert!(
+            diff.is_empty(),
+            "Values defined in data do not match values defined in consts. Difference (value, data name, const name):\n {:?}",
+            diff
+        );
+    }
+
+    #[test]
+    fn test_ea() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1,
+            EastAsianWidth::ALL_CONSTS
+                .iter()
+                .map(|(val, name)| (val.0 as u16, name)),
+        );
+    }
+
+    #[test]
+    fn test_gc() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
+            CanonicalCombiningClass::ALL_CONSTS
+                .iter()
+                .map(|(val, name)| (val.0 as u16, name)),
+        );
     }
 }
