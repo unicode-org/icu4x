@@ -2510,7 +2510,7 @@ mod test_enumerated_property_completeness {
 
     fn check_enum<'a>(
         lookup: &PropertyValueNameToEnumMapV1<'_>,
-        consts: impl Iterator<Item = &'a (&'static str, u16)>,
+        consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
     ) {
         let mut data = lookup
             .map
@@ -2519,7 +2519,7 @@ mod test_enumerated_property_completeness {
         data.sort_by_key(|(_, v)| *v);
         data.dedup_by_key(|(_, v)| *v); // data may contain multiple entries for the same value
 
-        let mut consts = consts.collect::<Vec<_>>();
+        let mut consts = consts.into_iter().collect::<Vec<_>>();
         consts.sort_by_key(|(_, v)| *v);
 
         let mut diff = Vec::new();
@@ -2561,7 +2561,7 @@ mod test_enumerated_property_completeness {
     fn test_ea() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1,
-            EastAsianWidth::ALL_CONSTS.iter(),
+            EastAsianWidth::ALL_CONSTS,
         );
     }
 
@@ -2569,7 +2569,7 @@ mod test_enumerated_property_completeness {
     fn test_gc() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
-            CanonicalCombiningClass::ALL_CONSTS.iter(),
+            CanonicalCombiningClass::ALL_CONSTS,
         );
     }
 
@@ -2577,7 +2577,7 @@ mod test_enumerated_property_completeness {
     fn test_jt() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_JT_V1,
-            JoiningType::ALL_CONSTS.iter(),
+            JoiningType::ALL_CONSTS,
         );
     }
 
@@ -2585,7 +2585,7 @@ mod test_enumerated_property_completeness {
     fn test_insc() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_INSC_V1,
-            IndicSyllabicCategory::ALL_CONSTS.iter(),
+            IndicSyllabicCategory::ALL_CONSTS,
         );
     }
 
@@ -2593,7 +2593,7 @@ mod test_enumerated_property_completeness {
     fn test_sb() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_SB_V1,
-            SentenceBreak::ALL_CONSTS.iter(),
+            SentenceBreak::ALL_CONSTS,
         );
     }
 
@@ -2601,7 +2601,7 @@ mod test_enumerated_property_completeness {
     fn test_wb() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_WB_V1,
-            WordBreak::ALL_CONSTS.iter(),
+            WordBreak::ALL_CONSTS,
         );
     }
 
@@ -2609,7 +2609,7 @@ mod test_enumerated_property_completeness {
     fn test_bc() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
-            BidiClass::ALL_CONSTS.iter(),
+            BidiClass::ALL_CONSTS,
         );
     }
 }
