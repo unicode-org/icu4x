@@ -9,9 +9,9 @@
 //!
 //! ## Date Time Extended Examples
 //!
-//!   - `2024-03-02T08:48:00-05:00[America/New_York]`
-//!   - `2024-03-02T08:48:00-05:00[-05:00]`
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
+//! - `2024-03-02T08:48:00-05:00[America/New_York]`
+//! - `2024-03-02T08:48:00-05:00[-05:00]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
 //!
 //! ## Example Usage
 //!
@@ -42,30 +42,30 @@
 //!
 //! Example Valid Date Time Strings:
 //!
-//!   - `2024-03-02`
-//!   - `+002024-03-02`
-//!   - `20240302`
-//!   - `+0020240302`
-//!   - `2024-03-02T08:48:00`
-//!   - `2024-03-02T08:48:00`
+//! - `2024-03-02`
+//! - `+002024-03-02`
+//! - `20240302`
+//! - `+0020240302`
+//! - `2024-03-02T08:48:00`
+//! - `2024-03-02T08:48:00`
 //!
-//! # IXDTF Extensions: A Deeper Look
+//! ## IXDTF Extensions: A Deeper Look
 //!
 //! The suffix extensions come in two primary kinds: a time zone annotation and a key-value
 //! annotation. The suffixes may also be flagged as critical with a '!' as a leading flag
 //! character.
 //!
-//! ## Time Zone Annotations
+//! ### Time Zone Annotations
 //!
 //! Time zone annotations can be either a valud time zone IANA name or a number
 //! offset as shown previously.
 //!
-//! ### Valid Time Zone Annotations
+//! #### Valid Time Zone Annotations
 //!
-//!   - `2024-03-02T08:48:00-5:00[America/New_York]`
-//!   - `2024-03-02T08:48:00-5:00[-05:00]`
+//! - `2024-03-02T08:48:00-5:00[America/New_York]`
+//! - `2024-03-02T08:48:00-5:00[-05:00]`
 //!
-//! ## Key-Value Annotations
+//! ### Key-Value Annotations
 //!
 //! Key-value pair annotations are any keys that are delimited by a '='. Key-value
 //! pairs are can include any information. Keys can be permanent registered, provisional
@@ -77,26 +77,21 @@
 //! of the duplicate annotations is marked as critical, in which case an error will be
 //! thrown.
 //!
-//! ### Permanent Registered Keys:
+//! #### Permanent Registered Keys:
 //!
 //! - `u-ca`
 //!
-//! ### Valid Key-Value Annotations
+//! #### Valid Key-Value Annotations
 //!
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601][answer-to-universe=fortytwo]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][u-ca=japanese]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
 //!
-//! ### Valid Key-Value Annotations
+//! #### Invalid Key-Value Annotations
 //!
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601][u-ca=japanese]`
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
-//!
-//! ### Invalid Key-Value Annotations
-//!
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]`
-//!   - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]`
+//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
 //!
 //!
 //! [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
