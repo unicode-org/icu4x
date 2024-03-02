@@ -177,7 +177,7 @@ pub(crate) fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
 
     let month = parse_date_month(cursor)?;
 
-    assert_syntax!(cursor.check_or(true, is_annotation_open), InvalidEnd,);
+    assert_syntax!(cursor.check_or(true, is_annotation_open), InvalidEnd);
 
     Ok((year, month))
 }
@@ -204,7 +204,7 @@ pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
 
     let day = parse_date_day(cursor)?;
 
-    assert_syntax!(cursor.check_or(true, is_annotation_open), InvalidEnd,);
+    assert_syntax!(cursor.check_or(true, is_annotation_open), InvalidEnd);
 
     Ok((month, day))
 }
@@ -216,13 +216,18 @@ fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
     if cursor.check_or(false, is_sign) {
         let sign = if cursor.abrupt_next()? == '+' { 1 } else { -1 };
 
-        let first = cursor.next_digit()? as i32 * 100_000;
-        let second = cursor.next_digit()? as i32 * 10_000;
-        let third = cursor.next_digit()? as i32 * 1000;
-        let fourth = cursor.next_digit()? as i32 * 100;
-        let fifth = cursor.next_digit()? as i32 * 10;
+        let first = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 100_000;
+        let second = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 10_000;
+        let third = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 1000;
+        let fourth = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 100;
+        let fifth = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 10;
 
-        let year_value = first + second + third + fourth + fifth + cursor.next_digit()? as i32;
+        let year_value = first
+            + second
+            + third
+            + fourth
+            + fifth
+            + cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32;
 
         // 13.30.1 Static Semantics: Early Errors
         //
@@ -238,18 +243,19 @@ fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
         return Ok(year);
     }
 
-    let first = cursor.next_digit()? as i32 * 1000;
-    let second = cursor.next_digit()? as i32 * 100;
-    let third = cursor.next_digit()? as i32 * 10;
-    let year_value = first + second + third + cursor.next_digit()? as i32;
+    let first = cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32 * 1000;
+    let second = cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32 * 100;
+    let third = cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32 * 10;
+    let year_value =
+        first + second + third + cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32;
 
     Ok(year_value)
 }
 
 #[inline]
 fn parse_date_month(cursor: &mut Cursor) -> ParserResult<u8> {
-    let first = cursor.next_digit()?;
-    let month_value = first * 10 + cursor.next_digit()?;
+    let first = cursor.next_digit()?.ok_or(ParserError::DateMonth)?;
+    let month_value = first * 10 + cursor.next_digit()?.ok_or(ParserError::DateMonth)?;
     if !(1..=12).contains(&month_value) {
         return Err(ParserError::InvalidMonthRange);
     }
@@ -258,8 +264,8 @@ fn parse_date_month(cursor: &mut Cursor) -> ParserResult<u8> {
 
 #[inline]
 fn parse_date_day(cursor: &mut Cursor) -> ParserResult<u8> {
-    let first = cursor.next_digit()?;
-    let day_value = first * 10 + cursor.next_digit()?;
+    let first = cursor.next_digit()?.ok_or(ParserError::DateDay)?;
+    let day_value = first * 10 + cursor.next_digit()?.ok_or(ParserError::DateDay)?;
     Ok(day_value)
 }
 
@@ -278,8 +284,8 @@ fn check_date_validity(year: i32, month: u8, day: u8) -> ParserResult<()> {
     Ok(())
 }
 
-#[inline]
 /// Utilty to return the days in month, returns None if month is invalid
+#[inline]
 fn days_in_month(year: i32, month: u8) -> Option<u8> {
     match month {
         1 | 3 | 5 | 7 | 8 | 10 | 12 => Some(31),
@@ -290,6 +296,7 @@ fn days_in_month(year: i32, month: u8) -> Option<u8> {
 }
 
 /// Utility that returns whether a year is a leap year.
+#[inline]
 fn in_leap_year(year: i32) -> i8 {
     if year % 4 != 0 {
         0

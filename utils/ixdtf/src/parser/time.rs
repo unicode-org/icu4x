@@ -67,23 +67,31 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 /// Parse an hour value.
 #[inline]
 pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
-    let first = cursor.next_digit()?;
-    let hour_value = first * 10 + cursor.next_digit()?;
+    let first = cursor.next_digit()?.ok_or(ParserError::TimeHour)?;
+    let hour_value = first * 10 + cursor.next_digit()?.ok_or(ParserError::TimeHour)?;
     if !(0..=23).contains(&hour_value) {
         return Err(ParserError::TimeHour);
     }
     Ok(hour_value)
 }
 
-// NOTE: `TimeSecond` is a 60 inclusive `MinuteSecond`.
-/// Parse `MinuteSecond` value.
+/// Parses `MinuteSecond` value.
 #[inline]
-pub(crate) fn parse_minute_second(cursor: &mut Cursor, inclusive: bool) -> ParserResult<u8> {
-    let first = cursor.next_digit()?;
-    let min_sec_value = first * 10 + cursor.next_digit()?;
-    let valid_range = if inclusive { 0..=60 } else { 0..=59 };
+pub(crate) fn parse_minute_second(cursor: &mut Cursor, is_second: bool) -> ParserResult<u8> {
+    let first = cursor.next_digit()?.ok_or(if is_second {
+        ParserError::TimeSecond
+    } else {
+        ParserError::TimeMinute
+    })?;
+    let min_sec_value = first * 10
+        + cursor.next_digit()?.ok_or(if is_second {
+            ParserError::TimeSecond
+        } else {
+            ParserError::TimeMinute
+        })?;
+    let valid_range = if is_second { 0..=60 } else { 0..=59 };
     if !valid_range.contains(&min_sec_value) {
-        let err = if inclusive {
+        let err = if is_second {
             ParserError::TimeSecond
         } else {
             ParserError::TimeMinute
@@ -93,6 +101,7 @@ pub(crate) fn parse_minute_second(cursor: &mut Cursor, inclusive: bool) -> Parse
     Ok(min_sec_value)
 }
 
+#[inline]
 pub(crate) fn parse_fraction_component(cursor: &mut Cursor) -> ParserResult<(u16, u16, u16)> {
     let Some(fraction) = parse_fraction(cursor)? else {
         return Ok((0, 0, 0));
@@ -104,6 +113,7 @@ pub(crate) fn parse_fraction_component(cursor: &mut Cursor) -> ParserResult<(u16
 ///
 /// This is primarily used in ISO8601 to add percision past
 /// a second.
+#[inline]
 pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<f64>> {
     // Assert that the first char provided is a decimal separator.
     if !cursor.check_or(false, is_decimal_separator) {

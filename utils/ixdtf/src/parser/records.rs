@@ -8,8 +8,9 @@ use alloc::string::String;
 /// An `IsoParseRecord` is an intermediary record returned by ISO parsing functions.
 ///
 /// `IsoParseRecord` is converted into the ISO AST Nodes.
+#[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
-pub(crate) struct IsoParseRecord {
+pub struct IsoParseRecord {
     /// Parsed Date Record
     pub date: DateRecord,
     /// Parsed Time
@@ -20,20 +21,22 @@ pub(crate) struct IsoParseRecord {
     pub calendar: Option<String>,
 }
 
+#[non_exhaustive]
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 /// The record of a parsed date.
-pub(crate) struct DateRecord {
+pub struct DateRecord {
     /// Date Year
-    pub(crate) year: i32,
+    pub year: i32,
     /// Date Month
-    pub(crate) month: u8,
+    pub month: u8,
     /// Date Day
-    pub(crate) day: u8,
+    pub day: u8,
 }
 
 /// Parsed Time info
+#[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
-pub(crate) struct TimeRecord {
+pub struct TimeRecord {
     /// An hour
     pub hour: u8,
     /// A minute value
@@ -49,8 +52,9 @@ pub(crate) struct TimeRecord {
 }
 
 /// `TimeZone` data
+#[non_exhaustive]
 #[derive(Default, Debug, Clone, PartialEq)]
-pub(crate) struct TimeZone {
+pub struct TimeZone {
     /// TimeZoneIANAName
     pub name: Option<String>,
     /// TimeZoneOffset
@@ -58,6 +62,7 @@ pub(crate) struct TimeZone {
 }
 
 /// A full precision `UtcOffset`
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UTCOffset {
     /// The `+`/`-` sign of this `UtcOffset`
@@ -77,6 +82,7 @@ pub struct UTCOffset {
 }
 
 /// An ISO8601 `DurationRecord` Parse Node.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
     /// Duration Sign
@@ -149,7 +155,7 @@ impl DurationParseRecord {
 
 /// A `DateDuration` Parse Node.
 #[derive(Default, Debug, Clone, Copy)]
-pub struct DateDurationRecord {
+pub(crate) struct DateDurationRecord {
     /// Years value.
     pub(crate) years: i32,
     /// Months value.
@@ -162,7 +168,7 @@ pub struct DateDurationRecord {
 
 /// A `TimeDuration` Parse Node
 #[derive(Default, Debug, Clone, Copy)]
-pub struct TimeDurationRecord {
+pub(crate) struct TimeDurationRecord {
     /// Hours value.
     pub(crate) hours: i32,
     /// Hours fraction value.

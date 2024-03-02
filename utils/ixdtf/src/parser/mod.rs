@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-//! This module implements parsing for ISO 8601 grammar.
+//! The parser module contains the implementation details for `IXDTFParser` and `ISODurationParser`
 
 use crate::{ParserError, ParserResult};
 
@@ -9,24 +9,22 @@ extern crate alloc;
 
 use alloc::{string::String, vec::Vec};
 
+use self::duration::parse_duration;
 use datetime::DateTimeFlags;
 use grammar::is_annotation_open;
 use records::{DateRecord, DurationParseRecord, IsoParseRecord, TimeZone};
 
-use self::duration::parse_duration;
+pub mod records;
 
 mod annotations;
 pub(crate) mod datetime;
 pub(crate) mod duration;
 mod grammar;
-mod records;
 mod time;
 pub(crate) mod time_zone;
 
 #[cfg(test)]
 mod tests;
-
-// TODO: optimize where possible.
 
 /// `assert_syntax!` is a parser specific utility macro for asserting a syntax test, and returning a
 /// `SyntaxError` with the provided message if the test fails.
@@ -39,21 +37,33 @@ macro_rules! assert_syntax {
     };
 }
 
-struct IXDTFParser {
+/// The primary parser for the `ixdtf`. This parser provides various
+/// options for parsing date/time strings with the extended notation
+/// laid out in sedate's IXDTF.
+#[derive(Debug)]
+pub struct IxdtfParser {
     cursor: Cursor,
 }
 
-impl IXDTFParser {
+impl IxdtfParser {
+    /// Creates a new `IXDTFParser` from a provided `&str`.
     pub fn new(target: &str) -> Self {
         Self {
             cursor: Cursor::new(target),
         }
     }
 
+    /// Parses the source as a DateTime string.
+    ///
+    /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
     pub fn parse_date_time(&mut self) -> ParserResult<IsoParseRecord> {
         datetime::parse_annotated_date_time(DateTimeFlags::empty(), &mut self.cursor)
     }
 
+    /// Parses the source as an instant string
+    ///
+    /// An instant string is laid out by the `Temporal` and is a stricter DateTime string with the
+    /// TimeRecord and UTCOffset record being required.
     pub fn parse_instant(&mut self) -> ParserResult<IsoParseRecord> {
         datetime::parse_annotated_date_time(
             DateTimeFlags::UTC_REQ | DateTimeFlags::TIME_REQ,
@@ -61,6 +71,9 @@ impl IXDTFParser {
         )
     }
 
+    /// Parses the source as a Year-Month string
+    ///
+    /// This will parse a valid date time string or year month string.
     pub fn parse_year_month(&mut self) -> ParserResult<IsoParseRecord> {
         let ym = datetime::parse_year_month(&mut self.cursor);
 
@@ -90,6 +103,9 @@ impl IXDTFParser {
         })
     }
 
+    /// Parses the source as a Month-Day string
+    ///
+    /// This will parse a valid date time string or month day string.
     pub fn parse_month_day(&mut self) -> ParserResult<IsoParseRecord> {
         let md = datetime::parse_month_day(&mut self.cursor);
 
@@ -119,22 +135,46 @@ impl IXDTFParser {
         })
     }
 
+    /// Parses the source as a Time Zone string.
     pub fn parse_time_zone(&mut self) -> ParserResult<TimeZone> {
         time_zone::parse_time_zone(&mut self.cursor)
     }
 }
 
-struct ISODurationParser {
+/// A parser for an ISO8601 Duration string.
+///
+///
+/// # Exmaple
+///
+/// ```
+/// use ixdtf::parser::{IsoDurationParser, records::DurationParseRecord };
+///
+/// let duration_str = "P1Y2M3W1D";
+///
+/// let result = IsoDurationParser::new(duration_str).parse().unwrap();
+///
+/// assert_eq!(result.years, 1);
+/// assert_eq!(result.months, 2);
+/// assert_eq!(result.weeks, 3);
+/// assert_eq!(result.days, 1);
+///
+/// ```
+///
+///
+#[derive(Debug)]
+pub struct IsoDurationParser {
     cursor: Cursor,
 }
 
-impl ISODurationParser {
+impl IsoDurationParser {
+    /// Creates a new `IsoDurationParser` from a target `&str`.
     pub fn new(target: &str) -> Self {
         Self {
             cursor: Cursor::new(target),
         }
     }
 
+    /// Parse the contents of this `IsoDurationParser`.
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         parse_duration(&mut self.cursor)
     }
@@ -212,12 +252,12 @@ impl Cursor {
     /// # Errors
     ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
-    fn next_digit(&mut self) -> ParserResult<u8> {
+    fn next_digit(&mut self) -> ParserResult<Option<u8>> {
         let p_digit = self.abrupt_next()?.to_digit(10);
         let Some(digit) = p_digit else {
-            return Err(ParserError::ExpectedDigitChar);
+            return Ok(None);
         };
-        Ok(digit as u8)
+        Ok(Some(digit as u8))
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
