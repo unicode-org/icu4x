@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-//! Parsers for extended date time string and ISO Duration parsing.
+//! Parsers for extended date time string and Duration parsing.
 //!
 //! The [Internet Extended Date/Time Fmt (IXDTF)][ixdtf-draft] as laid out by Serialising
 //! Extended Data About Times and Events' (sedate) builds on RFC3339's time stamp specification and
@@ -94,7 +94,14 @@
 //! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
 //!
 //!
+//! ## Additional DateTime grammar resources
+//!
+//! Additional resources for Date and Time string grammar can be found in [RFC3339][rfc3339]
+//! and the [Temporal proposal][temporal-grammar].
+//!
 //! [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
+//! [rfc3339]: https://datatracker.ietf.org/doc/html/rfc3339
+//! [temporal-grammar]: https://tc39.es/proposal-temporal/#sec-temporal-iso8601grammar
 
 #![no_std]
 #![cfg_attr(

@@ -26,8 +26,8 @@ pub(crate) mod time_zone;
 #[cfg(test)]
 mod tests;
 
-/// `assert_syntax!` is a parser specific utility macro for asserting a syntax test, and returning a
-/// `SyntaxError` with the provided message if the test fails.
+/// `assert_syntax!` is a parser specific utility macro for asserting a syntax test, and returning the
+/// the provided provided error if the assertion fails.
 #[macro_export]
 macro_rules! assert_syntax {
     ($cond:expr, $err:ident $(,)?) => {
@@ -37,9 +37,13 @@ macro_rules! assert_syntax {
     };
 }
 
-/// The primary parser for the `ixdtf`. This parser provides various
-/// options for parsing date/time strings with the extended notation
-/// laid out in sedate's IXDTF.
+/// `IxdtfParser` is the primary parser implementation of `ixdtf`.
+///
+/// This parser provides various options for parsing date/time strings with the extended notation
+/// laid out in [sedate's IXDTF][ixdtf-draft] along with other variations laid out in the [`Temporal`][temporal-proposal].
+///
+/// [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
+/// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
 pub struct IxdtfParser {
     cursor: Cursor,
@@ -53,17 +57,21 @@ impl IxdtfParser {
         }
     }
 
-    /// Parses the source as a DateTime string.
+    /// Parses the source as a [DateTime string][temporal-dt].
     ///
     /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
+    ///
+    /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
     pub fn parse_date_time(&mut self) -> ParserResult<IsoParseRecord> {
         datetime::parse_annotated_date_time(DateTimeFlags::empty(), &mut self.cursor)
     }
 
-    /// Parses the source as an instant string
+    /// Parses the source as an [Instant string][temporal-instant]
     ///
     /// An instant string is laid out by the `Temporal` and is a stricter DateTime string with the
     /// TimeRecord and UTCOffset record being required.
+    ///
+    /// [temporal-instant]: https://tc39.es/proposal-temporal/#prod-TemporalInstantString
     pub fn parse_instant(&mut self) -> ParserResult<IsoParseRecord> {
         datetime::parse_annotated_date_time(
             DateTimeFlags::UTC_REQ | DateTimeFlags::TIME_REQ,
@@ -71,16 +79,20 @@ impl IxdtfParser {
         )
     }
 
-    /// Parses the source a ZonedDateTime string
+    /// Parses the source aa a [ZonedDateTime string][temporal-zdt]
     ///
     /// Parses the string as a datetime string with the time zoned annotation being required.
+    ///
+    /// [temporal-zdt]: https://tc39.es/proposal-temporal/#prod-AnnotatedDateTime
     pub fn parse_zoned_date_time(&mut self) -> ParserResult<IsoParseRecord> {
         datetime::parse_annotated_date_time(DateTimeFlags::ZONED, &mut self.cursor)
     }
 
-    /// Parses the source as a Year-Month string
+    /// Parses the source as a [YearMonth string][temporal-ym]
     ///
     /// This will parse a valid date time string or year month string.
+    ///
+    /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
     pub fn parse_year_month(&mut self) -> ParserResult<IsoParseRecord> {
         let ym = datetime::parse_year_month(&mut self.cursor);
 
@@ -110,9 +122,11 @@ impl IxdtfParser {
         })
     }
 
-    /// Parses the source as a Month-Day string
+    /// Parses the source as a [MonthDay string][temporal-md]
     ///
     /// This will parse a valid date time string or month day string.
+    ///
+    /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
     pub fn parse_month_day(&mut self) -> ParserResult<IsoParseRecord> {
         let md = datetime::parse_month_day(&mut self.cursor);
 
@@ -148,8 +162,7 @@ impl IxdtfParser {
     }
 }
 
-/// A parser for an ISO8601 Duration string.
-///
+/// A parser for Duration strings.
 ///
 /// # Exmaple
 ///
@@ -166,8 +179,6 @@ impl IxdtfParser {
 /// assert_eq!(result.days, 1);
 ///
 /// ```
-///
-///
 #[derive(Debug)]
 pub struct IsoDurationParser {
     cursor: Cursor,
@@ -181,7 +192,7 @@ impl IsoDurationParser {
         }
     }
 
-    /// Parse the contents of this `IsoDurationParser`.
+    /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         parse_duration(&mut self.cursor)
     }
