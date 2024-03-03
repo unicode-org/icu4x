@@ -4,7 +4,7 @@
 //! An error enum for representing `ixdtf` parsing errors.
 
 #[non_exhaustive]
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Copy, Debug)]
 pub enum ParserError {
     ParseFloat,
     AbruptEnd,

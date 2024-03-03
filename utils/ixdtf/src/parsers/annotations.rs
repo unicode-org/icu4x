@@ -4,7 +4,7 @@
 //! Parsing for Parser's `Annotations`.
 use crate::{
     assert_syntax,
-    parser::{
+    parsers::{
         grammar::{
             is_a_key_char, is_a_key_leading_char, is_annotation_close,
             is_annotation_key_value_separator, is_annotation_open, is_annotation_value_component,

@@ -4,7 +4,7 @@
 
 use crate::{
     assert_syntax,
-    parser::{
+    parsers::{
         grammar::{
             is_day_designator, is_duration_designator, is_hour_designator, is_minute_designator,
             is_month_designator, is_second_designator, is_sign, is_time_designator,

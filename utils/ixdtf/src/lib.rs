@@ -16,7 +16,7 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parser::{IxdtfParser, records::{IsoParseRecord, DateRecord, TimeRecord, TimeZone}};
+//! use ixdtf::parsers::{IxdtfParser, records::{IsoParseRecord, DateRecord, TimeRecord, TimeZone}};
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
@@ -118,7 +118,7 @@
 )]
 
 mod error;
-pub mod parser;
+pub mod parsers;
 
 extern crate alloc;
 

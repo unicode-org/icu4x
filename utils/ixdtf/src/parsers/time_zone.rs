@@ -105,7 +105,7 @@ pub(crate) fn parse_time_zone(cursor: &mut Cursor) -> ParserResult<TimeZone> {
     if is_iana {
         return parse_tz_iana_name(cursor);
     } else if is_offset {
-        let offset = parse_utc_offset_minute_precision(cursor)?;
+        let (offset, _) = parse_utc_offset_minute_precision(cursor)?;
         return Ok(TimeZone {
             name: None,
             offset: Some(offset),
@@ -152,15 +152,15 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<TimeZone>
 
     let separated = cursor.peek_n(3).map_or(false, is_time_separator);
 
-    let mut utc_to_minute = parse_utc_offset_minute_precision(cursor)?;
+    let (mut utc_to_minute, parsed_minute) = parse_utc_offset_minute_precision(cursor)?;
 
     if cursor.check_or(false, is_time_separator) && !separated {
         return Err(ParserError::UtcTimeSeparator);
     }
     cursor.advance_if(cursor.check_or(false, is_time_separator));
 
-    // Return early on None or AnnotationOpen.
-    if cursor.check_or(true, is_annotation_open) {
+    // Return early on only hour offset parse, None, or AnnotationOpen.
+    if cursor.check_or(true, is_annotation_open) || !parsed_minute {
         return Ok(TimeZone {
             name: None,
             offset: Some(utc_to_minute),
@@ -183,7 +183,11 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<TimeZone>
 }
 
 /// Parse an `UtcOffsetMinutePrecision` node
-pub(crate) fn parse_utc_offset_minute_precision(cursor: &mut Cursor) -> ParserResult<UTCOffset> {
+///
+/// Returns the offset and whether the utc parsing includes a minute.
+pub(crate) fn parse_utc_offset_minute_precision(
+    cursor: &mut Cursor,
+) -> ParserResult<(UTCOffset, bool)> {
     let sign = if cursor.check_or(false, is_sign) {
         if cursor.abrupt_next()? == '+' {
             1
@@ -197,28 +201,34 @@ pub(crate) fn parse_utc_offset_minute_precision(cursor: &mut Cursor) -> ParserRe
 
     // If at the end of the utc, then return.
     if !cursor.check_or(false, |ch| ch.is_ascii_digit() || is_time_separator(ch)) {
-        return Ok(UTCOffset {
-            sign,
-            hour,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-            microsecond: 0,
-            nanosecond: 0,
-        });
+        return Ok((
+            UTCOffset {
+                sign,
+                hour,
+                minute: 0,
+                second: 0,
+                millisecond: 0,
+                microsecond: 0,
+                nanosecond: 0,
+            },
+            false,
+        ));
     }
     // Advance cursor beyond any TimeSeparator
     cursor.advance_if(cursor.check_or(false, is_time_separator));
 
     let minute = parse_minute_second(cursor, false)?;
 
-    Ok(UTCOffset {
-        sign,
-        hour,
-        minute,
-        second: 0,
-        millisecond: 0,
-        microsecond: 0,
-        nanosecond: 0,
-    })
+    Ok((
+        UTCOffset {
+            sign,
+            hour,
+            minute,
+            second: 0,
+            millisecond: 0,
+            microsecond: 0,
+            nanosecond: 0,
+        },
+        true,
+    ))
 }

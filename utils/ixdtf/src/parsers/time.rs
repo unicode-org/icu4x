@@ -5,15 +5,78 @@
 
 use crate::{
     assert_syntax,
-    parser::{
-        grammar::{is_decimal_separator, is_time_separator},
-        records::TimeRecord,
-        Cursor,
+    parsers::{
+        annotations,
+        grammar::{
+            is_annotation_open, is_decimal_separator, is_sign, is_time_designator,
+            is_time_separator, is_utc_designator,
+        },
+        records::{IsoParseRecord, TimeRecord},
+        time_zone, Cursor,
     },
     ParserError, ParserResult,
 };
 
 use alloc::string::String;
+
+use super::records::DateRecord;
+
+/// Parse annotated time record is silently fallible returning None in the case that the
+/// value does not align
+pub(crate) fn parse_annotated_time_record(
+    cursor: &mut Cursor,
+) -> ParserResult<Option<IsoParseRecord>> {
+    let designator = cursor.check_or(false, is_time_designator);
+    cursor.advance_if(designator);
+
+    let time = match parse_time_record(cursor) {
+        Ok(time) => time,
+        Err(err) => {
+            if designator {
+                return Err(err);
+            }
+            return Ok(None);
+        }
+    };
+
+    // If Time was successfully parsed, assume from this point that this IS a
+    // valid AnnotatedTimeRecord.
+
+    let utc_offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
+        Some(time_zone::parse_date_time_utc(cursor)?)
+    } else {
+        None
+    };
+
+    // Check if annotations exist.
+    if !cursor.check_or(false, is_annotation_open) {
+        cursor.close()?;
+
+        return Ok(Some(IsoParseRecord {
+            date: DateRecord::default(),
+            time: Some(time),
+            tz: None,
+            calendar: None,
+        }));
+    }
+
+    let annotations = annotations::parse_annotation_set(false, cursor)?;
+
+    let tz = if let Some(tz_annotation) = annotations.tz {
+        Some(tz_annotation.tz)
+    } else {
+        utc_offset
+    };
+
+    cursor.close()?;
+
+    Ok(Some(IsoParseRecord {
+        date: DateRecord::default(),
+        time: Some(time),
+        tz,
+        calendar: annotations.calendar,
+    }))
+}
 
 /// Parse `TimeRecord`
 pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord> {
@@ -78,24 +141,14 @@ pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
 /// Parses `MinuteSecond` value.
 #[inline]
 pub(crate) fn parse_minute_second(cursor: &mut Cursor, is_second: bool) -> ParserResult<u8> {
-    let first = cursor.next_digit()?.ok_or(if is_second {
-        ParserError::TimeSecond
+    let (valid_range, err) = if is_second {
+        (0..=60, ParserError::TimeSecond)
     } else {
-        ParserError::TimeMinute
-    })?;
-    let min_sec_value = first * 10
-        + cursor.next_digit()?.ok_or(if is_second {
-            ParserError::TimeSecond
-        } else {
-            ParserError::TimeMinute
-        })?;
-    let valid_range = if is_second { 0..=60 } else { 0..=59 };
+        (0..=59, ParserError::TimeMinute)
+    };
+    let first = cursor.next_digit()?.ok_or(err)?;
+    let min_sec_value = first * 10 + cursor.next_digit()?.ok_or(err)?;
     if !valid_range.contains(&min_sec_value) {
-        let err = if is_second {
-            ParserError::TimeSecond
-        } else {
-            ParserError::TimeMinute
-        };
         return Err(err);
     }
     Ok(min_sec_value)

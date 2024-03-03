@@ -4,7 +4,7 @@
 use alloc::borrow::ToOwned;
 
 use crate::{
-    parser::{
+    parsers::{
         records::{DateRecord, IsoParseRecord, TimeRecord, TimeZone},
         IsoDurationParser, IxdtfParser,
     },
@@ -308,6 +308,70 @@ fn temporal_month_day() {
         assert_eq!(result.date.month, 11);
         assert_eq!(result.date.day, 7);
     }
+}
+
+#[test]
+fn temporal_time() {
+    let possible_times = [
+        "T12:01:04",
+        "t12:01:04",
+        "12:01:04",
+        "12:01:04[u-ca=iso8601]",
+        "12:01:04[+04:00][u-ca=iso8601]",
+        "12:01:04-05:00[America/New_York][u-ca=iso8601]",
+    ];
+
+    for time in possible_times {
+        let result = IxdtfParser::new(time).parse_time().unwrap();
+        let time = result.time.unwrap();
+        assert_eq!(time.hour, 12);
+        assert_eq!(time.minute, 1);
+        assert_eq!(time.second, 4);
+    }
+}
+
+#[test]
+fn invalid_time() {
+    let bad_value = "20240801";
+    let err = IxdtfParser::new(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParserError::InvalidEnd),
+        "Invalid time parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "24-12-08";
+    let err = IxdtfParser::new(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParserError::DateYear),
+        "Invalid time parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    // Attempts to parse UTC offset: -12, leaving -08 on end as junk.
+    let bad_value = "T19-12-08";
+    let err = IxdtfParser::new(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParserError::InvalidEnd),
+        "Invalid time parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "T19:12-089";
+    let err = IxdtfParser::new(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParserError::AbruptEnd),
+        "Invalid time parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "T19:120-08";
+    let err = IxdtfParser::new(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParserError::TimeSeparator),
+        "Invalid time parsing: \"{bad_value}\" should fail to parse."
+    );
 }
 
 #[test]

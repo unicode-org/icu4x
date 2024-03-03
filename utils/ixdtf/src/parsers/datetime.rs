@@ -5,7 +5,7 @@
 
 use crate::{
     assert_syntax,
-    parser::{
+    parsers::{
         annotations,
         grammar::{
             is_annotation_open, is_date_time_separator, is_hyphen, is_sign, is_utc_designator,

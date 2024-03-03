@@ -156,6 +156,22 @@ impl IxdtfParser {
         })
     }
 
+    /// Parses the source as a [Time string][temporal-time].
+    ///
+    /// This method will parse as an annotated time string or annotated date time string.
+    ///
+    /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
+    pub fn parse_time(&mut self) -> ParserResult<IsoParseRecord> {
+        match time::parse_annotated_time_record(&mut self.cursor) {
+            Ok(None) => {
+                self.cursor.pos = 0;
+                datetime::parse_annotated_date_time(DateTimeFlags::TIME_REQ, &mut self.cursor)
+            }
+            Ok(Some(result)) => Ok(result),
+            Err(err) => Err(err),
+        }
+    }
+
     /// Parses the source as a Time Zone string.
     pub fn parse_time_zone(&mut self) -> ParserResult<TimeZone> {
         time_zone::parse_time_zone(&mut self.cursor)
@@ -167,7 +183,7 @@ impl IxdtfParser {
 /// # Exmaple
 ///
 /// ```
-/// use ixdtf::parser::{IsoDurationParser, records::DurationParseRecord };
+/// use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
 ///
 /// let duration_str = "P1Y2M3W1D";
 ///
@@ -202,7 +218,7 @@ impl IsoDurationParser {
 
 /// `Cursor` is a small cursor implementation for parsing Iso8601 grammar.
 #[derive(Debug)]
-pub struct Cursor {
+pub(crate) struct Cursor {
     pos: u32,
     source: Vec<char>,
 }
@@ -210,7 +226,7 @@ pub struct Cursor {
 impl Cursor {
     /// Create a new cursor from a source `String` value.
     #[must_use]
-    pub fn new(source: &str) -> Self {
+    pub(crate) fn new(source: &str) -> Self {
         Self {
             pos: 0,
             source: source.chars().collect(),

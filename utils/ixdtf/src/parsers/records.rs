@@ -81,7 +81,7 @@ pub struct UTCOffset {
     pub nanosecond: u16,
 }
 
-/// An ISO8601 `DurationRecord` Parse Node.
+/// The resulting record of a `Duration` parse.
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
