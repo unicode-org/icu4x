@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-//! ISO8601 parsing for Time Zone and Offset data.
+//! Parsing for Time Zone and Offset data.
 
 use super::{
     grammar::{
@@ -17,9 +17,10 @@ use crate::{assert_syntax, ParserError, ParserResult};
 
 use alloc::borrow::ToOwned;
 
+// NOTE: critical field on time zones is captured but not handled.
 /// A `TimeZoneAnnotation` is an internal annotation struct.
-#[derive(Debug, Clone)]
 #[allow(unused)]
+#[derive(Debug, Clone)]
 pub(crate) struct TimeZoneAnnotation {
     /// Critical Flag for the annotation.
     pub(crate) critical: bool,
@@ -66,7 +67,7 @@ pub(crate) fn parse_ambiguous_tz_annotation(
 
                 peek_pos += 1;
             }
-            return Err(ParserError::abrupt_end());
+            return Err(ParserError::AbruptEnd);
         }
         let tz = parse_tz_annotation(cursor)?;
         return Ok(Some(tz));
@@ -80,14 +81,14 @@ pub(crate) fn parse_ambiguous_tz_annotation(
 }
 
 fn parse_tz_annotation(cursor: &mut Cursor) -> ParserResult<TimeZoneAnnotation> {
-    assert_syntax!(is_annotation_open(cursor.abrupt_next()?), AnnotationOpen,);
+    assert_syntax!(is_annotation_open(cursor.abrupt_next()?), AnnotationOpen);
 
     let critical = cursor.check_or(false, is_critical_flag);
     cursor.advance_if(critical);
 
     let tz = parse_time_zone(cursor)?;
 
-    assert_syntax!(is_annotation_close(cursor.abrupt_next()?), AnnotationClose,);
+    assert_syntax!(is_annotation_close(cursor.abrupt_next()?), AnnotationClose);
 
     Ok(TimeZoneAnnotation { critical, tz })
 }
@@ -127,10 +128,7 @@ fn parse_tz_iana_name(cursor: &mut Cursor) -> ParserResult<TimeZone> {
         }
 
         if is_tz_name_separator(potential_value_char) {
-            assert_syntax!(
-                cursor.peek_n(2).map_or(false, is_tz_char),
-                IanaCharPostSeparator,
-            );
+            assert_syntax!(cursor.check_or(false, is_tz_char), IanaCharPostSeparator,);
             continue;
         }
 

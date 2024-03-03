@@ -238,8 +238,6 @@ fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
 
         let year = sign * year_value;
 
-        // NOTE: Below is a RangeError check -> validate.
-
         return Ok(year);
     }
 

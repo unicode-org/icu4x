@@ -71,6 +71,13 @@ impl IxdtfParser {
         )
     }
 
+    /// Parses the source a ZonedDateTime string
+    ///
+    /// Parses the string as a datetime string with the time zoned annotation being required.
+    pub fn parse_zoned_date_time(&mut self) -> ParserResult<IsoParseRecord> {
+        datetime::parse_annotated_date_time(DateTimeFlags::ZONED, &mut self.cursor)
+    }
+
     /// Parses the source as a Year-Month string
     ///
     /// This will parse a valid date time string or year month string.

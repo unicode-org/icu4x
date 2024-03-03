@@ -30,7 +30,7 @@ pub(crate) struct KeyValueAnnotation {
     pub(crate) critical: bool,
 }
 
-/// Strictly a Parsing Intermediary for the checking the common annotation backing.
+/// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet {
     pub(crate) tz: Option<TimeZoneAnnotation>,
     pub(crate) calendar: Option<String>,
@@ -98,7 +98,7 @@ pub(crate) fn parse_annotations(cursor: &mut Cursor) -> ParserResult<RecognizedA
 
 /// Parse an annotation with an `AnnotationKey`=`AnnotationValue` pair.
 fn parse_kv_annotation(cursor: &mut Cursor) -> ParserResult<KeyValueAnnotation> {
-    assert_syntax!(is_annotation_open(cursor.abrupt_next()?), AnnotationOpen,);
+    assert_syntax!(is_annotation_open(cursor.abrupt_next()?), AnnotationOpen);
 
     let critical = cursor.check_or(false, is_critical_flag);
     cursor.advance_if(critical);
@@ -112,7 +112,7 @@ fn parse_kv_annotation(cursor: &mut Cursor) -> ParserResult<KeyValueAnnotation> 
 
     // Parse AnnotationValue.
     let annotation_value = parse_annotation_value(cursor)?;
-    assert_syntax!(is_annotation_close(cursor.abrupt_next()?), AnnotationClose,);
+    assert_syntax!(is_annotation_close(cursor.abrupt_next()?), AnnotationClose);
 
     Ok(KeyValueAnnotation {
         key: annotation_key,
@@ -136,7 +136,7 @@ fn parse_annotation_key(cursor: &mut Cursor) -> ParserResult<String> {
             return Ok(cursor.slice(key_start, cursor.pos()));
         }
 
-        assert_syntax!(is_a_key_char(potential_key_char), AnnotationKeyChar,);
+        assert_syntax!(is_a_key_char(potential_key_char), AnnotationKeyChar);
     }
 
     Err(ParserError::abrupt_end())

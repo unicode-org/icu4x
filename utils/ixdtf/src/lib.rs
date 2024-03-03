@@ -97,8 +97,6 @@
 //! [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
 
 #![no_std]
-// TODO(#2127): Fix this lint.
-#![allow(clippy::needless_return)]
 #![cfg_attr(
     not(test),
     deny(

@@ -17,7 +17,7 @@ use crate::{
     ParserError, ParserResult,
 };
 
-use crate::alloc::string::ToString;
+use alloc::string::ToString;
 
 pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseRecord> {
     let sign = if cursor.check(is_sign).ok_or_else(ParserError::abrupt_end)? {

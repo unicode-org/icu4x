@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 //! An error enum for representing `ixdtf` parsing errors.
 
-use crate::alloc::string::String;
+use alloc::string::String;
 
 #[non_exhaustive]
 #[derive(PartialEq, Clone, Debug)]

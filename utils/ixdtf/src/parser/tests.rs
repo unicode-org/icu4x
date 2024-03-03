@@ -33,7 +33,6 @@ fn temporal_parser_basic() {
 
 #[test]
 fn temporal_date_time_max() {
-    // Fractions not accurate, but for testing purposes.
     let date_time =
         "+002020-11-08T12:28:32.329402834[!America/Argentina/ComodRivadavia][!u-ca=iso8601]";
 
@@ -49,6 +48,70 @@ fn temporal_date_time_max() {
             microsecond: 402,
             nanosecond: 834,
         })
+    );
+}
+
+#[test]
+fn good_zoned_date_time() {
+    let zdt = "2020-04-08[America/Chicago]";
+    let result = IxdtfParser::new(zdt).parse_zoned_date_time().unwrap();
+    assert_eq!(
+        result.date,
+        DateRecord {
+            year: 2020,
+            month: 4,
+            day: 8,
+        }
+    );
+    assert_eq!(
+        result.tz,
+        Some(TimeZone {
+            name: Some("America/Chicago".to_owned()),
+            offset: None,
+        })
+    );
+}
+
+#[test]
+fn bad_zoned_date_time() {
+    let bad_value = "2020-04-08(America/Chicago]";
+    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    assert_eq!(
+        err,
+        Err(ParserError::MissingRequiredTzAnnotation),
+        "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2020-04-08[America/Chicago)";
+    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    assert_eq!(
+        err,
+        Err(ParserError::IanaChar),
+        "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2020-04-08[America/ Chicago)";
+    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    assert_eq!(
+        err,
+        Err(ParserError::IanaCharPostSeparator),
+        "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2020-04-08[Amer";
+    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    assert_eq!(
+        err,
+        Err(ParserError::AbruptEnd),
+        "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2020-04-08[u-ca=iso8601][Europe/London]";
+    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    assert_eq!(
+        err,
+        Err(ParserError::MissingRequiredTzAnnotation),
+        "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 }
 
@@ -199,6 +262,14 @@ fn invalid_annotations() {
     assert_eq!(
         err,
         Err(ParserError::AnnotationValueChar),
+        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2021-01-29 02:12:48+01:00:00[u][u-ca=iso8601]";
+    let err = IxdtfParser::new(bad_value).parse_instant();
+    assert_eq!(
+        err,
+        Err(ParserError::InvalidAnnotation),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 }
