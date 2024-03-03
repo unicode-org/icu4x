@@ -13,7 +13,7 @@ use crate::{
     ParserError, ParserResult,
 };
 
-use alloc::string::{String, ToString};
+use alloc::string::String;
 
 /// Parse `TimeRecord`
 pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord> {
@@ -130,7 +130,7 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<f64>> {
 
     let fraction_value = fraction
         .parse::<f64>()
-        .map_err(|e| ParserError::External(e.to_string()))?;
+        .map_err(|_| ParserError::ParseFloat)?;
     Ok(Some(fraction_value))
 }
 

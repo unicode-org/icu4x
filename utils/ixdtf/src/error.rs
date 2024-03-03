@@ -3,12 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 //! An error enum for representing `ixdtf` parsing errors.
 
-use alloc::string::String;
-
 #[non_exhaustive]
 #[derive(PartialEq, Clone, Debug)]
 pub enum ParserError {
-    External(String),
+    ParseFloat,
     AbruptEnd,
     InvalidEnd,
     InvalidMonthRange,
@@ -68,7 +66,7 @@ impl ParserError {
 impl core::fmt::Display for ParserError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let msg = match self {
-            ParserError::External(s) => s,
+            ParserError::ParseFloat => "Invalid float while parsing fraction part.",
             ParserError::AbruptEnd => "Parsing ended abruptly.",
             ParserError::InvalidEnd => "Invalid chars beyond parsing targets.",
             ParserError::InvalidMonthRange => "Invalid month value provided.",

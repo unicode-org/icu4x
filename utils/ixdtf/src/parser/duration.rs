@@ -17,8 +17,6 @@ use crate::{
     ParserError, ParserResult,
 };
 
-use alloc::string::ToString;
-
 pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseRecord> {
     let sign = if cursor.check(is_sign).ok_or_else(ParserError::abrupt_end)? {
         cursor.abrupt_next()? == '+'
@@ -68,18 +66,11 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
     let mut previous_unit = DateUnit::None;
 
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        let digit_start = cursor.pos();
-
-        while cursor.next().is_some() {
-            if !cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-                break;
-            }
+        let mut value: i32 = 0;
+        while cursor.check_or(false, |c| c.is_ascii_digit()) {
+            let digit = cursor.next_digit()?.ok_or(ParserError::AbruptEnd)?;
+            value = value * 10 + i32::from(digit);
         }
-
-        let value = cursor
-            .slice(digit_start, cursor.pos())
-            .parse::<i32>()
-            .map_err(|err| ParserError::External(err.to_string()))?;
 
         match cursor.next() {
             Some(ch) if is_year_designator(ch) => {
@@ -110,7 +101,7 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
                 date.days = value;
                 previous_unit = DateUnit::Day;
             }
-            Some(_) | None => return Err(ParserError::abrupt_end()),
+            Some(_) | None => return Err(ParserError::AbruptEnd),
         }
     }
 
@@ -136,18 +127,11 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
     let mut previous_unit = TimeUnit::None;
     let mut fraction_present = false;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        let digit_start = cursor.pos();
-
-        while cursor.next().is_some() {
-            if !cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-                break;
-            }
+        let mut value: i32 = 0;
+        while cursor.check_or(false, |c| c.is_ascii_digit()) {
+            let digit = cursor.next_digit()?.ok_or(ParserError::AbruptEnd)?;
+            value = value * 10 + i32::from(digit);
         }
-
-        let value = cursor
-            .slice(digit_start, cursor.pos())
-            .parse::<i32>()
-            .map_err(|err| ParserError::External(err.to_string()))?;
 
         let fraction = if let Some(fraction) = parse_fraction(cursor)? {
             fraction_present = true;
