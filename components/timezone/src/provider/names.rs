@@ -15,7 +15,7 @@
 use crate::TimeZoneBcp47Id;
 use core::str;
 use icu_provider::prelude::*;
-use zerotrie::ZeroTrie;
+use zerotrie::{ZeroTrie, ZeroAsciiIgnoreCaseTrie};
 use zerovec::{VarZeroVec, ZeroVec};
 
 /// A mapping from lowercase IANA time zone identifiers to BCP-47 time zone identifiers.
@@ -72,12 +72,11 @@ pub struct IanaToBcp47MapV1<'data> {
     databake(path = icu_timezone::provider::names),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
 pub struct IanaToBcp47MapV2<'data> {
     /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
     /// The IANA identifiers are normal-case.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    pub map: ZeroAsciiIgnoreCaseTrie<ZeroVec<'data, u8>>,
     /// A sorted list of BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
     // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
