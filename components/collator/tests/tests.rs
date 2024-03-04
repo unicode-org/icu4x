@@ -165,6 +165,36 @@ fn test_de() {
         Ordering::Greater,
     ];
 
+    let expect_de_at = [
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Greater,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Equal,
+        Ordering::Greater,
+        Ordering::Greater,
+        Ordering::Equal,
+        Ordering::Greater,
+        Ordering::Greater,
+    ];
+
+    let expect_de_de = [
+        Ordering::Less,
+        Ordering::Less,
+        Ordering::Less,
+        Ordering::Greater,
+        Ordering::Less,
+        Ordering::Less,
+        Ordering::Equal,
+        Ordering::Greater,
+        Ordering::Greater,
+        Ordering::Equal,
+        Ordering::Greater,
+        Ordering::Greater,
+    ];
+
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Primary);
 
@@ -180,6 +210,18 @@ fn test_de() {
         // Note: German uses the root collation
         let collator = Collator::try_new(&Default::default(), options).unwrap();
         check_expectations(&collator, &left, &right, &expect_tertiary);
+    }
+
+    {
+        let locale: Locale = "de-AT-u-co-phonebk".parse().unwrap();
+        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        check_expectations(&collator, &left, &right, &expect_de_at);
+    }
+
+    {
+        let locale: Locale = "de-DE-u-co-phonebk".parse().unwrap();
+        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        check_expectations(&collator, &left, &right, &expect_de_de);
     }
 }
 
@@ -615,6 +657,40 @@ fn test_reordering() {
         assert_eq!(collator.compare("অ", "a"), Ordering::Less);
         assert_eq!(collator.compare("ऄ", "a"), Ordering::Less);
         assert_eq!(collator.compare("অ", "ऄ"), Ordering::Less);
+    }
+}
+
+#[test]
+fn test_vi() {
+    {
+        let locale = langid!("vi");
+        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+
+        assert_eq!(collator.compare("a", "b"), Ordering::Less);
+        assert_eq!(collator.compare("a", "á"), Ordering::Less);
+        assert_eq!(collator.compare("à", "á"), Ordering::Less);
+        assert_eq!(collator.compare("ả", "ã"), Ordering::Less);
+        assert_eq!(collator.compare("ạ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ê", "ế"), Ordering::Less);
+        assert_eq!(collator.compare("u", "ư"), Ordering::Less);
+        assert_eq!(collator.compare("d", "đ"), Ordering::Less);
+        assert_eq!(collator.compare("ô", "ơ"), Ordering::Less);
+        assert_eq!(collator.compare("â", "ấ"), Ordering::Less); // Similar sounding
+    }
+
+    {
+        let collator = Collator::try_new(Default::default(), CollatorOptions::new()).unwrap();
+
+        assert_eq!(collator.compare("a", "b"), Ordering::Less);
+        assert_eq!(collator.compare("a", "á"), Ordering::Less);
+        assert_eq!(collator.compare("à", "á"), Ordering::Greater);
+        assert_eq!(collator.compare("ả", "ã"), Ordering::Greater);
+        assert_eq!(collator.compare("ạ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ê", "ế"), Ordering::Less);
+        assert_eq!(collator.compare("u", "ư"), Ordering::Less);
+        assert_eq!(collator.compare("d", "đ"), Ordering::Less);
+        assert_eq!(collator.compare("ô", "ơ"), Ordering::Less);
+        assert_eq!(collator.compare("â", "ấ"), Ordering::Less); // Similar sounding
     }
 }
 
