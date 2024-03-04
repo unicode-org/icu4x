@@ -38,6 +38,10 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
             })
             .collect();
 
+        // TODO(#4031): Use this ignore-case trie in the data. For now, check that it builds.
+        zerotrie::ZeroAsciiIgnoreCaseTrie::try_from(&map)
+            .expect("Data should work in case-insensitive trie");
+
         let data_struct = IanaToBcp47MapV1 {
             map: ZeroTriePerfectHash::try_from(&map)
                 .map_err(|e| {

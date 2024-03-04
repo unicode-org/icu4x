@@ -8,8 +8,6 @@ import { ICU4XPluralOperands } from "./ICU4XPluralOperands";
 
 /**
 
- * FFI version of `PluralRules`.
-
  * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html Rust documentation for `PluralRules`} for more information.
  */
 export class ICU4XPluralRules {

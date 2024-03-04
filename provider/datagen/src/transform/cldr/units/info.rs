@@ -8,13 +8,13 @@ use crate::transform::cldr::{
     cldr_serde::{self},
     units::helpers::ScientificNumber,
 };
+use icu_experimental::units::{
+    measureunit::MeasureUnitParser,
+    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
+};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
-};
-use icu_unitsconversion::{
-    measureunit::MeasureUnitParser,
-    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
@@ -109,9 +109,9 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
 #[test]
 fn test_basic() {
+    use icu_experimental::units::provider::*;
     use icu_locid::locale;
     use icu_provider::prelude::*;
-    use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
     use zerofrom::ZeroFrom;

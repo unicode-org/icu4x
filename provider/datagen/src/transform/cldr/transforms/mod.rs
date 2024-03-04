@@ -4,11 +4,11 @@
 
 use super::cldr_serde::transforms;
 use super::source::CldrCache;
+use icu_experimental::transliterate::provider::*;
+use icu_experimental::transliterate::RuleCollection;
 use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_transliterate::provider::*;
-use icu_transliterate::RuleCollection;
 use std::sync::Mutex;
 
 impl CldrCache {

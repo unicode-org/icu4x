@@ -5,7 +5,7 @@
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 
-use icu_displaynames::provider::*;
+use icu_experimental::displaynames::provider::*;
 use icu_locid::subtags::Language;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};

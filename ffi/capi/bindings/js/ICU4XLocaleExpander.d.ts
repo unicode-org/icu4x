@@ -32,15 +32,11 @@ export class ICU4XLocaleExpander {
 
   /**
 
-   * FFI version of `LocaleExpander::maximize()`.
-
    * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize Rust documentation for `maximize`} for more information.
    */
   maximize(locale: ICU4XLocale): ICU4XTransformResult;
 
   /**
-
-   * FFI version of `LocaleExpander::minimize()`.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize Rust documentation for `minimize`} for more information.
    */

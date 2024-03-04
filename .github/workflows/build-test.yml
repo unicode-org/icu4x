@@ -10,19 +10,26 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'release/**'
   pull_request:
-    branches: '*'
   workflow_dispatch:
     inputs:
-      nightly:
-        description: "Test on latest nightly"
-        required: true
-        default: false
-        type: boolean
+      channel:
+        description: "Channel"
+        default: 'nightly'
+        type: choice
+        options:
+        - pinned-stable
+        - stable
+        - beta
+        - nightly
   schedule:
     # Run nightly cronjob CI every day at 14 UTC / 6AM PST / 3PM CET
     - cron:  '0 14 * * *'
+    # Run beta slightly later
+    - cron:  '1 14 * * *'
 
 concurrency:
   # Allow one run at a time for PRs, but multiple for other invocations
@@ -49,48 +56,21 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      uses: taiki-e/install-action@cargo-make
 
-    # Cargo-all-features boilerplate
-    - name: Get cargo-all-features version
-      if: matrix.behavior != 'check'
-      id: cargo-all-features-version
-      run: |
-        echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-all-features
-      if: matrix.behavior != 'check'
-      uses: actions/cache@v3
-      id: cargo-all-features-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-all-features
-          ~/.cargo/bin/cargo-all-features.exe
-        key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
+    # Job-specific dependencies
+    - name: Install cargo-binstall 
+      uses: taiki-e/install-action@cargo-binstall
     - name: Install cargo-all-features
-      if: matrix.behavior != 'check' && steps.cargo-all-features-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-all-features
+      run: cargo-binstall -y cargo-all-features
 
     # No toolchain boilerplate as this runs on MSRV
 
     # Actual job
     - name: Check
       run: cargo make ci-job-msrv-${{ matrix.behavior }}
+
 
   # ci-job-test
   test:
@@ -103,33 +83,19 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
     # Actual job
     - name: Run `cargo make ci-job-test`
       run: cargo make ci-job-test
+
 
   # ci-job-test-docs
   test-docs:
@@ -138,33 +104,40 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
     # Actual job
     - name: Run `cargo make ci-job-test-docs`
       run: cargo make ci-job-test-docs
+
+
+  # ci-job-test-gigo
+  test-gigo:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@cargo-make
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-gigo`
+      run: cargo make ci-job-test-gigo
+
 
   # ci-job-test-tutorials
   test-tutorials:
@@ -177,27 +150,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -212,6 +170,7 @@ jobs:
     - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
       run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
 
+
   # ci-job-testdata
   testdata:
     strategy:
@@ -223,26 +182,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -252,10 +197,13 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
+    - name: Install rustfmt
+      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
       run: cargo make ci-job-testdata
+
 
   # ci-job-testdata-legacy
   testdata-legacy:
@@ -265,44 +213,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
-    # Cargo-all-features boilerplate
-    - name: Get cargo-all-features version
-      id: cargo-all-features-version
-      run: |
-        echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-all-features
-      uses: actions/cache@v3
-      id: cargo-all-features-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-all-features
-          ~/.cargo/bin/cargo-all-features.exe
-        key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
-    - name: Install cargo-all-features
-      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-all-features
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -312,10 +228,15 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
+    - name: Install cargo-binstall 
+      uses: taiki-e/install-action@cargo-binstall
+    - name: Install cargo-all-features
+      run: cargo-binstall -y cargo-all-features
 
     # Actual job
     - name: Run `cargo make ci-job-testdata-legacy`
       run: cargo make ci-job-testdata-legacy
+
 
   # ci-job-full-datagen
   full-datagen:
@@ -324,27 +245,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -361,6 +267,7 @@ jobs:
     - name: Run `cargo make ci-job-full-datagen`
       run: cargo make ci-job-full-datagen
 
+
   # ci-job-test-c
   test-c:
     runs-on: ubuntu-latest
@@ -376,28 +283,12 @@ jobs:
         rustup toolchain install stable
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        # Since this is inside a container, use a different key than the other jobs
-        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -405,9 +296,12 @@ jobs:
     - name: Run apt-get update
       run: |
         apt-get update
-    - name: Install Clang-15
+    - name: Install LLVM 16
       run: |
-        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
+        apt-get install -y clang-16 lld-16 llvm-16-dev libc++-16-dev
+    - name: Install LLVM 16 nightly
+      run: |
+        rustup install nightly-2023-08-08
     - name: Install GCC 11
       run: |
         apt-get install -y gcc-11 g++-11
@@ -425,6 +319,11 @@ jobs:
       run: cargo make ci-job-test-c
       env:
         CXX: "g++-11"
+    - name: Test C++ with clang
+      run: cargo make test-cpp
+      env:
+        CXX: "clang++"
+
 
   # ci-job-test-js
   test-js:
@@ -441,28 +340,12 @@ jobs:
         rustup toolchain install stable
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        # Since this is inside a container, use a different key than the other jobs
-        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -487,6 +370,7 @@ jobs:
     - name: Run `cargo make ci-job-test-js`
       run: cargo make ci-job-test-js
 
+
   # ci-job-test-dart
   test-dart:
     runs-on: ubuntu-latest
@@ -500,28 +384,12 @@ jobs:
         rustup toolchain install stable
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        # Since this is inside a container, use a different key than the other jobs
-        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -534,6 +402,7 @@ jobs:
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
  
+
   # ci-job-nostd
   nostd:
     runs-on: ubuntu-latest
@@ -541,33 +410,19 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
     # Actual job
     - name: Run `cargo make ci-job-nostd`
       run: cargo make ci-job-nostd
+
 
   # ci-job-diplomat
   diplomat:
@@ -576,33 +431,19 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
     # Actual job
     - name: Run `cargo make ci-job-diplomat`
       run: cargo make ci-job-diplomat
+
 
   # ci-job-gn
   gn:
@@ -612,27 +453,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -648,29 +474,13 @@ jobs:
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
 
-    - name: Get cargo-rdme version
-      id: cargo-rdme-version
-      run: |
-        echo "hash=$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-rdme
-      uses: actions/cache@v3
-      id: cargo-rdme-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-rdme
-          ~/.cargo/bin/cargo-rdme.exe
-        key: ${{ runner.os }}-readme-${{ steps.cargo-rdme-version.outputs.hash }}
     - name: Install cargo-rdme
-      if: steps.cargo-rdme-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-rdme
-        version: latest
+      uses: taiki-e/install-action@cargo-rdme
 
     # Actual job
     - name: Run `cargo make ci-job-gn`
       run: cargo make ci-job-gn
+
 
   # ci-job-fmt
   fmt:
@@ -679,27 +489,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -711,6 +506,7 @@ jobs:
     - name: Check Format
       run: cargo make ci-job-fmt
 
+
   # ci-job-tidy
   tidy:
     runs-on: ubuntu-latest
@@ -718,54 +514,23 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
     # Job-specific dependencies
-    - name: Get cargo-rdme version
-      id: cargo-rdme-version
-      run: |
-        echo "hash=$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-rdme
-      uses: actions/cache@v3
-      id: cargo-rdme-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-rdme
-          ~/.cargo/bin/cargo-rdme.exe
-        key: ${{ runner.os }}-readme-${{ steps.cargo-rdme-version.outputs.hash }}
     - name: Install cargo-rdme
-      if: steps.cargo-rdme-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-rdme
-        version: latest
+      uses: taiki-e/install-action@cargo-rdme
 
     # Actual job
     - name: Tidy
       run: cargo make ci-job-tidy
+
 
   # ci-job-clippy
   clippy:
@@ -777,26 +542,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -808,6 +559,7 @@ jobs:
     - name: Run `ci-job-clippy`
       run: cargo make ci-job-clippy
 
+
   # ci-job-doc
   doc:
     runs-on: ubuntu-latest
@@ -816,27 +568,12 @@ jobs:
     - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
+      uses: taiki-e/install-action@cargo-make
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
+      run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
 
@@ -853,11 +590,23 @@ jobs:
     steps:
       - name: Notify slack of failure
         uses: ravsamhq/notify-slack-action@v1
+        # Only notify main slack of failure for beta runs and for failed main CI
+        if: (github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push'
         with:
           notify_when: failure
           status: failure # We do the filtering earlier
           notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Nightly' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notify nightly slack of failure
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          notify_when: failure
+          status: failure # We do the filtering earlier
+          notification_title: ''
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly') || (github.event_name == 'push') && 'Main' || 'Manually dispatched on `${{ inputs.channel }}`')) }}
+          footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_WEBHOOK_URL }}

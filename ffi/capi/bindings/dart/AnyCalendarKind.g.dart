@@ -65,34 +65,30 @@ enum AnyCalendarKind {
 
   /// Read the calendar type off of the -u-ca- extension on a locale.
   ///
-  /// Errors if there is no calendar on the locale or if the locale's calendar
+  /// Returns nothing if there is no calendar on the locale or if the locale's calendar
   /// is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  factory AnyCalendarKind.forLocale(Locale locale) {
+  static AnyCalendarKind? getForLocale(Locale locale) {
     final result = _ICU4XAnyCalendarKind_get_for_locale(locale._underlying);
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return AnyCalendarKind.values[result.union.ok];
   }
 
   /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
   ///
-  /// Errors if the calendar is not known or supported.
+  /// Returns nothing if the calendar is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  factory AnyCalendarKind.forBcp47(String s) {
+  static AnyCalendarKind? getForBcp47(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XAnyCalendarKind_get_for_bcp47(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return AnyCalendarKind.values[result.union.ok];
   }

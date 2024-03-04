@@ -110,7 +110,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCo
   auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -122,7 +122,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XComposingNormalizer::norma
   auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

@@ -99,7 +99,7 @@ pub mod datetime;
 pub mod datetime_formatter;
 #[cfg(feature = "icu_decimal")]
 pub mod decimal;
-#[cfg(feature = "icu_displaynames")]
+#[cfg(feature = "experimental_components")]
 pub mod displaynames;
 #[cfg(feature = "icu_locid_transform")]
 pub mod fallbacker;

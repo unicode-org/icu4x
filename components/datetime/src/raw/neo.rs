@@ -4,6 +4,7 @@
 
 use core::fmt;
 
+use crate::calendar::DatePatternV1Provider;
 use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
@@ -79,14 +80,13 @@ where
 }
 
 impl DatePatternSelectionData {
-    pub(crate) fn try_new_with_length<M, P>(
-        provider: &P,
+    pub(crate) fn try_new_with_length<M>(
+        provider: &(impl DatePatternV1Provider<M> + ?Sized),
         locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, Error>
     where
-        P: DataProvider<M> + ?Sized,
-        M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+        M: DataMarker<Yokeable = DatePatternV1<'static>>,
     {
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
@@ -232,20 +232,21 @@ impl<'a> TimePatternDataBorrowed<'a> {
 
 impl DateTimeGluePatternSelectionData {
     pub(crate) fn try_new_with_lengths<M, P>(
+        date_pattern_provider: &(impl DatePatternV1Provider<M> + ?Sized),
         provider: &P,
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, Error>
     where
-        P: DataProvider<M>
-            + DataProvider<TimePatternV1Marker>
-            + DataProvider<DateTimePatternV1Marker>
-            + ?Sized,
-        M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+        P: DataProvider<TimePatternV1Marker> + DataProvider<DateTimePatternV1Marker> + ?Sized,
+        M: DataMarker<Yokeable = DatePatternV1<'static>>,
     {
-        let date =
-            DatePatternSelectionData::try_new_with_length::<M, _>(provider, locale, date_length)?;
+        let date = DatePatternSelectionData::try_new_with_length::<M>(
+            date_pattern_provider,
+            locale,
+            date_length,
+        )?;
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(

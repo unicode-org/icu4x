@@ -3,6 +3,12 @@
 version = 3
 
 [[package]]
+name = "autocfg"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
+
+[[package]]
 name = "bitflags"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -48,7 +54,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696#acc3e0280265274f217208aa88df792a1f795696"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -59,7 +65,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696#acc3e0280265274f217208aa88df792a1f795696"
 dependencies = [
  "log",
 ]
@@ -67,7 +73,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=acc3e0280265274f217208aa88df792a1f795696#acc3e0280265274f217208aa88df792a1f795696"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -153,7 +159,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -264,20 +270,34 @@ name = "icu_decimal_data"
 version = "1.4.0"
 
 [[package]]
-name = "icu_displaynames"
-version = "0.11.2"
+name = "icu_experimental"
+version = "0.0.0"
 dependencies = [
- "icu_displaynames_data",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_collections",
+ "icu_decimal",
+ "icu_experimental_data",
  "icu_locid",
  "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
  "icu_provider",
+ "litemap",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "smallvec",
  "tinystr",
+ "writeable",
+ "zerotrie",
  "zerovec",
 ]
 
 [[package]]
-name = "icu_displaynames_data"
-version = "1.4.0"
+name = "icu_experimental_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_list"
@@ -324,7 +344,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -505,6 +525,46 @@ name = "memchr"
 version = "2.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
+
+[[package]]
+name = "num-bigint"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "608e7659b5c3d7cba262d894801b9ec9d00de989e8a82bd4bef91d08da45cdc0"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
+name = "num-integer"
+version = "0.1.46"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.2.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da0df0e5185db44f69b44f26786fe401b6c293d1907744beaa7fa62b2e5a517a"
+dependencies = [
+ "autocfg",
+]
 
 [[package]]
 name = "num_threads"
@@ -969,20 +1029,8 @@ name = "icu_codepointtrie_builder"
 version = "0.3.7"
 
 [[patch.unused]]
-name = "icu_compactdecimal"
-version = "0.2.3"
-
-[[patch.unused]]
-name = "icu_compactdecimal_data"
-version = "1.4.0"
-
-[[patch.unused]]
 name = "icu_datagen"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_dimension"
-version = "0.0.0"
+version = "1.4.1"
 
 [[patch.unused]]
 name = "icu_freertos"
@@ -997,36 +1045,12 @@ name = "icu_pattern"
 version = "0.1.5"
 
 [[patch.unused]]
-name = "icu_personnames"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "icu_provider_blob"
 version = "1.4.0"
 
 [[patch.unused]]
 name = "icu_provider_fs"
 version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_relativetime"
-version = "0.1.4"
-
-[[patch.unused]]
-name = "icu_relativetime_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_transliterate"
-version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_unicodeset_parse"
-version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_unitsconversion"
-version = "0.0.0"
 
 [[patch.unused]]
 name = "ixdtf"

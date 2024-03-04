@@ -12,10 +12,6 @@
 #include "ICU4XPluralCategories.h"
 
 
-
-/**
- * FFI version of `PluralRules::categories()` data.
- */
 struct ICU4XPluralCategories {
  public:
   bool zero;

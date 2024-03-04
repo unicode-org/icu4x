@@ -351,7 +351,7 @@ pub enum BackwardSecondLevel {
 /// [`core::cmp::Ordering::Less`] and [`core::cmp::Ordering::Greater`]), it is
 /// possible to check if a set of human-readable strings contains a full-string
 /// fuzzy match of a user-entered string, where "fuzzy" means case-insensitive and
-/// accent-insentive for scripts that have such concepts and something roughly
+/// accent-insensitive for scripts that have such concepts and something roughly
 /// similar for other scripts.
 ///
 /// Due to the very limited utility, ICU4X data does not include search collations

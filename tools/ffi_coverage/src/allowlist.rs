@@ -113,21 +113,6 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
 
-        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
-        // Potential solutions:
-        // - borrow and clone (cheap as long it's not json)
-        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
-        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
-        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
-        //   can be destructively passed to these constructors via &mut self. All future
-        //   specialized constructors show up on this type instead.
-        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
-        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
-
-        // experimental
-        "icu::datetime::DateTimeFormatter::resolve_components",
-        "icu::datetime::TypedDateTimeFormatter::resolve_components",
-
         // Individual calendars: Currently the main entry point is AnyCalendar
         "icu::calendar::buddhist",
         "icu::calendar::coptic",
@@ -186,19 +171,42 @@ lazy_static::lazy_static! {
         "icu::calendar::DateDuration",
         "icu::calendar::DateDurationUnit",
 
-        // mostly used for provider, may in the future be exposed for options
-        "icu::datetime::fields",
-        // experimental
-        "icu::datetime::options::components",
-        "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeFormatter::try_new_experimental",
-        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
-
         // Not necessary for now
         "icu::calendar::Date::day_of_year_info",
 
+        // CPIL errors not reachable
+        "icu::collections::codepointinvlist::CodePointInversionListError",
+        "icu::collections::codepointinvlist::Error",
+
+        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
+        // Potential solutions:
+        // - borrow and clone (cheap as long it's not json)
+        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
+        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
+        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
+        //   can be destructively passed to these constructors via &mut self. All future
+        //   specialized constructors show up on this type instead.
+        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
+        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
+
+        // experimental
+        "icu::datetime::DateTimeFormatter::resolve_components",
+        "icu::datetime::TypedDateTimeFormatter::resolve_components",
+
+        // mostly used for provider, may in the future be exposed for options
+        "icu::datetime::fields",
+
+        // experimental
+        "icu::datetime::neo",
+        "icu::datetime::neo_pattern",
+        "icu::datetime::options::components",
+        "icu::datetime::options::preferences",
+        "icu::datetime::DateTimeFormatter::try_new_experimental",
+        "icu::datetime::FormattedDateTimePattern",
+        "icu::datetime::TypedDateTimeNames",
+        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
         // Formatting wrappers, may be supported in the future
         "icu::datetime::FormattedTimeZone",
@@ -206,53 +214,15 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedZonedDateTime",
         "icu::decimal::FormattedFixedDecimal",
 
-        // The FFI constructor takes a single option instead of a struct
-        "icu::decimal::options::FixedDecimalFormatterOptions",
-
         // Experimental and unused decimal types
         "fixed_decimal::CompactDecimal",
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
 
-        // Rust-specific power user API for rules ASTS and such
-        // could be exposed in the future but it's complicated
-        "icu::plurals::rules",
-
-        // Pulls in libstd, which we'd rather not do
-        "icu::plurals::PluralOperands::n",
-
-        // May be exposed when we have associated constants over FFI
-        "icu::properties::BidiClass",
-        "icu::properties::CanonicalCombiningClass",
-        "icu::properties::EastAsianWidth",
-        "icu::properties::GeneralCategory",
-        "icu::properties::GeneralCategoryGroup",
-        "icu::properties::GraphemeClusterBreak",
-        "icu::properties::IndicSyllabicCategory",
-        "icu::properties::LineBreak",
-        "icu::properties::Script",
-        "icu::properties::SentenceBreak",
-        "icu::properties::WordBreak",
-
-        // Experimental
-        "icu::properties::maps::canonical_combining_class",
-        "icu::properties::maps::load_canonical_combining_class",
-
-        // Not planned for 1.0
-        "icu::properties::maps::CodePointMapData::as_code_point_trie",
-        "icu::properties::maps::CodePointMapData::from_code_point_trie",
-        "icu::properties::maps::CodePointMapData::to_code_point_trie",
-        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
-        "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
-        "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
-        "icu::collections::codepointinvlist::CodePointInversionList",
-        "icu::collections::codepointinvlist::CodePointInversionListULE",
-        "icu::collections::codepointinvlist::CodePointInversionListError",
-        "icu::collections::codepointinvlist::Error",
-        "icu::collections::codepointinvliststringlist",
-        "icu::collections::codepointtrie",
-        "icu::collections::char16trie",
+        // Don't want parts for 1.0
+        "icu::list::parts",
+        // Formatting wrappers, may be supported in the future
+        "icu::list::FormattedList",
 
         // Not planned until someone needs them
         "icu::locid::extensions",
@@ -277,6 +247,49 @@ lazy_static::lazy_static! {
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
 
+        // Rust-specific power user API for rules ASTs and such,
+        // could be exposed in the future but it's complicated
+        "icu::plurals::rules",
+
+        // Experimental
+        "icu::plurals::PluralRulesWithRanges",
+        "icu::plurals::PluralRulesWithRanges::categories",
+        "icu::plurals::PluralRulesWithRanges::category_for",
+        "icu::plurals::PluralRulesWithRanges::category_for_range",
+        "icu::plurals::PluralRulesWithRanges::resolve_range",
+        "icu::plurals::PluralRulesWithRanges::try_new",
+        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
+        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
+
+        // May be exposed when we have associated constants over FFI
+        "icu::properties::BidiClass",
+        "icu::properties::CanonicalCombiningClass",
+        "icu::properties::EastAsianWidth",
+        "icu::properties::GeneralCategory",
+        "icu::properties::GeneralCategoryGroup",
+        "icu::properties::GraphemeClusterBreak",
+        "icu::properties::IndicSyllabicCategory",
+        "icu::properties::LineBreak",
+        "icu::properties::Script",
+        "icu::properties::SentenceBreak",
+        "icu::properties::WordBreak",
+        "icu::properties::JoiningType",
+
+        // Not planned for 1.0
+        // Only CodePointInversionListBuilder is exposed
+        "icu::collections::codepointinvlist::CodePointInversionList",
+        "icu::collections::codepointinvlist::CodePointInversionListError",
+        "icu::collections::codepointinvliststringlist",
+        "icu::collections::codepointtrie",
+        "icu::collections::char16trie",
+        "icu::properties::maps::CodePointMapData::as_code_point_trie",
+        "icu::properties::maps::CodePointMapData::from_code_point_trie",
+        "icu::properties::maps::CodePointMapData::to_code_point_trie",
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
+        "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
+        "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
+        "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
+
         // Need to think about how to expose DataErrorKind for this to work
         "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
 
@@ -297,42 +310,6 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
-        // Don't want parts for 1.0
-        "icu::list::parts",
-        // Formatting wrappers, may be supported in the future
-        "icu::list::FormattedList",
-
-        // Experimental
-        "icu::compactdecimal",
-        "icu::relativetime",
-        "icu::displaynames",
-        "icu::transliterate",
-        "icu::plurals::PluralRulesWithRanges",
-        "icu::plurals::PluralRulesWithRanges::categories",
-        "icu::plurals::PluralRulesWithRanges::category_for",
-        "icu::plurals::PluralRulesWithRanges::category_for_range",
-        "icu::plurals::PluralRulesWithRanges::resolve_range",
-        "icu::plurals::PluralRulesWithRanges::try_new",
-        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
-        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
-        "fixed_decimal::FixedDecimal::expand_to_increment",
-        "fixed_decimal::FixedDecimal::expanded_to_increment",
-        "fixed_decimal::FixedDecimal::trunc_to_increment",
-        "fixed_decimal::FixedDecimal::trunced_to_increment",
-        "fixed_decimal::FixedDecimal::ceil_to_increment",
-        "fixed_decimal::FixedDecimal::ceiled_to_increment",
-        "fixed_decimal::FixedDecimal::floor_to_increment",
-        "fixed_decimal::FixedDecimal::floored_to_increment",
-        "fixed_decimal::FixedDecimal::half_ceil_to_increment",
-        "fixed_decimal::FixedDecimal::half_ceiled_to_increment",
-        "fixed_decimal::FixedDecimal::half_even_to_increment",
-        "fixed_decimal::FixedDecimal::half_evened_to_increment",
-        "fixed_decimal::FixedDecimal::half_expand_to_increment",
-        "fixed_decimal::FixedDecimal::half_expanded_to_increment",
-        "fixed_decimal::FixedDecimal::half_floor_to_increment",
-        "fixed_decimal::FixedDecimal::half_floored_to_increment",
-        "fixed_decimal::FixedDecimal::half_trunc_to_increment",
-        "fixed_decimal::FixedDecimal::half_trunced_to_increment",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -355,6 +332,10 @@ lazy_static::lazy_static! {
         "icu::segmenter::provider",
         "icu::timezone::provider",
         "icu::transliterate::provider",
+
+        // ULE types that are not in provider modules
+        "icu::collections::codepointinvlist::CodePointInversionListULE",
+        "icu::plurals::PluralCategoryULE",
 
         // Borrowed <-> owned converters
         "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
@@ -381,12 +362,13 @@ lazy_static::lazy_static! {
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::casemap::titlecase::TitlecaseMapper",
         "icu::datetime::options::DateTimeFormatterOptions",
 
-        // Re-exports of errors
         "fixed_decimal::Error",
         "icu::calendar::Error",
         "icu::collator::Error",
+        "icu::collections::codepointinvlist::Error",
         "icu::compactdecimal::Error",
         "icu::datetime::Error",
         "icu::decimal::Error",
@@ -401,19 +383,17 @@ lazy_static::lazy_static! {
         "icu::timezone::Error",
         "icu::transliterator::Error",
 
-        // ULE types that are not in provider modules
-        "icu::plurals::PluralCategoryULE",
-
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
+
         // Rust-specific calendar wrapper stuff
         "icu::calendar::AsCalendar",
-        "icu::datetime::CldrCalendar",
         "icu::calendar::Ref",
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
         "icu::calendar::DateTime::wrap_calendar_in_rc",
         "icu::calendar::DateTime::wrap_calendar_in_arc",
+        "icu::datetime::CldrCalendar",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
@@ -428,52 +408,31 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
 
+        // Options bags which are expanded in FFI to regular functions
+        "icu::datetime::DateTimeFormatterOptions",
+        "icu::datetime::options::length::Bag",
+        "icu::decimal::options::FixedDecimalFormatterOptions",
+
         // Constructing an error is not useful over FFI because it gets turned into
         // a flat ICU4XError anyway
         "icu::calendar::CalendarError::unknown_any_calendar_kind",
-
-        // Rusty input trait
-        "icu::datetime::input",
-
-        // Options bags which are expanded in FFI to regular functions
-        "icu::datetime::DateTimeFormatterOptions",
-        "icu::datetime::time_zone::TimeZoneFormatterOptions",
-        "icu::datetime::options::length::Bag",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types",
 
+        // Rust-specific trait abstraction, handled as individual types over FFI
+        "icu::casemap::ClosureSink",
+
+        // Rusty input trait
+        "icu::datetime::input",
+
         // Convenience iterator for Rust
         "icu::plurals::PluralCategory::all",
-        // associated type
-        "icu::plurals::PluralOperands::Err",
-
-        // locid macros
-        "icu::locid::langid",
-        "icu::locid::locale",
-        "icu::locid::extensions::other::subtag",
-        "icu::locid::extensions::private::subtag",
-        "icu::locid::extensions::transform::key",
-        "icu::locid::extensions::unicode::attribute",
-        "icu::locid::extensions::unicode::key",
-        "icu::locid::extensions::unicode::value",
-        "icu::locid::subtags::language",
-        "icu::locid::subtags::region",
-        "icu::locid::subtags::script",
-        "icu::locid::subtags::variant",
-        // assoc type
-        "icu::locale::Locale::Err",
 
         // locid comparison iteration
         "icu::locid::Locale::strict_cmp_iter",
         "icu::locid::SubtagOrderingResult",
-
-        // The only UTF-8 currently allowed over FFI is potentially-ill-formed.
-        "icu::segmenter::GraphemeClusterBreakIteratorUtf8",
-        "icu::segmenter::LineBreakIteratorUtf8",
-        "icu::segmenter::SentenceBreakIteratorUtf8",
-        "icu::segmenter::WordBreakIteratorUtf8",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
@@ -487,13 +446,24 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
         "icu_provider_adapters::fork::MultiForkByKeyProvider",
 
-        // No macros in FFI
+        // macros
+        "icu::locid::langid",
+        "icu::locid::locale",
+        "icu::locid::extensions::other::subtag",
+        "icu::locid::extensions::private::subtag",
+        "icu::locid::extensions::transform::key",
+        "icu::locid::extensions::unicode::attribute",
+        "icu::locid::extensions::unicode::key",
+        "icu::locid::extensions::unicode::value",
+        "icu::locid::subtags::language",
+        "icu::locid::subtags::region",
+        "icu::locid::subtags::script",
+        "icu::locid::subtags::variant",
         "icu_provider_adapters::make_forking_provider",
 
-        // Rust-specific trait abstraction, handled as individual types over FFI
-        "icu::casemap::ClosureSink",
-        // Reexported
-        "icu::casemap::titlecase::TitlecaseMapper",
+        // assoc types
+        "icu::locale::Locale::Err",
+        "icu::plurals::PluralOperands::Err",
 
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }

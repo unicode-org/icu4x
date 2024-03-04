@@ -6,7 +6,6 @@
 //!
 //! Most tests should either be in-module unit tests or integration tests.
 
-#[cfg(all(feature = "fs_exporter", feature = "use_wasm"))]
 mod make_testdata;
 
 mod data;

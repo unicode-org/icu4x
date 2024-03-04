@@ -11,7 +11,16 @@ part of 'lib.g.dart';
 final class LocaleFallbackIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  LocaleFallbackIterator._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+  final core.List<Object> _edge_a;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  LocaleFallbackIterator._(this._underlying, bool isOwned, this._edge_self, this._edge_a) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -24,7 +33,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
   Locale get get {
     final result = _ICU4XLocaleFallbackIterator_get(_underlying);
-    return Locale._(result, true);
+    return Locale._(result, true, []);
   }
 
   /// Performs one step of the fallback algorithm, mutating the locale.

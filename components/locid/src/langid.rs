@@ -267,7 +267,6 @@ impl LanguageIdentifier {
     ///
     /// ```
     /// use icu::locid::LanguageIdentifier;
-    /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "pl-LaTn-pL",

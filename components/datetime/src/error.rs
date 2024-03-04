@@ -88,6 +88,18 @@ pub enum DateTimeError {
     DuplicateField(Field),
 }
 
+/// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[displaydoc("DateTimeFormatter for {this_kind} calendar was given a {date_kind:?} calendar")]
+#[non_exhaustive]
+pub struct MismatchedCalendarError {
+    /// The calendar kind of the target object (formatter).
+    pub this_kind: AnyCalendarKind,
+    /// The calendar kind of the input object (date being formatted).
+    /// Can be `None` if the input calendar was not specified.
+    pub date_kind: Option<AnyCalendarKind>,
+}
+
 impl From<PatternError> for DateTimeError {
     fn from(e: PatternError) -> Self {
         DateTimeError::Pattern(e)
@@ -121,5 +133,11 @@ impl From<CalendarError> for DateTimeError {
 impl From<DecimalError> for DateTimeError {
     fn from(e: DecimalError) -> Self {
         DateTimeError::FixedDecimalFormatter(e)
+    }
+}
+
+impl From<MismatchedCalendarError> for DateTimeError {
+    fn from(e: MismatchedCalendarError) -> Self {
+        DateTimeError::MismatchedAnyCalendar(e.this_kind, e.date_kind)
     }
 }

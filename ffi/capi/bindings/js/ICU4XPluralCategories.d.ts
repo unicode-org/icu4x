@@ -1,7 +1,5 @@
 
 /**
-
- * FFI version of `PluralRules::categories()` data.
  */
 export class ICU4XPluralCategories {
   zero: boolean;

@@ -33,7 +33,6 @@ use yoke::Yokeable;
 /// ```
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
-/// use std::rc::Rc;
 ///
 /// #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
 /// struct MyDataStruct<'data> {
