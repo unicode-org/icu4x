@@ -199,7 +199,11 @@ fn complex_benches(c: &mut Criterion) {
         suffix: " oranges",
     };
     c.bench_function("complex/write_to_string/medium", |b| {
-        b.iter(|| black_box(COMPLEX_WRITEABLE_MEDIUM).write_to_string().into_owned());
+        b.iter(|| {
+            black_box(COMPLEX_WRITEABLE_MEDIUM)
+                .write_to_string()
+                .into_owned()
+        });
     });
     c.bench_function("complex/display_to_string/medium", |b| {
         b.iter(|| black_box(COMPLEX_WRITEABLE_MEDIUM).to_string());
