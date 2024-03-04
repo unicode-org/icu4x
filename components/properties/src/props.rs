@@ -2512,10 +2512,7 @@ mod test_enumerated_property_completeness {
         lookup: &PropertyValueNameToEnumMapV1<'_>,
         consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
     ) {
-        let mut data = lookup
-            .map
-            .iter_copied_values()
-            .collect::<Vec<_>>();
+        let mut data = lookup.map.iter_copied_values().collect::<Vec<_>>();
         data.sort_by_key(|(_, v)| *v);
         data.dedup_by_key(|(_, v)| *v); // data may contain multiple entries for the same value
 
@@ -2549,8 +2546,18 @@ mod test_enumerated_property_completeness {
                 }
             }
         }
-        diff.extend(data[data_idx..].iter().map(|(name, val)| (*val, Some(core::str::from_utf8(name.as_byte_slice()).unwrap()), None)));
-        diff.extend(consts[consts_idx..].iter().map(|(n, v)| (*v, None, Some(n))));
+        diff.extend(data[data_idx..].iter().map(|(name, val)| {
+            (
+                *val,
+                Some(core::str::from_utf8(name.as_byte_slice()).unwrap()),
+                None,
+            )
+        }));
+        diff.extend(
+            consts[consts_idx..]
+                .iter()
+                .map(|(n, v)| (*v, None, Some(n))),
+        );
 
         assert!(
             diff.is_empty(),
