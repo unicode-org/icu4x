@@ -237,7 +237,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     /// Return true when break boundary is word-like such as letter/number/CJK
     /// If segmenter isn't word, return false
     pub fn is_word_like(&self) -> bool {
-        self.word_type() != WordType::None
+        self.word_type().is_word_like()
     }
 }
 

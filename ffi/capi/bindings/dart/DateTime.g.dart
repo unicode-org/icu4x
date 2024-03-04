@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class DateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  DateTime._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  DateTime._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -30,7 +38,7 @@ final class DateTime implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return DateTime._(result.union.ok, true);
+    return DateTime._(result.union.ok, true, []);
   }
 
   /// Creates a new [`DateTime`] from the given codes, which are interpreted in the given calendar system
@@ -47,7 +55,7 @@ final class DateTime implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return DateTime._(result.union.ok, true);
+    return DateTime._(result.union.ok, true, []);
   }
 
   /// Creates a new [`DateTime`] from an [`Date`] and [`Time`] object
@@ -55,7 +63,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
   factory DateTime.fromDateAndTime(Date date, Time time) {
     final result = _ICU4XDateTime_create_from_date_and_time(date._underlying, time._underlying);
-    return DateTime._(result, true);
+    return DateTime._(result, true, []);
   }
 
   /// Gets a copy of the date contained in this object
@@ -63,7 +71,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
   Date get date {
     final result = _ICU4XDateTime_date(_underlying);
-    return Date._(result, true);
+    return Date._(result, true, []);
   }
 
   /// Gets the time contained in this object
@@ -71,7 +79,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
   Time get time {
     final result = _ICU4XDateTime_time(_underlying);
-    return Time._(result, true);
+    return Time._(result, true, []);
   }
 
   /// Converts this date to ISO
@@ -79,7 +87,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_iso) for more information.
   IsoDateTime toIso() {
     final result = _ICU4XDateTime_to_iso(_underlying);
-    return IsoDateTime._(result, true);
+    return IsoDateTime._(result, true, []);
   }
 
   /// Convert this datetime to one in a different calendar
@@ -87,7 +95,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
   DateTime toCalendar(Calendar calendar) {
     final result = _ICU4XDateTime_to_calendar(_underlying, calendar._underlying);
-    return DateTime._(result, true);
+    return DateTime._(result, true, []);
   }
 
   /// Returns the hour in this time
@@ -240,7 +248,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
   Calendar get calendar {
     final result = _ICU4XDateTime_calendar(_underlying);
-    return Calendar._(result, true);
+    return Calendar._(result, true, []);
   }
 }
 

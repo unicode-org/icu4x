@@ -11,7 +11,15 @@ part of 'lib.g.dart';
 final class Locale implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  Locale._(this._underlying, bool isOwned) {
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  Locale._(this._underlying, bool isOwned, this._edge_self) {
     if (isOwned) {
       _finalizer.attach(this, _underlying.cast());
     }
@@ -36,7 +44,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return Locale._(result.union.ok, true);
+    return Locale._(result.union.ok, true, []);
   }
 
   /// Construct a default undefined [`Locale`] "und".
@@ -44,7 +52,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
   factory Locale.und() {
     final result = _ICU4XLocale_create_und();
-    return Locale._(result, true);
+    return Locale._(result, true, []);
   }
 
   /// Clones the [`Locale`].
@@ -52,7 +60,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
   Locale clone() {
     final result = _ICU4XLocale_clone(_underlying);
-    return Locale._(result, true);
+    return Locale._(result, true, []);
   }
 
   /// Write a string representation of the `LanguageIdentifier` part of
@@ -114,6 +122,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Write a string representation of [`Locale`] region to `write`
@@ -143,6 +152,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Write a string representation of [`Locale`] script to `write`
@@ -172,6 +182,7 @@ final class Locale implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
+    
   }
 
   /// Best effort locale canonicalizer that doesn't need any data

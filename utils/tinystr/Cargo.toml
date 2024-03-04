@@ -8,7 +8,7 @@ description = "A small ASCII-only bounded length string representation."
 version = "0.7.5"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true

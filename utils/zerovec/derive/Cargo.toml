@@ -9,7 +9,7 @@ version = "0.10.1"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 edition.workspace = true
 repository.workspace = true

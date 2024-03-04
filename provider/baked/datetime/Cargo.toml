@@ -5,7 +5,7 @@
 [package]
 name = "icu_datetime_data"
 description = "Data for the icu_datetime crate"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 version = "1.4.0"
 
 authors.workspace = true

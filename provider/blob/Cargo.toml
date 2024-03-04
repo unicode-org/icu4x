@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_blob"
 description = "ICU4X data provider that reads from blobs in memory"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true

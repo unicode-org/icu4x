@@ -8,7 +8,7 @@ FORCE:
 ICU_CAPI := $(shell cargo metadata --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
 HEADERS := ${ICU_CAPI}/bindings/js
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
-ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-12-26"
+PINNED_CI_NIGHTLY ?= "nightly-2022-12-26"
 
 $(ALL_HEADERS):
 
@@ -26,11 +26,11 @@ diplomat.config.mjs:
 	echo "export default { wasm_path: new URL('target/wasm32-unknown-unknown/release/icu_capi.wasm', import.meta.url) };" > diplomat.config.mjs
 
 target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
-	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
-	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+	rustup toolchain install ${PINNED_CI_NIGHTLY}
+	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
 	# Build the WASM library
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode" \
-	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} rustc \
+	cargo +${PINNED_CI_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		-p icu_capi \
