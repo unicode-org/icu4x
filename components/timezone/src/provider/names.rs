@@ -15,7 +15,7 @@
 use crate::TimeZoneBcp47Id;
 use core::str;
 use icu_provider::prelude::*;
-use zerotrie::{ZeroTrie, ZeroAsciiIgnoreCaseTrie};
+use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTrie};
 use zerovec::{VarZeroVec, ZeroVec};
 
 /// A mapping from lowercase IANA time zone identifiers to BCP-47 time zone identifiers.
@@ -63,9 +63,11 @@ pub struct IanaToBcp47MapV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(
-    marker(IanaToBcp47MapV2Marker, "time_zone/iana_to_bcp47@2", singleton)
-)]
+#[icu_provider::data_struct(marker(
+    IanaToBcp47MapV2Marker,
+    "time_zone/iana_to_bcp47@2",
+    singleton
+))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),

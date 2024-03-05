@@ -257,7 +257,7 @@ fn test_normalize_iana_coverage() {
         .unwrap();
     let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
 
-    let mapper = icu_timezone::IanaBcp47RoundTripMapper::try_new_unstable(&provider).unwrap();
+    let mapper = icu_timezone::IanaToBcp47Mapper::try_new_unstable(&provider).unwrap();
     let mapper_borrowed = mapper.as_borrowed();
 
     for iana_id in iana2bcp.keys() {
