@@ -85,6 +85,19 @@ pub struct IanaToBcp47MapV2<'data> {
     pub bcp47_ids_checksum: u64,
 }
 
+impl<'data> From<IanaToBcp47MapV1<'data>> for IanaToBcp47MapV2<'data> {
+    fn from(v1: IanaToBcp47MapV1<'data>) -> Self {
+        // The V1 trie is not a valid V2 trie since the V1 trie is built with
+        // perfect hash support. We work around this using `is_v1`.
+        let trie_store = v1.map.take_store();
+        IanaToBcp47MapV2 {
+            map: ZeroAsciiIgnoreCaseTrie::from_store(trie_store),
+            bcp47_ids: v1.bcp47_ids,
+            bcp47_ids_checksum: v1.bcp47_ids_checksum,
+        }
+    }
+}
+
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
