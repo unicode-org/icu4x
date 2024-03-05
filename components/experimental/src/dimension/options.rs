@@ -4,7 +4,7 @@
 
 //! Options for [`CurrencyFormatter`](crate::CurrencyFormatter).
 
-/// A bag of options defining how currencies will be formatted by
+/// A collection of configuration options that determine the formatting behavior of
 /// [`CurrencyFormatter`](crate::CurrencyFormatter).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
