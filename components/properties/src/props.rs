@@ -667,7 +667,7 @@ macro_rules! create_const_array {
                 $v const $i: $t = $e;
             )*
 
-            #[allow(dead_code)]
+            #[cfg(test)]
             const ALL_CONSTS: &'static [(&'static str, u16)] = &[
                 $((stringify!($i), $enum_ty::$i.0 as u16)),*
             ];
