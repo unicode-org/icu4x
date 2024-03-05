@@ -51,6 +51,7 @@ pub const KEYS: &[DataKey] = &[
     MetazonePeriodV1Marker::KEY,
     names::Bcp47ToIanaMapV1Marker::KEY,
     names::IanaToBcp47MapV1Marker::KEY,
+    names::IanaToBcp47MapV2Marker::KEY,
 ];
 
 /// TimeZone ID in BCP47 format
