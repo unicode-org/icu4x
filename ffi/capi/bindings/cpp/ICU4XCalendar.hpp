@@ -54,7 +54,7 @@ class ICU4XCalendar {
   ICU4XAnyCalendarKind kind() const;
   inline const capi::ICU4XCalendar* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCalendar* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCalendar(capi::ICU4XCalendar* i) : inner(i) {}
+  inline explicit ICU4XCalendar(capi::ICU4XCalendar* i) : inner(i) {}
   ICU4XCalendar() = default;
   ICU4XCalendar(ICU4XCalendar&&) noexcept = default;
   ICU4XCalendar& operator=(ICU4XCalendar&& other) noexcept = default;

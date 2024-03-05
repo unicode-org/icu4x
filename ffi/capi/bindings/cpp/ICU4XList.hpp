@@ -58,7 +58,7 @@ class ICU4XList {
   bool is_empty() const;
   inline const capi::ICU4XList* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XList* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XList(capi::ICU4XList* i) : inner(i) {}
+  inline explicit ICU4XList(capi::ICU4XList* i) : inner(i) {}
   ICU4XList() = default;
   ICU4XList(ICU4XList&&) noexcept = default;
   ICU4XList& operator=(ICU4XList&& other) noexcept = default;

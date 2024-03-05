@@ -87,7 +87,7 @@ class ICU4XUnicodeSetData {
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
   inline const capi::ICU4XUnicodeSetData* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnicodeSetData* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XUnicodeSetData(capi::ICU4XUnicodeSetData* i) : inner(i) {}
+  inline explicit ICU4XUnicodeSetData(capi::ICU4XUnicodeSetData* i) : inner(i) {}
   ICU4XUnicodeSetData() = default;
   ICU4XUnicodeSetData(ICU4XUnicodeSetData&&) noexcept = default;
   ICU4XUnicodeSetData& operator=(ICU4XUnicodeSetData&& other) noexcept = default;

@@ -107,14 +107,9 @@
 //!   * enables the deprecated pre-1.3 API
 //!   * enabled by default for semver stability
 //!   * will be removed in 2.0.
-//!
-//! Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
-//! affect the behaviour of [`all_keys`]:
-//! * `icu_compactdecimal`
-//! * `icu_displaynames`
-//! * `icu_relativetime`
-//! * `icu_transliterate`
-//! * ...
+//! * `icu_experimental`
+//!   * enables data generation for keys defined in the unstable `icu_experimental` crate
+//!   * note that this features affects the behaviour of `all_keys`
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
 
@@ -368,7 +363,6 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_file("keys.txt")?,
@@ -407,7 +401,6 @@ fn keys_from_file_inner<R: std::io::Read>(source: R) -> std::io::Result<Vec<Data
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,
@@ -699,12 +692,8 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by running
-    // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
-    const BYTES: &[u8] = include_bytes!("../tests/data/tutorial_buffer.wasm");
-
     assert_eq!(
-        keys_from_bin_inner(BYTES),
+        keys_from_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,

@@ -67,7 +67,7 @@ class ICU4XFixedDecimalFormatter {
   diplomat::result<std::string, ICU4XError> format(const ICU4XFixedDecimal& value) const;
   inline const capi::ICU4XFixedDecimalFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XFixedDecimalFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XFixedDecimalFormatter(capi::ICU4XFixedDecimalFormatter* i) : inner(i) {}
+  inline explicit ICU4XFixedDecimalFormatter(capi::ICU4XFixedDecimalFormatter* i) : inner(i) {}
   ICU4XFixedDecimalFormatter() = default;
   ICU4XFixedDecimalFormatter(ICU4XFixedDecimalFormatter&&) noexcept = default;
   ICU4XFixedDecimalFormatter& operator=(ICU4XFixedDecimalFormatter&& other) noexcept = default;
@@ -105,7 +105,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XFi
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormatter_format(this->inner.get(), value.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -117,7 +117,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XFixedDecimalFormatter::for
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormatter_format(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

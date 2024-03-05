@@ -87,8 +87,8 @@ fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> P
 }
 
 /// Determine the appropriate `Pattern` for a given `options::length::Time` bag.
-/// If a preference for an hour cycle is set, it will look look up a pattern in the time_h11_12 or
-/// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
+/// If a preference for an hour cycle is set, it will look look up a pattern in the `time_h11_12` or
+/// `time_h23_h24` provider data, and then manually modify the symbol in the pattern if needed.
 pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
     locale: &'a DataLocale,
@@ -291,7 +291,7 @@ where
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         } else if cal_val == &value!("islamic")
             || cal_val == &value!("islamicc")
-            || cal_val.as_tinystr_slice().get(0) == Some(&tinystr!(8, "islamic"))
+            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
             locale.set_unicode_ext(key!("ca"), value!("islamic"));

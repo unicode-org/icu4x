@@ -182,7 +182,7 @@ impl DateFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+            Some(WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -238,9 +238,18 @@ impl DateFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
-                provider, locale,
-            )?)
+            Some(
+                (*DataProvider::<WeekDataV1Marker>::load(
+                    provider,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )?
+                .take_payload()?
+                .get())
+                .into(),
+            )
         } else {
             None
         };
@@ -314,8 +323,8 @@ impl DateFormatter {
     }
 }
 
-/// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
-/// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
+/// This is the internal "raw" version of [`crate::DateTimeFormatter`], i.e. a version of `DateTimeFormatter`
+/// without the generic parameter. The actual implementation of [`crate::DateTimeFormatter`] should live here.
 #[derive(Debug)]
 pub(crate) struct DateTimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -382,7 +391,7 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+            Some(WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -445,9 +454,18 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
-                provider, locale,
-            )?)
+            Some(
+                (*DataProvider::<WeekDataV1Marker>::load(
+                    provider,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )?
+                .take_payload()?
+                .get())
+                .into(),
+            )
         } else {
             None
         };

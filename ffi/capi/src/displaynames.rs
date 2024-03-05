@@ -9,23 +9,21 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-specific
-    use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
-    use icu_displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
+    use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
+    use icu_experimental::displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
     use icu_locid::subtags::Region;
     use writeable::Writeable;
 
-    //  FFI version of `LocaleDisplayNamesFormatter`.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter, Struct)]
     pub struct ICU4XLocaleDisplayNamesFormatter(pub LocaleDisplayNamesFormatter);
 
-    //  FFI version of `RegionDisplayNames`.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::displaynames::RegionDisplayNames, Struct)]
     pub struct ICU4XRegionDisplayNames(pub RegionDisplayNames);
 
-    //  FFI version of `DisplayNamesOptions`.
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
+    #[diplomat::attr(dart, rename = "DisplayNamesOptions")]
     pub struct ICU4XDisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: ICU4XDisplayNamesStyle,
@@ -36,7 +34,6 @@ pub mod ffi {
         pub language_display: ICU4XLanguageDisplay,
     }
 
-    // FFI version of `Style` option for the display names.
     #[diplomat::rust_link(icu::displaynames::options::Style, Enum)]
     pub enum ICU4XDisplayNamesStyle {
         Auto,
@@ -46,7 +43,6 @@ pub mod ffi {
         Menu,
     }
 
-    // FFI version of `Fallback` option for the display names.
     #[diplomat::rust_link(icu::displaynames::options::Fallback, Enum)]
     #[diplomat::enum_convert(Fallback, needs_wildcard)]
     pub enum ICU4XDisplayNamesFallback {
@@ -54,7 +50,6 @@ pub mod ffi {
         None,
     }
 
-    // FFI version of `LanguageDisplay`.
     #[diplomat::rust_link(icu::displaynames::options::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(LanguageDisplay, needs_wildcard)]
     pub enum ICU4XLanguageDisplay {
@@ -116,7 +111,7 @@ pub mod ffi {
         }
 
         /// Returns the locale specific display name of a region.
-        /// Note that the funtion returns an empty string in case the display name for a given
+        /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
         pub fn of(
@@ -134,7 +129,7 @@ pub mod ffi {
 }
 
 #[allow(unused_imports)] // feature-specific
-use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay, Style};
+use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay, Style};
 
 impl From<ffi::ICU4XDisplayNamesStyle> for Option<Style> {
     fn from(style: ffi::ICU4XDisplayNamesStyle) -> Option<Style> {

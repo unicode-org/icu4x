@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XCanonicalCombiningClassMap ICU4XCanonicalCombiningClassMap;
+#include "ICU4XCanonicalCombiningClassMap.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

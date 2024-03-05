@@ -76,7 +76,7 @@ class ICU4XSentenceSegmenter {
   ICU4XSentenceBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XSentenceSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XSentenceSegmenter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XSentenceSegmenter(capi::ICU4XSentenceSegmenter* i) : inner(i) {}
+  inline explicit ICU4XSentenceSegmenter(capi::ICU4XSentenceSegmenter* i) : inner(i) {}
   ICU4XSentenceSegmenter() = default;
   ICU4XSentenceSegmenter(ICU4XSentenceSegmenter&&) noexcept = default;
   ICU4XSentenceSegmenter& operator=(ICU4XSentenceSegmenter&& other) noexcept = default;

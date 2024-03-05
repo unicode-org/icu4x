@@ -14,8 +14,6 @@
 
 
 /**
- * FFI version of `TransformResult`.
- * 
  * See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locid_transform/enum.TransformResult.html) for more information.
  */
 enum struct ICU4XTransformResult {

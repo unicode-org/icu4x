@@ -29,8 +29,6 @@ struct ICU4XPluralRulesDeleter {
 };
 
 /**
- * FFI version of `PluralRules`.
- * 
  * See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
  */
 class ICU4XPluralRules {
@@ -65,7 +63,7 @@ class ICU4XPluralRules {
   ICU4XPluralCategories categories() const;
   inline const capi::ICU4XPluralRules* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPluralRules* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XPluralRules(capi::ICU4XPluralRules* i) : inner(i) {}
+  inline explicit ICU4XPluralRules(capi::ICU4XPluralRules* i) : inner(i) {}
   ICU4XPluralRules() = default;
   ICU4XPluralRules(ICU4XPluralRules&&) noexcept = default;
   ICU4XPluralRules& operator=(ICU4XPluralRules&& other) noexcept = default;

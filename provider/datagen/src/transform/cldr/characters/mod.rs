@@ -5,10 +5,10 @@
 use std::collections::HashSet;
 use std::marker::PhantomData;
 
+use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
-use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
@@ -46,8 +46,8 @@ macro_rules! exemplar_chars_impls {
             }
         }
 
-        impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        impl IterableDataProviderInternal<$data_marker_name> for crate::DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
@@ -74,14 +74,7 @@ macro_rules! exemplar_chars_impls {
 
                 let chars_str = match source_data_chars {
                     Some(chars_str) => chars_str,
-                    None => {
-                        log::warn!(concat!(
-                            "Data missing for ",
-                            stringify!($cldr_serde_field_name),
-                            " set exemplar characters"
-                        ));
-                        "[]"
-                    }
+                    None => "[]",
                 };
                 Ok(string_to_prop_unicodeset(chars_str))
             }

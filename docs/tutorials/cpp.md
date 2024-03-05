@@ -4,7 +4,7 @@ ICU4X's core functionality is completely available from C++, with headers genera
 
 Typically C++ users can build ICU4X by building the `icu_capi` Rust crate, and linking the resultant static library to their C++ application. This crate contains all of the relevant [Diplomat]-generated `extern "C"` declarations, as well as an idiomatic C++ wrapper using these functions.
 
-Using ICU4X in C++ is best demonstrated via the [examples] present in the codebase. For example, [here's an example showing off decimal formatting in ICU4X][decimal-example-code], built with [this Makefile][decimal-example-makefile].
+Using ICU4X in C++ is best demonstrated via the [examples](cpp). For example, [here's an example showing off decimal formatting in ICU4X](cpp/fixeddecimal.cpp), built with [this Makefile](cpp/Makefile).
 
 _We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out_
 
@@ -25,20 +25,24 @@ version = "0.0.0"
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false, features = ["default"] }
+icu_capi = { version = "1.4", default-features = false }
 ```
 
-Some of the keys are required by the parser, but won't be used by us. The `features` array can be used to enable additional functionality:
+Some of the keys are required by the parser, but won't be used by us. 
 
+`icu_capi` supports a list of option features:
+
+- `default` enables a default set of features
+- `std` \[default\] set this when building for a target with a Rust standard library, otherwise see below
 - `compiled_data` \[default\] to include data (`ICU4XDataProvider::create_compiled()`)
 - `simple_logger` \[default\] enable basic stdout logging of error metadata. Further loggers can be added on request.
 - `default_components` \[default\] activate all stable ICU4X components. For smaller builds, this can be disabled, and components can be added with features like `icu_list`.
 - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
 
-You can now build the library:
+You can now set features using the `--features icu_capi/<feature>` syntax to build the library:
 
 ```shell
-cargo rustc --release -p icu_capi --crate-type staticlib
+cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default,icu_capi/buffer_provider
 ```
 
 - Be sure to pass `--release` to get an optimized build
@@ -105,24 +109,11 @@ C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and a panic hook, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/capi/tests/tinyc/fixeddecimal/icu_capi_staticlib_tiny/src/lib.rs):
+Users wishing to use ICU4X on a `no_std` platform will need to provide an allocator and a panic hook in order to build a linkable library. The `icu_capi` crate can provide a looping panic handler, and a `malloc`-backed allocator, under the `looping_panic_handler` and `libc_alloc` features, respectively.
 
-```rust
-#![no_std]
-
-// Expose icu_capi symbols
-extern crate icu_capi;
-
-#[global_allocator]
-static ALLOCATOR: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
-
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
 ```
-
-This can then be compiled with `cargo +nightly build --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort` for a minimal build.
+cargo rustc --release -p icu_capi --crate-type staticlib --features icu_capi/default_components,icu_capi/buffer_provider,icu_capi/looping_panic_handler,icu_capi/libc_alloc
+```
 
 ## Tips
 
@@ -139,13 +130,4 @@ These bindings may be customized by running `diplomat-tool` directly (including 
 
  [discussions forum]: https://github.com/unicode-org/icu4x/discussions
  [Diplomat]: https://github.com/rust-diplomat/diplomat
- [staticlib-crates]: https://crates.io/crates/icu_capi_staticlib
- [staticlib-source]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi_staticlib
- [freertos port]: https://github.com/unicode-org/icu4x/blob/main/ffi/freertos/src/lib.rs
- [examples]: https://github.com/unicode-org/icu4x/blob/main/tests/tinycpp/examples/
- [decimal-example-code]: https://github.com/unicode-org/icu4x/blob/main/ffi/capi/tests/cpp/fixeddecimal.cpp
- [decimal-example-makefile]: https://github.com/unicode-org/icu4x/blob/main/ffi/capi/tests/cpp/Makefile
- [`ffi/capi/bindings/cpp`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/bindings/cpp
- [`tests/tinycpp/docs`]: https://github.com/unicode-org/icu4x/tree/main/tests/tinycpp/docs
- [rust-docs]: https://docs.rs/icu_capi/latest/icu_capi/
  [cargo-profiles]: https://doc.rust-lang.org/cargo/reference/profiles.html

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -33,9 +33,8 @@
 //! This crate may still be explored for documentation on docs.rs, and there are language-specific docs available as well.
 //! C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [TypeScript].
 //!
-//! This crate is `no_std` and will not typically build as a staticlib on its own. If you wish to link to it you should prefer
-//! using `icu_capi_staticlib`, or for more esoteric platforms you may write a shim crate depending on this crate that hooks in
-//! an allocator and panic hook.
+//! This crate is `no_std`-compatible. If you wish to use it in `no_std` mode, you must write a wrapper crate that defines an allocator
+//! and a panic hook in order to compile as a C library.
 //!
 //! More information on using ICU4X from C++ can be found in [our tutorial].
 //!
@@ -47,7 +46,15 @@
 #[cfg(target_arch = "wasm32")]
 extern crate std as rust_std;
 
+#[cfg(all(not(feature = "std"), feature = "looping_panic_handler"))]
+#[panic_handler]
+fn panic(_info: &core::panic::PanicInfo) -> ! {
+    loop {}
+}
+
 extern crate alloc;
+#[cfg(all(not(feature = "std"), feature = "libc_alloc"))]
+extern crate libc_alloc;
 
 // Common modules
 
@@ -92,7 +99,7 @@ pub mod datetime;
 pub mod datetime_formatter;
 #[cfg(feature = "icu_decimal")]
 pub mod decimal;
-#[cfg(feature = "icu_displaynames")]
+#[cfg(feature = "experimental_components")]
 pub mod displaynames;
 #[cfg(feature = "icu_locid_transform")]
 pub mod fallbacker;

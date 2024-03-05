@@ -166,7 +166,7 @@ class ICU4XCodePointSetBuilder {
   void complement_set(const ICU4XCodePointSetData& data);
   inline const capi::ICU4XCodePointSetBuilder* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointSetBuilder* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCodePointSetBuilder(capi::ICU4XCodePointSetBuilder* i) : inner(i) {}
+  inline explicit ICU4XCodePointSetBuilder(capi::ICU4XCodePointSetBuilder* i) : inner(i) {}
   ICU4XCodePointSetBuilder() = default;
   ICU4XCodePointSetBuilder(ICU4XCodePointSetBuilder&&) noexcept = default;
   ICU4XCodePointSetBuilder& operator=(ICU4XCodePointSetBuilder&& other) noexcept = default;

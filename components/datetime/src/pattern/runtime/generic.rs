@@ -23,6 +23,17 @@ pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 
+/// A ZeroSlice containing a 0 and a 1 placeholder
+#[cfg(feature = "experimental")]
+pub(crate) const ZERO_ONE_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
+    GenericPatternItem;
+    GenericPatternItem::to_unaligned_const;
+    [
+        GenericPatternItem::Placeholder(0),
+        GenericPatternItem::Placeholder(1),
+    ]
+);
+
 impl<'data> GenericPattern<'data> {
     /// The function allows for creation of new DTF pattern from a generic pattern
     /// and replacement patterns.

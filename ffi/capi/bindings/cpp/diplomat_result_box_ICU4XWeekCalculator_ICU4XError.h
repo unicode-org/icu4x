@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XWeekCalculator ICU4XWeekCalculator;
+#include "ICU4XWeekCalculator.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

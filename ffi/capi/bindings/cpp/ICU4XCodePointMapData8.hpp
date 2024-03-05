@@ -55,7 +55,7 @@ class ICU4XCodePointMapData8 {
   /**
    * Converts a general category to its corresponding mask value
    * 
-   * Nonexistant general categories will map to the empty mask
+   * Nonexistent general categories will map to the empty mask
    * 
    * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html) for more information.
    */
@@ -141,9 +141,14 @@ class ICU4XCodePointMapData8 {
    * See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_sentence_break(const ICU4XDataProvider& provider);
+
+  /**
+   * See the [Rust documentation for `joining_type`](https://docs.rs/icu/latest/icu/properties/maps/fn.joining_type.html) for more information.
+   */
+  static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_joining_type(const ICU4XDataProvider& provider);
   inline const capi::ICU4XCodePointMapData8* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointMapData8* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCodePointMapData8(capi::ICU4XCodePointMapData8* i) : inner(i) {}
+  inline explicit ICU4XCodePointMapData8(capi::ICU4XCodePointMapData8* i) : inner(i) {}
   ICU4XCodePointMapData8() = default;
   ICU4XCodePointMapData8(ICU4XCodePointMapData8&&) noexcept = default;
   ICU4XCodePointMapData8& operator=(ICU4XCodePointMapData8&& other) noexcept = default;
@@ -248,6 +253,16 @@ inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapDat
 }
 inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapData8::load_sentence_break(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData8_load_sentence_break(provider.AsFFI());
+  diplomat::result<ICU4XCodePointMapData8, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointMapData8>(ICU4XCodePointMapData8(diplomat_result_raw_out_value.ok));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapData8::load_joining_type(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData8_load_joining_type(provider.AsFFI());
   diplomat::result<ICU4XCodePointMapData8, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCodePointMapData8>(ICU4XCodePointMapData8(diplomat_result_raw_out_value.ok));

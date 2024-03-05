@@ -5,26 +5,29 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-12-26"
+PINNED_CI_NIGHTLY ?= "nightly-2022-12-26"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
 WASM_STACK_SIZE := 100000
  
-lib/index.js:
+lib/index.mjs:
 	rm -rf lib
 	cp -r ../capi/bindings/js lib
 
-target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
-	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
-	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
+	rustup toolchain install ${PINNED_CI_NIGHTLY}
+	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode" \
-	CARGO_TARGET_DIR="target" \
-	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+	cargo +${PINNED_CI_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		--release \
-		-p icu_capi_cdylib \
+		-p icu_capi \
+		--crate-type cdylib \
 		--features buffer_provider
 
-build: lib/index.js target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
+icu_capi.wasm: ../../target/wasm32-unknown-unknown/release/icu_capi.wasm
+	cp ../../target/wasm32-unknown-unknown/release/icu_capi.wasm icu_capi.wasm
+
+build: lib/index.mjs icu_capi.wasm

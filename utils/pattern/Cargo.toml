@@ -6,7 +6,7 @@
 name = "icu_pattern"
 description = "ICU pattern utilities"
 version = "0.1.5"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true
@@ -24,9 +24,6 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 writeable = { workspace = true }
 
-[dev-dependencies]
-iai = "0.1"
-
-[[bench]]
-name = "parser_iai"
-harness = false
+[features]
+alloc = []
+std = ["alloc"]

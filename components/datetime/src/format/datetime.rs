@@ -7,6 +7,7 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
+use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -51,7 +52,7 @@ use writeable::Writeable;
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct FormattedDateTime<'l> {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
@@ -128,7 +129,8 @@ where
 }
 
 pub(crate) fn write_pattern<'data, T, W, DS, TS>(
-    pattern: &crate::pattern::runtime::Pattern,
+    pattern_items: impl Iterator<Item = PatternItem>,
+    pattern_metadata: PatternMetadata,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
@@ -141,11 +143,11 @@ where
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
-    let mut iter = pattern.items.iter().peekable();
+    let mut iter = pattern_items.peekable();
     loop {
         match iter.next() {
             Some(PatternItem::Field(field)) => write_field(
-                pattern,
+                pattern_metadata,
                 field,
                 iter.peek(),
                 date_symbols,
@@ -179,7 +181,8 @@ where
     let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
-        pattern,
+        pattern.items.iter(),
+        pattern.metadata,
         date_symbols,
         time_symbols,
         &loc_datetime,
@@ -213,7 +216,7 @@ const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
 pub(super) fn write_field<'data, T, W, DS, TS>(
-    pattern: &crate::pattern::runtime::Pattern,
+    pattern_metadata: PatternMetadata,
     field: fields::Field,
     next_item: Option<&PatternItem>,
     date_symbols: Option<&DS>,
@@ -495,7 +498,7 @@ where
                         .datetime()
                         .hour()
                         .ok_or(Error::MissingInputField(Some("hour")))?,
-                    pattern.metadata.time_granularity().is_top_of_hour(
+                    pattern_metadata.time_granularity().is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                         datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
@@ -594,6 +597,7 @@ pub fn analyze_patterns(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
+    use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use icu_locid::Locale;
 
@@ -639,7 +643,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let pattern = "MMM".parse().unwrap();
+        let pattern: runtime::Pattern = "MMM".parse().unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
@@ -647,7 +651,8 @@ mod tests {
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
         write_pattern(
-            &pattern,
+            pattern.items.iter(),
+            pattern.metadata,
             Some(date_data.get()),
             Some(time_data.get()),
             &loc_datetime,

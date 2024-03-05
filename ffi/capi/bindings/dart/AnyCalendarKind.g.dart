@@ -65,47 +65,33 @@ enum AnyCalendarKind {
 
   /// Read the calendar type off of the -u-ca- extension on a locale.
   ///
-  /// Errors if there is no calendar on the locale or if the locale's calendar
+  /// Returns nothing if there is no calendar on the locale or if the locale's calendar
   /// is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  factory AnyCalendarKind.forLocale(Locale locale) {
+  static AnyCalendarKind? getForLocale(Locale locale) {
     final result = _ICU4XAnyCalendarKind_get_for_locale(locale._underlying);
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return AnyCalendarKind.values[result.union.ok];
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_get_for_locale =
-    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_get_for_locale')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
   ///
-  /// Errors if the calendar is not known or supported.
+  /// Returns nothing if the calendar is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  factory AnyCalendarKind.forBcp47(String s) {
+  static AnyCalendarKind? getForBcp47(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XAnyCalendarKind_get_for_bcp47(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return AnyCalendarKind.values[result.union.ok];
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_get_for_bcp47 =
-    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///
@@ -120,9 +106,16 @@ enum AnyCalendarKind {
     }
     return writeable.finalize();
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_bcp47 =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
-      .asFunction<_ResultVoidInt32 Function(int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_locale')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_locale(ffi.Pointer<ffi.Opaque> locale);
+
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_bcp47')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_bcp47(ffi.Pointer<ffi.Uint8> sData, int sLength);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> writeable);

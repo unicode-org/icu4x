@@ -52,7 +52,7 @@ class ICU4XBcp47ToIanaMapper {
   diplomat::result<std::string, ICU4XError> get(const std::string_view value) const;
   inline const capi::ICU4XBcp47ToIanaMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XBcp47ToIanaMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XBcp47ToIanaMapper(capi::ICU4XBcp47ToIanaMapper* i) : inner(i) {}
+  inline explicit ICU4XBcp47ToIanaMapper(capi::ICU4XBcp47ToIanaMapper* i) : inner(i) {}
   ICU4XBcp47ToIanaMapper() = default;
   ICU4XBcp47ToIanaMapper(ICU4XBcp47ToIanaMapper&&) noexcept = default;
   ICU4XBcp47ToIanaMapper& operator=(ICU4XBcp47ToIanaMapper&& other) noexcept = default;
@@ -77,7 +77,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBc
   auto diplomat_result_raw_out_value = capi::ICU4XBcp47ToIanaMapper_get(this->inner.get(), value.data(), value.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -89,7 +89,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XBcp47ToIanaMapper::get(con
   auto diplomat_result_raw_out_value = capi::ICU4XBcp47ToIanaMapper_get(this->inner.get(), value.data(), value.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XListFormatter ICU4XListFormatter;
+#include "ICU4XListFormatter.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

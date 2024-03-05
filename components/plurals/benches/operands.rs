@@ -7,7 +7,6 @@ mod fixtures;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
 use icu_plurals::PluralOperands;
-use std::convert::TryInto;
 
 fn operands(c: &mut Criterion) {
     let data =
@@ -20,9 +19,7 @@ fn operands(c: &mut Criterion) {
                 let _: PluralOperands = black_box(*s).into();
             }
             for s in &data.isize {
-                let _: PluralOperands = black_box(*s)
-                    .try_into()
-                    .expect("Failed to parse a number into an operands.");
+                let _: PluralOperands = black_box(*s).into();
             }
             for s in &data.string {
                 let _: PluralOperands = black_box(s)
@@ -51,9 +48,7 @@ fn operands(c: &mut Criterion) {
         c.bench_function("plurals/operands/create/isize", |b| {
             b.iter(|| {
                 for s in &data.isize {
-                    let _: PluralOperands = black_box(*s)
-                        .try_into()
-                        .expect("Failed to parse a number into an operands.");
+                    let _: PluralOperands = black_box(*s).into();
                 }
             })
         });
@@ -82,9 +77,7 @@ fn operands(c: &mut Criterion) {
             let p: PluralOperands = "1".parse().expect("Parse successful");
             b.iter(|| {
                 for s in &data.isize {
-                    let q: PluralOperands = black_box(*s)
-                        .try_into()
-                        .expect("Failed to parse a number into operands.");
+                    let q: PluralOperands = black_box(*s).into();
                     let _ = black_box(black_box(p) == black_box(q));
                 }
             })
@@ -93,12 +86,8 @@ fn operands(c: &mut Criterion) {
         c.bench_function("plurals/operands/eq/mostly_equal", |b| {
             b.iter(|| {
                 for s in &data.isize {
-                    let p: PluralOperands = black_box(*s)
-                        .try_into()
-                        .expect("Failed to parse a number into operands.");
-                    let q: PluralOperands = black_box(*s)
-                        .try_into()
-                        .expect("Failed to parse a number into operands.");
+                    let p: PluralOperands = black_box(*s).into();
+                    let q: PluralOperands = black_box(*s).into();
                     let _ = black_box(black_box(p) == black_box(q));
                 }
             })

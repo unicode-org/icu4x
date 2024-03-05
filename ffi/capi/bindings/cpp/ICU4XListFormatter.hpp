@@ -65,7 +65,7 @@ class ICU4XListFormatter {
   diplomat::result<std::string, ICU4XError> format(const ICU4XList& list) const;
   inline const capi::ICU4XListFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XListFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XListFormatter(capi::ICU4XListFormatter* i) : inner(i) {}
+  inline explicit ICU4XListFormatter(capi::ICU4XListFormatter* i) : inner(i) {}
   ICU4XListFormatter() = default;
   ICU4XListFormatter(ICU4XListFormatter&&) noexcept = default;
   ICU4XListFormatter& operator=(ICU4XListFormatter&& other) noexcept = default;
@@ -112,7 +112,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLi
   auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -124,7 +124,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XListFormatter::format(cons
   auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XIanaToBcp47Mapper ICU4XIanaToBcp47Mapper;
+#include "ICU4XIanaToBcp47Mapper.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

@@ -36,6 +36,14 @@ export class ICU4XIsoDateTime {
 
   /**
 
+   * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} of midnight on January 1, 1970
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.local_unix_epoch Rust documentation for `local_unix_epoch`} for more information.
+   */
+  static local_unix_epoch(): ICU4XIsoDateTime;
+
+  /**
+
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.

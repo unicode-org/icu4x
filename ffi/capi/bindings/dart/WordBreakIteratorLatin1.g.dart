@@ -9,11 +9,22 @@ part of 'lib.g.dart';
 final class WordBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  WordBreakIteratorLatin1._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  final core.List<Object> _edge_self;
+  final core.List<Object> _edge_a;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  WordBreakIteratorLatin1._(this._underlying, bool isOwned, this._edge_self, this._edge_a) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XWordBreakIteratorLatin1_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWordBreakIteratorLatin1_destroy));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
@@ -24,11 +35,6 @@ final class WordBreakIteratorLatin1 implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordBreakIteratorLatin1_next =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordBreakIteratorLatin1_next')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
@@ -37,11 +43,6 @@ final class WordBreakIteratorLatin1 implements ffi.Finalizable {
     return SegmenterWordType.values[result];
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordBreakIteratorLatin1_word_type =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordBreakIteratorLatin1_word_type')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
   /// Return true when break boundary is word-like such as letter/number/CJK
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
@@ -49,9 +50,20 @@ final class WordBreakIteratorLatin1 implements ffi.Finalizable {
     final result = _ICU4XWordBreakIteratorLatin1_is_word_like(_underlying);
     return result;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XWordBreakIteratorLatin1_is_word_like =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordBreakIteratorLatin1_is_word_like')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorLatin1_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XWordBreakIteratorLatin1_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorLatin1_next')
+// ignore: non_constant_identifier_names
+external int _ICU4XWordBreakIteratorLatin1_next(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorLatin1_word_type')
+// ignore: non_constant_identifier_names
+external int _ICU4XWordBreakIteratorLatin1_word_type(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorLatin1_is_word_like')
+// ignore: non_constant_identifier_names
+external bool _ICU4XWordBreakIteratorLatin1_is_word_like(ffi.Pointer<ffi.Opaque> self);

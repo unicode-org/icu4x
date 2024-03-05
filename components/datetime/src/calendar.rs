@@ -6,6 +6,7 @@ use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
+use icu_calendar::AnyCalendar;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, dangi::Dangi, ethiopian::Ethiopian, hebrew::Hebrew,
     indian::Indian, islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
@@ -62,6 +63,10 @@ pub trait CldrCalendar: InternalCldrCalendar {
     /// The data marker for loading month symbols for this calendar.
     type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
 
+    #[cfg(feature = "experimental")]
+    /// The data marker for loading a single date pattern for this calendar.
+    type DatePatternV1Marker: KeyedDataMarker<Yokeable = DatePatternV1<'static>>;
+
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
     /// By default, just checks against DEFAULT_BCP_47_IDENTIFIER
@@ -70,17 +75,61 @@ pub trait CldrCalendar: InternalCldrCalendar {
     }
 }
 
+#[cfg(feature = "experimental")]
+pub(crate) trait YearNamesV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> YearNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) trait MonthNamesV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> MonthNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) trait DatePatternV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> DatePatternV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
 /// Check if the provided value is of the form `islamic-{subcal}`
 fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
-    let slice = value.as_tinystr_slice();
-    if slice.len() > 2 {
-        return false;
+    if let &[first, second] = value.as_tinystr_slice() {
+        first == "islamic" && second == subcal
+    } else {
+        false
     }
-    if let (Some(first), Some(second)) = (slice.get(0), slice.get(1)) {
-        return *first == tinystr!(8, "islamic") && *second == subcal;
-    }
-
-    false
 }
 
 impl CldrCalendar for Buddhist {
@@ -91,6 +140,8 @@ impl CldrCalendar for Buddhist {
     type YearNamesV1Marker = BuddhistYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = BuddhistMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = BuddhistDatePatternV1Marker;
 }
 
 impl CldrCalendar for Chinese {
@@ -101,6 +152,8 @@ impl CldrCalendar for Chinese {
     type YearNamesV1Marker = ChineseYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = ChineseMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = ChineseDatePatternV1Marker;
 }
 
 impl CldrCalendar for Coptic {
@@ -111,6 +164,8 @@ impl CldrCalendar for Coptic {
     type YearNamesV1Marker = CopticYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = CopticMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = CopticDatePatternV1Marker;
 }
 
 impl CldrCalendar for Dangi {
@@ -121,6 +176,8 @@ impl CldrCalendar for Dangi {
     type YearNamesV1Marker = DangiYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = DangiMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = DangiDatePatternV1Marker;
 }
 
 impl CldrCalendar for Ethiopian {
@@ -131,6 +188,8 @@ impl CldrCalendar for Ethiopian {
     type YearNamesV1Marker = EthiopianYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = EthiopianMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = EthiopianDatePatternV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
@@ -144,6 +203,8 @@ impl CldrCalendar for Gregorian {
     type YearNamesV1Marker = GregorianYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = GregorianMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = GregorianDatePatternV1Marker;
 }
 
 impl CldrCalendar for Hebrew {
@@ -154,6 +215,8 @@ impl CldrCalendar for Hebrew {
     type YearNamesV1Marker = HebrewYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = HebrewMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = HebrewDatePatternV1Marker;
 }
 
 impl CldrCalendar for Indian {
@@ -164,6 +227,8 @@ impl CldrCalendar for Indian {
     type YearNamesV1Marker = IndianYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = IndianMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = IndianDatePatternV1Marker;
 }
 
 impl CldrCalendar for IslamicCivil {
@@ -177,6 +242,8 @@ impl CldrCalendar for IslamicCivil {
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = IslamicDatePatternV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
     }
@@ -190,6 +257,8 @@ impl CldrCalendar for IslamicObservational {
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = IslamicDatePatternV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
@@ -203,6 +272,8 @@ impl CldrCalendar for IslamicTabular {
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = IslamicDatePatternV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, tinystr!(8, "tbla"))
     }
@@ -219,6 +290,8 @@ impl CldrCalendar for IslamicUmmAlQura {
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = IslamicDatePatternV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, tinystr!(8, "umalqura"))
     }
@@ -232,6 +305,8 @@ impl CldrCalendar for Japanese {
     type YearNamesV1Marker = JapaneseYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = JapaneseMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = JapaneseDatePatternV1Marker;
 }
 
 impl CldrCalendar for JapaneseExtended {
@@ -242,6 +317,8 @@ impl CldrCalendar for JapaneseExtended {
     type YearNamesV1Marker = JapaneseExtendedYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = JapaneseExtendedMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = JapaneseExtendedDatePatternV1Marker;
 }
 
 impl CldrCalendar for Persian {
@@ -252,6 +329,8 @@ impl CldrCalendar for Persian {
     type YearNamesV1Marker = PersianYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = PersianMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = PersianDatePatternV1Marker;
 }
 
 impl CldrCalendar for Roc {
@@ -262,6 +341,8 @@ impl CldrCalendar for Roc {
     type YearNamesV1Marker = RocYearNamesV1Marker;
     #[cfg(feature = "experimental")]
     type MonthNamesV1Marker = RocMonthNamesV1Marker;
+    #[cfg(feature = "experimental")]
+    type DatePatternV1Marker = RocDatePatternV1Marker;
 }
 
 impl InternalCldrCalendar for Buddhist {}
@@ -555,4 +636,140 @@ where
         }
     };
     Ok(payload)
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
+    pub(crate) provider: &'a P,
+    pub(crate) kind: AnyCalendarKind,
+}
+
+#[cfg(feature = "experimental")]
+macro_rules! impl_load_any_calendar {
+    ([$(($trait:ident, $erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl_load_any_calendar!(@expand [$(($trait, $erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
+    };
+    (@expand [$(($trait:ident, $erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
+        $(impl_load_any_calendar!(@single_impl $trait, $erased, $marker, $tail1, $tail2);)+
+    };
+    (@single_impl $trait:ident, $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl<P> $trait<$erased> for AnyCalendarProvider<'_, P>
+        where
+            P: ?Sized + $(DataProvider::<<$kind_cal as CldrCalendar>::$marker> +)+
+        {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<$erased>, DataError> {
+                match self.kind {
+                    $(
+                        AnyCalendarKind::$kind_cal => DataProvider
+                            ::<<$kind_cal as CldrCalendar>::$marker>
+                            ::load(self.provider, req)
+                            .map(DataResponse::cast),
+                    )+
+                    $(
+                        AnyCalendarKind::$kind => DataProvider
+                            ::<<$cal as CldrCalendar>::$marker>
+                            ::load(self.provider, req)
+                            .map(DataResponse::cast),
+                    )+
+                    _ => Err(
+                        DataError::custom("Don't know how to load data for specified calendar")
+                            .with_debug_context(&self.kind)),
+                }
+            }
+        }
+    };
+}
+
+#[cfg(feature = "experimental")]
+impl_load_any_calendar!([
+    (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
+    (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
+    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker)
+], [
+    Buddhist,
+    Chinese,
+    Coptic,
+    Dangi,
+    Ethiopian,
+    Gregorian,
+    Hebrew,
+    Indian,
+    IslamicCivil,
+    IslamicObservational,
+    IslamicTabular,
+    IslamicUmmAlQura,
+    Japanese,
+    JapaneseExtended,
+    Persian,
+    Roc
+], [
+    EthiopianAmeteAlem => Ethiopian
+]);
+
+/// Converts a date to the correct calendar if necessary
+///
+/// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
+/// if the date is compatible with the current calendar and doesn't need conversion
+pub(crate) fn convert_if_necessary<'a>(
+    any_calendar: &'a AnyCalendar,
+    value: &impl crate::input::DateInput<Calendar = AnyCalendar>,
+) -> Result<
+    Option<icu_calendar::Date<icu_calendar::Ref<'a, AnyCalendar>>>,
+    crate::MismatchedCalendarError,
+> {
+    let this_kind = any_calendar.kind();
+    let date_kind = value.any_calendar_kind();
+
+    if Some(this_kind) != date_kind {
+        if date_kind != Some(AnyCalendarKind::Iso) {
+            return Err(crate::MismatchedCalendarError {
+                this_kind,
+                date_kind,
+            });
+        }
+        let date = value.to_iso().to_any();
+        let converted = any_calendar.convert_any_date(&date);
+        Ok(Some(converted))
+    } else {
+        Ok(None)
+    }
+}
+
+/// Converts a date to the correct calendar if necessary
+///
+/// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
+/// if the date is compatible with the current calendar and doesn't need conversion
+pub(crate) fn convert_datetime_if_necessary<'a>(
+    any_calendar: &'a AnyCalendar,
+    value: &impl crate::input::DateTimeInput<Calendar = AnyCalendar>,
+) -> Result<
+    Option<icu_calendar::DateTime<icu_calendar::Ref<'a, AnyCalendar>>>,
+    crate::MismatchedCalendarError,
+> {
+    let this_kind = any_calendar.kind();
+    let date_kind = value.any_calendar_kind();
+
+    if Some(this_kind) != date_kind {
+        if date_kind != Some(AnyCalendarKind::Iso) {
+            return Err(crate::MismatchedCalendarError {
+                this_kind,
+                date_kind,
+            });
+        }
+        let date = value.to_iso();
+        let time = icu_calendar::types::Time::new(
+            value.hour().unwrap_or_default(),
+            value.minute().unwrap_or_default(),
+            value.second().unwrap_or_default(),
+            value.nanosecond().unwrap_or_default(),
+        );
+        let datetime = icu_calendar::DateTime::new(date, time).to_any();
+        let converted = any_calendar.convert_any_datetime(&datetime);
+        Ok(Some(converted))
+    } else {
+        Ok(None)
+    }
 }

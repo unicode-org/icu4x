@@ -78,7 +78,7 @@ class ICU4XDateTimeFormatter {
   diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XDateTimeFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDateTimeFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDateTimeFormatter(capi::ICU4XDateTimeFormatter* i) : inner(i) {}
+  inline explicit ICU4XDateTimeFormatter(capi::ICU4XDateTimeFormatter* i) : inner(i) {}
   ICU4XDateTimeFormatter() = default;
   ICU4XDateTimeFormatter(ICU4XDateTimeFormatter&&) noexcept = default;
   ICU4XDateTimeFormatter& operator=(ICU4XDateTimeFormatter&& other) noexcept = default;
@@ -106,7 +106,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDa
   auto diplomat_result_raw_out_value = capi::ICU4XDateTimeFormatter_format_datetime(this->inner.get(), value.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -118,7 +118,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XDateTimeFormatter::format_
   auto diplomat_result_raw_out_value = capi::ICU4XDateTimeFormatter_format_datetime(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -129,7 +129,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDa
   auto diplomat_result_raw_out_value = capi::ICU4XDateTimeFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -141,7 +141,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XDateTimeFormatter::format_
   auto diplomat_result_raw_out_value = capi::ICU4XDateTimeFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

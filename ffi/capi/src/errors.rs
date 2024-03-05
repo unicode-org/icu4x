@@ -40,7 +40,7 @@ use tinystr::TinyStrError;
 pub mod ffi {
     use alloc::boxed::Box;
 
-    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     /// A common enum for errors that ICU4X may return, organized by API
     ///
@@ -49,6 +49,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::CalendarError, Enum, compact)]
     #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
     #[diplomat::rust_link(icu::decimal::DecimalError, Enum, compact)]
     #[diplomat::rust_link(icu::list::ListError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]

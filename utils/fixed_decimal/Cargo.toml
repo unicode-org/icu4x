@@ -6,7 +6,7 @@
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
 version = "0.5.5"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
@@ -40,7 +40,7 @@ criterion = "0.4"
 
 [features]
 std = []
-bench = []
+bench = ["ryu"]
 experimental = []
 ryu = ["dep:ryu"]
 

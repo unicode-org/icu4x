@@ -413,7 +413,7 @@ class ICU4XCodePointSetData {
   static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name);
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointSetData* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCodePointSetData(capi::ICU4XCodePointSetData* i) : inner(i) {}
+  inline explicit ICU4XCodePointSetData(capi::ICU4XCodePointSetData* i) : inner(i) {}
   ICU4XCodePointSetData() = default;
   ICU4XCodePointSetData(ICU4XCodePointSetData&&) noexcept = default;
   ICU4XCodePointSetData& operator=(ICU4XCodePointSetData&& other) noexcept = default;

@@ -43,6 +43,10 @@ export class ICU4XIsoDateTime {
     return new ICU4XIsoDateTime(wasm.ICU4XIsoDateTime_crate_from_date_and_time(arg_date.underlying, arg_time.underlying), true, []);
   }
 
+  static local_unix_epoch() {
+    return new ICU4XIsoDateTime(wasm.ICU4XIsoDateTime_local_unix_epoch(), true, []);
+  }
+
   static create_from_minutes_since_local_unix_epoch(arg_minutes) {
     return new ICU4XIsoDateTime(wasm.ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(arg_minutes), true, []);
   }

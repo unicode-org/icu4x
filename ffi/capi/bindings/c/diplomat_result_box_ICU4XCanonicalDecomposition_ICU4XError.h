@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XCanonicalDecomposition ICU4XCanonicalDecomposition;
+#include "ICU4XCanonicalDecomposition.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

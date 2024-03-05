@@ -136,7 +136,7 @@ class ICU4XIsoDate {
   uint16_t days_in_year() const;
   inline const capi::ICU4XIsoDate* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XIsoDate* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XIsoDate(capi::ICU4XIsoDate* i) : inner(i) {}
+  inline explicit ICU4XIsoDate(capi::ICU4XIsoDate* i) : inner(i) {}
   ICU4XIsoDate() = default;
   ICU4XIsoDate(ICU4XIsoDate&&) noexcept = default;
   ICU4XIsoDate& operator=(ICU4XIsoDate&& other) noexcept = default;

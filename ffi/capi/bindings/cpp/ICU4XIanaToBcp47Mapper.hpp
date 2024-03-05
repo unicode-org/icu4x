@@ -42,7 +42,7 @@ class ICU4XIanaToBcp47Mapper {
   static diplomat::result<ICU4XIanaToBcp47Mapper, ICU4XError> create(const ICU4XDataProvider& provider);
   inline const capi::ICU4XIanaToBcp47Mapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XIanaToBcp47Mapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XIanaToBcp47Mapper(capi::ICU4XIanaToBcp47Mapper* i) : inner(i) {}
+  inline explicit ICU4XIanaToBcp47Mapper(capi::ICU4XIanaToBcp47Mapper* i) : inner(i) {}
   ICU4XIanaToBcp47Mapper() = default;
   ICU4XIanaToBcp47Mapper(ICU4XIanaToBcp47Mapper&&) noexcept = default;
   ICU4XIanaToBcp47Mapper& operator=(ICU4XIanaToBcp47Mapper&& other) noexcept = default;

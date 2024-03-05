@@ -22,6 +22,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::calendar::week::WeekOf, Struct)]
+    #[diplomat::out]
     pub struct ICU4XWeekOf {
         pub week: u16,
         pub unit: ICU4XWeekRelativeUnit,

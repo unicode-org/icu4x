@@ -713,7 +713,7 @@ pub(crate) struct ContextIterator<'a> {
 impl<'a> ContextIterator<'a> {
     // Returns a context iterator with the characters before
     // and after the character at a given index, given the preceding
-    // string and the succeding string including the character itself
+    // string and the succeeding string including the character itself
     pub fn new(before: &'a str, char_and_after: &'a str) -> Self {
         let mut char_and_after = char_and_after.chars();
         char_and_after.next(); // skip the character itself

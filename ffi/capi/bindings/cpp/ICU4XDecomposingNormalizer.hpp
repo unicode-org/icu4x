@@ -75,7 +75,7 @@ class ICU4XDecomposingNormalizer {
   bool is_normalized(const std::string_view s) const;
   inline const capi::ICU4XDecomposingNormalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDecomposingNormalizer* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XDecomposingNormalizer(capi::ICU4XDecomposingNormalizer* i) : inner(i) {}
+  inline explicit ICU4XDecomposingNormalizer(capi::ICU4XDecomposingNormalizer* i) : inner(i) {}
   ICU4XDecomposingNormalizer() = default;
   ICU4XDecomposingNormalizer(ICU4XDecomposingNormalizer&&) noexcept = default;
   ICU4XDecomposingNormalizer& operator=(ICU4XDecomposingNormalizer&& other) noexcept = default;
@@ -110,7 +110,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDe
   auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -122,7 +122,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XDecomposingNormalizer::nor
   auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

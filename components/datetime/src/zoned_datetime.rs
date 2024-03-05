@@ -223,7 +223,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();

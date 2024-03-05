@@ -47,10 +47,7 @@ fn main() {
         .flat_map(collect_public_types)
         .map(|(path_vec, typ)| {
             let mut path = ast::Path::empty();
-            path.elements = path_vec
-                .into_iter()
-                .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
-                .collect();
+            path.elements = path_vec.into_iter().map(ast::Ident::from).collect();
             RustLinkInfo { path, typ }
         })
         .filter(|rl| {
@@ -101,6 +98,10 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
+            std::process::Command::new("rustup")
+                .args(["install", "nightly-2022-12-26"])
+                .output()
+                .expect("failed to install nightly");
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",

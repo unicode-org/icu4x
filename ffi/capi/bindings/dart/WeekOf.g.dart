@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 final class _WeekOfFfi extends ffi.Struct {
   @ffi.Uint16()
   external int week;
@@ -13,37 +12,39 @@ final class _WeekOfFfi extends ffi.Struct {
   external int unit;
 }
 
+/// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 final class WeekOf {
-  final _WeekOfFfi _underlying;
+  final int week;
+  final WeekRelativeUnit unit;
 
-  WeekOf._(this._underlying);
+  // ignore: unused_element
+  // Internal constructor from FFI.
+  // This struct contains borrowed fields, so this takes in a list of
+  // "edges" corresponding to where each lifetime's data may have been borrowed from
+  // and passes it down to individual fields containing the borrow.
+  // This method does not attempt to handle any dependencies between lifetimes, the caller
+  // should handle this when constructing edge arrays.
+  WeekOf._(_WeekOfFfi underlying) :
+    week = underlying.week,
+    unit = WeekRelativeUnit.values[underlying.unit];
 
-  factory WeekOf() {
-    final pointer = ffi2.calloc<_WeekOfFfi>();
-    final result = WeekOf._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
-
-  int get week => _underlying.week;
-  set week(int week) {
-    _underlying.week = week;
-  }
-
-  WeekRelativeUnit get unit => WeekRelativeUnit.values[_underlying.unit];
-  set unit(WeekRelativeUnit unit) {
-    _underlying.unit = unit.index;
+  // ignore: unused_element
+  _WeekOfFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_WeekOfFfi>();
+    pointer.ref.week = week;
+    pointer.ref.unit = unit.index;
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is WeekOf &&
-      other._underlying.week == _underlying.week &&
-      other._underlying.unit == _underlying.unit;
+      other.week == this.week &&
+      other.unit == this.unit;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.week,
-        _underlying.unit,
+        this.week,
+        this.unit,
       ]);
 }

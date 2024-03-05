@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XGraphemeClusterSegmenter ICU4XGraphemeClusterSegmenter;
+#include "ICU4XGraphemeClusterSegmenter.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

@@ -9,11 +9,21 @@ part of 'lib.g.dart';
 final class ListFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ListFormatter._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  final core.List<Object> _edge_self;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  ListFormatter._(this._underlying, bool isOwned, this._edge_self) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XListFormatter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XListFormatter_destroy));
 
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
@@ -25,13 +35,8 @@ final class ListFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ListFormatter._(result.union.ok);
+    return ListFormatter._(result.union.ok, true, []);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XListFormatter_create_and_with_length =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>>('ICU4XListFormatter_create_and_with_length')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
@@ -43,13 +48,8 @@ final class ListFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ListFormatter._(result.union.ok);
+    return ListFormatter._(result.union.ok, true, []);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XListFormatter_create_or_with_length =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>>('ICU4XListFormatter_create_or_with_length')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
@@ -61,13 +61,8 @@ final class ListFormatter implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return ListFormatter._(result.union.ok);
+    return ListFormatter._(result.union.ok, true, []);
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XListFormatter_create_unit_with_length =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>>('ICU4XListFormatter_create_unit_with_length')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
   ///
@@ -80,9 +75,24 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return writeable.finalize();
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XListFormatter_format =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XListFormatter_format')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XListFormatter_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XListFormatter_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XListFormatter_create_and_with_length')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XListFormatter_create_and_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XListFormatter_create_or_with_length')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XListFormatter_create_or_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XListFormatter_create_unit_with_length')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XListFormatter_create_unit_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XListFormatter_format')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XListFormatter_format(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> list, ffi.Pointer<ffi.Opaque> writeable);

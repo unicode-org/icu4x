@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XLocaleFallbackerWithConfig ICU4XLocaleFallbackerWithConfig;
+#include "ICU4XLocaleFallbackerWithConfig.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

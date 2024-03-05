@@ -49,14 +49,12 @@ class ICU4XLocaleCanonicalizer {
   static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create_extended(const ICU4XDataProvider& provider);
 
   /**
-   * FFI version of `LocaleCanonicalizer::canonicalize()`.
-   * 
    * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
   ICU4XTransformResult canonicalize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleCanonicalizer* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLocaleCanonicalizer(capi::ICU4XLocaleCanonicalizer* i) : inner(i) {}
+  inline explicit ICU4XLocaleCanonicalizer(capi::ICU4XLocaleCanonicalizer* i) : inner(i) {}
   ICU4XLocaleCanonicalizer() = default;
   ICU4XLocaleCanonicalizer(ICU4XLocaleCanonicalizer&&) noexcept = default;
   ICU4XLocaleCanonicalizer& operator=(ICU4XLocaleCanonicalizer&& other) noexcept = default;

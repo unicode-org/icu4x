@@ -53,6 +53,13 @@ class ICU4XIsoDateTime {
   static ICU4XIsoDateTime crate_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time);
 
   /**
+   * Creates a new [`ICU4XIsoDateTime`] of midnight on January 1, 1970
+   * 
+   * See the [Rust documentation for `local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.local_unix_epoch) for more information.
+   */
+  static ICU4XIsoDateTime local_unix_epoch();
+
+  /**
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
    * 
    * See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
@@ -197,7 +204,7 @@ class ICU4XIsoDateTime {
   uint16_t days_in_year() const;
   inline const capi::ICU4XIsoDateTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XIsoDateTime* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XIsoDateTime(capi::ICU4XIsoDateTime* i) : inner(i) {}
+  inline explicit ICU4XIsoDateTime(capi::ICU4XIsoDateTime* i) : inner(i) {}
   ICU4XIsoDateTime() = default;
   ICU4XIsoDateTime(ICU4XIsoDateTime&&) noexcept = default;
   ICU4XIsoDateTime& operator=(ICU4XIsoDateTime&& other) noexcept = default;
@@ -224,6 +231,9 @@ inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::create(i
 }
 inline ICU4XIsoDateTime ICU4XIsoDateTime::crate_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time) {
   return ICU4XIsoDateTime(capi::ICU4XIsoDateTime_crate_from_date_and_time(date.AsFFI(), time.AsFFI()));
+}
+inline ICU4XIsoDateTime ICU4XIsoDateTime::local_unix_epoch() {
+  return ICU4XIsoDateTime(capi::ICU4XIsoDateTime_local_unix_epoch());
 }
 inline ICU4XIsoDateTime ICU4XIsoDateTime::create_from_minutes_since_local_unix_epoch(int32_t minutes) {
   return ICU4XIsoDateTime(capi::ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes));

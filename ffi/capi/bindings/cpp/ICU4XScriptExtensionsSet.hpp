@@ -44,14 +44,14 @@ class ICU4XScriptExtensionsSet {
   size_t count() const;
 
   /**
-   * Get script at index, returning an error if out of bounds
+   * Get script at index
    * 
    * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
    */
   diplomat::result<uint16_t, std::monostate> script_at(size_t index) const;
   inline const capi::ICU4XScriptExtensionsSet* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptExtensionsSet* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XScriptExtensionsSet(capi::ICU4XScriptExtensionsSet* i) : inner(i) {}
+  inline explicit ICU4XScriptExtensionsSet(capi::ICU4XScriptExtensionsSet* i) : inner(i) {}
   ICU4XScriptExtensionsSet() = default;
   ICU4XScriptExtensionsSet(ICU4XScriptExtensionsSet&&) noexcept = default;
   ICU4XScriptExtensionsSet& operator=(ICU4XScriptExtensionsSet&& other) noexcept = default;
@@ -72,7 +72,7 @@ inline diplomat::result<uint16_t, std::monostate> ICU4XScriptExtensionsSet::scri
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<uint16_t>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err<std::monostate>(std::monostate());
   }
   return diplomat_result_out_value;
 }

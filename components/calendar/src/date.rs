@@ -258,6 +258,7 @@ impl<A: AsCalendar> Date<A> {
         let config = WeekCalculator {
             first_weekday,
             min_week_days: 0, // ignored
+            weekend: None,
         };
         config.week_of_month(self.day_of_month(), self.day_of_week())
     }
@@ -267,7 +268,6 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::IsoWeekday;
     /// use icu::calendar::week::RelativeUnit;
     /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::week::WeekOf;
@@ -388,8 +388,11 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
             f,
-            "Date({:?}, for calendar {})",
-            self.inner,
+            "Date({}-{}-{}, {} era, for calendar {})",
+            self.year().number,
+            self.month().ordinal,
+            self.day_of_month().0,
+            self.year().era.0,
             self.calendar.as_calendar().debug_name()
         )
     }

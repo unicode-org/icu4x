@@ -8,13 +8,13 @@ use crate::transform::cldr::{
     cldr_serde::{self},
     units::helpers::ScientificNumber,
 };
+use icu_experimental::units::{
+    measureunit::MeasureUnitParser,
+    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
+};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
-};
-use icu_unitsconversion::{
-    measureunit::MeasureUnitParser,
-    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
@@ -67,14 +67,13 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        let units_conversion_trie = ZeroTrieSimpleAscii::try_from(&conversion_info_map)
-            .map_err(|e| {
+        let units_conversion_trie =
+            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
                 DataError::custom("Could not create ZeroTrie from units.json data")
                     .with_display_context(&e)
-            })?
-            .convert_store()
-            .into_zerotrie();
+            })?;
 
+        let units_conversion_trie = units_conversion_trie.clone().convert_store();
         let parser = MeasureUnitParser::from_payload(&units_conversion_trie);
 
         let convert_infos = convert_units_vec
@@ -109,12 +108,11 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use fraction::GenericFraction;
-    use fraction::Zero;
+    use icu_experimental::units::provider::*;
     use icu_locid::locale;
     use icu_provider::prelude::*;
-    use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
+    use num_rational::Ratio;
     use zerofrom::ZeroFrom;
     use zerovec::maps::ZeroVecLike;
     use zerovec::ZeroVec;
@@ -173,7 +171,7 @@ fn test_basic() {
             factor_num: ZeroVec::from(big_one.to_bytes_le()),
             factor_den: ZeroVec::from(big_one.to_bytes_le()),
             offset_sign: Sign::Positive,
-            offset_num: ZeroVec::from(BigUint::zero().to_bytes_le()),
+            offset_num: ZeroVec::from(BigUint::from(0u32).to_bytes_le()),
             offset_den: ZeroVec::from(big_one.to_bytes_le()),
             exactness: Exactness::Exact,
         }
@@ -182,7 +180,7 @@ fn test_basic() {
     let foot_convert_index = units_info_map.get("foot").unwrap();
     let foot_convert_ule = convert_units.zvl_get(foot_convert_index).unwrap();
     let foot_convert: ConversionInfo = ZeroFrom::zero_from(foot_convert_ule);
-    let ft_to_m = GenericFraction::<BigUint>::new(BigUint::from(3048u32), BigUint::from(10000u32));
+    let ft_to_m = Ratio::new(BigUint::from(3048u32), BigUint::from(10000u32));
 
     assert_eq!(
         foot_convert,
@@ -199,10 +197,10 @@ fn test_basic() {
                 ZeroVec::from_iter(base_unit.into_iter())
             },
             factor_sign: Sign::Positive,
-            factor_num: ZeroVec::from(ft_to_m.numer().unwrap().to_bytes_le()),
-            factor_den: ZeroVec::from(ft_to_m.denom().unwrap().to_bytes_le()),
+            factor_num: ZeroVec::from(ft_to_m.numer().to_bytes_le()),
+            factor_den: ZeroVec::from(ft_to_m.denom().to_bytes_le()),
             offset_sign: Sign::Positive,
-            offset_num: ZeroVec::from(BigUint::zero().to_bytes_le()),
+            offset_num: ZeroVec::from(BigUint::from(0u32).to_bytes_le()),
             offset_den: ZeroVec::from(big_one.to_bytes_le()),
             exactness: Exactness::Exact,
         }

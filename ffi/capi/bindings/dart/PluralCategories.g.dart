@@ -5,7 +5,6 @@
 
 part of 'lib.g.dart';
 
-/// FFI version of `PluralRules::categories()` data.
 final class _PluralCategoriesFfi extends ffi.Struct {
   @ffi.Bool()
   external bool zero;
@@ -22,64 +21,57 @@ final class _PluralCategoriesFfi extends ffi.Struct {
 }
 
 final class PluralCategories {
-  final _PluralCategoriesFfi _underlying;
+  final bool zero;
+  final bool one;
+  final bool two;
+  final bool few;
+  final bool many;
+  final bool other;
 
-  PluralCategories._(this._underlying);
+  // ignore: unused_element
+  // Internal constructor from FFI.
+  // This struct contains borrowed fields, so this takes in a list of
+  // "edges" corresponding to where each lifetime's data may have been borrowed from
+  // and passes it down to individual fields containing the borrow.
+  // This method does not attempt to handle any dependencies between lifetimes, the caller
+  // should handle this when constructing edge arrays.
+  PluralCategories._(_PluralCategoriesFfi underlying) :
+    zero = underlying.zero,
+    one = underlying.one,
+    two = underlying.two,
+    few = underlying.few,
+    many = underlying.many,
+    other = underlying.other;
 
-  factory PluralCategories() {
-    final pointer = ffi2.calloc<_PluralCategoriesFfi>();
-    final result = PluralCategories._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
-
-  bool get zero => _underlying.zero;
-  set zero(bool zero) {
-    _underlying.zero = zero;
-  }
-
-  bool get one => _underlying.one;
-  set one(bool one) {
-    _underlying.one = one;
-  }
-
-  bool get two => _underlying.two;
-  set two(bool two) {
-    _underlying.two = two;
-  }
-
-  bool get few => _underlying.few;
-  set few(bool few) {
-    _underlying.few = few;
-  }
-
-  bool get many => _underlying.many;
-  set many(bool many) {
-    _underlying.many = many;
-  }
-
-  bool get other => _underlying.other;
-  set other(bool other) {
-    _underlying.other = other;
+  // ignore: unused_element
+  _PluralCategoriesFfi _pointer(ffi.Allocator temp) {
+    final pointer = temp<_PluralCategoriesFfi>();
+    pointer.ref.zero = zero;
+    pointer.ref.one = one;
+    pointer.ref.two = two;
+    pointer.ref.few = few;
+    pointer.ref.many = many;
+    pointer.ref.other = other;
+    return pointer.ref;
   }
 
   @override
   bool operator ==(Object other) =>
       other is PluralCategories &&
-      other._underlying.zero == _underlying.zero &&
-      other._underlying.one == _underlying.one &&
-      other._underlying.two == _underlying.two &&
-      other._underlying.few == _underlying.few &&
-      other._underlying.many == _underlying.many &&
-      other._underlying.other == _underlying.other;
+      other.zero == this.zero &&
+      other.one == this.one &&
+      other.two == this.two &&
+      other.few == this.few &&
+      other.many == this.many &&
+      other.other == this.other;
 
   @override
   int get hashCode => Object.hashAll([
-        _underlying.zero,
-        _underlying.one,
-        _underlying.two,
-        _underlying.few,
-        _underlying.many,
-        _underlying.other,
+        this.zero,
+        this.one,
+        this.two,
+        this.few,
+        this.many,
+        this.other,
       ]);
 }

@@ -11,11 +11,22 @@ part of 'lib.g.dart';
 final class ScriptExtensionsSet implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ScriptExtensionsSet._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
+  final core.List<Object> _edge_self;
+  final core.List<Object> _edge_a;
+
+  // Internal constructor from FFI.
+  // isOwned is whether this is owned (has finalizer) or not
+  // This also takes in a list of lifetime edges (including for &self borrows)
+  // corresponding to data this may borrow from. These should be flat arrays containing
+  // references to objects, and this object will hold on to them to keep them alive and
+  // maintain borrow validity.
+  ScriptExtensionsSet._(this._underlying, bool isOwned, this._edge_self, this._edge_a) {
+    if (isOwned) {
+      _finalizer.attach(this, _underlying.cast());
+    }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XScriptExtensionsSet_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptExtensionsSet_destroy));
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
@@ -25,11 +36,6 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XScriptExtensionsSet_contains =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>('ICU4XScriptExtensionsSet_contains')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// Get the number of scripts contained in here
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
@@ -38,26 +44,30 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     return result;
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XScriptExtensionsSet_count =
-    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptExtensionsSet_count')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-
-  /// Get script at index, returning an error if out of bounds
+  /// Get script at index
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
-  ///
-  /// Throws [VoidError] on failure.
-  int scriptAt(int index) {
+  int? scriptAt(int index) {
     final result = _ICU4XScriptExtensionsSet_script_at(_underlying, index);
     if (!result.isOk) {
-      throw VoidError();
+      return null;
     }
     return result.union.ok;
   }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XScriptExtensionsSet_script_at =
-    _capi<ffi.NativeFunction<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XScriptExtensionsSet_script_at')
-      .asFunction<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }
+
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_destroy')
+// ignore: non_constant_identifier_names
+external void _ICU4XScriptExtensionsSet_destroy(ffi.Pointer<ffi.Void> self);
+
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_contains')
+// ignore: non_constant_identifier_names
+external bool _ICU4XScriptExtensionsSet_contains(ffi.Pointer<ffi.Opaque> self, int script);
+
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_count')
+// ignore: non_constant_identifier_names
+external int _ICU4XScriptExtensionsSet_count(ffi.Pointer<ffi.Opaque> self);
+
+@ffi.Native<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_script_at')
+// ignore: non_constant_identifier_names
+external _ResultUint16Void _ICU4XScriptExtensionsSet_script_at(ffi.Pointer<ffi.Opaque> self, int index);

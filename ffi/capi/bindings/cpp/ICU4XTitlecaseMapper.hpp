@@ -58,7 +58,7 @@ class ICU4XTitlecaseMapper {
   diplomat::result<std::string, ICU4XError> titlecase_segment_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
   inline const capi::ICU4XTitlecaseMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XTitlecaseMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XTitlecaseMapper(capi::ICU4XTitlecaseMapper* i) : inner(i) {}
+  inline explicit ICU4XTitlecaseMapper(capi::ICU4XTitlecaseMapper* i) : inner(i) {}
   ICU4XTitlecaseMapper() = default;
   ICU4XTitlecaseMapper(ICU4XTitlecaseMapper&&) noexcept = default;
   ICU4XTitlecaseMapper& operator=(ICU4XTitlecaseMapper&& other) noexcept = default;
@@ -86,7 +86,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XTi
   auto diplomat_result_raw_out_value = capi::ICU4XTitlecaseMapper_titlecase_segment_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -99,7 +99,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XTitlecaseMapper::titlecase
   auto diplomat_result_raw_out_value = capi::ICU4XTitlecaseMapper_titlecase_segment_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

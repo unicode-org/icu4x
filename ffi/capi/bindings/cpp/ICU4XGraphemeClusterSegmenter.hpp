@@ -77,7 +77,7 @@ class ICU4XGraphemeClusterSegmenter {
   ICU4XGraphemeClusterBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XGraphemeClusterSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGraphemeClusterSegmenter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XGraphemeClusterSegmenter(capi::ICU4XGraphemeClusterSegmenter* i) : inner(i) {}
+  inline explicit ICU4XGraphemeClusterSegmenter(capi::ICU4XGraphemeClusterSegmenter* i) : inner(i) {}
   ICU4XGraphemeClusterSegmenter() = default;
   ICU4XGraphemeClusterSegmenter(ICU4XGraphemeClusterSegmenter&&) noexcept = default;
   ICU4XGraphemeClusterSegmenter& operator=(ICU4XGraphemeClusterSegmenter&& other) noexcept = default;

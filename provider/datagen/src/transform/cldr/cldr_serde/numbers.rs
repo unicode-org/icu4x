@@ -22,6 +22,8 @@ pub struct Symbols {
     pub minus_sign: String,
     #[serde(rename = "plusSign")]
     pub plus_sign: String,
+    #[serde(rename = "percentSign")]
+    pub percent_sign: String,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -96,6 +98,12 @@ pub struct CurrencyFormattingPatterns {
     pub standard_alpha_next_to_number: Option<String>,
 }
 
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct PercentFormattingPatterns {
+    /// Standard pattern
+    pub standard: String,
+}
+
 #[derive(PartialEq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
@@ -104,6 +112,8 @@ pub struct NumberingSystemData {
     pub formats: HashMap<TinyStr8, DecimalFormats>,
     /// Map from numbering system to patterns
     pub currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
+    /// Map from numbering system to percent patterns
+    pub percent_patterns: HashMap<TinyStr8, PercentFormattingPatterns>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -142,6 +152,10 @@ impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
                 "currencyFormats" => {
                     let value: CurrencyFormattingPatterns = access.next_value()?;
                     result.currency_patterns.insert(numsys, value);
+                }
+                "percentFormats" => {
+                    let value: PercentFormattingPatterns = access.next_value()?;
+                    result.percent_patterns.insert(numsys, value);
                 }
                 _ => {
                     // When needed, consume "scientificFormats", "percentFormats", ...

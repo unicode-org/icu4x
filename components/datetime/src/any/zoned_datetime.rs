@@ -7,18 +7,22 @@ use alloc::string::String;
 
 use icu_provider::prelude::*;
 
+use crate::helpers::size_test;
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{self, calendar::*, date_time::PatternSelector};
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    WeekDataV1Marker,
 };
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use writeable::Writeable;
+
+size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 
 /// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times with time zones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
@@ -38,12 +42,14 @@ use writeable::Writeable;
 /// first, a computationally heavy construction of [`ZonedDateTimeFormatter`], and then fast formatting
 /// of the data using the instance.
 ///
+#[doc = zoned_date_time_formatter_size!()]
+///
 /// # Examples
 ///
 /// Using a GMT time zone:
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::CustomTimeZone;
@@ -76,7 +82,7 @@ use writeable::Writeable;
 /// Using a non-GMT time zone, specified by id:
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
@@ -141,12 +147,11 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::options::components;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
@@ -234,10 +239,12 @@ impl ZonedDateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>
@@ -298,10 +305,10 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::options::length;
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
@@ -386,10 +393,12 @@ impl ZonedDateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<ChineseCacheV1Marker>
             + DataProvider<ChineseDateLengthsV1Marker>
             + DataProvider<ChineseDateSymbolsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<DangiCacheV1Marker>
             + DataProvider<DangiDateLengthsV1Marker>
             + DataProvider<DangiDateSymbolsV1Marker>
             + DataProvider<EthiopianDateLengthsV1Marker>

@@ -6,6 +6,7 @@
 //! Central to this is the [`TypedDateTimeFormatter`].
 
 use crate::{
+    helpers::size_test,
     options::{length, preferences, DateTimeFormatterOptions},
     provider::calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
     provider::date_time::PatternSelector,
@@ -24,12 +25,16 @@ use crate::{
     DateTimeError, FormattedDateTime,
 };
 
+size_test!(TimeFormatter, time_formatter_size, 1200);
+
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
 ///
 /// For that reason, one should think of the process of formatting a time in two steps - first, a computational
 /// heavy construction of [`TimeFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
+///
+#[doc = time_formatter_size!()]
 ///
 /// [`icu_datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TimeFormatter
@@ -178,6 +183,12 @@ impl TimeFormatter {
     }
 }
 
+size_test!(
+    TypedDateFormatter<icu_calendar::Gregorian>,
+    typed_date_formatter_size,
+    4400
+);
+
 /// [`TypedDateFormatter`] is a formatter capable of formatting
 /// dates from a calendar selected at compile time. For the difference between this
 /// and [`DateFormatter`](crate::DateFormatter), please read the [crate root docs][crate].
@@ -187,6 +198,8 @@ impl TimeFormatter {
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateInput`] data using the instance.
+///
+#[doc = typed_date_formatter_size!()]
 ///
 /// [`icu_datetime`]: crate
 ///
@@ -390,6 +403,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     }
 }
 
+size_test!(
+    TypedDateTimeFormatter<icu_calendar::Gregorian>,
+    typed_date_time_formatter_size,
+    5152
+);
+
 /// [`TypedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times from a calendar selected at compile time. For the difference between this
 ///  and [`DateTimeFormatter`](crate::DateTimeFormatter), please read the [crate root docs][crate].
@@ -399,6 +418,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`TypedDateTimeFormatter`], and then fast formatting of [`DateInput`] data using the instance.
+///
+#[doc = typed_date_time_formatter_size!()]
 ///
 /// [`icu_datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateTimeFormatter
@@ -605,7 +626,6 @@ where {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::AsDeserializingBufferProvider;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -754,8 +774,7 @@ where {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::{components, length},
-    ///     DateTimeFormatterOptions, TypedDateTimeFormatter,
+    ///     options::{components, length}, TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///

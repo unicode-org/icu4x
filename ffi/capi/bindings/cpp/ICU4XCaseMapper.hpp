@@ -191,7 +191,7 @@ class ICU4XCaseMapper {
   char32_t simple_fold_turkic(char32_t ch) const;
   inline const capi::ICU4XCaseMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCaseMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XCaseMapper(capi::ICU4XCaseMapper* i) : inner(i) {}
+  inline explicit ICU4XCaseMapper(capi::ICU4XCaseMapper* i) : inner(i) {}
   ICU4XCaseMapper() = default;
   ICU4XCaseMapper(ICU4XCaseMapper&&) noexcept = default;
   ICU4XCaseMapper& operator=(ICU4XCaseMapper&& other) noexcept = default;
@@ -219,7 +219,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCa
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_lowercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -231,7 +231,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::lowercase(cons
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_lowercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -242,7 +242,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCa
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_uppercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -254,7 +254,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::uppercase(cons
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_uppercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -266,7 +266,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCa
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -279,7 +279,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::titlecase_segm
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -290,7 +290,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCa
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold(this->inner.get(), s.data(), s.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -302,7 +302,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold(const std
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -313,7 +313,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCa
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold_turkic(this->inner.get(), s.data(), s.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -325,7 +325,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold_turkic(co
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold_turkic(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

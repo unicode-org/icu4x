@@ -67,30 +67,30 @@ pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 impl CalendarArithmetic for Julian {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8) -> u8 {
+    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year) => 29,
+            2 if Self::is_leap_year(year, ()) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32) -> u8 {
+    fn months_for_every_year(_: i32, _data: ()) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(year: i32, _data: ()) -> bool {
         calendrical_calculations::julian::is_leap_year(year)
     }
 
-    fn last_month_day_in_year(_year: i32) -> (u8, u8) {
+    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
+        if Self::is_leap_year(year, ()) {
             366
         } else {
             365
@@ -172,7 +172,7 @@ impl Calendar for Julian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, ())
     }
 
     /// The calendar-specific month represented by `date`
@@ -220,7 +220,7 @@ impl Julian {
     /// Convenience function so we can call days_in_year without
     /// needing to construct a full ArithmeticDate
     fn days_in_year_direct(year: i32) -> u16 {
-        if Julian::is_leap_year(year) {
+        if Julian::is_leap_year(year, ()) {
             366
         } else {
             365
@@ -549,9 +549,9 @@ mod test {
 
     #[test]
     fn test_julian_leap_years() {
-        assert!(Julian::is_leap_year(4));
-        assert!(Julian::is_leap_year(0));
-        assert!(Julian::is_leap_year(-4));
+        assert!(Julian::is_leap_year(4, ()));
+        assert!(Julian::is_leap_year(0, ()));
+        assert!(Julian::is_leap_year(-4, ()));
 
         Date::try_new_julian_date(2020, 2, 29).unwrap();
     }

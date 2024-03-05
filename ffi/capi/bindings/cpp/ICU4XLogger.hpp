@@ -42,7 +42,7 @@ class ICU4XLogger {
   static bool init_console_logger();
   inline const capi::ICU4XLogger* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLogger* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLogger(capi::ICU4XLogger* i) : inner(i) {}
+  inline explicit ICU4XLogger(capi::ICU4XLogger* i) : inner(i) {}
   ICU4XLogger() = default;
   ICU4XLogger(ICU4XLogger&&) noexcept = default;
   ICU4XLogger& operator=(ICU4XLogger&& other) noexcept = default;

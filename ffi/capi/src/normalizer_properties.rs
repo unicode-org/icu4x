@@ -101,6 +101,7 @@ pub mod ffi {
     /// `second` will be NUL when the decomposition expands to a single character
     /// (which may or may not be the original one)
     #[diplomat::rust_link(icu::normalizer::properties::Decomposed, Enum)]
+    #[diplomat::out]
     pub struct ICU4XDecomposed {
         first: DiplomatChar,
         second: DiplomatChar,

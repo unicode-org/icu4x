@@ -54,7 +54,7 @@ class ICU4XLocaleDisplayNamesFormatter {
   diplomat::result<std::string, ICU4XError> of(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleDisplayNamesFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleDisplayNamesFormatter* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XLocaleDisplayNamesFormatter(capi::ICU4XLocaleDisplayNamesFormatter* i) : inner(i) {}
+  inline explicit ICU4XLocaleDisplayNamesFormatter(capi::ICU4XLocaleDisplayNamesFormatter* i) : inner(i) {}
   ICU4XLocaleDisplayNamesFormatter() = default;
   ICU4XLocaleDisplayNamesFormatter(ICU4XLocaleDisplayNamesFormatter&&) noexcept = default;
   ICU4XLocaleDisplayNamesFormatter& operator=(ICU4XLocaleDisplayNamesFormatter&& other) noexcept = default;
@@ -82,7 +82,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   auto diplomat_result_raw_out_value = capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -94,7 +94,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocaleDisplayNamesFormatte
   auto diplomat_result_raw_out_value = capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

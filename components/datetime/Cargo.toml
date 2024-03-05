@@ -5,7 +5,7 @@
 [package]
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
@@ -117,6 +117,10 @@ required-features = ["compiled_data"]
 [[test]]
 name = "resolved_components"
 required-features = ["experimental", "compiled_data"]
+
+[[test]]
+name = "simple_test"
+required-features = ["compiled_data"]
 
 [[test]]
 name = "skeleton_serialization"

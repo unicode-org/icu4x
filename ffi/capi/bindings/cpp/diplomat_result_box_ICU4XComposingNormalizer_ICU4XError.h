@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-typedef struct ICU4XComposingNormalizer ICU4XComposingNormalizer;
+#include "ICU4XComposingNormalizer.h"
 #include "ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {

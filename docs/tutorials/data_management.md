@@ -90,7 +90,7 @@ $ cargo add litemap
 $ cargo add zerovec
 ```
 
-We can use the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implemenations to any type.
+We can use the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
 
 ```rust,compile_fail
 extern crate alloc; // required as my-data is written for #[no_std]

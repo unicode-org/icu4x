@@ -98,7 +98,7 @@ class ICU4XPropertyValueNameToEnumMapper {
   static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_script(const ICU4XDataProvider& provider);
   inline const capi::ICU4XPropertyValueNameToEnumMapper* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPropertyValueNameToEnumMapper* AsFFIMut() { return this->inner.get(); }
-  inline ICU4XPropertyValueNameToEnumMapper(capi::ICU4XPropertyValueNameToEnumMapper* i) : inner(i) {}
+  inline explicit ICU4XPropertyValueNameToEnumMapper(capi::ICU4XPropertyValueNameToEnumMapper* i) : inner(i) {}
   ICU4XPropertyValueNameToEnumMapper() = default;
   ICU4XPropertyValueNameToEnumMapper(ICU4XPropertyValueNameToEnumMapper&&) noexcept = default;
   ICU4XPropertyValueNameToEnumMapper& operator=(ICU4XPropertyValueNameToEnumMapper&& other) noexcept = default;

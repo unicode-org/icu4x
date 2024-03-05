@@ -165,7 +165,6 @@ impl Date<Buddhist> {
     ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// use std::convert::TryFrom;
     ///
     /// let date_buddhist = Date::try_new_buddhist_date(1970, 1, 2)
     ///     .expect("Failed to initialize Buddhist Date instance.");
