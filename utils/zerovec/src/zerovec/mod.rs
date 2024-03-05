@@ -914,6 +914,41 @@ where
         *self = Self::new_borrowed(&[])
     }
 
+    /// Removes the first element of the ZeroVec. The ZeroVec remains in the same
+    /// borrowed or owned state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use crate::zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> =
+    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// assert!(!zerovec.is_owned());
+    ///
+    /// let first = zerovec.take_first().unwrap();
+    /// assert_eq!(first, 0x00D3);
+    /// assert!(!zerovec.is_owned());
+    /// ```
+    pub fn take_first(&mut self) -> Option<T> {
+        match core::mem::take(self).into_cow() {
+            Cow::Owned(mut vec) => {
+                let ule = vec.remove(0);
+                let rv = T::from_unaligned(ule);
+                *self = ZeroVec::new_owned(vec);
+                Some(rv)
+            }
+            Cow::Borrowed(b) => {
+                let (ule, remainder) = b.split_first()?;
+                let rv = T::from_unaligned(*ule);
+                *self = ZeroVec::new_borrowed(remainder);
+                Some(rv)
+            }
+        }
+    }
+
     /// Converts the type into a `Cow<'a, [T::ULE]>`, which is
     /// the logical equivalent of this type's internal representation
     #[inline]
