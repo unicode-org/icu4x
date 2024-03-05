@@ -2504,64 +2504,77 @@ impl_value_getter! {
 }
 #[cfg(test)]
 mod test_enumerated_property_completeness {
-    use std::cmp::Ordering;
-
     use super::*;
+    use alloc::collections::BTreeSet;
+    use std::cmp::Ordering;
+    use std::fmt;
+    enum Origin {
+        Data,
+        Consts,
+    }
+    struct NameValue {
+        origin: Origin,
+        name: String,
+        value: u16,
+    }
+
+    impl fmt::Debug for NameValue {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
+            let origin = match self.origin {
+                Origin::Data => "Data",
+                Origin::Consts => "Consts",
+            };
+            write!(f, "{}:\t{:?}\t{:?}", origin, self.name, self.value)
+        }
+    }
+
+    impl PartialOrd for NameValue {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            Some(self.value.cmp(&other.value))
+        }
+    }
+
+    impl PartialEq for NameValue {
+        fn eq(&self, other: &Self) -> bool {
+            self.value == other.value
+        }
+    }
+
+    impl Eq for NameValue {}
+
+    impl Ord for NameValue {
+        fn cmp(&self, other: &Self) -> Ordering {
+            self.value.cmp(&other.value)
+        }
+    }
 
     fn check_enum<'a>(
-        lookup: &PropertyValueNameToEnumMapV1<'_>,
+        lookup: &PropertyValueNameToEnumMapV1<'static>,
         consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
     ) {
-        let mut data = lookup.map.iter_copied_values().collect::<Vec<_>>();
-        data.sort_by_key(|(_, v)| *v);
-        data.dedup_by_key(|(_, v)| *v); // data may contain multiple entries for the same value
+        let data = lookup
+            .map
+            .iter_copied_values()
+            .map(|(name, value)| NameValue {
+                origin: Origin::Data,
+                name: String::from_utf8(name.as_byte_slice().to_vec()).unwrap(),
+                value,
+            })
+            .collect::<BTreeSet<NameValue>>();
+        let consts = consts
+            .into_iter()
+            .map(|(name, value)| NameValue {
+                origin: Origin::Consts,
+                name: name.to_string(),
+                value: *value,
+            })
+            .collect::<BTreeSet<NameValue>>();
 
-        let mut consts = consts.into_iter().collect::<Vec<_>>();
-        consts.sort_by_key(|(_, v)| *v);
-
-        let mut diff = Vec::new();
-
-        // find difference between data and consts
-        let (mut data_idx, mut consts_idx) = (0, 0);
-        while data_idx < data.len() && consts_idx < consts.len() {
-            let (data_name, data_val) = data[data_idx];
-            let (consts_name, consts_val) = &consts[consts_idx];
-
-            match data_val.cmp(consts_val) {
-                Ordering::Less => {
-                    diff.push((
-                        data_val,
-                        Some(core::str::from_utf8(data_name.as_byte_slice()).unwrap()),
-                        None,
-                    ));
-                    data_idx += 1;
-                }
-                Ordering::Equal => {
-                    data_idx += 1;
-                    consts_idx += 1;
-                }
-                Ordering::Greater => {
-                    diff.push((*consts_val, None, Some(consts_name)));
-                    consts_idx += 1;
-                }
-            }
-        }
-        diff.extend(data[data_idx..].iter().map(|(name, val)| {
-            (
-                *val,
-                Some(core::str::from_utf8(name.as_byte_slice()).unwrap()),
-                None,
-            )
-        }));
-        diff.extend(
-            consts[consts_idx..]
-                .iter()
-                .map(|(n, v)| (*v, None, Some(n))),
-        );
+        let diff: Vec<_> = data.symmetric_difference(&consts).collect();
 
         assert!(
             diff.is_empty(),
-            "Values defined in data do not match values defined in consts. Difference (value, data name, const name):\n {:?}",
+            "Values defined in data do not match values defined in consts. Difference:\n {:#?}",
             diff
         );
     }
