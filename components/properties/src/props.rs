@@ -2588,7 +2588,7 @@ mod test_enumerated_property_completeness {
     }
 
     #[test]
-    fn test_gc() {
+    fn test_ccc() {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
             CanonicalCombiningClass::ALL_CONSTS,
