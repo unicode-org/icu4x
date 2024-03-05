@@ -2524,7 +2524,7 @@ mod test_enumerated_property_completeness {
                 Origin::Data => "Data",
                 Origin::Consts => "Consts",
             };
-            write!(f, "{}:\t{:?}\t{:?}", origin, self.name, self.value)
+            write!(f, "{}:\t{:?}:\t{:?}", origin, self.name, self.value)
         }
     }
 
