@@ -160,7 +160,7 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 
     fn get_v2(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
         let idx = self.data.map.get(iana_id.as_bytes())?;
-        self.data.bcp47_ids.get(idx)
+        self.data.bcp47_ids.get(idx >> 1)
     }
 
     /// Normalizes the case of an IANA time zone identifier. Does not canonicalize the identifier,

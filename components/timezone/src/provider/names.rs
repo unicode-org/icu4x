@@ -74,6 +74,7 @@ pub struct IanaToBcp47MapV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct IanaToBcp47MapV2<'data> {
     /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
+    /// The lowest bit is 1 if the name is canonical and 0 if it is not canonical.
     /// The IANA identifiers are normal-case.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroAsciiIgnoreCaseTrie<ZeroVec<'data, u8>>,

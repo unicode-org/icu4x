@@ -74,14 +74,21 @@ impl DataProvider<IanaToBcp47MapV2Marker> for crate::DatagenProvider {
         let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
+        // Get the canonical IANA names.
+        // Note: The BTreeMap retains the order of the aliases, which is important for establishing
+        // the canonical order of the IANA names.
+        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
+
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
         let map: BTreeMap<Vec<u8>, usize> = iana2bcp
             .iter()
             .map(|(iana, bcp)| {
+                let is_canonical = bcp2iana.get(bcp) == Some(iana);
+                let index = bcp47_ids.binary_search(bcp).unwrap();
                 (
                     iana.as_bytes().to_vec(),
-                    bcp47_ids.binary_search(bcp).unwrap(),
+                    (index << 1) | (is_canonical as usize),
                 )
             })
             .collect();
