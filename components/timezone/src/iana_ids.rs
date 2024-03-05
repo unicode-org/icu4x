@@ -162,6 +162,71 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
         let idx = self.data.map.get(iana_id.as_bytes())?;
         self.data.bcp47_ids.get(idx)
     }
+
+    /// Normalizes the case of an IANA time zone identifier. Does not canonicalize the identifier,
+    /// and the identifier does not need to exist.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::IanaToBcp47Mapper;
+    ///
+    /// let mapper = IanaToBcp47Mapper::new();
+    /// let mapper_borrowed = mapper.as_borrowed();
+    ///
+    /// assert_eq!(
+    ///     "Asia/Ho_Chi_Minh",
+    ///     mapper_borrowed.normalize_iana("Asia/Ho_chi_minh")
+    /// );
+    ///
+    /// // Does not canonicalize identifiers:
+    /// assert_eq!(
+    ///     "Asia/Saigon",
+    ///     mapper_borrowed.normalize_iana("Asia/Saigon")
+    /// );
+    ///
+    /// // Identifier need not exist:
+    /// assert_eq!(
+    ///     "America/Fake_City",
+    ///     mapper_borrowed.normalize_iana("America/faKe_CitY")
+    /// );
+    ///
+    /// // Supports identifiers with unusual casing:
+    /// assert_eq!(
+    ///     "America/Argentina/ComodRivadavia",
+    ///     mapper_borrowed.normalize_iana("america/argentina/comodrivadavia")
+    /// );
+    /// ```
+    pub fn normalize_iana<'l>(&self, iana_id: &'l str) -> Cow<'l, str> {
+        if self.is_v1 {
+            // No data to do this properly.
+            return to_ypotryll_case(iana_id);
+        }
+        let mut cursor = self.data.map.cursor();
+        let mut key_str = Cow::Borrowed(iana_id);
+        let mut i = 0;
+        let value = loop {
+            if i == key_str.len() {
+                break cursor.take_value();
+            }
+            let input_byte = key_str.as_bytes()[i];
+            let Some(matched_byte) = cursor.step(input_byte) else {
+                break None;
+            };
+            if matched_byte != input_byte {
+                assert!(matched_byte.is_ascii_alphabetic());
+                assert!(input_byte.is_ascii_alphabetic());
+                // Safety: by assertion, the bytes at this index are ASCII bytes
+                unsafe { key_str.to_mut().as_mut_vec()[i] = matched_byte };
+            }
+            i += 1;
+        };
+        if value.is_some() {
+            key_str
+        } else {
+            to_ypotryll_case(iana_id)
+        }
+    }
 }
 
 /// A mapper that supports mapping IANA identifiers to BCP-47 identifiers and also
@@ -310,32 +375,9 @@ impl IanaBcp47RoundTripMapperBorrowed<'_> {
     /// Normalizes the case of an IANA time zone identifier. Does not canonicalize the identifier,
     /// and the identifier does not need to exist.
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::IanaBcp47RoundTripMapper;
-    ///
-    /// let mapper = IanaBcp47RoundTripMapper::new();
-    /// let mapper_borrowed = mapper.as_borrowed();
-    ///
-    /// assert_eq!(
-    ///     "Asia/Ho_Chi_Minh",
-    ///     mapper_borrowed.normalize_iana("Asia/Ho_chi_minh")
-    /// );
-    ///
-    /// // Does not canonicalize identifiers:
-    /// assert_eq!(
-    ///     "Asia/Saigon",
-    ///     mapper_borrowed.normalize_iana("Asia/Saigon")
-    /// );
-    ///
-    /// // Identifier need not exist:
-    /// assert_eq!(
-    ///     "America/Fake_City",
-    ///     mapper_borrowed.normalize_iana("America/faKe_CitY")
-    /// );
-    /// ```
+    /// See examples in [`IanaToBcp47MapperBorrowed::normalize_iana()`].
     pub fn normalize_iana<'a>(&'a self, iana_id: &'a str) -> Cow<'a, str> {
+        // TODO(2.0): Make this use IanaToBcp47MapperBorrowed::normalize_iana
         if let Some(bcp47_id) = self.iana_to_bcp47(iana_id) {
             if let Some(iana_roundtrip) = self.bcp47_to_iana(bcp47_id) {
                 if iana_id.eq_ignore_ascii_case(iana_roundtrip) {
