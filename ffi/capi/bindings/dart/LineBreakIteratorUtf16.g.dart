@@ -38,6 +38,7 @@ final class LineBreakIteratorUtf16 implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLineBreakIteratorUtf16_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLineBreakIteratorUtf16_destroy(ffi.Pointer<ffi.Void> self);
