@@ -80,14 +80,17 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XGregorianZonedDateTimeFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int dateLength, int timeLength);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, _IsoTimeZoneOptionsFfi)>(isLeaf: true, symbol: 'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int dateLength, int timeLength, _IsoTimeZoneOptionsFfi zoneOptions);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> writeable);

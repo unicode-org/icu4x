@@ -62,6 +62,7 @@ final class TitlecaseOptions {
       ]);
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<_TitlecaseOptionsFfi Function()>(isLeaf: true, symbol: 'ICU4XTitlecaseOptionsV1_default_options')
 // ignore: non_constant_identifier_names
 external _TitlecaseOptionsFfi _ICU4XTitlecaseOptionsV1_default_options();

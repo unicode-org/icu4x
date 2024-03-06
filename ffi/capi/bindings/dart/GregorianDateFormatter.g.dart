@@ -74,14 +74,17 @@ final class GregorianDateFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XGregorianDateFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XGregorianDateFormatter_create_with_length')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XGregorianDateFormatter_create_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianDateFormatter_format_iso_date')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XGregorianDateFormatter_format_iso_date(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianDateFormatter_format_iso_datetime')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XGregorianDateFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);

@@ -40,6 +40,7 @@ final class SentenceBreakIteratorUtf16 implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XSentenceBreakIteratorUtf16_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XSentenceBreakIteratorUtf16_next')
 // ignore: non_constant_identifier_names
 external int _ICU4XSentenceBreakIteratorUtf16_next(ffi.Pointer<ffi.Opaque> self);

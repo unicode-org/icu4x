@@ -121,34 +121,42 @@ final class UnicodeSetData implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XUnicodeSetData_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_contains')
 // ignore: non_constant_identifier_names
 external bool _ICU4XUnicodeSetData_contains(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_contains_char')
 // ignore: non_constant_identifier_names
 external bool _ICU4XUnicodeSetData_contains_char(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_basic_emoji')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_basic_emoji(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_main')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_main(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_auxiliary')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_auxiliary(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_punctuation')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_punctuation(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_numbers')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_numbers(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_index')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_index(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);

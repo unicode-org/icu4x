@@ -62,10 +62,12 @@ final class RegionDisplayNames implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XRegionDisplayNames_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XRegionDisplayNames_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_of')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> writeable);

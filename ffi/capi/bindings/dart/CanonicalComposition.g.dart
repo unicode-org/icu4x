@@ -56,10 +56,12 @@ final class CanonicalComposition implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XCanonicalComposition_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCanonicalComposition_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCanonicalComposition_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCanonicalComposition_compose')
 // ignore: non_constant_identifier_names
 external Rune _ICU4XCanonicalComposition_compose(ffi.Pointer<ffi.Opaque> self, Rune starter, Rune second);
