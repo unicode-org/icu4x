@@ -41,11 +41,13 @@ pub mod provider {
         icu_experimental_data::make_provider!(Baked);
         icu_experimental_data::impl_compactdecimal_long_v1!(Baked);
         icu_experimental_data::impl_compactdecimal_short_v1!(Baked);
+        icu_experimental_data::impl_currency_essentials_v1!(Baked);
         icu_experimental_data::impl_displaynames_languages_v1!(Baked);
         icu_experimental_data::impl_displaynames_locales_v1!(Baked);
         icu_experimental_data::impl_displaynames_regions_v1!(Baked);
         icu_experimental_data::impl_displaynames_scripts_v1!(Baked);
         icu_experimental_data::impl_displaynames_variants_v1!(Baked);
+        icu_experimental_data::impl_percent_essentials_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_day_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_hour_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_minute_v1!(Baked);
@@ -79,8 +81,6 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const KEYS: &[DataKey] = &[
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
         super::dimension::provider::CurrencyEssentialsV1Marker::KEY,
