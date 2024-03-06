@@ -4,8 +4,6 @@
 
 #[cfg(feature = "databake")]
 mod databake;
-#[cfg(feature = "serde")]
-mod serde;
 
 use core::{
     fmt::{self, Write},
