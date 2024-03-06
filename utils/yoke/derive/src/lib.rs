@@ -53,7 +53,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     // the Yokeable impl becomes really unweildy to generate safely
     let static_bounds: Vec<WherePredicate> = typarams
         .iter()
-        .map(|ty| parse_quote!(#ty: 'static))
+        // Yokeable::Output is Sized, so we ask that our generics are Sized, too.
+        // This could be improved to only enforce Sized on the type parameter that
+        // makes this struct a DST (the last field in the struct).
+        .map(|ty| parse_quote!(#ty: 'static + Sized))
         .collect();
     let lts = input.generics.lifetimes().count();
     if lts == 0 {
