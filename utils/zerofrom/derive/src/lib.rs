@@ -27,7 +27,8 @@ use syn::fold::{self, Fold};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
-    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Path, PathArguments, PathSegment, Token, TraitBoundModifier, Type, TypeParamBound, TypePath, WherePredicate
+    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Path, PathArguments,
+    PathSegment, Token, TraitBoundModifier, Type, TypeParamBound, TypePath, WherePredicate,
 };
 use synstructure::Structure;
 mod visitor;
@@ -134,8 +135,11 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         let sized: Path = PathSegment {
                             ident: quote::format_ident!("Sized"),
                             arguments: PathArguments::None,
-                        }.into();
-                        if trait_bound.path == sized && matches!(trait_bound.modifier, TraitBoundModifier::Maybe(_)) {
+                        }
+                        .into();
+                        if trait_bound.path == sized
+                            && matches!(trait_bound.modifier, TraitBoundModifier::Maybe(_))
+                        {
                             continue;
                         }
                     }
