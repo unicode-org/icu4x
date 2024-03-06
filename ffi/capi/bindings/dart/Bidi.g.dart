@@ -49,9 +49,9 @@ final class Bidi implements ffi.Finalizable {
     final textView = text.utf8View;
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
-    core.List<Object> edge_text = [textArena];
+    core.List<Object> textEdges = [textArena];
     final result = _ICU4XBidi_for_text(_underlying, textView.pointer(textArena.arena), textView.length, defaultLevel);
-    return BidiInfo._(result, true, [], edge_text);
+    return BidiInfo._(result, true, [], textEdges);
   }
 
   /// Utility function for producing reorderings given a list of levels
@@ -113,30 +113,37 @@ final class Bidi implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XBidi_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidi_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XBidi_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_for_text')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XBidi_for_text(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> textData, int textLength, int defaultLevel);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidi_reorder_visual')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XBidi_reorder_visual(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> levelsData, int levelsLength);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_level_is_rtl')
 // ignore: non_constant_identifier_names
 external bool _ICU4XBidi_level_is_rtl(int level);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_level_is_ltr')
 // ignore: non_constant_identifier_names
 external bool _ICU4XBidi_level_is_ltr(int level);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Uint8 Function()>(isLeaf: true, symbol: 'ICU4XBidi_level_rtl')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidi_level_rtl();
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Uint8 Function()>(isLeaf: true, symbol: 'ICU4XBidi_level_ltr')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidi_level_ltr();

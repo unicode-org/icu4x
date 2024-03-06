@@ -47,6 +47,7 @@ final class MetazoneCalculator implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XMetazoneCalculator_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XMetazoneCalculator_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XMetazoneCalculator_create(ffi.Pointer<ffi.Opaque> provider);

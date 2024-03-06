@@ -37,6 +37,7 @@ enum PluralCategory {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPluralCategory_get_for_cldr_string')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _ICU4XPluralCategory_get_for_cldr_string(ffi.Pointer<ffi.Uint8> sData, int sLength);

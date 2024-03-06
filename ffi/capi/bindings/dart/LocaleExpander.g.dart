@@ -70,18 +70,22 @@ final class LocaleExpander implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleExpander_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleExpander_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_create_extended')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleExpander_create_extended(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_maximize')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocaleExpander_maximize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_minimize')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocaleExpander_minimize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

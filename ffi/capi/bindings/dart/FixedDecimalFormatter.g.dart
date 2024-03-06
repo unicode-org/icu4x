@@ -59,10 +59,12 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimalFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int groupingStrategy);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_format')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XFixedDecimalFormatter_format(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);

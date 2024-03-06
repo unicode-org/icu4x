@@ -305,162 +305,202 @@ final class FixedDecimal implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_i64')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XFixedDecimal_create_from_i64(int v);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_f64_with_lower_magnitude')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int magnitude);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_f64_with_significant_digits')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, int digits);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Double)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_f64_with_floating_precision')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_f64_with_floating_precision(double f);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_string')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_string(ffi.Pointer<ffi.Uint8> vData, int vLength);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_digit_at')
 // ignore: non_constant_identifier_names
 external int _ICU4XFixedDecimal_digit_at(ffi.Pointer<ffi.Opaque> self, int magnitude);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_magnitude_start')
 // ignore: non_constant_identifier_names
 external int _ICU4XFixedDecimal_magnitude_start(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_magnitude_end')
 // ignore: non_constant_identifier_names
 external int _ICU4XFixedDecimal_magnitude_end(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_nonzero_magnitude_start')
 // ignore: non_constant_identifier_names
 external int _ICU4XFixedDecimal_nonzero_magnitude_start(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_nonzero_magnitude_end')
 // ignore: non_constant_identifier_names
 external int _ICU4XFixedDecimal_nonzero_magnitude_end(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_is_zero')
 // ignore: non_constant_identifier_names
 external bool _ICU4XFixedDecimal_is_zero(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_multiply_pow10')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_multiply_pow10(ffi.Pointer<ffi.Opaque> self, int power);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_sign')
 // ignore: non_constant_identifier_names
 external int _ICU4XFixedDecimal_sign(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_set_sign')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_set_sign(ffi.Pointer<ffi.Opaque> self, int sign);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_apply_sign_display')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_apply_sign_display(ffi.Pointer<ffi.Opaque> self, int signDisplay);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trim_start')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_trim_start(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trim_end')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_trim_end(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_pad_start')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_pad_start(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_pad_end')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_pad_end(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_set_max_position')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_set_max_position(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trunc')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_trunc(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trunc_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_trunc_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_trunc')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_trunc(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_trunc_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_trunc_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_expand')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_expand(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_expand_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_expand_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_expand')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_expand(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_expand_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_expand_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_ceil')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_ceil(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_ceil_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_ceil_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_ceil')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_ceil(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_ceil_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_ceil_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_floor')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_floor(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_floor_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_floor_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_floor')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_floor(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_floor_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_floor_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_even')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_even(ffi.Pointer<ffi.Opaque> self, int position);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_even_to_increment')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_half_even_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_concatenate_end')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _ICU4XFixedDecimal_concatenate_end(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_to_string')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimal_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);

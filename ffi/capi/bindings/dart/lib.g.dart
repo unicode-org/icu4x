@@ -10,6 +10,7 @@ import 'dart:ffi' as ffi;
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
+import 'package:meta/meta.dart' as meta;
 part 'AnyCalendarKind.g.dart';
 part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
@@ -438,6 +439,13 @@ class _FinalizedArena {
 
   _FinalizedArena() : this.arena = ffi2.Arena() {
     _finalizer.attach(this, this.arena);
+  }
+  // Construct
+  _FinalizedArena.withLifetime(core.List<core.List<Object>> lifetimeAppendArray) : this.arena = ffi2.Arena() {
+    _finalizer.attach(this, this.arena);
+    for (final edge in lifetimeAppendArray) {
+      edge.add(this);
+    }
   }
 }
 

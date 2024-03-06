@@ -62,10 +62,12 @@ final class TitlecaseMapper implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XTitlecaseMapper_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTitlecaseMapper_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XTitlecaseMapper_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTitlecaseMapper_titlecase_segment_v1')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XTitlecaseMapper_titlecase_segment_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> writeable);

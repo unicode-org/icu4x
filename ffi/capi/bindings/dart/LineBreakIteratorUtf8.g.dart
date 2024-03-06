@@ -42,6 +42,7 @@ final class LineBreakIteratorUtf8 implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XLineBreakIteratorUtf8_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLineBreakIteratorUtf8_next')
 // ignore: non_constant_identifier_names
 external int _ICU4XLineBreakIteratorUtf8_next(ffi.Pointer<ffi.Opaque> self);
