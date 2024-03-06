@@ -31,8 +31,8 @@ where
 
 #[test]
 fn test_baked() {
-    use alloc::borrow::Cow;
     use ::databake::test_bake;
+    use alloc::borrow::Cow;
     test_bake!(
         Pattern<SinglePlaceholder, Cow<str>>,
         const: unsafe { crate::Pattern::<SinglePlaceholder, Cow<str>>::from_store_unchecked(Cow::Borrowed("")) },

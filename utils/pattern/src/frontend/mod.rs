@@ -46,7 +46,11 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
-#[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom), zerofrom(may_borrow(Store)))]
+#[cfg_attr(
+    feature = "zerofrom",
+    derive(zerofrom::ZeroFrom),
+    zerofrom(may_borrow(Store))
+)]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
     store: Store,

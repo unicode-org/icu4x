@@ -6,8 +6,8 @@
 
 extern crate alloc;
 
-use icu_pattern::{SinglePlaceholder, Pattern};
 use alloc::borrow::Cow;
+use icu_pattern::{Pattern, SinglePlaceholder};
 
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
@@ -26,7 +26,11 @@ fn bake_SinglePlaceholderPattern_ZeroVec() {
     test_bake!(
         DeriveTest_SinglePlaceholderPattern_ZeroVec<'static>,
         crate::DeriveTest_SinglePlaceholderPattern_ZeroVec {
-            _data: unsafe { icu_pattern::Pattern::<icu_pattern::SinglePlaceholder, _>::from_store_unchecked(Cow::Borrowed("")) }
+            _data: unsafe {
+                icu_pattern::Pattern::<icu_pattern::SinglePlaceholder, _>::from_store_unchecked(
+                    Cow::Borrowed(""),
+                )
+            }
         },
     );
 }
