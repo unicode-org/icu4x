@@ -215,29 +215,6 @@ where
     }
 }
 
-/*
-#[cfg(feature = "zerofrom")]
-mod zerofrom {
-    use super::*;
-    use ::zerofrom::ZeroFrom;
-
-    impl<'zf, 'src, B, Store> ZeroFrom<'zf, Pattern<B, Store>> for Pattern<B, Store>
-    where
-        'src: 'zf,
-        B: 'static,
-        Store: ZeroFrom<'zf, Store> + 'src,
-    {
-        #[inline]
-        fn zero_from(other: &'zf Pattern<B, Store>) -> Self {
-            Self {
-                _backend: PhantomData,
-                store: ZeroFrom::zero_from(&other.store),
-            }
-        }
-    }
-}
-*/
-
 impl<B, Store> Pattern<B, Store>
 where
     B: PatternBackend,
