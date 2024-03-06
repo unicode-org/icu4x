@@ -2505,77 +2505,48 @@ impl_value_getter! {
 #[cfg(test)]
 mod test_enumerated_property_completeness {
     use super::*;
-    use alloc::collections::BTreeSet;
-    use std::cmp::Ordering;
-    use std::fmt;
-    enum Origin {
-        Data,
-        Consts,
-    }
-    struct NameValue {
-        origin: Origin,
-        name: String,
-        value: u16,
-    }
-
-    impl fmt::Debug for NameValue {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-            let origin = match self.origin {
-                Origin::Data => "Data",
-                Origin::Consts => "Consts",
-            };
-            write!(f, "{}:\t{:?}:\t{:?}", origin, self.name, self.value)
-        }
-    }
-
-    impl PartialOrd for NameValue {
-        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            Some(self.value.cmp(&other.value))
-        }
-    }
-
-    impl PartialEq for NameValue {
-        fn eq(&self, other: &Self) -> bool {
-            self.value == other.value
-        }
-    }
-
-    impl Eq for NameValue {}
-
-    impl Ord for NameValue {
-        fn cmp(&self, other: &Self) -> Ordering {
-            self.value.cmp(&other.value)
-        }
-    }
+    use alloc::collections::BTreeMap;
 
     fn check_enum<'a>(
         lookup: &PropertyValueNameToEnumMapV1<'static>,
         consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
     ) {
-        let data = lookup
+        let mut data: BTreeMap<_, _> = lookup
             .map
             .iter_copied_values()
-            .map(|(name, value)| NameValue {
-                origin: Origin::Data,
-                name: String::from_utf8(name.as_byte_slice().to_vec()).unwrap(),
-                value,
+            .map(|(name, value)| {
+                (
+                    value,
+                    (
+                        String::from_utf8(name.as_byte_slice().to_vec()).unwrap(),
+                        "Data",
+                    ),
+                )
             })
-            .collect::<BTreeSet<NameValue>>();
-        let consts = consts
-            .into_iter()
-            .map(|(name, value)| NameValue {
-                origin: Origin::Consts,
-                name: name.to_string(),
-                value: *value,
-            })
-            .collect::<BTreeSet<NameValue>>();
+            .collect();
 
-        let diff: Vec<_> = data.symmetric_difference(&consts).collect();
+        let consts: BTreeMap<_, _> = consts
+            .into_iter()
+            .map(|(name, value)| (*value, (name.to_string(), "Consts")))
+            .collect();
+
+        let mut diff = Vec::new();
+        for t @ (value, _) in consts {
+            if data.remove(&value).is_none() {
+                diff.push(t);
+            }
+        }
+        diff.extend(data);
+
+        let mut fmt_diff = String::new();
+        for (value, (name, source)) in diff {
+            fmt_diff.push_str(&format!("{source}:\t{name} = {value:?}\n"));
+        }
 
         assert!(
-            diff.is_empty(),
-            "Values defined in data do not match values defined in consts. Difference:\n {:#?}",
-            diff
+            fmt_diff.is_empty(),
+            "Values defined in data do not match values defined in consts. Difference:\n{}",
+            fmt_diff
         );
     }
 
