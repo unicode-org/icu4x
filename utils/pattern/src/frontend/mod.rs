@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "databake")]
+mod databake;
+#[cfg(feature = "serde")]
+mod serde;
+
 use core::{
     fmt::{self, Write},
     marker::PhantomData,
@@ -43,6 +48,7 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
+#[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom), zerofrom(may_borrow(Store)))]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
     store: Store,
@@ -209,47 +215,7 @@ where
     }
 }
 
-#[cfg(feature = "databake")]
-mod databake {
-    use core::any::TypeId;
-
-    use crate::SinglePlaceholder;
-
-    use super::*;
-    use ::databake::{quote, Bake, CrateEnv, TokenStream};
-
-    impl<B, Store> Bake for Pattern<B, Store>
-    where
-        B: 'static,
-        Store: Bake,
-    {
-        fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-            ctx.insert("icu_pattern");
-            let store = self.store.bake(ctx);
-            let b = if TypeId::of::<B>() == TypeId::of::<SinglePlaceholder>() {
-                quote!(icu_pattern::SinglePlaceholder)
-            } else {
-                unreachable!("sealed")
-            };
-            quote! {
-                // Safety: the store comes from a valid Pattern
-                unsafe { icu_pattern::Pattern::<#b, _>::from_store_unchecked(#store) }
-            }
-        }
-    }
-
-    #[test]
-    fn test_baked() {
-        use alloc::borrow::Cow;
-        use ::databake::test_bake;
-        test_bake!(
-            Pattern<SinglePlaceholder, Cow<str>>,
-            const: unsafe { crate::Pattern::<SinglePlaceholder, Cow<str>>::from_store_unchecked(Cow::Borrowed("")) },
-            icu_provider
-        );
-    }
-}
-
+/*
 #[cfg(feature = "zerofrom")]
 mod zerofrom {
     use super::*;
@@ -259,7 +225,7 @@ mod zerofrom {
     where
         'src: 'zf,
         B: 'static,
-        Store: ZeroFrom<'src, Store>,
+        Store: ZeroFrom<'zf, Store> + 'src,
     {
         #[inline]
         fn zero_from(other: &'zf Pattern<B, Store>) -> Self {
@@ -270,6 +236,7 @@ mod zerofrom {
         }
     }
 }
+*/
 
 impl<B, Store> Pattern<B, Store>
 where
