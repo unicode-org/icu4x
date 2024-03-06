@@ -41,8 +41,8 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialsV1<'data> {
-    /// Maps from currency iso code to currency patterns
-    /// which points to which pattern to use and the place holder index.
+    /// Maps from currency ISO code to currency patterns,
+    /// indicating which pattern to use and the placeholder index.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 
