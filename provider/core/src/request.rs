@@ -370,6 +370,24 @@ impl DataLocale {
         self == <&DataLocale>::default()
     }
 
+    /// Returns an ordering suitable for use in [`BTreeSet`].
+    ///
+    /// The ordering may or may not be equivalent to string ordering, and it
+    /// may or may not be stable across ICU4X releases.
+    ///
+    /// [`BTreeSet`]: alloc::collections::BTreeSet
+    pub fn total_cmp(&self, other: &Self) -> Ordering {
+        self.langid
+            .total_cmp(&other.langid)
+            .then_with(|| self.keywords.cmp(&other.keywords))
+            .then_with(|| {
+                #[cfg(feature = "experimental")]
+                return self.aux.cmp(&other.aux);
+                #[cfg(not(feature = "experimental"))]
+                return Ordering::Equal;
+            })
+    }
+
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
     ///
     /// This ignores auxiliary keys.
@@ -752,7 +770,7 @@ impl DataLocale {
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
-#[derive(Debug, PartialEq, Clone, Eq, Hash)]
+#[derive(Debug, PartialEq, Clone, Eq, Hash, PartialOrd, Ord)]
 #[cfg(feature = "experimental")]
 pub struct AuxiliaryKeys {
     value: AuxiliaryKeysInner,
@@ -789,6 +807,20 @@ impl PartialEq for AuxiliaryKeysInner {
 
 #[cfg(feature = "experimental")]
 impl Eq for AuxiliaryKeysInner {}
+
+#[cfg(feature = "experimental")]
+impl PartialOrd for AuxiliaryKeysInner {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl Ord for AuxiliaryKeysInner {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.deref().cmp(other.deref())
+    }
+}
 
 #[cfg(feature = "experimental")]
 impl Debug for AuxiliaryKeysInner {

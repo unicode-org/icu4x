@@ -178,6 +178,11 @@ pub mod ffi {
             self.0.strict_cmp(other).into()
         }
 
+        #[diplomat::rust_link(icu::locid::Locale::total_cmp, FnInStruct)]
+        pub fn total_cmp(&self, other: &Self) -> ICU4XOrdering {
+            self.0.total_cmp(&other.0).into()
+        }
+
         /// Deprecated
         ///
         /// Use `create_from_string("en").
