@@ -126,6 +126,7 @@ final class DataProvider implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XDataProvider_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XDataProvider_destroy(ffi.Pointer<ffi.Void> self);
