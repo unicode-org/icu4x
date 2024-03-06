@@ -16,6 +16,8 @@ pub mod ule;
 
 /// A formatter for currencies.
 pub struct CurrencyFormatter {
+    /// Options bag for the currency formatter to determine the behavior of the formatter.
     options: CurrencyFormatterOptions,
+    /// Essential data for the currency formatter.
     essential: DataPayload<provider::CurrencyEssentialsV1Marker>,
 }
