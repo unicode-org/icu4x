@@ -4,7 +4,7 @@
 
 use fixed_decimal::FixedDecimal;
 
-use crate::{options::CurrencyFormatterOptions, provider::CurrencyEssentialsV1};
+use crate::dimension::{options::CurrencyFormatterOptions, provider::CurrencyEssentialsV1};
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
