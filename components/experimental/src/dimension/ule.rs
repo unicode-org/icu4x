@@ -7,7 +7,7 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::dimension::provider::{CurrencyPatterns, PatternSelection, PlaceholderValue};
+use crate::dimension::provider::currency::{CurrencyPatterns, PatternSelection, PlaceholderValue};
 
 const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046

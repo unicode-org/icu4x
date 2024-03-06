@@ -13,7 +13,7 @@ use zerovec::ZeroMap;
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use crate::DatagenProvider;
-use icu_experimental::dimension::provider::*;
+use icu_experimental::dimension::provider::currency::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -316,7 +316,7 @@ fn test_basic() {
         (short_place_holder, narrow_place_holder)
     }
 
-    use icu_experimental::dimension::provider::*;
+    use icu_experimental::dimension::provider::currency::*;
     use icu_locid::locale;
 
     let provider = crate::DatagenProvider::new_testing();
