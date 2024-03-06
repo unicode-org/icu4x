@@ -13,7 +13,7 @@
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
-    - Mark `BidiClassAdapter::new` as const (https://github.com/unicode-org/icu4x/pull/4584)
+    - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
     - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)

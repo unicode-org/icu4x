@@ -97,7 +97,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
+    /// use icu_properties::bidi_data;
     ///
     /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
@@ -177,7 +177,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 ///
 /// # Examples
 /// ```
-/// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
+/// use icu_properties::bidi_data;
 ///
 /// let bidi_data = bidi_data::bidi_auxiliary_properties();
 ///

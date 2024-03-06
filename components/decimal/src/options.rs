@@ -26,7 +26,6 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// ```
 /// use icu_decimal::options;
 /// use icu_decimal::FixedDecimalFormatter;
-/// use icu_decimal::FormattedFixedDecimal;
 /// use icu_locid::Locale;
 /// use writeable::assert_writeable_eq;
 ///

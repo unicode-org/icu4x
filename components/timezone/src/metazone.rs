@@ -69,7 +69,6 @@ impl MetazoneCalculator {
     /// use icu::timezone::provider::{MetazoneId, TimeZoneBcp47Id};
     /// use icu::timezone::MetazoneCalculator;
     /// use icu_calendar::DateTime;
-    /// use icu_locid::locale;
     /// use tinystr::tinystr;
     ///
     /// let mzc = MetazoneCalculator::new();

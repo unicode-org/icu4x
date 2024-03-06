@@ -24,7 +24,8 @@ final class LocaleFallbackConfig {
   LocaleFallbackConfig({required this.priority, required this.extensionKey, required this.fallbackSupplement});
 
   // ignore: unused_element
-  LocaleFallbackConfig._(_LocaleFallbackConfigFfi underlying) :
+  // Internal constructor from FFI.
+  LocaleFallbackConfig._(_LocaleFallbackConfigFfi underlying, core.List<Object> edge_a) :
     priority = LocaleFallbackPriority.values[underlying.priority],
     extensionKey = Utf8Decoder().convert(underlying.extensionKey._pointer.asTypedList(underlying.extensionKey._length)),
     fallbackSupplement = LocaleFallbackSupplement.values[underlying.fallbackSupplement];
@@ -53,4 +54,10 @@ final class LocaleFallbackConfig {
         this.extensionKey,
         this.fallbackSupplement,
       ]);
+
+  // ignore: unused element
+  // Append all fields corresponding to lifetime `'a`
+  core.List<Object> _fields_for_lifetime_a() {
+    return [extensionKey];
+  }
 }

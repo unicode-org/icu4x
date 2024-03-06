@@ -16,12 +16,10 @@ extend = [
 default_to_workspace = false
 
 [env]
-ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-12-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
-# To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
-# https://chrome-infra-packages.appspot.com/p/gn/gn
-# TODO: Choose the correct distribution of GN automatically.
-ICU4X_GN_PACKAGE = { value = "gn/gn/linux-amd64", condition = { env_not_set = ["ICU4X_GN_PACKAGE"] } }
-ICU4X_BUILDING_WITH_FORCED_NIGHTLY = { value = "1", condition = { env_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] } }
+# The toolchain that CI is being run in. Allows tests to change under beta/nightly.
+CI_TOOLCHAIN = { value = "pinned-stable", condition = { env_not_set = ["CI_TOOLCHAIN"]}}
+# The pinned nightly toolchain for jobs that require a nightly compiler.
+PINNED_CI_NIGHTLY = { value = "nightly-2022-12-26", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
@@ -274,24 +272,14 @@ dependencies = [
     # benchmarking and coverage jobs not included
 ]
 
-[tasks.install-nightly]
-description = "Installs $ICU4X_NIGHTLY_TOOLCHAIN"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install ${ICU4X_NIGHTLY_TOOLCHAIN} --profile minimal
-exec --fail-on-error rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
-
-# For the nightly CI, we set three environment variables, and set a rustup override to nightly.
-# Each env var has a different purpose:
-# - ICU4X_NIGHTLY_TOOLCHAIN: This overrides the nightly used by this makefile
-# - ICU4X_BUILDING_WITH_FORCED_NIGHTLY: This lets tests know that we're building with forced nightly, in case of tests testing the behavior of specific Rust versions.
-# - `RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY`: Same as previously, but works for disabling doctests. Use ICU4X_BUILDING_WITH_FORCED_NIGHTLY where possible.
+# For the nightly and beta CI, we set 
+# - a rustup override
+# - CI_TOOLCHAIN: gets set to either "pinned-stable", "beta", or "nightly"
+# - PINNED_CI_NIGHTLY: Set to "nightly" if we want to use the latest nightly
 #
-# When updating the toolchain, please audit all cases of ICU4X_BUILDING_WITH_FORCED_NIGHTLY and remove cfgs where necessary.
-[tasks.set-nightly-version-for-ci]
-description = "Set all nightly version env vars for CI"
+# When updating the toolchain, please audit all cases of CI_TOOLCHAIN and remove cfgs where necessary.
+[tasks.set-ci-toolchain]
+description = "Set all toolchain vars for CI"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
@@ -309,24 +297,42 @@ if not ${event_name}
     exit 1
 end
 
-needs_nightly = eq "${event_name}" "schedule"
+ci_toolchain = set "pinned-stable"
 
-if eq "${event_name}" "workflow_dispatch"
+# We need to parse the channel information for dispatch/schedule events
+if eq "${event_name}" "workflow_dispatch" or eq "${event_name}" "schedule"
     event_path = get_env GITHUB_EVENT_PATH
     event_file = readfile ${event_path}
     event_json = json_parse ${event_file}
-    if ${event_json.inputs.nightly}
-        needs_nightly = set true
+    # For dispatch events
+    if eq "${event_name}" "workflow_dispatch"
+        if not eq "${event_json.inputs.channel}" "pinned-stable"
+            needs_override = set true
+            ci_toolchain = set "${event_json.inputs.channel}"
+        end
+    else
+        # Schedule events always override
+        needs_override = set true
+        # For schedule events, the cronjob on minute 1 is the beta job
+        if eq "${event_json.schedule}" "1 14 * * *"
+            ci_toolchain = set "beta"
+        else 
+            ci_toolchain = set "nightly"
+        end
     end
 end
 
-if ${needs_nightly}
-    echo "Setting up CI environment for forced-nightly Rust build"
-    appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=nightly\n"
-    appendfile ${env_file} "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1\n"
-    appendfile ${env_file} "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY\n"
-    exec rustup override set nightly
+
+if not eq ${ci_toolchain} "pinned-stable"
+    echo "Setting up CI environment for forced-${ci_toolchain} Rust build"
+    appendfile ${env_file} "CI_TOOLCHAIN=${ci_toolchain}\n"
+    exec rustup override set ${ci_toolchain}
+
+    if starts_with "${ci_toolchain}" "nightly"
+        # This affects tasks that can only be built on nightly
+        appendfile ${env_file} "PINNED_CI_NIGHTLY=${ci_toolchain}\n"
+    end
 else
-    echo "forced-nightly environment not required"
+    echo "forced-toolchain environment not required"
 end
 '''

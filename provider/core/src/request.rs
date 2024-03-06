@@ -258,7 +258,6 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
     /// use icu_provider::DataLocale;
     /// use std::cmp::Ordering;
     ///
@@ -491,7 +490,6 @@ impl DataLocale {
     /// use icu_locid::{
     ///     langid, locale,
     ///     subtags::{language, region},
-    ///     Locale,
     /// };
     /// use icu_provider::prelude::*;
     ///
@@ -748,7 +746,6 @@ impl DataLocale {
 /// Multiple auxiliary keys are allowed:
 ///
 /// ```
-/// use icu_locid::locale;
 /// use icu_provider::prelude::*;
 /// use writeable::assert_writeable_eq;
 ///

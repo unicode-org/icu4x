@@ -43,9 +43,9 @@ pub use keywords::Keywords;
 #[doc(inline)]
 pub use value::{value, Value};
 
-use crate::helpers::ShortSlice;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
+use crate::shortvec::ShortBoxSlice;
 use litemap::LiteMap;
 
 /// Unicode Extensions provide information about user preferences in a given locale.
@@ -151,7 +151,7 @@ impl Unicode {
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
-        let mut attributes = ShortSlice::new();
+        let mut attributes = ShortBoxSlice::new();
 
         while let Some(subtag) = iter.peek() {
             if let Ok(attr) = Attribute::try_from_bytes(subtag) {
@@ -167,14 +167,14 @@ impl Unicode {
         let mut keywords = LiteMap::new();
 
         let mut current_keyword = None;
-        let mut current_value = ShortSlice::new();
+        let mut current_value = ShortBoxSlice::new();
 
         while let Some(subtag) = iter.peek() {
             let slen = subtag.len();
             if slen == 2 {
                 if let Some(kw) = current_keyword.take() {
                     keywords.try_insert(kw, Value::from_short_slice_unchecked(current_value));
-                    current_value = ShortSlice::new();
+                    current_value = ShortBoxSlice::new();
                 }
                 current_keyword = Some(Key::try_from_bytes(subtag)?);
             } else if current_keyword.is_some() {

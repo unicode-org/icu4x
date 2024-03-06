@@ -59,18 +59,16 @@ pub mod ffi {
     impl ICU4XAnyCalendarKind {
         /// Read the calendar type off of the -u-ca- extension on a locale.
         ///
-        /// Errors if there is no calendar on the locale or if the locale's calendar
+        /// Returns nothing if there is no calendar on the locale or if the locale's calendar
         /// is not known or supported.
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::get_for_locale, FnInEnum)]
-        pub fn get_for_locale(locale: &ICU4XLocale) -> Result<ICU4XAnyCalendarKind, ()> {
-            AnyCalendarKind::get_for_locale(&locale.0)
-                .map(Into::into)
-                .ok_or(())
+        pub fn get_for_locale(locale: &ICU4XLocale) -> Option<ICU4XAnyCalendarKind> {
+            AnyCalendarKind::get_for_locale(&locale.0).map(Into::into)
         }
 
         /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
         ///
-        /// Errors if the calendar is not known or supported.
+        /// Returns nothing if the calendar is not known or supported.
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::get_for_bcp47_value, FnInEnum)]
         #[diplomat::rust_link(
             icu::calendar::AnyCalendarKind::get_for_bcp47_string,
@@ -82,10 +80,8 @@ pub mod ffi {
             FnInEnum,
             hidden
         )]
-        pub fn get_for_bcp47(s: &DiplomatStr) -> Result<ICU4XAnyCalendarKind, ()> {
-            AnyCalendarKind::get_for_bcp47_bytes(s)
-                .map(Into::into)
-                .ok_or(())
+        pub fn get_for_bcp47(s: &DiplomatStr) -> Option<ICU4XAnyCalendarKind> {
+            AnyCalendarKind::get_for_bcp47_bytes(s).map(Into::into)
         }
 
         /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.

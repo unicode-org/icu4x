@@ -33,6 +33,12 @@ final class ResolvedCollatorOptions {
   final CollatorBackwardSecondLevel backwardSecondLevel;
 
   // ignore: unused_element
+  // Internal constructor from FFI.
+  // This struct contains borrowed fields, so this takes in a list of
+  // "edges" corresponding to where each lifetime's data may have been borrowed from
+  // and passes it down to individual fields containing the borrow.
+  // This method does not attempt to handle any dependencies between lifetimes, the caller
+  // should handle this when constructing edge arrays.
   ResolvedCollatorOptions._(_ResolvedCollatorOptionsFfi underlying) :
     strength = CollatorStrength.values[underlying.strength],
     alternateHandling = CollatorAlternateHandling.values[underlying.alternateHandling],
@@ -45,6 +51,13 @@ final class ResolvedCollatorOptions {
   // ignore: unused_element
   _ResolvedCollatorOptionsFfi _pointer(ffi.Allocator temp) {
     final pointer = temp<_ResolvedCollatorOptionsFfi>();
+    pointer.ref.strength = strength.index;
+    pointer.ref.alternateHandling = alternateHandling.index;
+    pointer.ref.caseFirst = caseFirst.index;
+    pointer.ref.maxVariable = maxVariable.index;
+    pointer.ref.caseLevel = caseLevel.index;
+    pointer.ref.numeric = numeric.index;
+    pointer.ref.backwardSecondLevel = backwardSecondLevel.index;
     return pointer.ref;
   }
 

@@ -29,6 +29,12 @@ final class PluralCategories {
   final bool other;
 
   // ignore: unused_element
+  // Internal constructor from FFI.
+  // This struct contains borrowed fields, so this takes in a list of
+  // "edges" corresponding to where each lifetime's data may have been borrowed from
+  // and passes it down to individual fields containing the borrow.
+  // This method does not attempt to handle any dependencies between lifetimes, the caller
+  // should handle this when constructing edge arrays.
   PluralCategories._(_PluralCategoriesFfi underlying) :
     zero = underlying.zero,
     one = underlying.one,
@@ -40,6 +46,12 @@ final class PluralCategories {
   // ignore: unused_element
   _PluralCategoriesFfi _pointer(ffi.Allocator temp) {
     final pointer = temp<_PluralCategoriesFfi>();
+    pointer.ref.zero = zero;
+    pointer.ref.one = one;
+    pointer.ref.two = two;
+    pointer.ref.few = few;
+    pointer.ref.many = many;
+    pointer.ref.other = other;
     return pointer.ref;
   }
 
