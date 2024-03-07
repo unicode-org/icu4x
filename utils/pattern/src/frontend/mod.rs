@@ -63,11 +63,36 @@ impl<Backend, Store> Pattern<Backend, Store> {
         self.store
     }
 
-    /// # Safety
+    /// Creates a pattern from a serialized backing store without checking invariants.
+    /// Most users should prefer [`Pattern::try_from_store()`].
     ///
-    /// The store must come from a valid `Pattern` with this `Backend`,
-    /// such as by calling [`Pattern::take_store()`].
-    pub const unsafe fn from_store_unchecked(store: Store) -> Self {
+    /// The store is expected to come from a valid `Pattern` with this `Backend`,
+    /// such as by calling [`Pattern::take_store()`]. If the store is not valid,
+    /// unexpected behavior may occur.
+    ///
+    /// To parse a pattern string, use [`Self::try_from_str()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a pattern from a valid string:
+    /// let allocated_pattern: Pattern<SinglePlaceholder, String> =
+    ///     Pattern::try_from_str("{0} days").expect("valid pattern");
+    ///
+    /// // Transform the store and create a new Pattern. This is valid because
+    /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
+    /// // with the same backend (`SinglePlaceholder`).
+    /// let store = allocated_pattern.take_store();
+    /// let borrowed_pattern: Pattern<SinglePlaceholder, &str> =
+    ///     Pattern::from_store_unchecked(&store);
+    ///
+    /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
+    /// ```
+    pub const fn from_store_unchecked(store: Store) -> Self {
         Self {
             _backend: PhantomData,
             store,
