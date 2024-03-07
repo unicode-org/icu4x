@@ -23,7 +23,17 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 writeable = { workspace = true }
+databake = { workspace = true, features = ["derive"], optional = true }
+yoke = { workspace = true, features = ["derive"], optional = true }
+zerofrom = { workspace = true, features = ["derive"], optional = true }
+
+[dev-dependencies]
+zerofrom = { workspace = true, features = ["alloc"] }
+zerovec = { workspace = true, features = ["databake", "serde"] }
 
 [features]
 alloc = []
 std = ["alloc"]
+databake = ["dep:databake"]
+yoke = ["dep:yoke"]
+zerofrom = ["dep:zerofrom"]

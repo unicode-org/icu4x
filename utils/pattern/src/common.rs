@@ -32,6 +32,7 @@ pub enum PatternItem<'a, T> {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
 #[cfg(feature = "alloc")]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub enum PatternItemCow<'a, T> {
     /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),
@@ -40,6 +41,7 @@ pub enum PatternItemCow<'a, T> {
     /// 1. Between the start of the string and the first placeholder (prefix)
     /// 2. Between two placeholders (infix)
     /// 3. Between the final placeholder and the end of the string (suffix)
+    #[cfg_attr(feature = "serde", serde(borrow))]
     Literal(Cow<'a, str>),
 }
 
