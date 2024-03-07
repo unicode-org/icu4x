@@ -41,6 +41,7 @@ use alloc::string::String;
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[allow(clippy::exhaustive_enums)] // Singleton
 pub enum SinglePlaceholderKey {
     Singleton,

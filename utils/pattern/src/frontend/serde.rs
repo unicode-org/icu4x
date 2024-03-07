@@ -62,3 +62,39 @@ where
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::SinglePlaceholderPattern;
+
+    #[test]
+    fn test_json() {
+        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
+            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_json = serde_json::to_string(&pattern_cow).unwrap();
+        assert_eq!(
+            pattern_json,
+            r#"[{"Literal":"Hello, "},{"Placeholder":"Singleton"},{"Literal":"!"}]"#
+        );
+        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
+            serde_json::from_str(&pattern_json).unwrap();
+        assert_eq!(pattern_cow, pattern_deserialized);
+    }
+
+    #[test]
+    fn test_postcard() {
+        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
+            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
+        assert_eq!(
+            pattern_postcard,
+            b"\x09\x08Hello, !"
+        );
+        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
+            postcard::from_bytes(&pattern_postcard).unwrap();
+        assert_eq!(pattern_cow, pattern_deserialized);
+    }
+}
