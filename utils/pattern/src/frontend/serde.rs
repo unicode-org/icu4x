@@ -26,14 +26,14 @@ where
                 <HumanReadablePatternForSerde<B::PlaceholderKey>>::deserialize(deserializer)?;
             let pattern_owned: Pattern<B, <B::Store as ToOwned>::Owned> =
                 Pattern::try_from_items(pattern_items.into_iter())
-                    .map_err(|e| <D::Error as ::serde::de::Error>::custom(e))?;
+                    .map_err(<D::Error as ::serde::de::Error>::custom)?;
             let pattern_cow: Pattern<B, Cow<B::Store>> =
                 Pattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
             Ok(pattern_cow)
         } else {
             let store = Cow::<B::Store>::deserialize(deserializer)?;
             let pattern = Self::try_from_store(store)
-                .map_err(|e| <D::Error as ::serde::de::Error>::custom(e))?;
+                .map_err(<D::Error as ::serde::de::Error>::custom)?;
             Ok(pattern)
         }
     }
