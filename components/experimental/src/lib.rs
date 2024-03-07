@@ -84,7 +84,7 @@ pub mod provider {
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
         super::dimension::provider::currency::CurrencyEssentialsV1Marker::KEY,
-        super::dimension::provider::currency::PercentEssentialsV1Marker::KEY,
+        super::dimension::provider::percent::PercentEssentialsV1Marker::KEY,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::KEY,
         super::displaynames::provider::LocaleDisplayNamesV1Marker::KEY,
         super::displaynames::provider::RegionDisplayNamesV1Marker::KEY,

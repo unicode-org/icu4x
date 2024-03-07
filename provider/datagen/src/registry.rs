@@ -261,7 +261,7 @@ registry!(
     #[cfg(feature = "experimental_components")]
     icu_experimental::dimension::provider::currency::CurrencyEssentialsV1Marker =
         "currency/essentials@1",
-    icu_experimental::dimension::provider::currency::PercentEssentialsV1Marker =
+    icu_experimental::dimension::provider::percent::PercentEssentialsV1Marker =
         "percent/essentials@1",
     #[cfg(feature = "experimental_components")]
     icu_experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
