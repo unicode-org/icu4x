@@ -98,6 +98,7 @@ mod private {
 pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 
 #[test]
+#[cfg(feature = "alloc")]
 fn test_single_placeholder_pattern_impls() {
     let a = SinglePlaceholderPattern::try_from_str("{0}").unwrap();
     let b = SinglePlaceholderPattern::try_from_str("{0}").unwrap();
