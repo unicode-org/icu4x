@@ -96,3 +96,12 @@ mod private {
 /// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
 /// ```
 pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
+
+#[test]
+fn test_single_placeholder_pattern_impls() {
+    let a = SinglePlaceholderPattern::try_from_str("{0}").unwrap();
+    let b = SinglePlaceholderPattern::try_from_str("{0}").unwrap();
+    assert_eq!(a, b);
+    let c = b.clone();
+    assert_eq!(a, c);
+}
