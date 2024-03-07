@@ -53,17 +53,14 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     // the Yokeable impl becomes really unweildy to generate safely
     let static_bounds: Vec<WherePredicate> = typarams
         .iter()
-        // Yokeable::Output is Sized, so we ask that our generics are Sized, too.
-        // This could be improved to only enforce Sized on the type parameter that
-        // makes this struct a DST (the last field in the struct).
-        .map(|ty| parse_quote!(#ty: 'static + Sized))
+        .map(|ty| parse_quote!(#ty: 'static))
         .collect();
     let lts = input.generics.lifetimes().count();
     if lts == 0 {
         let name = &input.ident;
         quote! {
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds),* {
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds,)* Self: Sized {
                 type Output = Self;
                 #[inline]
                 fn transform(&self) -> &Self::Output {
@@ -223,7 +220,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             //
             // This custom derive can be improved to handle this case when
             // necessary
-            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#static_bounds),* {
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#static_bounds,)* {
                 type Output = #name<'a, #(#typarams),*>;
                 #[inline]
                 fn transform(&'a self) -> &'a Self::Output {
