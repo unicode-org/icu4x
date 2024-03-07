@@ -133,7 +133,7 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 while let Some(bound_pair) = bounds.pop() {
                     let bound = bound_pair.into_value();
                     if let TypeParamBound::Trait(ref trait_bound) = bound {
-                        if trait_bound.path.get_ident() == Some(&quote::format_ident!("Sized"))
+                        if trait_bound.path.get_ident().map(|ident| ident == "Sized") == Some(true)
                             && matches!(trait_bound.modifier, TraitBoundModifier::Maybe(_))
                         {
                             continue;
