@@ -46,7 +46,7 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// - `Cow<str>` for an owned-or-borrowed pattern
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(
     feature = "zerofrom",
