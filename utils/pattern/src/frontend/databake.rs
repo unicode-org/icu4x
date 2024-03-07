@@ -20,7 +20,7 @@ where
         let b = if TypeId::of::<B>() == TypeId::of::<SinglePlaceholder>() {
             quote!(icu_pattern::SinglePlaceholder)
         } else {
-            unreachable!("sealed")
+            unreachable!("all impls of sealed trait PatternBackend should be covered")
         };
         quote! {
             // Safety: the store comes from a valid Pattern
