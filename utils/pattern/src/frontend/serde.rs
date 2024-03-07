@@ -89,10 +89,7 @@ mod tests {
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
-        assert_eq!(
-            pattern_postcard,
-            b"\x09\x08Hello, !"
-        );
+        assert_eq!(pattern_postcard, b"\x09\x08Hello, !");
         let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
             postcard::from_bytes(&pattern_postcard).unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
