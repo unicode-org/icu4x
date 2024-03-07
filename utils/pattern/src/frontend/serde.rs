@@ -139,6 +139,7 @@ mod tests {
         check_store!(Cow::<str>::Owned(store.clone()), Cow<str>);
         check_store!(store.clone(), String);
 
+        /// A type implementing TryFrom<Cow<str>> that returns an error if the Cow is Owned
         #[derive(Debug, Clone, PartialEq, displaydoc::Display)]
         struct MyStr<'a>(&'a str);
         impl<'a> TryFrom<Cow<'a, str>> for MyStr<'a> {
