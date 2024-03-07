@@ -75,32 +75,32 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensions_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XScriptWithExtensions_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensions_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XScriptWithExtensions_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensions_get_script_val')
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_get_script_val')
 // ignore: non_constant_identifier_names
 external int _ICU4XScriptWithExtensions_get_script_val(ffi.Pointer<ffi.Opaque> self, int codePoint);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensions_has_script')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_has_script')
 // ignore: non_constant_identifier_names
 external bool _ICU4XScriptWithExtensions_has_script(ffi.Pointer<ffi.Opaque> self, int codePoint, int script);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensions_as_borrowed')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_as_borrowed')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XScriptWithExtensions_as_borrowed(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensions_iter_ranges_for_script')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_iter_ranges_for_script')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XScriptWithExtensions_iter_ranges_for_script(ffi.Pointer<ffi.Opaque> self, int script);

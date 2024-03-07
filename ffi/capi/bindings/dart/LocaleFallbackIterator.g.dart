@@ -44,17 +44,17 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleFallbackIterator_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_get')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_get')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackIterator_get(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_step')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_step')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleFallbackIterator_step(ffi.Pointer<ffi.Opaque> self);

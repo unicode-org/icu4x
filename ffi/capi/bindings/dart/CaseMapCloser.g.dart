@@ -61,22 +61,22 @@ final class CaseMapCloser implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCaseMapCloser_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCaseMapCloser_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCaseMapCloser_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCaseMapCloser_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCaseMapCloser_add_case_closure_to')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_case_closure_to')
 // ignore: non_constant_identifier_names
 external void _ICU4XCaseMapCloser_add_case_closure_to(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCaseMapCloser_add_string_case_closure_to')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_string_case_closure_to')
 // ignore: non_constant_identifier_names
 external bool _ICU4XCaseMapCloser_add_string_case_closure_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> builder);

@@ -151,87 +151,87 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_create')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_create')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XCodePointSetBuilder_create();
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_build')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_build')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XCodePointSetBuilder_build(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_complement')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_complement')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_complement(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_is_empty')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_is_empty')
 // ignore: non_constant_identifier_names
 external bool _ICU4XCodePointSetBuilder_is_empty(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_add_char')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_add_char')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_add_char(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_add_inclusive_range')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_add_inclusive_range')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_add_inclusive_range(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_add_set')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_add_set')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_add_set(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_remove_char')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_remove_char')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_remove_char(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_remove_inclusive_range')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_remove_inclusive_range')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_remove_inclusive_range(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_remove_set')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_remove_set')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_remove_set(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_retain_char')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_retain_char')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_retain_char(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_retain_inclusive_range')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_retain_inclusive_range')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_retain_inclusive_range(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_retain_set')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_retain_set')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_retain_set(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_complement_char')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_complement_char')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_complement_char(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_complement_inclusive_range')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_complement_inclusive_range')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_complement_inclusive_range(ffi.Pointer<ffi.Opaque> self, Rune start, Rune end);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XCodePointSetBuilder_complement_set')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetBuilder_complement_set')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointSetBuilder_complement_set(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> data);

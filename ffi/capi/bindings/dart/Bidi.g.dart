@@ -109,42 +109,42 @@ final class Bidi implements ffi.Finalizable {
   }();
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XBidi_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XBidi_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidi_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XBidi_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_for_text')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_for_text')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XBidi_for_text(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> textData, int textLength, int defaultLevel);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_reorder_visual')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidi_reorder_visual')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XBidi_reorder_visual(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> levelsData, int levelsLength);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_level_is_rtl')
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_level_is_rtl')
 // ignore: non_constant_identifier_names
 external bool _ICU4XBidi_level_is_rtl(int level);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_level_is_ltr')
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_level_is_ltr')
 // ignore: non_constant_identifier_names
 external bool _ICU4XBidi_level_is_ltr(int level);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_level_rtl')
 @ffi.Native<ffi.Uint8 Function()>(isLeaf: true, symbol: 'ICU4XBidi_level_rtl')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidi_level_rtl();
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XBidi_level_ltr')
 @ffi.Native<ffi.Uint8 Function()>(isLeaf: true, symbol: 'ICU4XBidi_level_ltr')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidi_level_ltr();

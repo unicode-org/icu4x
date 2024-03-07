@@ -226,122 +226,122 @@ final class IsoDateTime implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XIsoDateTime_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XIsoDateTime_create(int year, int month, int day, int hour, int minute, int second, int nanosecond);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_crate_from_date_and_time')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_crate_from_date_and_time')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_crate_from_date_and_time(ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_local_unix_epoch')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XIsoDateTime_local_unix_epoch')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_local_unix_epoch();
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(int minutes);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_date')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_date')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_date(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_time')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_time')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_time(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_to_any')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_to_any')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_to_any(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_minutes_since_local_unix_epoch')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_minutes_since_local_unix_epoch')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_minutes_since_local_unix_epoch(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_to_calendar')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_to_calendar')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XIsoDateTime_to_calendar(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_hour')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_hour')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_hour(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_minute')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_minute')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_minute(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_second')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_second')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_second(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_nanosecond')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_nanosecond')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_nanosecond(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_day_of_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_day_of_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_day_of_month(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_day_of_week')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_day_of_week')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_day_of_week(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_week_of_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_week_of_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_week_of_month(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_week_of_year')
 @ffi.Native<_ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_week_of_year')
 // ignore: non_constant_identifier_names
 external _ResultWeekOfFfiInt32 _ICU4XIsoDateTime_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_month(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_year')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_year(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_is_in_leap_year')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_is_in_leap_year')
 // ignore: non_constant_identifier_names
 external bool _ICU4XIsoDateTime_is_in_leap_year(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_months_in_year')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_months_in_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_months_in_year(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_days_in_month')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_days_in_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_days_in_month(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XIsoDateTime_days_in_year')
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_days_in_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_days_in_year(ffi.Pointer<ffi.Opaque> self);

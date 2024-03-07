@@ -68,27 +68,27 @@ final class PluralRules implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XPluralRules_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralRules_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XPluralRules_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XPluralRules_create_cardinal')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_create_cardinal')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPluralRules_create_cardinal(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XPluralRules_create_ordinal')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_create_ordinal')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPluralRules_create_ordinal(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XPluralRules_category_for')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_category_for')
 // ignore: non_constant_identifier_names
 external int _ICU4XPluralRules_category_for(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> op);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XPluralRules_categories')
 @ffi.Native<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_categories')
 // ignore: non_constant_identifier_names
 external _PluralCategoriesFfi _ICU4XPluralRules_categories(ffi.Pointer<ffi.Opaque> self);

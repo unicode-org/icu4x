@@ -64,27 +64,27 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensionsBorrowed_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensionsBorrowed_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XScriptWithExtensionsBorrowed_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensionsBorrowed_get_script_val')
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensionsBorrowed_get_script_val')
 // ignore: non_constant_identifier_names
 external int _ICU4XScriptWithExtensionsBorrowed_get_script_val(ffi.Pointer<ffi.Opaque> self, int codePoint);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(ffi.Pointer<ffi.Opaque> self, int codePoint);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensionsBorrowed_has_script')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensionsBorrowed_has_script')
 // ignore: non_constant_identifier_names
 external bool _ICU4XScriptWithExtensionsBorrowed_has_script(ffi.Pointer<ffi.Opaque> self, int codePoint, int script);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(ffi.Pointer<ffi.Opaque> self, int script);

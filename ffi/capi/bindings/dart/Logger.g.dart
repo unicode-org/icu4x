@@ -42,17 +42,17 @@ final class Logger implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XLogger_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLogger_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLogger_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XLogger_init_simple_logger')
 @ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'ICU4XLogger_init_simple_logger')
 // ignore: non_constant_identifier_names
 external bool _ICU4XLogger_init_simple_logger();
 
-@meta.ResourceIdentifier()
+@meta.ResourceIdentifier('ICU4XLogger_init_console_logger')
 @ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'ICU4XLogger_init_console_logger')
 // ignore: non_constant_identifier_names
 external bool _ICU4XLogger_init_console_logger();
