@@ -32,7 +32,7 @@ pub enum PatternItem<'a, T> {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
 #[cfg(feature = "alloc")]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum PatternItemCow<'a, T> {
     /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),
@@ -43,6 +43,15 @@ pub enum PatternItemCow<'a, T> {
     /// 3. Between the final placeholder and the end of the string (suffix)
     #[cfg_attr(feature = "serde", serde(borrow))]
     Literal(Cow<'a, str>),
+}
+
+impl<'a, T> From<PatternItem<'a, T>> for PatternItemCow<'a, T> {
+    fn from(value: PatternItem<'a, T>) -> Self {
+        match value {
+            PatternItem::Placeholder(t) => Self::Placeholder(t),
+            PatternItem::Literal(s) => Self::Literal(Cow::Borrowed(s)),
+        }
+    }
 }
 
 /// Types that implement backing data models for [`Pattern`] implement this trait.

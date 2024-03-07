@@ -1604,6 +1604,7 @@ version = "0.1.5"
 dependencies = [
  "databake",
  "displaydoc",
+ "serde",
  "writeable",
  "yoke",
  "zerofrom",
