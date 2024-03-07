@@ -38,6 +38,6 @@ postcard = { version = "1.0", features = ["use-std"] }
 alloc = []
 std = ["alloc"]
 databake = ["dep:databake"]
-serde = ["dep:serde"]
+serde = ["alloc", "dep:serde"]
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]

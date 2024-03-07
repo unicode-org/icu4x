@@ -45,6 +45,7 @@ pub enum PatternItemCow<'a, T> {
     Literal(Cow<'a, str>),
 }
 
+#[cfg(feature = "alloc")]
 impl<'a, T> From<PatternItem<'a, T>> for PatternItemCow<'a, T> {
     fn from(value: PatternItem<'a, T>) -> Self {
         match value {
