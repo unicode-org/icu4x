@@ -27,8 +27,8 @@ use syn::fold::{self, Fold};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
-    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Path, PathArguments,
-    PathSegment, Token, TraitBoundModifier, Type, TypeParamBound, TypePath, WherePredicate,
+    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Token,
+    TraitBoundModifier, Type, TypeParamBound, TypePath, WherePredicate,
 };
 use synstructure::Structure;
 mod visitor;
@@ -127,17 +127,13 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             let maybe_new_param = if has_attr(&param.attrs, "may_borrow")
                 || may_borrow_attrs.contains(&param.ident)
             {
-                // Remove `?Sized`` bound because we need a param to be Sized in order to take a ZeroFrom of it
+                // Remove `?Sized`` bound because we need a param to be Sized in order to take a ZeroFrom of it.
+                // This only applies to fields marked as `may_borrow`.
                 let mut bounds = core::mem::take(&mut param.bounds);
                 while let Some(bound_pair) = bounds.pop() {
                     let bound = bound_pair.into_value();
                     if let TypeParamBound::Trait(ref trait_bound) = bound {
-                        let sized: Path = PathSegment {
-                            ident: quote::format_ident!("Sized"),
-                            arguments: PathArguments::None,
-                        }
-                        .into();
-                        if trait_bound.path == sized
+                        if trait_bound.path.get_ident() == Some(&quote::format_ident!("Sized"))
                             && matches!(trait_bound.modifier, TraitBoundModifier::Maybe(_))
                         {
                             continue;
