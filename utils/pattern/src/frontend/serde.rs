@@ -9,13 +9,14 @@ use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 type HumanReadablePatternForSerde<'a, T> = Vec<PatternItemCow<'a, T>>;
 
-impl<'de, 'data, B> Deserialize<'de> for Pattern<B, Cow<'data, B::Store>>
+impl<'de, 'data, B, Store> Deserialize<'de> for Pattern<B, Store>
 where
     'de: 'data,
     B: PatternBackend,
-    B::Store: ToOwned,
+    B::Store: ToOwned + 'de,
     <B::Store as ToOwned>::Owned: Deserialize<'de>,
     B::PlaceholderKey: Deserialize<'de>,
+    Store: From<Cow<'data, B::Store>> + AsRef<B::Store>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -27,12 +28,12 @@ where
             let pattern_owned: Pattern<B, <B::Store as ToOwned>::Owned> =
                 Pattern::try_from_items(pattern_items.into_iter())
                     .map_err(<D::Error as ::serde::de::Error>::custom)?;
-            let pattern_cow: Pattern<B, Cow<B::Store>> =
-                Pattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+            let pattern_cow: Pattern<B, Store> =
+                Pattern::from_store_unchecked(Cow::<B::Store>::Owned(pattern_owned.take_store()).into());
             Ok(pattern_cow)
         } else {
             let store = Cow::<B::Store>::deserialize(deserializer)?;
-            let pattern = Self::try_from_store(store)
+            let pattern = Self::try_from_store(store.into())
                 .map_err(<D::Error as ::serde::de::Error>::custom)?;
             Ok(pattern)
         }
