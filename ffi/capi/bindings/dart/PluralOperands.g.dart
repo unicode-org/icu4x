@@ -42,10 +42,12 @@ final class PluralOperands implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XPluralOperands_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_string')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPluralOperands_create_from_string(ffi.Pointer<ffi.Uint8> sData, int sLength);

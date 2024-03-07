@@ -25,18 +25,23 @@ final class LocaleFallbackConfig {
 
   // ignore: unused_element
   // Internal constructor from FFI.
-  LocaleFallbackConfig._(_LocaleFallbackConfigFfi underlying, core.List<Object> edge_a) :
+  LocaleFallbackConfig._(_LocaleFallbackConfigFfi underlying, core.List<Object> aEdges) :
     priority = LocaleFallbackPriority.values[underlying.priority],
     extensionKey = Utf8Decoder().convert(underlying.extensionKey._pointer.asTypedList(underlying.extensionKey._length)),
     fallbackSupplement = LocaleFallbackSupplement.values[underlying.fallbackSupplement];
 
   // ignore: unused_element
-  _LocaleFallbackConfigFfi _pointer(ffi.Allocator temp) {
+  // If this struct contains any slices, their lifetime-edge-relevant objects (typically _FinalizedArenas) will only
+  // be constructed here, and can be appended to any relevant lifetime arrays here. <lifetime>AppendArray accepts a list
+  // of arrays for each lifetime to do so. It accepts multiple lists per lifetime in case the caller needs to tie a lifetime to multiple
+  // output arrays. Null is equivalent to an empty list: this lifetime is not being borrowed from.
+  _LocaleFallbackConfigFfi _pointer(ffi.Allocator temp, {core.List<core.List<Object>>? aAppendArray}) {
     final pointer = temp<_LocaleFallbackConfigFfi>();
     pointer.ref.priority = priority.index;
     final extensionKeyView = extensionKey.utf8View;
-    pointer.ref.extensionKey._pointer = extensionKeyView.pointer(temp);
     pointer.ref.extensionKey._length = extensionKeyView.length;
+    final extensionKeyArena = (aAppendArray != null && !aAppendArray.isEmpty) ? _FinalizedArena.withLifetime(aAppendArray).arena : temp;
+    pointer.ref.extensionKey._pointer = extensionKeyView.pointer(extensionKeyArena);
     pointer.ref.fallbackSupplement = fallbackSupplement.index;
     return pointer.ref;
   }
@@ -56,7 +61,11 @@ final class LocaleFallbackConfig {
       ]);
 
   // ignore: unused element
-  // Append all fields corresponding to lifetime `'a`
+  // Append all fields corresponding to lifetime `'a` 
+  // without handling lifetime dependencies (this is the job of the caller)
+  // This is all fields that may be borrowed from if borrowing `'a`,
+  // assuming that there are no `'other: a`. bounds. In case of such bounds,
+  // the caller should take care to also call _fields_for_lifetime_other()
   core.List<Object> _fields_for_lifetime_a() {
     return [extensionKey];
   }

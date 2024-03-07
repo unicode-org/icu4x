@@ -50,20 +50,23 @@ final class SentenceSegmenter implements ffi.Finalizable {
     final inputView = input.utf16View;
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> edge_a = [this, inputArena];
+    core.List<Object> aEdges = [this, inputArena];
     final result = _ICU4XSentenceSegmenter_segment_utf16(_underlying, inputView.pointer(inputArena.arena), inputView.length);
-    return SentenceBreakIteratorUtf16._(result, true, [], edge_a);
+    return SentenceBreakIteratorUtf16._(result, true, [], aEdges);
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XSentenceSegmenter_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XSentenceSegmenter_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_segment_utf16')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XSentenceSegmenter_segment_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);

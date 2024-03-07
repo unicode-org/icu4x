@@ -60,18 +60,22 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleCanonicalizer_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create_extended')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create_extended(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_canonicalize')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocaleCanonicalizer_canonicalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

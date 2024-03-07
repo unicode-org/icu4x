@@ -43,10 +43,12 @@ final class IanaToBcp47Mapper implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XIanaToBcp47Mapper_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XIanaToBcp47Mapper_create(ffi.Pointer<ffi.Opaque> provider);

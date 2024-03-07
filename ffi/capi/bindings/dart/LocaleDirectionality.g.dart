@@ -70,26 +70,32 @@ final class LocaleDirectionality implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleDirectionality_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleDirectionality_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_create_with_expander')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleDirectionality_create_with_expander(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> expander);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_get')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocaleDirectionality_get(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_is_left_to_right')
 // ignore: non_constant_identifier_names
 external bool _ICU4XLocaleDirectionality_is_left_to_right(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_is_right_to_left')
 // ignore: non_constant_identifier_names
 external bool _ICU4XLocaleDirectionality_is_right_to_left(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

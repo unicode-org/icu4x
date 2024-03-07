@@ -127,40 +127,48 @@ final class LineSegmenter implements ffi.Finalizable {
     final inputView = input.utf16View;
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> edge_a = [this, inputArena];
+    core.List<Object> aEdges = [this, inputArena];
     final result = _ICU4XLineSegmenter_segment_utf16(_underlying, inputView.pointer(inputArena.arena), inputView.length);
-    return LineBreakIteratorUtf16._(result, true, [], edge_a);
+    return LineBreakIteratorUtf16._(result, true, [], aEdges);
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLineSegmenter_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_create_auto')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLineSegmenter_create_auto(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_create_lstm')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLineSegmenter_create_lstm(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_create_dictionary')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLineSegmenter_create_dictionary(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_create_auto_with_options_v1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLineSegmenter_create_auto_with_options_v1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_create_lstm_with_options_v1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLineSegmenter_create_lstm_with_options_v1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_create_dictionary_with_options_v1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLineSegmenter_create_dictionary_with_options_v1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLineSegmenter_segment_utf16')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XLineSegmenter_segment_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);

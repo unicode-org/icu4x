@@ -51,14 +51,17 @@ final class CanonicalDecomposition implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCanonicalDecomposition_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCanonicalDecomposition_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_decompose')
 // ignore: non_constant_identifier_names
 external _DecomposedFfi _ICU4XCanonicalDecomposition_decompose(ffi.Pointer<ffi.Opaque> self, Rune c);

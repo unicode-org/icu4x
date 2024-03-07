@@ -59,9 +59,9 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
   ScriptWithExtensionsBorrowed get asBorrowed {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> edge_a = [this];
+    core.List<Object> aEdges = [this];
     final result = _ICU4XScriptWithExtensions_as_borrowed(_underlying);
-    return ScriptWithExtensionsBorrowed._(result, true, [], edge_a);
+    return ScriptWithExtensionsBorrowed._(result, true, [], aEdges);
   }
 
   /// Get a list of ranges of code points that contain this script in their Script_Extensions values
@@ -69,32 +69,38 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
   CodePointRangeIterator iterRangesForScript(int script) {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> edge_a = [this];
+    core.List<Object> aEdges = [this];
     final result = _ICU4XScriptWithExtensions_iter_ranges_for_script(_underlying, script);
-    return CodePointRangeIterator._(result, true, [], edge_a);
+    return CodePointRangeIterator._(result, true, [], aEdges);
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XScriptWithExtensions_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XScriptWithExtensions_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_get_script_val')
 // ignore: non_constant_identifier_names
 external int _ICU4XScriptWithExtensions_get_script_val(ffi.Pointer<ffi.Opaque> self, int codePoint);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_has_script')
 // ignore: non_constant_identifier_names
 external bool _ICU4XScriptWithExtensions_has_script(ffi.Pointer<ffi.Opaque> self, int codePoint, int script);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_as_borrowed')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XScriptWithExtensions_as_borrowed(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptWithExtensions_iter_ranges_for_script')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XScriptWithExtensions_iter_ranges_for_script(ffi.Pointer<ffi.Opaque> self, int script);

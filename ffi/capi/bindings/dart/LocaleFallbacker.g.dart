@@ -56,28 +56,32 @@ final class LocaleFallbacker implements ffi.Finalizable {
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final temp = ffi2.Arena();
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> edge_a = [this];
+    core.List<Object> aEdges = [this];
     final result = _ICU4XLocaleFallbacker_for_config(_underlying, config._pointer(temp));
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
-    return LocaleFallbackerWithConfig._(result.union.ok, true, [], edge_a);
+    return LocaleFallbackerWithConfig._(result.union.ok, true, [], aEdges);
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleFallbacker_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_create(ffi.Pointer<ffi.Opaque> provider);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create_without_data')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbacker_create_without_data();
 
+@meta.ResourceIdentifier()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_for_config')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_for_config(ffi.Pointer<ffi.Opaque> self, _LocaleFallbackConfigFfi config);

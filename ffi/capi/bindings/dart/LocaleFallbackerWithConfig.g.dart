@@ -35,16 +35,18 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
   LocaleFallbackIterator fallbackForLocale(Locale locale) {
     // This lifetime edge depends on lifetimes: 'a, 'b
-    core.List<Object> edge_a = [this];
+    core.List<Object> aEdges = [this];
     final result = _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(_underlying, locale._underlying);
-    return LocaleFallbackIterator._(result, true, [], edge_a);
+    return LocaleFallbackIterator._(result, true, [], aEdges);
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackerWithConfig_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleFallbackerWithConfig_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackerWithConfig_fallback_for_locale')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

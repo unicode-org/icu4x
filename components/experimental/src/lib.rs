@@ -83,8 +83,10 @@ pub mod provider {
     pub const KEYS: &[DataKey] = &[
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
-        super::dimension::provider::CurrencyEssentialsV1Marker::KEY,
-        super::dimension::provider::PercentEssentialsV1Marker::KEY,
+        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY,
+        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY,
+        super::dimension::provider::currency::CurrencyEssentialsV1Marker::KEY,
+        super::dimension::provider::percent::PercentEssentialsV1Marker::KEY,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::KEY,
         super::displaynames::provider::LocaleDisplayNamesV1Marker::KEY,
         super::displaynames::provider::RegionDisplayNamesV1Marker::KEY,

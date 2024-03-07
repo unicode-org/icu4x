@@ -62,26 +62,32 @@ final class List implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XList_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XList_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XList_create')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XList_create();
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(isLeaf: true, symbol: 'ICU4XList_create_with_capacity')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XList_create_with_capacity(int capacity);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XList_push')
 // ignore: non_constant_identifier_names
 external void _ICU4XList_push(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valData, int valLength);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XList_len')
 // ignore: non_constant_identifier_names
 external int _ICU4XList_len(ffi.Pointer<ffi.Opaque> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XList_is_empty')
 // ignore: non_constant_identifier_names
 external bool _ICU4XList_is_empty(ffi.Pointer<ffi.Opaque> self);

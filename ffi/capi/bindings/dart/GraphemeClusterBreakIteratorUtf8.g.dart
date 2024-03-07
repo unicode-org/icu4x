@@ -36,10 +36,12 @@ final class GraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
   }
 }
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterBreakIteratorUtf8_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XGraphemeClusterBreakIteratorUtf8_destroy(ffi.Pointer<ffi.Void> self);
 
+@meta.ResourceIdentifier()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterBreakIteratorUtf8_next')
 // ignore: non_constant_identifier_names
 external int _ICU4XGraphemeClusterBreakIteratorUtf8_next(ffi.Pointer<ffi.Opaque> self);
