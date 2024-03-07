@@ -18,6 +18,7 @@ where
     <B::Store as ToOwned>::Owned: Deserialize<'de>,
     B::PlaceholderKey: Deserialize<'de>,
     Store: From<Cow<'data, B::Store>> + AsRef<B::Store>,
+    &'de B::Store: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -33,8 +34,8 @@ where
                 Pattern::from_store_unchecked(Cow::<B::Store>::Owned(pattern_owned.take_store()).into());
             Ok(pattern_cow)
         } else {
-            let store = Cow::<B::Store>::deserialize(deserializer)?;
-            let pattern = Self::try_from_store(store.into())
+            let store = <&B::Store>::deserialize(deserializer)?;
+            let pattern = Self::try_from_store(Cow::Borrowed(store).into())
                 .map_err(<D::Error as ::serde::de::Error>::custom)?;
             Ok(pattern)
         }
@@ -83,6 +84,7 @@ mod tests {
         let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
             serde_json::from_str(&pattern_json).unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
+        assert!(matches!(pattern_deserialized.take_store(), Cow::Owned(_)));
     }
 
     #[test]
@@ -95,5 +97,6 @@ mod tests {
         let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
             postcard::from_bytes(&pattern_postcard).unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
+        assert!(matches!(pattern_deserialized.take_store(), Cow::Borrowed(_)));
     }
 }
