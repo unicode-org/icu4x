@@ -173,7 +173,7 @@ macro_rules! test_bake {
         let env = Default::default();
         let expr: &$type = &$expr;
         let bake = $crate::Bake::bake(expr, &env).to_string();
-        let expected_bake = $crate::quote!($expr).to_string();
+        let expected_bake = $crate::quote!($expr).to_string().replace("::<", ":: <").replace(">::", "> ::");
         $(
             let expected_bake = expected_bake.replace("crate", stringify!($krate));
         )?

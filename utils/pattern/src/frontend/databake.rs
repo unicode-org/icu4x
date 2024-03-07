@@ -29,13 +29,6 @@ where
 }
 
 #[test]
-/*
-Test currently ignored because test_bake is broken:
-
-  left: "icu_pattern :: Pattern :: < icu_pattern :: SinglePlaceholder , _ > :: from_store_unchecked (alloc :: borrow :: Cow :: Borrowed (\"\"))"
- right: "icu_pattern :: Pattern ::< icu_pattern :: SinglePlaceholder , _ >:: from_store_unchecked (alloc :: borrow :: Cow :: Borrowed (\"\"))"
-*/
-#[ignore]
 fn test_baked() {
     use ::databake::test_bake;
     use alloc::borrow::Cow;

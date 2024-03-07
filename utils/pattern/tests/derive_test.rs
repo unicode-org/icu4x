@@ -19,13 +19,6 @@ struct DeriveTest_SinglePlaceholderPattern_ZeroVec<'data> {
 }
 
 #[test]
-/*
-Test currently ignored because test_bake is broken:
-
-  left: "crate :: DeriveTest_SinglePlaceholderPattern_ZeroVec { _data : icu_pattern :: Pattern :: < icu_pattern :: SinglePlaceholder , _ > :: from_store_unchecked (alloc :: borrow :: Cow :: Borrowed (\"\")) , }"
- right: "crate :: DeriveTest_SinglePlaceholderPattern_ZeroVec { _data : icu_pattern :: Pattern ::< icu_pattern :: SinglePlaceholder , _ >:: from_store_unchecked (alloc :: borrow :: Cow :: Borrowed (\"\")) , }"
-*/
-#[ignore]
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_SinglePlaceholderPattern_ZeroVec() {
     use databake::*;
