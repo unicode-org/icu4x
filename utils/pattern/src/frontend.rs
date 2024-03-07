@@ -41,7 +41,8 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// - `Cow<str>` for an owned-or-borrowed pattern
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
     store: Store,
@@ -50,6 +51,17 @@ pub struct Pattern<Backend, Store: ?Sized> {
 impl<Backend, Store> Pattern<Backend, Store> {
     pub fn take_store(self) -> Store {
         self.store
+    }
+
+    /// # Safety
+    ///
+    /// The store must come from a valid `Pattern` with this `Backend`,
+    /// such as by calling [`Pattern::take_store()`].
+    pub const unsafe fn from_store_unchecked(store: Store) -> Self {
+        Self {
+            _backend: PhantomData,
+            store,
+        }
     }
 }
 
@@ -194,6 +206,68 @@ where
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
         Self::try_from_str(pattern)
+    }
+}
+
+#[cfg(feature = "databake")]
+mod databake {
+    use core::any::TypeId;
+
+    use crate::SinglePlaceholder;
+
+    use super::*;
+    use ::databake::{quote, Bake, CrateEnv, TokenStream};
+
+    impl<B, Store> Bake for Pattern<B, Store>
+    where
+        B: 'static,
+        Store: Bake,
+    {
+        fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+            ctx.insert("icu_pattern");
+            let store = self.store.bake(ctx);
+            let b = if TypeId::of::<B>() == TypeId::of::<SinglePlaceholder>() {
+                quote!(icu_pattern::SinglePlaceholder)
+            } else {
+                unreachable!("sealed")
+            };
+            quote! {
+                // Safety: the store comes from a valid Pattern
+                unsafe { icu_pattern::Pattern::<#b, _>::from_store_unchecked(#store) }
+            }
+        }
+    }
+
+    #[test]
+    fn test_baked() {
+        use alloc::borrow::Cow;
+        use ::databake::test_bake;
+        test_bake!(
+            Pattern<SinglePlaceholder, Cow<str>>,
+            const: unsafe { crate::Pattern::<SinglePlaceholder, Cow<str>>::from_store_unchecked(Cow::Borrowed("")) },
+            icu_provider
+        );
+    }
+}
+
+#[cfg(feature = "zerofrom")]
+mod zerofrom {
+    use super::*;
+    use ::zerofrom::ZeroFrom;
+
+    impl<'zf, 'src, B, Store> ZeroFrom<'zf, Pattern<B, Store>> for Pattern<B, Store>
+    where
+        'src: 'zf,
+        B: 'static,
+        Store: ZeroFrom<'src, Store>,
+    {
+        #[inline]
+        fn zero_from(other: &'zf Pattern<B, Store>) -> Self {
+            Self {
+                _backend: PhantomData,
+                store: ZeroFrom::zero_from(&other.store),
+            }
+        }
     }
 }
 
