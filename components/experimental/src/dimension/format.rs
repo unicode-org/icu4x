@@ -5,7 +5,7 @@
 use fixed_decimal::FixedDecimal;
 use writeable::Writeable;
 
-use crate::dimension::{options::CurrencyFormatterOptions, provider::CurrencyEssentialsV1};
+use crate::dimension::{options::CurrencyFormatterOptions, provider::currency::CurrencyEssentialsV1};
 
 use super::CurrencyCode;
 

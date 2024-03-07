@@ -33,7 +33,7 @@ pub struct CurrencyFormatter {
     options: CurrencyFormatterOptions,
 
     /// Essential data for the currency formatter.
-    essential: DataPayload<provider::CurrencyEssentialsV1Marker>,
+    essential: DataPayload<provider::currency::CurrencyEssentialsV1Marker>,
     fixed_decimal_formatter: FixedDecimalFormatter,
 }
 
@@ -49,7 +49,7 @@ impl CurrencyFormatter {
         #[cfg(skip)]
     );
 
-    /// Creates a new [`FixedDecimalFormatterOptions`] from compiled locale data and an options bag.
+    /// Creates a new [`CurrencyFormatter`] from compiled locale data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -83,7 +83,7 @@ impl CurrencyFormatter {
     ) -> Result<Self, DimensionError>
     where
         D: ?Sized
-            + DataProvider<provider::CurrencyEssentialsV1Marker>
+            + DataProvider<provider::currency::CurrencyEssentialsV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
