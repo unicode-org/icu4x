@@ -14,6 +14,8 @@ use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+use icu_pattern::SinglePlaceholderPattern;
+
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -32,7 +34,7 @@ pub use crate::provider::Baked;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -48,11 +50,11 @@ pub struct CurrencyEssentialsV1<'data> {
 
     /// Represents the standard pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard: Cow<'data, str>,
+    pub standard: SinglePlaceholderPattern<Cow<'data, str>>,
 
     /// Represents the standard alpha_next_to_number pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard_alpha_next_to_number: Cow<'data, str>,
+    pub standard_alpha_next_to_number: SinglePlaceholderPattern<Cow<'data, str>>,
 
     /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]
