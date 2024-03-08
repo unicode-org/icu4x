@@ -88,9 +88,14 @@ where
     }
 }
 
+/// Internal representation of a placeholder
 #[derive(Debug, Copy, Clone)]
 struct DoublePlaceholderInfo {
+    /// The placeholder key: 0 or 1
     pub key: DoublePlaceholderKey,
+    /// An offset field. This can take one of two forms:
+    /// - Encoded form: 1 + offset from start of literals
+    /// - Decoded form: offset from start of store
     pub offset: usize,
 }
 
@@ -353,7 +358,97 @@ pub struct DoublePlaceholderPatternIterator<'a> {
     current_offset: usize,
 }
 
-// TODO(#1668): Add ExactSizeIterator impl
+// Note: This impl is not exported via public bounds, but it might be in the
+// future, and the compiler might be able to find it. The code is also
+// reachable from `Iterator::size_hint`.
+impl ExactSizeIterator for DoublePlaceholderPatternIterator<'_> {
+    fn len(&self) -> usize {
+        let mut chars = self.store.chars();
+        let (mut ph_first, ph_first_len) = match chars.next() {
+            Some(ch) => (DoublePlaceholderInfo::from_char(ch), ch.len_utf8()),
+            None => {
+                debug_assert!(false);
+                (DoublePlaceholderInfo::zero(), 0)
+            }
+        };
+        let (mut ph_second, ph_second_len) = match chars.next() {
+            Some(ch) => (DoublePlaceholderInfo::from_char(ch), ch.len_utf8()),
+            None => {
+                debug_assert!(false);
+                (ph_first.flip(), ph_first_len)
+            }
+        };
+        let initial_offset = ph_first_len + ph_second_len;
+        ph_first.offset += initial_offset - 1;
+        ph_second.offset += initial_offset - 1;
+        let store_len = self.store.len();
+
+        if ph_first.offset < initial_offset {
+            // No placeholders
+            if initial_offset < store_len {
+                // No placeholder, non-empty literal
+                1
+            } else {
+                // No placeholder, empty literal
+                0
+            }
+        } else if ph_first.offset == initial_offset {
+            // At least 1 placeholder, empty prefix
+            if ph_second.offset < initial_offset {
+                // Single placeholder
+                if ph_first.offset < store_len {
+                    // Single placeholder, empty prefix, non-empty suffix
+                    2
+                } else {
+                    // Single placeholder, empty prefix, empty suffix
+                    1
+                }
+            } else if ph_second.offset == ph_first.offset {
+                // Two placeholders, empty infix
+                if ph_first.offset < store_len {
+                    // Two placeholders, empty prefix, empty infix, non-empty suffix
+                    3
+                } else {
+                    // Two placeholders, empty prefix, empty infix, empty suffix
+                    2
+                }
+            } else if ph_second.offset < store_len {
+                // Two placeholders, empty prefix, non-empty infix, non-empty suffix
+                4
+            } else {
+                // Two placeholders, empty prefix, non-empty infix, empty suffix
+                3
+            }
+        } else {
+            // At least 1 placeholder, non-empty prefix
+            if ph_second.offset < initial_offset {
+                // Single placeholder
+                if ph_first.offset < store_len {
+                    // Single placeholder, non-empty prefix, non-empty suffix
+                    3
+                } else {
+                    // Single placeholder, non-empty prefix, empty suffix
+                    2
+                }
+            } else if ph_second.offset == ph_first.offset {
+                // Two placeholders, empty infix
+                if ph_first.offset < store_len {
+                    // Two placeholders, non-empty prefix, empty infix, non-empty suffix
+                    4
+                } else {
+                    // Two placeholders, non-empty prefix, empty infix, empty suffix
+                    3
+                }
+            } else if ph_second.offset < store_len {
+                // Two placeholders, non-empty prefix, non-empty infix, non-empty suffix
+                5
+            } else {
+                // Two placeholders, non-empty prefix, non-empty infix, empty suffix
+                4
+            }
+        }
+    }
+}
 
 impl<'a> Iterator for DoublePlaceholderPatternIterator<'a> {
     type Item = PatternItem<'a, DoublePlaceholderKey>;
@@ -417,7 +512,10 @@ impl<'a> Iterator for DoublePlaceholderPatternIterator<'a> {
         }
     }
 
-    // TODO(#1668): Add size_hint
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let len = self.len();
+        (len, Some(len))
+    }
 }
 
 // TODO(#1668):  Add more tests
