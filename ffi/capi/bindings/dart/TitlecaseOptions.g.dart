@@ -48,13 +48,13 @@ final class TitlecaseOptions {
   @override
   bool operator ==(Object other) =>
       other is TitlecaseOptions &&
-      other.leadingAdjustment == this.leadingAdjustment &&
-      other.trailingCase == this.trailingCase;
+      other.leadingAdjustment == leadingAdjustment &&
+      other.trailingCase == trailingCase;
 
   @override
   int get hashCode => Object.hashAll([
-        this.leadingAdjustment,
-        this.trailingCase,
+        leadingAdjustment,
+        trailingCase,
       ]);
 }
 

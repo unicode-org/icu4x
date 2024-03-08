@@ -54,20 +54,20 @@ final class PluralCategories {
   @override
   bool operator ==(Object other) =>
       other is PluralCategories &&
-      other.zero == this.zero &&
-      other.one == this.one &&
-      other.two == this.two &&
-      other.few == this.few &&
-      other.many == this.many &&
+      other.zero == zero &&
+      other.one == one &&
+      other.two == two &&
+      other.few == few &&
+      other.many == many &&
       other.other == this.other;
 
   @override
   int get hashCode => Object.hashAll([
-        this.zero,
-        this.one,
-        this.two,
-        this.few,
-        this.many,
-        this.other,
+        zero,
+        one,
+        two,
+        few,
+        many,
+        other,
       ]);
 }

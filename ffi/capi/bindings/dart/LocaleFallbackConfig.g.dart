@@ -23,7 +23,7 @@ final class LocaleFallbackConfig {
   // ignore: unused_element
   LocaleFallbackConfig._fromFfi(_LocaleFallbackConfigFfi ffi, core.List<Object> aEdges) :
     priority = LocaleFallbackPriority.values[ffi.priority],
-    extensionKey = Utf8Decoder().convert(ffi.extensionKey._data.asTypedList(ffi.extensionKey._length)),
+    extensionKey = ffi.extensionKey._toDart(aEdges),
     fallbackSupplement = LocaleFallbackSupplement.values[ffi.fallbackSupplement];
 
   // If this struct contains any slices, their lifetime-edge-relevant objects (typically _FinalizedArenas) will only
@@ -44,15 +44,15 @@ final class LocaleFallbackConfig {
   @override
   bool operator ==(Object other) =>
       other is LocaleFallbackConfig &&
-      other.priority == this.priority &&
-      other.extensionKey == this.extensionKey &&
-      other.fallbackSupplement == this.fallbackSupplement;
+      other.priority == priority &&
+      other.extensionKey == extensionKey &&
+      other.fallbackSupplement == fallbackSupplement;
 
   @override
   int get hashCode => Object.hashAll([
-        this.priority,
-        this.extensionKey,
-        this.fallbackSupplement,
+        priority,
+        extensionKey,
+        fallbackSupplement,
       ]);
 
   // Return all fields corresponding to lifetime `'a` 

@@ -42,14 +42,14 @@ final class DisplayNamesOptions {
   @override
   bool operator ==(Object other) =>
       other is DisplayNamesOptions &&
-      other.style == this.style &&
-      other.fallback == this.fallback &&
-      other.languageDisplay == this.languageDisplay;
+      other.style == style &&
+      other.fallback == fallback &&
+      other.languageDisplay == languageDisplay;
 
   @override
   int get hashCode => Object.hashAll([
-        this.style,
-        this.fallback,
-        this.languageDisplay,
+        style,
+        fallback,
+        languageDisplay,
       ]);
 }

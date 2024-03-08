@@ -150,19 +150,21 @@ typedef Rune = int;
 // ignore: unused_element
 final _callocFree = core.Finalizer(ffi2.calloc.free);
 
+final _nopFree = core.Finalizer((nothing) => {});
+
 // ignore: unused_element
 class _FinalizedArena {
   final ffi2.Arena arena;
   static final core.Finalizer<ffi2.Arena> _finalizer = core.Finalizer((arena) => arena.releaseAll());
 
   // ignore: unused_element
-  _FinalizedArena() : this.arena = ffi2.Arena() {
-    _finalizer.attach(this, this.arena);
+  _FinalizedArena() : arena = ffi2.Arena() {
+    _finalizer.attach(this, arena);
   }
 
   // ignore: unused_element
-  _FinalizedArena.withLifetime(core.List<core.List<Object>> lifetimeAppendArray) : this.arena = ffi2.Arena() {
-    _finalizer.attach(this, this.arena);
+  _FinalizedArena.withLifetime(core.List<core.List<Object>> lifetimeAppendArray) : arena = ffi2.Arena() {
+    _finalizer.attach(this, arena);
     for (final edge in lifetimeAppendArray) {
       edge.add(this);
     }
@@ -574,6 +576,11 @@ final class _SliceUsize extends ffi.Struct {
   // This is cheap
   @override
   int get hashCode => _length.hashCode;
+
+  core.List<int> _toDart(core.List<Object> lifetimeEdges) {
+    // Do not have to keep lifetimeEdges alive, because this copies
+    return core.Iterable.generate(_length).map((i) => _data[i]).toList(growable: false);
+  }
 }
 
 final class _SliceUtf8 extends ffi.Struct {
@@ -600,6 +607,11 @@ final class _SliceUtf8 extends ffi.Struct {
   // This is cheap
   @override
   int get hashCode => _length.hashCode;
+
+  String _toDart(core.List<Object> lifetimeEdges) {
+    // Do not have to keep lifetimeEdges alive, because this copies
+    return Utf8Decoder().convert(_data.asTypedList(_length));
+  }
 }
 
 final class _Writeable {

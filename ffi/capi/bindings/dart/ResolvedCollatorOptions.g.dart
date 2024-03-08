@@ -60,22 +60,22 @@ final class ResolvedCollatorOptions {
   @override
   bool operator ==(Object other) =>
       other is ResolvedCollatorOptions &&
-      other.strength == this.strength &&
-      other.alternateHandling == this.alternateHandling &&
-      other.caseFirst == this.caseFirst &&
-      other.maxVariable == this.maxVariable &&
-      other.caseLevel == this.caseLevel &&
-      other.numeric == this.numeric &&
-      other.backwardSecondLevel == this.backwardSecondLevel;
+      other.strength == strength &&
+      other.alternateHandling == alternateHandling &&
+      other.caseFirst == caseFirst &&
+      other.maxVariable == maxVariable &&
+      other.caseLevel == caseLevel &&
+      other.numeric == numeric &&
+      other.backwardSecondLevel == backwardSecondLevel;
 
   @override
   int get hashCode => Object.hashAll([
-        this.strength,
-        this.alternateHandling,
-        this.caseFirst,
-        this.maxVariable,
-        this.caseLevel,
-        this.numeric,
-        this.backwardSecondLevel,
+        strength,
+        alternateHandling,
+        caseFirst,
+        maxVariable,
+        caseLevel,
+        numeric,
+        backwardSecondLevel,
       ]);
 }

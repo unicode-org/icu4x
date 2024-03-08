@@ -46,14 +46,14 @@ final class CodePointRangeIteratorResult {
   @override
   bool operator ==(Object other) =>
       other is CodePointRangeIteratorResult &&
-      other.start == this.start &&
-      other.end == this.end &&
-      other.done == this.done;
+      other.start == start &&
+      other.end == end &&
+      other.done == done;
 
   @override
   int get hashCode => Object.hashAll([
-        this.start,
-        this.end,
-        this.done,
+        start,
+        end,
+        done,
       ]);
 }

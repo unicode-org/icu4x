@@ -42,7 +42,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment) for more information.
   ///
   /// Throws [Error] on failure.
-  String titlecase_segment(String s, Locale locale, TitlecaseOptions options) {
+  String titlecaseSegment(String s, Locale locale, TitlecaseOptions options) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();

@@ -39,12 +39,12 @@ final class Decomposed {
   @override
   bool operator ==(Object other) =>
       other is Decomposed &&
-      other.first == this.first &&
-      other.second == this.second;
+      other.first == first &&
+      other.second == second;
 
   @override
   int get hashCode => Object.hashAll([
-        this.first,
-        this.second,
+        first,
+        second,
       ]);
 }

@@ -41,14 +41,14 @@ final class IsoTimeZoneOptions {
   @override
   bool operator ==(Object other) =>
       other is IsoTimeZoneOptions &&
-      other.format == this.format &&
-      other.minutes == this.minutes &&
-      other.seconds == this.seconds;
+      other.format == format &&
+      other.minutes == minutes &&
+      other.seconds == seconds;
 
   @override
   int get hashCode => Object.hashAll([
-        this.format,
-        this.minutes,
-        this.seconds,
+        format,
+        minutes,
+        seconds,
       ]);
 }

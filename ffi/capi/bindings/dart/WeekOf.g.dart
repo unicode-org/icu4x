@@ -35,12 +35,12 @@ final class WeekOf {
   @override
   bool operator ==(Object other) =>
       other is WeekOf &&
-      other.week == this.week &&
-      other.unit == this.unit;
+      other.week == week &&
+      other.unit == unit;
 
   @override
   int get hashCode => Object.hashAll([
-        this.week,
-        this.unit,
+        week,
+        unit,
       ]);
 }

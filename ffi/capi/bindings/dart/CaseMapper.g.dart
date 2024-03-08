@@ -78,7 +78,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
   ///
   /// Throws [Error] on failure.
-  String titlecase_segment_with_only_case_data(String s, Locale locale, TitlecaseOptions options) {
+  String titlecaseSegmentWithOnlyCaseData(String s, Locale locale, TitlecaseOptions options) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();

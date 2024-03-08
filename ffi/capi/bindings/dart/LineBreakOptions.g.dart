@@ -42,14 +42,14 @@ final class LineBreakOptions {
   @override
   bool operator ==(Object other) =>
       other is LineBreakOptions &&
-      other.strictness == this.strictness &&
-      other.wordOption == this.wordOption &&
-      other.jaZh == this.jaZh;
+      other.strictness == strictness &&
+      other.wordOption == wordOption &&
+      other.jaZh == jaZh;
 
   @override
   int get hashCode => Object.hashAll([
-        this.strictness,
-        this.wordOption,
-        this.jaZh,
+        strictness,
+        wordOption,
+        jaZh,
       ]);
 }
