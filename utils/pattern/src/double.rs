@@ -260,7 +260,7 @@ impl PatternBackend for DoublePlaceholder {
             debug_assert!(false, "ph_first.offset > ph_second.offset");
             return Err(Error::InvalidPattern);
         }
-        if (ph_second.offset as usize) > store.len() - initial_offset + 1 {
+        if ph_second.offset > store.len() - initial_offset + 1 {
             debug_assert!(false, "ph_second.offset out of range");
             return Err(Error::InvalidPattern);
         }
@@ -315,8 +315,7 @@ impl PatternBackend for DoublePlaceholder {
                     if second_ph.is_some() {
                         return Err(Error::InvalidPattern);
                     }
-                    let placeholder_offset =
-                        usize::try_from(result.len() + 1).map_err(|_| Error::InvalidPattern)?;
+                    let placeholder_offset = result.len() + 1;
                     if placeholder_offset >= 0xD800 {
                         return Err(Error::InvalidPattern);
                     }
@@ -335,7 +334,10 @@ impl PatternBackend for DoublePlaceholder {
         let (first_ph, second_ph) = match (first_ph, second_ph) {
             (Some(a), Some(b)) => (a, b),
             (Some(a), None) => (a, a.flip().clear()),
-            (None, None) => (DoublePlaceholderInfo::zero(), DoublePlaceholderInfo::zero().flip()),
+            (None, None) => (
+                DoublePlaceholderInfo::zero(),
+                DoublePlaceholderInfo::zero().flip(),
+            ),
             (None, Some(_)) => unreachable!("first_ph always populated before second_ph"),
         };
         if first_ph.key == second_ph.key {
@@ -383,6 +385,7 @@ impl ExactSizeIterator for DoublePlaceholderPatternIterator<'_> {
         ph_second.offset += initial_offset - 1;
         let store_len = self.store.len();
 
+        #[allow(clippy::comparison_chain)]
         if ph_first.offset < initial_offset {
             // No placeholders
             if initial_offset < store_len {
