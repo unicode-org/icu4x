@@ -153,7 +153,7 @@ mod tests {
         }
         impl AsRef<str> for MyStr<'_> {
             fn as_ref(&self) -> &str {
-                &self.0
+                self.0
             }
         }
 
