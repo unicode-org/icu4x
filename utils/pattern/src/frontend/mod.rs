@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "databake")]
+mod databake;
+#[cfg(feature = "serde")]
+mod serde;
+
 use core::{
     fmt::{self, Write},
     marker::PhantomData,
@@ -41,7 +46,13 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// - `Cow<str>` for an owned-or-borrowed pattern
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
+#[cfg_attr(
+    feature = "zerofrom",
+    derive(zerofrom::ZeroFrom),
+    zerofrom(may_borrow(Store))
+)]
 pub struct Pattern<Backend, Store: ?Sized> {
     _backend: PhantomData<Backend>,
     store: Store,
@@ -50,6 +61,42 @@ pub struct Pattern<Backend, Store: ?Sized> {
 impl<Backend, Store> Pattern<Backend, Store> {
     pub fn take_store(self) -> Store {
         self.store
+    }
+
+    /// Creates a pattern from a serialized backing store without checking invariants.
+    /// Most users should prefer [`Pattern::try_from_store()`].
+    ///
+    /// The store is expected to come from a valid `Pattern` with this `Backend`,
+    /// such as by calling [`Pattern::take_store()`]. If the store is not valid,
+    /// unexpected behavior may occur.
+    ///
+    /// To parse a pattern string, use [`Self::try_from_str()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a pattern from a valid string:
+    /// let allocated_pattern: Pattern<SinglePlaceholder, String> =
+    ///     Pattern::try_from_str("{0} days").expect("valid pattern");
+    ///
+    /// // Transform the store and create a new Pattern. This is valid because
+    /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
+    /// // with the same backend (`SinglePlaceholder`).
+    /// let store = allocated_pattern.take_store();
+    /// let borrowed_pattern: Pattern<SinglePlaceholder, &str> =
+    ///     Pattern::from_store_unchecked(&store);
+    ///
+    /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
+    /// ```
+    pub const fn from_store_unchecked(store: Store) -> Self {
+        Self {
+            _backend: PhantomData,
+            store,
+        }
     }
 }
 

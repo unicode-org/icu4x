@@ -23,7 +23,21 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 writeable = { workspace = true }
+databake = { workspace = true, features = ["derive"], optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
+yoke = { workspace = true, features = ["derive"], optional = true }
+zerofrom = { workspace = true, features = ["derive"], optional = true }
+
+[dev-dependencies]
+zerofrom = { workspace = true, features = ["alloc"] }
+zerovec = { workspace = true, features = ["databake", "serde"] }
+serde_json = { version = "1.0" }
+postcard = { version = "1.0", features = ["use-std"] }
 
 [features]
 alloc = []
 std = ["alloc"]
+databake = ["dep:databake"]
+serde = ["alloc", "dep:serde"]
+yoke = ["dep:yoke"]
+zerofrom = ["dep:zerofrom"]

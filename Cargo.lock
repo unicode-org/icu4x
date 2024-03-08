@@ -1603,8 +1603,15 @@ version = "1.4.0"
 name = "icu_pattern"
 version = "0.1.5"
 dependencies = [
+ "databake",
  "displaydoc",
+ "postcard",
+ "serde",
+ "serde_json",
  "writeable",
+ "yoke",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
