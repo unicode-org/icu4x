@@ -115,14 +115,14 @@ impl DoublePlaceholderInfo {
             .and_then(|x| char::try_from(x).ok())
             .ok_or(Error::InvalidPattern)
     }
-    /// Only used in GIGO code
+    /// Creates a PlaceholderInfo for an empty Place0
     pub fn zero() -> Self {
         Self {
             key: DoublePlaceholderKey::Place0,
             offset: 0,
         }
     }
-    /// Only used in GIGO code
+    /// Changes Place0 to Place1 and vice-versa
     pub fn flip(self) -> Self {
         Self {
             key: match self.key {
@@ -130,6 +130,13 @@ impl DoublePlaceholderInfo {
                 DoublePlaceholderKey::Place1 => DoublePlaceholderKey::Place0,
             },
             offset: self.offset,
+        }
+    }
+    /// Sets the offset to 0 (ignored placeholder), retaining the key
+    pub fn clear(self) -> Self {
+        Self {
+            key: self.key,
+            offset: 0,
         }
     }
 }
@@ -244,7 +251,7 @@ impl PatternBackend for DoublePlaceholder {
             debug_assert!(false, "ph_first.key == ph_second.key");
             return Err(Error::InvalidPattern);
         }
-        if ph_first.offset > ph_second.offset {
+        if ph_first.offset > ph_second.offset && ph_second.offset > 0 {
             debug_assert!(false, "ph_first.offset > ph_second.offset");
             return Err(Error::InvalidPattern);
         }
@@ -322,7 +329,9 @@ impl PatternBackend for DoublePlaceholder {
         }
         let (first_ph, second_ph) = match (first_ph, second_ph) {
             (Some(a), Some(b)) => (a, b),
-            _ => todo!(),
+            (Some(a), None) => (a, a.flip().clear()),
+            (None, None) => (DoublePlaceholderInfo::zero(), DoublePlaceholderInfo::zero().flip()),
+            (None, Some(_)) => unreachable!("first_ph always populated before second_ph"),
         };
         if first_ph.key == second_ph.key {
             return Err(Error::InvalidPattern);
