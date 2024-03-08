@@ -110,6 +110,7 @@ impl DoublePlaceholderInfo {
             offset: (ch as usize) >> 1,
         }
     }
+    #[cfg(feature = "alloc")]
     pub fn try_to_char(self) -> Result<char, Error> {
         let usize_val = match self.key {
             DoublePlaceholderKey::Place0 => 0,
@@ -138,6 +139,7 @@ impl DoublePlaceholderInfo {
         }
     }
     /// Sets the offset to 0 (ignored placeholder), retaining the key
+    #[cfg(feature = "alloc")]
     pub fn clear(self) -> Self {
         Self {
             key: self.key,
