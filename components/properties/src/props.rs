@@ -2525,10 +2525,9 @@ mod test_enumerated_property_completeness {
             })
             .collect();
 
-        let consts: BTreeMap<_, _> = consts
+        let consts = consts
             .into_iter()
-            .map(|(name, value)| (*value, (name.to_string(), "Consts")))
-            .collect();
+            .map(|(name, value)| (*value, (name.to_string(), "Consts")));
 
         let mut diff = Vec::new();
         for t @ (value, _) in consts {
