@@ -666,9 +666,16 @@ mod tests {
             },
         ];
         for cas in cases {
-            let TestCase { pattern, store, interpolated } = cas;
+            let TestCase {
+                pattern,
+                store,
+                interpolated,
+            } = cas;
             let parsed = DoublePlaceholderPattern::try_from_str(pattern).unwrap();
-            let actual = parsed.interpolate(["apple", "orange"]).write_to_string().into_owned();
+            let actual = parsed
+                .interpolate(["apple", "orange"])
+                .write_to_string()
+                .into_owned();
             assert_eq!(parsed.take_store(), store, "{cas:?}");
             assert_eq!(actual, interpolated, "{cas:?}");
         }
@@ -677,17 +684,20 @@ mod tests {
     #[test]
     fn test_invalid() {
         let cases = [
-            "", // too short
-            "\x00", // too short
-            "\x00\x00", // duplicate placeholders
-            "\x04\x03", // first offset is after second offset
-            "\x04\x05", // second offset out of range (also first offset)
+            "",               // too short
+            "\x00",           // too short
+            "\x00\x00",       // duplicate placeholders
+            "\x04\x03",       // first offset is after second offset
+            "\x04\x05",       // second offset out of range (also first offset)
             "\x04\u{10001}@", // second offset too large for UTF-8
         ];
-        let long_str = core::iter::repeat("0123456789").take(1000000).collect::<String>();
+        let long_str = "0123456789".repeat(1000000);
         for cas in cases {
-            let cas = cas.replace("@", &long_str);
-            assert!(matches!(DoublePlaceholderPattern::try_from_store(&cas), Err(_)), "{cas:?}");
+            let cas = cas.replace('@', &long_str);
+            assert!(
+                DoublePlaceholderPattern::try_from_store(&cas).is_err(),
+                "{cas:?}"
+            );
         }
     }
 }
