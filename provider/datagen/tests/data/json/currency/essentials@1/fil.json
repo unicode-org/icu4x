@@ -887,8 +887,22 @@
       }
     }
   },
-  "standard": "¤#,##0.00",
-  "standard_alpha_next_to_number": "¤ #,##0.00",
+  "standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "¤#,##0.00"
+    }
+  ],
+  "standard_alpha_next_to_number": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "¤ #,##0.00"
+    }
+  ],
   "place_holders": [
     "؋",
     "֏",

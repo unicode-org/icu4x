@@ -883,8 +883,19 @@
       }
     }
   },
-  "standard": "¤#,##0.00",
-  "standard_alpha_next_to_number": "",
+  "standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "¤#,##0.00"
+    }
+  ],
+  "standard_alpha_next_to_number": [
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
   "place_holders": [
     "؋",
     "֏",

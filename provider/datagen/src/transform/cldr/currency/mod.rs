@@ -22,7 +22,6 @@ use icu_pattern::SinglePlaceholder;
 use icu_pattern::SinglePlaceholderKey;
 
 use icu_experimental::dimension::ule::MAX_PLACE_HOLDER_INDEX;
-use icu_pattern::SinglePlaceholderPattern;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
@@ -288,7 +287,7 @@ fn extract_currency_essentials<'data>(
 
     let standard_store = standard.take_store();
     let borrowed_standard: Pattern<SinglePlaceholder, Cow<'_, str>> =
-        Pattern::from_store_unchecked(Cow::Borrowed(standard_store.to_owned().as_str()));
+        Pattern::from_store_unchecked(Cow::Owned(standard_store));
 
     let standard_alpha_next_to_number = Pattern::<SinglePlaceholder, _>::try_from_items(
         [
@@ -301,9 +300,7 @@ fn extract_currency_essentials<'data>(
 
     let standard_alpha_next_to_number_store = standard_alpha_next_to_number.take_store();
     let borrowed_standard_alpha_next_to_number: Pattern<SinglePlaceholder, Cow<'_, str>> =
-        Pattern::from_store_unchecked(Cow::Borrowed(
-            standard_alpha_next_to_number_store.to_owned().as_str(),
-        ));
+        Pattern::from_store_unchecked(Cow::Owned(standard_alpha_next_to_number_store));
 
     Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
