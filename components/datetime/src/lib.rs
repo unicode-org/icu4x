@@ -144,6 +144,8 @@ pub mod input;
 pub mod neo;
 #[cfg(feature = "experimental")]
 pub mod neo_pattern;
+#[cfg(feature = "experimental")]
+pub mod neo_skeleton;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
