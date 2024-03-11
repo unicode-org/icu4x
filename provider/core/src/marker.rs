@@ -4,7 +4,9 @@
 
 //! Marker types and traits for DataProvider.
 
-use crate::key::DataKey;
+use core::marker::PhantomData;
+
+use crate::{data_key, key::DataKey};
 use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -82,4 +84,42 @@ pub trait DataMarker: 'static {
 pub trait KeyedDataMarker: DataMarker {
     /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
+}
+
+/// A [`DataMarker`] that never returns data.
+///
+/// # Examples
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider::NeverMarker;
+///
+/// let buffer_provider = HelloWorldProvider.into_json_provider();
+///
+/// DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+///     &buffer_provider.as_deserializing(),
+///     DataRequest {
+///         locale: &locale!("en").into(),
+///         metadata: Default::default(),
+///     },
+/// )
+/// .expect_err("should never find NeverMarker");
+/// ```
+#[derive(Debug, Copy, Clone)]
+pub struct NeverMarker<Y>(PhantomData<Y>);
+
+impl<Y> DataMarker for NeverMarker<Y>
+where
+    for<'a> Y: Yokeable<'a>,
+{
+    type Yokeable = Y;
+}
+
+impl<Y> KeyedDataMarker for NeverMarker<Y>
+where
+    for<'a> Y: Yokeable<'a>,
+{
+    const KEY: DataKey = data_key!("_empty@1");
 }
