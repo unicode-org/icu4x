@@ -122,14 +122,14 @@ impl DoublePlaceholderInfo {
             .ok_or(Error::InvalidPattern)
     }
     /// Creates a PlaceholderInfo for an empty Place0
-    pub fn zero() -> Self {
+    pub fn no_place0() -> Self {
         Self {
             key: DoublePlaceholderKey::Place0,
             offset: 0,
         }
     }
     /// Changes Place0 to Place1 and vice-versa
-    pub fn flip(self) -> Self {
+    pub fn swap(self) -> Self {
         Self {
             key: match self.key {
                 DoublePlaceholderKey::Place0 => DoublePlaceholderKey::Place1,
@@ -275,14 +275,14 @@ impl PatternBackend for DoublePlaceholder {
             Some(ch) => (DoublePlaceholderInfo::from_char(ch), ch.len_utf8()),
             None => {
                 debug_assert!(false);
-                (DoublePlaceholderInfo::zero(), 0)
+                (DoublePlaceholderInfo::no_place0(), 0)
             }
         };
         let (mut ph_second, ph_second_len) = match chars.next() {
             Some(ch) => (DoublePlaceholderInfo::from_char(ch), ch.len_utf8()),
             None => {
                 debug_assert!(false);
-                (ph_first.flip(), ph_first_len)
+                (ph_first.swap(), ph_first_len)
             }
         };
         let initial_offset = ph_first_len + ph_second_len;
@@ -331,10 +331,10 @@ impl PatternBackend for DoublePlaceholder {
         }
         let (first_ph, second_ph) = match (first_ph, second_ph) {
             (Some(a), Some(b)) => (a, b),
-            (Some(a), None) => (a, a.flip().clear()),
+            (Some(a), None) => (a, a.swap().clear()),
             (None, None) => (
-                DoublePlaceholderInfo::zero(),
-                DoublePlaceholderInfo::zero().flip(),
+                DoublePlaceholderInfo::no_place0(),
+                DoublePlaceholderInfo::no_place0().swap(),
             ),
             (None, Some(_)) => unreachable!("first_ph always populated before second_ph"),
         };
@@ -368,14 +368,14 @@ impl ExactSizeIterator for DoublePlaceholderPatternIterator<'_> {
             Some(ch) => (DoublePlaceholderInfo::from_char(ch), ch.len_utf8()),
             None => {
                 debug_assert!(false);
-                (DoublePlaceholderInfo::zero(), 0)
+                (DoublePlaceholderInfo::no_place0(), 0)
             }
         };
         let (mut ph_second, ph_second_len) = match chars.next() {
             Some(ch) => (DoublePlaceholderInfo::from_char(ch), ch.len_utf8()),
             None => {
                 debug_assert!(false);
-                (ph_first.flip(), ph_first_len)
+                (ph_first.swap(), ph_first_len)
             }
         };
         let initial_offset = ph_first_len + ph_second_len;
