@@ -255,19 +255,15 @@ impl PatternBackend for DoublePlaceholder {
         let ph_first = DoublePlaceholderInfo::from_char(ph_first_char);
         let ph_second = DoublePlaceholderInfo::from_char(ph_second_char);
         if ph_first.key == ph_second.key {
-            debug_assert!(false, "ph_first.key == ph_second.key");
             return Err(Error::InvalidPattern);
         }
         if ph_first.offset > ph_second.offset && ph_second.offset > 0 {
-            debug_assert!(false, "ph_first.offset > ph_second.offset");
             return Err(Error::InvalidPattern);
         }
         if ph_second.offset > store.len() - initial_offset + 1 {
-            debug_assert!(false, "ph_second.offset out of range");
             return Err(Error::InvalidPattern);
         }
         if (ph_second_char as usize) >= 0xD800 {
-            debug_assert!(false, "ph_second too big for char");
             return Err(Error::InvalidPattern);
         }
         Ok(())
@@ -523,4 +519,175 @@ impl<'a> Iterator for DoublePlaceholderPatternIterator<'a> {
     }
 }
 
-// TODO(#1668):  Add more tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::DoublePlaceholderPattern;
+
+    #[test]
+    fn test_permutations() {
+        #[derive(Debug)]
+        struct TestCase<'a> {
+            pattern: &'a str,
+            store: &'a str,
+            /// Interpolation with 0=apple, 1=orange
+            interpolated: &'a str,
+        }
+        let cases = [
+            TestCase {
+                pattern: "",
+                store: "\x00\x01",
+                interpolated: "",
+            },
+            TestCase {
+                pattern: "{0}",
+                store: "\x02\x01",
+                interpolated: "apple",
+            },
+            TestCase {
+                pattern: "X{0}",
+                store: "\x04\x01X",
+                interpolated: "Xapple",
+            },
+            TestCase {
+                pattern: "{0}Y",
+                store: "\x02\x01Y",
+                interpolated: "appleY",
+            },
+            TestCase {
+                pattern: "X{0}Y",
+                store: "\x04\x01XY",
+                interpolated: "XappleY",
+            },
+            TestCase {
+                pattern: "{1}",
+                store: "\x03\x00",
+                interpolated: "orange",
+            },
+            TestCase {
+                pattern: "X{1}",
+                store: "\x05\x00X",
+                interpolated: "Xorange",
+            },
+            TestCase {
+                pattern: "{1}Y",
+                store: "\x03\x00Y",
+                interpolated: "orangeY",
+            },
+            TestCase {
+                pattern: "X{1}Y",
+                store: "\x05\x00XY",
+                interpolated: "XorangeY",
+            },
+            TestCase {
+                pattern: "{0}{1}",
+                store: "\x02\x03",
+                interpolated: "appleorange",
+            },
+            TestCase {
+                pattern: "X{0}{1}",
+                store: "\x04\x05X",
+                interpolated: "Xappleorange",
+            },
+            TestCase {
+                pattern: "{0}Y{1}",
+                store: "\x02\x05Y",
+                interpolated: "appleYorange",
+            },
+            TestCase {
+                pattern: "{0}{1}Z",
+                store: "\x02\x03Z",
+                interpolated: "appleorangeZ",
+            },
+            TestCase {
+                pattern: "X{0}Y{1}",
+                store: "\x04\x07XY",
+                interpolated: "XappleYorange",
+            },
+            TestCase {
+                pattern: "X{0}{1}Z",
+                store: "\x04\x05XZ",
+                interpolated: "XappleorangeZ",
+            },
+            TestCase {
+                pattern: "{0}Y{1}Z",
+                store: "\x02\x05YZ",
+                interpolated: "appleYorangeZ",
+            },
+            TestCase {
+                pattern: "X{0}Y{1}Z",
+                store: "\x04\x07XYZ",
+                interpolated: "XappleYorangeZ",
+            },
+            TestCase {
+                pattern: "{1}{0}",
+                store: "\x03\x02",
+                interpolated: "orangeapple",
+            },
+            TestCase {
+                pattern: "X{1}{0}",
+                store: "\x05\x04X",
+                interpolated: "Xorangeapple",
+            },
+            TestCase {
+                pattern: "{1}Y{0}",
+                store: "\x03\x04Y",
+                interpolated: "orangeYapple",
+            },
+            TestCase {
+                pattern: "{1}{0}Z",
+                store: "\x03\x02Z",
+                interpolated: "orangeappleZ",
+            },
+            TestCase {
+                pattern: "X{1}Y{0}",
+                store: "\x05\x06XY",
+                interpolated: "XorangeYapple",
+            },
+            TestCase {
+                pattern: "X{1}{0}Z",
+                store: "\x05\x04XZ",
+                interpolated: "XorangeappleZ",
+            },
+            TestCase {
+                pattern: "{1}Y{0}Z",
+                store: "\x03\x04YZ",
+                interpolated: "orangeYappleZ",
+            },
+            TestCase {
+                pattern: "X{1}Y{0}Z",
+                store: "\x05\x06XYZ",
+                interpolated: "XorangeYappleZ",
+            },
+            TestCase {
+                pattern: "01234567890123456789012345678901234567890123456789012345678901234567890123456789{0}Y{1}Z",
+                store: "\u{A2}\u{A5}01234567890123456789012345678901234567890123456789012345678901234567890123456789YZ",
+                interpolated: "01234567890123456789012345678901234567890123456789012345678901234567890123456789appleYorangeZ",
+            },
+        ];
+        for cas in cases {
+            let TestCase { pattern, store, interpolated } = cas;
+            let parsed = DoublePlaceholderPattern::try_from_str(pattern).unwrap();
+            let actual = parsed.interpolate(["apple", "orange"]).write_to_string().into_owned();
+            assert_eq!(parsed.take_store(), store, "{cas:?}");
+            assert_eq!(actual, interpolated, "{cas:?}");
+        }
+    }
+
+    #[test]
+    fn test_invalid() {
+        let cases = [
+            "", // too short
+            "\x00", // too short
+            "\x00\x00", // duplicate placeholders
+            "\x04\x03", // first offset is after second offset
+            "\x04\x05", // second offset out of range (also first offset)
+            "\x04\u{10001}@", // second offset too large for UTF-8
+        ];
+        let long_str = core::iter::repeat("0123456789").take(1000000).collect::<String>();
+        for cas in cases {
+            let cas = cas.replace("@", &long_str);
+            assert!(matches!(DoublePlaceholderPattern::try_from_store(&cas), Err(_)), "{cas:?}");
+        }
+    }
+}
