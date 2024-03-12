@@ -88,8 +88,8 @@ pub trait KeyedDataMarker: DataMarker {
 
 /// A [`DataMarker`] that never returns data.
 ///
-/// All types that have non-blanket impls of `DataProvider<T>` are expected to explicitly
-/// implement `DataProvider<NeverMarker<T>>`, returning [`DataErrorKind::MissingDataKey`].
+/// All types that have non-blanket impls of `DataProvider<M>` are expected to explicitly
+/// implement `DataProvider<NeverMarker<Y>>`, returning [`DataErrorKind::MissingDataKey`].
 /// See [`impl_data_provider_never_marker!`].
 ///
 /// [`DataErrorKind::MissingDataKey`]: crate::DataErrorKind::MissingDataKey
