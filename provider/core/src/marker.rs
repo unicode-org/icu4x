@@ -93,6 +93,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// See [`impl_data_provider_never_marker!`].
 ///
 /// [`DataErrorKind::MissingDataKey`]: crate::DataErrorKind::MissingDataKey
+/// [`impl_data_provider_never_marker!`]: crate::impl_data_provider_never_marker
 ///
 /// # Examples
 ///
