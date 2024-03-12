@@ -551,6 +551,7 @@ pub struct DateTimePatternV1<'data> {
 //   has_short: bool,
 //   index: u16, // index of first pattern (long if present, else medium, else short)
 // }
+#[allow(missing_docs)] // TODO
 #[derive(Debug, Copy, Clone, PartialEq, ULE)]
 #[cfg_attr(
     feature = "datagen",
@@ -584,11 +585,14 @@ impl AsULE for SkeletonDataIndex {
     databake(path = icu_datetime::provider::neo),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
-    /// len = 12 for time, 17 for date
+    // len = 12 for time, 17 for date
+    #[allow(missing_docs)] // TODO
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub indices: ZeroVec<'data, SkeletonDataIndex>,
     // TODO: This should support plurals
+    #[allow(missing_docs)] // TODO
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: VarZeroVec<'data, PatternULE>,
 }
@@ -605,10 +609,12 @@ pub struct PackedSkeletonDataV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
+#[allow(missing_docs)] // TODO
 pub struct DateTimeSkeletonsV1<'data> {
     // will typically be small, there are only a couple special cases like E B h m
     // TODO: This should support plurals
     // TODO: The key of this map should be Skeleton
+    #[allow(missing_docs)] // TODO
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroMap<'data, str, PatternULE>,
 }
