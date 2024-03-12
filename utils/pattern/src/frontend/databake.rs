@@ -4,6 +4,7 @@
 
 use core::any::TypeId;
 
+use crate::DoublePlaceholder;
 use crate::SinglePlaceholder;
 
 use super::*;
@@ -19,6 +20,8 @@ where
         let store = self.store.bake(ctx);
         let b = if TypeId::of::<B>() == TypeId::of::<SinglePlaceholder>() {
             quote!(icu_pattern::SinglePlaceholder)
+        } else if TypeId::of::<B>() == TypeId::of::<DoublePlaceholder>() {
+            quote!(icu_pattern::DoublePlaceholder)
         } else {
             unreachable!("all impls of sealed trait PatternBackend should be covered")
         };
