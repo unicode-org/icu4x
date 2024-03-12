@@ -4,9 +4,9 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-use icu_provider::prelude::*;
-use crate::CldrCalendar;
 use crate::provider::neo::*;
+use crate::CldrCalendar;
+use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
 
 pub trait NeoSkeleton<C: CldrCalendar> {
@@ -41,7 +41,10 @@ pub struct YearMonthSkeleton {
     pub length: Length,
 }
 
-impl<C> NeoSkeleton<C> for YearMonthSkeleton where C: CldrCalendar {
+impl<C> NeoSkeleton<C> for YearMonthSkeleton
+where
+    C: CldrCalendar,
+{
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
