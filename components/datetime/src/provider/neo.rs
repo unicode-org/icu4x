@@ -4,11 +4,11 @@
 
 mod adapter;
 
-use crate::pattern::runtime;
+use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::ule::UnvalidatedStr;
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
+use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 #[cfg(feature = "experimental")]
 use core::ops::Range;
@@ -542,6 +542,74 @@ pub struct DateTimePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
+}
+
+// conceptually:
+// {
+//   has_long: bool,
+//   has_medium: bool,
+//   has_short: bool,
+//   index: u16, // index of first pattern (long if present, else medium, else short)
+// }
+#[derive(Debug, Copy, Clone, PartialEq, ULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[repr(transparent)]
+pub struct SkeletonDataIndex([u8; 2]);
+
+impl AsULE for SkeletonDataIndex {
+    type ULE = Self;
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+}
+
+#[icu_provider::data_struct(
+    marker(DateSkeletonPatternsV1Marker, "datetime/patterns/date_skeleton@1"),
+    marker(TimeSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1"),
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct PackedSkeletonDataV1<'data> {
+    /// len = 12 for time, 17 for date
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub indices: ZeroVec<'data, SkeletonDataIndex>,
+    // TODO: This should support plurals
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub patterns: VarZeroVec<'data, PatternULE>,
+}
+
+#[icu_provider::data_struct(
+    marker(DateTimeSkeletonPatternsV1Marker, "datetime/patterns/datetime_skeleton@1"),
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct DateTimeSkeletonsV1<'data> {
+    // will typically be small, there are only a couple special cases like E B h m
+    // TODO: This should support plurals
+    // TODO: The key of this map should be Skeleton
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, str, PatternULE>, 
 }
 
 pub(crate) struct ErasedYearNamesV1Marker;
