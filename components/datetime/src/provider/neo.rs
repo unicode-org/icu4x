@@ -575,7 +575,7 @@ impl AsULE for SkeletonDataIndex {
 
 #[icu_provider::data_struct(
     marker(DateSkeletonPatternsV1Marker, "datetime/patterns/date_skeleton@1"),
-    marker(TimeSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1"),
+    marker(TimeSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -593,9 +593,10 @@ pub struct PackedSkeletonDataV1<'data> {
     pub patterns: VarZeroVec<'data, PatternULE>,
 }
 
-#[icu_provider::data_struct(
-    marker(DateTimeSkeletonPatternsV1Marker, "datetime/patterns/datetime_skeleton@1"),
-)]
+#[icu_provider::data_struct(marker(
+    DateTimeSkeletonPatternsV1Marker,
+    "datetime/patterns/datetime_skeleton@1"
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -609,7 +610,7 @@ pub struct DateTimeSkeletonsV1<'data> {
     // TODO: This should support plurals
     // TODO: The key of this map should be Skeleton
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, str, PatternULE>, 
+    pub map: ZeroMap<'data, str, PatternULE>,
 }
 
 pub(crate) struct ErasedYearNamesV1Marker;
