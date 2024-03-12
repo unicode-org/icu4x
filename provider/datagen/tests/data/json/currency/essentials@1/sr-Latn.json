@@ -877,40 +877,21 @@
       }
     }
   },
-  "standard": [
+  "standard_pattern": [
     {
-      "Literal": "standard"
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": "standard"
+      "Literal": " ¤"
     },
     {
       "Placeholder": "Place1"
     },
     {
-      "Literal": "standard"
-    }
-  ],
-  "standard_alpha_next_to_number": [
-    {
-      "Literal": "standard_alpha_next_to_number"
+      "Literal": " "
     },
     {
       "Placeholder": "Place0"
-    },
-    {
-      "Literal": "standard_alpha_next_to_number"
-    },
-    {
-      "Placeholder": "Place1"
-    },
-    {
-      "Literal": "standard_alpha_next_to_number"
     }
   ],
+  "standard_alpha_next_to_number_pattern": null,
   "place_holders": [
     "؋",
     "֏",

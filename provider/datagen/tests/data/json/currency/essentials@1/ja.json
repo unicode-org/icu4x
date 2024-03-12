@@ -881,40 +881,15 @@
       }
     }
   },
-  "standard": [
-    {
-      "Literal": "standard"
-    },
+  "standard_pattern": [
     {
       "Placeholder": "Place0"
     },
     {
-      "Literal": "standard"
-    },
-    {
       "Placeholder": "Place1"
-    },
-    {
-      "Literal": "standard"
     }
   ],
-  "standard_alpha_next_to_number": [
-    {
-      "Literal": "standard_alpha_next_to_number"
-    },
-    {
-      "Placeholder": "Place0"
-    },
-    {
-      "Literal": "standard_alpha_next_to_number"
-    },
-    {
-      "Placeholder": "Place1"
-    },
-    {
-      "Literal": "standard_alpha_next_to_number"
-    }
-  ],
+  "standard_alpha_next_to_number_pattern": null,
   "place_holders": [
     "؋",
     "֏",

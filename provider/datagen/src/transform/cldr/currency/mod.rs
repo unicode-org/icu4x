@@ -4,13 +4,17 @@
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
+use crate::transform::cldr::decimal::decimal_pattern::DecimalSubPattern;
 use crate::DatagenProvider;
 
 use std::borrow::Cow;
 
+use icu_pattern::DoublePlaceholderPattern;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::str::FromStr;
 use tinystr::tinystr;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
@@ -276,44 +280,88 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    let standard = Pattern::<DoublePlaceholder, _>::try_from_items(
-        [
-            PatternItemCow::Literal(Cow::Owned("standard".to_string())),
-            PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
-            PatternItemCow::Literal(Cow::Owned("standard".to_string())),
-            PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
-            PatternItemCow::Literal(Cow::Owned("standard".to_string())),
-        ]
-        .into_iter(),
-    )
-    .unwrap();
+    fn create_standard_pattern<'data>(
+        pattern: &String,
+    ) -> Result<Option<DoublePlaceholderPattern<Cow<'data, str>>>, DataError> {
 
-    let standard_store = standard.take_store();
-    let borrowed_standard: Pattern<DoublePlaceholder, Cow<'_, str>> =
-        Pattern::from_store_unchecked(Cow::Owned(standard_store));
+        // TODO(#4677): Remove this after the bug is fixed.
+        let pattern = pattern.split(";").next().unwrap();
 
-    let standard_alpha_next_to_number = Pattern::<DoublePlaceholder, _>::try_from_items(
-        [
-            PatternItemCow::Literal(Cow::Owned("standard_alpha_next_to_number".to_string())),
-            PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
-            PatternItemCow::Literal(Cow::Owned("standard_alpha_next_to_number".to_string())),
-            PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
-            PatternItemCow::Literal(Cow::Owned("standard_alpha_next_to_number".to_string())),
+        if pattern.is_empty() {
+            return Ok(None);
+        }
 
 
-        ]
-        .into_iter(),
-    )
-    .unwrap();
 
-    let standard_alpha_next_to_number_store = standard_alpha_next_to_number.take_store();
-    let borrowed_standard_alpha_next_to_number: Pattern<DoublePlaceholder, Cow<'_, str>> =
-        Pattern::from_store_unchecked(Cow::Owned(standard_alpha_next_to_number_store));
+
+        let decimal_pattern = DecimalSubPattern::from_str(pattern).map_err(|e| {
+            println!("Pattern: {}", pattern);
+            DataError::custom("Could not parse the pattern").with_display_context(&e)
+        })?;
+
+        let mut parts = Vec::<&str>::new();
+        let first_place_holder: DoublePlaceholderKey;
+        let second_place_holder: DoublePlaceholderKey;
+
+        if decimal_pattern.prefix.contains('¤') {
+            first_place_holder = DoublePlaceholderKey::Place0;
+            second_place_holder = DoublePlaceholderKey::Place1;
+
+            let mut split = decimal_pattern.prefix.split('¤');
+            parts.push(split.next().unwrap());
+            parts.push(split.next().unwrap());
+
+            if split.next().is_some() {
+                return Err(DataError::custom(
+                    "The pattern prefix has more than one currency sign",
+                ));
+            }
+
+            parts.push(decimal_pattern.suffix.as_str());
+        } else if decimal_pattern.suffix.contains('¤') {
+            first_place_holder = DoublePlaceholderKey::Place1;
+            second_place_holder = DoublePlaceholderKey::Place0;
+
+            parts.push(decimal_pattern.suffix.as_str());
+            let mut split = decimal_pattern.suffix.split('¤');
+            parts.push(split.next().unwrap());
+            parts.push(split.next().unwrap());
+            if split.next().is_some() {
+                return Err(DataError::custom(
+                    "The pattern suffix has more than one currency sign",
+                ));
+            }
+        } else {
+            return Err(DataError::custom("The currency pattern is malformed."));
+        }
+
+        let pattern = Pattern::<DoublePlaceholder, _>::try_from_items(
+            [
+                PatternItemCow::Literal(Cow::Owned(parts[0].to_string())),
+                PatternItemCow::Placeholder(first_place_holder),
+                PatternItemCow::Literal(Cow::Owned(parts[1].to_string())),
+                PatternItemCow::Placeholder(second_place_holder),
+                PatternItemCow::Literal(Cow::Owned(parts[2].to_string())),
+            ]
+            .into_iter(),
+        )
+        .map_err(|e| {
+            DataError::custom("Could not parse standard pattern").with_display_context(&e)
+        })?;
+
+        let pattern_store = pattern.take_store();
+        let borrowed_pattern: Pattern<DoublePlaceholder, Cow<'_, str>> =
+            Pattern::from_store_unchecked(Cow::Owned(pattern_store));
+
+        Ok(Some(borrowed_pattern.to_owned()))
+    }
 
     Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
-        standard: borrowed_standard.to_owned(),
-        standard_alpha_next_to_number: borrowed_standard_alpha_next_to_number.to_owned(),
+        standard_pattern: create_standard_pattern(&standard)?,
+        standard_alpha_next_to_number_pattern: create_standard_pattern(
+            &standard_alpha_next_to_number.to_string(),
+        )?,
         place_holders: VarZeroVec::from(&place_holders),
         default_pattern,
     })
