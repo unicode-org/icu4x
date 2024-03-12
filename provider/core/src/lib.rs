@@ -186,6 +186,7 @@ pub use crate::buf::BufferMarker;
 pub use crate::buf::BufferProvider;
 pub use crate::marker::DataMarker;
 pub use crate::marker::KeyedDataMarker;
+pub use crate::marker::NeverMarker;
 #[cfg(feature = "serde")]
 pub use crate::serde::AsDeserializingBufferProvider;
 
