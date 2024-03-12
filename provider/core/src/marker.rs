@@ -88,6 +88,12 @@ pub trait KeyedDataMarker: DataMarker {
 
 /// A [`DataMarker`] that never returns data.
 ///
+/// All types that have non-blanket impls of `DataProvider<T>` are expected to explicitly
+/// implement `DataProvider<NeverMarker<T>>`, returning [`DataErrorKind::MissingDataKey`].
+/// See [`impl_data_provider_never_marker!`].
+///
+/// [`DataErrorKind::MissingDataKey`]: crate::DataErrorKind::MissingDataKey
+///
 /// # Examples
 ///
 /// ```
@@ -98,14 +104,21 @@ pub trait KeyedDataMarker: DataMarker {
 ///
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
-/// DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+/// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
 ///         locale: &locale!("en").into(),
 ///         metadata: Default::default(),
 ///     },
-/// )
-/// .expect_err("should never find NeverMarker");
+/// );
+///
+/// assert!(matches!(
+///     result,
+///     Err(DataError {
+///         kind: DataErrorKind::MissingDataKey,
+///         ..
+///     })
+/// ));
 /// ```
 #[derive(Debug, Copy, Clone)]
 pub struct NeverMarker<Y>(PhantomData<Y>);
@@ -121,5 +134,54 @@ impl<Y> KeyedDataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
-    const KEY: DataKey = data_key!("_empty@1");
+    const KEY: DataKey = data_key!("_never@1");
+}
+
+/// Implements `DataProvider<NeverMarker<Y>>` on a struct.
+///
+/// For more information, see [`NeverMarker`].
+///
+/// # Examples
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider::NeverMarker;
+///
+/// struct MyProvider;
+///
+/// icu_provider::impl_data_provider_never_marker!(MyProvider);
+///
+/// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+///     &MyProvider,
+///     DataRequest {
+///         locale: &locale!("und").into(),
+///         metadata: Default::default(),
+///     },
+/// );
+///
+/// assert!(matches!(
+///     result,
+///     Err(DataError {
+///         kind: DataErrorKind::MissingDataKey,
+///         ..
+///     })
+/// ));
+/// ```
+#[macro_export]
+macro_rules! impl_data_provider_never_marker {
+    ($ty:path) => {
+        impl<Y> $crate::DataProvider<$crate::NeverMarker<Y>> for $ty
+        where
+            for<'a> Y: $crate::yoke::Yokeable<'a>,
+        {
+            fn load(
+                &self,
+                req: $crate::DataRequest,
+            ) -> Result<$crate::DataResponse<$crate::NeverMarker<Y>>, $crate::DataError> {
+                Err($crate::DataErrorKind::MissingDataKey.with_req($crate::NeverMarker::<Y>::KEY, req))
+            }
+        }
+    };
 }
