@@ -180,7 +180,8 @@ macro_rules! impl_data_provider_never_marker {
                 &self,
                 req: $crate::DataRequest,
             ) -> Result<$crate::DataResponse<$crate::NeverMarker<Y>>, $crate::DataError> {
-                Err($crate::DataErrorKind::MissingDataKey.with_req($crate::NeverMarker::<Y>::KEY, req))
+                Err($crate::DataErrorKind::MissingDataKey
+                    .with_req($crate::NeverMarker::<Y>::KEY, req))
             }
         }
     };
