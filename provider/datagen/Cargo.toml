@@ -41,7 +41,7 @@ icu_decimal = { workspace = true, features = ["datagen"] }
 icu_list = { workspace = true, features = ["datagen"]}
 icu_locid_transform = { workspace = true, features = ["datagen"] }
 icu_normalizer = { workspace = true, features = ["datagen"] }
-icu_pattern = { workspace = true }
+icu_pattern = { workspace = true, features = ["alloc"] }
 icu_plurals = { workspace = true, features = ["datagen"] }
 icu_properties = { workspace = true, features = ["datagen"]}
 icu_segmenter = { workspace = true, features = ["datagen", "lstm"] }

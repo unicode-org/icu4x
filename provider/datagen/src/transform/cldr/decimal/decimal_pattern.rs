@@ -8,6 +8,7 @@
 
 use displaydoc::Display;
 use icu_decimal::provider::AffixesV1;
+#[cfg(feature = "experimental_components")]
 use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
 use itertools::Itertools;
 use std::borrow::Cow;
@@ -79,6 +80,7 @@ impl FromStr for DecimalSubPattern {
 }
 
 impl DecimalSubPattern {
+    #[cfg(feature = "experimental_components")]
     pub fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
         vec![
             PatternItemCow::Literal(Cow::Borrowed(&self.prefix)),
