@@ -4,8 +4,8 @@
 
 use core::any::TypeId;
 
-use crate::SinglePlaceholder;
 use crate::DoublePlaceholder;
+use crate::SinglePlaceholder;
 
 use super::*;
 use ::databake::{quote, Bake, CrateEnv, TokenStream};

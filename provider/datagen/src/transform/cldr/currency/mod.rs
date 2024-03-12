@@ -4,7 +4,6 @@
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
 use crate::transform::cldr::decimal::decimal_pattern::DecimalSubPattern;
 use crate::DatagenProvider;
 
@@ -283,19 +282,14 @@ fn extract_currency_essentials<'data>(
     fn create_standard_pattern<'data>(
         pattern: &String,
     ) -> Result<Option<DoublePlaceholderPattern<Cow<'data, str>>>, DataError> {
-
-        // TODO(#4677): Remove this after the bug is fixed.
-        let pattern = pattern.split(";").next().unwrap();
-
         if pattern.is_empty() {
             return Ok(None);
         }
 
-
-
+        // TODO(#4677): Remove this after the bug is fixed.
+        let pattern = pattern.split(";").next().unwrap();
 
         let decimal_pattern = DecimalSubPattern::from_str(pattern).map_err(|e| {
-            println!("Pattern: {}", pattern);
             DataError::custom("Could not parse the pattern").with_display_context(&e)
         })?;
 
