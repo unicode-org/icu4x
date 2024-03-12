@@ -386,11 +386,24 @@ fn test_basic() {
         .unwrap();
 
     let en_place_holders = &en.get().to_owned().place_holders;
-    // assert_eq!(en.clone().get().to_owned().standard, "¤#,##0.00");
-    // assert_eq!(
-    //     en.clone().get().to_owned().standard_alpha_next_to_number,
-    //     "¤\u{a0}#,##0.00"
-    // );
+    assert_eq!(
+        en.clone()
+            .get()
+            .to_owned()
+            .standard_pattern
+            .unwrap()
+            .take_store(),
+        "\u{3}\u{2}"
+    );
+    assert_eq!(
+        en.clone()
+            .get()
+            .to_owned()
+            .standard_alpha_next_to_number_pattern
+            .unwrap()
+            .take_store(),
+        "\u{3}\u{6}\u{a0}"
+    );
 
     let (en_usd_short, en_usd_narrow) =
         get_place_holders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_place_holders);
@@ -413,14 +426,22 @@ fn test_basic() {
 
     let ar_eg_place_holders = &ar_eg.get().to_owned().place_holders;
 
-    // assert_eq!(
-    //     ar_eg.clone().get().to_owned().standard,
-    //     "‏#,##0.00 ¤;‏-#,##0.00 ¤"
-    // );
-    // assert_eq!(
-    //     ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
-    //     ""
-    // );
+    assert_eq!(
+        ar_eg
+            .clone()
+            .get()
+            .to_owned()
+            .standard_pattern
+            .unwrap()
+            .take_store(),
+        "\u{8}\r\u{200f}\u{a0}"
+    );
+    assert!(ar_eg
+        .clone()
+        .get()
+        .to_owned()
+        .standard_alpha_next_to_number_pattern
+        .is_none());
 
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_place_holders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
