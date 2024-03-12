@@ -879,15 +879,36 @@
   },
   "standard": [
     {
-      "Placeholder": "Singleton"
+      "Literal": "standard"
     },
     {
-      "Literal": "¤ #,##0.00"
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": "standard"
+    },
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": "standard"
     }
   ],
   "standard_alpha_next_to_number": [
     {
-      "Placeholder": "Singleton"
+      "Literal": "standard_alpha_next_to_number"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": "standard_alpha_next_to_number"
+    },
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": "standard_alpha_next_to_number"
     }
   ],
   "place_holders": [

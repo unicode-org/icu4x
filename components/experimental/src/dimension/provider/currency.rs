@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
-use icu_pattern::SinglePlaceholderPattern;
+use icu_pattern::DoublePlaceholderPattern;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -49,12 +49,16 @@ pub struct CurrencyEssentialsV1<'data> {
     pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 
     /// Represents the standard pattern.
+    /// NOTE: place holder 0 is the place of the place holder `¤`
+    ///       place holder 1 is the place of the currency value.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard: SinglePlaceholderPattern<Cow<'data, str>>,
+    pub standard: DoublePlaceholderPattern<Cow<'data, str>>,
 
     /// Represents the standard alpha_next_to_number pattern.
+    /// NOTE: place holder 0 is the place of the place holder `¤`
+    ///       place holder 1 is the place of the currency value.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard_alpha_next_to_number: SinglePlaceholderPattern<Cow<'data, str>>,
+    pub standard_alpha_next_to_number: DoublePlaceholderPattern<Cow<'data, str>>,
 
     /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]

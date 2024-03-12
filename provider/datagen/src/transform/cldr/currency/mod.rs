@@ -16,10 +16,10 @@ use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
+use icu_pattern::DoublePlaceholder;
+use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::Pattern;
 use icu_pattern::PatternItemCow;
-use icu_pattern::SinglePlaceholder;
-use icu_pattern::SinglePlaceholderKey;
 
 use icu_experimental::dimension::ule::MAX_PLACE_HOLDER_INDEX;
 use icu_properties::sets::load_for_general_category_group;
@@ -276,30 +276,38 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    let standard = Pattern::<SinglePlaceholder, _>::try_from_items(
+    let standard = Pattern::<DoublePlaceholder, _>::try_from_items(
         [
-            PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
-            PatternItemCow::Literal(Cow::Borrowed(standard)),
+            PatternItemCow::Literal(Cow::Owned("standard".to_string())),
+            PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
+            PatternItemCow::Literal(Cow::Owned("standard".to_string())),
+            PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
+            PatternItemCow::Literal(Cow::Owned("standard".to_string())),
         ]
         .into_iter(),
     )
     .unwrap();
 
     let standard_store = standard.take_store();
-    let borrowed_standard: Pattern<SinglePlaceholder, Cow<'_, str>> =
+    let borrowed_standard: Pattern<DoublePlaceholder, Cow<'_, str>> =
         Pattern::from_store_unchecked(Cow::Owned(standard_store));
 
-    let standard_alpha_next_to_number = Pattern::<SinglePlaceholder, _>::try_from_items(
+    let standard_alpha_next_to_number = Pattern::<DoublePlaceholder, _>::try_from_items(
         [
-            PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
-            PatternItemCow::Literal(Cow::Borrowed(standard_alpha_next_to_number)),
+            PatternItemCow::Literal(Cow::Owned("standard_alpha_next_to_number".to_string())),
+            PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
+            PatternItemCow::Literal(Cow::Owned("standard_alpha_next_to_number".to_string())),
+            PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
+            PatternItemCow::Literal(Cow::Owned("standard_alpha_next_to_number".to_string())),
+
+
         ]
         .into_iter(),
     )
     .unwrap();
 
     let standard_alpha_next_to_number_store = standard_alpha_next_to_number.take_store();
-    let borrowed_standard_alpha_next_to_number: Pattern<SinglePlaceholder, Cow<'_, str>> =
+    let borrowed_standard_alpha_next_to_number: Pattern<DoublePlaceholder, Cow<'_, str>> =
         Pattern::from_store_unchecked(Cow::Owned(standard_alpha_next_to_number_store));
 
     Ok(CurrencyEssentialsV1 {
