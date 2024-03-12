@@ -17,7 +17,10 @@ use zerovec::ZeroVec;
     databake(path = icu_datetime::pattern::runtime),
 )]
 #[zerovec::make_varule(PatternULE)]
+#[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
+#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
     /// This field should contain the smallest time unit from the `items` vec.
