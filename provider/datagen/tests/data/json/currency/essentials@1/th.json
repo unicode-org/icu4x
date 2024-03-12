@@ -885,10 +885,10 @@
   },
   "standard_pattern": [
     {
-      "Placeholder": "Place0"
+      "Placeholder": "Place1"
     },
     {
-      "Placeholder": "Place1"
+      "Placeholder": "Place0"
     }
   ],
   "standard_alpha_next_to_number_pattern": null,

@@ -8,6 +8,7 @@
 
 use displaydoc::Display;
 use icu_decimal::provider::AffixesV1;
+use icu_pattern::{DoublePlaceholderKey, PatternItem, PatternItemCow};
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::str::FromStr;
@@ -74,6 +75,16 @@ impl FromStr for DecimalSubPattern {
             min_fraction_digits: c,
             max_fraction_digits: d,
         })
+    }
+}
+
+impl DecimalSubPattern {
+    pub fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
+        let mut items = vec![];
+        items.push(PatternItemCow::Literal(Cow::Borrowed(&self.prefix)));
+        items.push(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0));
+        items.push(PatternItemCow::Literal(Cow::Borrowed(&self.suffix)));
+        items
     }
 }
 

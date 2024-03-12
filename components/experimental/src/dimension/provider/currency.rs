@@ -50,15 +50,15 @@ pub struct CurrencyEssentialsV1<'data> {
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// Represents the standard pattern.
-    /// NOTE: place holder 0 is the place of the place holder `¤`
-    ///       place holder 1 is the place of the currency value.
+    /// NOTE: place holder 0 is the place of the currency value.
+    ///       place holder 1 is the place of the currency sign `¤`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard_pattern: Option<DoublePlaceholderPattern<Cow<'data, str>>>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// Represents the standard alpha_next_to_number pattern.
-    /// NOTE: place holder 0 is the place of the place holder `¤`
-    ///       place holder 1 is the place of the currency value.
+    /// NOTE: place holder 0 is the place of the currency value.
+    ///       place holder 1 is the place of the currency sign `¤`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard_alpha_next_to_number_pattern: Option<DoublePlaceholderPattern<Cow<'data, str>>>,
 

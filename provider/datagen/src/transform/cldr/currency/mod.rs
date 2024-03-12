@@ -4,12 +4,17 @@
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::decimal::decimal_pattern;
+use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
 use crate::transform::cldr::decimal::decimal_pattern::DecimalSubPattern;
 use crate::DatagenProvider;
 
 use std::borrow::Cow;
 
 use icu_pattern::DoublePlaceholderPattern;
+use icu_pattern::PatternItem;
+
+use itertools::Itertools;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -279,69 +284,37 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    fn create_standard_pattern<'data>(
-        pattern: &String,
+    /// Create a `DoublePlaceholderPattern` from a string.
+    fn create_pattern<'data>(
+        pattern: &str,
     ) -> Result<Option<DoublePlaceholderPattern<Cow<'data, str>>>, DataError> {
         if pattern.is_empty() {
             return Ok(None);
         }
 
-        // TODO(#4677): Remove this after the bug is fixed.
-        let pattern = pattern.split(";").next().unwrap();
-
-        let decimal_pattern = DecimalSubPattern::from_str(pattern).map_err(|e| {
+        let decimal_pattern = DecimalPattern::from_str(pattern).map_err(|e| {
             DataError::custom("Could not parse the pattern").with_display_context(&e)
         })?;
 
-        let mut parts = Vec::<&str>::new();
-        let first_place_holder: DoublePlaceholderKey;
-        let second_place_holder: DoublePlaceholderKey;
+        // TODO(#4677): Handle the negative sub pattern.
+        let pattern_items = decimal_pattern
+            .positive
+            .to_pattern_items()
+            .into_iter()
+            .flat_map(|item| match item {
+                PatternItemCow::Placeholder(_) => vec![item],
+                PatternItemCow::Literal(s) if s.contains('¤') => s
+                    .split('¤')
+                    .map(|s| PatternItemCow::Literal(s.to_string().into()))
+                    .intersperse(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
+                    .collect(),
+                PatternItemCow::Literal(s) => vec![PatternItemCow::Literal(s)],
+            });
 
-        if decimal_pattern.prefix.contains('¤') {
-            first_place_holder = DoublePlaceholderKey::Place0;
-            second_place_holder = DoublePlaceholderKey::Place1;
-
-            let mut split = decimal_pattern.prefix.split('¤');
-            parts.push(split.next().unwrap());
-            parts.push(split.next().unwrap());
-
-            if split.next().is_some() {
-                return Err(DataError::custom(
-                    "The pattern prefix has more than one currency sign",
-                ));
-            }
-
-            parts.push(decimal_pattern.suffix.as_str());
-        } else if decimal_pattern.suffix.contains('¤') {
-            first_place_holder = DoublePlaceholderKey::Place1;
-            second_place_holder = DoublePlaceholderKey::Place0;
-
-            parts.push(decimal_pattern.suffix.as_str());
-            let mut split = decimal_pattern.suffix.split('¤');
-            parts.push(split.next().unwrap());
-            parts.push(split.next().unwrap());
-            if split.next().is_some() {
-                return Err(DataError::custom(
-                    "The pattern suffix has more than one currency sign",
-                ));
-            }
-        } else {
-            return Err(DataError::custom("The currency pattern is malformed."));
-        }
-
-        let pattern = Pattern::<DoublePlaceholder, _>::try_from_items(
-            [
-                PatternItemCow::Literal(Cow::Owned(parts[0].to_string())),
-                PatternItemCow::Placeholder(first_place_holder),
-                PatternItemCow::Literal(Cow::Owned(parts[1].to_string())),
-                PatternItemCow::Placeholder(second_place_holder),
-                PatternItemCow::Literal(Cow::Owned(parts[2].to_string())),
-            ]
-            .into_iter(),
-        )
-        .map_err(|e| {
-            DataError::custom("Could not parse standard pattern").with_display_context(&e)
-        })?;
+        let pattern = Pattern::<DoublePlaceholder, _>::try_from_items(pattern_items.into_iter())
+            .map_err(|e| {
+                DataError::custom("Could not parse standard pattern").with_display_context(&e)
+            })?;
 
         let pattern_store = pattern.take_store();
         let borrowed_pattern: Pattern<DoublePlaceholder, Cow<'_, str>> =
@@ -352,10 +325,8 @@ fn extract_currency_essentials<'data>(
 
     Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
-        standard_pattern: create_standard_pattern(&standard)?,
-        standard_alpha_next_to_number_pattern: create_standard_pattern(
-            &standard_alpha_next_to_number.to_string(),
-        )?,
+        standard_pattern: create_pattern(standard.as_str())?,
+        standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
         place_holders: VarZeroVec::from(&place_holders),
         default_pattern,
     })
