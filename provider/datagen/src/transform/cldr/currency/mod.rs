@@ -13,7 +13,6 @@ use std::borrow::Cow;
 
 use icu_pattern::DoublePlaceholderPattern;
 
-use itertools::Itertools;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -302,11 +301,14 @@ fn extract_currency_essentials<'data>(
             .into_iter()
             .flat_map(|item| match item {
                 PatternItemCow::Placeholder(_) => vec![item],
-                PatternItemCow::Literal(s) if s.contains('¤') => s
-                    .split('¤')
-                    .map(|s| PatternItemCow::Literal(s.to_string().into()))
-                    .intersperse(PatternItemCow::Placeholder(DoublePlaceholderKey::Place1))
-                    .collect(),
+                PatternItemCow::Literal(s) if s.contains('¤') => {
+                    itertools::Itertools::intersperse(
+                        s.split('¤')
+                            .map(|s| PatternItemCow::Literal(s.to_string().into())),
+                        PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
+                    )
+                    .collect()
+                }
                 PatternItemCow::Literal(s) => vec![PatternItemCow::Literal(s)],
             });
 
