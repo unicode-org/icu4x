@@ -80,11 +80,11 @@ impl FromStr for DecimalSubPattern {
 
 impl DecimalSubPattern {
     pub fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
-        let mut items = vec![];
-        items.push(PatternItemCow::Literal(Cow::Borrowed(&self.prefix)));
-        items.push(PatternItemCow::Placeholder(DoublePlaceholderKey::Place0));
-        items.push(PatternItemCow::Literal(Cow::Borrowed(&self.suffix)));
-        items
+        vec![
+            PatternItemCow::Literal(Cow::Borrowed(&self.prefix)),
+            PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
+            PatternItemCow::Literal(Cow::Borrowed(&self.suffix)),
+        ]
     }
 }
 
