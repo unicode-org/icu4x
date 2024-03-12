@@ -33,6 +33,7 @@ pub struct DatagenProvider {
 }
 
 crate::registry::make_exportable_provider!(DatagenProvider);
+icu_provider::impl_data_provider_never_marker!(DatagenProvider);
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
