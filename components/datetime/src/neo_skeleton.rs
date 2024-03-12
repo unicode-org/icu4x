@@ -9,14 +9,31 @@ use crate::CldrCalendar;
 use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
 
+/// Trait for different types of semantic skeleta.
 pub trait NeoSkeleton<C: CldrCalendar> {
+    /// Marker for loading year names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    /// Marker for loading month names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    /// Marker for loading weekday names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    /// Marker for loading day period names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    /// Marker for loading date skeleton patterns.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    /// Marker for loading time skeleton patterns.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    /// Marker for loading the date/time glue pattern.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    /// Marker for loading date/time combined patterns.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DateTimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = DateTimeSkeletonsV1<'static>>;
 }
 
@@ -36,8 +53,10 @@ pub enum Length {
     Short,
 }
 
+/// A skeleton for a year and a month, like "March 2024".
 #[derive(Debug)]
 pub struct YearMonthSkeleton {
+    /// The desired formatting length.
     pub length: Length,
 }
 
