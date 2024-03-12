@@ -110,7 +110,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, rename = "titlecase_segment_with_only_case_data")]
+        #[diplomat::attr(dart, rename = "titlecaseSegmentWithOnlyCaseData")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &DiplomatStr,
@@ -313,7 +313,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, rename = "titlecase_segment")]
+        #[diplomat::attr(dart, rename = "titlecaseSegment")]
         pub fn titlecase_segment_v1(
             &self,
             s: &DiplomatStr,

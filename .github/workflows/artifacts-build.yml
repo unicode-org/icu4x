@@ -229,7 +229,7 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@v1
       with:
-        sdk: 3.3.0-279.1.beta
+        sdk: 3.4.0-204.0.dev
         
     - name: Build docs
       run: |
