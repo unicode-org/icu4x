@@ -8,7 +8,7 @@
 
 use displaydoc::Display;
 use icu_decimal::provider::AffixesV1;
-use icu_pattern::{DoublePlaceholderKey, PatternItem, PatternItemCow};
+use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::str::FromStr;

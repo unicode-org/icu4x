@@ -4,15 +4,15 @@
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::decimal::decimal_pattern;
+
 use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
-use crate::transform::cldr::decimal::decimal_pattern::DecimalSubPattern;
+
 use crate::DatagenProvider;
 
 use std::borrow::Cow;
 
 use icu_pattern::DoublePlaceholderPattern;
-use icu_pattern::PatternItem;
+
 
 use itertools::Itertools;
 use std::collections::BTreeMap;
