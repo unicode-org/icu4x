@@ -140,6 +140,24 @@ impl Bag {
         Self::default()
     }
 
+    /// Merges the fields of other into self if non-None. If both fields are set, `other` is kept.
+    pub fn merge(self, other: Self) -> Self {
+        Self {
+            era: other.era.or(self.era),
+            year: other.year.or(self.year),
+            month: other.month.or(self.month),
+            week: other.week.or(self.week),
+            day: other.day.or(self.day),
+            weekday: other.weekday.or(self.weekday),
+            hour: other.hour.or(self.hour),
+            minute: other.minute.or(self.minute),
+            second: other.second.or(self.second),
+            fractional_second: other.fractional_second.or(self.fractional_second),
+            time_zone_name: other.time_zone_name.or(self.time_zone_name),
+            preferences: other.preferences.or(self.preferences),
+        }
+    }
+
     #[allow(clippy::wrong_self_convention)]
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
@@ -403,10 +421,13 @@ pub enum Numeric {
 #[non_exhaustive]
 pub enum Text {
     /// Display the long form of the text, such as "Wednesday" for the weekday.
+    /// In UTS-35, known as "Wide" (4 letters)
     Long,
     /// Display the short form of the text, such as "Wed" for the weekday.
+    /// In UTS-35, known as "Abbreviated" (3 letters)
     Short,
     /// Display the narrow form of the text, such as "W" for the weekday.
+    /// In UTS-35, known as "Narrow" (5 letters)
     Narrow,
 }
 
