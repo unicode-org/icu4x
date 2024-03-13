@@ -552,7 +552,7 @@ pub struct DateTimePatternV1<'data> {
 //   index: u16, // index of first pattern (long if present, else medium, else short)
 // }
 #[allow(missing_docs)] // TODO
-#[derive(Debug, Copy, Clone, PartialEq, ULE)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -560,19 +560,9 @@ pub struct DateTimePatternV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(transparent)]
-pub struct SkeletonDataIndex([u8; 2]);
-
-impl AsULE for SkeletonDataIndex {
-    type ULE = Self;
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-}
+#[zerovec::make_ule(SkeletonDataIndexULE)]
+#[zerovec::skip_derive(Ord)]
+pub struct SkeletonDataIndex(pub u16);
 
 #[icu_provider::data_struct(
     marker(DateSkeletonPatternsV1Marker, "datetime/patterns/date_skeleton@1"),
