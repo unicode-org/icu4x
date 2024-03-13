@@ -282,7 +282,7 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-    /// Create a `DoublePlaceholderPattern` from a string.
+    /// Create a `DoublePlaceholderPattern` from a string pattern.
     fn create_pattern<'data>(
         pattern: &str,
     ) -> Result<Option<DoublePlaceholderPattern<Cow<'data, str>>>, DataError> {
