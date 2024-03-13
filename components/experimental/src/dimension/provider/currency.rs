@@ -14,6 +14,8 @@ use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+use icu_pattern::DoublePlaceholderPattern;
+
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -32,7 +34,7 @@ pub use crate::provider::Baked;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -46,13 +48,19 @@ pub struct CurrencyEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 
+    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// Represents the standard pattern.
+    /// NOTE: place holder 0 is the place of the currency value.
+    ///       place holder 1 is the place of the currency sign `¤`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard: Cow<'data, str>,
+    pub standard_pattern: Option<DoublePlaceholderPattern<Cow<'data, str>>>,
 
+    // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// Represents the standard alpha_next_to_number pattern.
+    /// NOTE: place holder 0 is the place of the currency value.
+    ///       place holder 1 is the place of the currency sign `¤`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard_alpha_next_to_number: Cow<'data, str>,
+    pub standard_alpha_next_to_number_pattern: Option<DoublePlaceholderPattern<Cow<'data, str>>>,
 
     /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]

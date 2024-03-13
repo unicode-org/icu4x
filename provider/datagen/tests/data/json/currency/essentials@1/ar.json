@@ -1027,8 +1027,21 @@
       }
     }
   },
-  "standard": "‏#,##0.00 ¤;‏-#,##0.00 ¤",
-  "standard_alpha_next_to_number": "",
+  "standard_pattern": [
+    {
+      "Literal": "‏"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
+  "standard_alpha_next_to_number_pattern": null,
   "place_holders": [
     "د.إ.‏",
     "؋",

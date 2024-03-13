@@ -877,8 +877,25 @@
       }
     }
   },
-  "standard": "¤#,##0.00",
-  "standard_alpha_next_to_number": "¤ #,##0.00",
+  "standard_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "standard_alpha_next_to_number_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
   "place_holders": [
     "؋",
     "֏",
