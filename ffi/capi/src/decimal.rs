@@ -22,6 +22,11 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
     #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter, Struct)]
+    #[diplomat::rust_link(
+            icu::datetime::FormattedFixedDecimal,
+            Struct,
+            hidden
+        )]
     pub struct ICU4XFixedDecimalFormatter(pub FixedDecimalFormatter);
 
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]

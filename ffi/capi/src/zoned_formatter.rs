@@ -107,6 +107,11 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter, Struct)]
+    #[diplomat::rust_link(
+            icu::datetime::FormattedZonedDateTime,
+            Struct,
+            hidden
+        )]
     pub struct ICU4XZonedDateTimeFormatter(pub ZonedDateTimeFormatter);
 
     impl ICU4XZonedDateTimeFormatter {

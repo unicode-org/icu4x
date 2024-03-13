@@ -108,6 +108,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     "nightly-2022-12-26",
                     "cargo",
                     "rustdoc",
+                    "-Zsparse-registry",
                     "-p",
                     krate,
                     "--all-features",
