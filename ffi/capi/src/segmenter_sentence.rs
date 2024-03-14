@@ -25,11 +25,7 @@ pub mod ffi {
         Typedef,
         hidden
     )]
-    #[diplomat::rust_link(
-        icu::segmenter::SentenceBreakIteratorUtf8,
-        Typedef,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf8, Typedef, hidden)]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
         SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );

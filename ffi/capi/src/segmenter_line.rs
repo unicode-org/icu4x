@@ -52,11 +52,7 @@ pub mod ffi {
         Typedef,
         compact
     )]
-    #[diplomat::rust_link(
-        icu::segmenter::LineBreakIteratorUtf8,
-        Typedef,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf8, Typedef, hidden)]
     pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]

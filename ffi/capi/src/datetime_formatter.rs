@@ -296,11 +296,7 @@ pub mod ffi {
     /// An ICU4X DateFormatter object capable of formatting a [`ICU4XDateTime`] as a string,
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
-    #[diplomat::rust_link(
-            icu::datetime::FormattedDateTime,
-            Struct,
-            hidden
-        )]
+    #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
     pub struct ICU4XDateTimeFormatter(pub DateTimeFormatter);
 
     impl ICU4XDateTimeFormatter {
@@ -332,12 +328,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-
-        #[diplomat::rust_link(
-            icu::datetime::FormattedDateTime::write_to,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::write_to, FnInStruct, hidden)]
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,
