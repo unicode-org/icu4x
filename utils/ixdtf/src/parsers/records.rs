@@ -4,22 +4,34 @@
 
 //! Parse records for `ixdtf`'s parsers to target.
 
-use alloc::string::String;
+use alloc::vec::Vec;
 
 /// An `IsoParseRecord` is an intermediary record returned by ISO parsing functions.
 ///
 /// `IsoParseRecord` is converted into the ISO AST Nodes.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
-pub struct IsoParseRecord {
+pub struct IsoParseRecord<'a> {
     /// Parsed Date Record
-    pub date: DateRecord,
+    pub date: Option<DateRecord>,
     /// Parsed Time
     pub time: Option<TimeRecord>,
+    /// Parsed UtcOffset
+    pub offset: Option<UTCOffset>,
     /// Parsed `TimeZone` data (UTCOffset | IANA name)
-    pub tz: Option<TimeZone>,
+    pub tz: Option<TimeZone<'a>>,
     /// The parsed calendar value.
-    pub calendar: Option<String>,
+    pub calendar: Option<&'a str>,
+    /// Annotations
+    pub annotations: Vec<Annotation<'a>>,
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq)]
+pub struct Annotation<'a> {
+    pub critical: bool,
+    pub key: &'a str,
+    pub value: &'a str,
 }
 
 #[non_exhaustive]
@@ -55,9 +67,9 @@ pub struct TimeRecord {
 /// `TimeZone` data
 #[non_exhaustive]
 #[derive(Default, Debug, Clone, PartialEq)]
-pub struct TimeZone {
+pub struct TimeZone<'a> {
     /// TimeZoneIANAName
-    pub name: Option<String>,
+    pub name: Option<&'a str>,
     /// TimeZoneOffset
     pub offset: Option<UTCOffset>,
 }

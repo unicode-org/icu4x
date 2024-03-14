@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::borrow::ToOwned;
+use alloc::vec::Vec;
 
 use crate::{
     parsers::{
@@ -14,30 +14,31 @@ use crate::{
 
 #[test]
 fn temporal_parser_basic() {
-    let basic = "20201108";
-    let basic_separated = "2020-11-08";
+    let mut basic = IxdtfParser::new("20201108");
+    let mut basic_separated = IxdtfParser::new("2020-11-08");
 
-    let basic_result = IxdtfParser::new(basic).parse_date_time().unwrap();
+    let basic_result = basic.parse().unwrap();
 
-    let sep_result = IxdtfParser::new(basic_separated).parse_date_time().unwrap();
+    let sep_result = basic_separated.parse().unwrap();
 
     assert_eq!(
         basic_result.date,
-        DateRecord {
+        Some(DateRecord {
             year: 2020,
             month: 11,
             day: 8,
-        }
+        })
     );
     assert_eq!(basic_result.date, sep_result.date,);
 }
 
 #[test]
 fn temporal_date_time_max() {
-    let date_time =
-        "+002020-11-08T12:28:32.329402834[!America/Argentina/ComodRivadavia][!u-ca=iso8601]";
+    let mut date_time = IxdtfParser::new(
+        "+002020-11-08T12:28:32.329402834[!America/Argentina/ComodRivadavia][!u-ca=iso8601]",
+    );
 
-    let result = IxdtfParser::new(date_time).parse_date_time().unwrap();
+    let result = date_time.parse().unwrap();
 
     assert_eq!(
         result.time,
@@ -54,20 +55,20 @@ fn temporal_date_time_max() {
 
 #[test]
 fn good_zoned_date_time() {
-    let zdt = "2020-04-08[America/Chicago]";
-    let result = IxdtfParser::new(zdt).parse_zoned_date_time().unwrap();
+    let mut zdt = IxdtfParser::new("2020-04-08[America/Chicago]");
+    let result = zdt.parse().unwrap();
     assert_eq!(
         result.date,
-        DateRecord {
+        Some(DateRecord {
             year: 2020,
             month: 4,
             day: 8,
-        }
+        })
     );
     assert_eq!(
         result.tz,
         Some(TimeZone {
-            name: Some("America/Chicago".to_owned()),
+            name: Some("America/Chicago"),
             offset: None,
         })
     );
@@ -76,15 +77,17 @@ fn good_zoned_date_time() {
 #[test]
 fn bad_zoned_date_time() {
     let bad_value = "2020-04-08(America/Chicago]";
-    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
-        Err(ParserError::MissingRequiredTzAnnotation),
+        Err(ParserError::InvalidEnd),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
     let bad_value = "2020-04-08[America/Chicago)";
-    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::IanaChar),
@@ -92,7 +95,8 @@ fn bad_zoned_date_time() {
     );
 
     let bad_value = "2020-04-08[America/ Chicago)";
-    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::IanaCharPostSeparator),
@@ -100,18 +104,22 @@ fn bad_zoned_date_time() {
     );
 
     let bad_value = "2020-04-08[Amer";
-    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
-        Err(ParserError::AbruptEnd),
+        Err(ParserError::AbruptEnd {
+            location: "IANATimeZoneName"
+        }),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
     let bad_value = "2020-04-08[u-ca=iso8601][Europe/London]";
-    let err = IxdtfParser::new(bad_value).parse_zoned_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
-        Err(ParserError::MissingRequiredTzAnnotation),
+        Err(ParserError::AnnotationKeyLeadingChar),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -119,26 +127,28 @@ fn bad_zoned_date_time() {
 #[test]
 fn good_extended_year_parsing() {
     let extended_year = "+002020-11-08";
-    let result = IxdtfParser::new(extended_year).parse_date_time().unwrap();
+    let mut ixdtf = IxdtfParser::new(extended_year);
+    let result = ixdtf.parse().unwrap();
     assert_eq!(
         result.date,
-        DateRecord {
+        Some(DateRecord {
             year: 2020,
             month: 11,
             day: 8,
-        },
+        }),
         "Extended year \"{extended_year}\" should pass."
     );
 
     let extended_year = "-002020-11-08";
-    let result = IxdtfParser::new(extended_year).parse_date_time().unwrap();
+    let mut ixdtf = IxdtfParser::new(extended_year);
+    let result = ixdtf.parse().unwrap();
     assert_eq!(
         result.date,
-        DateRecord {
+        Some(DateRecord {
             year: -2020,
             month: 11,
             day: 8,
-        },
+        }),
         "Extended year \"{extended_year}\" should pass."
     );
 }
@@ -146,7 +156,8 @@ fn good_extended_year_parsing() {
 #[test]
 fn bad_extended_year() {
     let bad_year = "-000000-11-08";
-    let err = IxdtfParser::new(bad_year).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_year);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::DateExtendedYear),
@@ -154,7 +165,8 @@ fn bad_extended_year() {
     );
 
     let bad_year = "-271821-11-08";
-    let err = IxdtfParser::new(bad_year).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_year);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidYearRange),
@@ -162,7 +174,8 @@ fn bad_extended_year() {
     );
 
     let bad_year = "+275761-11-08";
-    let err = IxdtfParser::new(bad_year).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_year);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidYearRange),
@@ -172,32 +185,34 @@ fn bad_extended_year() {
 
 #[test]
 fn good_annotations_date_time() {
-    let basic = "2020-11-08[America/Argentina/ComodRivadavia][u-ca=iso8601][foo=bar]";
-    let omitted = "+0020201108[u-ca=iso8601][f-1a2b=a0sa-2l4s]";
+    let mut basic =
+        IxdtfParser::new("2020-11-08[America/Argentina/ComodRivadavia][u-ca=iso8601][foo=bar]");
+    let mut omitted = IxdtfParser::new("+0020201108[u-ca=iso8601][f-1a2b=a0sa-2l4s]");
 
-    let result = IxdtfParser::new(basic).parse_date_time().unwrap();
+    let result = basic.parse().unwrap();
 
     assert_eq!(
         result.tz,
         Some(TimeZone {
-            name: Some("America/Argentina/ComodRivadavia".to_owned()),
+            name: Some("America/Argentina/ComodRivadavia"),
             offset: None,
         })
     );
 
-    assert_eq!(result.calendar, Some("iso8601".to_owned()));
+    assert_eq!(result.calendar, Some("iso8601"));
 
-    let omit_result = IxdtfParser::new(omitted).parse_date_time().unwrap();
+    let omit_result = omitted.parse().unwrap();
 
     assert!(omit_result.tz.is_none());
 
-    assert_eq!(omit_result.calendar, Some("iso8601".to_owned()));
+    assert_eq!(omit_result.calendar, Some("iso8601"));
 }
 
 #[test]
 fn invalid_day_for_month() {
     let bad_value = "2021-02-29";
-    let err = IxdtfParser::new(bad_value).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidDayRange),
@@ -205,7 +220,8 @@ fn invalid_day_for_month() {
     );
 
     let bad_value = "1900-02-29";
-    let err = IxdtfParser::new(bad_value).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidDayRange),
@@ -213,7 +229,8 @@ fn invalid_day_for_month() {
     );
 
     let bad_value = "2021-04-31";
-    let err = IxdtfParser::new(bad_value).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidDayRange),
@@ -221,7 +238,8 @@ fn invalid_day_for_month() {
     );
 
     let bad_value = "2021-04-00";
-    let err = IxdtfParser::new(bad_value).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidDayRange),
@@ -232,7 +250,8 @@ fn invalid_day_for_month() {
 #[test]
 fn invalid_month() {
     let bad_value = "2021-00-29";
-    let err = IxdtfParser::new(bad_value).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidMonthRange),
@@ -240,7 +259,8 @@ fn invalid_month() {
     );
 
     let bad_value = "1900-13-29";
-    let err = IxdtfParser::new(bad_value).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidMonthRange),
@@ -251,7 +271,8 @@ fn invalid_month() {
 #[test]
 fn invalid_annotations() {
     let bad_value = "2021-01-29 02:12:48+01:00:00(u-ca=iso8601]";
-    let err = IxdtfParser::new(bad_value).parse_instant();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -259,7 +280,8 @@ fn invalid_annotations() {
     );
 
     let bad_value = "2021-01-29 02:12:48+01:00:00[u-ca=iso8601)";
-    let err = IxdtfParser::new(bad_value).parse_instant();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::AnnotationValueChar),
@@ -267,13 +289,16 @@ fn invalid_annotations() {
     );
 
     let bad_value = "2021-01-29 02:12:48+01:00:00[u][u-ca=iso8601]";
-    let err = IxdtfParser::new(bad_value).parse_instant();
+    let mut ixdtf = IxdtfParser::new(bad_value);
+    let err = ixdtf.parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidAnnotation),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 }
+
+/* TODO: Determine YearMonth, MonthDay, and Time Parsing go-forward.
 
 #[test]
 fn temporal_year_month() {
@@ -286,7 +311,7 @@ fn temporal_year_month() {
     ];
 
     for ym in possible_year_months {
-        let result = IxdtfParser::new(ym).parse_year_month().unwrap();
+        let result = IxdtfParser::new(ym).parse();
 
         assert_eq!(result.date.year, 2020);
         assert_eq!(result.date.month, 11);
@@ -304,7 +329,7 @@ fn temporal_month_day() {
     ];
 
     for md in possible_month_day {
-        let result = IxdtfParser::new(md).parse_month_day().unwrap();
+        let result = IxdtfParser::new(md).parse();
 
         assert_eq!(result.date.month, 11);
         assert_eq!(result.date.day, 7);
@@ -323,7 +348,7 @@ fn temporal_time() {
     ];
 
     for time in possible_times {
-        let result = IxdtfParser::new(time).parse_time().unwrap();
+        let result = IxdtfParser::new(time).parse();
         let time = result.time.unwrap();
         assert_eq!(time.hour, 12);
         assert_eq!(time.minute, 1);
@@ -334,7 +359,7 @@ fn temporal_time() {
 #[test]
 fn invalid_time() {
     let bad_value = "20240801";
-    let err = IxdtfParser::new(bad_value).parse_time();
+    let err = IxdtfParser::new(bad_value).parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -342,7 +367,7 @@ fn invalid_time() {
     );
 
     let bad_value = "24-12-08";
-    let err = IxdtfParser::new(bad_value).parse_time();
+    let err = IxdtfParser::new(bad_value).parse();
     assert_eq!(
         err,
         Err(ParserError::DateYear),
@@ -351,7 +376,7 @@ fn invalid_time() {
 
     // Attempts to parse UTC offset: -12, leaving -08 on end as junk.
     let bad_value = "T19-12-08";
-    let err = IxdtfParser::new(bad_value).parse_time();
+    let err = IxdtfParser::new(bad_value).parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -359,15 +384,15 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:12-089";
-    let err = IxdtfParser::new(bad_value).parse_time();
+    let err = IxdtfParser::new(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::AbruptEnd),
+        Err(ParserError::InvalidEnd),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
     let bad_value = "T19:120-08";
-    let err = IxdtfParser::new(bad_value).parse_time();
+    let err = IxdtfParser::new(bad_value).parse();
     assert_eq!(
         err,
         Err(ParserError::TimeSeparator),
@@ -375,16 +400,18 @@ fn invalid_time() {
     );
 }
 
+*/
+
 #[test]
 fn temporal_invalid_annotations() {
     let invalid_annotations = [
         "2020-11-11[!u-ca=iso8601][u-ca=iso8601]",
         "2020-11-11[u-ca=iso8601][!u-ca=iso8601]",
-        "2020-11-11[u-ca=iso8601][!rip=this-invalid-annotation]",
     ];
 
     for invalid in invalid_annotations {
-        let err_result = IxdtfParser::new(invalid).parse_month_day();
+        let mut src = IxdtfParser::new(invalid);
+        let err_result = src.parse();
         assert!(
             err_result.is_err(),
             "Invalid ISO annotation parsing: \"{invalid}\" should fail parsing."
@@ -401,7 +428,8 @@ fn temporal_valid_instant_strings() {
     ];
 
     for test in instants {
-        let result = IxdtfParser::new(test).parse_instant();
+        let mut src = IxdtfParser::new(test);
+        let result = src.parse();
         assert!(result.is_ok());
     }
 }
@@ -496,7 +524,8 @@ fn temporal_invalid_iso_datetime_strings() {
     ];
 
     for invalid_target in INVALID_DATETIME_STRINGS {
-        let error_result = IxdtfParser::new(invalid_target).parse_date_time();
+        let mut ixdtf = IxdtfParser::new(invalid_target);
+        let error_result = ixdtf.parse();
         assert!(
             error_result.is_err(),
             "Invalid ISO8601 `DateTime` target: \"{invalid_target}\" should fail parsing."
@@ -507,47 +536,54 @@ fn temporal_invalid_iso_datetime_strings() {
 #[test]
 fn test_correct_datetime() {
     let dt = "2022-11-08";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 11,
                 day: 8,
-            },
+            }),
             time: None,
+            offset: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 
     let dt = "20220605";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 6,
                 day: 5,
-            },
+            }),
+            offset: None,
             time: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 
     let dt = "2022-06-05T04";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 6,
                 day: 5,
-            },
+            }),
             time: Some(TimeRecord {
                 hour: 4,
                 minute: 0,
@@ -556,21 +592,24 @@ fn test_correct_datetime() {
                 microsecond: 0,
                 nanosecond: 0,
             }),
+            offset: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 
     let dt = "2022-06-05t04:34";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 6,
                 day: 5,
-            },
+            }),
             time: Some(TimeRecord {
                 hour: 4,
                 minute: 34,
@@ -579,21 +618,24 @@ fn test_correct_datetime() {
                 microsecond: 0,
                 nanosecond: 0,
             }),
+            offset: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 
     let dt = "2022-06-05 04:34:22";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 6,
                 day: 5,
-            },
+            }),
             time: Some(TimeRecord {
                 hour: 4,
                 minute: 34,
@@ -602,21 +644,24 @@ fn test_correct_datetime() {
                 microsecond: 0,
                 nanosecond: 0,
             }),
+            offset: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 
     let dt = "2022-06-05 04:34:22.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 6,
                 day: 5,
-            },
+            }),
             time: Some(TimeRecord {
                 hour: 4,
                 minute: 34,
@@ -625,21 +670,24 @@ fn test_correct_datetime() {
                 microsecond: 0,
                 nanosecond: 0,
             }),
+            offset: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 
     let dt = "2022-06-05 043422.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(
         parsed,
         Ok(IsoParseRecord {
-            date: DateRecord {
+            date: Some(DateRecord {
                 year: 2022,
                 month: 6,
                 day: 5,
-            },
+            }),
             time: Some(TimeRecord {
                 hour: 4,
                 minute: 34,
@@ -648,8 +696,10 @@ fn test_correct_datetime() {
                 microsecond: 0,
                 nanosecond: 0,
             }),
+            offset: None,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         })
     );
 }
@@ -657,53 +707,65 @@ fn test_correct_datetime() {
 #[test]
 fn test_bad_date() {
     let dt = "-2022-06-05";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::DateExtendedYear));
 
     let dt = "!2022-06-05";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::DateYear));
 
     let dt = "20-06-05";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::DateYear));
 
     let dt = "2022-0605";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::DateSeparator));
 
     let dt = "202206-05";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::DateSeparator));
 
     let dt = "2022-06-05e";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::InvalidEnd));
 }
 
 #[test]
 fn test_bad_time_spec_separator() {
     let dt = "2022-06-05  043422.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::TimeHour));
 
     let dt = "2022-06-05 04:3422.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::TimeSeparator));
 
     let dt = "2022-06-05 0434:22.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::TimeSeparator));
 
     let dt = "2022-06-05 03422.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::TimeSecond));
 
     let dt = "2022-06-05 3:42:22.000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::TimeHour));
 
     let dt = "2022-06-05 03:42:22;000";
-    let parsed = IxdtfParser::new(dt).parse_date_time();
+    let mut ixdtf = IxdtfParser::new(dt);
+    let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::InvalidEnd));
 }

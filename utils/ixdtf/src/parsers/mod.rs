@@ -8,12 +8,8 @@ use crate::{ParserError, ParserResult};
 
 extern crate alloc;
 
-use alloc::{string::String, vec::Vec};
-
 use self::duration::parse_duration;
-use datetime::DateTimeFlags;
-use grammar::is_annotation_open;
-use records::{DateRecord, DurationParseRecord, IsoParseRecord, TimeZone};
+use records::{DurationParseRecord, IsoParseRecord};
 
 pub mod records;
 
@@ -46,13 +42,13 @@ macro_rules! assert_syntax {
 /// [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
-pub struct IxdtfParser {
-    cursor: Cursor,
+pub struct IxdtfParser<'a> {
+    cursor: Cursor<'a>,
 }
 
-impl IxdtfParser {
+impl<'a> IxdtfParser<'a> {
     /// Creates a new `IXDTFParser` from a provided `&str`.
-    pub fn new(target: &str) -> Self {
+    pub fn new(target: &'a str) -> Self {
         Self {
             cursor: Cursor::new(target),
         }
@@ -63,119 +59,8 @@ impl IxdtfParser {
     /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
     ///
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
-    pub fn parse_date_time(&mut self) -> ParserResult<IsoParseRecord> {
-        datetime::parse_annotated_date_time(DateTimeFlags::empty(), &mut self.cursor)
-    }
-
-    /// Parses the source as an [Instant string][temporal-instant]
-    ///
-    /// An instant string is laid out by the `Temporal` and is a stricter DateTime string with the
-    /// TimeRecord and UTCOffset record being required.
-    ///
-    /// [temporal-instant]: https://tc39.es/proposal-temporal/#prod-TemporalInstantString
-    pub fn parse_instant(&mut self) -> ParserResult<IsoParseRecord> {
-        datetime::parse_annotated_date_time(
-            DateTimeFlags::UTC_REQ | DateTimeFlags::TIME_REQ,
-            &mut self.cursor,
-        )
-    }
-
-    /// Parses the source aa a [ZonedDateTime string][temporal-zdt]
-    ///
-    /// Parses the string as a datetime string with the time zoned annotation being required.
-    ///
-    /// [temporal-zdt]: https://tc39.es/proposal-temporal/#prod-AnnotatedDateTime
-    pub fn parse_zoned_date_time(&mut self) -> ParserResult<IsoParseRecord> {
-        datetime::parse_annotated_date_time(DateTimeFlags::ZONED, &mut self.cursor)
-    }
-
-    /// Parses the source as a [YearMonth string][temporal-ym]
-    ///
-    /// This will parse a valid date time string or year month string.
-    ///
-    /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
-    pub fn parse_year_month(&mut self) -> ParserResult<IsoParseRecord> {
-        let ym = datetime::parse_year_month(&mut self.cursor);
-
-        let Ok(year_month) = ym else {
-            self.cursor.pos = 0;
-            return datetime::parse_annotated_date_time(DateTimeFlags::empty(), &mut self.cursor);
-        };
-
-        let calendar = if self.cursor.check_or(false, is_annotation_open) {
-            let set = annotations::parse_annotation_set(false, &mut self.cursor)?;
-            set.calendar
-        } else {
-            None
-        };
-
-        self.cursor.close()?;
-
-        Ok(IsoParseRecord {
-            date: DateRecord {
-                year: year_month.0,
-                month: year_month.1,
-                day: 1,
-            },
-            time: None,
-            tz: None,
-            calendar,
-        })
-    }
-
-    /// Parses the source as a [MonthDay string][temporal-md]
-    ///
-    /// This will parse a valid date time string or month day string.
-    ///
-    /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
-    pub fn parse_month_day(&mut self) -> ParserResult<IsoParseRecord> {
-        let md = datetime::parse_month_day(&mut self.cursor);
-
-        let Ok(month_day) = md else {
-            self.cursor.pos = 0;
-            return datetime::parse_annotated_date_time(DateTimeFlags::empty(), &mut self.cursor);
-        };
-
-        let calendar = if self.cursor.check_or(false, is_annotation_open) {
-            let set = annotations::parse_annotation_set(false, &mut self.cursor)?;
-            set.calendar
-        } else {
-            None
-        };
-
-        self.cursor.close()?;
-
-        Ok(IsoParseRecord {
-            date: DateRecord {
-                year: 0,
-                month: month_day.0,
-                day: month_day.1,
-            },
-            time: None,
-            tz: None,
-            calendar,
-        })
-    }
-
-    /// Parses the source as a [Time string][temporal-time].
-    ///
-    /// This method will parse as an annotated time string or annotated date time string.
-    ///
-    /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
-    pub fn parse_time(&mut self) -> ParserResult<IsoParseRecord> {
-        match time::parse_annotated_time_record(&mut self.cursor) {
-            Ok(None) => {
-                self.cursor.pos = 0;
-                datetime::parse_annotated_date_time(DateTimeFlags::TIME_REQ, &mut self.cursor)
-            }
-            Ok(Some(result)) => Ok(result),
-            Err(err) => Err(err),
-        }
-    }
-
-    /// Parses the source as a Time Zone string.
-    pub fn parse_time_zone(&mut self) -> ParserResult<TimeZone> {
-        time_zone::parse_time_zone(&mut self.cursor)
+    pub fn parse(&mut self) -> ParserResult<IsoParseRecord> {
+        datetime::parse_annotated_date_time(&mut self.cursor)
     }
 }
 
@@ -197,13 +82,13 @@ impl IxdtfParser {
 ///
 /// ```
 #[derive(Debug)]
-pub struct IsoDurationParser {
-    cursor: Cursor,
+pub struct IsoDurationParser<'a> {
+    cursor: Cursor<'a>,
 }
 
-impl IsoDurationParser {
+impl<'a> IsoDurationParser<'a> {
     /// Creates a new `IsoDurationParser` from a target `&str`.
-    pub fn new(target: &str) -> Self {
+    pub fn new(target: &'a str) -> Self {
         Self {
             cursor: Cursor::new(target),
         }
@@ -219,44 +104,46 @@ impl IsoDurationParser {
 
 /// `Cursor` is a small cursor implementation for parsing Iso8601 grammar.
 #[derive(Debug)]
-pub(crate) struct Cursor {
-    pos: u32,
-    source: Vec<char>,
+pub(crate) struct Cursor<'a> {
+    pos: usize,
+    source: &'a str,
 }
 
-impl Cursor {
+impl<'a> Cursor<'a> {
     /// Create a new cursor from a source `String` value.
     #[must_use]
-    pub(crate) fn new(source: &str) -> Self {
-        Self {
-            pos: 0,
-            source: source.chars().collect(),
-        }
+    pub(crate) fn new(source: &'a str) -> Self {
+        Self { pos: 0, source }
     }
 
     /// Returns a string value from a slice of the cursor.
-    fn slice(&self, start: u32, end: u32) -> String {
-        let slice = self.source.get(start as usize..end as usize);
-        let Some(slice) = slice else {
-            return String::default();
-        };
-        slice.iter().collect()
+    fn slice(&self, start: usize, end: usize) -> Option<&'a str> {
+        self.source.get(start..end)
     }
 
     /// Get current position
-    const fn pos(&self) -> u32 {
+    const fn pos(&self) -> usize {
         self.pos
     }
 
     /// Peek the value at next position (current + 1).
     fn peek(&self) -> Option<char> {
-        self.peek_n(1)
+        self.peek_n_char(1)
+    }
+
+    /// Returns current position in source as `char`.
+    fn current(&self) -> Option<char> {
+        self.peek_n_char(0)
     }
 
     /// Peek the value at n len from current.
-    fn peek_n(&self, n: u32) -> Option<char> {
-        let target = (self.pos + n) as usize;
-        self.source.get(target).copied()
+    fn peek_n(&self, n: usize) -> Option<&'a str> {
+        let target = self.pos + n;
+        self.source.get(target..target + 1)
+    }
+
+    fn peek_n_char(&self, n: usize) -> Option<char> {
+        self.peek_n(n).map(str::chars).and_then(|mut c| c.next())
     }
 
     /// Runs the provided check on the current position.
@@ -264,7 +151,7 @@ impl Cursor {
     where
         F: FnOnce(char) -> bool,
     {
-        self.peek_n(0).map(f)
+        self.current().map(f)
     }
 
     /// Runs the provided check on current position returns the default value if None.
@@ -272,12 +159,12 @@ impl Cursor {
     where
         F: FnOnce(char) -> bool,
     {
-        self.peek_n(0).map_or(default, f)
+        self.current().map_or(default, f)
     }
 
     /// Returns `Cursor`'s current char and advances to the next position.
     fn next(&mut self) -> Option<char> {
-        let result = self.peek_n(0);
+        let result = self.current();
         self.advance();
         result
     }
@@ -288,7 +175,7 @@ impl Cursor {
     ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        let p_digit = self.abrupt_next()?.to_digit(10);
+        let p_digit = self.next_or(ParserError::InvalidEnd)?.to_digit(10);
         let Some(digit) = p_digit else {
             return Ok(None);
         };
@@ -296,8 +183,8 @@ impl Cursor {
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn abrupt_next(&mut self) -> ParserResult<char> {
-        self.next().ok_or_else(ParserError::abrupt_end)
+    fn next_or(&mut self, err: ParserError) -> ParserResult<char> {
+        self.next().ok_or(err)
     }
 
     /// Advances the cursor's position by 1.
@@ -313,13 +200,13 @@ impl Cursor {
     }
 
     /// Advances the cursor's position by `n`.
-    fn advance_n(&mut self, n: u32) {
+    fn advance_n(&mut self, n: usize) {
         self.pos += n;
     }
 
     /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.
     fn close(&mut self) -> ParserResult<()> {
-        if (self.pos as usize) < self.source.len() {
+        if self.pos < self.source.len() {
             return Err(ParserError::InvalidEnd);
         }
         Ok(())

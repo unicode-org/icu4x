@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module implements logic for Duration parsing.
+
 use crate::{
     assert_syntax,
     parsers::{
@@ -18,14 +20,17 @@ use crate::{
 };
 
 pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseRecord> {
-    let sign = if cursor.check(is_sign).ok_or_else(ParserError::abrupt_end)? {
-        cursor.abrupt_next()? == '+'
+    let sign = if cursor
+        .check(is_sign)
+        .ok_or_else(|| ParserError::abrupt_end("DurationStart"))?
+    {
+        cursor.next_or(ParserError::ImplAssert)? == '+'
     } else {
         true
     };
 
     assert_syntax!(
-        is_duration_designator(cursor.abrupt_next()?),
+        is_duration_designator(cursor.next_or(ParserError::abrupt_end("DurationDesignator"))?),
         DurationDisgnator,
     );
 
@@ -68,7 +73,9 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         let mut value: i32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
-            let digit = cursor.next_digit()?.ok_or(ParserError::AbruptEnd)?;
+            let digit = cursor
+                .next_digit()?
+                .ok_or_else(|| ParserError::abrupt_end("DateDuration"))?;
             value = value * 10 + i32::from(digit);
         }
 
@@ -101,7 +108,7 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
                 date.days = value;
                 previous_unit = DateUnit::Day;
             }
-            Some(_) | None => return Err(ParserError::AbruptEnd),
+            Some(_) | None => return Err(ParserError::abrupt_end("DateDurationDesignator")),
         }
     }
 
@@ -129,7 +136,9 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         let mut value: i32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
-            let digit = cursor.next_digit()?.ok_or(ParserError::AbruptEnd)?;
+            let digit = cursor
+                .next_digit()?
+                .ok_or_else(|| ParserError::abrupt_end("TimeDurationDigit"))?;
             value = value * 10 + i32::from(digit);
         }
 
@@ -165,7 +174,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 time.fseconds = fraction;
                 previous_unit = TimeUnit::Second;
             }
-            Some(_) | None => return Err(ParserError::AbruptEnd),
+            Some(_) | None => return Err(ParserError::abrupt_end("TimeDurationDesignator")),
         }
 
         if fraction_present {

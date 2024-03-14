@@ -18,15 +18,13 @@ use crate::{
     ParserError, ParserResult,
 };
 
-use alloc::string::String;
-
-use super::records::DateRecord;
+use alloc::{string::String, vec::Vec};
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
-pub(crate) fn parse_annotated_time_record(
-    cursor: &mut Cursor,
-) -> ParserResult<Option<IsoParseRecord>> {
+pub(crate) fn parse_annotated_time_record<'a>(
+    cursor: &mut Cursor<'a>,
+) -> ParserResult<Option<IsoParseRecord<'a>>> {
     let designator = cursor.check_or(false, is_time_designator);
     cursor.advance_if(designator);
 
@@ -44,7 +42,7 @@ pub(crate) fn parse_annotated_time_record(
     // valid AnnotatedTimeRecord.
 
     let utc_offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
-        Some(time_zone::parse_date_time_utc(cursor)?)
+        time_zone::parse_date_time_utc(cursor)?.offset
     } else {
         None
     };
@@ -54,28 +52,32 @@ pub(crate) fn parse_annotated_time_record(
         cursor.close()?;
 
         return Ok(Some(IsoParseRecord {
-            date: DateRecord::default(),
+            date: None,
             time: Some(time),
+            offset: utc_offset,
             tz: None,
             calendar: None,
+            annotations: Vec::default(),
         }));
     }
 
-    let annotations = annotations::parse_annotation_set(false, cursor)?;
+    let annotations = annotations::parse_annotation_set(cursor)?;
 
     let tz = if let Some(tz_annotation) = annotations.tz {
         Some(tz_annotation.tz)
     } else {
-        utc_offset
+        None
     };
 
     cursor.close()?;
 
     Ok(Some(IsoParseRecord {
-        date: DateRecord::default(),
+        date: None,
         time: Some(time),
+        offset: utc_offset,
         tz,
         calendar: annotations.calendar,
+        annotations: Vec::default(),
     }))
 }
 
@@ -173,11 +175,11 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<f64>> {
     if !cursor.check_or(false, is_decimal_separator) {
         return Ok(None);
     }
-    cursor.abrupt_next()?;
+    cursor.next_or(ParserError::FractionPart)?;
     let mut fraction = String::from('.');
 
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        fraction.push(cursor.abrupt_next()?);
+        fraction.push(cursor.next_or(ParserError::FractionPart)?);
     }
 
     assert_syntax!(fraction.len() <= 10, FractionPart);

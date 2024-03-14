@@ -4,120 +4,97 @@
 
 //! An error enum for representing `ixdtf` parsing errors.
 
+use displaydoc::Display;
+
 #[non_exhaustive]
-#[derive(PartialEq, Clone, Copy, Debug)]
+#[derive(PartialEq, Display, Clone, Copy, Debug)]
 pub enum ParserError {
+    #[displaydoc("Implementation error: this error must not throw.")]
+    ImplAssert,
+    #[displaydoc("Invalid float while parsing fraction part.")]
     ParseFloat,
-    AbruptEnd,
+    #[displaydoc("Parsing ended abruptly while parsing {location}")]
+    AbruptEnd { location: &'static str },
+    #[displaydoc("Unexpected character found after parsing was completed.")]
     InvalidEnd,
+    #[displaydoc("Parsed month value not in a valid range.")]
     InvalidMonthRange,
+    #[displaydoc("Parsed day value not in a valid range.")]
     InvalidDayRange,
+    #[displaydoc("Parsed year value not in a valid range.")]
     InvalidYearRange,
+    #[displaydoc("Invalid chracter while parsing year value.")]
     DateYear,
+    #[displaydoc("Invalid character while parsing extended year value.")]
     DateExtendedYear,
-    DateFourDigitYear,
+    #[displaydoc("Invalid caracter while parsing month value.")]
     DateMonth,
+    #[displaydoc("Invalid character while parsing day value.")]
     DateDay,
+    #[displaydoc("Unexpected end while parsing a date value.")]
     DateUnexpectedEnd,
+    #[displaydoc("Invalid character while parsing hour value.")]
     TimeHour,
+    #[displaydoc("Invalid character while parsing minute value.")]
     TimeMinute,
+    #[displaydoc("Invalid character while parsing second value.")]
     TimeSecond,
+    #[displaydoc("Invalid character while parsing fraction part value.")]
     FractionPart,
+    #[displaydoc("Invalid character while parsing date separator.")]
     DateSeparator,
+    #[displaydoc("Invalid character while parsing time separator.")]
     TimeSeparator,
+    #[displaydoc("Invalid character while parsing decimal separator.")]
     DecimalSeparator,
 
-    // Missing Required components.
-    MissingRequiredTzAnnotation,
-    MissingRequiredTime,
-    MissingUtcOffset,
-
     // Annotation Related Errors
+    #[displaydoc("Invalid annotation.")]
     InvalidAnnotation,
+    #[displaydoc("Invalid annotation open character.")]
     AnnotationOpen,
+    #[displaydoc("Invalid annotation close character.")]
     AnnotationClose,
+    #[displaydoc("Invalid annotation character.")]
     AnnotationChar,
+    #[displaydoc("Invalid annotation key-value separator character.")]
     AnnotationKeyValueSeparator,
+    #[displaydoc("Invalid annotation key leading character.")]
     AnnotationKeyLeadingChar,
+    #[displaydoc("Invalid annotation key character.")]
     AnnotationKeyChar,
+    #[displaydoc("Expected annotation value character must exist after hyphen.")]
     AnnotationValueCharPostHyphen,
+    #[displaydoc("Invalid annotation value character.")]
     AnnotationValueChar,
-    UnrecognizedCritical,
+
+    // Duplicate calendar with critical.
+    #[displaydoc("Duplicate calendars cannot be provided when one is critical.")]
     CriticalDuplicateCalendar,
 
     // Time Zone Errors
+    #[displaydoc("Invalid time zone leading character.")]
     TzLeadingChar,
+    #[displaydoc("Expected time zone character after '/'.")]
     IanaCharPostSeparator,
+    #[displaydoc("Invalid IANA time zone character after '/'.")]
     IanaChar,
+    #[displaydoc("Invalid time zone character after '/'.")]
     UtcTimeSeparator,
 
     // Duration Errors
+    #[displaydoc("Invalid duration designator.")]
     DurationDisgnator,
+    #[displaydoc("Invalid date duration part order.")]
     DateDurationPartOrder,
+    #[displaydoc("Invalid time duration part order.")]
     TimeDurationPartOrder,
+    #[displaydoc("Invalid time duration designator.")]
     TimeDurationDesignator,
 }
 
 impl ParserError {
-    pub(crate) fn abrupt_end() -> Self {
-        ParserError::AbruptEnd
-    }
-}
-
-impl core::fmt::Display for ParserError {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let msg = match self {
-            ParserError::ParseFloat => "Invalid float while parsing fraction part.",
-            ParserError::AbruptEnd => "Parsing ended abruptly.",
-            ParserError::InvalidEnd => "Invalid chars beyond parsing targets.",
-            ParserError::InvalidMonthRange => "Invalid month value provided.",
-            ParserError::InvalidDayRange => "Invalid day value for provided month.",
-            ParserError::InvalidYearRange => "Invalid year value",
-            ParserError::DateExtendedYear => "Invalid extended year value. ",
-            ParserError::TimeHour => "Invalid hour value provided.",
-            ParserError::TimeMinute => "Invalid minute value provided.",
-            ParserError::TimeSecond => "Invalid second value provided.",
-            ParserError::FractionPart => "Invalid fraction part provided.",
-            ParserError::DateSeparator => "Invalid DateSeparator",
-            ParserError::TimeSeparator => "Invalid TimeSeparator",
-            ParserError::MissingRequiredTzAnnotation => "Missing required time zone annotation.",
-            ParserError::MissingRequiredTime => "Missing required time value.",
-            ParserError::MissingUtcOffset => "Missing required UTC offset value.",
-            ParserError::InvalidAnnotation => "Invalid annotation found.",
-            ParserError::AnnotationOpen => "Invalid AnnotationOpen character provided.",
-            ParserError::AnnotationClose => "Invalid AnnotationClosing character provided.",
-            ParserError::AnnotationChar => "Invalid annotation character provided.",
-            ParserError::AnnotationKeyValueSeparator => {
-                "Invalid Annotation KeyValueSeparator found."
-            }
-            ParserError::AnnotationKeyLeadingChar => {
-                "Invalid leading character of an annotation key."
-            }
-            ParserError::AnnotationKeyChar => "Invalid annotation key character found.",
-            ParserError::AnnotationValueCharPostHyphen => {
-                "Expected annotation value character after '-'"
-            }
-            ParserError::AnnotationValueChar => "Invalid annotation value character.",
-            ParserError::UnrecognizedCritical => {
-                "Unrecognized annotations cannot be flagged as critical."
-            }
-            ParserError::CriticalDuplicateCalendar => {
-                "Duplicate calendar annotations cannot be flagged as critical."
-            }
-            ParserError::TzLeadingChar => "Invalid time zone leading character.",
-            ParserError::IanaCharPostSeparator => "Invalid IANA character found post '/'",
-            ParserError::IanaChar => "Invalid IANA character found.",
-            ParserError::UtcTimeSeparator => "Invalid UTC TimeSeparator provided.",
-            ParserError::DurationDisgnator => {
-                "Duration must begin with a valid DurationDesignator character."
-            }
-            ParserError::DateDurationPartOrder => "DateDuration part was provided out of order.",
-            ParserError::TimeDurationPartOrder => "TimeDuration part was provided out of order.",
-            ParserError::TimeDurationDesignator => {
-                "No values provided after TimeDurationDesignator value."
-            }
-            _ => "",
-        };
-        f.write_str(msg)
+    pub(crate) fn abrupt_end(location: &'static str) -> Self {
+        ParserError::AbruptEnd { location }
     }
 }

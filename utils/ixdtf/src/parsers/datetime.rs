@@ -11,14 +11,16 @@ use crate::{
         grammar::{
             is_annotation_open, is_date_time_separator, is_hyphen, is_sign, is_utc_designator,
         },
-        records::{DateRecord, TimeRecord, TimeZone},
+        records::{DateRecord, TimeRecord},
         time::parse_time_record,
         time_zone, Cursor, IsoParseRecord,
     },
     ParserError, ParserResult,
 };
 
-use bitflags::bitflags;
+use alloc::vec::Vec;
+
+use super::records::UTCOffset;
 
 #[derive(Debug, Default, Clone)]
 /// A `DateTime` Parse Node that contains the date, time, and offset info.
@@ -28,17 +30,7 @@ pub(crate) struct DateTimeRecord {
     /// Time
     pub(crate) time: Option<TimeRecord>,
     /// Tz Offset
-    pub(crate) time_zone: Option<TimeZone>,
-}
-
-bitflags! {
-    /// Parsing flags for `AnnotatedDateTime` parsing.
-    #[derive(Debug, Clone, Copy)]
-    pub struct DateTimeFlags: u8 {
-        const ZONED = 0b0000_0001;
-        const TIME_REQ = 0b0000_0010;
-        const UTC_REQ = 0b0000_0100;
-    }
+    pub(crate) time_zone: Option<UTCOffset>,
 }
 
 /// This function handles parsing for [`AnnotatedDateTime`][datetime],
@@ -49,76 +41,48 @@ bitflags! {
 /// [datetime]: https://tc39.es/proposal-temporal/#prod-AnnotatedDateTime
 /// [time]: https://tc39.es/proposal-temporal/#prod-AnnotatedDateTimeTimeRequired
 /// [instant]: https://tc39.es/proposal-temporal/#prod-TemporalInstantString
-pub(crate) fn parse_annotated_date_time(
-    flags: DateTimeFlags,
-    cursor: &mut Cursor,
-) -> ParserResult<IsoParseRecord> {
-    let date_time = parse_date_time(
-        flags.contains(DateTimeFlags::TIME_REQ),
-        flags.contains(DateTimeFlags::UTC_REQ),
-        cursor,
-    )?;
+pub(crate) fn parse_annotated_date_time<'a>(
+    cursor: &mut Cursor<'a>,
+) -> ParserResult<IsoParseRecord<'a>> {
+    let date_time = parse_date_time(cursor)?;
 
     // Peek Annotation presence
     // Throw error if annotation does not exist and zoned is true, else return.
     if !cursor.check_or(false, is_annotation_open) {
-        if flags.contains(DateTimeFlags::ZONED) {
-            return Err(ParserError::MissingRequiredTzAnnotation);
-        }
-
         cursor.close()?;
 
         return Ok(IsoParseRecord {
-            date: date_time.date,
+            date: Some(date_time.date),
             time: date_time.time,
-            tz: date_time.time_zone,
+            offset: date_time.time_zone,
+            tz: None,
             calendar: None,
+            annotations: Vec::default(),
         });
     }
 
-    let mut tz = TimeZone::default();
+    let annotation_set = annotations::parse_annotation_set(cursor)?;
 
-    if let Some(tz_info) = date_time.time_zone {
-        tz = tz_info;
-    }
-
-    let annotation_set =
-        annotations::parse_annotation_set(flags.contains(DateTimeFlags::ZONED), cursor)?;
-
-    if let Some(annotated_tz) = annotation_set.tz {
-        tz = annotated_tz.tz;
-    }
-
-    let tz = if tz.name.is_some() || tz.offset.is_some() {
-        Some(tz)
-    } else {
-        None
-    };
+    let tz = annotation_set.tz.map(|tz_anno| tz_anno.tz);
 
     cursor.close()?;
 
     Ok(IsoParseRecord {
-        date: date_time.date,
+        date: Some(date_time.date),
         time: date_time.time,
+        offset: date_time.time_zone,
         tz,
         calendar: annotation_set.calendar,
+        annotations: annotation_set.annotations,
     })
 }
 
 /// Parses a `DateTime` record.
-fn parse_date_time(
-    time_required: bool,
-    utc_required: bool,
-    cursor: &mut Cursor,
-) -> ParserResult<DateTimeRecord> {
+fn parse_date_time(cursor: &mut Cursor) -> ParserResult<DateTimeRecord> {
     let date = parse_date(cursor)?;
 
     // If there is no `DateTimeSeparator`, return date early.
     if !cursor.check_or(false, is_date_time_separator) {
-        if time_required {
-            return Err(ParserError::MissingRequiredTime);
-        }
-
         return Ok(DateTimeRecord {
             date,
             time: None,
@@ -131,11 +95,8 @@ fn parse_date_time(
     let time = parse_time_record(cursor)?;
 
     let time_zone = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
-        Some(time_zone::parse_date_time_utc(cursor)?)
+        time_zone::parse_date_time_utc(cursor)?.offset
     } else {
-        if utc_required {
-            return Err(ParserError::MissingUtcOffset);
-        }
         None
     };
 
@@ -151,7 +112,7 @@ fn parse_date(cursor: &mut Cursor) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
     let hyphenated = cursor
         .check(is_hyphen)
-        .ok_or_else(ParserError::abrupt_end)?;
+        .ok_or(ParserError::abrupt_end("Date"))?;
 
     cursor.advance_if(hyphenated);
 
@@ -171,7 +132,7 @@ fn parse_date(cursor: &mut Cursor) -> ParserResult<DateRecord> {
 // ==== `YearMonth` and `MonthDay` parsing functions ====
 
 /// Parses a `DateSpecYearMonth`
-pub(crate) fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
+pub fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
     let year = parse_date_year(cursor)?;
 
     cursor.advance_if(cursor.check_or(false, is_hyphen));
@@ -184,14 +145,14 @@ pub(crate) fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
 }
 
 /// Parses a `DateSpecMonthDay`
-pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
+pub fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
     let dash_one = cursor
         .check(is_hyphen)
-        .ok_or_else(ParserError::abrupt_end)?;
+        .ok_or(ParserError::abrupt_end("MonthDay"))?;
     let dash_two = cursor
         .peek()
         .map(is_hyphen)
-        .ok_or_else(ParserError::abrupt_end)?;
+        .ok_or(ParserError::abrupt_end("MonthDay"))?;
 
     if dash_two && dash_one {
         cursor.advance_n(2);
@@ -215,7 +176,11 @@ pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
 #[inline]
 fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
     if cursor.check_or(false, is_sign) {
-        let sign = if cursor.abrupt_next()? == '+' { 1 } else { -1 };
+        let sign = if cursor.next_or(ParserError::ImplAssert)? == '+' {
+            1
+        } else {
+            -1
+        };
 
         let first = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 100_000;
         let second = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 10_000;
