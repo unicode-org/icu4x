@@ -44,7 +44,7 @@
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
       "has_plurals": false,
       "index": 17
     },
@@ -52,35 +52,41 @@
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
+      "index": 19
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
       "index": 20
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 21
+      "index": 23
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
       "has_plurals": false,
-      "index": 24
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 27
+      "index": 26
     },
     {
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 30
+      "index": 28
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 29
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
       "has_plurals": false,
       "index": 31
     },
@@ -88,19 +94,13 @@
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 34
+      "index": 32
     },
     {
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 35
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 36
+      "index": 33
     }
   ],
   "patterns": [
@@ -113,17 +113,16 @@
     "dd.MM.y",
     "d MMMM y г. GGGG",
     "d MMM y г. GGG",
-    "d.M.y GGGGG",
+    "d.M.y GGG",
     "ccc, d",
     "ccc, d MMMM",
     "ccc, d MMM",
-    "EEEEE, d.M",
+    "E, dd.MM",
     "EEEE, d MMMM y г.",
     "E, d MMM y г.",
-    "ccc, d.M.y г.",
+    "ccc, dd.MM.y г.",
     "EEEE, d MMMM y г. GGGG",
     "E, d MMM y г. GGG",
-    "EEEEE, d MMM y г. GGGGG",
     "ccc",
     "MMMM",
     "LLL",
@@ -133,11 +132,9 @@
     "MM.y",
     "MMMM y г. GGGG",
     "LLL y г. GGG",
-    "LLL y г. GGGGG",
     "y",
     "y г. GGGG",
     "y г. GGG",
-    "y г. GGGGG",
     "w-я неделя Y г.",
     "'unimplemented'",
     "'unimplemented'"
