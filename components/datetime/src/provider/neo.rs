@@ -560,9 +560,6 @@ pub struct DateTimePatternV1<'data> {
     databake(path = icu_datetime::provider::neo),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-// TODO: Make a bitpacked ULE type
-#[zerovec::make_ule(SkeletonDataIndexULE)]
-#[zerovec::skip_derive(Ord)]
 pub struct SkeletonDataIndex {
     /// If true, the first pattern is for [`Length::Long`].
     /// If false, fall back to the next pattern (Medium).
@@ -575,6 +572,34 @@ pub struct SkeletonDataIndex {
     pub has_plurals: bool,
     /// The offset into the vector of the first pattern.
     pub index: u8,
+}
+
+/// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
+#[derive(Debug, Copy, Clone, ULE)]
+#[repr(transparent)]
+pub struct SkeletonDataIndexULE([u8; 2]);
+
+impl AsULE for SkeletonDataIndex {
+    type ULE = SkeletonDataIndexULE;
+    
+    fn to_unaligned(self) -> Self::ULE {
+        let mut flags = 0;
+        flags |= (self.has_long as u8) << 7;
+        flags |= (self.has_medium as u8) << 6;
+        flags |= (self.has_plurals as u8) << 5;
+        SkeletonDataIndexULE([flags, self.index])
+    }
+    
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        let [flags, index] = unaligned.0;
+        // TODO: `flags` could have more bits set, but we don't check that here.
+        SkeletonDataIndex {
+            has_long: (flags & (1 << 7)) != 0,
+            has_medium: (flags & (1 << 6)) != 0,
+            has_plurals: (flags & (1 << 5)) != 0,
+            index
+        }
+    }
 }
 
 #[icu_provider::data_struct(
