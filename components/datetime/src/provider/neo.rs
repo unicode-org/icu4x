@@ -560,11 +560,11 @@ pub struct DateTimePatternV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SkeletonDataIndex {
-    /// If true, the first pattern is for [`Length::Long`].
-    /// If false, fall back to the next pattern (Medium).
+    /// If true, the first pattern is for `Long`.
+    /// If false, fall back to the next pattern (`Medium``).
     pub has_long: bool,
-    /// If true, the next pattern is for [`Length::Long`].
-    /// If false, fall back to the next pattern (Short).
+    /// If true, the next pattern is for `Long`.
+    /// If false, fall back to the next pattern (`Short`).
     pub has_medium: bool,
     /// If true, there are 6 plural variants for each pattern.
     /// If false, it is just a single variant.
