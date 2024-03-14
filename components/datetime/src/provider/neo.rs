@@ -4,7 +4,6 @@
 
 mod adapter;
 
-use crate::neo_skeleton::{DateComponents, DateSkeleton};
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
@@ -581,7 +580,7 @@ pub struct SkeletonDataIndexULE([u8; 2]);
 
 impl AsULE for SkeletonDataIndex {
     type ULE = SkeletonDataIndexULE;
-    
+
     fn to_unaligned(self) -> Self::ULE {
         let mut flags = 0;
         flags |= (self.has_long as u8) << 7;
@@ -589,7 +588,7 @@ impl AsULE for SkeletonDataIndex {
         flags |= (self.has_plurals as u8) << 5;
         SkeletonDataIndexULE([flags, self.index])
     }
-    
+
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [flags, index] = unaligned.0;
         // TODO: `flags` could have more bits set, but we don't check that here.
@@ -597,7 +596,7 @@ impl AsULE for SkeletonDataIndex {
             has_long: (flags & (1 << 7)) != 0,
             has_medium: (flags & (1 << 6)) != 0,
             has_plurals: (flags & (1 << 5)) != 0,
-            index
+            index,
         }
     }
 }

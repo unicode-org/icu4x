@@ -5,16 +5,11 @@
 use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
-use icu_datetime::neo_skeleton::{DateComponents, DateSkeleton, Length};
-use icu_datetime::options::components;
+use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength};
 use icu_datetime::pattern::runtime::PatternPlurals;
-use icu_datetime::{
-    neo_skeleton::{DayComponents, NeoComponents, NeoSkeleton, TimeComponents},
-    pattern::runtime::Pattern,
-    provider::{
-        calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
-        neo::{GregorianDateSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
-    },
+use icu_datetime::provider::{
+    calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
+    neo::{GregorianDateSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
 };
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
@@ -38,9 +33,9 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
             self.load(req)?.take_payload()?;
         let mut patterns = vec![];
         let mut indices = vec![];
-        for skeleton_components in DateComponents::VALUES {
-            if matches!(skeleton_components, DateComponents::Quarter)
-                || matches!(skeleton_components, DateComponents::YearQuarter)
+        for skeleton_components in NeoDateComponents::VALUES {
+            if matches!(skeleton_components, NeoDateComponents::Quarter)
+                || matches!(skeleton_components, NeoDateComponents::YearQuarter)
             {
                 indices.push(SkeletonDataIndex {
                     has_long: false,
@@ -57,12 +52,12 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
                 has_plurals: false,
                 index: patterns.len().try_into().unwrap(),
             };
-            let long_medium_short = [Length::Long, Length::Medium, Length::Short]
-                .map(|length| DateSkeleton {
+            let long_medium_short = [NeoSkeletonLength::Long, NeoSkeletonLength::Medium, NeoSkeletonLength::Short]
+                .map(|length| NeoDateSkeleton {
                     length,
                     components: *skeleton_components,
                 })
-                .map(DateSkeleton::to_components_bag)
+                .map(NeoDateSkeleton::to_components_bag)
                 .map(|bag| {
                     bag.select_pattern(
                         skeletons_data.get(),
