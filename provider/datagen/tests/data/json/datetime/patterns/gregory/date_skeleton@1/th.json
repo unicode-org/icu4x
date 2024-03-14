@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "d MMMM HH:mm น."
+    "d",
+    "d MMMM",
+    "d MMMM y",
+    "d MMMM GGGG y",
+    "EEEE d",
+    "EEEEที่ d MMMM",
+    "EEEEที่ d MMMM y",
+    "EEEEที่ d MMMM GGGG y",
+    "ccc",
+    "MMMM",
+    "MMMM y",
+    "MMMM GGGG y",
+    "y",
+    "GGGG y",
+    "สัปดาห์ที่ w ของปี Y",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }

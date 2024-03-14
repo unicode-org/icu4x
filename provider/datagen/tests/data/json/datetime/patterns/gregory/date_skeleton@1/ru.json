@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "d MMMM, HH:mm"
+    "d",
+    "d MMMM",
+    "d MMMM y г.",
+    "d MMMM y г. GGGG",
+    "ccc, d",
+    "ccc, d MMMM",
+    "EEEE, d MMMM y г.",
+    "EEEE, d MMMM y г. GGGG",
+    "ccc",
+    "MMMM",
+    "LLLL y г.",
+    "MMMM y г. GGGG",
+    "y",
+    "y г. GGGG",
+    "w-я неделя Y г.",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }

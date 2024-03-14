@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "M月d日 H:mm"
+    "d日",
+    "M月d日",
+    "y年M月d日",
+    "GGGGy年M月d日",
+    "d日EEEE",
+    "M月d日EEEE",
+    "y年M月d日EEEE",
+    "GGGGy年M月d日EEEE",
+    "ccc",
+    "M月",
+    "y年M月",
+    "GGGGy年M月",
+    "y年",
+    "GGGGy年",
+    "Y年第w週",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }

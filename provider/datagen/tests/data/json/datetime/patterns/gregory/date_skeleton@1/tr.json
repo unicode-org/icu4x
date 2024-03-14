@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "d MMMM HH:mm"
+    "d",
+    "d MMMM",
+    "d MMMM y",
+    "GGGG d MMMM y",
+    "d EEEE",
+    "d MMMM EEEE",
+    "d MMMM y EEEE",
+    "GGGG d MMMM y EEEE",
+    "ccc",
+    "MMMM",
+    "MMMM y",
+    "GGGG MMMM y",
+    "y",
+    "GGGG y",
+    "Y 'yılının' w'. haftası'",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }

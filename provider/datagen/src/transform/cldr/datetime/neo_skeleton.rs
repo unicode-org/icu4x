@@ -5,6 +5,7 @@
 use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
+use icu_datetime::neo_skeleton::{DateComponents, DateSkeleton};
 use icu_datetime::pattern::runtime::PatternPlurals;
 use icu_datetime::{
     neo_skeleton::{DayComponents, NeoComponents, NeoSkeleton, TimeComponents},
@@ -23,14 +24,6 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GregorianDateSkeletonPatternsV1Marker>, DataError> {
-        let skel = NeoSkeleton {
-            length: icu_datetime::neo_skeleton::Length::Long,
-            components: NeoComponents::DateTime(
-                DayComponents::MonthDay,
-                TimeComponents::HourMinute,
-            ),
-            time_zone: None,
-        };
         let mut skeletons_data_locale = req.locale.clone();
         skeletons_data_locale.set_unicode_ext(key!("ca"), value!("gregory"));
         let skeletons_data: DataPayload<DateSkeletonPatternsV1Marker> = self
@@ -41,18 +34,34 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
             .take_payload()?;
         let length_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             self.load(req)?.take_payload()?;
-        let pattern_plurals = skel
-            .to_components_bag()
-            .select_pattern(
-                skeletons_data.get(),
-                &length_patterns_data.get().length_combinations,
-            )
-            .unwrap();
-        let PatternPlurals::SinglePattern(pattern) = pattern_plurals else {
-            panic!()
-        };
+        let mut patterns = vec![];
+        for skeleton_components in DateComponents::VALUES {
+            if matches!(skeleton_components, DateComponents::Quarter) || matches!(skeleton_components, DateComponents::YearQuarter) {
+                patterns.push("'unimplemented'".parse().unwrap());
+                continue;
+            }
+            let skeleton = DateSkeleton {
+                length: icu_datetime::neo_skeleton::Length::Long,
+                components: *skeleton_components,
+            };
+            let components_bag = skeleton
+            .to_components_bag();
+            let pattern_plurals = 
+            components_bag.select_pattern(
+                    skeletons_data.get(),
+                    &length_patterns_data.get().length_combinations,
+                )
+                .unwrap();
+            let pattern = match pattern_plurals {
+                PatternPlurals::SinglePattern(pattern) => pattern,
+                PatternPlurals::MultipleVariants(variants) => {
+                    // TODO: Handle all of the variants
+                    variants.other
+                }
+            };
+            patterns.push(pattern);
+        }
         let indices = vec![SkeletonDataIndex(0)];
-        let patterns = vec![pattern];
         let packed_skeleton_data = PackedSkeletonDataV1 {
             indices: indices.into_iter().collect(),
             patterns: (&patterns).into(),

@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "d. MMMM HH:mm"
+    "d",
+    "d. MMMM",
+    "d. MMMM y.",
+    "d. MMMM y. GGGG",
+    "EEEE d.",
+    "EEEE, d. MMMM",
+    "EEEE, d. MMMM y.",
+    "EEEE, d. MMMM y. GGGG",
+    "EEEE",
+    "MMMM",
+    "MMMM y.",
+    "MMMM y. GGGG",
+    "y.",
+    "y. GGGG",
+    "w'. sedmica u' Y.",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }
