@@ -10,7 +10,7 @@ _We are still working on improving the user experience of using ICU4X from other
 
 Similar to C++, the JS APIs mirror the Rust code in the `icu_capi` crate, which can be explored on [docs.rs][rust-docs], though the precise types used may be different.
 
-See [`ffi/npm/examples/wasm-demo`] for an NPM package that uses the ICU4X package. You can run it using `npm run start`.
+See [`docs/tutorials/npm`] for an NPM package that uses the ICU4X package. You can run it using `npm run start`.
 
 We hope to fill in these docs over time with more examples.
 

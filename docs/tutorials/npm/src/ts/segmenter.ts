@@ -1,17 +1,20 @@
 import { ICU4XDataProvider, ICU4XWordSegmenter } from "icu4x";
+import { DataProviderManager } from './data-provider-manager';
 
 export class SegmenterDemo {
     #displayFn: (formatted: string) => void;
     #dataProvider: ICU4XDataProvider;
+    #dataProviderManager: DataProviderManager;
 
     #segmenter: ICU4XWordSegmenter;
     #model: string;
     #text: string;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+    constructor(displayFn: (formatted: string) => void, dataProviderManager: DataProviderManager) {
         this.#displayFn = displayFn;
-        this.#dataProvider = dataProvider;
-
+        this.#dataProvider = dataProviderManager.getDataProvider();
+        this.#dataProviderManager = dataProviderManager;
+        
         this.#model = "Auto";
         this.#text = "";
         this.#updateSegmenter();
@@ -27,7 +30,8 @@ export class SegmenterDemo {
         this.#render();
     }
 
-    #updateSegmenter(): void {
+    async #updateSegmenter(): Promise<void> {
+        this.#dataProvider = await this.#dataProviderManager.getSegmenterProviderLocale();
         if (this.#model === "Auto") {
             this.#segmenter = ICU4XWordSegmenter.create_auto(this.#dataProvider);
         } else if (this.#model === "LSTM") {
