@@ -259,7 +259,7 @@ impl NeoDayComponents {
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum NeoDateComponents {
-    /// A date that specifies a single day. See [`DayComponents`].
+    /// A date that specifies a single day. See [`NeoDayComponents`].
     Day(NeoDayComponents),
     /// A standalone month, as in
     /// “January”.
@@ -469,9 +469,9 @@ pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
     /// format “Pacific Daylight Time”, whichever is idiomatic for the locale.
     /// > Note: for now, this is always identical to
-    /// > [`TimeZoneStyle::SpecificNonLocation`] (Pacific Daylight Time), but
-    /// > whether it is [`TimeZoneStyle::NonLocation`] or
-    /// > [`TimeZoneStyle::SpecificNonLocation`] will be locale-dependent in the
+    /// > [`NeoTimeZoneStyle::SpecificNonLocation`] (Pacific Daylight Time), but
+    /// > whether it is [`NeoTimeZoneStyle::NonLocation`] or
+    /// > [`NeoTimeZoneStyle::SpecificNonLocation`] will be locale-dependent in the
     /// > future; see
     /// > [CLDR-15566](https://unicode-org.atlassian.net/browse/CLDR-15566).
     #[default]
@@ -491,14 +491,14 @@ pub enum NeoTimeZoneStyle {
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
-    /// `style`=[`TimeZoneStyle::NonLocation`], whether to format as “Pacific
-    /// Time” ([`Length::Long`]) or “PT” ([`Length::Short`]).
-    /// If this is [`None`], the length is deduced from the [`Length`] of the
-    /// enclosing [`SemanticSkeleton`] when formatting.
+    /// `style`=[`NeoTimeZoneStyle::NonLocation`], whether to format as “Pacific
+    /// Time” ([`NeoSkeletonLength::Long`]) or “PT” ([`NeoSkeletonLength::Short`]).
+    /// If this is [`None`], the length is deduced from the [`NeoSkeletonLength`] of the
+    /// enclosing [`NeoSkeleton`] when formatting.
     pub length: Option<NeoSkeletonLength>,
-    /// The style, _i.e._, with `length`=[`Length::Short`], whether to format as
-    /// “GMT−8” ([`TimeZoneStyle::Offset`]) or “PT”
-    /// ([`TimeZoneStyle::NonLocation`]).
+    /// The style, _i.e._, with `length`=[`NeoSkeletonLength::Short`], whether to format as
+    /// “GMT−8” ([`NeoTimeZoneStyle::Offset`]) or “PT”
+    /// ([`NeoTimeZoneStyle::NonLocation`]).
     pub style: NeoTimeZoneStyle,
 }
 
@@ -513,7 +513,7 @@ pub struct NeoDateSkeleton {
 }
 
 impl NeoDateSkeleton {
-    /// Converts this [`DateSkeleton`] to a [`components::Bag`].
+    /// Converts this [`NeoDateSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.components.to_components_bag_with_length(self.length)
     }
@@ -549,7 +549,7 @@ pub struct NeoDateTimeSkeleton {
 }
 
 impl NeoDateTimeSkeleton {
-    /// Converts this [`DateTimeSkeleton`] to a [`components::Bag`].
+    /// Converts this [`NeoDateTimeSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.date
             .to_components_bag_with_length(self.length)
