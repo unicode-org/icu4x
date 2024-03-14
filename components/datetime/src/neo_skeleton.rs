@@ -67,7 +67,8 @@ impl NeoSkeletonLength {
         match self {
             Self::Long => components::Text::Long,
             Self::Medium => components::Text::Short,
-            Self::Short => components::Text::Narrow,
+            // Note: Do not use narrow in skeleton. It may still appear in patterns.
+            Self::Short => components::Text::Short,
         }
     }
 

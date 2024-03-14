@@ -26,7 +26,7 @@
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
       "has_plurals": false,
       "index": 10
     },
@@ -34,43 +34,55 @@
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 13
+      "index": 12
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 16
+      "index": 15
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
       "has_plurals": false,
-      "index": 19
+      "index": 18
     },
     {
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 22
+      "index": 20
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 23
+      "index": 21
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 26
+      "index": 24
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 27
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
       "has_plurals": false,
       "index": 29
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 30
     },
     {
       "has_long": false,
@@ -79,8 +91,8 @@
       "index": 32
     },
     {
-      "has_long": true,
-      "has_medium": true,
+      "has_long": false,
+      "has_medium": false,
       "has_plurals": false,
       "index": 33
     },
@@ -88,19 +100,7 @@
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 36
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 37
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 38
+      "index": 34
     }
   ],
   "patterns": [
@@ -113,19 +113,17 @@
     "d/M/y",
     "d MMMM GGGG y",
     "d MMM GGG y",
-    "d/M/GGGGG y",
+    "d/M/GGG y",
     "EEEE d",
     "E d",
-    "EEEEE d",
     "EEEEที่ d MMMM",
     "E d MMM",
-    "EEEEE d/M",
+    "E d/M",
     "EEEEที่ d MMMM y",
     "E d MMM y",
-    "EEEEE d/M/y",
+    "E d/M/y",
     "EEEEที่ d MMMM GGGG y",
     "E d MMM GGG y",
-    "EEEEE d MMM GGGGG y",
     "ccc",
     "MMMM",
     "LLL",
@@ -135,11 +133,9 @@
     "M/y",
     "MMMM GGGG y",
     "MMM GGG y",
-    "MMM GGGGG y",
     "y",
     "GGGG y",
     "GGG y",
-    "GGGGG y",
     "สัปดาห์ที่ w ของปี Y",
     "'unimplemented'",
     "'unimplemented'"

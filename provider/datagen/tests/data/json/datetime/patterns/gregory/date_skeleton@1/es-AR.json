@@ -26,7 +26,7 @@
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
       "has_plurals": false,
       "index": 10
     },
@@ -34,43 +34,55 @@
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 13
+      "index": 12
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 16
+      "index": 15
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
       "has_plurals": false,
-      "index": 19
+      "index": 18
     },
     {
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 22
+      "index": 20
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 23
+      "index": 21
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 26
+      "index": 24
     },
     {
       "has_long": true,
-      "has_medium": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 27
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
       "has_plurals": false,
       "index": 29
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 30
     },
     {
       "has_long": false,
@@ -79,8 +91,8 @@
       "index": 32
     },
     {
-      "has_long": true,
-      "has_medium": true,
+      "has_long": false,
+      "has_medium": false,
       "has_plurals": false,
       "index": 33
     },
@@ -88,19 +100,7 @@
       "has_long": false,
       "has_medium": false,
       "has_plurals": false,
-      "index": 36
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 37
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 38
+      "index": 34
     }
   ],
   "patterns": [
@@ -113,19 +113,17 @@
     "d/M/y",
     "d 'de' MMMM 'de' y GGGG",
     "d MMM y GGG",
-    "d/M/y GGGGG",
+    "d/M/y GGG",
     "EEEE d",
     "E d",
-    "EEEEE d",
     "EEEE, d 'de' MMMM",
     "E, d MMM",
-    "EEEEE d-M",
+    "E d-M",
     "EEEE, d 'de' MMMM 'de' y",
     "E, d MMM y",
-    "EEEEE, d/M/y",
+    "E, d/M/y",
     "EEEE, d 'de' MMMM 'de' y GGGG",
     "E, d 'de' MMM 'de' y GGG",
-    "EEEEE, d 'de' MMM 'de' y GGGGG",
     "ccc",
     "MMMM",
     "LLL",
@@ -135,11 +133,9 @@
     "M-y",
     "MMMM 'de' y GGGG",
     "MMM y GGG",
-    "MMM y GGGGG",
     "y",
     "y GGGG",
     "y GGG",
-    "y GGGGG",
     "'semana' w 'de' Y",
     "'unimplemented'",
     "'unimplemented'"
