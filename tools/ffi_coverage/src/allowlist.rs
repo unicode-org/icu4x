@@ -392,6 +392,7 @@ lazy_static::lazy_static! {
         // Options bags which are expanded in FFI to regular functions
         // TODO-2.0: investigate flattening on the rust side too
         "icu::datetime::DateTimeFormatterOptions",
+        "icu::datetime::options::DateTimeFormatterOptions",
         "icu::datetime::options::length::Bag",
         "icu::decimal::options::FixedDecimalFormatterOptions",
 

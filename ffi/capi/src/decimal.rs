@@ -102,6 +102,16 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::rust_link(
+            icu::decimal::FormattedFixedDecimal,
+            Struct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::decimal::FormattedFixedDecimal::write_to,
+            FnInStruct,
+            hidden
+        )]
         pub fn format(
             &self,
             value: &ICU4XFixedDecimal,

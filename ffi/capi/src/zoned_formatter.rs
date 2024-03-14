@@ -171,6 +171,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::rust_link(
+            icu::datetime::FormattedZonedDateTime::write_to,
+            FnInStruct,
+            hidden
+        )]
         pub fn format_datetime_with_custom_time_zone(
             &self,
             datetime: &ICU4XDateTime,

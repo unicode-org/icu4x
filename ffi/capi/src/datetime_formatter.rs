@@ -333,6 +333,11 @@ pub mod ffi {
             hidden
         )]
 
+        #[diplomat::rust_link(
+            icu::datetime::FormattedDateTime::write_to,
+            FnInStruct,
+            hidden
+        )]
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,

@@ -15,16 +15,7 @@
 
 
 icu::calendar::week::WeekCalculator::weekend#FnInStruct
-icu::casemap::ClosureSink::add_char#FnInTrait
-icu::casemap::ClosureSink::add_string#FnInTrait
-icu::datetime::FormattedDateTime::write_to#FnInStruct
 icu::datetime::FormattedTimeZone::write_no_fallback#FnInStruct
-icu::datetime::FormattedTimeZone::write_to#FnInStruct
-icu::datetime::FormattedZonedDateTime::write_to#FnInStruct
-icu::datetime::options::DateTimeFormatterOptions#Enum
-icu::decimal::FormattedFixedDecimal#Struct
-icu::decimal::FormattedFixedDecimal::write_to#FnInStruct
-icu::list::FormattedList#Struct
 icu::properties::BidiClass#Struct
 icu::properties::BidiClass::ArabicLetter#AssociatedConstantInStruct
 icu::properties::BidiClass::ArabicNumber#AssociatedConstantInStruct

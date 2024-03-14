@@ -280,6 +280,11 @@ pub mod ffi {
             icu::datetime::time_zone::TimeZoneFormatter::format_to_string,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::datetime::FormattedTimeZone::write_to,
+            FnInStruct,
+            hidden
+        )]
         pub fn format_custom_time_zone(
             &self,
             value: &ICU4XCustomTimeZone,
