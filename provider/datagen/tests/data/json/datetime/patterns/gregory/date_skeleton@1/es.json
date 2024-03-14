@@ -1,0 +1,8 @@
+{
+  "indices": [
+    0
+  ],
+  "patterns": [
+    "d 'de' MMMM, H:mm"
+  ]
+}

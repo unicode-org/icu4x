@@ -13,7 +13,7 @@ use icu_datetime::{
         neo::{GregorianDateSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
     },
 };
-use icu_locid::extensions::unicode::value;
+use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
 
 use super::supported_cals;
@@ -31,8 +31,14 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
             ),
             time_zone: None,
         };
-        let skeletons_data: DataPayload<DateSkeletonPatternsV1Marker> =
-            self.load(req)?.take_payload()?;
+        let mut skeletons_data_locale = req.locale.clone();
+        skeletons_data_locale.set_unicode_ext(key!("ca"), value!("gregory"));
+        let skeletons_data: DataPayload<DateSkeletonPatternsV1Marker> = self
+            .load(DataRequest {
+                locale: &skeletons_data_locale,
+                metadata: req.metadata,
+            })?
+            .take_payload()?;
         let length_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             self.load(req)?.take_payload()?;
         let pattern_plurals = skel
