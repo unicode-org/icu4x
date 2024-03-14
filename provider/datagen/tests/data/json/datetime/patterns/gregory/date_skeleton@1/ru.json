@@ -1,22 +1,143 @@
 {
   "indices": [
-    0
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 1
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 4
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 7
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 10
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 11
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 14
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 17
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 20
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 21
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 24
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 27
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 30
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 31
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 34
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 35
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 36
+    }
   ],
   "patterns": [
     "d",
     "d MMMM",
+    "d MMM",
+    "dd.MM",
     "d MMMM y г.",
+    "d MMM y г.",
+    "dd.MM.y",
     "d MMMM y г. GGGG",
+    "d MMM y г. GGG",
+    "d.M.y GGGGG",
     "ccc, d",
     "ccc, d MMMM",
+    "ccc, d MMM",
+    "EEEEE, d.M",
     "EEEE, d MMMM y г.",
+    "E, d MMM y г.",
+    "ccc, d.M.y г.",
     "EEEE, d MMMM y г. GGGG",
+    "E, d MMM y г. GGG",
+    "EEEEE, d MMM y г. GGGGG",
     "ccc",
     "MMMM",
+    "LLL",
+    "L",
     "LLLL y г.",
+    "LLL y г.",
+    "MM.y",
     "MMMM y г. GGGG",
+    "LLL y г. GGG",
+    "LLL y г. GGGGG",
     "y",
     "y г. GGGG",
+    "y г. GGG",
+    "y г. GGGGG",
     "w-я неделя Y г.",
     "'unimplemented'",
     "'unimplemented'"

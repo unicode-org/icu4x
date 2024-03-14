@@ -1,22 +1,145 @@
 {
   "indices": [
-    0
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 1
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 4
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 7
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 10
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 13
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 16
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 19
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 22
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 23
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 26
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 29
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 32
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 33
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 36
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 37
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 38
+    }
   ],
   "patterns": [
     "d",
     "d MMMM",
+    "d MMM",
+    "d/M",
     "d MMMM, y",
+    "d MMM, y",
+    "d/M/y",
     "d MMMM, y GGGG",
+    "d MMM, y GGG",
+    "GGGGG y-M-d",
     "d EEEE",
+    "d E",
+    "d EEEEE",
     "EEEE d MMMM",
+    "E d MMM",
+    "EEEEE, d-M",
     "EEEE, d MMMM, y",
+    "E, d MMM, y",
+    "EEEEE, d/M/y",
     "EEEE, d MMMM, y GGGG",
+    "E, d MMM, y GGG",
+    "EEEEE, d MMM, y GGGGG",
     "ccc",
     "MMMM",
+    "LLL",
+    "L",
     "MMMM y",
+    "MMM y",
+    "M/y",
     "MMMM y GGGG",
+    "MMM y GGG",
+    "MMM y GGGGG",
     "y",
     "y GGGG",
+    "y GGG",
+    "y GGGGG",
     "Y 𑄃𑄬𑄢𑄴 𑄖𑄧𑄟𑄴 𑄥𑄛𑄴𑄖 w",
     "'unimplemented'",
     "'unimplemented'"

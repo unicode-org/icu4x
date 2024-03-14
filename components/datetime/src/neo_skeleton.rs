@@ -59,6 +59,9 @@ pub enum Length {
 }
 
 impl Length {
+    /// All values of this enum.
+    pub const VALUES: &'static [Self] = &[Self::Long, Self::Medium, Self::Short];
+
     fn to_components_text(self) -> components::Text {
         match self {
             Self::Long => components::Text::Long,

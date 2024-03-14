@@ -560,10 +560,22 @@ pub struct DateTimePatternV1<'data> {
     databake(path = icu_datetime::provider::neo),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[repr(transparent)]
+// TODO: Make a bitpacked ULE type
 #[zerovec::make_ule(SkeletonDataIndexULE)]
 #[zerovec::skip_derive(Ord)]
-pub struct SkeletonDataIndex(pub u16);
+pub struct SkeletonDataIndex {
+    /// If true, the first pattern is for [`Length::Long`].
+    /// If false, fall back to the next pattern (Medium).
+    pub has_long: bool,
+    /// If true, the next pattern is for [`Length::Long`].
+    /// If false, fall back to the next pattern (Short).
+    pub has_medium: bool,
+    /// If true, there are 6 plural variants for each pattern.
+    /// If false, it is just a single variant.
+    pub has_plurals: bool,
+    /// The offset into the vector of the first pattern.
+    pub index: u8,
+}
 
 #[icu_provider::data_struct(
     marker(

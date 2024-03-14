@@ -5,10 +5,12 @@
 use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
-use icu_datetime::neo_skeleton::{DateComponents, DateSkeleton};
+use icu_datetime::neo_skeleton::{DateComponents, DateSkeleton, Length};
+use icu_datetime::options::components;
 use icu_datetime::pattern::runtime::PatternPlurals;
 use icu_datetime::{
     neo_skeleton::{DayComponents, NeoComponents, NeoSkeleton, TimeComponents},
+    pattern::runtime::Pattern,
     provider::{
         calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
         neo::{GregorianDateSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
@@ -35,33 +37,83 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
         let length_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             self.load(req)?.take_payload()?;
         let mut patterns = vec![];
+        let mut indices = vec![];
         for skeleton_components in DateComponents::VALUES {
-            if matches!(skeleton_components, DateComponents::Quarter) || matches!(skeleton_components, DateComponents::YearQuarter) {
+            if matches!(skeleton_components, DateComponents::Quarter)
+                || matches!(skeleton_components, DateComponents::YearQuarter)
+            {
+                indices.push(SkeletonDataIndex {
+                    has_long: false,
+                    has_medium: false,
+                    has_plurals: false,
+                    index: patterns.len().try_into().unwrap(),
+                });
                 patterns.push("'unimplemented'".parse().unwrap());
                 continue;
             }
-            let skeleton = DateSkeleton {
-                length: icu_datetime::neo_skeleton::Length::Long,
-                components: *skeleton_components,
+            let mut skeleton_data_index = SkeletonDataIndex {
+                has_long: true,
+                has_medium: true,
+                has_plurals: false,
+                index: patterns.len().try_into().unwrap(),
             };
-            let components_bag = skeleton
-            .to_components_bag();
-            let pattern_plurals = 
-            components_bag.select_pattern(
-                    skeletons_data.get(),
-                    &length_patterns_data.get().length_combinations,
-                )
-                .unwrap();
-            let pattern = match pattern_plurals {
-                PatternPlurals::SinglePattern(pattern) => pattern,
-                PatternPlurals::MultipleVariants(variants) => {
-                    // TODO: Handle all of the variants
-                    variants.other
-                }
+            let long_medium_short = [Length::Long, Length::Medium, Length::Short]
+                .map(|length| DateSkeleton {
+                    length,
+                    components: *skeleton_components,
+                })
+                .map(DateSkeleton::to_components_bag)
+                .map(|bag| {
+                    bag.select_pattern(
+                        skeletons_data.get(),
+                        &length_patterns_data.get().length_combinations,
+                    )
+                    .unwrap()
+                });
+            let [long, medium, short] = if long_medium_short
+                .iter()
+                .any(|pp| matches!(pp, PatternPlurals::MultipleVariants(_)))
+            {
+                // Expand all variants to vector of length 6
+                skeleton_data_index.has_plurals = true;
+                long_medium_short.map(|pp| match pp {
+                    PatternPlurals::MultipleVariants(variants) => vec![
+                        variants.zero.unwrap_or_else(|| variants.other.clone()),
+                        variants.one.unwrap_or_else(|| variants.other.clone()),
+                        variants.two.unwrap_or_else(|| variants.other.clone()),
+                        variants.few.unwrap_or_else(|| variants.other.clone()),
+                        variants.many.unwrap_or_else(|| variants.other.clone()),
+                        variants.other,
+                    ],
+                    PatternPlurals::SinglePattern(pattern) => vec![
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern,
+                    ],
+                })
+            } else {
+                // Take a single variant of each pattern
+                long_medium_short.map(|pp| match pp {
+                    PatternPlurals::MultipleVariants(_) => unreachable!(),
+                    PatternPlurals::SinglePattern(pattern) => vec![pattern],
+                })
             };
-            patterns.push(pattern);
+            if long == medium {
+                skeleton_data_index.has_long = false;
+            } else {
+                patterns.extend(long);
+            }
+            if medium == short {
+                skeleton_data_index.has_medium = false;
+            } else {
+                patterns.extend(medium);
+            }
+            patterns.extend(short);
+            indices.push(skeleton_data_index);
         }
-        let indices = vec![SkeletonDataIndex(0)];
         let packed_skeleton_data = PackedSkeletonDataV1 {
             indices: indices.into_iter().collect(),
             patterns: (&patterns).into(),
