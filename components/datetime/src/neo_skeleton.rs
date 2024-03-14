@@ -49,7 +49,7 @@ pub trait TypedNeoSkeletonData<C: CldrCalendar> {
 /// `Full`; this is because `Full` corresponds to additional components,
 /// rather than to making the components wider than in `Long`.
 #[derive(Debug, Copy, Clone)]
-pub enum Length {
+pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
     Long,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
@@ -58,7 +58,7 @@ pub enum Length {
     Short,
 }
 
-impl Length {
+impl NeoSkeletonLength {
     /// All values of this enum.
     pub const VALUES: &'static [Self] = &[Self::Long, Self::Medium, Self::Short];
 
@@ -107,7 +107,7 @@ impl<C> TypedNeoSkeletonData<C> for YearMonthMarker
 where
     C: CldrCalendar,
 {
-    const COMPONENTS: NeoComponents = NeoComponents::Date(DateComponents::YearMonth);
+    const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::YearMonth);
 
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
@@ -122,11 +122,13 @@ where
     type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
+// TODO: Add more of these TypedNeoSkeletonData marker types.
+
 /// Representation of a semantic skeleton with marker types.
 #[derive(Debug, Copy, Clone)]
 pub struct TypedNeoSkeleton<C: CldrCalendar, T: TypedNeoSkeletonData<C>> {
     /// Desired formatting length.
-    pub length: Length,
+    pub length: NeoSkeletonLength,
     _phantom: PhantomData<(C, T)>,
 }
 
@@ -147,18 +149,24 @@ impl<C: CldrCalendar, T: TypedNeoSkeletonData<C>> TypedNeoSkeleton<C, T> {
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub enum DayComponents {
-    /// The day of the month, as in “on the 1st”.
+pub enum NeoDayComponents {
+    /// The day of the month, as in
+    /// “on the 1st”.
     Day,
-    /// The month and day of the month, as in “January 1st”.
+    /// The month and day of the month, as in
+    /// “January 1st”.
     MonthDay,
-    /// The year, month, and day of the month, as in “January 1st, 2000”.
+    /// The year, month, and day of the month, as in
+    /// “January 1st, 2000”.
     YearMonthDay,
-    /// The era, year, month, and day of the month, as in “January 1st, 2000 A.D.”.
+    /// The era, year, month, and day of the month, as in
+    /// “January 1st, 2000 A.D.”.
     EraYearMonthDay,
-    /// The day of the month and day of the week, as in “Saturday 1st”.
+    /// The day of the month and day of the week, as in
+    /// “Saturday 1st”.
     DayWeekday,
-    /// The month, day of the month, and day of the week, as in “Saturday, January 1st”.
+    /// The month, day of the month, and day of the week, as in
+    /// “Saturday, January 1st”.
     MonthDayWeekday,
     /// The year, month, day of the month, and day of the week, as in
     /// “Saturday, January 1st, 2000”.
@@ -166,11 +174,12 @@ pub enum DayComponents {
     /// The era, year, month, day of the month, and day of the week, as in
     /// “Saturday, January 1st, 2000 A.D.”.
     EraYearMonthDayWeekday,
-    /// The day of the week alone, as in “Saturday”.
+    /// The day of the week alone, as in
+    /// “Saturday”.
     Weekday,
 }
 
-impl DayComponents {
+impl NeoDayComponents {
     /// All values of this enum.
     pub const VALUES: &'static [Self] = &[
         Self::Day,
@@ -184,7 +193,7 @@ impl DayComponents {
         Self::Weekday,
     ];
 
-    fn to_components_bag_with_length(self, length: Length) -> components::Bag {
+    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
             Self::Day => components::Bag {
                 day: Some(length.to_components_day()),
@@ -247,39 +256,47 @@ impl DayComponents {
 /// a date such as “fourth quarter, Anno Domini”.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub enum DateComponents {
-    /// A date that specifies a single day.  Prefer constructing using [`Into`].
-    Day(DayComponents),
-    /// A standalone month, as in “January”.
+pub enum NeoDateComponents {
+    /// A date that specifies a single day. See [`DayComponents`].
+    Day(NeoDayComponents),
+    /// A standalone month, as in
+    /// “January”.
     Month,
-    /// A month and year, as in “January 2000”.
+    /// A month and year, as in
+    /// “January 2000”.
     YearMonth,
-    /// A month, year, and era, as in “January 2000 A.D”.
+    /// A month, year, and era, as in
+    /// “January 2000 A.D”.
     EraYearMonth,
-    /// A year, as in “2000”.
+    /// A year, as in
+    /// “2000”.
     Year,
-    /// A year with era, as in “2000 A.D.”.
+    /// A year with era, as in
+    /// “2000 A.D.”.
     EraYear,
-    /// The year and week of the year, as in “52nd week of 1999”.
+    /// The year and week of the year, as in
+    /// “52nd week of 1999”.
     YearWeek,
-    /// The quarter of the year, as in “1st quarter”.
+    /// The quarter of the year, as in
+    /// “1st quarter”.
     Quarter,
-    /// The year and quarter of the year, as in “1st quarter of 2000”.
+    /// The year and quarter of the year, as in
+    /// “1st quarter of 2000”.
     YearQuarter,
 }
 
-impl DateComponents {
+impl NeoDateComponents {
     /// All values of this enum.
     pub const VALUES: &'static [Self] = &[
-        Self::Day(DayComponents::Day),
-        Self::Day(DayComponents::MonthDay),
-        Self::Day(DayComponents::YearMonthDay),
-        Self::Day(DayComponents::EraYearMonthDay),
-        Self::Day(DayComponents::DayWeekday),
-        Self::Day(DayComponents::MonthDayWeekday),
-        Self::Day(DayComponents::YearMonthDayWeekday),
-        Self::Day(DayComponents::EraYearMonthDayWeekday),
-        Self::Day(DayComponents::Weekday),
+        Self::Day(NeoDayComponents::Day),
+        Self::Day(NeoDayComponents::MonthDay),
+        Self::Day(NeoDayComponents::YearMonthDay),
+        Self::Day(NeoDayComponents::EraYearMonthDay),
+        Self::Day(NeoDayComponents::DayWeekday),
+        Self::Day(NeoDayComponents::MonthDayWeekday),
+        Self::Day(NeoDayComponents::YearMonthDayWeekday),
+        Self::Day(NeoDayComponents::EraYearMonthDayWeekday),
+        Self::Day(NeoDayComponents::Weekday),
         Self::Month,
         Self::YearMonth,
         Self::EraYearMonth,
@@ -290,7 +307,7 @@ impl DateComponents {
         Self::YearQuarter,
     ];
 
-    fn to_components_bag_with_length(self, length: Length) -> components::Bag {
+    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
             Self::Day(day_components) => day_components.to_components_bag_with_length(length),
             Self::Month => components::Bag {
@@ -328,25 +345,51 @@ impl DateComponents {
     }
 }
 
+/// A specification for a set of parts of a time.
+/// Only sets that yield “sensible” time are allowed: this type cannot describe
+/// a time such as “am, 5 minutes, 25 milliseconds”.
 #[derive(Debug, Copy, Clone)]
-#[allow(missing_docs)] // TODO
 #[non_exhaustive]
-pub enum TimeComponents {
+pub enum NeoTimeComponents {
+    /// An hour (12-hour or 24-hour chosen by locale), as in
+    /// "4 pm" or "16h"
     Hour,
+    /// An hour and minute (12-hour or 24-hour chosen by locale), as in
+    /// "4:03 pm" or "16:03"
     HourMinute,
+    /// An hour, minute, and second (12-hour or 24-hour chosen by locale), as in
+    /// "4:03:51 pm" or "16:03:51"
     HourMinuteSecond,
+    /// An hour with a 12-hour clock and day period, as in
+    /// "4 in the afternoon"
     DayPeriodHour12,
+    /// An hour with a 12-hour clock, as in
+    /// "4 pm"
     Hour12,
+    /// An hour and minute with a 12-hour clock and a day period, as in
+    /// "4:03 in the afternoon"
     DayPeriodHour12Minute,
+    /// An hour and minute with a 12-hour clock, as in
+    /// "4:03 pm"
     Hour12Minute,
+    /// An hour, minute, and second with a 12-hour clock and day period, as in
+    /// "4:03:51 in the afternoon"
     DayPeriodHour12MinuteSecond,
+    /// An hour, minute, and second with a 12-hour clock, as in
+    /// "4:03:51 pm"
     Hour12MinuteSecond,
+    /// An hour with a 24-hour clock, as in
+    /// "16h"
     Hour24,
+    /// An hour and minute with a 24-hour clock, as in
+    /// "16:03"
     Hour24Minute,
+    /// An hour, minute, and second with a 24-hour clock, as in
+    /// "16:03:51"
     Hour24MinuteSecond,
 }
 
-impl TimeComponents {
+impl NeoTimeComponents {
     /// All values of this enum.
     pub const VALUES: &'static [Self] = &[
         Self::Hour,
@@ -363,7 +406,7 @@ impl TimeComponents {
         Self::Hour24MinuteSecond,
     ];
 
-    fn to_components_bag_with_length(self, length: Length) -> components::Bag {
+    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
             Self::Hour => components::Bag {
                 hour: Some(length.to_components_numeric()),
@@ -393,15 +436,19 @@ impl TimeComponents {
     }
 }
 
+/// A specification of components for parts of a datetime.
 #[derive(Debug, Copy, Clone)]
 pub enum NeoComponents {
-    Date(DateComponents),
-    Time(TimeComponents),
-    DateTime(DayComponents, TimeComponents),
+    /// Components for parts of a date.
+    Date(NeoDateComponents),
+    /// Components for parts of a time.
+    Time(NeoTimeComponents),
+    /// Components for parts of a date and time together.
+    DateTime(NeoDayComponents, NeoTimeComponents),
 }
 
 impl NeoComponents {
-    fn to_components_bag_with_length(self, length: Length) -> components::Bag {
+    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
             Self::Date(inner) => inner.to_components_bag_with_length(length),
             Self::Time(inner) => inner.to_components_bag_with_length(length),
@@ -415,7 +462,7 @@ impl NeoComponents {
 /// Specification of the time zone display style
 #[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
-pub enum TimeZoneStyle {
+pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
     /// format “Pacific Daylight Time”, whichever is idiomatic for the locale.
     /// > Note: for now, this is always identical to
@@ -436,40 +483,44 @@ pub enum TimeZoneStyle {
     Offset,
 }
 
-/// Specification of a time zone style with an optional length.
+/// A skeleton for formatting a time zone.
 #[derive(Debug, Copy, Clone, Default)]
-pub struct TimeZone {
+pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
     /// `style`=[`TimeZoneStyle::NonLocation`], whether to format as “Pacific
     /// Time” ([`Length::Long`]) or “PT” ([`Length::Short`]).
     /// If this is [`None`], the length is deduced from the [`Length`] of the
     /// enclosing [`SemanticSkeleton`] when formatting.
-    pub length: Option<Length>,
+    pub length: Option<NeoSkeletonLength>,
     /// The style, _i.e._, with `length`=[`Length::Short`], whether to format as
     /// “GMT−8” ([`TimeZoneStyle::Offset`]) or “PT”
     /// ([`TimeZoneStyle::NonLocation`]).
-    pub style: TimeZoneStyle,
+    pub style: NeoTimeZoneStyle,
 }
 
+/// A skeleton for formatting parts of a date (without time or time zone).
 #[derive(Debug, Copy, Clone)]
-pub struct DateSkeleton {
-    pub length: Length,
-    pub components: DateComponents,
+pub struct NeoDateSkeleton {
+    /// Desired formatting length.
+    pub length: NeoSkeletonLength,
+    /// Date components of the skeleton.
+    pub components: NeoDateComponents,
 }
 
-impl DateSkeleton {
+impl NeoDateSkeleton {
     /// Converts this [`DateSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.components.to_components_bag_with_length(self.length)
     }
 }
 
+/// A skeleton for formatting parts of a time (without date or time zone).
 #[derive(Debug, Copy, Clone)]
 pub struct TimeSkeleton {
     /// Desired formatting length.
-    pub length: Length,
-    /// Time time components of the skeleton.
-    pub components: TimeComponents,
+    pub length: NeoSkeletonLength,
+    /// Time components of the skeleton.
+    pub components: NeoTimeComponents,
 }
 
 impl TimeSkeleton {
@@ -479,16 +530,18 @@ impl TimeSkeleton {
     }
 }
 
-/// Representation of a semantic skeleton, agnostic to fields or calendar system.
+/// A skeleton for formatting parts of a date and time (without time zone).
 #[derive(Debug, Copy, Clone)]
-pub struct DateTimeSkeleton {
+pub struct NeoDateTimeSkeleton {
     /// Desired formatting length.
-    pub length: Length,
-    pub date: DayComponents,
-    pub time: TimeComponents,
+    pub length: NeoSkeletonLength,
+    /// Date components of the skeleton.
+    pub date: NeoDayComponents,
+    /// Time components of the skeleton.
+    pub time: NeoTimeComponents,
 }
 
-impl DateTimeSkeleton {
+impl NeoDateTimeSkeleton {
     /// Converts this [`DateTimeSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.date
@@ -497,11 +550,15 @@ impl DateTimeSkeleton {
     }
 }
 
+/// A skeleton for formatting parts of a date, time, and optional time zone.
 #[derive(Debug, Copy, Clone)]
 pub struct NeoSkeleton {
-    pub length: Length,
+    /// Desired formatting length.
+    pub length: NeoSkeletonLength,
+    /// Components of the skeleton.
     pub components: NeoComponents,
-    pub time_zone: Option<TimeZone>,
+    /// Optional time zone skeleton.
+    pub time_zone: Option<NeoTimeZoneSkeleton>,
 }
 
 impl NeoSkeleton {
