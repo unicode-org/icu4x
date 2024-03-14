@@ -246,7 +246,7 @@ registry!(
         "datetime/patterns/japanext/date@1",
     icu_datetime::provider::neo::PersianDatePatternV1Marker = "datetime/patterns/persian/date@1",
     icu_datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
-    icu_datetime::provider::neo::GregorianDateSkeletonPatternsV1Marker =
+    icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker =
         "datetime/patterns/gregory/date_skeleton@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
         "time_zone/generic_long@1",

@@ -222,7 +222,7 @@ impl CldrCalendar for Gregorian {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = GregorianDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = GregorianDateSkeletonPatternsV1Marker;
+    type DateSkeletonPatternsV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Hebrew {
