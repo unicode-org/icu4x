@@ -52,19 +52,23 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
                 has_plurals: false,
                 index: patterns.len().try_into().unwrap(),
             };
-            let long_medium_short = [NeoSkeletonLength::Long, NeoSkeletonLength::Medium, NeoSkeletonLength::Short]
-                .map(|length| NeoDateSkeleton {
-                    length,
-                    components: *skeleton_components,
-                })
-                .map(NeoDateSkeleton::to_components_bag)
-                .map(|bag| {
-                    bag.select_pattern(
-                        skeletons_data.get(),
-                        &length_patterns_data.get().length_combinations,
-                    )
-                    .unwrap()
-                });
+            let long_medium_short = [
+                NeoSkeletonLength::Long,
+                NeoSkeletonLength::Medium,
+                NeoSkeletonLength::Short,
+            ]
+            .map(|length| NeoDateSkeleton {
+                length,
+                components: *skeleton_components,
+            })
+            .map(NeoDateSkeleton::to_components_bag)
+            .map(|bag| {
+                bag.select_pattern(
+                    skeletons_data.get(),
+                    &length_patterns_data.get().length_combinations,
+                )
+                .unwrap()
+            });
             let [long, medium, short] = if long_medium_short
                 .iter()
                 .any(|pp| matches!(pp, PatternPlurals::MultipleVariants(_)))
