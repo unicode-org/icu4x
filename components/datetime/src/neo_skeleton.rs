@@ -513,6 +513,14 @@ pub struct NeoDateSkeleton {
 }
 
 impl NeoDateSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(
+        length: NeoSkeletonLength,
+        components: NeoDateComponents,
+    ) -> Self {
+        Self { length, components }
+    }
+
     /// Converts this [`NeoDateSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.components.to_components_bag_with_length(self.length)
@@ -522,14 +530,22 @@ impl NeoDateSkeleton {
 /// A skeleton for formatting parts of a time (without date or time zone).
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub struct TimeSkeleton {
+pub struct NeoTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
     /// Time components of the skeleton.
     pub components: NeoTimeComponents,
 }
 
-impl TimeSkeleton {
+impl NeoTimeSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(
+        length: NeoSkeletonLength,
+        components: NeoTimeComponents,
+    ) -> Self {
+        Self { length, components }
+    }
+
     /// Converts this [`TimeSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.components.to_components_bag_with_length(self.length)
@@ -549,6 +565,15 @@ pub struct NeoDateTimeSkeleton {
 }
 
 impl NeoDateTimeSkeleton {
+    /// Creates a skeleton from its length and components.
+    pub fn for_length_and_components(
+        length: NeoSkeletonLength,
+        date: NeoDayComponents,
+        time: NeoTimeComponents,
+    ) -> Self {
+        Self { length, date, time }
+    }
+
     /// Converts this [`NeoDateTimeSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.date
@@ -573,5 +598,35 @@ impl NeoSkeleton {
     /// Converts this [`NeoSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.components.to_components_bag_with_length(self.length)
+    }
+}
+
+impl From<NeoDateSkeleton> for NeoSkeleton {
+    fn from(value: NeoDateSkeleton) -> Self {
+        NeoSkeleton {
+            length: value.length,
+            components: NeoComponents::Date(value.components),
+            time_zone: None,
+        }
+    }
+}
+
+impl From<NeoTimeSkeleton> for NeoSkeleton {
+    fn from(value: NeoTimeSkeleton) -> Self {
+        NeoSkeleton {
+            length: value.length,
+            components: NeoComponents::Time(value.components),
+            time_zone: None,
+        }
+    }
+}
+
+impl From<NeoDateTimeSkeleton> for NeoSkeleton {
+    fn from(value: NeoDateTimeSkeleton) -> Self {
+        NeoSkeleton {
+            length: value.length,
+            components: NeoComponents::DateTime(value.date, value.time),
+            time_zone: None,
+        }
     }
 }

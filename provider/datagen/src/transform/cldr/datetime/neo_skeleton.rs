@@ -57,10 +57,7 @@ impl DataProvider<GregorianDateSkeletonPatternsV1Marker> for DatagenProvider {
                 NeoSkeletonLength::Medium,
                 NeoSkeletonLength::Short,
             ]
-            .map(|length| NeoDateSkeleton {
-                length,
-                components: *skeleton_components,
-            })
+            .map(|length| NeoDateSkeleton::for_length_and_components(length, *skeleton_components))
             .map(NeoDateSkeleton::to_components_bag)
             .map(|bag| {
                 bag.select_pattern(
