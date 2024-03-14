@@ -170,6 +170,9 @@ pub mod ffi {
         /// plan on using string case closure mappings too.
         #[cfg(feature = "icu_properties")]
         #[diplomat::rust_link(icu::casemap::CaseMapper::add_case_closure_to, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::ClosureSink, Trait, hidden)]
+        #[diplomat::rust_link(icu::casemap::ClosureSink::add_char, FnInTrait, hidden)]
+        #[diplomat::rust_link(icu::casemap::ClosureSink::add_string, FnInTrait, hidden)]
         pub fn add_case_closure_to(
             &self,
             c: DiplomatChar,
