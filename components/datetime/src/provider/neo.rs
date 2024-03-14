@@ -565,7 +565,10 @@ pub struct DateTimePatternV1<'data> {
 pub struct SkeletonDataIndex(pub u16);
 
 #[icu_provider::data_struct(
-    marker(DateSkeletonPatternsV1Marker, "datetime/patterns/date_skeleton@1"),
+    marker(
+        GregorianDateSkeletonPatternsV1Marker,
+        "datetime/patterns/gregory/date_skeleton@1"
+    ),
     marker(TimeSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
