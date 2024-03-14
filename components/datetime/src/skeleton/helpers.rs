@@ -526,7 +526,7 @@ pub fn get_best_available_format_pattern<'data>(
 
 impl components::Bag {
     #[doc(hidden)] // TODO(#4467): Internal
-    #[cfg(any(feature = "datagen"))]
+    #[cfg(feature = "datagen")]
     pub fn select_pattern<'data>(
         self,
         skeletons: &DateSkeletonPatternsV1<'data>,
@@ -534,8 +534,8 @@ impl components::Bag {
     ) -> Option<PatternPlurals<'data>> {
         let fields = self.to_vec_fields();
         match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
-            BestSkeleton::AllFieldsMatch(p) => return Some(p),
-            _ => return None,
+            BestSkeleton::AllFieldsMatch(p) => Some(p),
+            _ => None,
         }
     }
 }

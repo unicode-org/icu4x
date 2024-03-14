@@ -49,6 +49,7 @@ pub trait TypedNeoSkeletonData<C: CldrCalendar> {
 /// `Full`; this is because `Full` corresponds to additional components,
 /// rather than to making the components wider than in `Long`.
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
     Long,
@@ -101,6 +102,7 @@ impl NeoSkeletonLength {
 
 /// Marker for a skeleton with a year and a month, like "March 2024".
 #[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
 pub enum YearMonthMarker {}
 
 impl<C> TypedNeoSkeletonData<C> for YearMonthMarker
@@ -438,6 +440,7 @@ impl NeoTimeComponents {
 
 /// A specification of components for parts of a datetime.
 #[derive(Debug, Copy, Clone)]
+#[allow(clippy::exhaustive_enums)] // well-defined type
 pub enum NeoComponents {
     /// Components for parts of a date.
     Date(NeoDateComponents),
@@ -485,6 +488,7 @@ pub enum NeoTimeZoneStyle {
 
 /// A skeleton for formatting a time zone.
 #[derive(Debug, Copy, Clone, Default)]
+#[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
     /// `style`=[`TimeZoneStyle::NonLocation`], whether to format as “Pacific
@@ -500,6 +504,7 @@ pub struct NeoTimeZoneSkeleton {
 
 /// A skeleton for formatting parts of a date (without time or time zone).
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct NeoDateSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -516,6 +521,7 @@ impl NeoDateSkeleton {
 
 /// A skeleton for formatting parts of a time (without date or time zone).
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct TimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -532,6 +538,7 @@ impl TimeSkeleton {
 
 /// A skeleton for formatting parts of a date and time (without time zone).
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct NeoDateTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -552,6 +559,7 @@ impl NeoDateTimeSkeleton {
 
 /// A skeleton for formatting parts of a date, time, and optional time zone.
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
