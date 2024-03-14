@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "d MMMM HH:mm"
+    "d",
+    "d MMMM",
+    "d MMMM, y",
+    "d MMMM, y GGGG",
+    "d EEEE",
+    "EEEE d MMMM",
+    "EEEE, d MMMM, y",
+    "EEEE, d MMMM, y GGGG",
+    "ccc",
+    "MMMM",
+    "MMMM y",
+    "MMMM y GGGG",
+    "y",
+    "y GGGG",
+    "Y এর wতম সপ্তাহ",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }

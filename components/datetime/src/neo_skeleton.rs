@@ -168,6 +168,19 @@ pub enum DayComponents {
 }
 
 impl DayComponents {
+    /// All values of this enum.
+    pub const VALUES: &'static [Self] = &[
+        Self::Day,
+        Self::MonthDay,
+        Self::YearMonthDay,
+        Self::EraYearMonthDay,
+        Self::DayWeekday,
+        Self::MonthDayWeekday,
+        Self::YearMonthDayWeekday,
+        Self::EraYearMonthDayWeekday,
+        Self::Weekday,
+    ];
+
     fn to_components_bag_with_length(self, length: Length) -> components::Bag {
         match self {
             Self::Day => components::Bag {
@@ -253,6 +266,27 @@ pub enum DateComponents {
 }
 
 impl DateComponents {
+    /// All values of this enum.
+    pub const VALUES: &'static [Self] = &[
+        Self::Day(DayComponents::Day),
+        Self::Day(DayComponents::MonthDay),
+        Self::Day(DayComponents::YearMonthDay),
+        Self::Day(DayComponents::EraYearMonthDay),
+        Self::Day(DayComponents::DayWeekday),
+        Self::Day(DayComponents::MonthDayWeekday),
+        Self::Day(DayComponents::YearMonthDayWeekday),
+        Self::Day(DayComponents::EraYearMonthDayWeekday),
+        Self::Day(DayComponents::Weekday),
+        Self::Month,
+        Self::YearMonth,
+        Self::EraYearMonth,
+        Self::Year,
+        Self::EraYear,
+        Self::YearWeek,
+        Self::Quarter,
+        Self::YearQuarter,
+    ];
+
     fn to_components_bag_with_length(self, length: Length) -> components::Bag {
         match self {
             Self::Day(day_components) => day_components.to_components_bag_with_length(length),
@@ -310,6 +344,22 @@ pub enum TimeComponents {
 }
 
 impl TimeComponents {
+    /// All values of this enum.
+    pub const VALUES: &'static [Self] = &[
+        Self::Hour,
+        Self::HourMinute,
+        Self::HourMinuteSecond,
+        Self::DayPeriodHour12,
+        Self::Hour12,
+        Self::DayPeriodHour12Minute,
+        Self::Hour12Minute,
+        Self::DayPeriodHour12MinuteSecond,
+        Self::Hour12MinuteSecond,
+        Self::Hour24,
+        Self::Hour24Minute,
+        Self::Hour24MinuteSecond,
+    ];
+
     fn to_components_bag_with_length(self, length: Length) -> components::Bag {
         match self {
             Self::Hour => components::Bag {

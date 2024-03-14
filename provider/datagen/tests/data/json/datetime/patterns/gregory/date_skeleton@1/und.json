@@ -3,6 +3,22 @@
     0
   ],
   "patterns": [
-    "MMMM d HH:mm"
+    "d",
+    "MMMM d",
+    "y MMMM d",
+    "GGGG y MMMM d",
+    "d, EEEE",
+    "MMMM d, EEEE",
+    "y MMMM d, EEEE",
+    "GGGG y MMMM d, EEEE",
+    "ccc",
+    "MMMM",
+    "y MMMM",
+    "GGGG y MMMM",
+    "y",
+    "GGGG y",
+    "'week' w 'of' Y",
+    "'unimplemented'",
+    "'unimplemented'"
   ]
 }
