@@ -14,27 +14,9 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::calendar::any_calendar::AnyCalendar#Enum
-icu::calendar::any_calendar::AnyCalendar::convert_any_date#FnInEnum
-icu::calendar::any_calendar::AnyCalendar::convert_any_datetime#FnInEnum
-icu::calendar::any_calendar::AnyCalendar::kind#FnInEnum
-icu::calendar::any_calendar::AnyCalendar::new#FnInEnum
-icu::calendar::any_calendar::AnyCalendar::new_for_locale#FnInEnum
-icu::calendar::any_calendar::AnyCalendarKind#Enum
-icu::calendar::any_calendar::AnyCalendarKind::as_bcp47_string#FnInEnum
-icu::calendar::any_calendar::AnyCalendarKind::as_bcp47_value#FnInEnum
-icu::calendar::any_calendar::AnyCalendarKind::get_for_bcp47_bytes#FnInEnum
-icu::calendar::any_calendar::AnyCalendarKind::get_for_bcp47_string#FnInEnum
-icu::calendar::any_calendar::AnyCalendarKind::get_for_bcp47_value#FnInEnum
-icu::calendar::any_calendar::AnyCalendarKind::get_for_locale#FnInEnum
 icu::calendar::week::WeekCalculator::weekend#FnInStruct
 icu::casemap::ClosureSink::add_char#FnInTrait
 icu::casemap::ClosureSink::add_string#FnInTrait
-icu::casemap::titlecase::TitlecaseMapper#Struct
-icu::casemap::titlecase::TitlecaseMapper::new#FnInStruct
-icu::casemap::titlecase::TitlecaseMapper::new_with_mapper#FnInStruct
-icu::casemap::titlecase::TitlecaseMapper::titlecase_segment#FnInStruct
-icu::casemap::titlecase::TitlecaseMapper::titlecase_segment_to_string#FnInStruct
 icu::datetime::FormattedDateTime::write_to#FnInStruct
 icu::datetime::FormattedTimeZone::write_no_fallback#FnInStruct
 icu::datetime::FormattedTimeZone::write_to#FnInStruct
@@ -610,9 +592,4 @@ icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::get#Fn
 icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
-icu::segmenter::GraphemeClusterBreakIteratorUtf8#Typedef
-icu::segmenter::LineBreakIteratorUtf8#Typedef
-icu::segmenter::SentenceBreakIteratorUtf8#Typedef
-icu::segmenter::WordBreakIterator::iter_with_word_type#FnInStruct
-icu::segmenter::WordBreakIteratorUtf8#Typedef
 icu::segmenter::WordType::is_word_like#FnInEnum

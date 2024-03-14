@@ -339,6 +339,11 @@ lazy_static::lazy_static! {
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
 
+        // Reexported
+        "icu::calendar::any_calendar::AnyCalendar",
+        "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::casemap::titlecase::TitlecaseMapper",
+
         // TODO-2.0 these errors will have changed
         "fixed_decimal::Error",
         "icu::calendar::Error",

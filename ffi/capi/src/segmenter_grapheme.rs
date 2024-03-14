@@ -26,6 +26,11 @@ pub mod ffi {
         Typedef,
         hidden
     )]
+    #[diplomat::rust_link(
+        icu::segmenter::GraphemeClusterBreakIteratorUtf8,
+        Typedef,
+        hidden
+    )]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
         GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
