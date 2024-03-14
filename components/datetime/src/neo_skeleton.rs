@@ -546,7 +546,7 @@ impl NeoTimeSkeleton {
         Self { length, components }
     }
 
-    /// Converts this [`TimeSkeleton`] to a [`components::Bag`].
+    /// Converts this [`NeoTimeSkeleton`] to a [`components::Bag`].
     pub fn to_components_bag(self) -> components::Bag {
         self.components.to_components_bag_with_length(self.length)
     }
