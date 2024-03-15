@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 use crate::{
     parsers::{
         records::{DateRecord, IsoParseRecord, TimeRecord, TimeZone},
-        IsoDurationParser, IxdtfParser,
+        IsoDurationParser, IxdtfParser, TemporalParser,
     },
     ParserError,
 };
@@ -298,8 +298,6 @@ fn invalid_annotations() {
     );
 }
 
-/* TODO: Determine YearMonth, MonthDay, and Time Parsing go-forward.
-
 #[test]
 fn temporal_year_month() {
     let possible_year_months = [
@@ -311,10 +309,13 @@ fn temporal_year_month() {
     ];
 
     for ym in possible_year_months {
-        let result = IxdtfParser::new(ym).parse();
+        let mut temporal = TemporalParser::new(ym);
+        let result = temporal.parse_year_month().unwrap();
 
-        assert_eq!(result.date.year, 2020);
-        assert_eq!(result.date.month, 11);
+        let date = result.date.unwrap();
+
+        assert_eq!(date.year, 2020);
+        assert_eq!(date.month, 11);
     }
 }
 
@@ -329,10 +330,13 @@ fn temporal_month_day() {
     ];
 
     for md in possible_month_day {
-        let result = IxdtfParser::new(md).parse();
+        let mut temporal = TemporalParser::new(md);
+        let result = temporal.parse_month_day().unwrap();
 
-        assert_eq!(result.date.month, 11);
-        assert_eq!(result.date.day, 7);
+        let date = result.date.unwrap();
+
+        assert_eq!(date.month, 11);
+        assert_eq!(date.day, 7);
     }
 }
 
@@ -348,7 +352,8 @@ fn temporal_time() {
     ];
 
     for time in possible_times {
-        let result = IxdtfParser::new(time).parse();
+        let mut parser = TemporalParser::new(time);
+        let result = parser.parse_time().unwrap();
         let time = result.time.unwrap();
         assert_eq!(time.hour, 12);
         assert_eq!(time.minute, 1);
@@ -359,7 +364,8 @@ fn temporal_time() {
 #[test]
 fn invalid_time() {
     let bad_value = "20240801";
-    let err = IxdtfParser::new(bad_value).parse();
+    let mut temporal = TemporalParser::new(bad_value);
+    let err = temporal.parse_time();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -367,7 +373,8 @@ fn invalid_time() {
     );
 
     let bad_value = "24-12-08";
-    let err = IxdtfParser::new(bad_value).parse();
+    let mut temporal = TemporalParser::new(bad_value);
+    let err = temporal.parse_time();
     assert_eq!(
         err,
         Err(ParserError::DateYear),
@@ -376,7 +383,8 @@ fn invalid_time() {
 
     // Attempts to parse UTC offset: -12, leaving -08 on end as junk.
     let bad_value = "T19-12-08";
-    let err = IxdtfParser::new(bad_value).parse();
+    let mut temporal = TemporalParser::new(bad_value);
+    let err = temporal.parse_time();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -384,7 +392,8 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:12-089";
-    let err = IxdtfParser::new(bad_value).parse();
+    let mut temporal = TemporalParser::new(bad_value);
+    let err = temporal.parse_time();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -392,15 +401,14 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:120-08";
-    let err = IxdtfParser::new(bad_value).parse();
+    let mut temporal = TemporalParser::new(bad_value);
+    let err = temporal.parse_time();
     assert_eq!(
         err,
         Err(ParserError::TimeSeparator),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 }
-
-*/
 
 #[test]
 fn temporal_invalid_annotations() {

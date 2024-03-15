@@ -22,6 +22,11 @@ independent = true
 [package.metadata.docs.rs]
 all-features = true
 
+[features]
+default = ["temporal", "duration"]
+temporal = []
+duration = []
+
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 

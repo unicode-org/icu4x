@@ -22,6 +22,7 @@ use alloc::{string::String, vec::Vec};
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
+#[cfg(feature = "temporal")]
 pub(crate) fn parse_annotated_time_record<'a>(
     cursor: &mut Cursor<'a>,
 ) -> ParserResult<Option<IsoParseRecord<'a>>> {

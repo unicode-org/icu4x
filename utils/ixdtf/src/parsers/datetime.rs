@@ -132,7 +132,8 @@ fn parse_date(cursor: &mut Cursor) -> ParserResult<DateRecord> {
 // ==== `YearMonth` and `MonthDay` parsing functions ====
 
 /// Parses a `DateSpecYearMonth`
-pub fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
+#[cfg(feature = "temporal")]
+pub(crate) fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
     let year = parse_date_year(cursor)?;
 
     cursor.advance_if(cursor.check_or(false, is_hyphen));
@@ -145,7 +146,8 @@ pub fn parse_year_month(cursor: &mut Cursor) -> ParserResult<(i32, u8)> {
 }
 
 /// Parses a `DateSpecMonthDay`
-pub fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
+#[cfg(feature = "temporal")]
+pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
     let dash_one = cursor
         .check(is_hyphen)
         .ok_or(ParserError::abrupt_end("MonthDay"))?;
@@ -155,7 +157,9 @@ pub fn parse_month_day(cursor: &mut Cursor) -> ParserResult<(u8, u8)> {
         .ok_or(ParserError::abrupt_end("MonthDay"))?;
 
     if dash_two && dash_one {
-        cursor.advance_n(2);
+        // Advance twice
+        cursor.advance();
+        cursor.advance();
     } else if dash_two && !dash_one {
         return Err(ParserError::DateSeparator);
     }

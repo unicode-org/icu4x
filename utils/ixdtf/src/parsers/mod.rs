@@ -8,13 +8,19 @@ use crate::{ParserError, ParserResult};
 
 extern crate alloc;
 
-use self::duration::parse_duration;
+use self::{
+    duration::parse_duration,
+    grammar::is_annotation_open,
+    records::{DateRecord, TimeZone},
+};
+use alloc::vec::Vec;
 use records::{DurationParseRecord, IsoParseRecord};
 
 pub mod records;
 
 mod annotations;
 pub(crate) mod datetime;
+#[cfg(feature = "duration")]
 pub(crate) mod duration;
 mod grammar;
 mod time;
@@ -64,6 +70,119 @@ impl<'a> IxdtfParser<'a> {
     }
 }
 
+/// An extended parser for parsing additional extended datetime formats like
+/// `AnnotatedYearMonth`s, `AnnotatedMonthDay`s and `AnnotatedTime`s
+#[cfg(feature = "temporal")]
+#[derive(Debug)]
+pub struct TemporalParser<'a> {
+    cursor: Cursor<'a>,
+}
+
+#[cfg(feature = "temporal")]
+impl<'a> TemporalParser<'a> {
+    /// Creates a new `TemporalParser` from a provided `&str`.
+    pub fn new(target: &'a str) -> Self {
+        Self {
+            cursor: Cursor::new(target),
+        }
+    }
+
+    /// Parses the target value as an extended month-day string.
+    pub fn parse_month_day(&mut self) -> ParserResult<IsoParseRecord> {
+        let md = datetime::parse_month_day(&mut self.cursor);
+
+        let Ok(month_day) = md else {
+            self.cursor.pos = 0;
+            return datetime::parse_annotated_date_time(&mut self.cursor);
+        };
+
+        let (tz, calendar, annotations) = if self.cursor.check_or(false, is_annotation_open) {
+            let set = annotations::parse_annotation_set(&mut self.cursor)?;
+
+            let tz = if let Some(tz_anno) = set.tz {
+                Some(tz_anno.tz)
+            } else {
+                None
+            };
+
+            (tz, set.calendar, set.annotations)
+        } else {
+            (None, None, Vec::default())
+        };
+
+        self.cursor.close()?;
+
+        Ok(IsoParseRecord {
+            date: Some(DateRecord {
+                year: 0,
+                month: month_day.0,
+                day: month_day.1,
+            }),
+            time: None,
+            offset: None,
+            tz,
+            calendar,
+            annotations,
+        })
+    }
+
+    /// Parses the target value as an extended year-month string.
+    pub fn parse_year_month(&mut self) -> ParserResult<IsoParseRecord> {
+        let ym = datetime::parse_year_month(&mut self.cursor);
+
+        let Ok(year_month) = ym else {
+            self.cursor.pos = 0;
+            return datetime::parse_annotated_date_time(&mut self.cursor);
+        };
+
+        let (tz, calendar, annotations) = if self.cursor.check_or(false, is_annotation_open) {
+            let set = annotations::parse_annotation_set(&mut self.cursor)?;
+
+            let tz = if let Some(tz_anno) = set.tz {
+                Some(tz_anno.tz)
+            } else {
+                None
+            };
+
+            (tz, set.calendar, set.annotations)
+        } else {
+            (None, None, Vec::default())
+        };
+
+        self.cursor.close()?;
+
+        Ok(IsoParseRecord {
+            date: Some(DateRecord {
+                year: year_month.0,
+                month: year_month.1,
+                day: 1,
+            }),
+            time: None,
+            offset: None,
+            tz,
+            calendar,
+            annotations,
+        })
+    }
+
+    /// Parses the target value as an extended `Time` string
+    pub fn parse_time(&mut self) -> ParserResult<IsoParseRecord> {
+        match time::parse_annotated_time_record(&mut self.cursor) {
+            Ok(None) => {
+                self.cursor.pos = 0;
+                datetime::parse_annotated_date_time(&mut self.cursor)
+            }
+            Ok(Some(result)) => Ok(result),
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Parses the target value as a `TimeZone`.
+    pub fn parse_time_zone(&mut self) -> ParserResult<TimeZone<'a>> {
+        time_zone::parse_time_zone(&mut self.cursor)
+    }
+}
+
 /// A parser for Duration strings.
 ///
 /// # Exmaple
@@ -81,11 +200,13 @@ impl<'a> IxdtfParser<'a> {
 /// assert_eq!(result.days, 1);
 ///
 /// ```
+#[cfg(feature = "duration")]
 #[derive(Debug)]
 pub struct IsoDurationParser<'a> {
     cursor: Cursor<'a>,
 }
 
+#[cfg(feature = "duration")]
 impl<'a> IsoDurationParser<'a> {
     /// Creates a new `IsoDurationParser` from a target `&str`.
     pub fn new(target: &'a str) -> Self {
@@ -142,6 +263,7 @@ impl<'a> Cursor<'a> {
         self.source.get(target..target + 1)
     }
 
+    /// Peeks the value at `n` as a `char`.
     fn peek_n_char(&self, n: usize) -> Option<char> {
         self.peek_n(n).map(str::chars).and_then(|mut c| c.next())
     }
@@ -197,11 +319,6 @@ impl<'a> Cursor<'a> {
         if condition {
             self.advance();
         }
-    }
-
-    /// Advances the cursor's position by `n`.
-    fn advance_n(&mut self, n: usize) {
-        self.pos += n;
     }
 
     /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.
