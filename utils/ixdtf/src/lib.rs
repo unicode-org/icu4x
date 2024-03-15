@@ -35,7 +35,6 @@
 //! assert_eq!(time.hour, 8);
 //! assert_eq!(time.minute, 48);
 //! assert_eq!(tz.name, Some("America/New_York"));
-//!
 //! ```
 //!
 //! ## Date Time Strings
@@ -160,7 +159,6 @@
 //! assert!(annotation.critical);
 //! assert_eq!(annotation.key, "answer-to-universe");
 //! assert_eq!(annotation.value, "fortytwo");
-//!
 //! ```
 //!
 //! (4) belongs to group (b) and shows an ambiguous Time Zone caused by a misalignment
