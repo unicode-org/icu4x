@@ -39,15 +39,15 @@ impl<'l> Writeable for FormattedCurrency<'l> {
                 .unwrap_or(&self.essential.default_pattern.to_unaligned()),
         );
 
-        let placeholder = match self.options.width {
+        let currency_sign_value = match self.options.width {
             super::options::Width::Short => match pattern.short_place_holder_index {
                 Some(currency::PlaceholderValue::Index(index)) => self
                     .essential
                     .place_holders
                     .get(index.into())
                     .ok_or(core::fmt::Error)?,
-                Some(currency::PlaceholderValue::ISO) => self.currency_code.0.to_string().as_str(),
-                None => self.currency_code.0.to_string().as_str(),
+                Some(currency::PlaceholderValue::ISO) => self.currency_code.0.as_str(),
+                None => self.currency_code.0.as_str(),
             },
             super::options::Width::Narrow => match pattern.narrow_place_holder_index {
                 Some(currency::PlaceholderValue::Index(index)) => self
@@ -55,33 +55,46 @@ impl<'l> Writeable for FormattedCurrency<'l> {
                     .place_holders
                     .get(index.into())
                     .ok_or(core::fmt::Error)?,
-                Some(currency::PlaceholderValue::ISO) => self.currency_code.0.to_string().as_str(),
-                None => self.currency_code.0.to_string().as_str(),
+                Some(currency::PlaceholderValue::ISO) => self.currency_code.0.as_str(),
+                None => self.currency_code.0.as_str(),
             },
         };
 
         let pattern = match self.options.width {
             super::options::Width::Short => match pattern.short_pattern_standard {
-                currency::PatternSelection::Standard => {
-                    self.essential.standard_pattern.ok_or(core::fmt::Error)?
-                }
+                currency::PatternSelection::Standard => self
+                    .essential
+                    .standard_pattern
+                    .as_ref()
+                    .ok_or(core::fmt::Error)?,
                 currency::PatternSelection::StandardAlphaNextToNumber => self
                     .essential
                     .standard_alpha_next_to_number_pattern
+                    .as_ref()
                     .ok_or(core::fmt::Error)?,
             },
             super::options::Width::Narrow => match pattern.narrow_pattern_standard {
-                currency::PatternSelection::Standard => {
-                    self.essential.standard_pattern.ok_or(core::fmt::Error)?
-                }
+                currency::PatternSelection::Standard => self
+                    .essential
+                    .standard_pattern
+                    .as_ref()
+                    .ok_or(core::fmt::Error)?,
                 currency::PatternSelection::StandardAlphaNextToNumber => self
                     .essential
                     .standard_alpha_next_to_number_pattern
+                    .as_ref()
                     .ok_or(core::fmt::Error)?,
             },
         };
 
-        let fmtted = pattern.interpolate_to_string([placeholder, &self.value.write_to_string()]);
+        sink.write_str(
+            pattern
+                .interpolate_to_string([
+                    &self.value.write_to_string(), // placeholder 0 (currency value)
+                    currency_sign_value,           // placeholder 1 (currency sign value)
+                ])
+                .as_str(),
+        )?;
 
         Ok(())
     }
