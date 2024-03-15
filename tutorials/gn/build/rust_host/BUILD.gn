@@ -2,10 +2,8 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-executable("print_hello") {
-  sources = [ "print_hello.rs" ]
-  deps = [
-    "//docs/tutorials/gn/icu4x:icu",
-    "//docs/tutorials/gn/icu4x:icu_provider",
-  ]
+import("//tutorials/gn/build/rust_toolchain.gni")
+
+rust_toolchain("rust_host") {
+  rust_target = ""
 }

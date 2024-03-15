@@ -128,7 +128,7 @@
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 //! [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-//! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_provider.md#loading-additional-data-at-runtime
+//! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

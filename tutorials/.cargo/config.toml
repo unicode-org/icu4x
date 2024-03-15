@@ -4,7 +4,7 @@
 
 # All code in tutorials is built outside the workspace, as a client would.
 # In order to test with repo code, this config.toml is used automatically
-# by cargo for any invocation inside docs/tutorials/.
+# by cargo for any invocation inside tutorials/.
 
 [patch.crates-io]
 # KEEP IN SYNC WITH TOP-LEVEL Cargo.toml

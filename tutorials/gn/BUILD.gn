@@ -2,8 +2,9 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import("//docs/tutorials/gn/build/rust_toolchain.gni")
-
-rust_toolchain("rust_host") {
-  rust_target = ""
+group("default") {
+  deps = [
+    "//tutorials/gn/hello_world:print_hello",
+    "//tutorials/gn/icu4x:icu_capi"
+  ]
 }
