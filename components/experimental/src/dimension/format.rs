@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::FixedDecimal;
-use icu_pattern::{Pattern, PlaceholderValueProvider};
+use icu_pattern::{
+    DoublePlaceholderKey, DoublePlaceholderPattern, Pattern, PlaceholderValueProvider,
+};
 use tinystr::tinystr;
 use writeable::Writeable;
 use zerovec::{maps::ZeroVecLike, ule::AsULE};
@@ -79,7 +81,7 @@ impl<'l> Writeable for FormattedCurrency<'l> {
             },
         };
 
-        // complete
+        let fmtted = pattern.interpolate_to_string([placeholder, &self.value.write_to_string()]);
 
         Ok(())
     }
