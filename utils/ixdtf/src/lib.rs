@@ -17,13 +17,15 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::{IxdtfParser, records::{IsoParseRecord, DateRecord, TimeRecord, TimeZone}};
+//! use ixdtf::parsers::IxdtfParser;
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
-//! let result = IxdtfParser::new(ixdtf_str).parse_date_time().unwrap();
+//! let mut ixdtf = IxdtfParser::new(ixdtf_str);
 //!
-//! let date = result.date;
+//! let result = ixdtf.parse().unwrap();
+//!
+//! let date = result.date.unwrap();
 //! let time = result.time.unwrap();
 //! let tz = result.tz.unwrap();
 //!
@@ -32,7 +34,7 @@
 //! assert_eq!(date.day, 2);
 //! assert_eq!(time.hour, 8);
 //! assert_eq!(time.minute, 48);
-//! assert_eq!(tz.name, Some("America/New_York".to_owned()));
+//! assert_eq!(tz.name, Some("America/New_York"));
 //!
 //! ```
 //!
@@ -69,31 +71,119 @@
 //! ### Key-Value Annotations
 //!
 //! Key-value pair annotations are any keys that are delimited by a '='. Key-value
-//! pairs are can include any information. Keys can be permanent registered, provisional
-//! registered, or unknown; however, only permanent keys are acted on. Any unknown key
-//! may be provided, but will be ignored unless flagged critical. If an unknown key, is
-//! flagged as critical, an error will be thrown.
+//! pairs are can include any information. Keys can be permanently registered, provisionally
+//! registered, or unknown; however, only permanent keys are acted on by the parser. All
+//! annotations will be parsed and returned to the user in a `Vec` of annotations.
 //!
-//! If duplicate keys will are provided the first will key will be returned, unless one
+//! If duplicate registered keys are provided the first will key will be returned, unless one
 //! of the duplicate annotations is marked as critical, in which case an error will be
-//! thrown.
+//! thrown by the parser.
 //!
 //! #### Permanent Registered Keys:
 //!
 //! - `u-ca`
 //!
-//! #### Valid Key-Value Annotations
+//! #### Valid Annotations Examples
 //!
-//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
-//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][u-ca=japanese]`
-//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
+//! - (1) `2024-03-02T08:48:00-05:00[America/New_York][u-ca=iso8601]`
+//! - (2) `2024-03-02T08:48:00-05:00[u-ca=iso8601][u-ca=japanese]`
+//! - (3) `2024-03-02T08:48:00-05:00[u-ca=iso8601][answer-to-universe=fortytwo]`
 //!
-//! #### Invalid Key-Value Annotations
+//! (1) is a basic annotation string that has a Time Zone and calendar annotation.
 //!
-//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601]`
-//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]`
-//! - `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
+//! (2) has a duplicate calendar, but neither calendar is flagged as critical so
+//! the first calendar is returned while the second calendar is ignored.
 //!
+//! (3) shows an unknown key-value annotation. In this situation, the annotation
+//! is not flagged as critical, so the annotation is valid.
+//!
+//! #### Invalid Annotations Examples
+//!
+//! The below invalid annotations have to primary groups: (a) invalid annotations that
+//! `ixdtf` will handle and throw an error, and (b) invalid annotations that will NOT
+//! be handled by `ixdtf`, but will be presented to the user to handle as they see fit.
+//!
+//! - (1) `2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]`
+//! - (2) `2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]`
+//! - (3) `2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]`
+//! - (4) `2024-03-02T08:48:00+01:00[America/New_York]`
+//!
+//! (1) belongs to group (a) and shows a Time Zone annotation that is not currently
+//! in the correct order with the key value. When parsing this invalid annotation, `ixdtf`
+//! will attempt to parse the Time Zone annotation as a key-value annotation.
+//!
+//! ```rust
+//! use ixdtf::{parsers::IxdtfParser, ParserError};
+//!
+//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
+//!
+//! let mut ixdtf = IxdtfParser::new(example_one);
+//!
+//! let result = ixdtf.parse();
+//!
+//! assert_eq!(result, Err(ParserError::AnnotationKeyLeadingChar));
+//! ```
+//!
+//! (2) belongs to group (a) and shows a duplicate registered key; however, in
+//! this case, one of the registered keys is flagged as critical, which throws an error
+//! as the ixdtf string must be treated as erroneous
+//!
+//! ```rust
+//! use ixdtf::{parsers::IxdtfParser, ParserError};
+//!
+//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
+//!
+//! let mut ixdtf = IxdtfParser::new(example_one);
+//!
+//! let result = ixdtf.parse();
+//!
+//! assert_eq!(result, Err(ParserError::CriticalDuplicateCalendar));
+//! ```
+//!
+//! (3) belongs to group (b) and shows an unknown key flagged as critical. `ixdtf` is
+//! agnostic regarding the ambiguity caused by the criticality of an unknown key. This will
+//! be provided to the user to handle the unknown key's critical flag as they see fit.
+//!
+//! ```rust
+//! use ixdtf::parsers::IxdtfParser;
+//!
+//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
+//!
+//! let mut ixdtf = IxdtfParser::new(example_one);
+//!
+//! let result = ixdtf.parse().unwrap();
+//!
+//! let annotation = &result.annotations[0];
+//!
+//! // While an unknown annotation should not be critical, it is up to the user
+//! // to act on that error.
+//! assert!(annotation.critical);
+//! assert_eq!(annotation.key, "answer-to-universe");
+//! assert_eq!(annotation.value, "fortytwo");
+//!
+//! ```
+//!
+//! (4) belongs to group (b) and shows an ambiguous Time Zone caused by a misalignment
+//! of the offset and the Time Zone annotation. It is up to the user to handle this ambiguity
+//! between the offset and annotation.
+//!
+//! ```rust
+//! use ixdtf::parsers::IxdtfParser;
+//!
+//! let example_one = "2024-03-02T08:48:00+01:00[America/New_York]";
+//!
+//! let mut ixdtf = IxdtfParser::new(example_one);
+//!
+//! let result = ixdtf.parse().unwrap();
+//!
+//! let tz = result.tz.unwrap();
+//! let offset = result.offset.unwrap();
+//!
+//! // The time zone annotation and offset conflict with each other, and must therefore be
+//! // resolved by the user.
+//! assert_eq!(tz.name, Some("America/New_York"));
+//! assert_eq!(offset.hour, 1);
+//! ```
 //!
 //! ## Additional DateTime grammar resources
 //!
