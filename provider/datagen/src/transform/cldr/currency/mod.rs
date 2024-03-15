@@ -151,34 +151,36 @@ fn extract_currency_essentials<'data>(
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut currency_patterns_standard_next_to_num =
         BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
-    let mut place_holders = Vec::<&str>::new();
-    // A map to check if the place holder is already in the place_holders vector.
-    let mut place_holders_checker_map = HashMap::<&str, u16>::new();
+    let mut placeholder_values = Vec::<&str>::new();
+    // A map to check if the place holder is already in the placeholder_values vector.
+    let mut placeholder_values_checker_map = HashMap::<&str, u16>::new();
 
     for (iso, currency_pattern) in currencies {
         let short_place_holder_index = currency_pattern.short.as_ref().map(|short_place_holder| {
-            if let Some(&index) = place_holders_checker_map.get(short_place_holder.as_str()) {
+            if let Some(&index) = placeholder_values_checker_map.get(short_place_holder.as_str()) {
                 PlaceholderValue::Index(index)
             } else if short_place_holder == iso.try_into_tinystr().unwrap().as_str() {
                 PlaceholderValue::ISO
             } else {
-                let index = place_holders.len() as u16;
-                place_holders.push(short_place_holder.as_str());
-                place_holders_checker_map.insert(short_place_holder.as_str(), index);
+                let index = placeholder_values.len() as u16;
+                placeholder_values.push(short_place_holder.as_str());
+                placeholder_values_checker_map.insert(short_place_holder.as_str(), index);
                 PlaceholderValue::Index(index)
             }
         });
 
         let narrow_place_holder_index =
             currency_pattern.narrow.as_ref().map(|narrow_place_holder| {
-                if let Some(&index) = place_holders_checker_map.get(narrow_place_holder.as_str()) {
+                if let Some(&index) =
+                    placeholder_values_checker_map.get(narrow_place_holder.as_str())
+                {
                     PlaceholderValue::Index(index)
                 } else if narrow_place_holder == iso.try_into_tinystr().unwrap().as_str() {
                     PlaceholderValue::ISO
                 } else {
-                    let index = place_holders.len() as u16;
-                    place_holders.push(narrow_place_holder.as_ref());
-                    place_holders_checker_map.insert(narrow_place_holder.as_str(), index);
+                    let index = placeholder_values.len() as u16;
+                    placeholder_values.push(narrow_place_holder.as_ref());
+                    placeholder_values_checker_map.insert(narrow_place_holder.as_str(), index);
                     PlaceholderValue::Index(index)
                 }
             });
@@ -208,7 +210,7 @@ fn extract_currency_essentials<'data>(
                 Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    place_holders.get(index as usize).unwrap(),
+                    placeholder_values.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceholderValue::ISO) => {
                     currency_pattern_selection(provider, standard, iso_string.as_str())?
@@ -227,7 +229,7 @@ fn extract_currency_essentials<'data>(
                 Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    place_holders.get(index as usize).unwrap(),
+                    placeholder_values.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceholderValue::ISO) => {
                     currency_pattern_selection(provider, standard, &iso_string)?
@@ -329,7 +331,7 @@ fn extract_currency_essentials<'data>(
         currency_config_map: ZeroMap::from_iter(currency_config_map.iter()),
         standard_pattern: create_pattern(standard.as_str())?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
-        placeholder_values: VarZeroVec::from(&place_holders),
+        placeholder_values: VarZeroVec::from(&placeholder_values),
         default_config: default_pattern,
     })
 }
@@ -452,18 +454,18 @@ fn test_basic() {
         .standard_alpha_next_to_number_pattern
         .is_none());
 
-    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_place_holders_of_currency(
+    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholder_values_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
         &ar_eg,
-        ar_eg_place_holders,
+        ar_eg_placeholder_values,
     );
     assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
     assert_eq!(ar_eg_egp_narrow, "E£");
 
-    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_place_holders_of_currency(
+    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_placeholder_values_of_currency(
         tinystr!(3, "USD").to_unvalidated(),
         &ar_eg,
-        ar_eg_place_holders,
+        ar_eg_placeholder_values,
     );
     assert_eq!(ar_eg_usd_short, "US$");
     assert_eq!(ar_eg_usd_narrow, "US$");
