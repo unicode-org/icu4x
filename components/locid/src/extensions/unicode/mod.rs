@@ -43,7 +43,7 @@ pub use keywords::Keywords;
 #[doc(inline)]
 pub use value::{value, Value};
 
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 use litemap::LiteMap;
@@ -150,7 +150,7 @@ impl Unicode {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
-    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut attributes = ShortBoxSlice::new();
 
         while let Some(subtag) = iter.peek() {
@@ -195,7 +195,7 @@ impl Unicode {
 
         // Ensure we've defined at least one attribute or keyword
         if attributes.is_empty() && keywords.is_empty() {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
 
         Ok(Self {

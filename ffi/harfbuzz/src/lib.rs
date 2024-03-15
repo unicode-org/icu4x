@@ -44,7 +44,7 @@
 extern crate alloc;
 mod error;
 
-use crate::error::HarfBuzzError;
+use crate::error::*;
 use alloc::boxed::Box;
 use core::ffi::{c_char, c_void};
 use harfbuzz_sys::*;
@@ -155,16 +155,16 @@ impl UnicodeFuncs {
         self.raw
     }
 
-    fn empty() -> Result<Self, HarfBuzzError> {
+    fn empty() -> Option<Self> {
         let empty = unsafe { hb_unicode_funcs_get_empty() };
         // The HarfBuzz refcounting convention is that "create"
         // sets refcount to one, not zero.
         // https://harfbuzz.github.io/object-model-lifecycle.html
         let raw = unsafe { hb_unicode_funcs_create(empty) };
         if raw == empty {
-            Err(HarfBuzzError::Alloc)
+            None
         } else {
-            Ok(Self { raw })
+            Some(Self { raw })
         }
     }
 
@@ -176,8 +176,8 @@ impl UnicodeFuncs {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Result<Self, HarfBuzzError> {
-        let ufuncs = Self::empty()?;
+    pub fn new() -> Result<Self, HarfBuzzAllocError> {
+        let ufuncs = Self::empty().ok_or(HarfBuzzAllocError)?;
 
         unsafe {
             hb_unicode_funcs_set_combining_class_func(
@@ -386,7 +386,7 @@ impl UnicodeFuncs {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn new_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
+    pub fn new_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzAllocOrDataError>
     where
         D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
@@ -407,7 +407,7 @@ impl UnicodeFuncs {
         let canonical_composition = CanonicalComposition::try_new_unstable(provider)?;
         let canonical_decomposition = CanonicalDecomposition::try_new_unstable(provider)?;
 
-        let ufuncs = Self::empty()?;
+        let ufuncs = Self::empty().ok_or(HarfBuzzAllocOrDataError::Alloc)?;
 
         unsafe {
             hb_unicode_funcs_set_combining_class_func(

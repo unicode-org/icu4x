@@ -14,7 +14,7 @@ use writeable::Writeable;
 pub struct ListFormat(icu::list::ListFormatter);
 
 impl ecma402_traits::listformat::Format for ListFormat {
-    type Error = icu::list::Error;
+    type Error = icu_provider::DataError;
 
     fn try_new<L>(locale: L, opts: Options) -> Result<Self, Self::Error>
     where

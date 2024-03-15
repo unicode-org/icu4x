@@ -7,7 +7,6 @@ use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
 use crate::rule_segmenter::*;
-use crate::SegmenterError;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -215,7 +214,7 @@ impl WordSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_auto,
@@ -228,7 +227,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
@@ -290,7 +289,7 @@ impl WordSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_lstm,
@@ -303,7 +302,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -357,7 +356,7 @@ impl WordSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_dictionary,
@@ -369,7 +368,7 @@ impl WordSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>

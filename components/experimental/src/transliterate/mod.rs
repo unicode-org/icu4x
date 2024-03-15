@@ -24,15 +24,10 @@
 pub mod provider;
 
 mod compile;
-mod error;
 mod ids;
 #[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod transliterator;
 
-pub use error::*;
 pub use transliterator::*;
-
-#[doc(no_inline)]
-pub use TransliteratorError as Error;
 
 pub use compile::RuleCollection;

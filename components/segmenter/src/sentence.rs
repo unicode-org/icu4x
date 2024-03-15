@@ -7,8 +7,8 @@ use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
+use crate::provider::*;
 use crate::rule_segmenter::*;
-use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Implements the [`Iterator`] trait over the sentence boundaries of the given string.
@@ -124,7 +124,7 @@ impl SentenceSegmenter {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: SegmenterError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -136,7 +136,7 @@ impl SentenceSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {

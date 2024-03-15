@@ -5,7 +5,6 @@
 use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
-use crate::SegmenterError;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -365,7 +364,7 @@ impl LineSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_auto,
@@ -378,7 +377,7 @@ impl LineSegmenter {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     #[cfg(feature = "auto")]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -409,7 +408,7 @@ impl LineSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_lstm,
@@ -422,7 +421,7 @@ impl LineSegmenter {
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -451,7 +450,7 @@ impl LineSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_dictionary,
@@ -463,7 +462,7 @@ impl LineSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
@@ -493,7 +492,7 @@ impl LineSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: LineBreakOptions,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_auto_with_options,
@@ -509,7 +508,7 @@ impl LineSegmenter {
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, SegmenterError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -546,7 +545,7 @@ impl LineSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: LineBreakOptions,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_lstm_with_options,
@@ -562,7 +561,7 @@ impl LineSegmenter {
     pub fn try_new_lstm_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, SegmenterError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -607,7 +606,7 @@ impl LineSegmenter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: LineBreakOptions,
-        error: SegmenterError,
+        error: DataError,
         #[cfg(skip)]
         functions: [
             new_dictionary_with_options,
@@ -622,7 +621,7 @@ impl LineSegmenter {
     pub fn try_new_dictionary_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, SegmenterError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>

@@ -5,34 +5,22 @@
 //! HarfBuzz-specific error
 
 use displaydoc::Display;
-use icu_normalizer::NormalizerError;
-use icu_properties::PropertiesError;
+use icu_provider::DataError;
 
-/// HarfBuzz-specific error
 #[derive(Display, Debug)]
-#[non_exhaustive]
-pub enum HarfBuzzError {
-    /// Error coming from the normalizer
+pub struct HarfBuzzAllocError;
+
+#[derive(Display, Debug)]
+pub enum HarfBuzzAllocOrDataError {
+    /// Error coming from the data provider
     #[displaydoc("{0}")]
-    Normalizer(NormalizerError),
-    /// Error coming from properties
-    #[displaydoc("{0}")]
-    Properties(PropertiesError),
+    Data(DataError),
     /// Allocation failed within HarfBuzz itself
     Alloc,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for HarfBuzzError {}
-
-impl From<PropertiesError> for HarfBuzzError {
-    fn from(e: PropertiesError) -> Self {
-        HarfBuzzError::Properties(e)
-    }
-}
-
-impl From<NormalizerError> for HarfBuzzError {
-    fn from(e: NormalizerError) -> Self {
-        HarfBuzzError::Normalizer(e)
+impl From<DataError> for HarfBuzzAllocOrDataError {
+    fn from(e: DataError) -> Self {
+        HarfBuzzAllocOrDataError::Data(e)
     }
 }

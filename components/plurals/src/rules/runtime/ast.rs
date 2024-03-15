@@ -260,11 +260,11 @@ impl From<RangeOrValue> for reference::ast::RangeListItem {
 }
 
 impl FromStr for Rule<'_> {
-    type Err = reference::parser::ParserError;
+    type Err = reference::parser::ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let rule = reference::parser::parse(s.as_bytes())?;
-        Rule::try_from(&rule).map_err(|_| reference::parser::ParserError::ValueTooLarge)
+        Rule::try_from(&rule).map_err(|_| reference::parser::ParseError::ValueTooLarge)
     }
 }
 

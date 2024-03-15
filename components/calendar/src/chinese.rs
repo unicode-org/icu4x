@@ -159,7 +159,7 @@ impl Chinese {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -172,7 +172,7 @@ impl Chinese {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<ChineseCacheV1Marker> + ?Sized>(
         provider: &D,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
             data: Some(provider.load(Default::default())?.take_payload()?),
         })

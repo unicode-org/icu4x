@@ -12,7 +12,6 @@
 //! glyph-availability-guided custom normalizer.
 
 use crate::char_from_u16;
-use crate::error::NormalizerError;
 use crate::in_inclusive_range;
 use crate::provider::CanonicalCompositionsV1Marker;
 use crate::provider::CanonicalDecompositionDataV1Marker;
@@ -98,7 +97,7 @@ impl CanonicalComposition {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: NormalizerError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -110,7 +109,7 @@ impl CanonicalComposition {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
@@ -367,7 +366,7 @@ impl CanonicalDecomposition {
                     .scalars24
                     .const_len()
                 <= 0xFFF,
-            "NormalizerError::FutureExtension"
+            "future extension"
         );
 
         Self {
@@ -383,7 +382,7 @@ impl CanonicalDecomposition {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: NormalizerError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -395,7 +394,7 @@ impl CanonicalDecomposition {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -414,7 +413,7 @@ impl CanonicalDecomposition {
             // dynamically change the bit masks so that the length mask becomes 0x1FFF instead
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
-            return Err(NormalizerError::FutureExtension);
+            return Err(DataError::custom("future extension"));
         }
 
         let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> =
@@ -484,7 +483,7 @@ impl CanonicalCombiningClassMap {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: NormalizerError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -495,7 +494,7 @@ impl CanonicalCombiningClassMap {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
     {

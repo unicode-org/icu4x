@@ -6,7 +6,7 @@ use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
-use icu_locid::{subtags::Script, ParserError};
+use icu_locid::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -61,7 +61,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNamesV1<'static> {
-    type Error = ParserError;
+    type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();

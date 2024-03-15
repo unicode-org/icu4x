@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParserError, SubtagIterator};
+use crate::parser::{ParseError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
@@ -48,7 +48,7 @@ impl Value {
     ///
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::new();
 
         if !input.is_empty() {
@@ -73,9 +73,9 @@ impl Value {
     /// Value::try_from_single_subtag(b"#####").expect_err("invalid subtag");
     /// Value::try_from_single_subtag(b"foo-bar").expect_err("not a single subtag");
     /// ```
-    pub const fn try_from_single_subtag(subtag: &[u8]) -> Result<Self, ParserError> {
+    pub const fn try_from_single_subtag(subtag: &[u8]) -> Result<Self, ParseError> {
         match Self::subtag_from_bytes(subtag) {
-            Err(_) => Err(ParserError::InvalidExtension),
+            Err(_) => Err(ParseError::InvalidExtension),
             Ok(option) => Ok(Self::from_tinystr(option)),
         }
     }
@@ -107,11 +107,11 @@ impl Value {
     }
 
     #[doc(hidden)]
-    pub const fn subtag_from_bytes(bytes: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+    pub const fn subtag_from_bytes(bytes: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParseError> {
         Self::parse_subtag_from_bytes_manual_slice(bytes, 0, bytes.len())
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParseError> {
         Self::parse_subtag_from_bytes_manual_slice(t, 0, t.len())
     }
 
@@ -119,17 +119,17 @@ impl Value {
         bytes: &[u8],
         start: usize,
         end: usize,
-    ) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+    ) -> Result<Option<TinyAsciiStr<8>>, ParseError> {
         let slice_len = end - start;
         if slice_len > *VALUE_LENGTH.end() || slice_len < *VALUE_LENGTH.start() {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
 
         match TinyAsciiStr::from_bytes_manual_slice(bytes, start, end) {
             Ok(TRUE_VALUE) => Ok(None),
             Ok(s) if s.is_ascii_alphanumeric() => Ok(Some(s.to_ascii_lowercase())),
-            Ok(_) => Err(ParserError::InvalidExtension),
-            Err(_) => Err(ParserError::InvalidSubtag),
+            Ok(_) => Err(ParseError::InvalidExtension),
+            Err(_) => Err(ParseError::InvalidSubtag),
         }
     }
 
@@ -142,7 +142,7 @@ impl Value {
 }
 
 impl FromStr for Value {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())

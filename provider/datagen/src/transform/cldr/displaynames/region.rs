@@ -60,7 +60,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 const SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
-    type Error = icu_locid::ParserError;
+    type Error = icu_locid::ParseError;
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();

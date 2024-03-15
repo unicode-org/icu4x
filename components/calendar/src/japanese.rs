@@ -128,7 +128,7 @@ impl Japanese {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -141,7 +141,7 @@ impl Japanese {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
         provider: &D,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
             eras: provider.load(Default::default())?.take_payload()?,
         })
@@ -187,7 +187,7 @@ impl JapaneseExtended {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -200,7 +200,7 @@ impl JapaneseExtended {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
         provider: &D,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Ok(Self(Japanese {
             eras: provider.load(Default::default())?.take_payload()?.cast(),
         }))
