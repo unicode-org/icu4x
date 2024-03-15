@@ -7,18 +7,20 @@
 use crate::{
     assert_syntax,
     parsers::{
-        annotations,
-        grammar::{
-            is_annotation_open, is_decimal_separator, is_sign, is_time_designator,
-            is_time_separator, is_utc_designator,
-        },
-        records::{IsoParseRecord, TimeRecord},
-        time_zone, Cursor,
+        grammar::{is_decimal_separator, is_time_separator},
+        records::TimeRecord,
+        Cursor,
     },
     ParserError, ParserResult,
 };
 
-use alloc::{string::String, vec::Vec};
+use alloc::string::String;
+
+#[cfg(feature = "temporal")]
+use crate::parsers::{annotations, grammar, records::IsoParseRecord, time_zone};
+
+#[cfg(feature = "temporal")]
+use alloc::vec::Vec;
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
@@ -26,7 +28,7 @@ use alloc::{string::String, vec::Vec};
 pub(crate) fn parse_annotated_time_record<'a>(
     cursor: &mut Cursor<'a>,
 ) -> ParserResult<Option<IsoParseRecord<'a>>> {
-    let designator = cursor.check_or(false, is_time_designator);
+    let designator = cursor.check_or(false, grammar::is_time_designator);
     cursor.advance_if(designator);
 
     let time = match parse_time_record(cursor) {
@@ -42,14 +44,16 @@ pub(crate) fn parse_annotated_time_record<'a>(
     // If Time was successfully parsed, assume from this point that this IS a
     // valid AnnotatedTimeRecord.
 
-    let utc_offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
+    let utc_offset = if cursor.check_or(false, |ch| {
+        grammar::is_sign(ch) || grammar::is_utc_designator(ch)
+    }) {
         time_zone::parse_date_time_utc(cursor)?.offset
     } else {
         None
     };
 
     // Check if annotations exist.
-    if !cursor.check_or(false, is_annotation_open) {
+    if !cursor.check_or(false, grammar::is_annotation_open) {
         cursor.close()?;
 
         return Ok(Some(IsoParseRecord {

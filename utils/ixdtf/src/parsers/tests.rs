@@ -7,10 +7,16 @@ use alloc::vec::Vec;
 use crate::{
     parsers::{
         records::{DateRecord, IsoParseRecord, TimeRecord, TimeZone},
-        IsoDurationParser, IxdtfParser, TemporalParser,
+        IxdtfParser,
     },
     ParserError,
 };
+
+#[cfg(feature = "temporal")]
+use crate::parsers::TemporalParser;
+
+#[cfg(feature = "duration")]
+use crate::parsers::IsoDurationParser;
 
 #[test]
 fn temporal_parser_basic() {
@@ -299,6 +305,7 @@ fn invalid_annotations() {
 }
 
 #[test]
+#[cfg(feature = "temporal")]
 fn temporal_year_month() {
     let possible_year_months = [
         "+002020-11",
@@ -320,6 +327,7 @@ fn temporal_year_month() {
 }
 
 #[test]
+#[cfg(feature = "temporal")]
 fn temporal_month_day() {
     let possible_month_day = [
         "11-07",
@@ -341,6 +349,7 @@ fn temporal_month_day() {
 }
 
 #[test]
+#[cfg(feature = "temporal")]
 fn temporal_time() {
     let possible_times = [
         "T12:01:04",
@@ -362,6 +371,7 @@ fn temporal_time() {
 }
 
 #[test]
+#[cfg(feature = "temporal")]
 fn invalid_time() {
     let bad_value = "20240801";
     let mut temporal = TemporalParser::new(bad_value);
@@ -443,6 +453,7 @@ fn temporal_valid_instant_strings() {
 }
 
 #[test]
+#[cfg(feature = "duration")]
 fn temporal_duration_parsing() {
     let durations = [
         "p1y1m1dt1h1m1s",
@@ -473,6 +484,7 @@ fn temporal_duration_parsing() {
 }
 
 #[test]
+#[cfg(feature = "duration")]
 fn temporal_invalid_durations() {
     let invalids = [
         "P1Y1M1W0,5D",

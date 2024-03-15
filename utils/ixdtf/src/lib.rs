@@ -8,7 +8,7 @@
 //! Extended Data About Times and Events' (sedate) builds on RFC3339's time stamp specification and
 //! ISO8601 to provide an optional extension syntax for date time strings.
 //!
-//! ## Date Time Extended Examples
+//! # Date Time Extended Examples
 //!
 //! - `2024-03-02T08:48:00-05:00[America/New_York]`
 //! - `2024-03-02T08:48:00-05:00[-05:00]`
@@ -79,7 +79,7 @@
 //! of the duplicate annotations is marked as critical, in which case an error will be
 //! thrown by the parser.
 //!
-//! #### Permanent Registered Keys:
+//! #### Permanent Registered Keys
 //!
 //! - `u-ca`
 //!

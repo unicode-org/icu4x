@@ -96,6 +96,7 @@ pub struct UTCOffset {
 
 /// The resulting record of a `Duration` parse.
 #[non_exhaustive]
+#[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
     /// Duration Sign
@@ -120,6 +121,7 @@ pub struct DurationParseRecord {
     pub nanoseconds: f64,
 }
 
+#[cfg(feature = "duration")]
 impl DurationParseRecord {
     pub(crate) fn from_records(
         sign: bool,
@@ -167,6 +169,7 @@ impl DurationParseRecord {
 }
 
 /// A `DateDuration` Parse Node.
+#[cfg(feature = "duration")]
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) struct DateDurationRecord {
     /// Years value.
@@ -180,6 +183,7 @@ pub(crate) struct DateDurationRecord {
 }
 
 /// A `TimeDuration` Parse Node
+#[cfg(feature = "duration")]
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) struct TimeDurationRecord {
     /// Hours value.

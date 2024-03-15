@@ -77,48 +77,56 @@ pub(crate) const fn is_utc_designator(ch: char) -> bool {
 
 /// Checks if char is a `DurationDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_duration_designator(ch: char) -> bool {
     ch == 'P' || ch == 'p'
 }
 
 /// Checks if char is a `YearDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_year_designator(ch: char) -> bool {
     ch == 'Y' || ch == 'y'
 }
 
 /// Checks if char is a `MonthsDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_month_designator(ch: char) -> bool {
     ch == 'M' || ch == 'm'
 }
 
 /// Checks if char is a `WeekDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_week_designator(ch: char) -> bool {
     ch == 'W' || ch == 'w'
 }
 
 /// Checks if char is a `DayDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_day_designator(ch: char) -> bool {
     ch == 'D' || ch == 'd'
 }
 
 /// checks if char is a `DayDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_hour_designator(ch: char) -> bool {
     ch == 'H' || ch == 'h'
 }
 
 /// Checks if char is a `MinuteDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_minute_designator(ch: char) -> bool {
     is_month_designator(ch)
 }
 
 /// checks if char is a `SecondDesignator`.
 #[inline]
+#[cfg(feature = "duration")]
 pub(crate) const fn is_second_designator(ch: char) -> bool {
     ch == 'S' || ch == 's'
 }

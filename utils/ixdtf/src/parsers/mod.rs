@@ -8,13 +8,12 @@ use crate::{ParserError, ParserResult};
 
 extern crate alloc;
 
-use self::{
-    duration::parse_duration,
-    grammar::is_annotation_open,
-    records::{DateRecord, TimeZone},
-};
+#[cfg(feature = "duration")]
+#[cfg(feature = "temporal")]
 use alloc::vec::Vec;
-use records::{DurationParseRecord, IsoParseRecord};
+#[cfg(feature = "duration")]
+use records::DurationParseRecord;
+use records::IsoParseRecord;
 
 pub mod records;
 
@@ -96,24 +95,25 @@ impl<'a> TemporalParser<'a> {
             return datetime::parse_annotated_date_time(&mut self.cursor);
         };
 
-        let (tz, calendar, annotations) = if self.cursor.check_or(false, is_annotation_open) {
-            let set = annotations::parse_annotation_set(&mut self.cursor)?;
+        let (tz, calendar, annotations) =
+            if self.cursor.check_or(false, grammar::is_annotation_open) {
+                let set = annotations::parse_annotation_set(&mut self.cursor)?;
 
-            let tz = if let Some(tz_anno) = set.tz {
-                Some(tz_anno.tz)
+                let tz = if let Some(tz_anno) = set.tz {
+                    Some(tz_anno.tz)
+                } else {
+                    None
+                };
+
+                (tz, set.calendar, set.annotations)
             } else {
-                None
+                (None, None, Vec::default())
             };
-
-            (tz, set.calendar, set.annotations)
-        } else {
-            (None, None, Vec::default())
-        };
 
         self.cursor.close()?;
 
         Ok(IsoParseRecord {
-            date: Some(DateRecord {
+            date: Some(records::DateRecord {
                 year: 0,
                 month: month_day.0,
                 day: month_day.1,
@@ -135,24 +135,25 @@ impl<'a> TemporalParser<'a> {
             return datetime::parse_annotated_date_time(&mut self.cursor);
         };
 
-        let (tz, calendar, annotations) = if self.cursor.check_or(false, is_annotation_open) {
-            let set = annotations::parse_annotation_set(&mut self.cursor)?;
+        let (tz, calendar, annotations) =
+            if self.cursor.check_or(false, grammar::is_annotation_open) {
+                let set = annotations::parse_annotation_set(&mut self.cursor)?;
 
-            let tz = if let Some(tz_anno) = set.tz {
-                Some(tz_anno.tz)
+                let tz = if let Some(tz_anno) = set.tz {
+                    Some(tz_anno.tz)
+                } else {
+                    None
+                };
+
+                (tz, set.calendar, set.annotations)
             } else {
-                None
+                (None, None, Vec::default())
             };
-
-            (tz, set.calendar, set.annotations)
-        } else {
-            (None, None, Vec::default())
-        };
 
         self.cursor.close()?;
 
         Ok(IsoParseRecord {
-            date: Some(DateRecord {
+            date: Some(records::DateRecord {
                 year: year_month.0,
                 month: year_month.1,
                 day: 1,
@@ -178,7 +179,7 @@ impl<'a> TemporalParser<'a> {
     }
 
     /// Parses the target value as a `TimeZone`.
-    pub fn parse_time_zone(&mut self) -> ParserResult<TimeZone<'a>> {
+    pub fn parse_time_zone(&mut self) -> ParserResult<records::TimeZone<'a>> {
         time_zone::parse_time_zone(&mut self.cursor)
     }
 }
@@ -217,7 +218,7 @@ impl<'a> IsoDurationParser<'a> {
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
-        parse_duration(&mut self.cursor)
+        duration::parse_duration(&mut self.cursor)
     }
 }
 
