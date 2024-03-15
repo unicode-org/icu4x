@@ -729,7 +729,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8e2fa9ac70f1269a30e934e6d21e16cad0d8440f#8e2fa9ac70f1269a30e934e6d21e16cad0d8440f"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -747,7 +747,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8e2fa9ac70f1269a30e934e6d21e16cad0d8440f#8e2fa9ac70f1269a30e934e6d21e16cad0d8440f"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "log",
 ]
@@ -755,7 +755,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8e2fa9ac70f1269a30e934e6d21e16cad0d8440f#8e2fa9ac70f1269a30e934e6d21e16cad0d8440f"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -775,7 +775,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=8e2fa9ac70f1269a30e934e6d21e16cad0d8440f#8e2fa9ac70f1269a30e934e6d21e16cad0d8440f"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "displaydoc",
  "either",
@@ -1314,6 +1314,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_pattern",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1452,6 +1453,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_pattern",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1602,8 +1604,15 @@ version = "1.4.0"
 name = "icu_pattern"
 version = "0.1.5"
 dependencies = [
+ "databake",
  "displaydoc",
+ "postcard",
+ "serde",
+ "serde_json",
  "writeable",
+ "yoke",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]

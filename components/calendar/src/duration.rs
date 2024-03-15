@@ -62,8 +62,11 @@ use core::marker::PhantomData;
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
 /// ```
+///
+/// Currently unstable for ICU4X 1.0
 #[derive(Copy, Clone, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
+#[doc(hidden)]
 pub struct DateDuration<C: Calendar + ?Sized> {
     /// The number of years
     pub years: i32,
@@ -79,8 +82,11 @@ pub struct DateDuration<C: Calendar + ?Sized> {
 
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
+///
+/// Currently unstable for ICU4X 1.0
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[allow(clippy::exhaustive_enums)] // this type should be stable
+#[doc(hidden)]
 pub enum DateDurationUnit {
     /// Duration in years
     Years,
