@@ -145,11 +145,12 @@ fn extract_currency_essentials<'data>(
         None => "",
     };
 
-    let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_config_map =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut currency_patterns_standard_none =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut currency_patterns_standard_next_to_num =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut place_holders = Vec::<&str>::new();
     // A map to check if the place holder is already in the place_holders vector.
     let mut place_holders_checker_map = HashMap::<&str, u16>::new();
@@ -238,9 +239,9 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-        let currency_patterns = CurrencyPatterns {
-            short_pattern_standard,
-            narrow_pattern_standard,
+        let currency_patterns = CurrencyPatternConfig {
+            short_pattern_selection: short_pattern_standard,
+            narrow_pattern_selection: narrow_pattern_standard,
             short_place_holder_index,
             narrow_place_holder_index,
         };
@@ -258,25 +259,25 @@ fn extract_currency_essentials<'data>(
                 currency_patterns_standard_next_to_num.insert(*iso, currency_patterns);
             }
             _ => {
-                currency_patterns_map.insert(*iso, currency_patterns);
+                currency_config_map.insert(*iso, currency_patterns);
             }
         }
     }
 
     let default_pattern =
         if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
-            currency_patterns_map.extend(currency_patterns_standard_none);
-            CurrencyPatterns {
-                short_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
-                narrow_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
+            currency_config_map.extend(currency_patterns_standard_none);
+            CurrencyPatternConfig {
+                short_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
+                narrow_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
                 short_place_holder_index: None,
                 narrow_place_holder_index: None,
             }
         } else {
-            currency_patterns_map.extend(currency_patterns_standard_next_to_num);
-            CurrencyPatterns {
-                short_pattern_standard: PatternSelection::Standard,
-                narrow_pattern_standard: PatternSelection::Standard,
+            currency_config_map.extend(currency_patterns_standard_next_to_num);
+            CurrencyPatternConfig {
+                short_pattern_selection: PatternSelection::Standard,
+                narrow_pattern_selection: PatternSelection::Standard,
                 short_place_holder_index: None,
                 narrow_place_holder_index: None,
             }
@@ -325,35 +326,35 @@ fn extract_currency_essentials<'data>(
     }
 
     Ok(CurrencyEssentialsV1 {
-        currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
+        currency_config_map: ZeroMap::from_iter(currency_config_map.iter()),
         standard_pattern: create_pattern(standard.as_str())?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
-        place_holders: VarZeroVec::from(&place_holders),
-        default_pattern,
+        placeholder_values: VarZeroVec::from(&place_holders),
+        default_config: default_pattern,
     })
 }
 
 #[test]
 fn test_basic() {
-    fn get_place_holders_of_currency(
+    fn get_placeholder_values_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataPayload<CurrencyEssentialsV1Marker>,
-        place_holders: &VarZeroVec<'_, str>,
+        placeholder_values: &VarZeroVec<'_, str>,
     ) -> (String, String) {
-        let default = CurrencyPatterns {
-            short_pattern_standard: PatternSelection::Standard,
-            narrow_pattern_standard: PatternSelection::Standard,
+        let default = CurrencyPatternConfig {
+            short_pattern_selection: PatternSelection::Standard,
+            narrow_pattern_selection: PatternSelection::Standard,
             short_place_holder_index: None,
             narrow_place_holder_index: None,
         };
         let owned = locale.get().to_owned();
-        let currency_pattern: CurrencyPatterns = owned
-            .currency_patterns_map
+        let currency_pattern: CurrencyPatternConfig = owned
+            .currency_config_map
             .get_copied(&iso_code)
             .unwrap_or(default);
 
         let short_place_holder = match currency_pattern.short_place_holder_index {
-            Some(PlaceholderValue::Index(index)) => place_holders
+            Some(PlaceholderValue::Index(index)) => placeholder_values
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
@@ -362,7 +363,7 @@ fn test_basic() {
         };
 
         let narrow_place_holder = match currency_pattern.narrow_place_holder_index {
-            Some(PlaceholderValue::Index(index)) => place_holders
+            Some(PlaceholderValue::Index(index)) => placeholder_values
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
@@ -387,7 +388,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let en_place_holders = &en.get().to_owned().place_holders;
+    let en_placeholder_values = &en.get().to_owned().placeholder_values;
     assert_eq!(
         en.clone()
             .get()
@@ -407,13 +408,19 @@ fn test_basic() {
         "\u{3}\u{6}\u{a0}"
     );
 
-    let (en_usd_short, en_usd_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_place_holders);
+    let (en_usd_short, en_usd_narrow) = get_placeholder_values_of_currency(
+        tinystr!(3, "USD").to_unvalidated(),
+        &en,
+        en_placeholder_values,
+    );
     assert_eq!(en_usd_short, "$");
     assert_eq!(en_usd_narrow, "$");
 
-    let (en_egp_short, en_egp_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "EGP").to_unvalidated(), &en, en_place_holders);
+    let (en_egp_short, en_egp_narrow) = get_placeholder_values_of_currency(
+        tinystr!(3, "EGP").to_unvalidated(),
+        &en,
+        en_placeholder_values,
+    );
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
@@ -426,7 +433,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let ar_eg_place_holders = &ar_eg.get().to_owned().place_holders;
+    let ar_eg_placeholder_values = &ar_eg.get().to_owned().placeholder_values;
 
     assert_eq!(
         ar_eg

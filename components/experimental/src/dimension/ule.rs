@@ -7,7 +7,9 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::dimension::provider::currency::{CurrencyPatterns, PatternSelection, PlaceholderValue};
+use crate::dimension::provider::currency::{
+    CurrencyPatternConfig, PatternSelection, PlaceholderValue,
+};
 
 const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
@@ -56,17 +58,17 @@ const PATTERN_NARROW_SHIFT: u8 = 6;
 const INDEX_SHORT_SHIFT: u8 = 3;
 const INDEX_NARROW_SHIFT: u8 = 0;
 
-impl AsULE for CurrencyPatterns {
+impl AsULE for CurrencyPatternConfig {
     type ULE = CurrencyPatternsULE;
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         let mut first_byte_ule: u8 = 0;
 
-        if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
+        if self.short_pattern_selection == PatternSelection::StandardAlphaNextToNumber {
             first_byte_ule |= 0b1 << PATTERN_SHORT_SHIFT;
         }
-        if self.narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
+        if self.narrow_pattern_selection == PatternSelection::StandardAlphaNextToNumber {
             first_byte_ule |= 0b1 << PATTERN_NARROW_SHIFT;
         }
 
@@ -148,18 +150,18 @@ impl AsULE for CurrencyPatterns {
             }
         };
 
-        CurrencyPatterns {
-            short_pattern_standard,
-            narrow_pattern_standard,
+        CurrencyPatternConfig {
+            short_pattern_selection: short_pattern_standard,
+            narrow_pattern_selection: narrow_pattern_standard,
             short_place_holder_index,
             narrow_place_holder_index,
         }
     }
 }
 
-impl<'a> ZeroMapKV<'a> for CurrencyPatterns {
-    type Container = zerovec::ZeroVec<'a, CurrencyPatterns>;
-    type Slice = zerovec::ZeroSlice<CurrencyPatterns>;
-    type GetType = <CurrencyPatterns as AsULE>::ULE;
-    type OwnedType = CurrencyPatterns;
+impl<'a> ZeroMapKV<'a> for CurrencyPatternConfig {
+    type Container = zerovec::ZeroVec<'a, CurrencyPatternConfig>;
+    type Slice = zerovec::ZeroSlice<CurrencyPatternConfig>;
+    type GetType = <CurrencyPatternConfig as AsULE>::ULE;
+    type OwnedType = CurrencyPatternConfig;
 }

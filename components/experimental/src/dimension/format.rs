@@ -10,12 +10,13 @@ use tinystr::tinystr;
 use writeable::Writeable;
 use zerovec::{maps::ZeroVecLike, ule::AsULE};
 
+use super::options::Width;
 use crate::dimension::{
     options::CurrencyFormatterOptions, provider::currency::CurrencyEssentialsV1,
 };
 
 use super::{
-    provider::currency::{self, CurrencyPatterns, PlaceholderValue},
+    provider::currency::{self, CurrencyPatternConfig, PlaceholderValue},
     CurrencyCode,
 };
 
@@ -31,62 +32,39 @@ impl<'l> Writeable for FormattedCurrency<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let pattern = CurrencyPatterns::from_unaligned(
-            *self
+        let config = self
+            .essential
+            .currency_config_map
+            .get_copied(&self.currency_code.0.to_unvalidated())
+            .unwrap_or(self.essential.default_config);
+
+        let placeholder_index = match self.options.width {
+            Width::Short => config.short_place_holder_index,
+            Width::Narrow => config.narrow_place_holder_index,
+        };
+        let currency_sign_value = match placeholder_index {
+            Some(currency::PlaceholderValue::Index(index)) => self
                 .essential
-                .currency_patterns_map
-                .get(&self.currency_code.0.to_unvalidated())
-                .unwrap_or(&self.essential.default_pattern.to_unaligned()),
-        );
-
-        let currency_sign_value = match self.options.width {
-            super::options::Width::Short => match pattern.short_place_holder_index {
-                Some(currency::PlaceholderValue::Index(index)) => self
-                    .essential
-                    .place_holders
-                    .get(index.into())
-                    .ok_or(core::fmt::Error)?,
-                Some(currency::PlaceholderValue::ISO) => self.currency_code.0.as_str(),
-                None => self.currency_code.0.as_str(),
-            },
-            super::options::Width::Narrow => match pattern.narrow_place_holder_index {
-                Some(currency::PlaceholderValue::Index(index)) => self
-                    .essential
-                    .place_holders
-                    .get(index.into())
-                    .ok_or(core::fmt::Error)?,
-                Some(currency::PlaceholderValue::ISO) => self.currency_code.0.as_str(),
-                None => self.currency_code.0.as_str(),
-            },
+                .placeholder_values
+                .get(index.into())
+                .ok_or(core::fmt::Error)?,
+            Some(currency::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
         };
 
-        let pattern = match self.options.width {
-            super::options::Width::Short => match pattern.short_pattern_standard {
-                currency::PatternSelection::Standard => self
-                    .essential
-                    .standard_pattern
-                    .as_ref()
-                    .ok_or(core::fmt::Error)?,
-                currency::PatternSelection::StandardAlphaNextToNumber => self
-                    .essential
-                    .standard_alpha_next_to_number_pattern
-                    .as_ref()
-                    .ok_or(core::fmt::Error)?,
-            },
-            super::options::Width::Narrow => match pattern.narrow_pattern_standard {
-                currency::PatternSelection::Standard => self
-                    .essential
-                    .standard_pattern
-                    .as_ref()
-                    .ok_or(core::fmt::Error)?,
-                currency::PatternSelection::StandardAlphaNextToNumber => self
-                    .essential
-                    .standard_alpha_next_to_number_pattern
-                    .as_ref()
-                    .ok_or(core::fmt::Error)?,
-            },
+        let pattern_selection = match self.options.width {
+            Width::Short => config.short_pattern_selection,
+            Width::Narrow => config.narrow_pattern_selection,
         };
+        let pattern = match pattern_selection {
+            currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
+            currency::PatternSelection::StandardAlphaNextToNumber => self
+                .essential
+                .standard_alpha_next_to_number_pattern
+                .as_ref(),
+        }
+        .ok_or(core::fmt::Error)?;
 
+        // TODO: rewrite this so it does not allocate
         sink.write_str(
             pattern
                 .interpolate_to_string([
