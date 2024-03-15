@@ -1873,8 +1873,8 @@ checksum = "af150ab688ff2122fcef229be89cb50dd66af9e01a4ff320cc137eecc9bacc38"
 name = "ixdtf"
 version = "0.1.0"
 dependencies = [
- "bitflags 2.4.2",
  "criterion",
+ "displaydoc",
  "serde-json-core",
 ]
 
