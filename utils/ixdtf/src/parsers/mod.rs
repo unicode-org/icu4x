@@ -8,7 +8,6 @@ use crate::{ParserError, ParserResult};
 
 extern crate alloc;
 
-#[cfg(feature = "duration")]
 #[cfg(feature = "temporal")]
 use alloc::vec::Vec;
 #[cfg(feature = "duration")]
