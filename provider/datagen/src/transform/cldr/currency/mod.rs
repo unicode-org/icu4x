@@ -27,7 +27,7 @@ use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::Pattern;
 use icu_pattern::PatternItemCow;
 
-use icu_experimental::dimension::ule::MAX_PLACE_HOLDER_INDEX;
+use icu_experimental::dimension::ule::MAX_PLACEHOLDER_INDEX;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
@@ -41,13 +41,13 @@ use icu_provider::prelude::*;
 ///    this means the return value will be PatternSelection::StandardAlphaNextToNumber
 ///    because the character closes to the number is a letter.
 /// NOTE:
-///   place_holder_value must not be empty.
+///   placeholder_value must not be empty.
 fn currency_pattern_selection(
     provider: &DatagenProvider,
     pattern: &str,
-    place_holder_value: &str,
+    placeholder_value: &str,
 ) -> Result<PatternSelection, DataError> {
-    if place_holder_value.is_empty() {
+    if placeholder_value.is_empty() {
         return Err(DataError::custom("Place holder value must not be empty"));
     }
 
@@ -67,9 +67,9 @@ fn currency_pattern_selection(
 
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            place_holder_value.chars().next_back().unwrap()
+            placeholder_value.chars().next_back().unwrap()
         } else if currency_sign_index > last_num_index {
-            place_holder_value.chars().next().unwrap()
+            placeholder_value.chars().next().unwrap()
         } else {
             return Err(DataError::custom(
                 "Currency sign must be in the middle of the pattern",
@@ -145,55 +145,55 @@ fn extract_currency_essentials<'data>(
         None => "",
     };
 
-    let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_map =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut currency_patterns_standard_none =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
     let mut currency_patterns_standard_next_to_num =
-        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
-    let mut place_holders = Vec::<&str>::new();
-    // A map to check if the place holder is already in the place_holders vector.
-    let mut place_holders_checker_map = HashMap::<&str, u16>::new();
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>::new();
+    let mut placeholders = Vec::<&str>::new();
+    // A map to check if the place holder is already in the placeholders vector.
+    let mut placeholders_checker_map = HashMap::<&str, u16>::new();
 
     for (iso, currency_pattern) in currencies {
-        let short_place_holder_index = currency_pattern.short.as_ref().map(|short_place_holder| {
-            if let Some(&index) = place_holders_checker_map.get(short_place_holder.as_str()) {
+        let short_placeholder_index = currency_pattern.short.as_ref().map(|short_placeholder| {
+            if let Some(&index) = placeholders_checker_map.get(short_placeholder.as_str()) {
                 PlaceholderValue::Index(index)
-            } else if short_place_holder == iso.try_into_tinystr().unwrap().as_str() {
+            } else if short_placeholder == iso.try_into_tinystr().unwrap().as_str() {
                 PlaceholderValue::ISO
             } else {
-                let index = place_holders.len() as u16;
-                place_holders.push(short_place_holder.as_str());
-                place_holders_checker_map.insert(short_place_holder.as_str(), index);
+                let index = placeholders.len() as u16;
+                placeholders.push(short_placeholder.as_str());
+                placeholders_checker_map.insert(short_placeholder.as_str(), index);
                 PlaceholderValue::Index(index)
             }
         });
 
-        let narrow_place_holder_index =
-            currency_pattern.narrow.as_ref().map(|narrow_place_holder| {
-                if let Some(&index) = place_holders_checker_map.get(narrow_place_holder.as_str()) {
-                    PlaceholderValue::Index(index)
-                } else if narrow_place_holder == iso.try_into_tinystr().unwrap().as_str() {
-                    PlaceholderValue::ISO
-                } else {
-                    let index = place_holders.len() as u16;
-                    place_holders.push(narrow_place_holder.as_ref());
-                    place_holders_checker_map.insert(narrow_place_holder.as_str(), index);
-                    PlaceholderValue::Index(index)
-                }
-            });
+        let narrow_placeholder_index = currency_pattern.narrow.as_ref().map(|narrow_placeholder| {
+            if let Some(&index) = placeholders_checker_map.get(narrow_placeholder.as_str()) {
+                PlaceholderValue::Index(index)
+            } else if narrow_placeholder == iso.try_into_tinystr().unwrap().as_str() {
+                PlaceholderValue::ISO
+            } else {
+                let index = placeholders.len() as u16;
+                placeholders.push(narrow_placeholder.as_ref());
+                placeholders_checker_map.insert(narrow_placeholder.as_str(), index);
+                PlaceholderValue::Index(index)
+            }
+        });
 
-        // Ensure that short_place_holder_index and narrow_place_holder_index do not exceed MAX_PLACE_HOLDER_INDEX.
-        if let Some(PlaceholderValue::Index(index)) = short_place_holder_index {
-            if index > MAX_PLACE_HOLDER_INDEX {
+        // Ensure that short_placeholder_index and narrow_placeholder_index do not exceed MAX_PLACEHOLDER_INDEX.
+        if let Some(PlaceholderValue::Index(index)) = short_placeholder_index {
+            if index > MAX_PLACEHOLDER_INDEX {
                 return Err(DataError::custom(
-                    "short_place_holder_index exceeded MAX_PLACE_HOLDER_INDEX",
+                    "short_placeholder_index exceeded MAX_PLACEHOLDER_INDEX",
                 ));
             }
         }
-        if let Some(PlaceholderValue::Index(index)) = narrow_place_holder_index {
-            if index > MAX_PLACE_HOLDER_INDEX {
+        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_index {
+            if index > MAX_PLACEHOLDER_INDEX {
                 return Err(DataError::custom(
-                    "narrow_place_holder_index exceeded MAX_PLACE_HOLDER_INDEX",
+                    "narrow_placeholder_index exceeded MAX_PLACEHOLDER_INDEX",
                 ));
             }
         }
@@ -203,11 +203,11 @@ fn extract_currency_essentials<'data>(
         let short_pattern_standard: PatternSelection = if standard_alpha_next_to_number.is_empty() {
             PatternSelection::Standard
         } else {
-            match short_place_holder_index {
+            match short_placeholder_index {
                 Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    place_holders.get(index as usize).unwrap(),
+                    placeholders.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceholderValue::ISO) => {
                     currency_pattern_selection(provider, standard, iso_string.as_str())?
@@ -222,11 +222,11 @@ fn extract_currency_essentials<'data>(
         {
             PatternSelection::Standard
         } else {
-            match narrow_place_holder_index {
+            match narrow_placeholder_index {
                 Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    place_holders.get(index as usize).unwrap(),
+                    placeholders.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceholderValue::ISO) => {
                     currency_pattern_selection(provider, standard, &iso_string)?
@@ -238,23 +238,23 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-        let currency_patterns = CurrencyPatterns {
-            short_pattern_standard,
-            narrow_pattern_standard,
-            short_place_holder_index,
-            narrow_place_holder_index,
+        let currency_patterns = CurrencyPatternConfig {
+            short_pattern_selection: short_pattern_standard,
+            narrow_pattern_selection: narrow_pattern_standard,
+            short_placeholder_index: short_placeholder_index,
+            narrow_placeholder_index: narrow_placeholder_index,
         };
 
         match (short_pattern_standard, narrow_pattern_standard) {
             (PatternSelection::Standard, PatternSelection::Standard)
-                if short_place_holder_index.is_none() && narrow_place_holder_index.is_none() =>
+                if short_placeholder_index.is_none() && narrow_placeholder_index.is_none() =>
             {
                 currency_patterns_standard_none.insert(*iso, currency_patterns);
             }
             (
                 PatternSelection::StandardAlphaNextToNumber,
                 PatternSelection::StandardAlphaNextToNumber,
-            ) if short_place_holder_index.is_none() && narrow_place_holder_index.is_none() => {
+            ) if short_placeholder_index.is_none() && narrow_placeholder_index.is_none() => {
                 currency_patterns_standard_next_to_num.insert(*iso, currency_patterns);
             }
             _ => {
@@ -266,19 +266,19 @@ fn extract_currency_essentials<'data>(
     let default_pattern =
         if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
             currency_patterns_map.extend(currency_patterns_standard_none);
-            CurrencyPatterns {
-                short_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
-                narrow_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
-                short_place_holder_index: None,
-                narrow_place_holder_index: None,
+            CurrencyPatternConfig {
+                short_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
+                narrow_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
+                short_placeholder_index: None,
+                narrow_placeholder_index: None,
             }
         } else {
             currency_patterns_map.extend(currency_patterns_standard_next_to_num);
-            CurrencyPatterns {
-                short_pattern_standard: PatternSelection::Standard,
-                narrow_pattern_standard: PatternSelection::Standard,
-                short_place_holder_index: None,
-                narrow_place_holder_index: None,
+            CurrencyPatternConfig {
+                short_pattern_selection: PatternSelection::Standard,
+                narrow_pattern_selection: PatternSelection::Standard,
+                short_placeholder_index: None,
+                narrow_placeholder_index: None,
             }
         };
 
@@ -325,35 +325,35 @@ fn extract_currency_essentials<'data>(
     }
 
     Ok(CurrencyEssentialsV1 {
-        currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
+        pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_pattern(standard.as_str())?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
-        place_holders: VarZeroVec::from(&place_holders),
-        default_pattern,
+        placeholders: VarZeroVec::from(&placeholders),
+        default_pattern_config: default_pattern,
     })
 }
 
 #[test]
 fn test_basic() {
-    fn get_place_holders_of_currency(
+    fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataPayload<CurrencyEssentialsV1Marker>,
-        place_holders: &VarZeroVec<'_, str>,
+        placeholders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
-        let default = CurrencyPatterns {
-            short_pattern_standard: PatternSelection::Standard,
-            narrow_pattern_standard: PatternSelection::Standard,
-            short_place_holder_index: None,
-            narrow_place_holder_index: None,
+        let default = CurrencyPatternConfig {
+            short_pattern_selection: PatternSelection::Standard,
+            narrow_pattern_selection: PatternSelection::Standard,
+            short_placeholder_index: None,
+            narrow_placeholder_index: None,
         };
         let owned = locale.get().to_owned();
-        let currency_pattern: CurrencyPatterns = owned
-            .currency_patterns_map
+        let currency_pattern: CurrencyPatternConfig = owned
+            .pattern_config_map
             .get_copied(&iso_code)
             .unwrap_or(default);
 
-        let short_place_holder = match currency_pattern.short_place_holder_index {
-            Some(PlaceholderValue::Index(index)) => place_holders
+        let short_placeholder = match currency_pattern.short_placeholder_index {
+            Some(PlaceholderValue::Index(index)) => placeholders
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
@@ -361,8 +361,8 @@ fn test_basic() {
             None => "".to_string(),
         };
 
-        let narrow_place_holder = match currency_pattern.narrow_place_holder_index {
-            Some(PlaceholderValue::Index(index)) => place_holders
+        let narrow_placeholder = match currency_pattern.narrow_placeholder_index {
+            Some(PlaceholderValue::Index(index)) => placeholders
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
@@ -370,7 +370,7 @@ fn test_basic() {
             None => "".to_string(),
         };
 
-        (short_place_holder, narrow_place_holder)
+        (short_placeholder, narrow_placeholder)
     }
 
     use icu_experimental::dimension::provider::currency::*;
@@ -387,7 +387,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let en_place_holders = &en.get().to_owned().place_holders;
+    let en_placeholders = &en.get().to_owned().placeholders;
     assert_eq!(
         en.clone()
             .get()
@@ -408,12 +408,12 @@ fn test_basic() {
     );
 
     let (en_usd_short, en_usd_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_place_holders);
+        get_placeholders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_placeholders);
     assert_eq!(en_usd_short, "$");
     assert_eq!(en_usd_narrow, "$");
 
     let (en_egp_short, en_egp_narrow) =
-        get_place_holders_of_currency(tinystr!(3, "EGP").to_unvalidated(), &en, en_place_holders);
+        get_placeholders_of_currency(tinystr!(3, "EGP").to_unvalidated(), &en, en_placeholders);
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
@@ -426,7 +426,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let ar_eg_place_holders = &ar_eg.get().to_owned().place_holders;
+    let ar_eg_placeholders = &ar_eg.get().to_owned().placeholders;
 
     assert_eq!(
         ar_eg
@@ -445,18 +445,18 @@ fn test_basic() {
         .standard_alpha_next_to_number_pattern
         .is_none());
 
-    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_place_holders_of_currency(
+    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
         &ar_eg,
-        ar_eg_place_holders,
+        ar_eg_placeholders,
     );
     assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
     assert_eq!(ar_eg_egp_narrow, "E£");
 
-    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_place_holders_of_currency(
+    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_placeholders_of_currency(
         tinystr!(3, "USD").to_unvalidated(),
         &ar_eg,
-        ar_eg_place_holders,
+        ar_eg_placeholders,
     );
     assert_eq!(ar_eg_usd_short, "US$");
     assert_eq!(ar_eg_usd_narrow, "US$");
