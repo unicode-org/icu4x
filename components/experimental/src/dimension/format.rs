@@ -4,9 +4,7 @@
 
 use fixed_decimal::FixedDecimal;
 
-
 use writeable::Writeable;
-
 
 use super::options::Width;
 use crate::dimension::{
