@@ -34,6 +34,10 @@ pub struct CurrencyFormatter {
 
     /// Essential data for the currency formatter.
     essential: DataPayload<provider::currency::CurrencyEssentialsV1Marker>,
+    
+    // TODO: Remove this allow once the `fixed_decimal_formatter` is used.
+    #[allow(dead_code)]
+    /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
 }
 
