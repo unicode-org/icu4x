@@ -3,12 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::FixedDecimal;
-use icu_pattern::{
-    DoublePlaceholderKey, DoublePlaceholderPattern, Pattern, PlaceholderValueProvider,
-};
-use tinystr::tinystr;
+
+
 use writeable::Writeable;
-use zerovec::{maps::ZeroVecLike, ule::AsULE};
+
 
 use super::options::Width;
 use crate::dimension::{
@@ -16,7 +14,7 @@ use crate::dimension::{
 };
 
 use super::{
-    provider::currency::{self, CurrencyPatternConfig, PlaceholderValue},
+    provider::currency::{self},
     CurrencyCode,
 };
 
