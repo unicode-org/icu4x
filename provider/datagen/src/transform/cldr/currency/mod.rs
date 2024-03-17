@@ -196,44 +196,24 @@ fn extract_currency_essentials<'data>(
         }
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
-
-        let short_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty()
-        {
+        let short_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty() {
             PatternSelection::Standard
         } else {
-            match short_placeholder_index {
-                Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
-                    provider,
-                    standard,
-                    placeholders.get(index as usize).unwrap(),
-                )?,
-                Some(PlaceholderValue::ISO) => {
-                    currency_pattern_selection(provider, standard, iso_string.as_str())?
-                }
-                // Based on UTS-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
-                // If the place holder value is empty, then use the currency code (ISO code).
-                None => currency_pattern_selection(provider, standard, iso_string.as_str())?,
-            }
+            let placeholder_value = match short_placeholder_index {
+                Some(PlaceholderValue::Index(index)) => placeholders.get(index as usize).unwrap(),
+                Some(PlaceholderValue::ISO) | None => iso_string.as_str(),
+            };
+            currency_pattern_selection(provider, standard, placeholder_value)?
         };
 
-        let narrow_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty()
-        {
+        let narrow_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty() {
             PatternSelection::Standard
         } else {
-            match narrow_placeholder_index {
-                Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
-                    provider,
-                    standard,
-                    placeholders.get(index as usize).unwrap(),
-                )?,
-                Some(PlaceholderValue::ISO) => {
-                    currency_pattern_selection(provider, standard, &iso_string)?
-                }
-
-                // Based on UTS-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
-                // If the place holder value is empty, then use the currency code (ISO code).
-                None => currency_pattern_selection(provider, standard, &iso_string)?,
-            }
+            let placeholder_value = match narrow_placeholder_index {
+                Some(PlaceholderValue::Index(index)) => placeholders.get(index as usize).unwrap(),
+                Some(PlaceholderValue::ISO) | None => iso_string.as_str(),
+            };
+            currency_pattern_selection(provider, standard, placeholder_value)?
         };
 
         let currency_patterns = CurrencyPatternConfig {
