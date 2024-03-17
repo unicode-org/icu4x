@@ -241,7 +241,7 @@ fn extract_currency_essentials<'data>(
         }
     }
 
-    let default_pattern =
+    let default_pattern_config =
         if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
             currency_patterns_map.extend(currency_patterns_standard_none);
             CurrencyPatternConfig {
@@ -307,7 +307,7 @@ fn extract_currency_essentials<'data>(
         standard_pattern: create_pattern(standard.as_str())?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
         placeholders: VarZeroVec::from(&placeholders),
-        default_pattern_config: default_pattern,
+        default_pattern_config,
     })
 }
 
