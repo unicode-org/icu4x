@@ -153,8 +153,8 @@ impl AsULE for CurrencyPatternConfig {
         CurrencyPatternConfig {
             short_pattern_selection: short_pattern_standard,
             narrow_pattern_selection: narrow_pattern_standard,
-            short_placeholder_index: short_placeholder_index,
-            narrow_placeholder_index: narrow_placeholder_index,
+            short_placeholder_index,
+            narrow_placeholder_index,
         }
     }
 }
