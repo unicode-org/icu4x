@@ -63,7 +63,7 @@ fn currency_pattern_selection(
         })?;
 
     let char_closer_to_number = if currency_sign_index < first_num_index {
-        placeholder_value.chars().rev().next().unwrap()
+        placeholder_value.chars().next_back().unwrap()
     } else if currency_sign_index > last_num_index {
         placeholder_value.chars().next().unwrap()
     } else {
