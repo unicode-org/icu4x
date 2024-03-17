@@ -200,7 +200,8 @@ fn extract_currency_essentials<'data>(
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
 
-        let short_pattern_standard: PatternSelection = if standard_alpha_next_to_number.is_empty() {
+        let short_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty()
+        {
             PatternSelection::Standard
         } else {
             match short_placeholder_index {
@@ -218,7 +219,7 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-        let narrow_pattern_standard: PatternSelection = if standard_alpha_next_to_number.is_empty()
+        let narrow_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty()
         {
             PatternSelection::Standard
         } else {
@@ -239,13 +240,13 @@ fn extract_currency_essentials<'data>(
         };
 
         let currency_patterns = CurrencyPatternConfig {
-            short_pattern_selection: short_pattern_standard,
-            narrow_pattern_selection: narrow_pattern_standard,
+            short_pattern_selection,
+            narrow_pattern_selection,
             short_placeholder_index,
             narrow_placeholder_index,
         };
 
-        match (short_pattern_standard, narrow_pattern_standard) {
+        match (short_pattern_selection, narrow_pattern_selection) {
             (PatternSelection::Standard, PatternSelection::Standard)
                 if short_placeholder_index.is_none() && narrow_placeholder_index.is_none() =>
             {

@@ -22,10 +22,10 @@ pub const MAX_PLACEHOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
-/// The first bit (b7) is used to determine the short_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
+/// The first bit (b7) is used to determine the short_pattern_selection. If the bit is `0`, then, the value will be `Standard`.
 /// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The second bit (b6) is used to determine the narrow_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
+/// The second bit (b6) is used to determine the narrow_pattern_selection. If the bit is `0`, then, the value will be `Standard`.
 /// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
 /// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_placeholder_index.
@@ -113,14 +113,14 @@ impl AsULE for CurrencyPatternConfig {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
-        let short_pattern_standard =
+        let short_pattern_selection =
             if first_byte & (0b1 << PATTERN_SHORT_SHIFT) == 0b1 << PATTERN_SHORT_SHIFT {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
                 PatternSelection::Standard
             };
 
-        let narrow_pattern_standard =
+        let narrow_pattern_selection =
             if first_byte & (0b1 << PATTERN_NARROW_SHIFT) == 0b1 << PATTERN_NARROW_SHIFT {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
@@ -151,8 +151,8 @@ impl AsULE for CurrencyPatternConfig {
         };
 
         CurrencyPatternConfig {
-            short_pattern_selection: short_pattern_standard,
-            narrow_pattern_selection: narrow_pattern_standard,
+            short_pattern_selection,
+            narrow_pattern_selection,
             short_placeholder_index,
             narrow_placeholder_index,
         }
