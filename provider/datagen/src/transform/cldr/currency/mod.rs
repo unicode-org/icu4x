@@ -63,7 +63,7 @@ fn currency_pattern_selection(
         })?;
 
     let char_closer_to_number = if currency_sign_index < first_num_index {
-        placeholder_value.chars().next_back().unwrap()
+        placeholder_value.chars().rev().next().unwrap()
     } else if currency_sign_index > last_num_index {
         placeholder_value.chars().next().unwrap()
     } else {
@@ -153,7 +153,7 @@ fn extract_currency_essentials<'data>(
     let mut placeholders_checker_map = HashMap::<&str, u16>::new();
 
     for (iso, currency_pattern) in currencies {
-        let short_placeholder_index = currency_pattern.short.as_ref().map(|short_placeholder| {
+        let short_placeholder_value = currency_pattern.short.as_ref().map(|short_placeholder| {
             if let Some(&index) = placeholders_checker_map.get(short_placeholder.as_str()) {
                 PlaceholderValue::Index(index)
             } else if short_placeholder == iso.try_into_tinystr().unwrap().as_str() {
@@ -166,7 +166,7 @@ fn extract_currency_essentials<'data>(
             }
         });
 
-        let narrow_placeholder_index = currency_pattern.narrow.as_ref().map(|narrow_placeholder| {
+        let narrow_placeholder_value = currency_pattern.narrow.as_ref().map(|narrow_placeholder| {
             if let Some(&index) = placeholders_checker_map.get(narrow_placeholder.as_str()) {
                 PlaceholderValue::Index(index)
             } else if narrow_placeholder == iso.try_into_tinystr().unwrap().as_str() {
@@ -179,18 +179,18 @@ fn extract_currency_essentials<'data>(
             }
         });
 
-        // Ensure that short_placeholder_index and narrow_placeholder_index do not exceed MAX_PLACEHOLDER_INDEX.
-        if let Some(PlaceholderValue::Index(index)) = short_placeholder_index {
+        // Ensure that short_placeholder_value and narrow_placeholder_value do not exceed MAX_PLACEHOLDER_INDEX.
+        if let Some(PlaceholderValue::Index(index)) = short_placeholder_value {
             if index > MAX_PLACEHOLDER_INDEX {
                 return Err(DataError::custom(
-                    "short_placeholder_index exceeded MAX_PLACEHOLDER_INDEX",
+                    "short_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
                 ));
             }
         }
-        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_index {
+        if let Some(PlaceholderValue::Index(index)) = narrow_placeholder_value {
             if index > MAX_PLACEHOLDER_INDEX {
                 return Err(DataError::custom(
-                    "narrow_placeholder_index exceeded MAX_PLACEHOLDER_INDEX",
+                    "narrow_placeholder_value exceeded MAX_PLACEHOLDER_INDEX",
                 ));
             }
         }
@@ -212,27 +212,27 @@ fn extract_currency_essentials<'data>(
             };
 
         let short_pattern_selection: PatternSelection =
-            determine_pattern_selection(short_placeholder_index)?;
+            determine_pattern_selection(short_placeholder_value)?;
         let narrow_pattern_selection: PatternSelection =
-            determine_pattern_selection(narrow_placeholder_index)?;
+            determine_pattern_selection(narrow_placeholder_value)?;
 
         let currency_patterns = CurrencyPatternConfig {
             short_pattern_selection,
             narrow_pattern_selection,
-            short_placeholder_index,
-            narrow_placeholder_index,
+            short_placeholder_value,
+            narrow_placeholder_value,
         };
 
         match (short_pattern_selection, narrow_pattern_selection) {
             (PatternSelection::Standard, PatternSelection::Standard)
-                if short_placeholder_index.is_none() && narrow_placeholder_index.is_none() =>
+                if short_placeholder_value.is_none() && narrow_placeholder_value.is_none() =>
             {
                 currency_patterns_standard_none.insert(*iso, currency_patterns);
             }
             (
                 PatternSelection::StandardAlphaNextToNumber,
                 PatternSelection::StandardAlphaNextToNumber,
-            ) if short_placeholder_index.is_none() && narrow_placeholder_index.is_none() => {
+            ) if short_placeholder_value.is_none() && narrow_placeholder_value.is_none() => {
                 currency_patterns_standard_next_to_num.insert(*iso, currency_patterns);
             }
             _ => {
@@ -247,16 +247,16 @@ fn extract_currency_essentials<'data>(
             CurrencyPatternConfig {
                 short_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
                 narrow_pattern_selection: PatternSelection::StandardAlphaNextToNumber,
-                short_placeholder_index: None,
-                narrow_placeholder_index: None,
+                short_placeholder_value: None,
+                narrow_placeholder_value: None,
             }
         } else {
             currency_patterns_map.extend(currency_patterns_standard_next_to_num);
             CurrencyPatternConfig {
                 short_pattern_selection: PatternSelection::Standard,
                 narrow_pattern_selection: PatternSelection::Standard,
-                short_placeholder_index: None,
-                narrow_placeholder_index: None,
+                short_placeholder_value: None,
+                narrow_placeholder_value: None,
             }
         };
 
@@ -321,8 +321,8 @@ fn test_basic() {
         let default = CurrencyPatternConfig {
             short_pattern_selection: PatternSelection::Standard,
             narrow_pattern_selection: PatternSelection::Standard,
-            short_placeholder_index: None,
-            narrow_placeholder_index: None,
+            short_placeholder_value: None,
+            narrow_placeholder_value: None,
         };
         let owned = locale.get().to_owned();
         let currency_pattern: CurrencyPatternConfig = owned
@@ -330,7 +330,7 @@ fn test_basic() {
             .get_copied(&iso_code)
             .unwrap_or(default);
 
-        let short_placeholder = match currency_pattern.short_placeholder_index {
+        let short_placeholder = match currency_pattern.short_placeholder_value {
             Some(PlaceholderValue::Index(index)) => placeholders
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
@@ -339,7 +339,7 @@ fn test_basic() {
             None => "".to_string(),
         };
 
-        let narrow_placeholder = match currency_pattern.narrow_placeholder_index {
+        let narrow_placeholder = match currency_pattern.narrow_placeholder_value {
             Some(PlaceholderValue::Index(index)) => placeholders
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())

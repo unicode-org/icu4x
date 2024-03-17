@@ -28,8 +28,8 @@ pub const MAX_PLACEHOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 /// The second bit (b6) is used to determine the narrow_pattern_selection. If the bit is `0`, then, the value will be `Standard`.
 /// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_placeholder_index.
-/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_placeholder_index.
+/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_placeholder_value.
+/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_placeholder_value.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct CurrencyPatternsULE([u8; 3]);
@@ -72,31 +72,31 @@ impl AsULE for CurrencyPatternConfig {
             first_byte_ule |= 0b1 << PATTERN_NARROW_SHIFT;
         }
 
-        // For short_placeholder_index
+        // For short_placeholder_value
         let [short_most_significant_byte, short_least_significant_byte_ule] =
-            match self.short_placeholder_index {
+            match self.short_placeholder_value {
                 Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
                 Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
                 None => NO_PLACEHOLDER.to_be_bytes(),
             };
         if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "short_placeholder_index is too large {}, {}",
+                "short_placeholder_value is too large {}, {}",
                 short_most_significant_byte, short_least_significant_byte_ule
             )
         }
         first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
 
-        // For narrow_placeholder_index
+        // For narrow_placeholder_value
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
-            match self.narrow_placeholder_index {
+            match self.narrow_placeholder_value {
                 Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
                 Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
                 None => NO_PLACEHOLDER.to_be_bytes(),
             };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "narrow_placeholder_index is too large {}, {}",
+                "narrow_placeholder_value is too large {}, {}",
                 narrow_most_significant_byte, narrow_least_significant_byte_ule
             )
         }
@@ -129,10 +129,10 @@ impl AsULE for CurrencyPatternConfig {
         let short_prefix = (first_byte & 0b111 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
         let narrow_prefix = (first_byte & 0b111 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
 
-        let short_placeholder_index = ((short_prefix as u16) << 8) | second_byte as u16;
-        let narrow_placeholder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
+        let short_placeholder_value = ((short_prefix as u16) << 8) | second_byte as u16;
+        let narrow_placeholder_value = ((narrow_prefix as u16) << 8) | third_byte as u16;
 
-        let short_placeholder_index = match short_placeholder_index {
+        let short_placeholder_value = match short_placeholder_value {
             NO_PLACEHOLDER => None,
             USE_ISO_CODE => Some(PlaceholderValue::ISO),
             index => {
@@ -141,7 +141,7 @@ impl AsULE for CurrencyPatternConfig {
             }
         };
 
-        let narrow_placeholder_index = match narrow_placeholder_index {
+        let narrow_placeholder_value = match narrow_placeholder_value {
             NO_PLACEHOLDER => None,
             USE_ISO_CODE => Some(PlaceholderValue::ISO),
             index => {
@@ -153,8 +153,8 @@ impl AsULE for CurrencyPatternConfig {
         CurrencyPatternConfig {
             short_pattern_selection,
             narrow_pattern_selection,
-            short_placeholder_index,
-            narrow_placeholder_index,
+            short_placeholder_value,
+            narrow_placeholder_value,
         }
     }
 }

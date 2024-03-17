@@ -124,9 +124,9 @@ pub struct CurrencyPatternConfig {
 
     /// The index of the short pattern place holder in the place holders list.
     /// If the value is `None`, this means that the short pattern does not have a place holder.
-    pub short_placeholder_index: Option<PlaceholderValue>,
+    pub short_placeholder_value: Option<PlaceholderValue>,
 
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is `None`, this means that the narrow pattern does not have a place holder.
-    pub narrow_placeholder_index: Option<PlaceholderValue>,
+    pub narrow_placeholder_value: Option<PlaceholderValue>,
 }
