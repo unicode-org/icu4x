@@ -56,32 +56,29 @@ fn currency_pattern_selection(
     let first_num_index = pattern.find(['0', '#']).unwrap();
     let last_num_index = pattern.rfind(['0', '#']).unwrap();
 
-    let letters_set = match load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
-    {
-        Ok(letters_set) => letters_set,
-        Err(icu_properties::PropertiesError::PropDataLoad(e)) => {
-            return Err(e);
-        }
-        Err(_) => unreachable!("load_for_general_category_group should only return PropDataLoad"),
-    };
+    let letters_set = load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
+        .map_err(|e| match e {
+            icu_properties::PropertiesError::PropDataLoad(e) => e,
+            _ => unreachable!("load_for_general_category_group should only return PropDataLoad"),
+        })?;
 
-    let char_closer_to_number = {
-        if currency_sign_index < first_num_index {
-            placeholder_value.chars().next_back().unwrap()
-        } else if currency_sign_index > last_num_index {
-            placeholder_value.chars().next().unwrap()
-        } else {
-            return Err(DataError::custom(
-                "Currency sign must be in the middle of the pattern",
-            ));
-        }
-    };
-
-    if letters_set.as_borrowed().contains(char_closer_to_number) {
-        Ok(PatternSelection::StandardAlphaNextToNumber)
+    let char_closer_to_number = if currency_sign_index < first_num_index {
+        placeholder_value.chars().rev().next().unwrap()
+    } else if currency_sign_index > last_num_index {
+        placeholder_value.chars().next().unwrap()
     } else {
-        Ok(PatternSelection::Standard)
-    }
+        return Err(DataError::custom(
+            "Currency sign must not be in the middle of the pattern",
+        ));
+    };
+
+    Ok(
+        if letters_set.as_borrowed().contains(char_closer_to_number) {
+            PatternSelection::StandardAlphaNextToNumber
+        } else {
+            PatternSelection::Standard
+        },
+    )
 }
 
 impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
