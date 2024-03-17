@@ -76,18 +76,26 @@ macro_rules! registry {
             )+
         }
 
-        icu_provider::make_exportable_provider!(
-            crate::DatagenProvider,
-            [
-                icu_provider::hello_world::HelloWorldV1Marker,
-                $(
-                    $(
-                        #[cfg($feature)]
-                        $marker,
-                    )+
-                )+
-            ]
-        );
+        #[macro_export]
+        #[doc(hidden)]
+        macro_rules! make_exportable_provider {
+            ($ty:ty) => {
+                icu_provider::make_exportable_provider!(
+                    $ty,
+                    [
+                        icu_provider::hello_world::HelloWorldV1Marker,
+                        $(
+                            $(
+                                #[cfg($feature)]
+                                $marker,
+                            )+
+                        )+
+                    ]
+                );
+            }
+        }
+        pub(crate) use make_exportable_provider;
+
 
         #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
@@ -251,8 +259,10 @@ registry!(
     #[cfg(all())]
     icu_decimal::provider::DecimalSymbolsV1Marker = "decimal/symbols@1",
     #[cfg(feature = "experimental_components")]
-    icu_experimental::dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    icu_experimental::dimension::provider::PercentEssentialsV1Marker = "percent/essentials@1",
+    icu_experimental::dimension::provider::currency::CurrencyEssentialsV1Marker =
+        "currency/essentials@1",
+    icu_experimental::dimension::provider::percent::PercentEssentialsV1Marker =
+        "percent/essentials@1",
     #[cfg(feature = "experimental_components")]
     icu_experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
     icu_experimental::displaynames::provider::LanguageDisplayNamesV1Marker =
@@ -376,6 +386,11 @@ registry!(
         "propnames/to/short/linear/InSC@1",
     icu_properties::provider::GraphV1Marker = "props/graph@1",
     icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
+    icu_properties::provider::JoiningTypeV1Marker = "props/jt@1",
+    icu_properties::provider::JoiningTypeNameToValueV1Marker = "propnames/from/jt@1",
+    icu_properties::provider::JoiningTypeValueToLongNameV1Marker = "propnames/to/long/linear/jt@1",
+    icu_properties::provider::JoiningTypeValueToShortNameV1Marker =
+        "propnames/to/short/linear/jt@1",
     icu_properties::provider::LineBreakV1Marker = "props/lb@1",
     icu_properties::provider::LineBreakNameToValueV1Marker = "propnames/from/lb@1",
     icu_properties::provider::LineBreakValueToLongNameV1Marker = "propnames/to/long/linear/lb@1",
@@ -487,7 +502,7 @@ registry!(
     icu_experimental::transliterate::provider::TransliteratorRulesV1Marker =
         "transliterator/rules@1",
     #[cfg(feature = "experimental_components")]
-    icu_experimental::unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
+    icu_experimental::units::provider::UnitsInfoV1Marker = "units/info@1",
 );
 
 /// Same as `all_keys`.

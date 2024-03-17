@@ -29,10 +29,8 @@ pub mod ffi {
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
-        pub fn get_for_cldr_string(s: &DiplomatStr) -> Result<ICU4XPluralCategory, ()> {
-            PluralCategory::get_for_cldr_bytes(s)
-                .ok_or(())
-                .map(Into::into)
+        pub fn get_for_cldr_string(s: &DiplomatStr) -> Option<ICU4XPluralCategory> {
+            PluralCategory::get_for_cldr_bytes(s).map(Into::into)
         }
     }
 

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::marker::PhantomData;
+
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
 #[cfg(feature = "alloc")]
@@ -124,5 +126,11 @@ impl<'zf, T> ZeroFrom<'zf, [T]> for &'zf [T] {
     #[inline]
     fn zero_from(other: &'zf [T]) -> &'zf [T] {
         other
+    }
+}
+
+impl<'zf, T: ?Sized + 'zf> ZeroFrom<'zf, PhantomData<T>> for PhantomData<T> {
+    fn zero_from(other: &'zf PhantomData<T>) -> Self {
+        *other
     }
 }

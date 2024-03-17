@@ -2,23 +2,38 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_experimental::dimension::ule::MAX_PLACE_HOLDER_INDEX;
-use icu_properties::sets::load_for_general_category_group;
-use icu_properties::GeneralCategoryGroup;
-use icu_provider::DataProvider;
+use crate::provider::IterableDataProviderInternal;
+use crate::transform::cldr::cldr_serde;
+
+use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
+
+use crate::DatagenProvider;
+
+use std::borrow::Cow;
+
+use icu_pattern::DoublePlaceholderPattern;
+
+use std::collections::BTreeMap;
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::str::FromStr;
+use tinystr::tinystr;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
-use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
-use crate::DatagenProvider;
-use icu_experimental::dimension::provider::*;
+use icu_pattern::DoublePlaceholder;
+use icu_pattern::DoublePlaceholderKey;
+use icu_pattern::Pattern;
+use icu_pattern::PatternItemCow;
+
+use icu_experimental::dimension::ule::MAX_PLACE_HOLDER_INDEX;
+use icu_properties::sets::load_for_general_category_group;
+use icu_properties::GeneralCategoryGroup;
+use icu_provider::DataProvider;
+
+use icu_experimental::dimension::provider::currency::*;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
-use std::collections::HashMap;
-use std::collections::HashSet;
-use tinystr::tinystr;
 
 /// Returns the pattern selection for a currency.
 /// For example:
@@ -267,10 +282,52 @@ fn extract_currency_essentials<'data>(
             }
         };
 
+    /// Create a `DoublePlaceholderPattern` from a string pattern.
+    fn create_pattern<'data>(
+        pattern: &str,
+    ) -> Result<Option<DoublePlaceholderPattern<Cow<'data, str>>>, DataError> {
+        if pattern.is_empty() {
+            return Ok(None);
+        }
+
+        let decimal_pattern = DecimalPattern::from_str(pattern).map_err(|e| {
+            DataError::custom("Could not parse the pattern").with_display_context(&e)
+        })?;
+
+        // TODO(#4677): Handle the negative sub pattern.
+        let pattern_items = decimal_pattern
+            .positive
+            .to_pattern_items()
+            .into_iter()
+            .flat_map(|item| match item {
+                PatternItemCow::Placeholder(_) => vec![item],
+                PatternItemCow::Literal(s) if s.contains('¤') => {
+                    itertools::Itertools::intersperse(
+                        s.split('¤')
+                            .map(|s| PatternItemCow::Literal(s.to_string().into())),
+                        PatternItemCow::Placeholder(DoublePlaceholderKey::Place1),
+                    )
+                    .collect()
+                }
+                PatternItemCow::Literal(s) => vec![PatternItemCow::Literal(s)],
+            });
+
+        let pattern = Pattern::<DoublePlaceholder, _>::try_from_items(pattern_items.into_iter())
+            .map_err(|e| {
+                DataError::custom("Could not parse standard pattern").with_display_context(&e)
+            })?;
+
+        let pattern_store = pattern.take_store();
+        let borrowed_pattern: Pattern<DoublePlaceholder, Cow<'_, str>> =
+            Pattern::from_store_unchecked(Cow::Owned(pattern_store));
+
+        Ok(Some(borrowed_pattern.to_owned()))
+    }
+
     Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
-        standard: standard.to_owned().into(),
-        standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
+        standard_pattern: create_pattern(standard.as_str())?,
+        standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
         place_holders: VarZeroVec::from(&place_holders),
         default_pattern,
     })
@@ -316,7 +373,7 @@ fn test_basic() {
         (short_place_holder, narrow_place_holder)
     }
 
-    use icu_experimental::dimension::provider::*;
+    use icu_experimental::dimension::provider::currency::*;
     use icu_locid::locale;
 
     let provider = crate::DatagenProvider::new_testing();
@@ -331,10 +388,23 @@ fn test_basic() {
         .unwrap();
 
     let en_place_holders = &en.get().to_owned().place_holders;
-    assert_eq!(en.clone().get().to_owned().standard, "¤#,##0.00");
     assert_eq!(
-        en.clone().get().to_owned().standard_alpha_next_to_number,
-        "¤\u{a0}#,##0.00"
+        en.clone()
+            .get()
+            .to_owned()
+            .standard_pattern
+            .unwrap()
+            .take_store(),
+        "\u{3}\u{2}"
+    );
+    assert_eq!(
+        en.clone()
+            .get()
+            .to_owned()
+            .standard_alpha_next_to_number_pattern
+            .unwrap()
+            .take_store(),
+        "\u{3}\u{6}\u{a0}"
     );
 
     let (en_usd_short, en_usd_narrow) =
@@ -359,13 +429,22 @@ fn test_basic() {
     let ar_eg_place_holders = &ar_eg.get().to_owned().place_holders;
 
     assert_eq!(
-        ar_eg.clone().get().to_owned().standard,
-        "‏#,##0.00 ¤;‏-#,##0.00 ¤"
+        ar_eg
+            .clone()
+            .get()
+            .to_owned()
+            .standard_pattern
+            .unwrap()
+            .take_store(),
+        "\u{8}\r\u{200f}\u{a0}"
     );
-    assert_eq!(
-        ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
-        ""
-    );
+    assert!(ar_eg
+        .clone()
+        .get()
+        .to_owned()
+        .standard_alpha_next_to_number_pattern
+        .is_none());
+
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_place_holders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
         &ar_eg,

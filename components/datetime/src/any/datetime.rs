@@ -7,24 +7,18 @@ use crate::provider::{calendar::*, date_time::PatternSelector};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
-use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
+use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
-use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::DataLocale;
 use writeable::Writeable;
 
-size_test!(
-    DateTimeFormatter,
-    date_time_formatter_size,
-    pinned = 5480,
-    nightly = 5208
-);
+size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
 /// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
@@ -46,7 +40,6 @@ size_test!(
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
-/// use std::str::FromStr;
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
@@ -74,13 +67,11 @@ size_test!(
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
+/// use icu::calendar::{AnyCalendar, DateTime, types::Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
-/// # use std::str::FromStr;
 /// # use std::rc::Rc;
-/// # use std::convert::TryInto;
 ///
 /// let locale = locale!("en-u-ca-japanese").into(); // English with the Japanese calendar
 ///
@@ -125,7 +116,7 @@ impl DateTimeFormatter {
     /// Construct a new [`DateTimeFormatter`] from compiled data.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    /// calendar for the locale. See [`AnyCalendarKind`](icu_calendar::AnyCalendarKind) for a list of supported calendars.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -137,8 +128,6 @@ impl DateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(
@@ -305,9 +294,6 @@ impl DateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::components, DateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use icu_provider::AsDeserializingBufferProvider;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -440,8 +426,6 @@ impl DateTimeFormatter {
     ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
     /// };
     /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
@@ -492,7 +476,7 @@ where {
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        if let Some(converted) = self.convert_if_necessary(value)? {
+        if let Some(converted) = calendar::convert_datetime_if_necessary(&self.1, value)? {
             Ok(self.0.format(&converted))
         } else {
             Ok(self.0.format(value))
@@ -529,13 +513,11 @@ where {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
     ///     options::{components, length},
-    ///     DateTimeFormatter, DateTimeFormatterOptions,
+    ///     DateTimeFormatter,
     /// };
     /// use icu::locid::locale;
-    /// use std::str::FromStr;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
@@ -553,39 +535,6 @@ where {
     #[cfg(feature = "experimental")]
     pub fn resolve_components(&self) -> crate::options::components::Bag {
         self.0.resolve_components()
-    }
-
-    /// Converts a date to the correct calendar if necessary
-    ///
-    /// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
-    /// if the date is compatible with the current calendar and doesn't need conversion
-    fn convert_if_necessary<'a>(
-        &'a self,
-        value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeError> {
-        let this_calendar = self.1.kind();
-        let date_calendar = value.any_calendar_kind();
-
-        if Some(this_calendar) != date_calendar {
-            if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeError::MismatchedAnyCalendar(
-                    this_calendar,
-                    date_calendar,
-                ));
-            }
-            let date = value.to_iso();
-            let time = Time::new(
-                value.hour().unwrap_or_default(),
-                value.minute().unwrap_or_default(),
-                value.second().unwrap_or_default(),
-                value.nanosecond().unwrap_or_default(),
-            );
-            let datetime = DateTime::new(date, time).to_any();
-            let converted = self.1.convert_any_datetime(&datetime);
-            Ok(Some(converted))
-        } else {
-            Ok(None)
-        }
     }
 }
 

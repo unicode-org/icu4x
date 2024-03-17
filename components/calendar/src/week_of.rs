@@ -148,7 +148,7 @@ impl WeekCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::types::{DayOfMonth, IsoWeekday};
+    /// use icu_calendar::types::IsoWeekday;
     /// use icu_calendar::week::{RelativeUnit, WeekCalculator, WeekOf};
     /// use icu_calendar::Date;
     ///

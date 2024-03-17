@@ -2,13 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::baked_exporter;
 use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider_fs::export::serializers::Json;
-use icu_provider_fs::export::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
 use std::collections::{BTreeMap, BTreeSet};
@@ -19,45 +16,63 @@ use std::sync::Mutex;
 include!("../../tests/locales.rs.data");
 
 #[test]
-#[ignore] // has side effects, run manually
-fn generate_json_and_verify_postcard() {
-    simple_logger::SimpleLogger::new()
-        .env()
-        .with_level(log::LevelFilter::Info)
-        .init()
-        .unwrap();
-
-    let json_out = Box::new(
-        FilesystemExporter::try_new(Box::new(Json::pretty()), {
-            let mut options = ExporterOptions::default();
-            options.root = "tests/data/json".into();
-            options.overwrite = OverwriteOption::RemoveAndReplace;
-            options
+#[cfg(feature = "use_wasm")]
+fn make_testdata() {
+    // Only produce output if the variable is set. Test is hermetic otherwise.
+    let exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
+        Box::new(PostcardTestingExporter {
+            size_hash: Default::default(),
+            zero_copy_violations: Default::default(),
+            zero_copy_transient_violations: Default::default(),
+            rountrip_errors: Default::default(),
+            fingerprints: std::io::sink(),
         })
-        .unwrap(),
-    );
+    } else {
+        simple_logger::SimpleLogger::new()
+            .env()
+            .with_level(log::LevelFilter::Info)
+            .init()
+            .unwrap();
 
-    let postcard_out = Box::new(PostcardTestingExporter {
-        size_hash: Default::default(),
-        zero_copy_violations: Default::default(),
-        zero_copy_transient_violations: Default::default(),
-        rountrip_errors: Default::default(),
-        fingerprints: BufWriterWithLineEndingFix::new(
-            File::create("tests/data/postcard/fingerprints.csv").unwrap(),
-        ),
-    });
-
-    let stubdata_out = Box::new(BakedStubdataExporter(
-        baked_exporter::BakedExporter::new(
-            "tests/data/baked".into(),
-            baked_exporter::Options {
-                overwrite: true,
-                pretty: true,
-                ..Default::default()
-            },
-        )
-        .unwrap(),
-    ));
+        Box::new(MultiExporter::new(vec![
+            #[cfg(feature = "fs_exporter")]
+            Box::new(
+                crate::fs_exporter::FilesystemExporter::try_new(
+                    Box::new(crate::fs_exporter::serializers::Json::pretty()),
+                    {
+                        let mut options = crate::fs_exporter::ExporterOptions::default();
+                        options.root = "tests/data/json".into();
+                        options.overwrite = crate::fs_exporter::OverwriteOption::RemoveAndReplace;
+                        options
+                    },
+                )
+                .unwrap(),
+            ),
+            #[cfg(feature = "baked_exporter")]
+            // Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
+            // for faster development and debugging. See CONTRIBUTING.md
+            Box::new(StubExporter(
+                crate::baked_exporter::BakedExporter::new(
+                    "tests/data/baked".into(),
+                    crate::baked_exporter::Options {
+                        overwrite: true,
+                        pretty: true,
+                        ..Default::default()
+                    },
+                )
+                .unwrap(),
+            )),
+            Box::new(PostcardTestingExporter {
+                size_hash: Default::default(),
+                zero_copy_violations: Default::default(),
+                zero_copy_transient_violations: Default::default(),
+                rountrip_errors: Default::default(),
+                fingerprints: BufWriterWithLineEndingFix::new(
+                    File::create("tests/data/postcard/fingerprints.csv").unwrap(),
+                ),
+            }),
+        ]))
+    };
 
     DatagenDriver::new()
         .with_keys(crate::all_keys())
@@ -66,26 +81,13 @@ fn generate_json_and_verify_postcard() {
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
         ])
-        .export(
-            &DatagenProvider::new_testing(),
-            MultiExporter::new(vec![json_out, postcard_out, stubdata_out]),
-        )
-        .unwrap();
+        .export(&DatagenProvider::new_testing(), exporter)
+        .unwrap()
 }
 
-/// Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
-/// for faster development and debugging. For example, put the following in
-/// VSCode settings.json:
-///
-/// ```javascript
-/// "rust-analyzer.cargo.extraEnv": {
-///   // Relative to provider/baked/x/src
-///   "ICU4X_DATA_DIR": "../../../datagen/tests/data/stub"
-/// },
-/// ```
-struct BakedStubdataExporter(baked_exporter::BakedExporter);
+struct StubExporter<E>(E);
 
-impl DataExporter for BakedStubdataExporter {
+impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
         key: DataKey,
@@ -129,12 +131,12 @@ impl DataExporter for BakedStubdataExporter {
     }
 }
 
-struct PostcardTestingExporter {
+struct PostcardTestingExporter<F> {
     size_hash: Mutex<BTreeMap<(DataKey, String), (usize, u64)>>,
     zero_copy_violations: Mutex<BTreeSet<DataKey>>,
     zero_copy_transient_violations: Mutex<BTreeSet<DataKey>>,
     rountrip_errors: Mutex<BTreeSet<(DataKey, String)>>,
-    fingerprints: BufWriterWithLineEndingFix<File>,
+    fingerprints: F,
 }
 
 // Types in this list cannot be zero-copy deserialized.
@@ -161,7 +163,7 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataKey] = &[
     icu_list::provider::UnitListV1Marker::KEY,
 ];
 
-impl DataExporter for PostcardTestingExporter {
+impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
     fn put_payload(
         &self,
         key: DataKey,
@@ -206,7 +208,7 @@ impl DataExporter for PostcardTestingExporter {
 
         if deallocated != allocated {
             if !EXPECTED_VIOLATIONS.contains(&key) {
-                log::warn!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
+                eprintln!("Zerocopy violation {key} {locale}: {allocated}B allocated, {deallocated}B deallocated");
             }
             self.zero_copy_violations
                 .lock()
@@ -214,7 +216,7 @@ impl DataExporter for PostcardTestingExporter {
                 .insert(key);
         } else if allocated > 0 {
             if !EXPECTED_TRANSIENT_VIOLATIONS.contains(&key) {
-                log::warn!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
+                eprintln!("Transient zerocopy violation {key} {locale}: {allocated}B allocated/deallocated");
             }
             self.zero_copy_transient_violations
                 .lock()

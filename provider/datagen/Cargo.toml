@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 include = [
     "data/**/*",
     "src/**/*",
@@ -41,12 +41,13 @@ icu_decimal = { workspace = true, features = ["datagen"] }
 icu_list = { workspace = true, features = ["datagen"]}
 icu_locid_transform = { workspace = true, features = ["datagen"] }
 icu_normalizer = { workspace = true, features = ["datagen"] }
+icu_pattern = { workspace = true, features = ["alloc"] }
 icu_plurals = { workspace = true, features = ["datagen"] }
 icu_properties = { workspace = true, features = ["datagen"]}
 icu_segmenter = { workspace = true, features = ["datagen", "lstm"] }
 icu_timezone = { workspace = true, features = ["datagen"] }
-
 icu_experimental = { workspace = true, features = ["datagen"], optional = true }
+
 num-bigint = { version = "0.4.4", default-features = false, optional = true }
 num-rational = { version = "0.4", default-features = false, optional = true }
 

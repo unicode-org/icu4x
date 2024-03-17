@@ -175,9 +175,8 @@ fn run_line_break_extra_test() {
     line_break_test(include_str!("testdata/LineBreakExtraTest.txt"));
 }
 
-#[test]
-fn run_word_break_test() {
-    let test_iter = TestContentIterator::new(include_str!("testdata/WordBreakTest.txt"));
+fn word_break_test(file: &'static str) {
+    let test_iter = TestContentIterator::new(file);
     let segmenter = WordSegmenter::new_dictionary();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -204,6 +203,16 @@ fn run_word_break_test() {
             );
         }
     }
+}
+
+#[test]
+fn run_word_break_test() {
+    word_break_test(include_str!("testdata/WordBreakTest.txt"));
+}
+
+#[test]
+fn run_word_break_extra_test() {
+    word_break_test(include_str!("testdata/WordBreakExtraTest.txt"));
 }
 
 fn grapheme_break_test(file: &'static str) {
@@ -350,4 +359,9 @@ fn run_sentence_break_test() {
 #[test]
 fn run_sentence_break_extra_test() {
     sentence_break_test(include_str!("testdata/SentenceBreakExtraTest.txt"));
+}
+
+#[test]
+fn run_sentence_break_random_test() {
+    sentence_break_test(include_str!("testdata/SentenceBreakRandomTest.txt"));
 }

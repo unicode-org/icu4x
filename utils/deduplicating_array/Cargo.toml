@@ -6,7 +6,7 @@
 name = "deduplicating_array"
 description = "A serde serialization strategy that uses PartialEq to reduce serialized size."
 version = "0.1.5"
-license-file = "LICENSE"
+license = "Unicode-3.0"
 
 authors.workspace = true
 edition.workspace = true

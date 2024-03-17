@@ -9,9 +9,12 @@
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
   - `icu_datetime`
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
+  - `icu_locid`
+    - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
-    - Mark `BidiClassAdapter::new` as const (https://github.com/unicode-org/icu4x/pull/4584)
+    - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
+    - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
 - Data model and providers
@@ -22,6 +25,7 @@
     - Propagate extension keywords and auxiliary keys to explicit locales (https://github.com/unicode-org/icu4x/pull/4533)
   - `icu_provider`
     - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
+    - Add `NeverMarker` to allow for DataProvider bounds that never return data (https://github.com/unicode-org/icu4x/issues/4186)
   - `icu_provider_blob`
     - Blob v2 no longer allocates (https://github.com/unicode-org/icu4x/pull/4383)
 - FFI:
@@ -39,11 +43,15 @@
         - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar. (https://github.com/unicode-org/icu4x/pull/4504)
         - Expose `Hebrew` as a unit struct, add `Date::try_new_hebrew_date()`, `DateTime::try_new_hebrew_datetime()`. (https://github.com/unicode-org/icu4x/pulls/4532)
         - Deprecate `Hebrew::new_always_precomputing()`, `Date::try_new_hebrew_date_with_calendar()`, `DateTime::try_new_hebrew_datetime_with_calendar()`. The new implementation of the Hebrew calendar is faster and we do not need APIs for precomputation. (https://github.com/unicode-org/icu4x/pulls/4532)
+    - `databake`
+        - Add `impl Bake for PhantomData<T>` (https://github.com/unicode-org/icu4x/pull/4663)
     - `litemap`
         - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
         - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
+    - `zerofrom`
+        - Support `?Sized` type parameters which must be `Sized` to implement `ZeroFrom` (https://github.com/unicode-org/icu4x/pull/4657)
     - `zerotrie`
         - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
         - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)

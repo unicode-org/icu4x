@@ -176,7 +176,6 @@ where
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
-    /// use std::rc::Rc;
     ///
     /// let payload: DataPayload<HelloWorldV1Marker> =
     ///     DataPayload::from_owned(HelloWorldV1 {
