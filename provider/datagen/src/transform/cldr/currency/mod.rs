@@ -196,25 +196,25 @@ fn extract_currency_essentials<'data>(
         }
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
-        let short_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty() {
-            PatternSelection::Standard
-        } else {
-            let placeholder_value = match short_placeholder_index {
-                Some(PlaceholderValue::Index(index)) => placeholders.get(index as usize).unwrap(),
-                Some(PlaceholderValue::ISO) | None => iso_string.as_str(),
+        let determine_pattern_selection =
+            |placeholder_index: Option<PlaceholderValue>| -> Result<PatternSelection, DataError> {
+                if standard_alpha_next_to_number.is_empty() {
+                    Ok(PatternSelection::Standard)
+                } else {
+                    let placeholder_value = match placeholder_index {
+                        Some(PlaceholderValue::Index(index)) => {
+                            placeholders.get(index as usize).unwrap()
+                        }
+                        Some(PlaceholderValue::ISO) | None => iso_string.as_str(),
+                    };
+                    currency_pattern_selection(provider, standard, placeholder_value)
+                }
             };
-            currency_pattern_selection(provider, standard, placeholder_value)?
-        };
 
-        let narrow_pattern_selection: PatternSelection = if standard_alpha_next_to_number.is_empty() {
-            PatternSelection::Standard
-        } else {
-            let placeholder_value = match narrow_placeholder_index {
-                Some(PlaceholderValue::Index(index)) => placeholders.get(index as usize).unwrap(),
-                Some(PlaceholderValue::ISO) | None => iso_string.as_str(),
-            };
-            currency_pattern_selection(provider, standard, placeholder_value)?
-        };
+        let short_pattern_selection: PatternSelection =
+            determine_pattern_selection(short_placeholder_index)?;
+        let narrow_pattern_selection: PatternSelection =
+            determine_pattern_selection(narrow_placeholder_index)?;
 
         let currency_patterns = CurrencyPatternConfig {
             short_pattern_selection,
