@@ -4,6 +4,7 @@
 
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'tool/build_libs.dart' show buildLib;
+import 'dart:io';
 
 void main(List<String> args) async {
   final config = await BuildConfig.fromArgs(args);
@@ -22,7 +23,7 @@ void main(List<String> args) async {
           id: 'package:icu/src/lib.g.dart',
           linkMode: linkMode,
           target: target,
-          path: AssetRelativePath(
+          path: AssetAbsolutePath(
               Uri.file(await buildLib(target, linkMode, config.outDir.path))))
     ],
     dependencies: Dependencies([config.packageRoot.resolve('build.rs')]),

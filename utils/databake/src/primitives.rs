@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::marker::PhantomData;
+
 use super::*;
 
 macro_rules! literal {
@@ -253,5 +255,21 @@ fn tuple() {
     test_bake!(
         (u8, i8),
         const: (0u8, 0i8)
+    );
+}
+
+impl<T> Bake for PhantomData<T> {
+    fn bake(&self, _ctx: &CrateEnv) -> TokenStream {
+        quote! {
+            ::core::marker::PhantomData
+        }
+    }
+}
+
+#[test]
+fn phantom_data() {
+    test_bake!(
+        PhantomData<usize>,
+        const: ::core::marker::PhantomData
     );
 }

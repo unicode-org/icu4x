@@ -20,7 +20,7 @@ lazy_static::lazy_static! {
         "Clone",
         "Copy",
         "Debug",
-        "Default", // ???
+        "Default", // We expose this when we see fit
         "Deserialize",
         "DeserializeOwned",
         "Display",
@@ -32,9 +32,9 @@ lazy_static::lazy_static! {
         "Into",
         "IntoIterator", // skip IntoIterator but not Iterator
         "Ord",
-        "Provider", // new error handling stuff
         "PartialEq",
         "PartialOrd",
+        "Provider", // From stdlib error infrastructure
         "RefUnwindSafe",
         "Send",
         "Separable",
@@ -43,9 +43,9 @@ lazy_static::lazy_static! {
         "StructuralPartialEq",
         "Sync",
         "ToOwned",
-        "ToString", // ???
-        "TryFrom", // ???
-        "TryInto", // ???
+        "ToString", // We expose this when we see fit
+        "TryFrom", // We expose this when we see fit
+        "TryInto", // We expose this when we see fit
         "Unpin",
         "UnwindSafe",
 
@@ -79,7 +79,7 @@ lazy_static::lazy_static! {
         "BufferProvider",
         "AnyProvider",
 
-        // internal trait , all methods replicated on Date
+        // internal trait, all methods replicated on Date
         "Calendar",
         // Rust-specific conversion trait
         "AsCalendar",
@@ -96,15 +96,16 @@ lazy_static::lazy_static! {
     pub static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
         // compiled data constructors cover these
         "_with_any_provider",
+        // TODO-2.0 remove this
         "_with_buffer_provider",
         "_unstable",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     pub static ref IGNORED_PATHS: HashSet<Vec<String>> = [
-        // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
+        // Stuff that could be exposed over FFI but is not currently planned (for 2.0)
         //
-        // Post 1.0 we should go through this and plan them, filing followups
+        // Post 2.0 we should go through this and plan them, filing followups
         // for ones we do plan and adding links here
         // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
@@ -114,69 +115,65 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::convert_any_datetime",
 
         // Individual calendars: Currently the main entry point is AnyCalendar
+        // We have chosen to not do individual calendars (except Iso) over FFI
+        // since Diplomat can't do generics. We also support Gregorian *formatter*
+        // but we don't need a separate Gregorian Date.
         "icu::calendar::buddhist",
+        "icu::calendar::chinese",
         "icu::calendar::coptic",
         "icu::calendar::dangi",
+        "icu::calendar::dangi",
         "icu::calendar::ethiopian",
+        "icu::calendar::hebrew",
         "icu::calendar::indian",
+        "icu::calendar::islamic",
         "icu::calendar::japanese",
         "icu::calendar::julian",
-        "icu::calendar::islamic",
-        "icu::calendar::chinese",
-        "icu::calendar::dangi",
-        "icu::calendar::roc",
         "icu::calendar::persian",
-        "icu::calendar::hebrew",
+        "icu::calendar::roc",
         "icu::calendar::any_calendar::IntoAnyCalendar",
-        "icu::calendar::Date::try_new_gregorian_date",
         "icu::calendar::Date::try_new_buddhist_date",
+        "icu::calendar::Date::try_new_chinese_date_with_calendar",
         "icu::calendar::Date::try_new_coptic_date",
         "icu::calendar::Date::try_new_dangi_date",
+        "icu::calendar::Date::try_new_dangi_date_with_calendar",
         "icu::calendar::Date::try_new_ethiopian_date",
+        "icu::calendar::Date::try_new_gregorian_date",
+        "icu::calendar::Date::try_new_hebrew_date",
+        "icu::calendar::Date::try_new_hebrew_date_with_calendar",
         "icu::calendar::Date::try_new_indian_date",
+        "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
+        "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
         "icu::calendar::Date::try_new_japanese_date",
         "icu::calendar::Date::try_new_japanese_extended_date",
         "icu::calendar::Date::try_new_julian_date",
-        "icu::calendar::Date::try_new_chinese_date_with_calendar",
-        "icu::calendar::Date::try_new_dangi_date_with_calendar",
-        "icu::calendar::Date::try_new_hebrew_date",
-        "icu::calendar::Date::try_new_hebrew_date_with_calendar",
-        "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
-        "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
         "icu::calendar::Date::try_new_observational_islamic_date",
         "icu::calendar::Date::try_new_persian_date",
         "icu::calendar::Date::try_new_roc_date",
         "icu::calendar::Date::try_new_ummalqura_date",
-        "icu::calendar::DateTime::try_new_gregorian_datetime",
         "icu::calendar::DateTime::try_new_buddhist_datetime",
+        "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_coptic_datetime",
         "icu::calendar::DateTime::try_new_dangi_datetime",
+        "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_ethiopian_datetime",
+        "icu::calendar::DateTime::try_new_gregorian_datetime",
+        "icu::calendar::DateTime::try_new_hebrew_datetime",
+        "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_indian_datetime",
+        "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
+        "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_japanese_datetime",
         "icu::calendar::DateTime::try_new_japanese_extended_datetime",
         "icu::calendar::DateTime::try_new_julian_datetime",
-        "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_hebrew_datetime",
-        "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
         "icu::calendar::DateTime::try_new_observational_islamic_datetime",
         "icu::calendar::DateTime::try_new_persian_datetime",
         "icu::calendar::DateTime::try_new_roc_datetime",
         "icu::calendar::DateTime::try_new_ummalqura_datetime",
 
-        // Arithmetic APIs are still experimental/hidden for 1.0
-        "icu::calendar::DateDuration",
-        "icu::calendar::DateDurationUnit",
-
-        // Not necessary for now
+        // This is formatting internals, we do not expect people
+        // to implement custom formatters over FFI
         "icu::calendar::Date::day_of_year_info",
-
-        // CPIL errors not reachable
-        "icu::collections::codepointinvlist::CodePointInversionListError",
-        "icu::collections::codepointinvlist::Error",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
         // Potential solutions:
@@ -193,7 +190,8 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::resolve_components",
         "icu::datetime::TypedDateTimeFormatter::resolve_components",
 
-        // mostly used for provider, may in the future be exposed for options
+        // Experimental API mostly used for provider, components bags, and patterns,
+        // may in the future be exposed for options
         "icu::datetime::fields",
 
         // experimental
@@ -208,31 +206,25 @@ lazy_static::lazy_static! {
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
         "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
-        // Formatting wrappers, may be supported in the future
-        "icu::datetime::FormattedTimeZone",
-        "icu::datetime::FormattedDateTime",
-        "icu::datetime::FormattedZonedDateTime",
-        "icu::decimal::FormattedFixedDecimal",
-
         // Experimental and unused decimal types
         "fixed_decimal::CompactDecimal",
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
 
-        // Don't want parts for 1.0
+        // Don't want parts for 2.0, would need to introduce diplomat writeable with parts
         "icu::list::parts",
-        // Formatting wrappers, may be supported in the future
-        "icu::list::FormattedList",
 
         // Not planned until someone needs them
         "icu::locid::extensions",
         "icu::locid::subtags",
+
+        // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locid::LanguageIdentifier",
 
         // experimental
         "icu::normalizer::ComposingNormalizer::new_uts46_without_ignored_and_disallowed",
 
-        // can't be exposed till Diplomat has Write16
+        // Do not want for 2.0: we need DiplomatWriteable16
         "icu::normalizer::ComposingNormalizer::normalize_utf16",
         "icu::normalizer::ComposingNormalizer::normalize_utf16_to",
         "icu::normalizer::ComposingNormalizer::is_normalized_utf16",
@@ -240,6 +232,7 @@ lazy_static::lazy_static! {
         "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
         "icu::normalizer::DecomposingNormalizer::is_normalized_utf16",
 
+        // Do not want for 2.0:
         // Can't be exposed till diplomat has input iterators, as well as
         // safety for borrowing input iterators into return types
         "icu::normalizer::ComposingNormalizer::normalize_iter",
@@ -247,8 +240,7 @@ lazy_static::lazy_static! {
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
 
-        // Rust-specific power user API for rules ASTs and such,
-        // could be exposed in the future but it's complicated
+        // experimental
         "icu::plurals::rules",
 
         // Experimental
@@ -261,27 +253,10 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
         "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
-        // May be exposed when we have associated constants over FFI
-        "icu::properties::BidiClass",
-        "icu::properties::CanonicalCombiningClass",
-        "icu::properties::EastAsianWidth",
-        "icu::properties::GeneralCategory",
-        "icu::properties::GeneralCategoryGroup",
-        "icu::properties::GraphemeClusterBreak",
-        "icu::properties::IndicSyllabicCategory",
-        "icu::properties::LineBreak",
-        "icu::properties::Script",
-        "icu::properties::SentenceBreak",
-        "icu::properties::WordBreak",
-        "icu::properties::JoiningType",
-
-        // Not planned for 1.0
-        // Only CodePointInversionListBuilder is exposed
-        "icu::collections::codepointinvlist::CodePointInversionList",
-        "icu::collections::codepointinvlist::CodePointInversionListError",
-        "icu::collections::codepointinvliststringlist",
-        "icu::collections::codepointtrie",
-        "icu::collections::char16trie",
+        // Not planned for 2.0
+        // We aren't exposing these collections directly, we instead expose them in a domain specific
+        // way like CodePointSetDataBuilder. We may eventually add these as utilities for users.
+        "icu::collections",
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
@@ -290,26 +265,53 @@ lazy_static::lazy_static! {
         "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
         "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
 
-        // Need to think about how to expose DataErrorKind for this to work
-        "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
+        // We do not plan to have FFI for this in 2.0
+        "icu_provider_adapters::empty::EmptyDataProvider",
 
         // We should add this once we have a better story for FFI custom data structs
+        // and callbacks
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
+        // Not planned for 2.0
         // We don't expose data keys directly over FFI, but when we do, we should add this
         "icu::locid_transform::fallback::LocaleFallbackConfig::from_key",
 
+        // Not planned for 2.0
         // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
         // filter_by_langid_allowlist_strict needs input iterators.
         // require_langid is not very useful by itself.
         "icu_provider_adapters::filter::Filterable",
         "icu_provider_adapters::filter::RequestFilterDataProvider",
 
-        // ForkByErrorProvider has only one useful constructor, new_with_predicate,
-        // which needs callback support.
+        // Not planned for 2.0
+        // ForkByErrorProvider is the abstract forking provider; we expose the concrete
+        // fork by locale/key ones. Could be added if we have callbacks.
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
+        // Not planned for 2.0 but would be nice to return 'static refs
+        // with Diplomat support.
+        // Borrowed <-> owned converters
+        "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
+        "icu::locid_transform::fallback::LocaleFallbackerBorrowed::static_to_owned",
+        "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
+        "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
+        "icu::properties::maps::CodePointMapData::as_borrowed",
+        "icu::properties::maps::CodePointMapDataBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameLinearMapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed",
+        "icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::static_to_owned",
+        "icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed",
+        "icu::properties::names::PropertyValueNameToEnumMapperBorrowed::static_to_owned",
+        "icu::properties::script::ScriptWithExtensions::as_borrowed",
+        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
+        "icu::properties::sets::CodePointSetData::as_borrowed",
+        "icu::properties::sets::CodePointSetDataBorrowed::static_to_owned",
+        "icu::properties::sets::UnicodeSetData::as_borrowed",
+        "icu::properties::sets::UnicodeSetDataBorrowed::static_to_owned",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -337,34 +339,12 @@ lazy_static::lazy_static! {
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
 
-        // Borrowed <-> owned converters
-        "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
-        "icu::locid_transform::fallback::LocaleFallbackerBorrowed::static_to_owned",
-        "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
-        "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
-        "icu::properties::maps::CodePointMapData::as_borrowed",
-        "icu::properties::maps::CodePointMapDataBorrowed::static_to_owned",
-        "icu::properties::names::PropertyEnumToValueNameLinearMapper::as_borrowed",
-        "icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed::static_to_owned",
-        "icu::properties::names::PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed",
-        "icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::static_to_owned",
-        "icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed",
-        "icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::static_to_owned",
-        "icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed",
-        "icu::properties::names::PropertyValueNameToEnumMapperBorrowed::static_to_owned",
-        "icu::properties::script::ScriptWithExtensions::as_borrowed",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
-        "icu::properties::sets::CodePointSetData::as_borrowed",
-        "icu::properties::sets::CodePointSetDataBorrowed::static_to_owned",
-        "icu::properties::sets::UnicodeSetData::as_borrowed",
-        "icu::properties::sets::UnicodeSetDataBorrowed::static_to_owned",
-
-        // Reexports (tool doesn't currently handle these)
+        // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::datetime::options::DateTimeFormatterOptions",
 
+        // TODO-2.0 these errors will have changed
         "fixed_decimal::Error",
         "icu::calendar::Error",
         "icu::collator::Error",
@@ -389,11 +369,12 @@ lazy_static::lazy_static! {
         // Rust-specific calendar wrapper stuff
         "icu::calendar::AsCalendar",
         "icu::calendar::Ref",
+        "icu::datetime::CldrCalendar",
+        // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
         "icu::calendar::DateTime::wrap_calendar_in_rc",
         "icu::calendar::DateTime::wrap_calendar_in_arc",
-        "icu::datetime::CldrCalendar",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
@@ -409,7 +390,9 @@ lazy_static::lazy_static! {
         "icu::calendar::any_calendar::AnyDateInner",
 
         // Options bags which are expanded in FFI to regular functions
+        // TODO-2.0: investigate flattening on the rust side too
         "icu::datetime::DateTimeFormatterOptions",
+        "icu::datetime::options::DateTimeFormatterOptions",
         "icu::datetime::options::length::Bag",
         "icu::decimal::options::FixedDecimalFormatterOptions",
 
@@ -421,13 +404,11 @@ lazy_static::lazy_static! {
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types",
 
-        // Rust-specific trait abstraction, handled as individual types over FFI
-        "icu::casemap::ClosureSink",
-
         // Rusty input trait
         "icu::datetime::input",
 
-        // Convenience iterator for Rust
+        // Convenience iterator for Rust. Useful but would require
+        // allocations over FFI, so not worth it.
         "icu::plurals::PluralCategory::all",
 
         // locid comparison iteration

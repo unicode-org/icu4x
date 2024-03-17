@@ -642,6 +642,39 @@ macro_rules! impl_value_getter {
     }
 }
 
+/// See [`test_enumerated_property_completeness`] for usage.
+/// Example input:
+/// ```ignore
+/// impl EastAsianWidth {
+///     pub const Neutral: EastAsianWidth = EastAsianWidth(0);
+///     pub const Ambiguous: EastAsianWidth = EastAsianWidth(1);
+///     ...
+/// }
+/// ```
+/// Produces `const ALL_CONSTS = &[("Neutral", 0u16), ...];` by
+/// explicitly casting first field of the struct to u16.
+macro_rules! create_const_array {
+    (
+        $ ( #[$meta:meta] )*
+        impl $enum_ty:ident {
+            $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; )*
+        }
+    ) => {
+        $( #[$meta] )*
+        impl $enum_ty {
+            $(
+                $(#[$const_meta])*
+                $v const $i: $t = $e;
+            )*
+
+            #[cfg(test)]
+            const ALL_CONSTS: &'static [(&'static str, u16)] = &[
+                $((stringify!($i), $enum_ty::$i.0 as u16)),*
+            ];
+        }
+    }
+}
+
 /// Enumerated property Bidi_Class
 ///
 /// These are the categories required by the Unicode Bidirectional Algorithm.
@@ -656,6 +689,7 @@ macro_rules! impl_value_getter {
 #[zerovec::make_ule(BidiClassULE)]
 pub struct BidiClass(pub u8);
 
+create_const_array! {
 #[allow(non_upper_case_globals)]
 impl BidiClass {
     /// (`L`) any strong left-to-right character
@@ -704,6 +738,7 @@ impl BidiClass {
     pub const RightToLeftIsolate: BidiClass = BidiClass(21);
     /// (`PDI`) U+2069: terminates an isolate control
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
+}
 }
 
 impl_value_getter! {
@@ -1546,6 +1581,7 @@ impl_value_getter! {
 #[zerovec::make_ule(EastAsianWidthULE)]
 pub struct EastAsianWidth(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl EastAsianWidth {
@@ -1555,6 +1591,7 @@ impl EastAsianWidth {
     pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); //name="F"
     pub const Narrow: EastAsianWidth = EastAsianWidth(4); //name="Na"
     pub const Wide: EastAsianWidth = EastAsianWidth(5); //name="W"
+}
 }
 
 impl_value_getter! {
@@ -1887,6 +1924,7 @@ impl_value_getter! {
 #[zerovec::make_ule(WordBreakULE)]
 pub struct WordBreak(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl WordBreak {
@@ -1917,6 +1955,7 @@ impl WordBreak {
     pub const GlueAfterZwj: WordBreak = WordBreak(20); // name="GAZ"
     pub const ZWJ: WordBreak = WordBreak(21); // name="ZWJ"
     pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
+}
 }
 
 impl_value_getter! {
@@ -2004,6 +2043,7 @@ impl_value_getter! {
 #[zerovec::make_ule(SentenceBreakULE)]
 pub struct SentenceBreak(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl SentenceBreak {
@@ -2022,6 +2062,7 @@ impl SentenceBreak {
     pub const Extend: SentenceBreak = SentenceBreak(12); // name="EX"
     pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
     pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
+}
 }
 
 impl_value_getter! {
@@ -2111,6 +2152,7 @@ impl_value_getter! {
 #[zerovec::make_ule(CanonicalCombiningClassULE)]
 pub struct CanonicalCombiningClass(pub u8);
 
+create_const_array! {
 // These constant names come from PropertyValueAliases.txt
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
@@ -2173,6 +2215,7 @@ impl CanonicalCombiningClass {
     pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); // name="DB"
     pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
     pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
+}
 }
 
 impl_value_getter! {
@@ -2259,6 +2302,7 @@ impl_value_getter! {
 #[zerovec::make_ule(IndicSyllabicCategoryULE)]
 pub struct IndicSyllabicCategory(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl IndicSyllabicCategory {
@@ -2298,6 +2342,7 @@ impl IndicSyllabicCategory {
     pub const Vowel: IndicSyllabicCategory = IndicSyllabicCategory(33);
     pub const VowelDependent: IndicSyllabicCategory = IndicSyllabicCategory(34);
     pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35);
+}
 }
 
 impl_value_getter! {
@@ -2377,6 +2422,7 @@ impl_value_getter! {
 #[zerovec::make_ule(JoiningTypeULE)]
 pub struct JoiningType(pub u8);
 
+create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl JoiningType {
@@ -2386,6 +2432,7 @@ impl JoiningType {
     pub const LeftJoining: JoiningType = JoiningType(3); // name="L"
     pub const RightJoining: JoiningType = JoiningType(4); // name="R"
     pub const Transparent: JoiningType = JoiningType(5); // name="T"
+}
 }
 
 impl_value_getter! {
@@ -2453,5 +2500,108 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(JoiningType::RightJoining), Some("Right_Joining"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+    }
+}
+#[cfg(test)]
+mod test_enumerated_property_completeness {
+    use super::*;
+    use alloc::collections::BTreeMap;
+
+    fn check_enum<'a>(
+        lookup: &PropertyValueNameToEnumMapV1<'static>,
+        consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
+    ) {
+        let mut data: BTreeMap<_, _> = lookup
+            .map
+            .iter_copied_values()
+            .map(|(name, value)| {
+                (
+                    value,
+                    (
+                        String::from_utf8(name.as_byte_slice().to_vec()).unwrap(),
+                        "Data",
+                    ),
+                )
+            })
+            .collect();
+
+        let consts = consts
+            .into_iter()
+            .map(|(name, value)| (*value, (name.to_string(), "Consts")));
+
+        let mut diff = Vec::new();
+        for t @ (value, _) in consts {
+            if data.remove(&value).is_none() {
+                diff.push(t);
+            }
+        }
+        diff.extend(data);
+
+        let mut fmt_diff = String::new();
+        for (value, (name, source)) in diff {
+            fmt_diff.push_str(&format!("{source}:\t{name} = {value:?}\n"));
+        }
+
+        assert!(
+            fmt_diff.is_empty(),
+            "Values defined in data do not match values defined in consts. Difference:\n{}",
+            fmt_diff
+        );
+    }
+
+    #[test]
+    fn test_ea() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1,
+            EastAsianWidth::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_ccc() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
+            CanonicalCombiningClass::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_jt() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_JT_V1,
+            JoiningType::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_insc() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_INSC_V1,
+            IndicSyllabicCategory::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_sb() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_SB_V1,
+            SentenceBreak::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_wb() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_WB_V1,
+            WordBreak::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_bc() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
+            BidiClass::ALL_CONSTS,
+        );
     }
 }

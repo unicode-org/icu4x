@@ -27,8 +27,8 @@ use syn::fold::{self, Fold};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
-    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Token, Type, TypePath,
-    WherePredicate,
+    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, MetaList, Token,
+    TraitBoundModifier, Type, TypeParamBound, TypePath, WherePredicate,
 };
 use synstructure::Structure;
 mod visitor;
@@ -121,12 +121,26 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
     // a newly introduced mirror type parameter that we are borrowing from, similar to C in the original trait.
     // For convenience, we are calling these "C types"
     let generics_env: HashMap<Ident, Option<Ident>> = tybounds
-        .iter()
+        .iter_mut()
         .map(|param| {
             // First one doesn't work yet https://github.com/rust-lang/rust/issues/114393
             let maybe_new_param = if has_attr(&param.attrs, "may_borrow")
                 || may_borrow_attrs.contains(&param.ident)
             {
+                // Remove `?Sized`` bound because we need a param to be Sized in order to take a ZeroFrom of it.
+                // This only applies to fields marked as `may_borrow`.
+                let mut bounds = core::mem::take(&mut param.bounds);
+                while let Some(bound_pair) = bounds.pop() {
+                    let bound = bound_pair.into_value();
+                    if let TypeParamBound::Trait(ref trait_bound) = bound {
+                        if trait_bound.path.get_ident().map(|ident| ident == "Sized") == Some(true)
+                            && matches!(trait_bound.modifier, TraitBoundModifier::Maybe(_))
+                        {
+                            continue;
+                        }
+                    }
+                    param.bounds.push(bound);
+                }
                 Some(Ident::new(
                     &format!("{}ZFParamC", param.ident),
                     param.ident.span(),

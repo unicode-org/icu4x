@@ -255,6 +255,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
+                .replace("icu::pattern", "icu_pattern")
                 .replace("icu::experimental", "icu_experimental");
         }
 
@@ -657,6 +658,7 @@ impl BakedExporter {
                             #[allow(dead_code)]
                             pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
                         }
+                        icu_provider::impl_data_provider_never_marker!($name);
                     };
                 }
                 #[doc(inline)]

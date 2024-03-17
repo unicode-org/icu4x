@@ -4,7 +4,7 @@
 
 #![allow(unused)]
 
-use std::borrow::Cow;
+use std::{borrow::Cow, marker::PhantomData};
 use zerofrom::ZeroFrom;
 use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
@@ -87,27 +87,29 @@ pub enum CloningZF3<'data> {
 }
 
 #[derive(ZeroFrom)]
-#[zerofrom(may_borrow(T))] // instead of treating T as a copy type, we want to allow zerofromming T too
-pub struct GenericsThatAreAlsoZf<T> {
+#[zerofrom(may_borrow(T, Q))] // instead of treating T as a copy type, we want to allow zerofromming T too
+pub struct GenericsThatAreAlsoZf<T, Q: ?Sized, Ignored: ?Sized> {
     x: T,
     y: Option<T>,
+    ignored: PhantomData<Ignored>,
+    q: Q,
 }
 
 pub fn assert_zf_generics_may_borrow<'a, 'b>(
-    x: &'b GenericsThatAreAlsoZf<&'a str>,
-) -> GenericsThatAreAlsoZf<&'b str> {
-    GenericsThatAreAlsoZf::<&'b str>::zero_from(x)
+    x: &'b GenericsThatAreAlsoZf<&'a str, usize, str>,
+) -> GenericsThatAreAlsoZf<&'b str, usize, str> {
+    GenericsThatAreAlsoZf::<&'b str, usize, str>::zero_from(x)
 }
 
 #[derive(ZeroFrom)]
 pub struct UsesGenericsThatAreAlsoZf<'a> {
-    x: GenericsThatAreAlsoZf<&'a str>,
+    x: GenericsThatAreAlsoZf<&'a str, usize, str>,
 }
 
 // Ensure it works with invariant types too
 #[derive(ZeroFrom)]
 pub struct UsesGenericsThatAreAlsoZfWithMap<'a> {
-    x: GenericsThatAreAlsoZf<ZeroMap<'a, str, str>>,
+    x: GenericsThatAreAlsoZf<ZeroMap<'a, str, str>, usize, str>,
 }
 
 fn main() {}
