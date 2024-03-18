@@ -528,29 +528,28 @@ impl LocaleDisplayNamesFormatter {
 
 #[test]
 fn test_language_display() {
-    assert_eq!(
-        LocaleDisplayNamesFormatter::try_new(
-            &"en".parse().unwrap(),
-            DisplayNamesOptions {
-                language_display: LanguageDisplay::Standard,
-                ..Default::default()
-            },
-        )
-        .unwrap()
-        .of(&icu_locid::locale!("en-GB")),
-        "English (United Kingdom)"
-    );
+    use icu_locid::locale;
 
-    assert_eq!(
-        LocaleDisplayNamesFormatter::try_new(
-            &"en".parse().unwrap(),
-            DisplayNamesOptions {
-                language_display: LanguageDisplay::Dialect,
-                ..Default::default()
-            },
-        )
-        .unwrap()
-        .of(&icu_locid::locale!("en-GB")),
-        "British English"
-    );
+    let dialect = LocaleDisplayNamesFormatter::try_new(
+        &locale!("en").into(),
+        DisplayNamesOptions {
+            language_display: LanguageDisplay::Dialect,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let standard = LocaleDisplayNamesFormatter::try_new(
+        &locale!("en").into(),
+        DisplayNamesOptions {
+            language_display: LanguageDisplay::Standard,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+
+    assert_eq!(standard.of(&locale!("en-GB")), "English (United Kingdom)");
+    assert_eq!(dialect.of(&locale!("en-GB")), "British English");
+
+    assert_eq!(dialect.of(&locale!("zh-Hant")), "Traditional Chinese");
+    assert_eq!(standard.of(&locale!("zh-Hant")), "Chinese (Traditional)");
 }
