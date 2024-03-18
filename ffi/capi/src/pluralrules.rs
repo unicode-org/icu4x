@@ -101,6 +101,16 @@ pub mod ffi {
                 &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
             ))))
         }
+
+        /// Construct from a FixedDecimal
+        ///
+        /// Retains at most 18 digits each from the integer and fraction parts.
+        #[cfg(feature = "icu_decimal")]
+        pub fn create_from_fixed_decimal(
+            x: &crate::fixed_decimal::ffi::ICU4XFixedDecimal,
+        ) -> Box<Self> {
+            Box::new(Self((&x.0).into()))
+        }
     }
 
     #[diplomat::out]
