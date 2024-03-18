@@ -17,7 +17,7 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::IxdtfParser;
+//! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
@@ -34,7 +34,7 @@
 //! assert_eq!(date.day, 2);
 //! assert_eq!(time.hour, 8);
 //! assert_eq!(time.minute, 48);
-//! assert_eq!(tz.name, Some("America/New_York"));
+//! assert_eq!(tz, TimeZoneRecord::Name("America/New_York"));
 //! ```
 //!
 //! ## Date Time Strings
@@ -166,7 +166,7 @@
 //! between the offset and annotation.
 //!
 //! ```rust
-//! use ixdtf::parsers::IxdtfParser;
+//! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
 //!
 //! let example_one = "2024-03-02T08:48:00+01:00[America/New_York]";
 //!
@@ -179,7 +179,7 @@
 //!
 //! // The time zone annotation and offset conflict with each other, and must therefore be
 //! // resolved by the user.
-//! assert_eq!(tz.name, Some("America/New_York"));
+//! assert_eq!(tz, TimeZoneRecord::Name("America/New_York"));
 //! assert_eq!(offset.hour, 1);
 //! ```
 //!

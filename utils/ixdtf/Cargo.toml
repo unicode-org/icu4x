@@ -23,8 +23,7 @@ independent = true
 all-features = true
 
 [features]
-default = ["temporal", "duration"]
-temporal = []
+default = ["duration"]
 duration = []
 
 [dependencies]

@@ -6,26 +6,23 @@ use alloc::vec::Vec;
 
 use crate::{
     parsers::{
-        records::{DateRecord, IsoParseRecord, TimeRecord, TimeZone},
-        IxdtfParser,
+        records::{DateRecord, IsoParseRecord, TimeRecord, TimeZoneRecord},
+        IxdtfOptions, IxdtfParser,
     },
     ParserError,
 };
 
+/*
 #[cfg(feature = "temporal")]
 use crate::parsers::TemporalParser;
-
+*/
 #[cfg(feature = "duration")]
 use crate::parsers::IsoDurationParser;
 
 #[test]
 fn temporal_parser_basic() {
-    let mut basic = IxdtfParser::new("20201108");
-    let mut basic_separated = IxdtfParser::new("2020-11-08");
-
-    let basic_result = basic.parse().unwrap();
-
-    let sep_result = basic_separated.parse().unwrap();
+    let basic_result = IxdtfParser::new("20201108").parse().unwrap();
+    let sep_result = IxdtfParser::new("2020-11-08").parse().unwrap();
 
     assert_eq!(
         basic_result.date,
@@ -52,9 +49,7 @@ fn temporal_date_time_max() {
             hour: 12,
             minute: 28,
             second: 32,
-            millisecond: 329,
-            microsecond: 402,
-            nanosecond: 834,
+            nanosecond: 329402834,
         })
     );
 }
@@ -71,13 +66,7 @@ fn good_zoned_date_time() {
             day: 8,
         })
     );
-    assert_eq!(
-        result.tz,
-        Some(TimeZone {
-            name: Some("America/Chicago"),
-            offset: None,
-        })
-    );
+    assert_eq!(result.tz, Some(TimeZoneRecord::Name("America/Chicago")));
 }
 
 #[test]
@@ -162,29 +151,26 @@ fn good_extended_year_parsing() {
 #[test]
 fn bad_extended_year() {
     let bad_year = "-000000-11-08";
-    let mut ixdtf = IxdtfParser::new(bad_year);
-    let err = ixdtf.parse();
+    let err = IxdtfParser::new(bad_year).parse();
     assert_eq!(
         err,
         Err(ParserError::DateExtendedYear),
         "Invalid extended year parsing: \"{bad_year}\" should fail to parse."
     );
 
-    let bad_year = "-271821-11-08";
-    let mut ixdtf = IxdtfParser::new(bad_year);
-    let err = ixdtf.parse();
+    let bad_year = "-1000000-11-08";
+    let err = IxdtfParser::new(bad_year).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidYearRange),
+        Err(ParserError::DateMonth),
         "Invalid year range parsing: \"{bad_year}\" should fail to parse."
     );
 
-    let bad_year = "+275761-11-08";
-    let mut ixdtf = IxdtfParser::new(bad_year);
-    let err = ixdtf.parse();
+    let bad_year = "+10000001108";
+    let err = IxdtfParser::new(bad_year).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidYearRange),
+        Err(ParserError::InvalidEnd),
         "Invalid year range parsing: \"{bad_year}\" should fail to parse."
     );
 }
@@ -199,10 +185,7 @@ fn good_annotations_date_time() {
 
     assert_eq!(
         result.tz,
-        Some(TimeZone {
-            name: Some("America/Argentina/ComodRivadavia"),
-            offset: None,
-        })
+        Some(TimeZoneRecord::Name("America/Argentina/ComodRivadavia"))
     );
 
     assert_eq!(result.calendar, Some("iso8601"));
@@ -316,8 +299,10 @@ fn temporal_year_month() {
     ];
 
     for ym in possible_year_months {
-        let mut temporal = TemporalParser::new(ym);
-        let result = temporal.parse_year_month().unwrap();
+        let result = IxdtfParser::new(ym)
+            .with_option(IxdtfOptions::YearMonth)
+            .parse()
+            .unwrap();
 
         let date = result.date.unwrap();
 
@@ -327,7 +312,6 @@ fn temporal_year_month() {
 }
 
 #[test]
-#[cfg(feature = "temporal")]
 fn temporal_month_day() {
     let possible_month_day = [
         "11-07",
@@ -338,8 +322,10 @@ fn temporal_month_day() {
     ];
 
     for md in possible_month_day {
-        let mut temporal = TemporalParser::new(md);
-        let result = temporal.parse_month_day().unwrap();
+        let result = IxdtfParser::new(md)
+            .with_option(IxdtfOptions::MonthDay)
+            .parse()
+            .unwrap();
 
         let date = result.date.unwrap();
 
@@ -349,7 +335,6 @@ fn temporal_month_day() {
 }
 
 #[test]
-#[cfg(feature = "temporal")]
 fn temporal_time() {
     let possible_times = [
         "T12:01:04",
@@ -361,8 +346,10 @@ fn temporal_time() {
     ];
 
     for time in possible_times {
-        let mut parser = TemporalParser::new(time);
-        let result = parser.parse_time().unwrap();
+        let result = IxdtfParser::new(time)
+            .with_option(IxdtfOptions::Time)
+            .parse()
+            .unwrap();
         let time = result.time.unwrap();
         assert_eq!(time.hour, 12);
         assert_eq!(time.minute, 1);
@@ -374,8 +361,9 @@ fn temporal_time() {
 #[cfg(feature = "temporal")]
 fn invalid_time() {
     let bad_value = "20240801";
-    let mut temporal = TemporalParser::new(bad_value);
-    let err = temporal.parse_time();
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::Time)
+        .parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -383,8 +371,9 @@ fn invalid_time() {
     );
 
     let bad_value = "24-12-08";
-    let mut temporal = TemporalParser::new(bad_value);
-    let err = temporal.parse_time();
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::Time)
+        .parse();
     assert_eq!(
         err,
         Err(ParserError::DateYear),
@@ -393,8 +382,9 @@ fn invalid_time() {
 
     // Attempts to parse UTC offset: -12, leaving -08 on end as junk.
     let bad_value = "T19-12-08";
-    let mut temporal = TemporalParser::new(bad_value);
-    let err = temporal.parse_time();
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::Time)
+        .parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -402,8 +392,9 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:12-089";
-    let mut temporal = TemporalParser::new(bad_value);
-    let err = temporal.parse_time();
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::Time)
+        .parse();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -411,8 +402,9 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:120-08";
-    let mut temporal = TemporalParser::new(bad_value);
-    let err = temporal.parse_time();
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::Time)
+        .parse();
     assert_eq!(
         err,
         Err(ParserError::TimeSeparator),
@@ -455,6 +447,8 @@ fn temporal_valid_instant_strings() {
 #[test]
 #[cfg(feature = "duration")]
 fn temporal_duration_parsing() {
+    use crate::parsers::records::DurationFraction;
+
     let durations = [
         "p1y1m1dt1h1m1s",
         "P1Y1M1W1DT1H1M1.1S",
@@ -472,15 +466,18 @@ fn temporal_duration_parsing() {
 
     let sub_second = IsoDurationParser::new(durations[2]).parse().unwrap();
 
-    assert_eq!(sub_second.milliseconds as i32, -123);
-    assert_eq!(sub_second.microseconds as i32, -456);
-    assert_eq!(sub_second.nanoseconds as i32, -789);
+    assert_eq!(
+        sub_second.fraction.unwrap(),
+        DurationFraction::Seconds(-123456789)
+    );
 
     let test_result = IsoDurationParser::new(durations[3]).parse().unwrap();
-
     assert_eq!(test_result.years, -1);
     assert_eq!(test_result.weeks, -3);
-    assert_eq!(test_result.minutes, -30.0);
+    assert_eq!(
+        test_result.fraction,
+        Some(DurationFraction::Hours(-1_800_000_000_000))
+    );
 }
 
 #[test]
@@ -608,8 +605,6 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 0,
                 second: 0,
-                millisecond: 0,
-                microsecond: 0,
                 nanosecond: 0,
             }),
             offset: None,
@@ -634,8 +629,6 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 0,
-                millisecond: 0,
-                microsecond: 0,
                 nanosecond: 0,
             }),
             offset: None,
@@ -660,8 +653,6 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                millisecond: 0,
-                microsecond: 0,
                 nanosecond: 0,
             }),
             offset: None,
@@ -686,8 +677,6 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                millisecond: 0,
-                microsecond: 0,
                 nanosecond: 0,
             }),
             offset: None,
@@ -712,8 +701,6 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                millisecond: 0,
-                microsecond: 0,
                 nanosecond: 0,
             }),
             offset: None,

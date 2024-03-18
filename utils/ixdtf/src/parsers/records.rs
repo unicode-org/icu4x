@@ -4,11 +4,12 @@
 
 //! Parse records for `ixdtf`'s parsers to target.
 
+#[cfg(feature = "duration")]
+use core::ops::Mul;
+
 use alloc::vec::Vec;
 
-/// An `IsoParseRecord` is an intermediary record returned by ISO parsing functions.
-///
-/// `IsoParseRecord` is converted into the ISO AST Nodes.
+/// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
 pub struct IsoParseRecord<'a> {
@@ -17,9 +18,9 @@ pub struct IsoParseRecord<'a> {
     /// Parsed Time
     pub time: Option<TimeRecord>,
     /// Parsed UtcOffset
-    pub offset: Option<UTCOffset>,
+    pub offset: Option<UTCOffsetRecord>,
     /// Parsed `TimeZone` data (UTCOffset | IANA name)
-    pub tz: Option<TimeZone<'a>>,
+    pub tz: Option<TimeZoneRecord<'a>>,
     /// The parsed calendar value.
     pub calendar: Option<&'a str>,
     /// Annotations
@@ -28,13 +29,14 @@ pub struct IsoParseRecord<'a> {
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
+/// A record of an annotation.
 pub struct Annotation<'a> {
     pub critical: bool,
     pub key: &'a str,
     pub value: &'a str,
 }
 
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)]
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 /// The record of a parsed date.
 pub struct DateRecord {
@@ -47,7 +49,7 @@ pub struct DateRecord {
 }
 
 /// Parsed Time info
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct TimeRecord {
     /// An hour
@@ -56,28 +58,24 @@ pub struct TimeRecord {
     pub minute: u8,
     /// A second value.
     pub second: u8,
-    /// A millisecond value
-    pub millisecond: u16,
-    /// A Microsecond value
-    pub microsecond: u16,
-    /// A Nanosecond value
-    pub nanosecond: u16,
+    /// A nanosecond value representing all sub-second components.
+    pub nanosecond: u32,
 }
 
 /// `TimeZone` data
 #[non_exhaustive]
-#[derive(Default, Debug, Clone, PartialEq)]
-pub struct TimeZone<'a> {
+#[derive(Debug, Clone, PartialEq)]
+pub enum TimeZoneRecord<'a> {
     /// TimeZoneIANAName
-    pub name: Option<&'a str>,
+    Name(&'a str),
     /// TimeZoneOffset
-    pub offset: Option<UTCOffset>,
+    Offset(UTCOffsetRecord),
 }
 
 /// A full precision `UtcOffset`
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct UTCOffset {
+pub struct UTCOffsetRecord {
     /// The `+`/`-` sign of this `UtcOffset`
     pub sign: i8,
     /// The hour value of the `UtcOffset`
@@ -86,12 +84,20 @@ pub struct UTCOffset {
     pub minute: u8,
     /// The second value of the `UtcOffset`.
     pub second: u8,
-    /// Any millisecond value of the `UTCOffset`
-    pub millisecond: u16,
-    /// Any microsecond value of the `UTCOffset`
-    pub microsecond: u16,
     /// Any nanosecond value of the `UTCOffset`
-    pub nanosecond: u16,
+    pub nanosecond: u32,
+}
+
+impl Default for UTCOffsetRecord {
+    fn default() -> Self {
+        Self {
+            sign: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            nanosecond: 0,
+        }
+    }
 }
 
 /// The resulting record of a `Duration` parse.
@@ -108,62 +114,36 @@ pub struct DurationParseRecord {
     /// The `days` value.
     pub days: i32,
     /// The `hours` value.
-    pub hours: f64,
+    pub hours: i32,
     /// The `minutes` value.
-    pub minutes: f64,
+    pub minutes: i32,
     /// The `seconds` value.
-    pub seconds: f64,
-    /// The `milliseconds` value.
-    pub milliseconds: f64,
-    /// The `microseconds` value.
-    pub microseconds: f64,
-    /// The `nanoseconds` value.
-    pub nanoseconds: f64,
+    pub seconds: i32,
+    /// Any fraction part of a duration.
+    pub fraction: Option<DurationFraction>,
+}
+
+/// An enum representing the fraction part of a duration.
+#[non_exhaustive]
+#[cfg(feature = "duration")]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum DurationFraction {
+    /// The fraction value applied to an hour.
+    Hours(i64),
+    /// The fraction value applied to the minutes field.
+    Minutes(i64),
+    /// The fraction value applied to the seconds field.
+    Seconds(i32),
 }
 
 #[cfg(feature = "duration")]
-impl DurationParseRecord {
-    pub(crate) fn from_records(
-        sign: bool,
-        date: DateDurationRecord,
-        time: TimeDurationRecord,
-    ) -> Self {
-        let minutes = if time.fhours > 0.0 {
-            time.fhours * 60.0
-        } else {
-            f64::from(time.minutes)
-        };
-
-        let seconds = if time.fminutes > 0.0 {
-            time.fminutes * 60.0
-        } else if time.seconds > 0 {
-            f64::from(time.seconds)
-        } else {
-            (minutes % 1.0) * 60.0
-        };
-
-        let milliseconds = if time.fseconds > 0.0 {
-            time.fseconds * 1000.0
-        } else {
-            (seconds % 1.0) * 1000.0
-        };
-
-        let microseconds = (milliseconds % 1.0) * 1000.0;
-        let nanoseconds = (microseconds % 1.0) * 1000.0;
-
-        let sign: i32 = if sign { 1 } else { -1 };
-
-        Self {
-            years: date.years * sign,
-            months: date.months * sign,
-            weeks: date.weeks * sign,
-            days: date.days * sign,
-            hours: f64::from(time.hours) * f64::from(sign),
-            minutes: minutes * f64::from(sign),
-            seconds: seconds * f64::from(sign),
-            milliseconds: milliseconds * f64::from(sign),
-            microseconds: microseconds * f64::from(sign),
-            nanoseconds: nanoseconds * f64::from(sign),
+impl Mul<i32> for DurationFraction {
+    type Output = Self;
+    fn mul(self, rhs: i32) -> Self::Output {
+        match self {
+            Self::Hours(i) => Self::Hours(i * i64::from(rhs)),
+            Self::Minutes(i) => Self::Minutes(i * i64::from(rhs)),
+            Self::Seconds(i) => Self::Seconds(i * rhs),
         }
     }
 }
@@ -188,14 +168,10 @@ pub(crate) struct DateDurationRecord {
 pub(crate) struct TimeDurationRecord {
     /// Hours value.
     pub(crate) hours: i32,
-    /// Hours fraction value.
-    pub(crate) fhours: f64,
-    /// Minutes value with fraction.
+    /// Minutes value.
     pub(crate) minutes: i32,
-    /// Minutes fraction value.
-    pub(crate) fminutes: f64,
-    /// Seconds value with fraction.
+    /// Seconds value.
     pub(crate) seconds: i32,
-    /// Seconds fraction value,
-    pub(crate) fseconds: f64,
+    /// Any parsed fraction value.
+    pub(crate) fraction: Option<DurationFraction>,
 }

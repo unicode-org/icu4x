@@ -10,8 +10,8 @@ use super::{
         is_annotation_key_value_separator, is_annotation_open, is_critical_flag, is_sign,
         is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator, is_utc_designator,
     },
-    records::{TimeZone, UTCOffset},
-    time::{parse_fraction_component, parse_hour, parse_minute_second},
+    records::{TimeZoneRecord, UTCOffsetRecord},
+    time::{parse_fraction, parse_hour, parse_minute_second},
     Cursor,
 };
 use crate::{assert_syntax, ParserError, ParserResult};
@@ -24,7 +24,7 @@ pub(crate) struct TimeZoneAnnotation<'a> {
     /// Critical Flag for the annotation.
     pub(crate) critical: bool,
     /// TimeZone Data
-    pub(crate) tz: TimeZone<'a>,
+    pub(crate) tz: TimeZoneRecord<'a>,
 }
 
 // ==== Time Zone Annotation Parsing ====
@@ -101,7 +101,7 @@ fn parse_tz_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneAnno
 /// Parses the [`TimeZoneIdentifier`][tz] node.
 ///
 /// [tz]: https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
-pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZone<'a>> {
+pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecord<'a>> {
     let is_iana = cursor
         .check(is_tz_leading_char)
         .ok_or(ParserError::abrupt_end("TimeZoneAnnotation"))?;
@@ -111,25 +111,23 @@ pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZ
         return parse_tz_iana_name(cursor);
     } else if is_offset {
         let (offset, _) = parse_utc_offset_minute_precision(cursor)?;
-        return Ok(TimeZone {
-            name: None,
-            offset: Some(offset),
-        });
+        return Ok(TimeZoneRecord::Offset(offset));
     }
 
     Err(ParserError::TzLeadingChar)
 }
 
 /// Parse a `TimeZoneIANAName` Parse Node
-fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZone<'a>> {
+fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecord<'a>> {
     let tz_name_start = cursor.pos();
     while let Some(potential_value_char) = cursor.next() {
         if cursor.check_or(false, is_annotation_close) {
             // Return the valid TimeZoneIANAName
-            return Ok(TimeZone {
-                name: cursor.slice(tz_name_start, cursor.pos()),
-                offset: None,
-            });
+            return Ok(TimeZoneRecord::Name(
+                cursor
+                    .slice(tz_name_start, cursor.pos())
+                    .ok_or(ParserError::ImplAssert)?,
+            ));
         }
 
         if is_tz_name_separator(potential_value_char) {
@@ -146,13 +144,10 @@ fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZone<'a>>
 // ==== Utc Offset Parsing ====
 
 /// Parse a full precision `UtcOffset`
-pub(crate) fn parse_date_time_utc<'a>(cursor: &mut Cursor) -> ParserResult<TimeZone<'a>> {
+pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UTCOffsetRecord> {
     if cursor.check_or(false, is_utc_designator) {
         cursor.advance();
-        return Ok(TimeZone {
-            name: Some("UTC"),
-            offset: None,
-        });
+        return Ok(UTCOffsetRecord::default());
     }
 
     let separated = cursor.peek_n_char(3).map_or(false, is_time_separator);
@@ -166,25 +161,17 @@ pub(crate) fn parse_date_time_utc<'a>(cursor: &mut Cursor) -> ParserResult<TimeZ
 
     // Return early on only hour offset parse, None, or AnnotationOpen.
     if cursor.check_or(true, is_annotation_open) || !parsed_minute {
-        return Ok(TimeZone {
-            name: None,
-            offset: Some(utc_to_minute),
-        });
+        return Ok(utc_to_minute);
     }
 
     // If `UtcOffsetWithSubMinuteComponents`, continue parsing.
     utc_to_minute.second = parse_minute_second(cursor, true)?;
 
-    let (millisecond, microsecond, nanosecond) = parse_fraction_component(cursor)?;
+    let nanosecond = parse_fraction(cursor)?.unwrap_or(0);
 
-    utc_to_minute.millisecond = millisecond;
-    utc_to_minute.microsecond = microsecond;
     utc_to_minute.nanosecond = nanosecond;
 
-    Ok(TimeZone {
-        name: None,
-        offset: Some(utc_to_minute),
-    })
+    Ok(utc_to_minute)
 }
 
 /// Parse an `UtcOffsetMinutePrecision` node
@@ -192,7 +179,7 @@ pub(crate) fn parse_date_time_utc<'a>(cursor: &mut Cursor) -> ParserResult<TimeZ
 /// Returns the offset and whether the utc parsing includes a minute.
 pub(crate) fn parse_utc_offset_minute_precision(
     cursor: &mut Cursor,
-) -> ParserResult<(UTCOffset, bool)> {
+) -> ParserResult<(UTCOffsetRecord, bool)> {
     let sign = if cursor.check_or(false, is_sign) {
         if cursor.next_or(ParserError::ImplAssert)? == '+' {
             1
@@ -207,13 +194,11 @@ pub(crate) fn parse_utc_offset_minute_precision(
     // If at the end of the utc, then return.
     if !cursor.check_or(false, |ch| ch.is_ascii_digit() || is_time_separator(ch)) {
         return Ok((
-            UTCOffset {
+            UTCOffsetRecord {
                 sign,
                 hour,
                 minute: 0,
                 second: 0,
-                millisecond: 0,
-                microsecond: 0,
                 nanosecond: 0,
             },
             false,
@@ -225,13 +210,11 @@ pub(crate) fn parse_utc_offset_minute_precision(
     let minute = parse_minute_second(cursor, false)?;
 
     Ok((
-        UTCOffset {
+        UTCOffsetRecord {
             sign,
             hour,
             minute,
             second: 0,
-            millisecond: 0,
-            microsecond: 0,
             nanosecond: 0,
         },
         true,

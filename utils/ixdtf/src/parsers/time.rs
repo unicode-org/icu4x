@@ -7,28 +7,23 @@
 use crate::{
     assert_syntax,
     parsers::{
-        grammar::{is_decimal_separator, is_time_separator},
+        datetime::DateTimeRecord,
+        grammar::{
+            is_decimal_separator, is_sign, is_time_designator, is_time_separator, is_utc_designator,
+        },
         records::TimeRecord,
+        timezone::parse_date_time_utc,
         Cursor,
     },
     ParserError, ParserResult,
 };
 
-use alloc::string::String;
-
-#[cfg(feature = "temporal")]
-use crate::parsers::{annotations, grammar, records::IsoParseRecord, time_zone};
-
-#[cfg(feature = "temporal")]
-use alloc::vec::Vec;
-
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
-#[cfg(feature = "temporal")]
-pub(crate) fn parse_annotated_time_record<'a>(
-    cursor: &mut Cursor<'a>,
-) -> ParserResult<Option<IsoParseRecord<'a>>> {
-    let designator = cursor.check_or(false, grammar::is_time_designator);
+pub(crate) fn parse_ambiguous_time_record(
+    cursor: &mut Cursor<'_>,
+) -> ParserResult<Option<DateTimeRecord>> {
+    let designator = cursor.check_or(false, is_time_designator);
     cursor.advance_if(designator);
 
     let time = match parse_time_record(cursor) {
@@ -44,45 +39,17 @@ pub(crate) fn parse_annotated_time_record<'a>(
     // If Time was successfully parsed, assume from this point that this IS a
     // valid AnnotatedTimeRecord.
 
-    let utc_offset = if cursor.check_or(false, |ch| {
-        grammar::is_sign(ch) || grammar::is_utc_designator(ch)
-    }) {
-        time_zone::parse_date_time_utc(cursor)?.offset
+    let utc_offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
+        Some(parse_date_time_utc(cursor)?)
     } else {
         None
     };
 
     // Check if annotations exist.
-    if !cursor.check_or(false, grammar::is_annotation_open) {
-        cursor.close()?;
-
-        return Ok(Some(IsoParseRecord {
-            date: None,
-            time: Some(time),
-            offset: utc_offset,
-            tz: None,
-            calendar: None,
-            annotations: Vec::default(),
-        }));
-    }
-
-    let annotations = annotations::parse_annotation_set(cursor)?;
-
-    let tz = if let Some(tz_annotation) = annotations.tz {
-        Some(tz_annotation.tz)
-    } else {
-        None
-    };
-
-    cursor.close()?;
-
-    Ok(Some(IsoParseRecord {
+    Ok(Some(DateTimeRecord {
         date: None,
         time: Some(time),
-        offset: utc_offset,
-        tz,
-        calendar: annotations.calendar,
-        annotations: Vec::default(),
+        time_zone: utc_offset,
     }))
 }
 
@@ -95,8 +62,6 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
             hour,
             minute: 0,
             second: 0,
-            millisecond: 0,
-            microsecond: 0,
             nanosecond: 0,
         });
     }
@@ -111,8 +76,6 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
             hour,
             minute,
             second: 0,
-            millisecond: 0,
-            microsecond: 0,
             nanosecond: 0,
         });
     }
@@ -123,14 +86,12 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 
     let second = parse_minute_second(cursor, true)?;
 
-    let (millisecond, microsecond, nanosecond) = parse_fraction_component(cursor)?;
+    let nanosecond = parse_fraction(cursor)?.unwrap_or(0);
 
     Ok(TimeRecord {
         hour,
         minute,
         second,
-        millisecond,
-        microsecond,
         nanosecond,
     })
 }
@@ -162,51 +123,33 @@ pub(crate) fn parse_minute_second(cursor: &mut Cursor, is_second: bool) -> Parse
     Ok(min_sec_value)
 }
 
-#[inline]
-pub(crate) fn parse_fraction_component(cursor: &mut Cursor) -> ParserResult<(u16, u16, u16)> {
-    let Some(fraction) = parse_fraction(cursor)? else {
-        return Ok((0, 0, 0));
-    };
-    Ok(to_fraction_components(fraction))
-}
-
 /// Parse a `Fraction` value
 ///
 /// This is primarily used in ISO8601 to add percision past
 /// a second.
 #[inline]
-pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<f64>> {
+pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
     // Assert that the first char provided is a decimal separator.
     if !cursor.check_or(false, is_decimal_separator) {
         return Ok(None);
     }
     cursor.next_or(ParserError::FractionPart)?;
-    let mut fraction = String::from('.');
 
+    let mut result = 0;
+    let mut fraction_len = 0;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        fraction.push(cursor.next_or(ParserError::FractionPart)?);
+        if fraction_len > 9 {
+            return Err(ParserError::FractionPart);
+        }
+        result = result * 10 + u32::from(cursor.next_digit()?.ok_or(ParserError::FractionPart)?);
+        fraction_len += 1;
     }
 
-    assert_syntax!(fraction.len() <= 10, FractionPart);
+    // Assert: 10^9-1 should always be a valid u32.
+    let result = result
+        * 10u32
+            .checked_pow(9 - fraction_len)
+            .ok_or(ParserError::ImplAssert)?;
 
-    let fraction_value = fraction
-        .parse::<f64>()
-        .map_err(|_| ParserError::ParseFloat)?;
-    Ok(Some(fraction_value))
-}
-
-#[inline]
-fn to_fraction_components(raw: f64) -> (u16, u16, u16) {
-    let intermediate: u32 = (raw * 1_000_000_000.0) as u32;
-
-    let (milliseconds, rem) = div_rem(intermediate, 1_000_000);
-    let (microseconds, nanoseconds) = div_rem(rem, 1_000);
-
-    // Safety: Intermediate should only be max 999_999_999;
-    (milliseconds as u16, microseconds as u16, nanoseconds as u16)
-}
-
-#[inline]
-fn div_rem(num: u32, divisor: u32) -> (u32, u32) {
-    (num / divisor, num % divisor)
+    Ok(Some(result))
 }

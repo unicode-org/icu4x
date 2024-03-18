@@ -17,12 +17,12 @@ pub enum ParserError {
     AbruptEnd { location: &'static str },
     #[displaydoc("Unexpected character found after parsing was completed.")]
     InvalidEnd,
+
+    // Date related errors
     #[displaydoc("Parsed month value not in a valid range.")]
     InvalidMonthRange,
     #[displaydoc("Parsed day value not in a valid range.")]
     InvalidDayRange,
-    #[displaydoc("Parsed year value not in a valid range.")]
-    InvalidYearRange,
     #[displaydoc("Invalid chracter while parsing year value.")]
     DateYear,
     #[displaydoc("Invalid character while parsing extended year value.")]
@@ -33,6 +33,10 @@ pub enum ParserError {
     DateDay,
     #[displaydoc("Unexpected end while parsing a date value.")]
     DateUnexpectedEnd,
+
+    // Time Related errors
+    #[displaydoc("Time is required.")]
+    TimeRequired,
     #[displaydoc("Invalid character while parsing hour value.")]
     TimeHour,
     #[displaydoc("Invalid character while parsing minute value.")]

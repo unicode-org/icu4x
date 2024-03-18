@@ -12,8 +12,8 @@ use crate::{
             is_annotation_key_value_separator, is_annotation_open, is_annotation_value_component,
             is_critical_flag, is_hyphen,
         },
-        time_zone,
-        time_zone::TimeZoneAnnotation,
+        timezone,
+        timezone::TimeZoneAnnotation,
         Cursor,
     },
     ParserError, ParserResult,
@@ -33,7 +33,7 @@ pub(crate) struct AnnotationSet<'a> {
 /// Parse a `TimeZoneAnnotation` `Annotations` set
 pub(crate) fn parse_annotation_set<'a>(cursor: &mut Cursor<'a>) -> ParserResult<AnnotationSet<'a>> {
     // Parse the first annotation.
-    let tz_annotation = time_zone::parse_ambiguous_tz_annotation(cursor)?;
+    let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
 
     // Parse any `Annotations`
     let annotations = cursor.check_or(false, is_annotation_open);

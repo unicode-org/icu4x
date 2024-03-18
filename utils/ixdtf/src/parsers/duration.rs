@@ -12,7 +12,7 @@ use crate::{
             is_month_designator, is_second_designator, is_sign, is_time_designator,
             is_week_designator, is_year_designator,
         },
-        records::{DateDurationRecord, DurationParseRecord, TimeDurationRecord},
+        records::{DateDurationRecord, DurationFraction, DurationParseRecord, TimeDurationRecord},
         time::parse_fraction,
         Cursor,
     },
@@ -35,25 +35,32 @@ pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseR
     );
 
     let date = if cursor.check_or(false, is_time_designator) {
-        Some(DateDurationRecord::default())
+        DateDurationRecord::default()
     } else {
-        Some(parse_date_duration(cursor)?)
+        parse_date_duration(cursor)?
     };
 
     let time = if cursor.check_or(false, is_time_designator) {
         cursor.advance();
-        Some(parse_time_duration(cursor)?)
+        parse_time_duration(cursor)?
     } else {
-        None
+        TimeDurationRecord::default()
     };
 
     cursor.close()?;
 
-    Ok(DurationParseRecord::from_records(
-        sign,
-        date.unwrap_or_default(),
-        time.unwrap_or_default(),
-    ))
+    let sign: i32 = if sign { 1 } else { -1 };
+
+    Ok(DurationParseRecord {
+        years: date.years * sign,
+        months: date.months * sign,
+        weeks: date.weeks * sign,
+        days: date.days * sign,
+        hours: time.hours * sign,
+        minutes: time.minutes * sign,
+        seconds: time.seconds * sign,
+        fraction: time.fraction.map(|f| f * sign),
+    })
 }
 
 #[derive(PartialEq, PartialOrd, Eq, Ord)]
@@ -132,7 +139,6 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
     );
 
     let mut previous_unit = TimeUnit::None;
-    let mut fraction_present = false;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         let mut value: i32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
@@ -142,12 +148,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
             value = value * 10 + i32::from(digit);
         }
 
-        let fraction = if let Some(fraction) = parse_fraction(cursor)? {
-            fraction_present = true;
-            fraction
-        } else {
-            0.0
-        };
+        let fraction = parse_fraction(cursor)?;
 
         match cursor.next() {
             Some(ch) if is_hour_designator(ch) => {
@@ -155,7 +156,9 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                     return Err(ParserError::TimeDurationPartOrder);
                 }
                 time.hours = value;
-                time.fhours = fraction;
+                if let Some(fraction) = fraction {
+                    time.fraction = Some(DurationFraction::Hours(3600 * i64::from(fraction)));
+                }
                 previous_unit = TimeUnit::Hour;
             }
             Some(ch) if is_minute_designator(ch) => {
@@ -163,7 +166,9 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                     return Err(ParserError::TimeDurationPartOrder);
                 }
                 time.minutes = value;
-                time.fminutes = fraction;
+                if let Some(fraction) = fraction {
+                    time.fraction = Some(DurationFraction::Minutes(60 * i64::from(fraction)));
+                }
                 previous_unit = TimeUnit::Minute;
             }
             Some(ch) if is_second_designator(ch) => {
@@ -171,13 +176,18 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                     return Err(ParserError::TimeDurationPartOrder);
                 }
                 time.seconds = value;
-                time.fseconds = fraction;
+                if let Some(fraction) = fraction {
+                    // Assert: Fraction value does not exceed i32 max.
+                    time.fraction = Some(DurationFraction::Seconds(
+                        i32::try_from(fraction).map_err(|_| ParserError::ImplAssert)?,
+                    ));
+                }
                 previous_unit = TimeUnit::Second;
             }
             Some(_) | None => return Err(ParserError::abrupt_end("TimeDurationDesignator")),
         }
 
-        if fraction_present {
+        if fraction.is_some() {
             assert_syntax!(cursor.check_or(true, |ch| !ch.is_ascii_digit()), InvalidEnd,);
             break;
         }
