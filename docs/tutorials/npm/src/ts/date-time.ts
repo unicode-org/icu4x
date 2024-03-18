@@ -1,9 +1,24 @@
-import { ICU4XDataProvider, ICU4XDateLength, ICU4XDateTime, ICU4XDateTimeFormatter, ICU4XLocale, ICU4XTimeLength, ICU4XCalendar } from "icu4x";
-import { Ok, Result, result, unwrap } from "./index";
+import { 
+    ICU4XDataProvider, 
+    ICU4XDateLength, 
+    ICU4XDateTime, 
+    ICU4XDateTimeFormatter, 
+    ICU4XLocale, 
+    ICU4XTimeLength, 
+    ICU4XCalendar 
+} from "icu4x";
+import { DataProviderManager } from './data-provider-manager';
+import { 
+    Ok, 
+    Result, 
+    result, 
+    unwrap 
+} from "./index";
 
 export class DateTimeDemo {
     #displayFn: (formatted: string) => void;
     #dataProvider: ICU4XDataProvider;
+    #dataProviderManager: DataProviderManager;
 
     #localeStr: string;
     #calendarStr: string;
@@ -16,12 +31,13 @@ export class DateTimeDemo {
     #formatter: Result<ICU4XDateTimeFormatter>;
     #dateTime: Result<ICU4XDateTime> | null;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+    constructor(displayFn: (formatted: string) => void, dataProviderManager: DataProviderManager) {
+        
         this.#displayFn = displayFn;
-        this.#dataProvider = dataProvider;
-
+        this.#dataProvider = dataProviderManager.getDataProvider();
+        this.#dataProviderManager = dataProviderManager;
         this.#locale = Ok(ICU4XLocale.create_from_string("en"));
-        this.#calendar = Ok(ICU4XCalendar.create_for_locale(dataProvider, unwrap(this.#locale)));
+        this.#calendar = Ok(ICU4XCalendar.create_for_locale(this.#dataProvider, unwrap(this.#locale)));
         this.#dateLength = ICU4XDateLength.Short;
         this.#timeLength = ICU4XTimeLength.Short;
         this.#dateTime = null;
@@ -37,9 +53,31 @@ export class DateTimeDemo {
         this.#updateFormatter();
     }
 
-    setLocale(locid: string): void {
-        this.#localeStr = locid;
-        this.#updateLocaleAndCalendar();
+    async setLocale(locid: string): Promise <void> {
+        this.#locale = result(() => ICU4XLocale.create_from_string(locid));
+        if (this.#locale.ok == true) {
+            const locales = this.#dataProviderManager.getLoadedLocales();
+            const localesFinal: string[] = [];
+            locales.forEach((item: ICU4XLocale) => {
+                localesFinal.push(item.to_string)
+            })
+            const loadedLocales = new Set(localesFinal);
+            if (!loadedLocales.has(this.#locale.value.to_string())) {
+                await this.updateProvider(this.#locale.value);
+            }
+        }
+        this.#updateFormatter()
+    }
+
+    async updateProvider(newLocale: ICU4XLocale) {
+        this.#dataProvider = await this.#dataProviderManager.loadLocale(newLocale.to_string());
+        const fallbackLocale = this.#dataProviderManager.getFallbackLocale();
+        const fallbackLocaleResult = result(() => this.#dataProviderManager.getFallbackLocale());
+        this.#locale = fallbackLocaleResult
+        // Logs if there is a fallback and prints the fallback locale
+        if(newLocale.to_string() != fallbackLocale.to_string()) {
+            console.log(`Falling back to locale: ${fallbackLocale.to_string()}`);
+        }
         this.#updateFormatter();
     }
 
