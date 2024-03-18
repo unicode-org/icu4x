@@ -37,6 +37,14 @@ final class PluralOperands implements ffi.Finalizable {
     }
     return PluralOperands._fromFfi(result.union.ok, []);
   }
+
+  /// Construct from a FixedDecimal
+  ///
+  /// Retains at most 18 digits each from the integer and fraction parts.
+  factory PluralOperands.fromFixedDecimal(FixedDecimal x) {
+    final result = _ICU4XPluralOperands_create_from_fixed_decimal(x._ffi);
+    return PluralOperands._fromFfi(result, []);
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XPluralOperands_destroy')
@@ -48,3 +56,8 @@ external void _ICU4XPluralOperands_destroy(ffi.Pointer<ffi.Void> self);
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_string')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPluralOperands_create_from_string(ffi.Pointer<ffi.Uint8> sData, int sLength);
+
+@meta.ResourceIdentifier('ICU4XPluralOperands_create_from_fixed_decimal')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_fixed_decimal')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XPluralOperands_create_from_fixed_decimal(ffi.Pointer<ffi.Opaque> x);
