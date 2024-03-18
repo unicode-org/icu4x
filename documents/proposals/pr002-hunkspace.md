@@ -22,10 +22,10 @@ more general and open to independent third party extensions.
 > inconsistent word use is a bug, and should be fixed.
 
 [cldr]: http://cldr.unicode.org
-[dp]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
+[dp]: https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md
 [ff]: https://github.com/filmil
-[hunk]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
-[icudp]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
+[hunk]: https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md
+[icudp]: https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md
 [zb]: https://github.com/zbraniecki
 
 ## Prior Art
@@ -36,7 +36,7 @@ the API by using *Data Providers*.  The API is using the
 `key:request/value:response` pattern.  See [Request][rq] in the source code for
 the example key.
 
-[dm]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
+[dm]: https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md
 [rq]: https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/lib.rs
 
 ## Use cases

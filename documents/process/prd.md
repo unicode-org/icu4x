@@ -1,6 +1,6 @@
 # ICU4X 1.0 Product Requirement Document (PRD)
 
-[ICU4X is an effort](https://github.com/unicode-org/icu4x/blob/master/docs/process/charter.md) under [Unicode](https://unicode.org/) guidance to develop a set of [Unicode Components](http://site.icu-project.org/) with focus on modularity, composability, and FFI supporting the scope of [ECMA-402](https://tc39.es/ecma402/) and written in accordance with modern internationalization techniques and standards.
+[ICU4X is an effort](https://github.com/unicode-org/icu4x/blob/main/documents/process/charter.md) under [Unicode](https://unicode.org/) guidance to develop a set of [Unicode Components](http://site.icu-project.org/) with focus on modularity, composability, and FFI supporting the scope of [ECMA-402](https://tc39.es/ecma402/) and written in accordance with modern internationalization techniques and standards.
 
 The effort, currently driven mostly by engineering resources from Google and Mozilla, has been in development since February 2020 and we’re now looking to establish the criteria for evaluation of its value proposition and business fit.
 
@@ -10,7 +10,7 @@ The following is the vision for a stable, production ready 1.0 release and miles
 
 Primarily, ICU4X aims to offer a more modular approach to internationalization, allowing client-side and resource-constrained environments to fine-tune the payload they vendor-in to maximize the quality and breadth of the internationalization coverage and relax the constraints internationalization imposes on product release cycles.
 
-Secondarily, ICU4X aims to provide a single [high quality](https://github.com/unicode-org/icu4x/blob/master/docs/process/benchmarking.md) Internationalization API implementation written in a modern language, with [low memory overhead and great runtime performance](https://github.com/zbraniecki/intl-measurements/), exposed to many target ecosystems via robust FFI.
+Secondarily, ICU4X aims to provide a single [high quality](https://github.com/unicode-org/icu4x/blob/main/documents/process/benchmarking.md) Internationalization API implementation written in a modern language, with [low memory overhead and great runtime performance](https://github.com/zbraniecki/intl-measurements/), exposed to many target ecosystems via robust FFI.
 This will reduce the maintenance cost of internationalization stacks and improve access to high quality internationalization in multi-stack environments.
 
 Finally, ICU4X will offer a powerful and flexible data management system, enabling sophisticated software release models and long-lived software processes to maintain data selection and updates.
@@ -55,7 +55,7 @@ By introducing ICU4X to the community, we have a chance to attract high-quality 
 
 ICU4X 0.1’s selection of components aimed to:
 
--   Validate low-level models around [data management](https://github.com/unicode-org/icu4x/blob/master/docs/design/data_pipeline.md)
+-   Validate low-level models around [data management](https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md)
 -   Establish project culture using simple building blocks such as [Locale](https://docs.rs/icu_locid/0.1.0/icu_locid/) and [Plural Rules](https://docs.rs/icu_plurals/0.1.0/icu_plurals/)
 -   Introduce a low-level foundation for string operations with [CodePointSet](https://docs.rs/icu_uniset/0.1.0/icu_uniset/)
 -   Expose a single, high-level, highly requested API - [DateTimeFormat](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)

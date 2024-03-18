@@ -3,8 +3,8 @@ Graduating Components from Experimental
 
 This document contains a checklist for the requirements to migrate a component from experimental.
 
-- [ ] The crate should fully conform with the [ICU4X Style Guide](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md):
-  - [ ] The crate should have a complete library header as shown in [boilerplate.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md) with Clippy passing
+- [ ] The crate should fully conform with the [ICU4X Style Guide](https://github.com/unicode-org/icu4x/blob/main/documents/process/style_guide.md):
+  - [ ] The crate should have a complete library header as shown in [boilerplate.md](https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md) with Clippy passing
   - [ ] The names of exported types should conform to the recommendations in the Style Guide
   - [ ] All Error types should be `Copy`
   - [ ] All constructors should take options structs by value
@@ -31,7 +31,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/make-testdata.rs) test
   - [ ] Constructors should avoid allocating memory in the common case
   - [ ] Opaque blobs of data should be avoided if possible (instead use VarZeroVec, ZeroMap, etc.)
-  - [ ] Data structs should not be panicky to load/deserialize and conform to [data_safety.md](https://github.com/unicode-org/icu4x/blob/main/docs/design/data_safety.md)
+  - [ ] Data structs should not be panicky to load/deserialize and conform to [data_safety.md](https://github.com/unicode-org/icu4x/blob/main/documents/design/data_safety.md)
 - [ ] The component should be fully integrated with ICU4X tooling
   - [ ] There should be an overview Criterion benchmark
   - [ ] There should be individual Criterion benchmarks for interesting or performance critical code paths

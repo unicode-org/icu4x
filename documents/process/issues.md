@@ -12,7 +12,7 @@ Follow these guidelines when opening an issue:
 2. **Post clarifying questions** in [the "Discussions" tab](https://github.com/unicode-org/icu4x/discussions).
     - The issue tracker should be for _bugs_ and _feature requests_. If you are having trouble following a tutorial or have some other question about _using_ ICU4X, please post your question in the "Discussions" tab.
 3. **Verify whether this is a data issue.** ICU4X is a data-driven library and many bugs observed in ICU4X may be issues in CLDR instead.
-    - Read the [CLDR issue reporting guidelines](https://github.com/unicode-org/cldr/blob/main/docs/requesting_changes.md) for more information on the CLDR process.
+    - Read the [CLDR issue reporting guidelines](https://github.com/unicode-org/cldr/blob/main/documents/requesting_changes.md) for more information on the CLDR process.
 4. **Check whether the issue has been fixed.** Sometimes if you pull ICU4X from the main branch, the issue is not reproducible.
     - To do this easily in your Cargo.toml file, replace your ICU4X dependency line with `icu = { git = "https://github.com/unicode-org/icu4x.git" }`
 5. **Isolate the problem.** Small, reproducible issues are more actionable than large, vague ones.

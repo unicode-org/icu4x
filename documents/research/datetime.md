@@ -4,7 +4,7 @@ In ICU4X 0.1 we introduce a `DateTimeFormat` API for formatting date and time in
 
 In order to clearly separate the concerns, we are leaving a challenging task of designing a complete solution for date and time management to the Rust community, and we can only formulate the request for what API ICU4X will need to format such structure.
 
-We have prepared [a design doc](https://github.com/unicode-org/icu4x/blob/main/docs/datetime-input.md) discussing the data we need in ICU4X DateTimeFormat in order to produce properly localized strings.
+We have prepared [a design doc](https://github.com/unicode-org/icu4x/blob/main/documents/datetime-input.md) discussing the data we need in ICU4X DateTimeFormat in order to produce properly localized strings.
 
 ## Separation of Concerns
 

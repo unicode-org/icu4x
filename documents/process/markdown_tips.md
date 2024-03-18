@@ -41,4 +41,4 @@ Here is how others can view your Markdown with images in a PR:
 
 1. In the PR, click "Files Changed" (goes to /pull/123/files)
 2. Find the Markdown file you want to preview
-3. Click the three dots (...) to open the menu, then click "View File" (goes to /blob/abcdef0/docs/example.md)
+3. Click the three dots (...) to open the menu, then click "View File" (goes to /blob/abcdef0/documents/example.md)

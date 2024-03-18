@@ -98,7 +98,7 @@ exclude = [
     # first.
     "provider/testdata",
     # Tutorials are tested outside the workspace to simulate external users
-    "docs",
+    "tutorials",
 ]
 
 [workspace.package]

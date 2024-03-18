@@ -30,7 +30,7 @@ ICU4X is highly modular allowing users to easily select and chunk pieces of the 
 
 ### Flexible Data Management
 
-[Data management](https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md) is a complex subcomponent of every internationalization ecosystem. Inflexible data management forces users to select which data and which locales are going to be available to users, which is a practice that goes against the idea of universal access to the system.
+[Data management](https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md) is a complex subcomponent of every internationalization ecosystem. Inflexible data management forces users to select which data and which locales are going to be available to users, which is a practice that goes against the idea of universal access to the system.
 
 What’s more, such architecture forces trade-offs and compromises in which benefiting some users puts additional cost on other users, companies and degrades performance.
 
