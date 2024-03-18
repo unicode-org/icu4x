@@ -406,7 +406,8 @@ impl LocaleDisplayNamesFormatter {
 
         // TODO: handle the other possible longest subtag cases
 
-        if self.options.language_display != LanguageDisplay::Standard {
+        // If not in Dialect mode, we always assemble the display names from language, script, region
+        if self.options.language_display == LanguageDisplay::Dialect {
             if let Some(script) = locale.id.script {
                 let data = self.locale_data.get();
                 let id = LanguageIdentifier::from((locale.id.language, Some(script), None));
@@ -526,7 +527,7 @@ impl LocaleDisplayNamesFormatter {
 }
 
 #[test]
-fn test() {
+fn test_language_display() {
     assert_eq!(
         LocaleDisplayNamesFormatter::try_new(
             &"en".parse().unwrap(),
