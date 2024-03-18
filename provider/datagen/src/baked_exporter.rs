@@ -255,6 +255,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
+                .replace("icu::pattern", "icu_pattern")
                 .replace("icu::experimental", "icu_experimental");
         }
 
