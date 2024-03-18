@@ -547,8 +547,8 @@ fn test_language_display() {
     )
     .unwrap();
 
-    assert_eq!(standard.of(&locale!("en-GB")), "English (United Kingdom)");
     assert_eq!(dialect.of(&locale!("en-GB")), "British English");
+    assert_eq!(standard.of(&locale!("en-GB")), "English (United Kingdom)");
 
     assert_eq!(dialect.of(&locale!("zh-Hant")), "Traditional Chinese");
     assert_eq!(standard.of(&locale!("zh-Hant")), "Chinese (Traditional)");
