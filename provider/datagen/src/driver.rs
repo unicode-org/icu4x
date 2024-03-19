@@ -59,9 +59,8 @@ pub enum RuntimeFallbackLocation {
 }
 
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DeduplicationStrategy {
-    #[default] // TODO: Make RetainBaseLanguages the default
     Maximal,
     #[allow(dead_code)]
     RetainBaseLanguages,
@@ -135,7 +134,7 @@ impl fmt::Display for LocaleWithExpansion {
 #[non_exhaustive]
 pub struct LocalesWithFallback {
     pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
-    pub deduplication_strategy: DeduplicationStrategy,
+    pub deduplication_strategy: Option<DeduplicationStrategy>,
     /// private: set via constructor
     locales: HashSet<LocaleWithExpansion>,
 }
@@ -160,7 +159,10 @@ impl LocalesWithFallback {
             Some(RuntimeFallbackLocation::External) => "with external fallback"
         };
         write!(f, "{start}, ")?;
-        self.deduplication_strategy.describe(f)?;
+        match self.deduplication_strategy {
+            Some(x) => x.describe(f)?,
+            None => write!(f, "default deduplication")?
+        }
         write!(f, ", and these locales: {:?}", sorted_locales)
     }
 }
@@ -457,12 +459,12 @@ impl DatagenDriver {
             }
             FallbackMode::Runtime => {
                 let config = locales_fallback.coerce_with_fallback();
-                config.deduplication_strategy = DeduplicationStrategy::Maximal;
+                config.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
                 config.runtime_fallback_location = Some(RuntimeFallbackLocation::Internal);
             }
             FallbackMode::RuntimeManual => {
                 let config = locales_fallback.coerce_with_fallback();
-                config.deduplication_strategy = DeduplicationStrategy::Maximal;
+                config.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
                 config.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
             }
             FallbackMode::Preresolved => {
@@ -475,7 +477,7 @@ impl DatagenDriver {
             }
             FallbackMode::Hybrid => {
                 let config = locales_fallback.coerce_with_fallback();
-                config.deduplication_strategy = DeduplicationStrategy::NoDeduplication;
+                config.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
                 config.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
             }
         }
@@ -486,7 +488,11 @@ impl DatagenDriver {
 
         let deduplication_strategy = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback(_) => DeduplicationStrategy::NoDeduplication,
-            LocalesWithOrWithoutFallback::WithFallback(config) => config.deduplication_strategy
+            LocalesWithOrWithoutFallback::WithFallback(config) => match config.deduplication_strategy {
+                // TODO: Default to RetainBaseLanguages here
+                None => if sink.supports_built_in_fallback() { DeduplicationStrategy::Maximal } else { DeduplicationStrategy::NoDeduplication },
+                Some(x) => x,
+            }
         };
 
         let uses_internal_fallback = match &locales_fallback {
