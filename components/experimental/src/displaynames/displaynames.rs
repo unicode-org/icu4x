@@ -406,27 +406,11 @@ impl LocaleDisplayNamesFormatter {
 
         // TODO: handle the other possible longest subtag cases
 
-        if let Some(script) = locale.id.script {
-            let data = self.locale_data.get();
-            let id = LanguageIdentifier::from((locale.id.language, Some(script), None));
-            let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
-            if let Some(x) = match self.options.style {
-                Some(Style::Short) => data.short_names.get_by(cmp),
-                Some(Style::Long) => data.long_names.get_by(cmp),
-                Some(Style::Menu) => data.menu_names.get_by(cmp),
-                _ => None,
-            }
-            .or_else(|| data.names.get_by(cmp))
-            {
-                ldn = Some(x);
-                script_qs = None;
-            }
-        }
-
-        if ldn.is_none() {
-            if let Some(region) = locale.id.region {
+        // If not in Dialect mode, we always assemble the display names from language, script, region
+        if self.options.language_display == LanguageDisplay::Dialect {
+            if let Some(script) = locale.id.script {
                 let data = self.locale_data.get();
-                let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
+                let id = LanguageIdentifier::from((locale.id.language, Some(script), None));
                 let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
                 if let Some(x) = match self.options.style {
                     Some(Style::Short) => data.short_names.get_by(cmp),
@@ -437,7 +421,26 @@ impl LocaleDisplayNamesFormatter {
                 .or_else(|| data.names.get_by(cmp))
                 {
                     ldn = Some(x);
-                    region_qs = None;
+                    script_qs = None;
+                }
+            }
+
+            if ldn.is_none() {
+                if let Some(region) = locale.id.region {
+                    let data = self.locale_data.get();
+                    let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
+                    let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
+                    if let Some(x) = match self.options.style {
+                        Some(Style::Short) => data.short_names.get_by(cmp),
+                        Some(Style::Long) => data.long_names.get_by(cmp),
+                        Some(Style::Menu) => data.menu_names.get_by(cmp),
+                        _ => None,
+                    }
+                    .or_else(|| data.names.get_by(cmp))
+                    {
+                        ldn = Some(x);
+                        region_qs = None;
+                    }
                 }
             }
         }
@@ -521,4 +524,32 @@ impl LocaleDisplayNamesFormatter {
         output.push_str(after);
         Cow::Owned(output)
     }
+}
+
+#[test]
+fn test_language_display() {
+    use icu_locid::locale;
+
+    let dialect = LocaleDisplayNamesFormatter::try_new(
+        &locale!("en").into(),
+        DisplayNamesOptions {
+            language_display: LanguageDisplay::Dialect,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let standard = LocaleDisplayNamesFormatter::try_new(
+        &locale!("en").into(),
+        DisplayNamesOptions {
+            language_display: LanguageDisplay::Standard,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+
+    assert_eq!(dialect.of(&locale!("en-GB")), "British English");
+    assert_eq!(standard.of(&locale!("en-GB")), "English (United Kingdom)");
+
+    assert_eq!(dialect.of(&locale!("zh-Hant")), "Traditional Chinese");
+    assert_eq!(standard.of(&locale!("zh-Hant")), "Chinese (Traditional)");
 }

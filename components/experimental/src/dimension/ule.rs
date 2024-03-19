@@ -11,25 +11,25 @@ use crate::dimension::provider::currency::{
     CurrencyPatternConfig, PatternSelection, PlaceholderValue,
 };
 
-const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111; // decimal: 2047
+const NO_PLACEHOLDER: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
 
 // TODO(#4013): Remove this constant once we have an invariant that the injecting text index is always less than 2046.
-pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
+pub const MAX_PLACEHOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 
 /// `CurrencyPatternsULE` is a type optimized for efficient storing and
 /// deserialization of `CurrencyPatterns` using the `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
-/// The first bit (b7) is used to determine the short_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
+/// The first bit (b7) is used to determine the short_pattern_selection. If the bit is `0`, then, the value will be `Standard`.
 /// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The second bit (b6) is used to determine the narrow_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
+/// The second bit (b6) is used to determine the narrow_pattern_selection. If the bit is `0`, then, the value will be `Standard`.
 /// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_place_holder_index.
-/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
+/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_placeholder_value.
+/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_placeholder_value.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct CurrencyPatternsULE([u8; 3]);
@@ -72,31 +72,31 @@ impl AsULE for CurrencyPatternConfig {
             first_byte_ule |= 0b1 << PATTERN_NARROW_SHIFT;
         }
 
-        // For short_place_holder_index
+        // For short_placeholder_value
         let [short_most_significant_byte, short_least_significant_byte_ule] =
-            match self.short_place_holder_index {
+            match self.short_placeholder_value {
                 Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
                 Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
-                None => NO_PLACE_HOLDER.to_be_bytes(),
+                None => NO_PLACEHOLDER.to_be_bytes(),
             };
         if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "short_place_holder_index is too large {}, {}",
+                "short_placeholder_value is too large {}, {}",
                 short_most_significant_byte, short_least_significant_byte_ule
             )
         }
         first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
 
-        // For narrow_place_holder_index
+        // For narrow_placeholder_value
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
-            match self.narrow_place_holder_index {
+            match self.narrow_placeholder_value {
                 Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
                 Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
-                None => NO_PLACE_HOLDER.to_be_bytes(),
+                None => NO_PLACEHOLDER.to_be_bytes(),
             };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "narrow_place_holder_index is too large {}, {}",
+                "narrow_placeholder_value is too large {}, {}",
                 narrow_most_significant_byte, narrow_least_significant_byte_ule
             )
         }
@@ -113,14 +113,14 @@ impl AsULE for CurrencyPatternConfig {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
-        let short_pattern_standard =
+        let short_pattern_selection =
             if first_byte & (0b1 << PATTERN_SHORT_SHIFT) == 0b1 << PATTERN_SHORT_SHIFT {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
                 PatternSelection::Standard
             };
 
-        let narrow_pattern_standard =
+        let narrow_pattern_selection =
             if first_byte & (0b1 << PATTERN_NARROW_SHIFT) == 0b1 << PATTERN_NARROW_SHIFT {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
@@ -129,32 +129,32 @@ impl AsULE for CurrencyPatternConfig {
         let short_prefix = (first_byte & 0b111 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
         let narrow_prefix = (first_byte & 0b111 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
 
-        let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
-        let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
+        let short_placeholder_value = ((short_prefix as u16) << 8) | second_byte as u16;
+        let narrow_placeholder_value = ((narrow_prefix as u16) << 8) | third_byte as u16;
 
-        let short_place_holder_index = match short_place_holder_index {
-            NO_PLACE_HOLDER => None,
+        let short_placeholder_value = match short_placeholder_value {
+            NO_PLACEHOLDER => None,
             USE_ISO_CODE => Some(PlaceholderValue::ISO),
             index => {
-                debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
+                debug_assert!(index <= MAX_PLACEHOLDER_INDEX);
                 Some(PlaceholderValue::Index(index))
             }
         };
 
-        let narrow_place_holder_index = match narrow_place_holder_index {
-            NO_PLACE_HOLDER => None,
+        let narrow_placeholder_value = match narrow_placeholder_value {
+            NO_PLACEHOLDER => None,
             USE_ISO_CODE => Some(PlaceholderValue::ISO),
             index => {
-                debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
+                debug_assert!(index <= MAX_PLACEHOLDER_INDEX);
                 Some(PlaceholderValue::Index(index))
             }
         };
 
         CurrencyPatternConfig {
-            short_pattern_selection: short_pattern_standard,
-            narrow_pattern_selection: narrow_pattern_standard,
-            short_place_holder_index,
-            narrow_place_holder_index,
+            short_pattern_selection,
+            narrow_pattern_selection,
+            short_placeholder_value,
+            narrow_placeholder_value,
         }
     }
 }

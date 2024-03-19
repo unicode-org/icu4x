@@ -43,10 +43,11 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialsV1<'data> {
-    /// Maps from currency ISO code to currency patterns,
-    /// indicating which pattern to use and the placeholder index.
+    /// A mapping from each currency's ISO code to its associated formatting patterns.
+    /// This includes information on which specific pattern to apply as well as the index
+    /// of placeholders within the `placeholders` vector.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub currency_config_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>,
+    pub pattern_config_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// Represents the standard pattern.
@@ -64,10 +65,11 @@ pub struct CurrencyEssentialsV1<'data> {
 
     /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub placeholder_values: VarZeroVec<'data, str>,
+    pub placeholders: VarZeroVec<'data, str>,
 
-    /// Represents the currency patten in case the currency patterns map does not contain the currency.
-    pub default_config: CurrencyPatternConfig,
+    /// The fallback currency pattern configuration used
+    /// when a specific currency's pattern is not found in the currency patterns map.
+    pub default_pattern_config: CurrencyPatternConfig,
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]
@@ -98,7 +100,7 @@ pub enum PatternSelection {
 #[repr(u16)]
 pub enum PlaceholderValue {
     /// The index of the place holder in the place holders list.
-    /// NOTE: the maximum value is MAX_PLACE_HOLDER_INDEX which is 2045 (0b0111_1111_1101).
+    /// NOTE: the maximum value is MAX_PLACEHOLDER_INDEX which is 2045 (0b0111_1111_1101).
     Index(u16),
 
     /// The place holder is the iso code.
@@ -122,9 +124,9 @@ pub struct CurrencyPatternConfig {
 
     /// The index of the short pattern place holder in the place holders list.
     /// If the value is `None`, this means that the short pattern does not have a place holder.
-    pub short_place_holder_index: Option<PlaceholderValue>,
+    pub short_placeholder_value: Option<PlaceholderValue>,
 
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is `None`, this means that the narrow pattern does not have a place holder.
-    pub narrow_place_holder_index: Option<PlaceholderValue>,
+    pub narrow_placeholder_value: Option<PlaceholderValue>,
 }
