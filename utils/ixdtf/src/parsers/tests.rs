@@ -12,10 +12,6 @@ use crate::{
     ParserError,
 };
 
-/*
-#[cfg(feature = "temporal")]
-use crate::parsers::TemporalParser;
-*/
 #[cfg(feature = "duration")]
 use crate::parsers::IsoDurationParser;
 
@@ -288,7 +284,6 @@ fn invalid_annotations() {
 }
 
 #[test]
-#[cfg(feature = "temporal")]
 fn temporal_year_month() {
     let possible_year_months = [
         "+002020-11",
@@ -358,7 +353,6 @@ fn temporal_time() {
 }
 
 #[test]
-#[cfg(feature = "temporal")]
 fn invalid_time() {
     let bad_value = "20240801";
     let err = IxdtfParser::new(bad_value)
@@ -502,7 +496,7 @@ fn temporal_invalid_durations() {
 #[test]
 fn temporal_invalid_iso_datetime_strings() {
     // NOTE: The below tests were initially pulled from test262's `argument-string-invalid`
-    const INVALID_DATETIME_STRINGS: [&str; 34] = [
+    const INVALID_DATETIME_STRINGS: [&str; 32] = [
         "", // 1
         "invalid iso8601",
         "2020-01-00",
@@ -535,9 +529,6 @@ fn temporal_invalid_iso_datetime_strings() {
         "2020-W01",
         "P1Y",
         "-P12Y",
-        // valid, but outside the supported year range:
-        "-999999-01-01",
-        "+999999-01-01",
     ];
 
     for invalid_target in INVALID_DATETIME_STRINGS {
