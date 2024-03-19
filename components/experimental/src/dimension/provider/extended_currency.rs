@@ -12,6 +12,7 @@
 use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
+use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ZeroMap2d;
 
 #[cfg(feature = "compiled_data")]
@@ -24,6 +25,28 @@ use zerovec::ZeroMap2d;
 /// </div>
 pub use crate::provider::Baked;
 
+use super::currency::{PatternSelection, PlaceholderValue};
+
+/// Currency Extended V1 data struct.
+#[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
+#[derive(Debug, Clone, Default, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::dimension::provider::extended_currency)
+)]
+#[yoke(prove_covariance_manually)]
+pub struct CurrencyExtendedDataV1<'data> {
+    /// A mapping from each currency's ISO code to its associated formatting patterns.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub patterns_config:
+        ZeroMap2d<'data, UnvalidatedTinyAsciiStr<3>, Count, ExtendedCurrencyPatternConfigULE>,
+
+    // Contains all the currency extended placeholders.
+    pub extended_placeholders: Vec<Cow<'data, str>>,
+}
+
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
 #[zerovec::make_ule(CountULE)]
@@ -33,7 +56,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider)
+    databake(path = icu_experimental::dimension::provider::extended_currency)
 )]
 #[repr(u8)]
 pub enum Count {
@@ -51,6 +74,7 @@ pub enum Count {
     Other = 5,
     /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
     Explicit1 = 6,
+    // TODO(younies): revise this for currency
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
 }
@@ -67,4 +91,21 @@ impl From<PluralCategory> for Count {
             Other => Count::Other,
         }
     }
+}
+
+#[zerovec::make_ule(ExtendedCurrencyPatternConfigULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::dimension::provider::extended_currency),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
+#[yoke(prove_covariance_manually)]
+pub struct ExtendedCurrencyPatternConfig {
+    /// The pattern selection for the current placeholder.
+    pub pattern_selection: PatternSelection,
+
+    /// Points to the index of the placeholder in the extended placeholders list.
+    pub placeholder_value: Option<PlaceholderValue>,
 }
