@@ -8,7 +8,8 @@ use displaydoc::Display;
 
 /// A list of error outcomes for various operations in this module.
 ///
-/// Re-exported as [`Error`](crate::Error).
+// TODO: should this be [`DimensionError`]
+/// Re-exported as [`Error`](crate::dimension::error::DimensionError).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum DimensionError {
