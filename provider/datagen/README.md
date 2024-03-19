@@ -8,7 +8,7 @@ Data files can be generated either programmatically (i.e. in `build.rs`), or thr
 command-line utility.
 
 
-Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md).
+Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
 
 ## Examples
 
