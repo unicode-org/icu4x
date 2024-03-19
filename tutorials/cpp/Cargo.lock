@@ -67,7 +67,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=05ddab1026b3e10c3bd0d6f848f9067afec92a91#05ddab1026b3e10c3bd0d6f848f9067afec92a91"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -78,7 +78,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=05ddab1026b3e10c3bd0d6f848f9067afec92a91#05ddab1026b3e10c3bd0d6f848f9067afec92a91"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "log",
 ]
@@ -86,7 +86,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=05ddab1026b3e10c3bd0d6f848f9067afec92a91#05ddab1026b3e10c3bd0d6f848f9067afec92a91"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -310,6 +310,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_pattern",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -396,6 +397,17 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "1.4.0"
+
+[[package]]
+name = "icu_pattern"
+version = "0.1.5"
+dependencies = [
+ "displaydoc",
+ "serde",
+ "writeable",
+ "yoke",
+ "zerofrom",
+]
 
 [[package]]
 name = "icu_plurals"
@@ -1144,10 +1156,6 @@ version = "1.4.0"
 [[patch.unused]]
 name = "icu_harfbuzz"
 version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_pattern"
-version = "0.1.5"
 
 [[patch.unused]]
 name = "ixdtf"
