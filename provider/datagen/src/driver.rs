@@ -213,6 +213,7 @@ pub(crate) enum LocalesWithOrWithoutFallback {
 }
 
 impl LocalesWithOrWithoutFallback {
+    /// Converts this field to [`LocalesWithoutFallback`] and returns a reference to it.
     pub(crate) fn coerce_without_fallback(&mut self) -> &mut LocalesWithoutFallback {
         match self {
             Self::WithoutFallback(config) => config,
@@ -228,6 +229,7 @@ impl LocalesWithOrWithoutFallback {
         }
     }
 
+    /// Converts this field to [`LocalesWithFallback`] and returns a reference to it.
     pub(crate) fn coerce_with_fallback(&mut self) -> &mut LocalesWithFallback {
         match self {
             Self::WithFallback(config) => config,
@@ -243,15 +245,13 @@ impl LocalesWithOrWithoutFallback {
         }
     }
 
+    /// Returns whether this is exactly the all-locales value.
     pub(crate) fn is_all_locales(&self) -> bool {
         let Self::WithFallback(config) = self else {
             return false;
         };
         let mut it = config.locales.iter();
-        match (it.next(), it.next()) {
-            (Some(lid), None) if lid == &LocaleWithExpansion::wildcard() => true,
-            _ => false,
-        }
+        matches!((it.next(), it.next()), (Some(lid), None) if lid == &LocaleWithExpansion::wildcard())
     }
 }
 
@@ -476,9 +476,10 @@ impl DatagenDriver {
             log::warn!("No keys selected");
         }
 
+        // Apply settings from FallbackMode
         match legacy_fallback_mode {
             FallbackMode::PreferredForExporter => {
-                // No-op
+                // No-op: use settings from locales_fallback
             }
             FallbackMode::Runtime => {
                 let config = locales_fallback.coerce_with_fallback();
@@ -778,7 +779,7 @@ fn make_explicit_implicit_sets(
     let mut explicit: HashSet<DataLocale> = Default::default();
     for (explicit_langid, include_ancestors) in explicit_langids {
         explicit.insert(explicit_langid.into());
-        if let Some(locales) = supported_map.get(&explicit_langid) {
+        if let Some(locales) = supported_map.get(explicit_langid) {
             explicit.extend(locales.iter().cloned()); // adds ar-EG-u-nu-latn
         }
         if explicit_langid == &LanguageIdentifier::UND {
