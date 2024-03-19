@@ -4,7 +4,6 @@
 
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
-use displaydoc::Display;
 use icu_locid::extensions::unicode::key;
 use icu_locid::langid;
 use icu_locid::LanguageIdentifier;
@@ -33,10 +32,8 @@ impl LocalesWithoutFallback {
     pub fn for_locales(locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
         Self::from_iter(locales)
     }
-}
 
-impl fmt::Display for LocalesWithoutFallback {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut sorted_locales = self.locales.iter().map(ToString::to_string).collect::<Vec<_>>();
         sorted_locales.sort();
         write!(f, "without fallback and these locales: {:?}",
@@ -62,16 +59,24 @@ pub enum RuntimeFallbackLocation {
 }
 
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, Display)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub enum DeduplicationStrategy {
-    #[displaydoc("maximal deduplication")]
     #[default] // TODO: Make RetainBaseLanguages the default
     Maximal,
-    #[displaydoc("deduplication retaining base languages")]
     #[allow(dead_code)]
     RetainBaseLanguages,
-    #[displaydoc("no deduplication")]
     NoDeduplication,
+}
+
+impl DeduplicationStrategy {
+    fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            Self::Maximal => "maximal deduplication",
+            Self::RetainBaseLanguages => "deduplication retaining base languages",
+            Self::NoDeduplication => "no deduplication",
+        };
+        write!(f, "{s}")
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -145,21 +150,18 @@ impl LocalesWithFallback {
     pub fn for_all_locales() -> Self {
         Self::from_iter([LocaleWithExpansion::wildcard()])
     }
-}
 
-impl fmt::Display for LocalesWithFallback {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut sorted_locales = self.locales.iter().map(ToString::to_string).collect::<Vec<_>>();
         sorted_locales.sort();
-        write!(f, "with fallback: location {}, {}, locales: {:?}",
-            match self.runtime_fallback_location {
-                None => "Default",
-                Some(RuntimeFallbackLocation::Internal) => "Internal",
-                Some(RuntimeFallbackLocation::External) => "External"
-            },
-            self.deduplication_strategy,
-            sorted_locales
-            )
+        let start = match self.runtime_fallback_location {
+            None => "with fallback",
+            Some(RuntimeFallbackLocation::Internal) => "with internal fallback",
+            Some(RuntimeFallbackLocation::External) => "with external fallback"
+        };
+        write!(f, "{start}, ")?;
+        self.deduplication_strategy.describe(f)?;
+        write!(f, ", and these locales: {:?}", sorted_locales)
     }
 }
 
@@ -182,11 +184,9 @@ impl FromIterator<LocaleWithExpansion> for LocalesWithFallback {
     }
 }
 
-#[derive(Debug, Clone, Display)]
+#[derive(Debug, Clone)]
 pub(crate) enum LocalesWithOrWithoutFallback {
-    #[displaydoc("{0}")]
     WithFallback(LocalesWithFallback),
-    #[displaydoc("{0}")]
     WithoutFallback(LocalesWithoutFallback),
 }
 
@@ -229,6 +229,15 @@ impl LocalesWithOrWithoutFallback {
         match (it.next(), it.next()) {
             (Some(lid), None) if lid == &LocaleWithExpansion::wildcard() => true,
             _ => false
+        }
+    }
+}
+
+impl fmt::Display for LocalesWithOrWithoutFallback {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::WithFallback(config) => config.describe(f),
+            Self::WithoutFallback(config) => config.describe(f),
         }
     }
 }
