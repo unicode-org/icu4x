@@ -65,9 +65,10 @@ pub enum RuntimeFallbackLocation {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, Display)]
 pub enum DeduplicationStrategy {
     #[displaydoc("maximal deduplication")]
+    #[default] // TODO: Make RetainBaseLanguages the default
     Maximal,
     #[displaydoc("deduplication retaining base languages")]
-    #[default]
+    #[allow(dead_code)]
     RetainBaseLanguages,
     #[displaydoc("no deduplication")]
     NoDeduplication,
