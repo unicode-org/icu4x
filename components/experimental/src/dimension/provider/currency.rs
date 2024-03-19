@@ -114,12 +114,10 @@ pub enum PlaceholderValue {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct CurrencyPatternConfig {
-    /// If it is true, then use the standard pattern.
-    /// Otherwise, use the standard_alpha_next_to_number pattern.
+    /// Indicates which pattern to use for short currency formatting.
     pub short_pattern_selection: PatternSelection,
 
-    /// If it is true, then use the standard pattern.
-    /// Otherwise, use the standard_alpha_next_to_number pattern.
+    /// Indicates which pattern to use for narrow currency formatting.
     pub narrow_pattern_selection: PatternSelection,
 
     /// The index of the short pattern place holder in the place holders list.
