@@ -10,7 +10,7 @@ extern crate alloc;
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
-use records::IsoParseRecord;
+use records::IxdtfParseRecord;
 
 pub mod records;
 
@@ -79,7 +79,7 @@ impl<'a> IxdtfParser<'a> {
     /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
     ///
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
-    pub fn parse(&mut self) -> ParserResult<IsoParseRecord<'a>> {
+    pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         datetime::parse_annotated_date_time(&mut self.cursor, self.options)
     }
 }

@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 
 use crate::{
     parsers::{
-        records::{DateRecord, IsoParseRecord, TimeRecord, TimeZoneRecord},
+        records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneRecord},
         IxdtfOptions, IxdtfParser,
     },
     ParserError,
@@ -533,7 +533,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 11,
@@ -551,7 +551,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 6,
@@ -569,7 +569,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 6,
@@ -592,7 +592,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 6,
@@ -615,7 +615,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 6,
@@ -638,7 +638,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 6,
@@ -661,7 +661,7 @@ fn test_correct_datetime() {
     let parsed = IxdtfParser::new(dt).parse();
     assert_eq!(
         parsed,
-        Ok(IsoParseRecord {
+        Ok(IxdtfParseRecord {
             date: Some(DateRecord {
                 year: 2022,
                 month: 6,

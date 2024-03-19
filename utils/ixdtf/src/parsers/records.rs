@@ -12,7 +12,7 @@ use alloc::vec::Vec;
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
-pub struct IsoParseRecord<'a> {
+pub struct IxdtfParseRecord<'a> {
     /// Parsed Date Record
     pub date: Option<DateRecord>,
     /// Parsed Time

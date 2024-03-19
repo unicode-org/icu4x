@@ -13,7 +13,7 @@ use crate::{
         },
         records::{DateRecord, TimeRecord},
         time::parse_time_record,
-        timezone, Cursor, IsoParseRecord,
+        timezone, Cursor, IxdtfParseRecord,
     },
     ParserError, ParserResult,
 };
@@ -44,7 +44,7 @@ pub(crate) struct DateTimeRecord {
 pub(crate) fn parse_annotated_date_time<'a>(
     cursor: &mut Cursor<'a>,
     options: IxdtfOptions,
-) -> ParserResult<IsoParseRecord<'a>> {
+) -> ParserResult<IxdtfParseRecord<'a>> {
     let date_time = parse_date_time(cursor, options)?;
 
     // Peek Annotation presence
@@ -52,7 +52,7 @@ pub(crate) fn parse_annotated_date_time<'a>(
     if !cursor.check_or(false, is_annotation_open) {
         cursor.close()?;
 
-        return Ok(IsoParseRecord {
+        return Ok(IxdtfParseRecord {
             date: date_time.date,
             time: date_time.time,
             offset: date_time.time_zone,
@@ -68,7 +68,7 @@ pub(crate) fn parse_annotated_date_time<'a>(
 
     cursor.close()?;
 
-    Ok(IsoParseRecord {
+    Ok(IxdtfParseRecord {
         date: date_time.date,
         time: date_time.time,
         offset: date_time.time_zone,
