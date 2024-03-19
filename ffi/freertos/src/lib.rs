@@ -13,7 +13,7 @@
 //! `--cfg needs_alloc_error_handler` flag: if using a custom build system and a nightly from
 //! 2022 or earlier, please set this flag.
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![no_std]
 #![cfg_attr(
     not(test),
