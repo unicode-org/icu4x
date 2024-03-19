@@ -61,10 +61,10 @@ pub struct IxdtfParser<'a> {
 
 impl<'a> IxdtfParser<'a> {
     /// Creates a new `IXDTFParser` from a provided `&str`.
-    pub fn new(target: &'a str) -> Self {
+    pub fn new(value: &'a str) -> Self {
         Self {
             options: IxdtfOptions::None,
-            cursor: Cursor::new(target),
+            cursor: Cursor::new(value),
         }
     }
 
@@ -160,8 +160,8 @@ impl<'a> Cursor<'a> {
 
     /// Peek the value at n len from current.
     fn peek_n(&self, n: usize) -> Option<&'a str> {
-        let target = self.pos + n;
-        self.source.get(target..target + 1)
+        let index = self.pos + n;
+        self.source.get(index..index + 1)
     }
 
     /// Peeks the value at `n` as a `char`.

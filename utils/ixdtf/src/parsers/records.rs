@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Parse records for `ixdtf`'s parsers to target.
+//! The records that `ixdtf`'s contain the resulting values of parsing.
 
 #[cfg(feature = "duration")]
 use core::ops::Mul;
