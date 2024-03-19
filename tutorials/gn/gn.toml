@@ -140,7 +140,7 @@ assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Pl
 
 cd tutorials/gn
 
-exec --fail-on-error ./third_party_tools/bin/gn gen --root=../../.. out/host
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. out/host
 exec --fail-on-error rustup run ${PINNED_CI_NIGHTLY} ./third_party_tools/depot_tools/ninja -C out/host
 '''
 
