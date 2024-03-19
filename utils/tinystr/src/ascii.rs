@@ -22,6 +22,37 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::from_bytes_inner(bytes, 0, bytes.len(), false)
     }
 
+    /// Creates a `TinyAsciiStr<N>` from a byte slice, replacing invalid bytes.
+    ///
+    /// Null and non-ASCII bytes (i.e. those outside the range `0x01..=0x7F`)
+    /// will be replaced with the '?' character.
+    ///
+    /// The input slice will be truncated if its length exceeds `N`.
+    pub const fn from_bytes_lossy(bytes: &[u8]) -> Self {
+        const QUESTION: u8 = b'?';
+        let mut out = [0; N];
+        let mut i = 0;
+        // Ord is not available in const, so no `.min(N)`
+        let len = if bytes.len() > N { N } else { bytes.len() };
+
+        // Indexing is protected by the len check above
+        #[allow(clippy::indexing_slicing)]
+        while i < len {
+            let b = bytes[i];
+            if b > 0 && b < 0x80 {
+                out[i] = b;
+            } else {
+                out[i] = QUESTION;
+            }
+            i += 1;
+        }
+
+        Self {
+            // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
+            bytes: unsafe { AsciiByte::to_ascii_byte_array(&out) },
+        }
+    }
+
     /// Attempts to parse a fixed-length byte array to a `TinyAsciiStr`.
     ///
     /// The byte array may contain trailing NUL bytes.
@@ -980,5 +1011,23 @@ mod test {
         check::<5>();
         check::<8>();
         check::<16>();
+    }
+
+    #[test]
+    fn lossy_constructor() {
+        assert_eq!(TinyAsciiStr::<4>::from_bytes_lossy(b"").as_str(), "");
+        assert_eq!(
+            TinyAsciiStr::<4>::from_bytes_lossy(b"oh\0o").as_str(),
+            "oh?o"
+        );
+        assert_eq!(TinyAsciiStr::<4>::from_bytes_lossy(b"\0").as_str(), "?");
+        assert_eq!(
+            TinyAsciiStr::<4>::from_bytes_lossy(b"toolong").as_str(),
+            "tool"
+        );
+        assert_eq!(
+            TinyAsciiStr::<4>::from_bytes_lossy(&[b'a', 0x80, 0xFF, b'1']).as_str(),
+            "a??1"
+        );
     }
 }
