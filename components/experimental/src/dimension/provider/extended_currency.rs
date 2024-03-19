@@ -9,6 +9,11 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::borrow::Cow;
+use icu_plurals::PluralCategory;
+use icu_provider::prelude::*;
+use zerovec::ZeroMap2d;
+
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -19,3 +24,47 @@
 /// </div>
 pub use crate::provider::Baked;
 
+/// A CLDR plural keyword, or the explicit value 1.
+/// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
+#[zerovec::make_ule(CountULE)]
+#[zerovec::derive(Debug)]
+#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::compactdecimal::provider)
+)]
+#[repr(u8)]
+pub enum Count {
+    /// The CLDR keyword `zero`.
+    Zero = 0,
+    /// The CLDR keyword `one`.
+    One = 1,
+    /// The CLDR keyword `two`.
+    Two = 2,
+    /// The CLDR keyword `few`.
+    Few = 3,
+    /// The CLDR keyword `many`.
+    Many = 4,
+    /// The CLDR keyword `other`.
+    Other = 5,
+    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
+    Explicit1 = 6,
+    // NOTE(egg): No explicit 0, because the compact decimal pattern selection
+    // algorithm does not allow such a thing to arise.
+}
+
+impl From<PluralCategory> for Count {
+    fn from(other: PluralCategory) -> Self {
+        use PluralCategory::*;
+        match other {
+            Zero => Count::Zero,
+            One => Count::One,
+            Two => Count::Two,
+            Few => Count::Few,
+            Many => Count::Many,
+            Other => Count::Other,
+        }
+    }
+}
