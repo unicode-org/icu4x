@@ -30,18 +30,18 @@ impl<'l> Writeable for FormattedCurrency<'l> {
     {
         let config = self
             .essential
-            .currency_config_map
+            .pattern_config_map
             .get_copied(&self.currency_code.0.to_unvalidated())
-            .unwrap_or(self.essential.default_config);
+            .unwrap_or(self.essential.default_pattern_config);
 
         let placeholder_index = match self.options.width {
-            Width::Short => config.short_place_holder_index,
-            Width::Narrow => config.narrow_place_holder_index,
+            Width::Short => config.short_placeholder_value,
+            Width::Narrow => config.narrow_placeholder_value,
         };
         let currency_sign_value = match placeholder_index {
             Some(currency::PlaceholderValue::Index(index)) => self
                 .essential
-                .placeholder_values
+                .placeholders
                 .get(index.into())
                 .ok_or(core::fmt::Error)?,
             Some(currency::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
