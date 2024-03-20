@@ -12,16 +12,13 @@ use crate::{
             is_annotation_key_value_separator, is_annotation_open, is_annotation_value_component,
             is_critical_flag, is_hyphen,
         },
-        timezone,
-        timezone::TimeZoneAnnotation,
-        Cursor,
+        records::{Annotation, TimeZoneAnnotation},
+        timezone, Cursor,
     },
     ParserError, ParserResult,
 };
 
 use alloc::vec::Vec;
-
-use super::records::Annotation;
 
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {

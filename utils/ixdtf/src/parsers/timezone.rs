@@ -10,22 +10,13 @@ use super::{
         is_annotation_key_value_separator, is_annotation_open, is_critical_flag, is_sign,
         is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator, is_utc_designator,
     },
-    records::{TimeZoneRecord, UTCOffsetRecord},
+    records::{Sign, TimeZoneAnnotation, TimeZoneRecord, UTCOffsetRecord},
     time::{parse_fraction, parse_hour, parse_minute_second},
     Cursor,
 };
 use crate::{assert_syntax, ParserError, ParserResult};
 
 // NOTE: critical field on time zones is captured but not handled.
-/// A `TimeZoneAnnotation` is an internal annotation struct.
-#[allow(unused)]
-#[derive(Debug, Clone)]
-pub(crate) struct TimeZoneAnnotation<'a> {
-    /// Critical Flag for the annotation.
-    pub(crate) critical: bool,
-    /// TimeZone Data
-    pub(crate) tz: TimeZoneRecord<'a>,
-}
 
 // ==== Time Zone Annotation Parsing ====
 
@@ -147,7 +138,13 @@ fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecor
 pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UTCOffsetRecord> {
     if cursor.check_or(false, is_utc_designator) {
         cursor.advance();
-        return Ok(UTCOffsetRecord::default());
+        return Ok(UTCOffsetRecord {
+            sign: Sign::Positive,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            nanosecond: 0,
+        });
     }
 
     let separated = cursor.peek_n_char(3).map_or(false, is_time_separator);
@@ -181,13 +178,10 @@ pub(crate) fn parse_utc_offset_minute_precision(
     cursor: &mut Cursor,
 ) -> ParserResult<(UTCOffsetRecord, bool)> {
     let sign = if cursor.check_or(false, is_sign) {
-        if cursor.next_or(ParserError::ImplAssert)? == '+' {
-            1
-        } else {
-            -1
-        }
+        let sign = cursor.next_or(ParserError::ImplAssert)?;
+        Sign::from(sign == '+')
     } else {
-        1
+        Sign::Positive
     };
     let hour = parse_hour(cursor)?;
 

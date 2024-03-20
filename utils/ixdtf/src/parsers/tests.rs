@@ -6,14 +6,11 @@ use alloc::vec::Vec;
 
 use crate::{
     parsers::{
-        records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneRecord},
+        records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord},
         IxdtfOptions, IxdtfParser,
     },
     ParserError,
 };
-
-#[cfg(feature = "duration")]
-use crate::parsers::IsoDurationParser;
 
 #[test]
 fn temporal_parser_basic() {
@@ -63,7 +60,14 @@ fn good_zoned_date_time() {
             day: 8,
         })
     );
-    assert_eq!(result.tz, Some(TimeZoneRecord::Name("America/Chicago")));
+    let tz_annotation = result.tz.unwrap();
+    assert_eq!(
+        tz_annotation,
+        TimeZoneAnnotation {
+            critical: false,
+            tz: TimeZoneRecord::Name("America/Chicago")
+        }
+    );
 }
 
 #[test]
@@ -170,14 +174,19 @@ fn bad_extended_year() {
 #[test]
 fn good_annotations_date_time() {
     let mut basic =
-        IxdtfParser::new("2020-11-08[America/Argentina/ComodRivadavia][u-ca=iso8601][foo=bar]");
+        IxdtfParser::new("2020-11-08[!America/Argentina/ComodRivadavia][u-ca=iso8601][foo=bar]");
     let mut omitted = IxdtfParser::new("+0020201108[u-ca=iso8601][f-1a2b=a0sa-2l4s]");
 
     let result = basic.parse().unwrap();
 
+    let tz_annotation = result.tz.unwrap();
+
     assert_eq!(
-        result.tz,
-        Some(TimeZoneRecord::Name("America/Argentina/ComodRivadavia"))
+        tz_annotation,
+        TimeZoneAnnotation {
+            critical: true,
+            tz: TimeZoneRecord::Name("America/Argentina/ComodRivadavia"),
+        }
     );
 
     assert_eq!(result.calendar, Some("iso8601"));
@@ -297,13 +306,7 @@ fn temporal_year_month() {
 
 #[test]
 fn temporal_month_day() {
-    let possible_month_day = [
-        "11-07",
-        "1107[+04:00]",
-        "--11-07",
-        "--1107[+04:00]",
-        "+002020-11-07T12:28:32[!u-ca=iso8601]",
-    ];
+    let possible_month_day = ["11-07", "1107[+04:00]", "--11-07", "--1107[+04:00]"];
 
     for md in possible_month_day {
         let result = IxdtfParser::new(md)
@@ -316,6 +319,15 @@ fn temporal_month_day() {
         assert_eq!(date.month, 11);
         assert_eq!(date.day, 7);
     }
+}
+
+#[test]
+fn invalid_month_day() {
+    let bad_value = "-11-07";
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::MonthDay)
+        .parse();
+    assert_eq!(err, Err(ParserError::MonthDayHyphen))
 }
 
 #[test]
@@ -359,7 +371,7 @@ fn invalid_time() {
         .parse();
     assert_eq!(
         err,
-        Err(ParserError::DateYear),
+        Err(ParserError::TimeHour),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -428,7 +440,10 @@ fn temporal_valid_instant_strings() {
 #[test]
 #[cfg(feature = "duration")]
 fn temporal_duration_parsing() {
-    use crate::parsers::records::DurationFraction;
+    use crate::parsers::{
+        records::{DurationFraction, DurationParseRecord, Sign},
+        IsoDurationParser,
+    };
 
     let durations = [
         "p1y1m1dt1h1m1s",
@@ -446,24 +461,45 @@ fn temporal_duration_parsing() {
     }
 
     let sub_second = IsoDurationParser::new(durations[2]).parse().unwrap();
-
     assert_eq!(
-        sub_second.fraction.unwrap(),
-        DurationFraction::Seconds(-123456789)
+        sub_second,
+        DurationParseRecord {
+            sign: Sign::Negative,
+            years: 1,
+            months: 1,
+            weeks: 1,
+            days: 1,
+            hours: 1,
+            minutes: 1,
+            seconds: 1,
+            fraction: Some(DurationFraction::Seconds(123456789))
+        },
+        "Failing to parse a valid Duration string: \"{}\" should pass.",
+        durations[2]
     );
 
     let test_result = IsoDurationParser::new(durations[3]).parse().unwrap();
-    assert_eq!(test_result.years, -1);
-    assert_eq!(test_result.weeks, -3);
     assert_eq!(
-        test_result.fraction,
-        Some(DurationFraction::Hours(-1_800_000_000_000))
+        test_result,
+        DurationParseRecord {
+            sign: Sign::Negative,
+            years: 1,
+            months: 0,
+            weeks: 3,
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            fraction: Some(DurationFraction::Hours(1_800_000_000_000)),
+        }
     );
 }
 
 #[test]
 #[cfg(feature = "duration")]
 fn temporal_invalid_durations() {
+    use crate::parsers::IsoDurationParser;
+
     let invalids = [
         "P1Y1M1W0,5D",
         "P1Y1M1W1DT1H1M1.123456789123S",

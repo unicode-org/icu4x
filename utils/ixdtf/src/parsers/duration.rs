@@ -49,17 +49,16 @@ pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseR
 
     cursor.close()?;
 
-    let sign: i32 = if sign { 1 } else { -1 };
-
     Ok(DurationParseRecord {
-        years: date.years * sign,
-        months: date.months * sign,
-        weeks: date.weeks * sign,
-        days: date.days * sign,
-        hours: time.hours * sign,
-        minutes: time.minutes * sign,
-        seconds: time.seconds * sign,
-        fraction: time.fraction.map(|f| f * sign),
+        sign: sign.into(),
+        years: date.years,
+        months: date.months,
+        weeks: date.weeks,
+        days: date.days,
+        hours: time.hours,
+        minutes: time.minutes,
+        seconds: time.seconds,
+        fraction: time.fraction,
     })
 }
 
@@ -78,12 +77,12 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
     let mut previous_unit = DateUnit::None;
 
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        let mut value: i32 = 0;
+        let mut value: u32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("DateDuration"))?;
-            value = value * 10 + i32::from(digit);
+            value = value * 10 + u32::from(digit);
         }
 
         match cursor.next() {
@@ -140,12 +139,12 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
 
     let mut previous_unit = TimeUnit::None;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        let mut value: i32 = 0;
+        let mut value: u32 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("TimeDurationDigit"))?;
-            value = value * 10 + i32::from(digit);
+            value = value * 10 + u32::from(digit);
         }
 
         let fraction = parse_fraction(cursor)?;
@@ -157,7 +156,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 }
                 time.hours = value;
                 if let Some(fraction) = fraction {
-                    time.fraction = Some(DurationFraction::Hours(3600 * i64::from(fraction)));
+                    time.fraction = Some(DurationFraction::Hours(3600 * u64::from(fraction)));
                 }
                 previous_unit = TimeUnit::Hour;
             }
@@ -167,7 +166,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 }
                 time.minutes = value;
                 if let Some(fraction) = fraction {
-                    time.fraction = Some(DurationFraction::Minutes(60 * i64::from(fraction)));
+                    time.fraction = Some(DurationFraction::Minutes(60 * u64::from(fraction)));
                 }
                 previous_unit = TimeUnit::Minute;
             }
@@ -178,9 +177,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 time.seconds = value;
                 if let Some(fraction) = fraction {
                     // Assert: Fraction value does not exceed i32 max.
-                    time.fraction = Some(DurationFraction::Seconds(
-                        i32::try_from(fraction).map_err(|_| ParserError::ImplAssert)?,
-                    ));
+                    time.fraction = Some(DurationFraction::Seconds(fraction));
                 }
                 previous_unit = TimeUnit::Second;
             }

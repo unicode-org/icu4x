@@ -17,24 +17,27 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
+//! use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord, UTCOffsetRecord}};
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
-//! let mut ixdtf = IxdtfParser::new(ixdtf_str);
-//!
-//! let result = ixdtf.parse().unwrap();
+//! let result = IxdtfParser::new(ixdtf_str).parse().unwrap();
 //!
 //! let date = result.date.unwrap();
 //! let time = result.time.unwrap();
-//! let tz = result.tz.unwrap();
+//! let offset = result.offset.unwrap();
+//! let tz_annotation = result.tz.unwrap();
 //!
 //! assert_eq!(date.year, 2024);
 //! assert_eq!(date.month, 3);
 //! assert_eq!(date.day, 2);
 //! assert_eq!(time.hour, 8);
 //! assert_eq!(time.minute, 48);
-//! assert_eq!(tz, TimeZoneRecord::Name("America/New_York"));
+//! assert_eq!(offset.sign, Sign::Negative);
+//! assert_eq!(offset.hour, 5);
+//! assert_eq!(offset.minute, 0);
+//! assert!(!tz_annotation.critical);
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
 //! ```
 //!
 //! ## Date Time Strings
@@ -132,9 +135,7 @@
 //!
 //! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 //!
-//! let mut ixdtf = IxdtfParser::new(example_one);
-//!
-//! let result = ixdtf.parse();
+//! let result = IxdtfParser::new(example_one).parse();
 //!
 //! assert_eq!(result, Err(ParserError::CriticalDuplicateCalendar));
 //! ```
@@ -168,18 +169,19 @@
 //! ```rust
 //! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
 //!
-//! let example_one = "2024-03-02T08:48:00+01:00[America/New_York]";
+//! let example_one = "2024-03-02T08:48:00+01:00[!America/New_York]";
 //!
 //! let mut ixdtf = IxdtfParser::new(example_one);
 //!
 //! let result = ixdtf.parse().unwrap();
 //!
-//! let tz = result.tz.unwrap();
+//! let tz_annotation = result.tz.unwrap();
 //! let offset = result.offset.unwrap();
 //!
 //! // The time zone annotation and offset conflict with each other, and must therefore be
 //! // resolved by the user.
-//! assert_eq!(tz, TimeZoneRecord::Name("America/New_York"));
+//! assert!(tz_annotation.critical);
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
 //! assert_eq!(offset.hour, 1);
 //! ```
 //!

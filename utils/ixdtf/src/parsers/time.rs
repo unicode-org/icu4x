@@ -4,12 +4,14 @@
 
 //! Parsing of ISO8601 Time Values
 
+use alloc::vec::Vec;
+
 use crate::{
     assert_syntax,
     parsers::{
-        datetime::DateTimeRecord,
         grammar::{
-            is_decimal_separator, is_sign, is_time_designator, is_time_separator, is_utc_designator,
+            is_annotation_open, is_decimal_separator, is_sign, is_time_designator,
+            is_time_separator, is_utc_designator,
         },
         records::TimeRecord,
         timezone::parse_date_time_utc,
@@ -18,39 +20,53 @@ use crate::{
     ParserError, ParserResult,
 };
 
+use super::{annotations, records::IxdtfParseRecord};
+
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
-pub(crate) fn parse_ambiguous_time_record(
-    cursor: &mut Cursor<'_>,
-) -> ParserResult<Option<DateTimeRecord>> {
+pub(crate) fn parse_annotated_time_record<'a>(
+    cursor: &mut Cursor<'a>,
+) -> ParserResult<IxdtfParseRecord<'a>> {
     let designator = cursor.check_or(false, is_time_designator);
     cursor.advance_if(designator);
 
-    let time = match parse_time_record(cursor) {
-        Ok(time) => time,
-        Err(err) => {
-            if designator {
-                return Err(err);
-            }
-            return Ok(None);
-        }
-    };
+    let time = parse_time_record(cursor)?;
 
     // If Time was successfully parsed, assume from this point that this IS a
     // valid AnnotatedTimeRecord.
 
-    let utc_offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
+    let offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
         Some(parse_date_time_utc(cursor)?)
     } else {
         None
     };
 
     // Check if annotations exist.
-    Ok(Some(DateTimeRecord {
+    if !cursor.check_or(false, is_annotation_open) {
+        cursor.close()?;
+
+        return Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(time),
+            offset,
+            tz: None,
+            calendar: None,
+            annotations: Vec::default(),
+        });
+    }
+
+    let annotations = annotations::parse_annotation_set(cursor)?;
+
+    cursor.close()?;
+
+    Ok(IxdtfParseRecord {
         date: None,
         time: Some(time),
-        time_zone: utc_offset,
-    }))
+        offset,
+        tz: annotations.tz,
+        calendar: annotations.calendar,
+        annotations: annotations.annotations,
+    })
 }
 
 /// Parse `TimeRecord`

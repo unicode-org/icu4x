@@ -86,6 +86,10 @@ pub enum ParserError {
     #[displaydoc("Invalid time zone character after '/'.")]
     UtcTimeSeparator,
 
+    // MonthDay Errors
+    #[displaydoc("MonthDay must begin with a month or '--'")]
+    MonthDayHyphen,
+
     // Duration Errors
     #[displaydoc("Invalid duration designator.")]
     DurationDisgnator,

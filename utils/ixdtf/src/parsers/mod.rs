@@ -40,9 +40,13 @@ macro_rules! assert_syntax {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum IxdtfOptions {
+    /// No modified parsing, i.e. parses as a date time
     None,
+    /// Parses the value as an annotated YearMonth.
     YearMonth,
+    /// Parses the value as an annotated MonthDay.
     MonthDay,
+    /// Parses the value as an annotated Time.
     Time,
 }
 
@@ -80,7 +84,13 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        datetime::parse_annotated_date_time(&mut self.cursor, self.options)
+        match self.options {
+            IxdtfOptions::None | IxdtfOptions::YearMonth => {
+                datetime::parse_annotated_date_time(&mut self.cursor, self.options)
+            }
+            IxdtfOptions::MonthDay => datetime::parse_annotated_month_day(&mut self.cursor),
+            IxdtfOptions::Time => time::parse_annotated_time_record(&mut self.cursor),
+        }
     }
 }
 

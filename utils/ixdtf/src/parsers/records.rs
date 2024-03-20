@@ -4,26 +4,23 @@
 
 //! The records that `ixdtf`'s contain the resulting values of parsing.
 
-#[cfg(feature = "duration")]
-use core::ops::Mul;
-
 use alloc::vec::Vec;
 
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
 pub struct IxdtfParseRecord<'a> {
-    /// Parsed Date Record
+    /// Parsed `DateRecord`
     pub date: Option<DateRecord>,
-    /// Parsed Time
+    /// Parsed `TimeRecord`
     pub time: Option<TimeRecord>,
     /// Parsed UtcOffset
     pub offset: Option<UTCOffsetRecord>,
-    /// Parsed `TimeZone` data (UTCOffset | IANA name)
-    pub tz: Option<TimeZoneRecord<'a>>,
+    /// Parsed `TimeZone` annotation with critical flag and data (UTCOffset | IANA name)
+    pub tz: Option<TimeZoneAnnotation<'a>>,
     /// The parsed calendar value.
     pub calendar: Option<&'a str>,
-    /// Annotations
+    /// A collection of annotations provided on an IXDTF string.
     pub annotations: Vec<Annotation<'a>>,
 }
 
@@ -31,12 +28,15 @@ pub struct IxdtfParseRecord<'a> {
 #[derive(Debug, Clone, PartialEq)]
 /// A record of an annotation.
 pub struct Annotation<'a> {
+    /// Whether this annotation is flagged as critical
     pub critical: bool,
+    /// The parsed key value of the annotation
     pub key: &'a str,
+    /// The parsed value of the annotation
     pub value: &'a str,
 }
 
-#[allow(clippy::exhaustive_structs)]
+#[allow(clippy::exhaustive_structs)] // DateRecord only allows for a year, month, and day value.
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 /// The record of a parsed date.
 pub struct DateRecord {
@@ -49,7 +49,7 @@ pub struct DateRecord {
 }
 
 /// Parsed Time info
-#[allow(clippy::exhaustive_structs)]
+#[allow(clippy::exhaustive_structs)] // TimeRecord only allows for a hour, minute, second, and sub-second value.
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct TimeRecord {
     /// An hour
@@ -62,7 +62,17 @@ pub struct TimeRecord {
     pub nanosecond: u32,
 }
 
-/// `TimeZone` data
+/// A `TimeZoneAnnotation` that represents a parsed `TimeZoneRecord` and its critical flag.
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq)]
+pub struct TimeZoneAnnotation<'a> {
+    /// Critical flag for the `TimeZoneAnnotation`.
+    pub critical: bool,
+    /// The parsed `TimeZoneRecord` for the annotation.
+    pub tz: TimeZoneRecord<'a>,
+}
+
+/// Parsed `TimeZone` data, which can be either a UTC Offset value or IANA Time Zone Name value.
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
 pub enum TimeZoneRecord<'a> {
@@ -72,32 +82,40 @@ pub enum TimeZoneRecord<'a> {
     Offset(UTCOffsetRecord),
 }
 
-/// A full precision `UtcOffset`
+/// The parsed sign value, representing whether its struct is positive or negative.
+#[repr(i8)]
+#[allow(clippy::exhaustive_enums)] // Sign can only be positive or negative.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Sign {
+    /// A negative value sign, representable as either -1 or false.
+    Negative = -1,
+    /// A positive value sign, representable as either 1 or true.
+    Positive = 1,
+}
+
+impl From<bool> for Sign {
+    fn from(value: bool) -> Self {
+        match value {
+            true => Self::Positive,
+            false => Self::Negative,
+        }
+    }
+}
+
+/// A full precision `UtcOffsetRecord`
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UTCOffsetRecord {
-    /// The `+`/`-` sign of this `UtcOffset`
-    pub sign: i8,
-    /// The hour value of the `UtcOffset`
+    /// The `Sign` value of the `UtcOffsetRecord`
+    pub sign: Sign,
+    /// The hour value of the `UtcOffsetRecord`
     pub hour: u8,
-    /// The minute value of the `UtcOffset`.
+    /// The minute value of the `UtcOffsetRecord`.
     pub minute: u8,
-    /// The second value of the `UtcOffset`.
+    /// The second value of the `UtcOffsetRecord`.
     pub second: u8,
-    /// Any nanosecond value of the `UTCOffset`
+    /// Any nanosecond value of the `UTCOffsetRecord`
     pub nanosecond: u32,
-}
-
-impl Default for UTCOffsetRecord {
-    fn default() -> Self {
-        Self {
-            sign: 1,
-            hour: 0,
-            minute: 0,
-            second: 0,
-            nanosecond: 0,
-        }
-    }
 }
 
 /// The resulting record of a `Duration` parse.
@@ -106,19 +124,21 @@ impl Default for UTCOffsetRecord {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
     /// Duration Sign
-    pub years: i32,
-    /// A `DateDuration` record.
-    pub months: i32,
+    pub sign: Sign,
+    /// The `years` value.
+    pub years: u32,
+    /// The `months` value.
+    pub months: u32,
     /// The `weeks` value.
-    pub weeks: i32,
+    pub weeks: u32,
     /// The `days` value.
-    pub days: i32,
+    pub days: u32,
     /// The `hours` value.
-    pub hours: i32,
+    pub hours: u32,
     /// The `minutes` value.
-    pub minutes: i32,
+    pub minutes: u32,
     /// The `seconds` value.
-    pub seconds: i32,
+    pub seconds: u32,
     /// Any fraction part of a duration.
     pub fraction: Option<DurationFraction>,
 }
@@ -129,23 +149,11 @@ pub struct DurationParseRecord {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum DurationFraction {
     /// The fraction value applied to an hour.
-    Hours(i64),
+    Hours(u64),
     /// The fraction value applied to the minutes field.
-    Minutes(i64),
+    Minutes(u64),
     /// The fraction value applied to the seconds field.
-    Seconds(i32),
-}
-
-#[cfg(feature = "duration")]
-impl Mul<i32> for DurationFraction {
-    type Output = Self;
-    fn mul(self, rhs: i32) -> Self::Output {
-        match self {
-            Self::Hours(i) => Self::Hours(i * i64::from(rhs)),
-            Self::Minutes(i) => Self::Minutes(i * i64::from(rhs)),
-            Self::Seconds(i) => Self::Seconds(i * rhs),
-        }
-    }
+    Seconds(u32),
 }
 
 /// A `DateDuration` Parse Node.
@@ -153,13 +161,13 @@ impl Mul<i32> for DurationFraction {
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) struct DateDurationRecord {
     /// Years value.
-    pub(crate) years: i32,
+    pub(crate) years: u32,
     /// Months value.
-    pub(crate) months: i32,
+    pub(crate) months: u32,
     /// Weeks value.
-    pub(crate) weeks: i32,
+    pub(crate) weeks: u32,
     /// Days value.
-    pub(crate) days: i32,
+    pub(crate) days: u32,
 }
 
 /// A `TimeDuration` Parse Node
@@ -167,11 +175,11 @@ pub(crate) struct DateDurationRecord {
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) struct TimeDurationRecord {
     /// Hours value.
-    pub(crate) hours: i32,
+    pub(crate) hours: u32,
     /// Minutes value.
-    pub(crate) minutes: i32,
+    pub(crate) minutes: u32,
     /// Seconds value.
-    pub(crate) seconds: i32,
+    pub(crate) seconds: u32,
     /// Any parsed fraction value.
     pub(crate) fraction: Option<DurationFraction>,
 }
