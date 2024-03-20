@@ -41,16 +41,22 @@ pub struct CurrencyPatterns {
 
     #[serde(rename = "DisplayName")]
     pub display_name: Option<String>,
+
     #[serde(rename = "DisplayName-count-zero")]
     pub zero: Option<String>,
+
     #[serde(rename = "DisplayName-count-one")]
     pub one: Option<String>,
+
     #[serde(rename = "DisplayName-count-two")]
     pub two: Option<String>,
+
     #[serde(rename = "DisplayName-count-few")]
     pub few: Option<String>,
+
     #[serde(rename = "DisplayName-count-many")]
     pub many: Option<String>,
+
     #[serde(rename = "DisplayName-count-other")]
     pub other: Option<String>,
 }

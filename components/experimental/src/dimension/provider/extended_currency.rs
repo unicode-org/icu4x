@@ -111,7 +111,6 @@ pub struct ExtendedCurrencyPatternConfig {
     // TODO: remove it once all of them are the same.
     /// The pattern selection for the current placeholder.
     pub pattern_selection: PatternSelection,
-    
     // /// Points to the index of the placeholder in the extended placeholders list.
     // pub placeholder_value: Option<PlaceholderValue>,
 }

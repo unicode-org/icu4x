@@ -13,6 +13,7 @@ use crate::DatagenProvider;
 use std::borrow::Cow;
 
 use icu_pattern::DoublePlaceholderPattern;
+use rayon::iter::Map;
 
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -36,19 +37,60 @@ use icu_provider::DataProvider;
 use icu_experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
 
-// impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
-//     fn load(
-//         &self,
-//         req: DataRequest,
-//     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
-//         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
-//         let langid = req.locale.get_langid();
-//         let currencies_data:&cldr_serde::currencies::data::Resource =
-//             &self.cldr()?;
+impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
+        self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
 
+        let langid = req.locale.get_langid();
+        let currencies_resource: &cldr_serde::currencies::data::Resource =
+            self.cldr()?
+                .numbers()
+                .read_and_parse(&langid, "currencies.json")?;
 
+        let usd = currencies_resource
+            .main
+            .value
+            .numbers
+            .currencies
+            .get(&tinystr!(3, "USD").to_unvalidated())
+            .ok_or(DataError::custom("remove"))?;
 
-//         // TODO: remove.
-//         Err(DataError::Unavailable)
-//     }
-// }
+        let extended_placeholders = vec![
+            usd.zero.as_deref(),
+            usd.one.as_deref(),
+            usd.two.as_deref(),
+            usd.few.as_deref(),
+            usd.many.as_deref(),
+            usd.other.as_deref(),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<&str>>();
+
+        let patterns_config = ZeroMap::new();
+
+        let data = CurrencyExtendedDataV1 {
+            patterns_config,
+            extended_placeholders: VarZeroVec::from(&extended_placeholders),
+        };
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+impl IterableDataProviderInternal<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        Ok(self
+            .cldr()?
+            .numbers()
+            .list_langs()?
+            .map(DataLocale::from)
+            .collect())
+    }
+}
