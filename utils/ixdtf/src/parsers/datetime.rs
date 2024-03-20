@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Parsing for Temporal's ISO8601 `Date` and `DateTime`.
+//! Parsing for `Date`, `DateTime`, and `MonthDay`.
 
 use crate::{
     assert_syntax,

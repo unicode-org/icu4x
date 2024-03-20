@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Parsing of ISO8601 Time Values
+//! Parsing of Time Values
 
 use alloc::vec::Vec;
 
