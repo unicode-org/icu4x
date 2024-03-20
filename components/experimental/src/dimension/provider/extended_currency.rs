@@ -25,7 +25,7 @@ use zerovec::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
 /// </div>
 pub use crate::provider::Baked;
 
-use super::currency::{PatternSelection, PlaceholderValue};
+use super::currency::{CurrencyPatternConfig, PatternSelection, PlaceholderValue};
 
 /// Currency Extended V1 data struct.
 #[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
@@ -39,8 +39,10 @@ use super::currency::{PatternSelection, PlaceholderValue};
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
     /// A mapping from each currency's ISO code to its associated formatting patterns.
+    // Using CurrencyPatternConfig until implementing AsULE for ExtendedCurrencyPatternConfig.
+    // use short for long right now.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns_config: ZeroMap<'data, Count, ExtendedCurrencyPatternConfig>,
+    pub patterns_config: ZeroMap<'data, Count, CurrencyPatternConfig>,
 
     /// Contains the counted display names for the currency.
     /// For example, for "en" locale, and "USD" currency:
@@ -109,6 +111,7 @@ pub struct ExtendedCurrencyPatternConfig {
     // TODO: remove it once all of them are the same.
     /// The pattern selection for the current placeholder.
     pub pattern_selection: PatternSelection,
+    
     // /// Points to the index of the placeholder in the extended placeholders list.
     // pub placeholder_value: Option<PlaceholderValue>,
 }
