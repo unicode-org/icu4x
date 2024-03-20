@@ -85,7 +85,7 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
             value = value
                 .checked_mul(10)
                 .and_then(|v| v.checked_add(u32::from(digit)))
-                .ok_or(ParserError::DurationDigitExceededRange)?
+                .ok_or(ParserError::DurationValueExceededRange)?
         }
 
         match cursor.next() {
@@ -150,7 +150,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
             value = value
                 .checked_mul(10)
                 .and_then(|v| v.checked_add(u32::from(digit)))
-                .ok_or(ParserError::DurationDigitExceededRange)?
+                .ok_or(ParserError::DurationValueExceededRange)?
         }
 
         let fraction = parse_fraction(cursor)?;

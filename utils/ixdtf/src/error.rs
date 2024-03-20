@@ -93,8 +93,8 @@ pub enum ParserError {
     // Duration Errors
     #[displaydoc("Invalid duration designator.")]
     DurationDisgnator,
-    #[displaydoc("Provided DurationDigit exceeds supported range.")]
-    DurationDigitExceededRange,
+    #[displaydoc("Provided Duration field value exceeds supported range.")]
+    DurationValueExceededRange,
     #[displaydoc("Invalid date duration part order.")]
     DateDurationPartOrder,
     #[displaydoc("Invalid time duration part order.")]

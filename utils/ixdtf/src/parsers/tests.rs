@@ -541,11 +541,11 @@ fn duration_exceeds_range() {
 
     let test = "P1000000000000000000000000000000000000000YT1H";
     let err = IsoDurationParser::new(test).parse();
-    assert_eq!(err, Err(ParserError::DurationDigitExceededRange));
+    assert_eq!(err, Err(ParserError::DurationValueExceededRange));
 
     let test = "P1YT1000000000000000000000000000000000000000H";
     let err = IsoDurationParser::new(test).parse();
-    assert_eq!(err, Err(ParserError::DurationDigitExceededRange));
+    assert_eq!(err, Err(ParserError::DurationValueExceededRange));
 }
 
 #[test]
