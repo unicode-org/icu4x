@@ -89,10 +89,10 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
         self.check_req::<CurrencyEssentialsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let currencies_resource: &cldr_serde::currencies::Resource = self
-            .cldr()?
-            .numbers()
-            .read_and_parse(&langid, "currencies.json")?;
+        let currencies_resource: &cldr_serde::currencies::data::Resource =
+            self.cldr()?
+                .numbers()
+                .read_and_parse(&langid, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -121,7 +121,7 @@ impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for crate::Datagen
 
 fn extract_currency_essentials<'data>(
     provider: &DatagenProvider,
-    currencies_resource: &cldr_serde::currencies::Resource,
+    currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
 ) -> Result<CurrencyEssentialsV1<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;

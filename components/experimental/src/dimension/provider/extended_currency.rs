@@ -13,7 +13,7 @@ use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::{ZeroMap, ZeroMap2d};
+use zerovec::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -42,8 +42,13 @@ pub struct CurrencyExtendedDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns_config: ZeroMap<'data, Count, ExtendedCurrencyPatternConfig>,
 
-    // Contains all the currency extended placeholders.
-    pub extended_placeholders: Vec<Cow<'data, str>>,
+    /// Contains the counted display names for the currency.
+    /// For example, for "en" locale, and "USD" currency:
+    ///        "US Dollars" for `zero` count,
+    ///        "US Dollar"  for `one`  count,
+    ///     ... etc.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub extended_placeholders: VarZeroVec<'data, str>,
 }
 
 /// A CLDR plural keyword, or the explicit value 1.
@@ -100,12 +105,10 @@ impl From<PluralCategory> for Count {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-#[yoke(prove_covariance_manually)]
 pub struct ExtendedCurrencyPatternConfig {
     // TODO: remove it once all of them are the same.
     /// The pattern selection for the current placeholder.
     pub pattern_selection: PatternSelection,
-
-    /// Points to the index of the placeholder in the extended placeholders list.
-    pub placeholder_value: Option<PlaceholderValue>,
+    // /// Points to the index of the placeholder in the extended placeholders list.
+    // pub placeholder_value: Option<PlaceholderValue>,
 }
