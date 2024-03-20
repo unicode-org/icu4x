@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+
+pub mod extended;
+
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 
@@ -87,7 +90,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
         self.check_req::<CurrencyEssentialsV1Marker>(req)?;
-        let langid = req.locale.get_langid();
+        let langid: icu_locid::LanguageIdentifier = req.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
