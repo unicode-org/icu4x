@@ -6,12 +6,16 @@ use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 
 use crate::transform::cldr::cldr_serde::currencies;
+use crate::transform::cldr::cldr_serde::currencies::data::CurrencyPatterns;
 use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
 
 use crate::DatagenProvider;
 
 use std::borrow::Cow;
 
+use icu_locid::extensions::private::Subtag;
+use icu_locid::extensions::transform::Value;
+use icu_locid::Locale;
 use icu_pattern::DoublePlaceholderPattern;
 use rayon::iter::Map;
 
@@ -44,11 +48,13 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
 
-        let langid = req.locale.get_langid();
+        let langid: icu_locid::LanguageIdentifier = req.locale.get_langid();
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
                 .read_and_parse(&langid, "currencies.json")?;
+
+        let currencies = currencies_resource.main.value.numbers.currencies;
 
         let usd = currencies_resource
             .main
@@ -69,7 +75,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
         .into_iter()
         .flatten()
         .collect::<Vec<&str>>();
-    
+
         let patterns_config = ZeroMap::new();
 
         let data = CurrencyExtendedDataV1 {
@@ -81,6 +87,28 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(data)),
         })
+    }
+}
+
+impl DatagenProvider {
+    fn supported_locales_currencies(
+        &self,
+        currency: Value,
+        keylengths: &'static [Subtag],
+        currencies: &BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
+        lang_id: &icu_locid::LanguageIdentifier,
+    ) -> Result<HashSet<DataLocale>, DataError> {
+        let mut r = HashSet::new();
+
+        r.extend(currencies.keys().flat_map(|currency_iso| {
+            let locale: Locale = lang_id.clone().into();
+            let mut locale = DataLocale::from(locale);
+
+            locale.set_aux();
+            locale
+        }));
+
+        Ok(r)
     }
 }
 
