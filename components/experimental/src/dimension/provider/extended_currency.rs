@@ -13,7 +13,7 @@ use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::ZeroMap2d;
+use zerovec::{ZeroMap, ZeroMap2d};
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -40,8 +40,7 @@ use super::currency::{PatternSelection, PlaceholderValue};
 pub struct CurrencyExtendedDataV1<'data> {
     /// A mapping from each currency's ISO code to its associated formatting patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns_config:
-        ZeroMap2d<'data, UnvalidatedTinyAsciiStr<3>, Count, ExtendedCurrencyPatternConfigULE>,
+    pub patterns_config: ZeroMap<'data, Count, ExtendedCurrencyPatternConfig>,
 
     // Contains all the currency extended placeholders.
     pub extended_placeholders: Vec<Cow<'data, str>>,
@@ -103,6 +102,7 @@ impl From<PluralCategory> for Count {
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 #[yoke(prove_covariance_manually)]
 pub struct ExtendedCurrencyPatternConfig {
+    // TODO: remove it once all of them are the same.
     /// The pattern selection for the current placeholder.
     pub pattern_selection: PatternSelection,
 
