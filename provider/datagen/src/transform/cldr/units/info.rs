@@ -26,7 +26,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         self.check_req::<UnitsInfoV1Marker>(_req)?;
 
         // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
-        let units_data: &cldr_serde::units::units_constants::Resource = self
+        let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
