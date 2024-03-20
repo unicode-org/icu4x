@@ -1,4 +1,7 @@
 {
   "patterns_config": {},
-  "extended_placeholders": []
+  "extended_placeholders": [
+    "dólar estadounidense",
+    "dólares estadounidenses"
+  ]
 }

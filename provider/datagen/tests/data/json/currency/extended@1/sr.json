@@ -1,4 +1,8 @@
 {
   "patterns_config": {},
-  "extended_placeholders": []
+  "extended_placeholders": [
+    "амерички долар",
+    "америчка долара",
+    "америчких долара"
+  ]
 }

@@ -14,17 +14,17 @@ use tinystr::UnvalidatedTinyAsciiStr;
 // TODO: uncomment when we have a use case for this
 // #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
 // pub struct LocaleDisplayNames {
-//     #[serde(rename = "DisplayName-count-zero")]
+//     #[serde(rename = "displayName-count-zero")]
 //     pub zero: Option<String>,
-//     #[serde(rename = "DisplayName-count-one")]
+//     #[serde(rename = "displayName-count-one")]
 //     pub one: Option<String>,
-//     #[serde(rename = "DisplayName-count-two")]
+//     #[serde(rename = "displayName-count-two")]
 //     pub two: Option<String>,
-//     #[serde(rename = "DisplayName-count-few")]
+//     #[serde(rename = "displayName-count-few")]
 //     pub few: Option<String>,
-//     #[serde(rename = "DisplayName-count-many")]
+//     #[serde(rename = "displayName-count-many")]
 //     pub many: Option<String>,
-//     #[serde(rename = "DisplayName-count-other")]
+//     #[serde(rename = "displayName-count-other")]
 //     pub other: Option<String>,
 // }
 
@@ -39,25 +39,25 @@ pub struct CurrencyPatterns {
     #[serde(rename = "symbol-alt-narrow")]
     pub narrow: Option<String>,
 
-    #[serde(rename = "DisplayName")]
+    #[serde(rename = "displayName")]
     pub display_name: Option<String>,
 
-    #[serde(rename = "DisplayName-count-zero")]
+    #[serde(rename = "displayName-count-zero")]
     pub zero: Option<String>,
 
-    #[serde(rename = "DisplayName-count-one")]
+    #[serde(rename = "displayName-count-one")]
     pub one: Option<String>,
 
-    #[serde(rename = "DisplayName-count-two")]
+    #[serde(rename = "displayName-count-two")]
     pub two: Option<String>,
 
-    #[serde(rename = "DisplayName-count-few")]
+    #[serde(rename = "displayName-count-few")]
     pub few: Option<String>,
 
-    #[serde(rename = "DisplayName-count-many")]
+    #[serde(rename = "displayName-count-many")]
     pub many: Option<String>,
 
-    #[serde(rename = "DisplayName-count-other")]
+    #[serde(rename = "displayName-count-other")]
     pub other: Option<String>,
 }
 

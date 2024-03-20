@@ -69,7 +69,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
         .into_iter()
         .flatten()
         .collect::<Vec<&str>>();
-
+    
         let patterns_config = ZeroMap::new();
 
         let data = CurrencyExtendedDataV1 {

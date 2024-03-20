@@ -1,4 +1,9 @@
 {
   "patterns_config": {},
-  "extended_placeholders": []
+  "extended_placeholders": [
+    "доллар США",
+    "доллара США",
+    "долларов США",
+    "доллара США"
+  ]
 }
