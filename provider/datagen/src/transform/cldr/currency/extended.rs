@@ -36,19 +36,19 @@ use icu_provider::DataProvider;
 use icu_experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
 
-impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
-        self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
-        let langid = req.locale.get_langid();
-        let currencies_data:&cldr_serde::currencies::data::Resource =
-            &self.cldr()?;
+// impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
+//     fn load(
+//         &self,
+//         req: DataRequest,
+//     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
+//         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
+//         let langid = req.locale.get_langid();
+//         let currencies_data:&cldr_serde::currencies::data::Resource =
+//             &self.cldr()?;
 
 
 
-        // TODO: remove.
-        Err(DataError::Unavailable)
-    }
-}
+//         // TODO: remove.
+//         Err(DataError::Unavailable)
+//     }
+// }
