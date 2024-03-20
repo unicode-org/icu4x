@@ -517,6 +517,38 @@ fn temporal_invalid_durations() {
 }
 
 #[test]
+#[cfg(feature = "duration")]
+fn maximum_duration_fraction() {
+    use crate::parsers::IsoDurationParser;
+
+    let test = "P1Y1DT1.999999999H";
+    let result = IsoDurationParser::new(test).parse();
+    assert!(result.is_ok());
+
+    let test = "P1Y1DT1H1.999999999M";
+    let result = IsoDurationParser::new(test).parse();
+    assert!(result.is_ok());
+
+    let test = "P1Y1DT1H1M1.999999999S";
+    let result = IsoDurationParser::new(test).parse();
+    assert!(result.is_ok());
+}
+
+#[test]
+#[cfg(feature = "duration")]
+fn duration_exceeds_range() {
+    use crate::parsers::IsoDurationParser;
+
+    let test = "P1000000000000000000000000000000000000000YT1H";
+    let err = IsoDurationParser::new(test).parse();
+    assert_eq!(err, Err(ParserError::DurationDigitExceededRange));
+
+    let test = "P1YT1000000000000000000000000000000000000000H";
+    let err = IsoDurationParser::new(test).parse();
+    assert_eq!(err, Err(ParserError::DurationDigitExceededRange));
+}
+
+#[test]
 fn temporal_invalid_iso_datetime_strings() {
     // NOTE: The below tests were initially pulled from test262's `argument-string-invalid`
     const INVALID_DATETIME_STRINGS: [&str; 32] = [

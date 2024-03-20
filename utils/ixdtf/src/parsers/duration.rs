@@ -82,7 +82,10 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("DateDuration"))?;
-            value = value * 10 + u32::from(digit);
+            value = value
+                .checked_mul(10)
+                .and_then(|v| v.checked_add(u32::from(digit)))
+                .ok_or(ParserError::DurationDigitExceededRange)?
         }
 
         match cursor.next() {
@@ -144,7 +147,10 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("TimeDurationDigit"))?;
-            value = value * 10 + u32::from(digit);
+            value = value
+                .checked_mul(10)
+                .and_then(|v| v.checked_add(u32::from(digit)))
+                .ok_or(ParserError::DurationDigitExceededRange)?
         }
 
         let fraction = parse_fraction(cursor)?;
@@ -156,6 +162,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 }
                 time.hours = value;
                 if let Some(fraction) = fraction {
+                    // Safety: Max fraction * 3600 is within u64 -> see test maximum_duration_fraction
                     time.fraction = Some(DurationFraction::Hours(3600 * u64::from(fraction)));
                 }
                 previous_unit = TimeUnit::Hour;
@@ -166,6 +173,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 }
                 time.minutes = value;
                 if let Some(fraction) = fraction {
+                    // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
                     time.fraction = Some(DurationFraction::Minutes(60 * u64::from(fraction)));
                 }
                 previous_unit = TimeUnit::Minute;
@@ -176,7 +184,6 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<TimeDurat
                 }
                 time.seconds = value;
                 if let Some(fraction) = fraction {
-                    // Assert: Fraction value does not exceed i32 max.
                     time.fraction = Some(DurationFraction::Seconds(fraction));
                 }
                 previous_unit = TimeUnit::Second;
