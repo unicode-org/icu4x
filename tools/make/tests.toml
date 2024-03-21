@@ -62,7 +62,7 @@ exit_on_error true
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-cd docs/tutorials/rust
+cd tutorials/rust
 
 exec --fail-on-error cargo check --manifest-path default/Cargo.toml
 exec --fail-on-error cargo check --manifest-path buffer/Cargo.toml
@@ -84,7 +84,7 @@ set_env CARGO_TARGET_DIR ${project_dir}/target
 
 exec --fail-on-error cargo build -p icu_datagen
 
-cd docs/tutorials/rust
+cd tutorials/rust
 
 mkdir bin
 cp ${project_dir}/target/debug/icu4x-datagen bin/icu4x-datagen
@@ -102,7 +102,7 @@ exec --fail-on-error make -C buffer buffer_data.postcard
 exec --fail-on-error cargo run --manifest-path buffer/Cargo.toml
 
 exec --fail-on-error make -C custom_compiled baked_data/mod.rs
-set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/rust/custom_compiled/baked_data
+set_env ICU4X_DATA_DIR ${project_dir}/tutorials/rust/custom_compiled/baked_data
 exec --fail-on-error cargo run --manifest-path custom_compiled/Cargo.toml
 '''
 
@@ -113,7 +113,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd docs/tutorials/rust
+cd tutorials/rust
 
 # Delete the lockfile to make a clean crates.io build
 rm -f Cargo.lock
