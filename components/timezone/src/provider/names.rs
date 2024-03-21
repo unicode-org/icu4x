@@ -47,7 +47,8 @@ pub struct IanaToBcp47MapV1<'data> {
     pub map: ZeroTrie<ZeroVec<'data, u8>>,
     /// A sorted list of BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
+    // Note: this is 9739B as `ZeroVec<TimeZoneBcp47Id>` (`ZeroVec<TinyStr8>`)
+    // and 9335B as `VarZeroVec<str>`
     pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
     /// An XxHash64 checksum of [`Self::bcp47_ids`].
     pub bcp47_ids_checksum: u64,
@@ -75,14 +76,22 @@ pub struct IanaToBcp47MapV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct IanaToBcp47MapV2<'data> {
-    /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
-    /// The lowest bit is 1 if the name is canonical and 0 if it is not canonical.
-    /// The IANA identifiers are normal-case.
+    /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
+    /// identifiers along with a canonical flag. The IANA identifiers are normal-case.
+    ///
+    /// The `usize` values stored in the trie have the following form:
+    ///
+    /// - Lowest bit: 1 if canonical, 0 if not canonical
+    /// - All remaining bits: index into `bcp47_ids`
+    ///
+    /// For example, in CLDR 44, `"Africa/Abidjan"` has value 221, which means it is canonical
+    /// (low bit is 1 == odd number) and the index into `bcp47_ids` is 110 (221 >> 1).
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroAsciiIgnoreCaseTrie<ZeroVec<'data, u8>>,
     /// A sorted list of BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
+    // Note: this is 9739B as `ZeroVec<TimeZoneBcp47Id>` (`ZeroVec<TinyStr8>`)
+    // and 9335B as `VarZeroVec<str>`
     pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
     /// An XxHash64 checksum of [`Self::bcp47_ids`].
     pub bcp47_ids_checksum: u64,
