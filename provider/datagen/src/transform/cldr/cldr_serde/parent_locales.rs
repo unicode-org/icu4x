@@ -15,6 +15,7 @@ use std::collections::HashMap;
 pub struct ParentLocales {
     #[serde(rename = "parentLocale")]
     pub parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
+    pub collations: HashMap<String, LanguageIdentifier>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
