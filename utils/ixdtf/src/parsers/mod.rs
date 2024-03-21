@@ -85,9 +85,8 @@ impl<'a> IxdtfParser<'a> {
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         match self.options {
-            IxdtfOptions::None | IxdtfOptions::YearMonth => {
-                datetime::parse_annotated_date_time(&mut self.cursor, self.options)
-            }
+            IxdtfOptions::None => datetime::parse_annotated_date_time(&mut self.cursor),
+            IxdtfOptions::YearMonth => datetime::parse_annotated_year_month(&mut self.cursor),
             IxdtfOptions::MonthDay => datetime::parse_annotated_month_day(&mut self.cursor),
             IxdtfOptions::Time => time::parse_annotated_time_record(&mut self.cursor),
         }

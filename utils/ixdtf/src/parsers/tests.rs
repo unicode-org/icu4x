@@ -288,7 +288,6 @@ fn temporal_year_month() {
         "2020-11[u-ca=iso8601]",
         "+00202011",
         "202011[u-ca=iso8601]",
-        "+002020-11-07T12:28:32[!u-ca=iso8601]",
     ];
 
     for ym in possible_year_months {
@@ -302,6 +301,28 @@ fn temporal_year_month() {
         assert_eq!(date.year, 2020);
         assert_eq!(date.month, 11);
     }
+}
+
+#[test]
+fn invalid_year_month() {
+    // Valid AnnotatedDateTime, but not a valid AnnotatedYearMonth.
+    let bad_value = "+002020-11T12:28:32[!u-ca=iso8601]";
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::YearMonth)
+        .parse();
+    assert_eq!(err, Err(ParserError::InvalidEnd));
+
+    let bad_value = "-202011[!u-ca=iso8601]";
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::YearMonth)
+        .parse();
+    assert_eq!(err, Err(ParserError::DateMonth));
+
+    let bad_value = "-00202011Z[Europe/Berlin]";
+    let err = IxdtfParser::new(bad_value)
+        .with_option(IxdtfOptions::YearMonth)
+        .parse();
+    assert_eq!(err, Err(ParserError::InvalidEnd));
 }
 
 #[test]

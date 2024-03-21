@@ -20,7 +20,7 @@ use crate::{
 
 use alloc::vec::Vec;
 
-use super::{records::UTCOffsetRecord, IxdtfOptions};
+use super::records::UTCOffsetRecord;
 
 #[derive(Debug, Default, Clone)]
 /// A `DateTime` Parse Node that contains the date, time, and offset info.
@@ -43,9 +43,8 @@ pub(crate) struct DateTimeRecord {
 /// [instant]: https://tc39.es/proposal-temporal/#prod-TemporalInstantString
 pub(crate) fn parse_annotated_date_time<'a>(
     cursor: &mut Cursor<'a>,
-    options: IxdtfOptions,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
-    let date_time = parse_date_time(cursor, options)?;
+    let date_time = parse_date_time(cursor)?;
 
     // Peek Annotation presence
     // Throw error if annotation does not exist and zoned is true, else return.
@@ -106,9 +105,48 @@ pub(crate) fn parse_annotated_month_day<'a>(
     })
 }
 
+/// Parse an annotated YearMonth
+pub(crate) fn parse_annotated_year_month<'a>(
+    cursor: &mut Cursor<'a>,
+) -> ParserResult<IxdtfParseRecord<'a>> {
+    let year = parse_date_year(cursor)?;
+    cursor.advance_if(cursor.check_or(false, is_hyphen));
+    let month = parse_date_month(cursor)?;
+
+    let date = DateRecord {
+        year,
+        month,
+        day: 1,
+    };
+
+    if !cursor.check_or(false, is_annotation_open) {
+        cursor.close()?;
+
+        return Ok(IxdtfParseRecord {
+            date: Some(date),
+            time: None,
+            offset: None,
+            tz: None,
+            calendar: None,
+            annotations: Vec::default(),
+        });
+    }
+
+    let annotation_set = annotations::parse_annotation_set(cursor)?;
+
+    Ok(IxdtfParseRecord {
+        date: Some(date),
+        time: None,
+        offset: None,
+        tz: annotation_set.tz,
+        calendar: annotation_set.calendar,
+        annotations: annotation_set.annotations,
+    })
+}
+
 /// Parses a `DateTime` record.
-fn parse_date_time(cursor: &mut Cursor, options: IxdtfOptions) -> ParserResult<DateTimeRecord> {
-    let date = parse_date(cursor, options)?;
+fn parse_date_time(cursor: &mut Cursor) -> ParserResult<DateTimeRecord> {
+    let date = parse_date(cursor)?;
 
     // If there is no `DateTimeSeparator`, return date early.
     if !cursor.check_or(false, is_date_time_separator) {
@@ -137,7 +175,7 @@ fn parse_date_time(cursor: &mut Cursor, options: IxdtfOptions) -> ParserResult<D
 }
 
 /// Parses `Date` record.
-fn parse_date(cursor: &mut Cursor, options: IxdtfOptions) -> ParserResult<DateRecord> {
+fn parse_date(cursor: &mut Cursor) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
     let hyphenated = cursor
         .check(is_hyphen)
@@ -146,15 +184,6 @@ fn parse_date(cursor: &mut Cursor, options: IxdtfOptions) -> ParserResult<DateRe
     cursor.advance_if(hyphenated);
 
     let month = parse_date_month(cursor)?;
-
-    // Check YearMonth
-    if options == IxdtfOptions::YearMonth && cursor.check_or(true, is_annotation_open) {
-        return Ok(DateRecord {
-            year,
-            month,
-            day: 1,
-        });
-    }
 
     let second_hyphen = cursor.check_or(false, is_hyphen);
     assert_syntax!(hyphenated == second_hyphen, DateSeparator);
