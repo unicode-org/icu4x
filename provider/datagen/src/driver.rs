@@ -20,19 +20,16 @@ use std::time::Instant;
 use writeable::Writeable;
 
 #[non_exhaustive]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct LocalesWithoutFallback {
-    /// TODO/DISCUSS: How to enforce that this set is non-empty?
-    /// Or do we just permit it to be empty?
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
+pub struct NoFallbackOptions {}
+
+#[derive(Debug, Clone)]
+struct LocalesAndNoFallbackOptions {
     locales: HashSet<LanguageIdentifier>,
+    options: NoFallbackOptions,
 }
 
-impl LocalesWithoutFallback {
-    #[allow(dead_code)]
-    pub fn for_locales(locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
-        Self::from_iter(locales)
-    }
-
+impl LocalesAndNoFallbackOptions {
     fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut sorted_locales = self
             .locales
@@ -48,15 +45,6 @@ impl LocalesWithoutFallback {
     }
 }
 
-impl FromIterator<LanguageIdentifier> for LocalesWithoutFallback {
-    #[inline]
-    fn from_iter<T: IntoIterator<Item = LanguageIdentifier>>(iter: T) -> Self {
-        Self {
-            locales: iter.into_iter().collect(),
-        }
-    }
-}
-
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum RuntimeFallbackLocation {
@@ -68,7 +56,6 @@ pub enum RuntimeFallbackLocation {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DeduplicationStrategy {
     Maximal,
-    #[allow(dead_code)]
     RetainBaseLanguages,
     NoDeduplication,
 }
@@ -146,26 +133,20 @@ impl fmt::Display for LocaleWithExpansion {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
-pub struct LocalesWithFallback {
+pub struct FallbackOptions {
     pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
     pub deduplication_strategy: Option<DeduplicationStrategy>,
-    /// private: set via constructor
-    locales: HashSet<LocaleWithExpansion>,
 }
 
-impl LocalesWithFallback {
-    #[inline]
-    #[allow(dead_code)]
-    pub fn for_locales(locales: impl IntoIterator<Item = LocaleWithExpansion>) -> Self {
-        Self::from_iter(locales)
-    }
+#[derive(Debug, Clone)]
+struct LocalesAndFallbackOptions {
+    locales: HashSet<LocaleWithExpansion>,
+    options: FallbackOptions,
+}
 
-    pub fn for_all_locales() -> Self {
-        Self::from_iter([LocaleWithExpansion::wildcard()])
-    }
-
+impl LocalesAndFallbackOptions {
     fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut sorted_locales = self
             .locales
@@ -173,13 +154,13 @@ impl LocalesWithFallback {
             .map(ToString::to_string)
             .collect::<Vec<_>>();
         sorted_locales.sort();
-        let start = match self.runtime_fallback_location {
+        let start = match self.options.runtime_fallback_location {
             None => "with fallback",
             Some(RuntimeFallbackLocation::Internal) => "with internal fallback",
             Some(RuntimeFallbackLocation::External) => "with external fallback",
         };
         write!(f, "{start}, ")?;
-        match self.deduplication_strategy {
+        match self.options.deduplication_strategy {
             Some(x) => x.describe(f)?,
             None => write!(f, "default deduplication")?,
         }
@@ -187,40 +168,27 @@ impl LocalesWithFallback {
     }
 }
 
-/// Wraps the language identifiers with [`LocaleWithExpansion::with_variants`]
-impl FromIterator<LanguageIdentifier> for LocalesWithFallback {
-    #[inline]
-    fn from_iter<T: IntoIterator<Item = LanguageIdentifier>>(iter: T) -> Self {
-        Self::from_iter(iter.into_iter().map(LocaleWithExpansion::with_variants))
-    }
-}
-
-impl FromIterator<LocaleWithExpansion> for LocalesWithFallback {
-    #[inline]
-    fn from_iter<T: IntoIterator<Item = LocaleWithExpansion>>(iter: T) -> Self {
-        Self {
-            runtime_fallback_location: Default::default(),
-            deduplication_strategy: Default::default(),
-            locales: iter.into_iter().collect(),
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 pub(crate) enum LocalesWithOrWithoutFallback {
-    WithFallback(LocalesWithFallback),
-    WithoutFallback(LocalesWithoutFallback),
+    WithFallback(LocalesAndFallbackOptions),
+    WithoutFallback(LocalesAndNoFallbackOptions),
 }
 
 impl LocalesWithOrWithoutFallback {
     /// Converts this field to [`LocalesWithoutFallback`] and returns a reference to it.
-    pub(crate) fn coerce_without_fallback(&mut self) -> &mut LocalesWithoutFallback {
+    pub(crate) fn coerce_without_fallback(&mut self) -> &mut LocalesAndNoFallbackOptions {
         match self {
             Self::WithoutFallback(config) => config,
             Self::WithFallback(config) => {
-                let locales_set = core::mem::take(&mut config.locales);
-                let config = locales_set.into_iter().map(|x| x.into_langid()).collect();
-                *self = Self::WithoutFallback(config);
+                let old_locales_set = core::mem::take(&mut config.locales);
+                let new_locales_set = old_locales_set
+                    .into_iter()
+                    .map(|x| x.into_langid())
+                    .collect();
+                *self = Self::WithoutFallback(LocalesAndNoFallbackOptions {
+                    locales: new_locales_set,
+                    options: Default::default(),
+                });
                 let Self::WithoutFallback(config) = self else {
                     unreachable!()
                 };
@@ -230,13 +198,19 @@ impl LocalesWithOrWithoutFallback {
     }
 
     /// Converts this field to [`LocalesWithFallback`] and returns a reference to it.
-    pub(crate) fn coerce_with_fallback(&mut self) -> &mut LocalesWithFallback {
+    pub(crate) fn coerce_with_fallback(&mut self) -> &mut LocalesAndFallbackOptions {
         match self {
             Self::WithFallback(config) => config,
             Self::WithoutFallback(config) => {
-                let locales_set = core::mem::take(&mut config.locales);
-                let config = locales_set.into_iter().collect();
-                *self = Self::WithFallback(config);
+                let old_locales_set = core::mem::take(&mut config.locales);
+                let new_locales_set = old_locales_set
+                    .into_iter()
+                    .map(LocaleWithExpansion::with_variants)
+                    .collect();
+                *self = Self::WithFallback(LocalesAndFallbackOptions {
+                    locales: new_locales_set,
+                    options: Default::default(),
+                });
                 let Self::WithFallback(config) = self else {
                     unreachable!()
                 };
@@ -332,25 +306,46 @@ impl DatagenDriver {
     /// [`langid!`]: crate::prelude::langid
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
-        self.with_locales_and_fallback(locales.into_iter().collect())
+        self.with_locales_and_fallback(
+            locales.into_iter().map(LocaleWithExpansion::with_variants),
+            Default::default(),
+        )
     }
 
     /// Sets this driver to generate all available locales.
     pub fn with_all_locales(self) -> Self {
-        self.with_locales_and_fallback(LocalesWithFallback::for_all_locales())
+        self.with_locales_and_fallback([LocaleWithExpansion::wildcard()], Default::default())
     }
 
     #[allow(dead_code)]
-    fn with_locales_no_fallback(self, config: LocalesWithoutFallback) -> Self {
+    fn with_locales_no_fallback(
+        self,
+        locales: impl IntoIterator<Item = LanguageIdentifier>,
+        options: NoFallbackOptions,
+    ) -> Self {
         Self {
-            locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback(config)),
+            locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback(
+                LocalesAndNoFallbackOptions {
+                    locales: locales.into_iter().collect(),
+                    options,
+                },
+            )),
             ..self
         }
     }
 
-    fn with_locales_and_fallback(self, config: LocalesWithFallback) -> Self {
+    fn with_locales_and_fallback(
+        self,
+        locales: impl IntoIterator<Item = LocaleWithExpansion>,
+        options: FallbackOptions,
+    ) -> Self {
         Self {
-            locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback(config)),
+            locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback(
+                LocalesAndFallbackOptions {
+                    locales: locales.into_iter().collect(),
+                    options,
+                },
+            )),
             ..self
         }
     }
@@ -483,13 +478,13 @@ impl DatagenDriver {
             }
             FallbackMode::Runtime => {
                 let config = locales_fallback.coerce_with_fallback();
-                config.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
-                config.runtime_fallback_location = Some(RuntimeFallbackLocation::Internal);
+                config.options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                config.options.runtime_fallback_location = Some(RuntimeFallbackLocation::Internal);
             }
             FallbackMode::RuntimeManual => {
                 let config = locales_fallback.coerce_with_fallback();
-                config.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
-                config.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
+                config.options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                config.options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
             }
             FallbackMode::Preresolved => {
                 let config = locales_fallback.coerce_without_fallback();
@@ -501,8 +496,9 @@ impl DatagenDriver {
             }
             FallbackMode::Hybrid => {
                 let config = locales_fallback.coerce_with_fallback();
-                config.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
-                config.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
+                config.options.deduplication_strategy =
+                    Some(DeduplicationStrategy::NoDeduplication);
+                config.options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
             }
         }
 
@@ -513,7 +509,7 @@ impl DatagenDriver {
                 DeduplicationStrategy::NoDeduplication
             }
             LocalesWithOrWithoutFallback::WithFallback(config) => {
-                match config.deduplication_strategy {
+                match config.options.deduplication_strategy {
                     // TODO: Default to RetainBaseLanguages here
                     None => {
                         if sink.supports_built_in_fallback() {
@@ -530,7 +526,7 @@ impl DatagenDriver {
         let uses_internal_fallback = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback(_) => false,
             LocalesWithOrWithoutFallback::WithFallback(config) => {
-                match config.runtime_fallback_location {
+                match config.options.runtime_fallback_location {
                     None => sink.supports_built_in_fallback(),
                     Some(RuntimeFallbackLocation::Internal) => true,
                     Some(RuntimeFallbackLocation::External) => false,
@@ -1064,9 +1060,10 @@ fn test_collation_filtering() {
         let resolved_locales = select_locales_for_key(
             &crate::DatagenProvider::new_testing(),
             icu_collator::provider::CollationDataV1Marker::KEY,
-            &LocalesWithOrWithoutFallback::WithoutFallback(
-                [cas.language.clone()].into_iter().collect(),
-            ),
+            &LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
+                locales: [cas.language.clone()].into_iter().collect(),
+                options: Default::default(),
+            }),
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
             &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
