@@ -5,6 +5,7 @@
 use crate::error::TimeZoneError;
 use crate::provider::names::*;
 use crate::TimeZoneBcp47Id;
+use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
 /// A mapper from IANA time zone identifiers to BCP-47 time zone identifiers.
@@ -37,7 +38,9 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct IanaToBcp47Mapper {
-    data: DataPayload<IanaToBcp47MapV1Marker>,
+    /// TODO(2.0): Remove this field and always assume v2
+    is_v1: bool,
+    data: DataPayload<IanaToBcp47MapV2Marker>,
 }
 
 impl IanaToBcp47Mapper {
@@ -52,8 +55,9 @@ impl IanaToBcp47Mapper {
     #[inline]
     pub const fn new() -> Self {
         IanaToBcp47Mapper {
+            is_v1: false,
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1,
+                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
             ),
         }
     }
@@ -64,7 +68,7 @@ impl IanaToBcp47Mapper {
             new,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_compat,
             Self,
         ]
     );
@@ -72,10 +76,26 @@ impl IanaToBcp47Mapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
     where
-        P: DataProvider<IanaToBcp47MapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV2Marker> + ?Sized,
     {
         let data = provider.load(Default::default())?.take_payload()?;
-        Ok(Self { data })
+        Ok(Self { is_v1: false, data })
+    }
+
+    fn try_new_compat<P>(provider: &P) -> Result<Self, TimeZoneError>
+    where
+        P: ?Sized + DataProvider<IanaToBcp47MapV1Marker> + DataProvider<IanaToBcp47MapV2Marker>,
+    {
+        if let Ok(data) = DataProvider::<IanaToBcp47MapV2Marker>::load(provider, Default::default())
+        {
+            let data = data.take_payload()?;
+            Ok(Self { is_v1: false, data })
+        } else {
+            let data = DataProvider::<IanaToBcp47MapV1Marker>::load(provider, Default::default())?
+                .take_payload()?;
+            let data = data.map_project::<IanaToBcp47MapV2Marker, _>(|v1, _| v1.into());
+            Ok(Self { is_v1: true, data })
+        }
     }
 
     /// Returns a borrowed version of the mapper that can be queried.
@@ -83,6 +103,7 @@ impl IanaToBcp47Mapper {
     /// This avoids a small potential cost of reading the data pointer.
     pub fn as_borrowed(&self) -> IanaToBcp47MapperBorrowed {
         IanaToBcp47MapperBorrowed {
+            is_v1: self.is_v1,
             data: self.data.get(),
         }
     }
@@ -92,7 +113,9 @@ impl IanaToBcp47Mapper {
 /// [`IanaToBcp47Mapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct IanaToBcp47MapperBorrowed<'a> {
-    data: &'a IanaToBcp47MapV1<'a>,
+    /// TODO(2.0): Remove this field and always assume v2
+    is_v1: bool,
+    data: &'a IanaToBcp47MapV2<'a>,
 }
 
 impl<'a> IanaToBcp47MapperBorrowed<'a> {
@@ -105,9 +128,19 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
     pub fn get(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
+        if self.is_v1 {
+            self.get_v1(iana_id)
+        } else {
+            self.get_v2(iana_id)
+        }
+    }
+
+    /// TODO(2.0): Remove this compatibility function
+    fn get_v1(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
         // The longest IANA name in CLDR appears to be "America/Argentina/ComodRivadavia"
         // which is 32 characters long, so 48 should be plenty. Add a debug assertion
         // just in case.
+        // TODO: Use a ZeroTrieSimpleAsciiCursor
         let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_bytes(iana_id.as_bytes()) {
             Ok(tinystr) => tinystr.to_ascii_lowercase(),
             Err(tinystr::TinyStrError::TooLarge { .. }) => {
@@ -119,8 +152,116 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
                 return None;
             }
         };
-        let idx = self.data.map.get(name_for_lookup.as_bytes())?;
+        // Fix the trie to be a PerfectHash trie
+        let trie = zerotrie::ZeroTriePerfectHash::from_bytes(self.data.map.as_bytes());
+        let idx = trie.get(name_for_lookup.as_bytes())?;
         self.data.bcp47_ids.get(idx)
+    }
+
+    fn get_v2(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
+        let idx = self.data.map.get(iana_id.as_bytes())?;
+        self.data.bcp47_ids.get(idx >> 1)
+    }
+
+    /// Gets the BCP-47 time zone identifier for an IANA time zone identifier
+    /// as well as whether the given IANA identifier is canonical.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::IanaToBcp47Mapper;
+    ///
+    /// let mapper = IanaToBcp47Mapper::new();
+    /// let mapper_borrowed = mapper.as_borrowed();
+    ///
+    /// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel"
+    /// // and it is canonical
+    /// let (bcp47id, is_canonical) = mapper_borrowed
+    ///     .get_is_canonical("Australia/Melbourne")
+    ///     .unwrap();
+    /// assert_eq!(bcp47id, "aumel".parse().unwrap());
+    /// assert!(is_canonical);
+    ///
+    /// // The IANA zone "Australia/Victoria" is an alias
+    /// let (bcp47id, is_canonical) = mapper_borrowed
+    ///     .get_is_canonical("australia/victoria")
+    ///     .unwrap();
+    /// assert_eq!(bcp47id, "aumel".parse().unwrap());
+    /// assert!(!is_canonical);
+    /// ```
+    pub fn get_is_canonical(&self, iana_id: &str) -> Option<(TimeZoneBcp47Id, bool)> {
+        if self.is_v1 {
+            // "is canonical" data not available
+            self.get_v1(iana_id).map(|id| (id, false))
+        } else {
+            let idx = self.data.map.get(iana_id.as_bytes())?;
+            self.data
+                .bcp47_ids
+                .get(idx >> 1)
+                .map(|id| (id, (idx & 1) == 1))
+        }
+    }
+
+    /// Normalizes the case of an IANA time zone identifier. Does not canonicalize the identifier,
+    /// and the identifier does not need to exist.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::IanaToBcp47Mapper;
+    ///
+    /// let mapper = IanaToBcp47Mapper::new();
+    /// let mapper_borrowed = mapper.as_borrowed();
+    ///
+    /// assert_eq!(
+    ///     "Asia/Ho_Chi_Minh",
+    ///     mapper_borrowed.normalize_iana("Asia/Ho_chi_minh")
+    /// );
+    ///
+    /// // Does not canonicalize identifiers:
+    /// assert_eq!("Asia/Saigon", mapper_borrowed.normalize_iana("Asia/Saigon"));
+    ///
+    /// // Identifier need not exist:
+    /// assert_eq!(
+    ///     "America/Fake_City",
+    ///     mapper_borrowed.normalize_iana("America/faKe_CitY")
+    /// );
+    ///
+    /// // Supports identifiers with unusual casing:
+    /// assert_eq!(
+    ///     "America/Argentina/ComodRivadavia",
+    ///     mapper_borrowed.normalize_iana("america/argentina/comodrivadavia")
+    /// );
+    /// ```
+    pub fn normalize_iana<'l>(&self, iana_id: &'l str) -> Cow<'l, str> {
+        if self.is_v1 {
+            // No data to do this properly.
+            return to_ypotryll_case(iana_id);
+        }
+        let mut cursor = self.data.map.cursor();
+        let mut key_str = Cow::Borrowed(iana_id);
+        let mut i = 0;
+        let value = loop {
+            if i == key_str.len() {
+                break cursor.take_value();
+            }
+            let input_byte = key_str.as_bytes()[i];
+            let Some(matched_byte) = cursor.step(input_byte) else {
+                break None;
+            };
+            if matched_byte != input_byte {
+                assert!(matched_byte.is_ascii_alphabetic());
+                assert!(input_byte.is_ascii_alphabetic());
+                // Safety: by assertion, the bytes at this index are ASCII bytes
+                unsafe { key_str.to_mut().as_mut_vec()[i] = matched_byte };
+            }
+            i += 1;
+        };
+        if value.is_some() {
+            key_str
+        } else {
+            to_ypotryll_case(iana_id)
+        }
     }
 }
 
@@ -150,8 +291,10 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 /// ```
 #[derive(Debug)]
 pub struct IanaBcp47RoundTripMapper {
-    data1: DataPayload<IanaToBcp47MapV1Marker>,
-    data2: DataPayload<Bcp47ToIanaMapV1Marker>,
+    /// TODO(2.0): Remove this field and always assume v2
+    is_v1: bool,
+    iana_to_bcp47: DataPayload<IanaToBcp47MapV2Marker>,
+    bcp47_to_iana: DataPayload<Bcp47ToIanaMapV1Marker>,
 }
 
 impl IanaBcp47RoundTripMapper {
@@ -166,14 +309,15 @@ impl IanaBcp47RoundTripMapper {
     #[inline]
     pub const fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1.bcp47_ids_checksum
+            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2.bcp47_ids_checksum
                 == crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1.bcp47_ids_checksum,
         );
         IanaBcp47RoundTripMapper {
-            data1: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1,
+            is_v1: false,
+            iana_to_bcp47: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
             ),
-            data2: DataPayload::from_static_ref(
+            bcp47_to_iana: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
             ),
         }
@@ -185,7 +329,7 @@ impl IanaBcp47RoundTripMapper {
             new,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_compat,
             Self,
         ]
     );
@@ -193,12 +337,38 @@ impl IanaBcp47RoundTripMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
     where
-        P: DataProvider<IanaToBcp47MapV1Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
-        let data1 = provider.load(Default::default())?.take_payload()?;
-        let data2 = provider.load(Default::default())?.take_payload()?;
-        let obj = Self { data1, data2 };
-        if obj.data1.get().bcp47_ids_checksum != obj.data2.get().bcp47_ids_checksum {
+        let iana_to_bcp47 = provider.load(Default::default())?.take_payload()?;
+        let bcp47_to_iana = provider.load(Default::default())?.take_payload()?;
+        let obj = Self {
+            is_v1: false,
+            iana_to_bcp47,
+            bcp47_to_iana,
+        };
+        if obj.iana_to_bcp47.get().bcp47_ids_checksum != obj.bcp47_to_iana.get().bcp47_ids_checksum
+        {
+            return Err(TimeZoneError::MismatchedChecksums);
+        }
+        Ok(obj)
+    }
+
+    fn try_new_compat<P>(provider: &P) -> Result<Self, TimeZoneError>
+    where
+        P: ?Sized
+            + DataProvider<IanaToBcp47MapV1Marker>
+            + DataProvider<IanaToBcp47MapV2Marker>
+            + DataProvider<Bcp47ToIanaMapV1Marker>,
+    {
+        let iana_to_bcp47 = IanaToBcp47Mapper::try_new_compat(provider)?;
+        let bcp47_to_iana = provider.load(Default::default())?.take_payload()?;
+        let obj = Self {
+            is_v1: iana_to_bcp47.is_v1,
+            iana_to_bcp47: iana_to_bcp47.data,
+            bcp47_to_iana,
+        };
+        if obj.iana_to_bcp47.get().bcp47_ids_checksum != obj.bcp47_to_iana.get().bcp47_ids_checksum
+        {
             return Err(TimeZoneError::MismatchedChecksums);
         }
         Ok(obj)
@@ -209,8 +379,9 @@ impl IanaBcp47RoundTripMapper {
     /// This avoids a small potential cost of reading the data pointer.
     pub fn as_borrowed(&self) -> IanaBcp47RoundTripMapperBorrowed {
         IanaBcp47RoundTripMapperBorrowed {
-            data1: self.data1.get(),
-            data2: self.data2.get(),
+            is_v1: self.is_v1,
+            iana_to_bcp47: self.iana_to_bcp47.get(),
+            bcp47_to_iana: self.bcp47_to_iana.get(),
         }
     }
 }
@@ -219,11 +390,13 @@ impl IanaBcp47RoundTripMapper {
 /// [`IanaBcp47RoundTripMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct IanaBcp47RoundTripMapperBorrowed<'a> {
-    data1: &'a IanaToBcp47MapV1<'a>,
-    data2: &'a Bcp47ToIanaMapV1<'a>,
+    /// TODO(2.0): Remove this field and always assume v2
+    is_v1: bool,
+    iana_to_bcp47: &'a IanaToBcp47MapV2<'a>,
+    bcp47_to_iana: &'a Bcp47ToIanaMapV1<'a>,
 }
 
-impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
+impl IanaBcp47RoundTripMapperBorrowed<'_> {
     /// Looks up a BCP-47 time zone identifier based on an ASCII-case-insensitive match for
     /// the given IANA time zone identifier.
     ///
@@ -233,7 +406,11 @@ impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
     pub fn iana_to_bcp47(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        IanaToBcp47MapperBorrowed { data: self.data1 }.get(iana_id)
+        IanaToBcp47MapperBorrowed {
+            is_v1: self.is_v1,
+            data: self.iana_to_bcp47,
+        }
+        .get(iana_id)
     }
 
     /// Looks up the canonical IANA time zone identifier of a BCP-47
@@ -241,7 +418,164 @@ impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
     ///
     /// See examples in [`IanaBcp47RoundTripMapper`].
     pub fn bcp47_to_iana(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
-        let index = self.data1.bcp47_ids.binary_search(&bcp47_id).ok()?;
-        self.data2.canonical_iana_ids.get(index)
+        let index = self.iana_to_bcp47.bcp47_ids.binary_search(&bcp47_id).ok()?;
+        self.bcp47_to_iana.canonical_iana_ids.get(index)
+    }
+
+    /// Normalizes the case of an IANA time zone identifier. Does not canonicalize the identifier,
+    /// and the identifier does not need to exist.
+    ///
+    /// See examples in [`IanaToBcp47MapperBorrowed::normalize_iana()`].
+    pub fn normalize_iana<'a>(&'a self, iana_id: &'a str) -> Cow<'a, str> {
+        // TODO(2.0): Make this use IanaToBcp47MapperBorrowed::normalize_iana
+        if let Some(bcp47_id) = self.iana_to_bcp47(iana_id) {
+            if let Some(iana_roundtrip) = self.bcp47_to_iana(bcp47_id) {
+                if iana_id.eq_ignore_ascii_case(iana_roundtrip) {
+                    return Cow::Borrowed(iana_roundtrip);
+                }
+            }
+        }
+        to_ypotryll_case(iana_id)
+    }
+}
+
+/// Converts a string to [ypotryll case](https://stackoverflow.com/a/54524664/1407170).
+fn to_ypotryll_case(input: &str) -> Cow<str> {
+    let mut is_title = true;
+    let mut output = Cow::Borrowed(input);
+    for i in 0..output.as_bytes().len() {
+        #[allow(clippy::indexing_slicing)] // i is in range
+        let current_byte = output.as_bytes()[i];
+        let expected_byte = if is_title {
+            current_byte.to_ascii_uppercase()
+        } else {
+            current_byte.to_ascii_lowercase()
+        };
+        if current_byte != expected_byte {
+            debug_assert!(current_byte.is_ascii());
+            // Safety: the byte at index i is an ASCII byte because the only bytes that can change
+            // via to_ascii_*case are ASCII bytes, and we're replacing it with another ASCII byte.
+            #[allow(clippy::indexing_slicing)] // i is in range
+            unsafe {
+                output.to_mut().as_bytes_mut()[i] = expected_byte
+            };
+        }
+        if current_byte.is_ascii_alphanumeric() {
+            is_title = false;
+        } else {
+            is_title = true;
+        }
+    }
+    output
+}
+
+#[test]
+fn test_to_ypotryll_case() {
+    struct TestCase<'a> {
+        input: &'a str,
+        expected: &'a str,
+    }
+    let cases = [
+        TestCase {
+            input: "abc",
+            expected: "Abc",
+        },
+        TestCase {
+            input: "abc_def",
+            expected: "Abc_Def",
+        },
+        TestCase {
+            input: "abc/def",
+            expected: "Abc/Def",
+        },
+        TestCase {
+            input: "abc/def_ghi",
+            expected: "Abc/Def_Ghi",
+        },
+        TestCase {
+            input: "a1b",
+            expected: "A1b",
+        },
+        TestCase {
+            input: "1ab",
+            expected: "1ab",
+        },
+    ];
+    for TestCase { input, expected } in &cases {
+        let output = to_ypotryll_case(input);
+        let roundtrip = to_ypotryll_case(&output);
+        let upper_input = input
+            .chars()
+            .map(|c| c.to_ascii_uppercase())
+            .collect::<String>();
+        let upper_output = to_ypotryll_case(&upper_input);
+        assert_eq!(expected, &output);
+        assert_eq!(expected, &roundtrip);
+        assert_eq!(expected, &upper_output);
+    }
+}
+
+#[cfg(feature = "serde")]
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct RejectByKeyProvider {
+        keys: Vec<DataKey>,
+    }
+
+    impl<M: KeyedDataMarker> DataProvider<M> for RejectByKeyProvider
+    where
+        crate::provider::Baked: DataProvider<M>,
+    {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+            if self.keys.contains(&M::KEY) {
+                return Err(DataErrorKind::MissingDataKey.with_str_context("rejected"));
+            }
+            crate::provider::Baked.load(req)
+        }
+    }
+
+    icu_provider::impl_dynamic_data_provider!(
+        RejectByKeyProvider,
+        [
+            IanaToBcp47MapV1Marker,
+            IanaToBcp47MapV2Marker,
+            Bcp47ToIanaMapV1Marker,
+        ],
+        AnyMarker
+    );
+
+    #[test]
+    fn test_old_key_oneway() {
+        let provider = RejectByKeyProvider {
+            keys: vec![IanaToBcp47MapV2Marker::KEY],
+        };
+        let mapper =
+            IanaToBcp47Mapper::try_new_with_any_provider(&provider.as_any_provider()).unwrap();
+        let mapper_borrowed = mapper.as_borrowed();
+
+        // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel"
+        assert_eq!(
+            mapper_borrowed.get("AUSTRALIA/MELBOURNE"),
+            Some("aumel".parse().unwrap())
+        );
+    }
+
+    #[test]
+    fn test_old_key_roundtrip() {
+        let provider = RejectByKeyProvider {
+            keys: vec![IanaToBcp47MapV2Marker::KEY],
+        };
+        let mapper =
+            IanaBcp47RoundTripMapper::try_new_with_any_provider(&provider.as_any_provider())
+                .unwrap();
+        let mapper_borrowed = mapper.as_borrowed();
+
+        // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel"
+        assert_eq!(
+            mapper_borrowed.iana_to_bcp47("AUSTRALIA/MELBOURNE"),
+            Some("aumel".parse().unwrap())
+        );
     }
 }
