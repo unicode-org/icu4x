@@ -42,7 +42,6 @@ const _: () = {
     icu_timezone_data::make_provider!(Baked);
     icu_timezone_data::impl_time_zone_bcp47_to_iana_v1!(Baked);
     icu_timezone_data::impl_time_zone_iana_to_bcp47_v1!(Baked);
-    icu_timezone_data::impl_time_zone_iana_to_bcp47_v2!(Baked);
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
 };
 
@@ -52,7 +51,6 @@ pub const KEYS: &[DataKey] = &[
     MetazonePeriodV1Marker::KEY,
     names::Bcp47ToIanaMapV1Marker::KEY,
     names::IanaToBcp47MapV1Marker::KEY,
-    names::IanaToBcp47MapV2Marker::KEY,
 ];
 
 /// TimeZone ID in BCP47 format
