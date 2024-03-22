@@ -9,13 +9,13 @@
 
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct ParentLocales {
     #[serde(rename = "parentLocale")]
     pub parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
-    pub collations: HashMap<String, LanguageIdentifier>,
+    pub collations: BTreeMap<String, LanguageIdentifier>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

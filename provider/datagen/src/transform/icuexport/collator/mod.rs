@@ -23,8 +23,8 @@ use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
-use zerovec::ZeroVec;
 use zerovec::ule::UnvalidatedStr;
+use zerovec::ZeroVec;
 
 mod collator_serde;
 
@@ -74,7 +74,6 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
         })
     }
 }
-
 
 impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
