@@ -9,9 +9,7 @@ pub mod ffi {
     use core::convert::TryInto;
     use core::fmt::Write;
 
-    use icu_calendar::types::Time;
-    use icu_calendar::AnyCalendar;
-    use icu_calendar::{DateTime, Iso};
+    use icu_calendar::{AnyCalendar, DateTime, Iso, Time};
     use tinystr::TinyAsciiStr;
 
     use crate::calendar::ffi::ICU4XCalendar;
@@ -106,22 +104,22 @@ pub mod ffi {
         }
 
         /// Returns the hour in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::hour, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::hour, StructField)]
         pub fn hour(&self) -> u8 {
             self.0.time.hour.into()
         }
         /// Returns the minute in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::minute, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::minute, StructField)]
         pub fn minute(&self) -> u8 {
             self.0.time.minute.into()
         }
         /// Returns the second in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::second, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::second, StructField)]
         pub fn second(&self) -> u8 {
             self.0.time.second.into()
         }
         /// Returns the nanosecond in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::nanosecond, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::nanosecond, StructField)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
         }
@@ -292,22 +290,22 @@ pub mod ffi {
         }
 
         /// Returns the hour in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::hour, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::hour, StructField)]
         pub fn hour(&self) -> u8 {
             self.0.time.hour.into()
         }
         /// Returns the minute in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::minute, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::minute, StructField)]
         pub fn minute(&self) -> u8 {
             self.0.time.minute.into()
         }
         /// Returns the second in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::second, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::second, StructField)]
         pub fn second(&self) -> u8 {
             self.0.time.second.into()
         }
         /// Returns the nanosecond in this time
-        #[diplomat::rust_link(icu::calendar::types::Time::nanosecond, StructField)]
+        #[diplomat::rust_link(icu::calendar::Time::nanosecond, StructField)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
         }

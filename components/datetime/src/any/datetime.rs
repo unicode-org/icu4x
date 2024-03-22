@@ -67,7 +67,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, types::Time};
+/// use icu::calendar::{AnyCalendar, DateTime, Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
