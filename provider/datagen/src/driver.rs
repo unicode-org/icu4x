@@ -60,6 +60,13 @@ pub enum DeduplicationStrategy {
     NoDeduplication,
 }
 
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum UndInclusion {
+    Always,
+    Never,
+}
+
 impl DeduplicationStrategy {
     fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
@@ -108,10 +115,11 @@ impl LocaleWithExpansion {
         }
     }
 
-    pub(crate) fn wildcard() -> Self {
+    // '*'
+    pub fn wildcard() -> Self {
         Self {
             langid: langid!("und"),
-            include_ancestors: true,
+            include_ancestors: false,
             include_descendants: true,
         }
     }
@@ -134,6 +142,7 @@ impl fmt::Display for LocaleWithExpansion {
 pub struct FallbackOptions {
     pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
     pub deduplication_strategy: Option<DeduplicationStrategy>,
+    pub und_inclusion: Option<UndInclusion>,
 }
 
 #[derive(Debug, Clone)]
@@ -214,7 +223,8 @@ impl fmt::Display for LocalesWithOrWithoutFallback {
 pub struct DatagenDriver {
     keys: Option<HashSet<DataKey>>,
     locales_fallback: Option<LocalesWithOrWithoutFallback>,
-    legacy_locales: Option<Vec<LanguageIdentifier>>,
+    // `None` means not set, `Some(None)` means all
+    legacy_locales: Option<Option<Vec<LanguageIdentifier>>>,
     legacy_fallback_mode: FallbackMode,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
@@ -261,7 +271,7 @@ impl DatagenDriver {
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
         Self {
-            legacy_locales: Some(locales.into_iter().collect()),
+            legacy_locales: Some(Some(locales.into_iter().collect())),
             ..self
         }
     }
@@ -269,8 +279,7 @@ impl DatagenDriver {
     /// Sets this driver to generate all available locales.
     pub fn with_all_locales(self) -> Self {
         Self {
-            // This will get coerced to the wildcard locale:
-            legacy_locales: Some(vec![langid!("und")]),
+            legacy_locales: Some(None),
             ..self
         }
     }
@@ -421,61 +430,65 @@ impl DatagenDriver {
             ));
         };
 
+        let map_legacy_locales_to_locales_with_expansion = |legacy_locales: Option<Vec<LanguageIdentifier>>| {
+            match legacy_locales {
+                Some(v) => v.into_iter().map(LocaleWithExpansion::with_variants).collect(),
+                None => [LocaleWithExpansion::wildcard()].into_iter().collect(),
+            }
+        };
+
         let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
             // 1.5 API
             (Some(locales_fallback), _, _) => locales_fallback,
             // 1.4 API
             (_, Some(legacy_locales), FallbackMode::PreferredForExporter) => {
                 LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
-                    locales: legacy_locales
-                        .into_iter()
-                        .map(LocaleWithExpansion::with_variants)
-                        .collect(),
+                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: None,
                         deduplication_strategy: None,
+                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
             (_, Some(legacy_locales), FallbackMode::Runtime) => {
                 LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
-                    locales: legacy_locales
-                        .into_iter()
-                        .map(LocaleWithExpansion::with_variants)
-                        .collect(),
+                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
+                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
             (_, Some(legacy_locales), FallbackMode::RuntimeManual) => {
                 LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
-                    locales: legacy_locales
-                        .into_iter()
-                        .map(LocaleWithExpansion::with_variants)
-                        .collect(),
+                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
+                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
-            (_, Some(legacy_locales), FallbackMode::Preresolved) => {
+            (_, Some(Some(locales)), FallbackMode::Preresolved) => {
                 LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
-                    locales: legacy_locales.into_iter().collect(),
+                    locales: locales.into_iter().collect(),
                     options: NoFallbackOptions {},
                 })
             }
+            (_, Some(None), FallbackMode::Preresolved) => {
+                return Err(DataError::custom(
+                    "FallbackMode::Preresolved requires an explicit locale set",
+                ));
+            }
             (_, Some(legacy_locales), FallbackMode::Hybrid) => {
                 LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
-                    locales: legacy_locales
-                        .into_iter()
-                        .map(LocaleWithExpansion::with_variants)
-                        .collect(),
+                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::NoDeduplication),
+                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
@@ -901,7 +914,7 @@ fn select_locales_for_key(
     let ExplicitImplicitLocaleSets { explicit, implicit } =
         make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
 
-    let include_und = explicit.contains(&DataLocale::default());
+    let include_und = matches!(config.options.und_inclusion, None | Some(UndInclusion::Always));
 
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
