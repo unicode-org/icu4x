@@ -108,10 +108,6 @@ impl LocaleWithExpansion {
         }
     }
 
-    pub(crate) fn into_langid(self) -> LanguageIdentifier {
-        self.langid
-    }
-
     pub(crate) fn wildcard() -> Self {
         Self {
             langid: langid!("und"),
@@ -175,50 +171,6 @@ pub(crate) enum LocalesWithOrWithoutFallback {
 }
 
 impl LocalesWithOrWithoutFallback {
-    /// Converts this field to [`LocalesWithoutFallback`] and returns a reference to it.
-    pub(crate) fn coerce_without_fallback(&mut self) -> &mut LocalesAndNoFallbackOptions {
-        match self {
-            Self::WithoutFallback(config) => config,
-            Self::WithFallback(config) => {
-                let old_locales_set = core::mem::take(&mut config.locales);
-                let new_locales_set = old_locales_set
-                    .into_iter()
-                    .map(|x| x.into_langid())
-                    .collect();
-                *self = Self::WithoutFallback(LocalesAndNoFallbackOptions {
-                    locales: new_locales_set,
-                    options: Default::default(),
-                });
-                let Self::WithoutFallback(config) = self else {
-                    unreachable!()
-                };
-                config
-            }
-        }
-    }
-
-    /// Converts this field to [`LocalesWithFallback`] and returns a reference to it.
-    pub(crate) fn coerce_with_fallback(&mut self) -> &mut LocalesAndFallbackOptions {
-        match self {
-            Self::WithFallback(config) => config,
-            Self::WithoutFallback(config) => {
-                let old_locales_set = core::mem::take(&mut config.locales);
-                let new_locales_set = old_locales_set
-                    .into_iter()
-                    .map(LocaleWithExpansion::with_variants)
-                    .collect();
-                *self = Self::WithFallback(LocalesAndFallbackOptions {
-                    locales: new_locales_set,
-                    options: Default::default(),
-                });
-                let Self::WithFallback(config) = self else {
-                    unreachable!()
-                };
-                config
-            }
-        }
-    }
-
     /// Returns whether this is exactly the all-locales value.
     pub(crate) fn is_all_locales(&self) -> bool {
         let Self::WithFallback(config) = self else {
@@ -262,6 +214,7 @@ impl fmt::Display for LocalesWithOrWithoutFallback {
 pub struct DatagenDriver {
     keys: Option<HashSet<DataKey>>,
     locales_fallback: Option<LocalesWithOrWithoutFallback>,
+    legacy_locales: Option<Vec<LanguageIdentifier>>,
     legacy_fallback_mode: FallbackMode,
     additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
@@ -277,6 +230,7 @@ impl DatagenDriver {
             keys: None,
             locales_fallback: None,
             legacy_fallback_mode: FallbackMode::default(),
+            legacy_locales: None,
             additional_collations: HashSet::new(),
             segmenter_models: Vec::new(),
         }
@@ -306,15 +260,19 @@ impl DatagenDriver {
     /// [`langid!`]: crate::prelude::langid
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
-        self.with_locales_and_fallback(
-            locales.into_iter().map(LocaleWithExpansion::with_variants),
-            Default::default(),
-        )
+        Self {
+            legacy_locales: Some(locales.into_iter().collect()),
+            ..self
+        }
     }
 
     /// Sets this driver to generate all available locales.
     pub fn with_all_locales(self) -> Self {
-        self.with_locales_and_fallback([LocaleWithExpansion::wildcard()], Default::default())
+        Self {
+            // This will get coerced to the wildcard locale:
+            legacy_locales: Some(vec![langid!("und")]),
+            ..self
+        }
     }
 
     #[allow(dead_code)]
@@ -334,6 +292,7 @@ impl DatagenDriver {
         }
     }
 
+    #[allow(dead_code)]
     fn with_locales_and_fallback(
         self,
         locales: impl IntoIterator<Item = LocaleWithExpansion>,
@@ -450,6 +409,7 @@ impl DatagenDriver {
         let Self {
             keys,
             locales_fallback,
+            legacy_locales,
             legacy_fallback_mode,
             additional_collations,
             segmenter_models,
@@ -461,45 +421,74 @@ impl DatagenDriver {
             ));
         };
 
-        let Some(mut locales_fallback) = locales_fallback else {
-            return Err(DataError::custom(
-                "`DatagenDriver::with_locales` or `with_all_locales` needs to be called",
-            ));
+        let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
+            // 1.5 API
+            (Some(locales_fallback), _, _) => locales_fallback,
+            // 1.4 API
+            (_, Some(legacy_locales), FallbackMode::PreferredForExporter) => {
+                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                    locales: legacy_locales
+                        .into_iter()
+                        .map(LocaleWithExpansion::with_variants)
+                        .collect(),
+                    options: FallbackOptions {
+                        runtime_fallback_location: None,
+                        deduplication_strategy: None,
+                    },
+                })
+            }
+            (_, Some(legacy_locales), FallbackMode::Runtime) => {
+                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                    locales: legacy_locales
+                        .into_iter()
+                        .map(LocaleWithExpansion::with_variants)
+                        .collect(),
+                    options: FallbackOptions {
+                        runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
+                        deduplication_strategy: Some(DeduplicationStrategy::Maximal),
+                    },
+                })
+            }
+            (_, Some(legacy_locales), FallbackMode::RuntimeManual) => {
+                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                    locales: legacy_locales
+                        .into_iter()
+                        .map(LocaleWithExpansion::with_variants)
+                        .collect(),
+                    options: FallbackOptions {
+                        runtime_fallback_location: Some(RuntimeFallbackLocation::External),
+                        deduplication_strategy: Some(DeduplicationStrategy::Maximal),
+                    },
+                })
+            }
+            (_, Some(legacy_locales), FallbackMode::Preresolved) => {
+                LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
+                    locales: legacy_locales.into_iter().collect(),
+                    options: NoFallbackOptions {},
+                })
+            }
+            (_, Some(legacy_locales), FallbackMode::Hybrid) => {
+                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                    locales: legacy_locales
+                        .into_iter()
+                        .map(LocaleWithExpansion::with_variants)
+                        .collect(),
+                    options: FallbackOptions {
+                        runtime_fallback_location: Some(RuntimeFallbackLocation::External),
+                        deduplication_strategy: Some(DeduplicationStrategy::NoDeduplication),
+                    },
+                })
+            }
+            // Failure case
+            _ => {
+                return Err(DataError::custom(
+                    "`DatagenDriver::with_locales` or `with_all_locales` or `with_locales_and_fallback` or `with_locales_no_fallback` needs to be called",
+                ));
+            }
         };
 
         if keys.is_empty() {
             log::warn!("No keys selected");
-        }
-
-        // Apply settings from FallbackMode
-        match legacy_fallback_mode {
-            FallbackMode::PreferredForExporter => {
-                // No-op: use settings from locales_fallback
-            }
-            FallbackMode::Runtime => {
-                let config = locales_fallback.coerce_with_fallback();
-                config.options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
-                config.options.runtime_fallback_location = Some(RuntimeFallbackLocation::Internal);
-            }
-            FallbackMode::RuntimeManual => {
-                let config = locales_fallback.coerce_with_fallback();
-                config.options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
-                config.options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
-            }
-            FallbackMode::Preresolved => {
-                let config = locales_fallback.coerce_without_fallback();
-                if config.locales.is_empty() {
-                    return Err(DataError::custom(
-                        "FallbackMode::Preresolved requires an explicit locale set",
-                    ));
-                }
-            }
-            FallbackMode::Hybrid => {
-                let config = locales_fallback.coerce_with_fallback();
-                config.options.deduplication_strategy =
-                    Some(DeduplicationStrategy::NoDeduplication);
-                config.options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
-            }
         }
 
         log::info!("Datagen configured {locales_fallback}");
