@@ -178,6 +178,8 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("zh-Hant").into());
     /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get(), &locale!("zh").into());
+    /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```
     pub fallback_supplement: Option<LocaleFallbackSupplement>,
