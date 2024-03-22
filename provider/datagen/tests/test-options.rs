@@ -21,6 +21,34 @@ impl TestingProvider {
     fn new<const N: usize>(data: [(&'static str, &'static str); N]) -> Self {
         Self(BTreeMap::from_iter(data))
     }
+
+    fn with_decimal_symbol_like_data() -> Self {
+        Self::new([
+            ("ar", "c3f15eb63fa35608"),
+            ("ar-EG", "c3f15eb63fa35608"),
+            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
+            ("ar-u-nu-latn", "29e2dc764329c56"),
+            ("bn", "31828215dcef2fcb"),
+            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
+            ("ccp", "c39715a84718596"),
+            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
+            ("en", "8df59f98704d3b0c"),
+            ("en-001", "8df59f98704d3b0c"),
+            ("en-ZA", "8df59f98704d3b0c"),
+            ("es", "2c22710b06ef69b6"),
+            ("es-AR", "3ec76252c7ed8d8c"),
+            ("fil", "8df59f98704d3b0c"),
+            ("fr", "bd076f44d0623175"),
+            ("ja", "8df59f98704d3b0c"),
+            ("ru", "8f773f51e85a65c1"),
+            ("sr", "3ec76252c7ed8d8c"),
+            ("sr-Latn", "3ec76252c7ed8d8c"),
+            ("th", "8df59f98704d3b0c"),
+            ("th-u-nu-thai", "db1d187d375ccfd2"),
+            ("tr", "3ec76252c7ed8d8c"),
+            ("und", "8df59f98704d3b0c"),
+        ])
+    }
 }
 
 impl DataProvider<HelloWorldV1Marker> for TestingProvider {
@@ -158,31 +186,7 @@ fn all_hybrid() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::Hybrid),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // These are all of the supported locales.
@@ -224,31 +228,7 @@ fn all_runtime() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::RuntimeManual),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // These are all of the supported locales with deduplication applied.
@@ -297,31 +277,7 @@ fn explicit_hybrid() {
                 langid!("ru-Cyrl-RU"),
             ])
             .with_fallback_mode(FallbackMode::Hybrid),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
@@ -366,31 +322,7 @@ fn explicit_runtime() {
                 langid!("ru-Cyrl-RU"),
             ])
             .with_fallback_mode(FallbackMode::RuntimeManual),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
@@ -434,31 +366,7 @@ fn explicit_preresolved() {
                 langid!("ru-Cyrl-RU"),
             ])
             .with_fallback_mode(FallbackMode::Preresolved),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
@@ -473,6 +381,40 @@ fn explicit_preresolved() {
         "ru-Cyrl-RU",
         "sr-ME",
     ];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_und() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([langid!("und")])
+            .with_fallback_mode(FallbackMode::RuntimeManual),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_preresolved_und() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([langid!("und")])
+            .with_fallback_mode(FallbackMode::Preresolved),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
 
     // Should return the exact explicit locales set.
     assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
