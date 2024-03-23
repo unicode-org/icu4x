@@ -144,6 +144,14 @@ pub struct ZeroAsciiIgnoreCaseTrieCursor<'a> {
     trie: ZeroAsciiIgnoreCaseTrie<&'a [u8]>,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct AsciiProbeResult {
+    /// The byte key edge between this node and its parent.
+    pub byte: u8,
+    /// The number of siblings of this node, _including itself_.
+    pub total_siblings: u8,
+}
+
 impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// Steps the cursor one character into the trie based on the character's byte value.
     ///
@@ -241,7 +249,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///
     /// let data: &[(String, usize)] = &[
     ///     ("ab".to_string(), 111),
-    ///     ("abc".to_string(), 22),
+    ///     ("abcxyz".to_string(), 22),
     ///     ("abde".to_string(), 333),
     ///     ("afg".to_string(), 44),
     /// ];
@@ -255,8 +263,8 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///     if let Some(value) = cursor.take_value() {
     ///         break value;
     ///     }
-    ///     let ch = cursor.probe(0).unwrap();
-    ///     key.push(char::from(ch));
+    ///     let probe_result = cursor.probe(0).unwrap();
+    ///     key.push(char::from(probe_result.byte));
     /// };
     ///
     /// assert_eq!(key, "ab");
@@ -269,7 +277,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// # use zerotrie::ZeroTrieSimpleAscii;
     /// # let data: &[(String, usize)] = &[
     /// #     ("ab".to_string(), 111),
-    /// #     ("abc".to_string(), 22),
+    /// #     ("abcxyz".to_string(), 22),
     /// #     ("abde".to_string(), 333),
     /// #     ("afg".to_string(), 44)
     /// # ];
@@ -280,11 +288,11 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// // (trie built as in previous example)
     ///
     /// // Initialize the iteration at the first child of the trie.
-    /// let mut stack = Vec::from([(trie.cursor(), 0)]);
+    /// let mut stack = Vec::from([(trie.cursor(), 0, 0)]);
     /// let mut key = Vec::new();
     /// let mut results = Vec::new();
     /// loop {
-    ///     let Some((ref mut cursor, ref mut index)) = stack.last_mut() else {
+    ///     let Some((mut cursor, index, suffix_len)) = stack.pop() else {
     ///         // Nothing left in the trie.
     ///         break;
     ///     };
@@ -294,23 +302,28 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///     }
     ///     // Now check for children of the current node.
     ///     let mut sub_cursor = cursor.clone();
-    ///     if let Some(ch) = sub_cursor.probe(*index) {
-    ///         // Found a child. Add the child to the stack, and also
-    ///         // increment the index, so that next time we visit the
-    ///         // current node, we check the next child.
-    ///         *index += 1;
-    ///         stack.push((sub_cursor, 0));
-    ///         key.push(ch);
+    ///     if let Some(probe_result) = sub_cursor.probe(index) {
+    ///         // Found a child. Add the current byte edge to the key.
+    ///         key.push(probe_result.byte);
+    ///         // Add the child to the stack, and also add back the current
+    ///         // node if there are more siblings to visit.
+    ///         if index + 1 < probe_result.total_siblings as usize {
+    ///             stack.push((cursor, index + 1, suffix_len));
+    ///             stack.push((sub_cursor, 0, 1));
+    ///         } else {
+    ///             stack.push((sub_cursor, 0, suffix_len + 1));
+    ///         }
     ///     } else {
-    ///         // No more children. Pop this node from the stack.
-    ///         stack.pop();
-    ///         key.pop();
+    ///         // No more children. Pop this node's bytes from the key.
+    ///         for _ in 0..suffix_len {
+    ///             key.pop();
+    ///         }
     ///     }
     /// }
     ///
     /// assert_eq!(&results, data);
     /// ```
-    pub fn probe(&mut self, index: usize) -> Option<u8> {
+    pub fn probe(&mut self, index: usize) -> Option<AsciiProbeResult> {
         reader::probe_parameterized::<ZeroTrieSimpleAscii<[u8]>>(&mut self.trie.store, index)
     }
 
@@ -379,7 +392,7 @@ impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// Probes the next byte in the cursor.
     ///
     /// For more details, see [`ZeroTrieSimpleAsciiCursor::probe`].
-    pub fn probe(&mut self, index: usize) -> Option<u8> {
+    pub fn probe(&mut self, index: usize) -> Option<AsciiProbeResult> {
         reader::probe_parameterized::<ZeroAsciiIgnoreCaseTrie<[u8]>>(&mut self.trie.store, index)
     }
 
