@@ -63,13 +63,41 @@ impl<'l> Writeable for FormattedCurrency<'l> {
         // TODO: rewrite this so it does not allocate
         sink.write_str(
             pattern
-                .interpolate_to_string([
+                .interpolate([
                     &self.value.write_to_string(), // placeholder 0 (currency value)
                     currency_sign_value,           // placeholder 1 (currency sign value)
                 ])
+                .to_string()
                 .as_str(),
         )?;
 
         Ok(())
+    }
+}
+
+// TODO: add more tests for this module to cover more locales.
+#[cfg(test)]
+mod tests {
+    use icu_locid::locale;
+    use tinystr::*;
+    use writeable::{assert_writeable_eq, Writeable};
+
+    use crate::dimension::{CurrencyCode, CurrencyFormatter};
+    use fixed_decimal::{FixedDecimal, FloatPrecision};
+
+    #[test]
+    pub fn test_es_mx() {
+        let locale = locale!("es-MX").into();
+        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let value = FixedDecimal::try_from("12345.67").unwrap();
+        let value = FixedDecimal::from("12345.67");
+        let value = FixedDecimal::try_from_f64(12345.67, FloatPrecision::Floating).unwrap();
+        let currency_code = CurrencyCode {
+            0: tinystr!(3, "USD"),
+        };
+        let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
+        let mut sink = String::new();
+        formatted_currency.write_to(&mut sink).unwrap();
+        assert_eq!(sink.as_str(), "$12,345.67");
     }
 }
