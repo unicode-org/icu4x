@@ -7,7 +7,7 @@
 //! It will usually undergo a major SemVer bump for every ICU4X release. Components in this
 //! crate will eventually stabilize and move to the `icu` crate.
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 // No boilerplate, each module has their own
 #![allow(clippy::module_inception)]
