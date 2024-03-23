@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 ///
-/// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
+/// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
 final class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] given field values
   ///
-  /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
+  /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
   ///
   /// Throws [Error] on failure.
   factory Time(int hour, int minute, int second, int nanosecond) {
@@ -39,7 +39,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] representing midnight (00:00.000).
   ///
-  /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
+  /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
   ///
   /// Throws [Error] on failure.
   factory Time.midnight() {
@@ -52,7 +52,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the hour in this time
   ///
-  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
+  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
   int get hour {
     final result = _ICU4XTime_hour(_ffi);
     return result;
@@ -60,7 +60,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the minute in this time
   ///
-  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
+  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
   int get minute {
     final result = _ICU4XTime_minute(_ffi);
     return result;
@@ -68,7 +68,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the second in this time
   ///
-  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
+  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
   int get second {
     final result = _ICU4XTime_second(_ffi);
     return result;
@@ -76,7 +76,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the nanosecond in this time
   ///
-  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
+  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
   int get nanosecond {
     final result = _ICU4XTime_nanosecond(_ffi);
     return result;

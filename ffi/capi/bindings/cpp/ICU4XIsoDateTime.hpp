@@ -105,28 +105,28 @@ class ICU4XIsoDateTime {
   /**
    * Returns the hour in this time
    * 
-   * See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
+   * See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
    */
   uint8_t hour() const;
 
   /**
    * Returns the minute in this time
    * 
-   * See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
+   * See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
    */
   uint8_t minute() const;
 
   /**
    * Returns the second in this time
    * 
-   * See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
+   * See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
    */
   uint8_t second() const;
 
   /**
    * Returns the nanosecond in this time
    * 
-   * See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
+   * See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
    */
   uint32_t nanosecond() const;
 

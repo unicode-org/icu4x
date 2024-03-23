@@ -13,6 +13,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
     #[diplomat::rust_link(icu::calendar::Time, Struct)]
+    #[diplomat::rust_link(icu::calendar::types::Time, Struct, hidden)]
     pub struct ICU4XTime(pub Time);
 
     impl ICU4XTime {
