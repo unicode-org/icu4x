@@ -34,14 +34,14 @@ class ICU4XTime {
   /**
    * Creates a new [`ICU4XTime`] given field values
    * 
-   * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.try_new) for more information.
    */
   static diplomat::result<ICU4XTime, ICU4XError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   /**
    * Creates a new [`ICU4XTime`] representing midnight (00:00.000).
    * 
-   * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
+   * See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.midnight) for more information.
    */
   static diplomat::result<ICU4XTime, ICU4XError> create_midnight();
 

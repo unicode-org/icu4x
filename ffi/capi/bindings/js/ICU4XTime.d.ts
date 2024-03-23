@@ -14,7 +14,7 @@ export class ICU4XTime {
 
    * Creates a new {@link ICU4XTime `ICU4XTime`} given field values
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html Rust documentation for `Time`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XTime | never;
@@ -23,7 +23,7 @@ export class ICU4XTime {
 
    * Creates a new {@link ICU4XTime `ICU4XTime`} representing midnight (00:00.000).
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html Rust documentation for `Time`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.midnight Rust documentation for `midnight`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_midnight(): ICU4XTime | never;

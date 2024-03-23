@@ -26,7 +26,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] given field values
   ///
-  /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
   factory Time(int hour, int minute, int second, int nanosecond) {
@@ -39,7 +39,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] representing midnight (00:00.000).
   ///
-  /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
+  /// See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.midnight) for more information.
   ///
   /// Throws [Error] on failure.
   factory Time.midnight() {

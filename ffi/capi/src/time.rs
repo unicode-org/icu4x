@@ -18,7 +18,10 @@ pub mod ffi {
 
     impl ICU4XTime {
         /// Creates a new [`ICU4XTime`] given field values
-        #[diplomat::rust_link(icu::calendar::Time, Struct)]
+        #[diplomat::rust_link(icu::calendar::Time::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Time::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::Time::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::Time::new, FnInStruct, hidden)]
         pub fn create(
             hour: u8,
             minute: u8,
@@ -39,7 +42,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`ICU4XTime`] representing midnight (00:00.000).
-        #[diplomat::rust_link(icu::calendar::Time, Struct)]
+        #[diplomat::rust_link(icu::calendar::Time::midnight, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::Time::midnight, FnInStruct, hidden)]
         pub fn create_midnight() -> Result<Box<ICU4XTime>, ICU4XError> {
             let time = Time::midnight();
             Ok(Box::new(ICU4XTime(time)))
