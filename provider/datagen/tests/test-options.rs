@@ -201,6 +201,48 @@ fn export_to_map(
 }
 
 #[test]
+fn all_preferred() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_all_locales()
+            .with_fallback_mode(FallbackMode::PreferredForExporter),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // These are all of the supported locales.
+    let locales = [
+        "ar",
+        "ar-EG",
+        "ar-EG-u-nu-latn",
+        "ar-u-nu-latn",
+        "bn",
+        "bn-u-nu-latn",
+        "ccp",
+        "ccp-u-nu-latn",
+        "en",
+        "en-001",
+        "en-ZA",
+        "es",
+        "es-AR",
+        "fil",
+        "fr",
+        "ja",
+        "ru",
+        "sr",
+        // "sr-Cyrl", (normalizes to 'sr')
+        "sr-Latn",
+        "th",
+        "th-u-nu-thai",
+        "tr",
+        "und",
+    ];
+
+    // Should return exactly the supported locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn all_hybrid() {
     let exported = export_to_map(
         DatagenDriver::new()
@@ -294,6 +336,51 @@ fn all_runtime() {
     ];
 
     // Should return the supported locales set with deduplication.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_preferred() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([
+                langid!("arc"), // Aramaic, not in supported list
+                langid!("ar-EG"),
+                langid!("ar-SA"),
+                langid!("en-GB"),
+                langid!("es"),
+                langid!("sr-ME"),
+                langid!("ru-Cyrl-RU"),
+            ])
+            .with_fallback_mode(FallbackMode::PreferredForExporter),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    let locales = [
+        "ar",              // ancestor of ar-EG
+        "ar-EG",           // explicit locale
+        "ar-EG-u-nu-latn", // descendant of ar-EG
+        "ar-SA",           // explicit locale, inheriting from ar
+        "ar-SA-u-nu-latn", // extensions should be included (#4533)
+        "ar-u-nu-latn",    // extensions should be included (#4533)
+        "arc",             // Aramaic, inheriting from und
+        "en",              // ancestor of en-GB
+        "en-001",          // ancestor of en-GB
+        "en-GB",           // explicit locale not in supported locales
+        // "en-ZA", // not reachable
+        "es",         // explicit and supported
+        "es-AR",      // descendant of es
+        "ru",         // ancestor of ru-Cyrl-RU
+        "ru-Cyrl-RU", // explicit locale, even though it is not normalized
+        // "sr", // not reachable from sr-ME
+        "sr-Latn", // ancestor of sr-ME
+        "sr-ME",   // explicit locale not in supported locales
+        "und",     // ancestor of everything
+    ];
+
+    // Should return the expanded explicit locales set above.
     assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
 }
 
