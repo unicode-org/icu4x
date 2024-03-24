@@ -140,7 +140,7 @@ mod tests;
 pub use driver::DatagenDriver;
 pub use driver::DeduplicationStrategy;
 pub use driver::FallbackOptions;
-pub use driver::LocaleWithExpansion;
+pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
 pub use driver::RuntimeFallbackLocation;
 pub use driver::UndInclusion;
@@ -162,7 +162,7 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
         CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
-        LocaleWithExpansion,
+        LocaleFamily,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};

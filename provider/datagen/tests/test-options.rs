@@ -209,7 +209,7 @@ fn all_hybrid() {
             .with_fallback_mode(FallbackMode::Hybrid),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleWithExpansion::wildcard()], {
+            .with_locales_and_fallback([LocaleFamily::full()], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
                 options
@@ -258,7 +258,7 @@ fn all_runtime() {
             .with_fallback_mode(FallbackMode::RuntimeManual),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleWithExpansion::wildcard()], {
+            .with_locales_and_fallback([LocaleFamily::full()], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
                 options
@@ -318,7 +318,7 @@ fn explicit_hybrid() {
             .with_locales_and_fallback(
                 SELECTED_LOCALES
                     .into_iter()
-                    .map(LocaleWithExpansion::with_variants),
+                    .map(LocaleFamily::with_descendants),
                 {
                     let mut options = FallbackOptions::default();
                     options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
@@ -376,7 +376,7 @@ fn explicit_runtime() {
             .with_locales_and_fallback(
                 SELECTED_LOCALES
                     .into_iter()
-                    .map(LocaleWithExpansion::with_variants),
+                    .map(LocaleFamily::with_descendants),
                 {
                     let mut options = FallbackOptions::default();
                     options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
@@ -460,7 +460,7 @@ fn explicit_runtime_und() {
             .with_fallback_mode(FallbackMode::RuntimeManual),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleWithExpansion::with_variants(langid!("und"))], {
+            .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
                 options
@@ -484,7 +484,7 @@ fn explicit_hybrid_und() {
             .with_fallback_mode(FallbackMode::Hybrid),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleWithExpansion::with_variants(langid!("und"))], {
+            .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
                 options

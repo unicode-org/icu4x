@@ -117,16 +117,27 @@ impl DeduplicationStrategy {
     }
 }
 
+/// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct LocaleWithExpansion {
+pub struct LocaleFamily {
     langid: LanguageIdentifier,
     include_ancestors: bool,
     include_descendants: bool,
 }
 
-impl LocaleWithExpansion {
-    // en-US
-    pub fn with_variants(langid: LanguageIdentifier) -> Self {
+impl LocaleFamily {
+    /// The family containing all ancestors and descendants of the selected locale.
+    ///
+    /// This is the recommended family type since it reflects regional preferences.
+    ///
+    /// For example, the family `::with_descendants("en-001")` contains:
+    ///
+    /// - Self: "en-001"
+    /// - Ancestors: "und", "en"
+    /// - Descendants: "en-GB", "en-ZA", ...
+    ///
+    /// Stylized on the CLI as: "en-US"
+    pub fn with_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
             include_ancestors: true,
@@ -134,8 +145,18 @@ impl LocaleWithExpansion {
         }
     }
 
-    // ^en-US
-    pub fn without_variants(langid: LanguageIdentifier) -> Self {
+    /// The family containing all ancestors of the selected locale.
+    ///
+    /// This family type does not include regional variants unless the selected locale is itself
+    /// a regional variant.
+    ///
+    /// For example, the family `::without_descendants("en-001")` contains:
+    ///
+    /// - Self: "en-001"
+    /// - Ancestors: "und", "en"
+    ///
+    /// Stylized on the CLI as: "^en-US"
+    pub fn without_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
             include_ancestors: true,
@@ -143,8 +164,12 @@ impl LocaleWithExpansion {
         }
     }
 
-    // @en-US
-    pub fn preresolved(langid: LanguageIdentifier) -> Self {
+    /// The family containing only the selected locale.
+    ///
+    /// For example, the family `::single("en-001")` contains only "en-001".
+    ///
+    /// Stylized on the CLI as: "@en-US"
+    pub fn single(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
             include_ancestors: false,
@@ -152,8 +177,10 @@ impl LocaleWithExpansion {
         }
     }
 
-    // full
-    pub fn wildcard() -> Self {
+    /// The family containing all locales.
+    ///
+    /// Stylized on the CLI as: "full"
+    pub fn full() -> Self {
         Self {
             langid: langid!("und"),
             include_ancestors: false,
@@ -162,7 +189,7 @@ impl LocaleWithExpansion {
     }
 }
 
-impl fmt::Display for LocaleWithExpansion {
+impl fmt::Display for LocaleFamily {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match (self.include_ancestors, self.include_descendants) {
             (true, true) => write!(f, "{}", self.langid),
@@ -195,7 +222,7 @@ pub struct FallbackOptions {
 
 #[derive(Debug, Clone)]
 struct LocalesAndFallbackOptions {
-    locales: HashSet<LocaleWithExpansion>,
+    locales: HashSet<LocaleFamily>,
     options: FallbackOptions,
 }
 
@@ -358,7 +385,7 @@ impl DatagenDriver {
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales_and_fallback(
         self,
-        locales: impl IntoIterator<Item = LocaleWithExpansion>,
+        locales: impl IntoIterator<Item = LocaleFamily>,
         options: FallbackOptions,
     ) -> Self {
         Self {
@@ -490,11 +517,8 @@ impl DatagenDriver {
 
         let map_legacy_locales_to_locales_with_expansion =
             |legacy_locales: Option<Vec<LanguageIdentifier>>| match legacy_locales {
-                Some(v) => v
-                    .into_iter()
-                    .map(LocaleWithExpansion::with_variants)
-                    .collect(),
-                None => [LocaleWithExpansion::wildcard()].into_iter().collect(),
+                Some(v) => v.into_iter().map(LocaleFamily::with_descendants).collect(),
+                None => [LocaleFamily::full()].into_iter().collect(),
             };
 
         let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
@@ -974,7 +998,7 @@ fn select_locales_for_key(
         None | Some(UndInclusion::Always)
     );
 
-    let include_full = config.locales.contains(&LocaleWithExpansion::wildcard());
+    let include_full = config.locales.contains(&LocaleFamily::full());
 
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
