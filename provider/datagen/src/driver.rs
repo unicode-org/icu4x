@@ -178,17 +178,6 @@ pub(crate) enum LocalesWithOrWithoutFallback {
     WithoutFallback(LocalesAndNoFallbackOptions),
 }
 
-impl LocalesWithOrWithoutFallback {
-    /// Returns whether this is exactly the all-locales value.
-    pub(crate) fn is_all_locales(&self) -> bool {
-        let Self::WithFallback(config) = self else {
-            return false;
-        };
-        let mut it = config.locales.iter();
-        matches!((it.next(), it.next()), (Some(lid), None) if lid == &LocaleWithExpansion::wildcard())
-    }
-}
-
 impl fmt::Display for LocalesWithOrWithoutFallback {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -888,13 +877,8 @@ fn select_locales_for_key(
         });
     }
 
-    if locales_fallback.is_all_locales() {
-        // Case 1: `is_all_locales` simply exports all supported locales for this key.
-        return Ok(supported_map.into_values().flatten().collect());
-    }
-
     let config = match locales_fallback {
-        // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
+        // `FallbackMode::Preresolved` exports all supported locales whose langid matches
         // one of the explicit locales. This ensures extensions are included. In addition, any
         // explicit locales are added to the list, even if they themselves don't contain data;
         // fallback should be performed upon exporting.
@@ -904,7 +888,7 @@ fn select_locales_for_key(
                 make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
             return Ok(explicit);
         }
-        // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
+        // All other modes resolve to fallback-aware inclusion.
         LocalesWithOrWithoutFallback::WithFallback(config) => config,
     };
 
@@ -920,6 +904,8 @@ fn select_locales_for_key(
         None | Some(UndInclusion::Always)
     );
 
+    let include_full = config.locales.contains(&LocaleWithExpansion::wildcard());
+
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
@@ -928,6 +914,9 @@ fn select_locales_for_key(
         .flatten()
         .chain(explicit.iter().cloned())
         .filter(|locale_orig| {
+            if include_full {
+                return true;
+            }
             let mut locale = locale_orig.clone();
             locale.remove_aux();
             if implicit.contains(&locale) {
