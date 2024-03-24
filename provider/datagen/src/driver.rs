@@ -115,7 +115,7 @@ impl LocaleWithExpansion {
         }
     }
 
-    // '*'
+    // full
     pub fn wildcard() -> Self {
         Self {
             langid: langid!("und"),
@@ -127,12 +127,11 @@ impl LocaleWithExpansion {
 
 impl fmt::Display for LocaleWithExpansion {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.include_descendants {
-            write!(f, "{}", self.langid)
-        } else if self.include_ancestors {
-            write!(f, "^{}", self.langid)
-        } else {
-            write!(f, "@{}", self.langid)
+        match (self.include_ancestors, self.include_descendants) {
+            (true, true) => write!(f, "{}", self.langid),
+            (true, false) => write!(f, "^{}", self.langid),
+            (false, false) => write!(f, "@{}", self.langid),
+            (false, true) => write!(f, "full"),
         }
     }
 }
