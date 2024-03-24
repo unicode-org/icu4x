@@ -63,10 +63,12 @@ impl<'l> Writeable for FormattedCurrency<'l> {
         // TODO: rewrite this so it does not allocate
         sink.write_str(
             pattern
-                .interpolate_to_string([
+                .interpolate([
                     &self.value.write_to_string(), // placeholder 0 (currency value)
                     currency_sign_value,           // placeholder 1 (currency sign value)
                 ])
+                .write_to_string()
+                .into_owned()
                 .as_str(),
         )?;
 
