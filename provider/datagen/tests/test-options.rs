@@ -404,6 +404,23 @@ fn explicit_runtime_und() {
 }
 
 #[test]
+fn explicit_hybrid_und() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([langid!("und")])
+            .with_fallback_mode(FallbackMode::Hybrid),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn explicit_preresolved_und() {
     let exported = export_to_map(
         DatagenDriver::new()
@@ -415,6 +432,57 @@ fn explicit_preresolved_und() {
 
     // Explicit locales are "und"
     let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_empty() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([])
+            .with_fallback_mode(FallbackMode::RuntimeManual),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_hybrid_empty() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([])
+            .with_fallback_mode(FallbackMode::Hybrid),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_preresolved_empty() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([])
+            .with_fallback_mode(FallbackMode::Preresolved),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales: [&str; 0] = [];
 
     // Should return the exact explicit locales set.
     assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
