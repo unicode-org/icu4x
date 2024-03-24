@@ -2,10 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(deprecated)] // remove in 2.0
+
 use std::collections::BTreeMap;
 
 use elsa::sync::FrozenMap;
 use icu_datagen::prelude::*;
+use icu_datagen::DeduplicationStrategy;
+use icu_datagen::FallbackOptions;
 use icu_locid_transform::provider::*;
 use icu_provider::datagen::ExportMarker;
 use icu_provider::datagen::*;
@@ -131,7 +135,11 @@ make_exportable_provider!(
     ]
 );
 
-fn export_to_map(driver: DatagenDriver, provider: &TestingProvider) -> BTreeMap<String, String> {
+fn export_to_map(
+    driver_1_4: DatagenDriver,
+    driver_1_5: DatagenDriver,
+    provider: &TestingProvider,
+) -> BTreeMap<String, String> {
     #[derive(Default)]
     struct TestingExporter(FrozenMap<DataLocale, String>);
 
@@ -167,16 +175,29 @@ fn export_to_map(driver: DatagenDriver, provider: &TestingProvider) -> BTreeMap<
         .with_level(log::LevelFilter::Trace)
         .init();
 
-    let mut exporter = TestingExporter::default();
+    let mut exporter_1_4 = TestingExporter::default();
+    driver_1_4.export(provider, &mut exporter_1_4).unwrap();
 
-    driver.export(provider, &mut exporter).unwrap();
-
-    exporter
+    let results_1_4 = exporter_1_4
         .0
         .into_tuple_vec()
         .into_iter()
         .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
-        .collect()
+        .collect();
+
+    let mut exporter_1_5 = TestingExporter::default();
+    driver_1_5.export(provider, &mut exporter_1_5).unwrap();
+
+    let results_1_5 = exporter_1_5
+        .0
+        .into_tuple_vec()
+        .into_iter()
+        .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
+        .collect();
+
+    assert_eq!(results_1_4, results_1_5);
+
+    results_1_4
 }
 
 #[test]
@@ -186,6 +207,13 @@ fn all_hybrid() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::Hybrid),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleWithExpansion::wildcard()], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -228,6 +256,13 @@ fn all_runtime() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::RuntimeManual),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleWithExpansion::wildcard()], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -264,19 +299,32 @@ fn all_runtime() {
 
 #[test]
 fn explicit_hybrid() {
+    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+        langid!("arc"), // Aramaic, not in supported list
+        langid!("ar-EG"),
+        langid!("ar-SA"),
+        langid!("en-GB"),
+        langid!("es"),
+        langid!("sr-ME"),
+        langid!("ru-Cyrl-RU"),
+    ];
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales([
-                langid!("arc"), // Aramaic, not in supported list
-                langid!("ar-EG"),
-                langid!("ar-SA"),
-                langid!("en-GB"),
-                langid!("es"),
-                langid!("sr-ME"),
-                langid!("ru-Cyrl-RU"),
-            ])
+            .with_locales(SELECTED_LOCALES)
             .with_fallback_mode(FallbackMode::Hybrid),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback(
+                SELECTED_LOCALES
+                    .into_iter()
+                    .map(LocaleWithExpansion::with_variants),
+                {
+                    let mut options = FallbackOptions::default();
+                    options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                    options
+                },
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -309,19 +357,32 @@ fn explicit_hybrid() {
 
 #[test]
 fn explicit_runtime() {
+    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+        langid!("arc"), // Aramaic, not in supported list
+        langid!("ar-EG"),
+        langid!("ar-SA"),
+        langid!("en-GB"),
+        langid!("es"),
+        langid!("sr-ME"),
+        langid!("ru-Cyrl-RU"),
+    ];
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales([
-                langid!("arc"), // Aramaic, not in supported list
-                langid!("ar-EG"),
-                langid!("ar-SA"),
-                langid!("en-GB"),
-                langid!("es"),
-                langid!("sr-ME"),
-                langid!("ru-Cyrl-RU"),
-            ])
+            .with_locales(SELECTED_LOCALES)
             .with_fallback_mode(FallbackMode::RuntimeManual),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback(
+                SELECTED_LOCALES
+                    .into_iter()
+                    .map(LocaleWithExpansion::with_variants),
+                {
+                    let mut options = FallbackOptions::default();
+                    options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                    options
+                },
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -353,19 +414,23 @@ fn explicit_runtime() {
 
 #[test]
 fn explicit_preresolved() {
+    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+        langid!("arc"), // Aramaic, not in supported list
+        langid!("ar-EG"),
+        langid!("ar-SA"),
+        langid!("en-GB"),
+        langid!("es"),
+        langid!("sr-ME"),
+        langid!("ru-Cyrl-RU"),
+    ];
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales([
-                langid!("arc"), // Aramaic, not in supported list
-                langid!("ar-EG"),
-                langid!("ar-SA"),
-                langid!("en-GB"),
-                langid!("es"),
-                langid!("sr-ME"),
-                langid!("ru-Cyrl-RU"),
-            ])
+            .with_locales(SELECTED_LOCALES)
             .with_fallback_mode(FallbackMode::Preresolved),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_no_fallback(SELECTED_LOCALES, Default::default()),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -393,6 +458,13 @@ fn explicit_runtime_und() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([langid!("und")])
             .with_fallback_mode(FallbackMode::RuntimeManual),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleWithExpansion::with_variants(langid!("und"))], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -410,6 +482,13 @@ fn explicit_hybrid_und() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([langid!("und")])
             .with_fallback_mode(FallbackMode::Hybrid),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleWithExpansion::with_variants(langid!("und"))], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -427,6 +506,9 @@ fn explicit_preresolved_und() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([langid!("und")])
             .with_fallback_mode(FallbackMode::Preresolved),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_no_fallback([langid!("und")], Default::default()),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -444,6 +526,13 @@ fn explicit_runtime_empty() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([])
             .with_fallback_mode(FallbackMode::RuntimeManual),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -461,6 +550,13 @@ fn explicit_hybrid_empty() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([])
             .with_fallback_mode(FallbackMode::Hybrid),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -478,6 +574,9 @@ fn explicit_preresolved_empty() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales([])
             .with_fallback_mode(FallbackMode::Preresolved),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_no_fallback([], Default::default()),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
