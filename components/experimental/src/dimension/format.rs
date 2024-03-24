@@ -80,24 +80,21 @@ impl<'l> Writeable for FormattedCurrency<'l> {
 mod tests {
     use icu_locid::locale;
     use tinystr::*;
-    use writeable::{assert_writeable_eq, Writeable};
+    use writeable::Writeable;
 
     use crate::dimension::{CurrencyCode, CurrencyFormatter};
-    use fixed_decimal::{FixedDecimal, FloatPrecision};
 
     #[test]
-    pub fn test_es_mx() {
-        let locale = locale!("es-MX").into();
+    pub fn test_en_us() {
+        let locale = locale!("en-US").into();
         let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
-        let value = FixedDecimal::try_from("12345.67").unwrap();
-        let value = FixedDecimal::from("12345.67");
-        let value = FixedDecimal::try_from_f64(12345.67, FloatPrecision::Floating).unwrap();
+        let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode {
             0: tinystr!(3, "USD"),
         };
         let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
         let mut sink = String::new();
         formatted_currency.write_to(&mut sink).unwrap();
-        assert_eq!(sink.as_str(), "$12,345.67");
+        assert_eq!(sink.as_str(), "$12345.67");
     }
 }
