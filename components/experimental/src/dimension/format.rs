@@ -96,4 +96,28 @@ mod tests {
         formatted_currency.write_to(&mut sink).unwrap();
         assert_eq!(sink.as_str(), "$12345.67");
     }
+
+    #[test]
+    pub fn test_fr_fr() {
+        let locale = locale!("fr-FR").into();
+        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let value = "12345.67".parse().unwrap();
+        let currency_code = CurrencyCode(tinystr!(3, "EUR"));
+        let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
+        let mut sink = String::new();
+        formatted_currency.write_to(&mut sink).unwrap();
+        assert_eq!(sink.as_str(), "12345.67\u{a0}€");
+    }
+
+    #[test]
+    pub fn test_ar_eg() {
+        let locale = locale!("ar-EG").into();
+        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let value = "12345.67".parse().unwrap();
+        let currency_code = CurrencyCode(tinystr!(3, "EGP"));
+        let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
+        let mut sink = String::new();
+        formatted_currency.write_to(&mut sink).unwrap();
+        assert_eq!(sink.as_str(), "\u{200f}12345.67\u{a0}ج.م.\u{200f}");
+    }
 }
