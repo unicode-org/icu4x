@@ -207,6 +207,9 @@ fn all_preferred() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::PreferredForExporter),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleFamily::full()], Default::default()),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -341,19 +344,28 @@ fn all_runtime() {
 
 #[test]
 fn explicit_preferred() {
+    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+        langid!("arc"), // Aramaic, not in supported list
+        langid!("ar-EG"),
+        langid!("ar-SA"),
+        langid!("en-GB"),
+        langid!("es"),
+        langid!("sr-ME"),
+        langid!("ru-Cyrl-RU"),
+    ];
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales([
-                langid!("arc"), // Aramaic, not in supported list
-                langid!("ar-EG"),
-                langid!("ar-SA"),
-                langid!("en-GB"),
-                langid!("es"),
-                langid!("sr-ME"),
-                langid!("ru-Cyrl-RU"),
-            ])
+            .with_locales(SELECTED_LOCALES)
             .with_fallback_mode(FallbackMode::PreferredForExporter),
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback(
+                SELECTED_LOCALES
+                    .into_iter()
+                    .map(LocaleFamily::with_descendants),
+                Default::default(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
