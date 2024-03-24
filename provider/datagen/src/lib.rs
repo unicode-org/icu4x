@@ -138,6 +138,11 @@ mod transform;
 mod tests;
 
 pub use driver::DatagenDriver;
+pub use driver::DeduplicationStrategy;
+pub use driver::FallbackOptions;
+pub use driver::NoFallbackOptions;
+pub use driver::RuntimeFallbackLocation;
+pub use driver::UndInclusion;
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde
 pub use provider::TrieType;

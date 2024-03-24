@@ -19,6 +19,7 @@ use std::time::Duration;
 use std::time::Instant;
 use writeable::Writeable;
 
+/// Options bag configuring locale inclusion and behavior when runtime fallback is disabled.
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct NoFallbackOptions {}
@@ -26,7 +27,7 @@ pub struct NoFallbackOptions {}
 #[derive(Debug, Clone)]
 struct LocalesAndNoFallbackOptions {
     locales: HashSet<LanguageIdentifier>,
-    options: NoFallbackOptions,
+    _options: NoFallbackOptions,
 }
 
 impl LocalesAndNoFallbackOptions {
@@ -45,25 +46,63 @@ impl LocalesAndNoFallbackOptions {
     }
 }
 
+/// Choices for the code location of runtime fallback.
+///
+/// Some data providers support "internal" fallback in which all data requests automatically run
+/// the locale fallback algorithm. If internal fallback is requested for an exporter that does
+/// not support it, an error will occur.
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum RuntimeFallbackLocation {
+    /// Include fallbacking code in the exported data provider.
     Internal,
+    /// Do not include fallbacking code in the exported data provider.
+    ///
+    /// The client is responsible for manually configuring [`LocaleFallbackProvider`] in their
+    /// runtime data pipeline.
+    ///
+    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
     External,
 }
 
+/// Choices for determining the deduplication of exported data payloads.
+///
+/// Deduplication affects the lookup table from locales to data payloads. If a child locale
+/// points to the same payload as its parent locale, then the child locale can be removed from
+/// the lookup table. Therefore, all deduplication strategies guarantee that data requests for
+/// selected locales will succeed so long as fallback is enabled at runtime (either internally
+/// or externally). They also do not impact which _payloads_ are included: only the lookup table.
+///
+/// Comparison of the deduplication strategies:
+///
+/// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
+/// |---|---|---|---|
+/// | [`Maximal`] | Smallest | No | Yes |
+/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
+/// | [`NoDeduplication`] | Medium/Small | Yes | No |
+///
+/// [`Maximal`]: DeduplicationStrategy::Maximal
+/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
+/// [`NoDeduplication`]: DeduplicationStrategy::NoDeduplication
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DeduplicationStrategy {
+    /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,
+    /// Removes from the lookup table any locale whose parent maps to the same data, except if
+    /// the parent is `und`.
     RetainBaseLanguages,
+    /// Keeps all selected locales in the lookup table.
     NoDeduplication,
 }
 
+/// Choices for whether to include the root (`und`) locale in the lookup table.
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum UndInclusion {
+    /// Yes, include the `und` locale.
     Always,
+    /// No, do not include the `und` locale.
     Never,
 }
 
@@ -96,7 +135,6 @@ impl LocaleWithExpansion {
     }
 
     // ^en-US
-    #[allow(dead_code)]
     pub fn without_variants(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
@@ -106,7 +144,6 @@ impl LocaleWithExpansion {
     }
 
     // @en-US
-    #[allow(dead_code)]
     pub fn preresolved(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
@@ -136,11 +173,23 @@ impl fmt::Display for LocaleWithExpansion {
     }
 }
 
+/// Options bag configuring locale inclusion and behavior when runtime fallback is enabled.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct FallbackOptions {
+    /// The location in code where fallback will be performed at runtime.
+    ///
+    /// If not set, determined by the exporter: internal fallback is used if the exporter
+    /// supports internal fallback.
     pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
+    /// The aggressiveness of deduplication of data payloads.
+    ///
+    /// If not set, determined by `runtime_fallback_location`. If internal fallback is enabled,
+    /// a more aggressive deduplication strategy is used.
     pub deduplication_strategy: Option<DeduplicationStrategy>,
+    /// Whether to include the `und` locale.
+    ///
+    /// If not set, `und` will generally be included.
     pub und_inclusion: Option<UndInclusion>,
 }
 
@@ -173,7 +222,7 @@ impl LocalesAndFallbackOptions {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) enum LocalesWithOrWithoutFallback {
+enum LocalesWithOrWithoutFallback {
     WithFallback(LocalesAndFallbackOptions),
     WithoutFallback(LocalesAndNoFallbackOptions),
 }
@@ -272,8 +321,14 @@ impl DatagenDriver {
         }
     }
 
-    #[allow(dead_code)]
-    fn with_locales_no_fallback(
+    /// Sets this driver to generate the given locales assuming no runtime fallback.
+    ///
+    /// Use the [`langid!`] macro from the prelude to create an
+    /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
+    ///
+    /// [`langid!`]: crate::prelude::langid
+    /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
+    pub fn with_locales_no_fallback(
         self,
         locales: impl IntoIterator<Item = LanguageIdentifier>,
         options: NoFallbackOptions,
@@ -282,15 +337,21 @@ impl DatagenDriver {
             locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback(
                 LocalesAndNoFallbackOptions {
                     locales: locales.into_iter().collect(),
-                    options,
+                    _options: options,
                 },
             )),
             ..self
         }
     }
 
-    #[allow(dead_code)]
-    fn with_locales_and_fallback(
+    /// Sets this driver to generate the given locales assuming runtime fallback.
+    ///
+    /// Use the [`langid!`] macro from the prelude to create an
+    /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
+    ///
+    /// [`langid!`]: crate::prelude::langid
+    /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
+    pub fn with_locales_and_fallback(
         self,
         locales: impl IntoIterator<Item = LocaleWithExpansion>,
         options: FallbackOptions,
@@ -464,7 +525,7 @@ impl DatagenDriver {
             (_, Some(Some(locales)), FallbackMode::Preresolved) => {
                 LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
                     locales: locales.into_iter().collect(),
-                    options: NoFallbackOptions {},
+                    _options: NoFallbackOptions {},
                 })
             }
             (_, Some(None), FallbackMode::Preresolved) => {
@@ -1057,7 +1118,7 @@ fn test_collation_filtering() {
             icu_collator::provider::CollationDataV1Marker::KEY,
             &LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
                 locales: [cas.language.clone()].into_iter().collect(),
-                options: Default::default(),
+                _options: Default::default(),
             }),
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
