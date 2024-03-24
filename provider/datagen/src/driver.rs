@@ -430,12 +430,14 @@ impl DatagenDriver {
             ));
         };
 
-        let map_legacy_locales_to_locales_with_expansion = |legacy_locales: Option<Vec<LanguageIdentifier>>| {
-            match legacy_locales {
-                Some(v) => v.into_iter().map(LocaleWithExpansion::with_variants).collect(),
+        let map_legacy_locales_to_locales_with_expansion =
+            |legacy_locales: Option<Vec<LanguageIdentifier>>| match legacy_locales {
+                Some(v) => v
+                    .into_iter()
+                    .map(LocaleWithExpansion::with_variants)
+                    .collect(),
                 None => [LocaleWithExpansion::wildcard()].into_iter().collect(),
-            }
-        };
+            };
 
         let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
             // 1.5 API
@@ -914,7 +916,10 @@ fn select_locales_for_key(
     let ExplicitImplicitLocaleSets { explicit, implicit } =
         make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
 
-    let include_und = matches!(config.options.und_inclusion, None | Some(UndInclusion::Always));
+    let include_und = matches!(
+        config.options.und_inclusion,
+        None | Some(UndInclusion::Always)
+    );
 
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
