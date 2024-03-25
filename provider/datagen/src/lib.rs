@@ -696,7 +696,6 @@ pub mod syntax {
 #[doc(hidden)]
 pub use baked_exporter::Options as BakedOptions;
 
-
 #[cfg(feature = "legacy_api")]
 /// ✨ *Enabled with the `legacy_api` Cargo feature.*
 impl AnyProvider for DatagenProvider {
