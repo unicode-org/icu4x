@@ -7,5 +7,3 @@
 //! Most tests should either be in-module unit tests or integration tests.
 
 mod make_testdata;
-
-mod data;

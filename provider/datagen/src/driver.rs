@@ -557,7 +557,7 @@ fn select_locales_for_key(
         supported_map.retain(|_, locales| {
             locales.retain(|locale| {
                 let model =
-                    crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
+                    crate::provider::segmenter::dictionary::data_locale_to_model_name(locale);
                 segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
             });
             !locales.is_empty()
@@ -567,7 +567,7 @@ fn select_locales_for_key(
     } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
         supported_map.retain(|_, locales| {
             locales.retain(|locale| {
-                let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
+                let model = crate::provider::segmenter::lstm::data_locale_to_model_name(locale);
                 segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
             });
             !locales.is_empty()
