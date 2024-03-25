@@ -75,6 +75,7 @@ pub(crate) fn parse_annotated_date_time<'a>(
     })
 }
 
+/// Parses an AnnotatedMonthDay.
 pub(crate) fn parse_annotated_month_day<'a>(
     cursor: &mut Cursor<'a>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
