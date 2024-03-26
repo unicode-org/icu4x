@@ -96,16 +96,6 @@ pub enum DeduplicationStrategy {
     NoDeduplication,
 }
 
-/// Choices for whether to include the root (`und`) locale in the lookup table.
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum UndInclusion {
-    /// Yes, include the `und` locale.
-    Always,
-    /// No, do not include the `und` locale.
-    Never,
-}
-
 impl DeduplicationStrategy {
     fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
@@ -214,10 +204,6 @@ pub struct FallbackOptions {
     /// If not set, determined by `runtime_fallback_location`. If internal fallback is enabled,
     /// a more aggressive deduplication strategy is used.
     pub deduplication_strategy: Option<DeduplicationStrategy>,
-    /// Whether to include the `und` locale.
-    ///
-    /// If not set, `und` will generally be included.
-    pub und_inclusion: Option<UndInclusion>,
 }
 
 #[derive(Debug, Clone)]
@@ -531,7 +517,6 @@ impl DatagenDriver {
                     options: FallbackOptions {
                         runtime_fallback_location: None,
                         deduplication_strategy: None,
-                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
@@ -541,7 +526,6 @@ impl DatagenDriver {
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
-                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
@@ -551,7 +535,6 @@ impl DatagenDriver {
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
-                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
@@ -572,7 +555,6 @@ impl DatagenDriver {
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::NoDeduplication),
-                        und_inclusion: Some(UndInclusion::Always),
                     },
                 })
             }
