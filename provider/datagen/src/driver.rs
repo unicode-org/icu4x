@@ -993,10 +993,8 @@ fn select_locales_for_key(
     let ExplicitImplicitLocaleSets { explicit, implicit } =
         make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
 
-    let include_und = matches!(
-        config.options.und_inclusion,
-        None | Some(UndInclusion::Always)
-    );
+    // TODO(#4629): Allow the exclusion of und
+    let include_und = true;
 
     let include_full = config.locales.contains(&LocaleFamily::full());
 
