@@ -151,6 +151,7 @@ pub struct ZeroAsciiIgnoreCaseTrieCursor<'a> {
 
 /// Information about a probed edge.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive] // no need to destructure or construct this in userland
 pub struct AsciiProbeResult {
     /// The character's byte value between this node and its parent.
     pub byte: u8,
