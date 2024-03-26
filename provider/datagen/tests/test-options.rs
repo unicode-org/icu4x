@@ -246,6 +246,48 @@ fn all_preferred() {
 }
 
 #[test]
+fn all_preferred() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_all_locales()
+            .with_fallback_mode(FallbackMode::PreferredForExporter),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // These are all of the supported locales.
+    let locales = [
+        "ar",
+        "ar-EG",
+        "ar-EG-u-nu-latn",
+        "ar-u-nu-latn",
+        "bn",
+        "bn-u-nu-latn",
+        "ccp",
+        "ccp-u-nu-latn",
+        "en",
+        "en-001",
+        "en-ZA",
+        "es",
+        "es-AR",
+        "fil",
+        "fr",
+        "ja",
+        "ru",
+        "sr",
+        // "sr-Cyrl", (normalizes to 'sr')
+        "sr-Latn",
+        "th",
+        "th-u-nu-thai",
+        "tr",
+        "und",
+    ];
+
+    // Should return exactly the supported locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn all_hybrid() {
     let exported = export_to_map(
         DatagenDriver::new()

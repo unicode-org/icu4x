@@ -279,9 +279,9 @@ struct MeasuringAllocator;
 impl MeasuringAllocator {
     // We need to track allocations on each thread independently
     thread_local! {
-        static ACTIVE: Cell<bool> = Cell::new(false);
-        static TOTAL_ALLOCATED: Cell<u64> = Cell::new(0);
-        static TOTAL_DEALLOCATED: Cell<u64> = Cell::new(0);
+        static ACTIVE: Cell<bool> = const { Cell::new(false) };
+        static TOTAL_ALLOCATED: Cell<u64> = const { Cell::new(0) };
+        static TOTAL_DEALLOCATED: Cell<u64> = const { Cell::new(0) };
     }
 
     pub fn start_measure() {

@@ -1,8 +1,48 @@
 {
   "parents": {
+    "bs-Cyrl": [
+      "bs",
+      null,
+      null
+    ],
+    "sr-Cyrl-ME": [
+      "sr",
+      null,
+      "ME"
+    ],
+    "sr-Latn": [
+      "sr",
+      null,
+      null
+    ],
     "yue": [
       "zh",
       "Hant",
+      null
+    ],
+    "yue-CN": [
+      "zh",
+      "Hans",
+      null
+    ],
+    "yue-Hans": [
+      "zh",
+      "Hans",
+      null
+    ],
+    "yue-Hans-CN": [
+      "zh",
+      "Hans",
+      null
+    ],
+    "yue-Hant": [
+      "zh",
+      "Hant",
+      null
+    ],
+    "zh-Hant": [
+      "zh",
+      null,
       null
     ]
   },
