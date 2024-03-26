@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Types for walking stepwise through a trie.
+//!
+//! For examples, see the `.cursor()` functions
+//! and the `Cursor` types in this module.
+
 use crate::reader;
 use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrieSimpleAscii;
@@ -144,9 +149,10 @@ pub struct ZeroAsciiIgnoreCaseTrieCursor<'a> {
     trie: ZeroAsciiIgnoreCaseTrie<&'a [u8]>,
 }
 
+/// Information about a probed edge.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct AsciiProbeResult {
-    /// The byte key edge between this node and its parent.
+    /// The character's byte value between this node and its parent.
     pub byte: u8,
     /// The number of siblings of this node, _including itself_.
     pub total_siblings: u8,
