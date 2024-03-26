@@ -51,6 +51,13 @@ impl CurrencyFormatter {
         options: options::CurrencyFormatterOptions,
         error: DimensionError,
         #[cfg(skip)]
+        functions: [
+            try_new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
     );
 
     /// Creates a new [`CurrencyFormatter`] from compiled locale data and an options bag.
