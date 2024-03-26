@@ -39,7 +39,7 @@ impl From<Sign> for num_bigint::Sign {
     }
 }
 
-impl<'data> ConverterFactory {
+impl ConverterFactory {
     // TODO: shall I implement the following function?
     // icu_provider::gen_any_buffer_data_constructors!(
     //     error: ConversionError,

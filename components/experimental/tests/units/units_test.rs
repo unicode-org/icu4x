@@ -9,7 +9,7 @@ use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_rational::Ratio;
 use num_traits::sign::Signed;
-use zerotrie::ZeroTrieSimpleAscii;
+
 
 // TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a decimal number to a BigRational.
