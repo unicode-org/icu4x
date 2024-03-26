@@ -42,7 +42,7 @@ atoi = "1.0.0"
 icu = { path = "../../components/icu", default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]

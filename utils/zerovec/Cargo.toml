@@ -53,7 +53,7 @@ yoke = { path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { path = "../../utils/zerofrom", features = ["derive"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 std = []
