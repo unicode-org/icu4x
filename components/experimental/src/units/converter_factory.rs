@@ -40,11 +40,12 @@ impl From<Sign> for num_bigint::Sign {
 }
 
 impl ConverterFactory {
-    // TODO: shall I implement the following function?
-    // icu_provider::gen_any_buffer_data_constructors!(
-    //     error: ConversionError,
-    //     #[cfg(skip)]
-    // );
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: skip,
+        error: ConversionError,
+        #[cfg(skip)]
+    );
 
     /// Creates a new [`ConverterFactory`] from compiled locale data and an options bag.
     ///
