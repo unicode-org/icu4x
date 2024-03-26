@@ -45,16 +45,16 @@ impl ConverterFactory {
         error: ConversionError,
         #[cfg(skip)]
         functions: [
-            new_factory,
-            try_new_factory_with_any_provider,
-            try_new_factory_with_buffer_provider,
-            try_new_factory_unstable,
+            try_new_factory,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
             Self
         ]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_factory_unstable<D>(provider: &D) -> Result<Self, ConversionError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, ConversionError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {

@@ -80,8 +80,7 @@ fn test_cldr_unit_tests() {
         .collect();
 
     let converter_factory =
-        ConverterFactory::try_new_factory_unstable(&icu_experimental::units::provider::Baked)
-            .unwrap();
+        ConverterFactory::try_new_unstable(&icu_experimental::units::provider::Baked).unwrap();
     let parser = converter_factory.parser();
 
     for test in tests {
@@ -120,8 +119,7 @@ fn test_units_not_parsable() {
     ];
 
     let converter_factory =
-        ConverterFactory::try_new_factory_unstable(&icu_experimental::units::provider::Baked)
-            .unwrap();
+        ConverterFactory::try_new_unstable(&icu_experimental::units::provider::Baked).unwrap();
     let parser = converter_factory.parser();
 
     for unit in unparsable_units.iter() {
