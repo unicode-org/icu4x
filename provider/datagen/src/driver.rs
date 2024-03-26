@@ -324,7 +324,7 @@ impl DatagenDriver {
     /// [`langid!`]: crate::prelude::langid
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     #[deprecated(
-        since = "1.5",
+        since = "1.5.0",
         note = "use `with_locales_and_fallback` or `with_locales_no_fallback`"
     )]
     pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
@@ -335,7 +335,7 @@ impl DatagenDriver {
     }
 
     /// Sets this driver to generate all available locales.
-    #[deprecated(since = "1.5", note = "use `with_locales_and_fallback`")]
+    #[deprecated(since = "1.5.0", note = "use `with_locales_and_fallback`")]
     pub fn with_all_locales(self) -> Self {
         Self {
             legacy_locales: Some(None),
@@ -393,7 +393,7 @@ impl DatagenDriver {
     ///
     /// If locale fallback is used at runtime, smaller data can be generated.
     #[deprecated(
-        since = "1.5",
+        since = "1.5.0",
         note = "use `with_locales_and_fallback` or `with_locales_no_fallback`"
     )]
     pub fn with_fallback_mode(self, fallback: FallbackMode) -> Self {
