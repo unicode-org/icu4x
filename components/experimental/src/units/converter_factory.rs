@@ -45,7 +45,7 @@ impl ConverterFactory {
         error: ConversionError,
         #[cfg(skip)]
         functions: [
-            try_new_factory,
+            try_new,
             try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
