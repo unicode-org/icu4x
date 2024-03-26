@@ -344,7 +344,7 @@ lazy_static::lazy_static! {
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::calendar::types::Time::midnight",
-        
+
 
         // TODO-2.0 these errors will have changed
         "fixed_decimal::Error",
