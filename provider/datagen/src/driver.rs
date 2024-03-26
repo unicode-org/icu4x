@@ -89,9 +89,12 @@ pub enum RuntimeFallbackLocation {
 pub enum DeduplicationStrategy {
     /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,
+    // TODO(#58): Add `RetainBaseLanguages`
+    /*
     /// Removes from the lookup table any locale whose parent maps to the same data, except if
     /// the parent is `und`.
     RetainBaseLanguages,
+    */
     /// Keeps all selected locales in the lookup table.
     NoDeduplication,
 }
@@ -100,7 +103,8 @@ impl DeduplicationStrategy {
     fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Self::Maximal => "maximal deduplication",
-            Self::RetainBaseLanguages => "deduplication retaining base languages",
+            // TODO(#58): Add `RetainBaseLanguages`
+            // Self::RetainBaseLanguages => "deduplication retaining base languages",
             Self::NoDeduplication => "no deduplication",
         };
         write!(f, "{s}")
@@ -705,7 +709,8 @@ impl DatagenDriver {
             )?;
 
             let (slowest_duration, slowest_locale) = match deduplication_strategy {
-                DeduplicationStrategy::RetainBaseLanguages => todo!(),
+                // TODO(#58): Add `RetainBaseLanguages`
+                // DeduplicationStrategy::RetainBaseLanguages => todo!(),
                 DeduplicationStrategy::Maximal => {
                     let payloads = locales_to_export
                         .into_par_iter()
