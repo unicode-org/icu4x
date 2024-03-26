@@ -53,7 +53,8 @@ impl ConverterFactory {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_unstable)]
+    #[inline]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, ConversionError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
