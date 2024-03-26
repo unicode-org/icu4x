@@ -73,8 +73,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                     .with_display_context(&e)
             })?;
 
-        let units_conversion_trie = units_conversion_trie.clone().convert_store();
-        let parser = MeasureUnitParser::from_payload(units_conversion_trie.clone());
+        let parser = MeasureUnitParser::from_payload(units_conversion_trie.as_borrowed());
 
         let convert_infos = convert_units_vec
             .iter()
@@ -89,7 +88,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
 
         let result = UnitsInfoV1 {
-            units_conversion_trie,
+            units_conversion_trie: units_conversion_trie.convert_store(),
             convert_infos: VarZeroVec::from(&convert_infos),
         };
 

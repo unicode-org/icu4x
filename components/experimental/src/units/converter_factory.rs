@@ -79,9 +79,7 @@ impl ConverterFactory {
     }
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(
-            self.payload.get().units_conversion_trie.clone(), /* This is cheap clone because we do not copy the data */
-        )
+        MeasureUnitParser::from_payload(self.payload.get().units_conversion_trie.as_borrowed())
     }
 
     /// Calculates the offset between two units by performing the following steps:
