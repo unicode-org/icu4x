@@ -10,7 +10,6 @@ use num_rational::BigRational;
 use num_rational::Ratio;
 use num_traits::sign::Signed;
 
-
 // TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
 /// Convert a decimal number to a BigRational.
 fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
