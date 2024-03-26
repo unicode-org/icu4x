@@ -79,9 +79,6 @@ impl ConverterFactory {
     }
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
-        // why this is not working?
-        // let payload_store = self.payload.get().units_conversion_trie;
-        // MeasureUnitParser::from_payload(&payload_store)
         MeasureUnitParser::from_payload(&self.payload.get().units_conversion_trie)
     }
 
