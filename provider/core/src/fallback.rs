@@ -171,12 +171,13 @@ pub struct LocaleFallbackConfig {
     ///     .fallback_for(locale!("yue-HK").into());
     ///
     /// // Run the algorithm and check the results.
-    /// // TODO(#1964): add "zh" as a target.
     /// assert_eq!(fallback_iterator.get(), &locale!("yue-HK").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("yue").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("zh-Hant").into());
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get(), &locale!("zh").into());
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```

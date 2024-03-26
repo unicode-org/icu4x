@@ -21,6 +21,34 @@ impl TestingProvider {
     fn new<const N: usize>(data: [(&'static str, &'static str); N]) -> Self {
         Self(BTreeMap::from_iter(data))
     }
+
+    fn with_decimal_symbol_like_data() -> Self {
+        Self::new([
+            ("ar", "c3f15eb63fa35608"),
+            ("ar-EG", "c3f15eb63fa35608"),
+            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
+            ("ar-u-nu-latn", "29e2dc764329c56"),
+            ("bn", "31828215dcef2fcb"),
+            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
+            ("ccp", "c39715a84718596"),
+            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
+            ("en", "8df59f98704d3b0c"),
+            ("en-001", "8df59f98704d3b0c"),
+            ("en-ZA", "8df59f98704d3b0c"),
+            ("es", "2c22710b06ef69b6"),
+            ("es-AR", "3ec76252c7ed8d8c"),
+            ("fil", "8df59f98704d3b0c"),
+            ("fr", "bd076f44d0623175"),
+            ("ja", "8df59f98704d3b0c"),
+            ("ru", "8f773f51e85a65c1"),
+            ("sr", "3ec76252c7ed8d8c"),
+            ("sr-Latn", "3ec76252c7ed8d8c"),
+            ("th", "8df59f98704d3b0c"),
+            ("th-u-nu-thai", "db1d187d375ccfd2"),
+            ("tr", "3ec76252c7ed8d8c"),
+            ("und", "8df59f98704d3b0c"),
+        ])
+    }
 }
 
 impl DataProvider<HelloWorldV1Marker> for TestingProvider {
@@ -152,37 +180,55 @@ fn export_to_map(driver: DatagenDriver, provider: &TestingProvider) -> BTreeMap<
 }
 
 #[test]
+fn all_preferred() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_all_locales()
+            .with_fallback_mode(FallbackMode::PreferredForExporter),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // These are all of the supported locales.
+    let locales = [
+        "ar",
+        "ar-EG",
+        "ar-EG-u-nu-latn",
+        "ar-u-nu-latn",
+        "bn",
+        "bn-u-nu-latn",
+        "ccp",
+        "ccp-u-nu-latn",
+        "en",
+        "en-001",
+        "en-ZA",
+        "es",
+        "es-AR",
+        "fil",
+        "fr",
+        "ja",
+        "ru",
+        "sr",
+        // "sr-Cyrl", (normalizes to 'sr')
+        "sr-Latn",
+        "th",
+        "th-u-nu-thai",
+        "tr",
+        "und",
+    ];
+
+    // Should return exactly the supported locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn all_hybrid() {
     let exported = export_to_map(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::Hybrid),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // These are all of the supported locales.
@@ -224,31 +270,7 @@ fn all_runtime() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_all_locales()
             .with_fallback_mode(FallbackMode::RuntimeManual),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // These are all of the supported locales with deduplication applied.
@@ -283,6 +305,51 @@ fn all_runtime() {
 }
 
 #[test]
+fn explicit_preferred() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([
+                langid!("arc"), // Aramaic, not in supported list
+                langid!("ar-EG"),
+                langid!("ar-SA"),
+                langid!("en-GB"),
+                langid!("es"),
+                langid!("sr-ME"),
+                langid!("ru-Cyrl-RU"),
+            ])
+            .with_fallback_mode(FallbackMode::PreferredForExporter),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    let locales = [
+        "ar",              // ancestor of ar-EG
+        "ar-EG",           // explicit locale
+        "ar-EG-u-nu-latn", // descendant of ar-EG
+        "ar-SA",           // explicit locale, inheriting from ar
+        "ar-SA-u-nu-latn", // extensions should be included (#4533)
+        "ar-u-nu-latn",    // extensions should be included (#4533)
+        "arc",             // Aramaic, inheriting from und
+        "en",              // ancestor of en-GB
+        "en-001",          // ancestor of en-GB
+        "en-GB",           // explicit locale not in supported locales
+        // "en-ZA", // not reachable
+        "es",         // explicit and supported
+        "es-AR",      // descendant of es
+        "ru",         // ancestor of ru-Cyrl-RU
+        "ru-Cyrl-RU", // explicit locale, even though it is not normalized
+        // "sr", // not reachable from sr-ME
+        "sr-Latn", // ancestor of sr-ME
+        "sr-ME",   // explicit locale not in supported locales
+        "und",     // ancestor of everything
+    ];
+
+    // Should return the expanded explicit locales set above.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn explicit_hybrid() {
     let exported = export_to_map(
         DatagenDriver::new()
@@ -297,31 +364,7 @@ fn explicit_hybrid() {
                 langid!("ru-Cyrl-RU"),
             ])
             .with_fallback_mode(FallbackMode::Hybrid),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
@@ -366,31 +409,7 @@ fn explicit_runtime() {
                 langid!("ru-Cyrl-RU"),
             ])
             .with_fallback_mode(FallbackMode::RuntimeManual),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
@@ -434,31 +453,7 @@ fn explicit_preresolved() {
                 langid!("ru-Cyrl-RU"),
             ])
             .with_fallback_mode(FallbackMode::Preresolved),
-        &TestingProvider::new([
-            ("ar", "c3f15eb63fa35608"),
-            ("ar-EG", "c3f15eb63fa35608"),
-            ("ar-EG-u-nu-latn", "29e2dc764329c56"),
-            ("ar-u-nu-latn", "29e2dc764329c56"),
-            ("bn", "31828215dcef2fcb"),
-            ("bn-u-nu-latn", "1be94084ee7dcfbf"),
-            ("ccp", "c39715a84718596"),
-            ("ccp-u-nu-latn", "1be94084ee7dcfbf"),
-            ("en", "8df59f98704d3b0c"),
-            ("en-001", "8df59f98704d3b0c"),
-            ("en-ZA", "8df59f98704d3b0c"),
-            ("es", "2c22710b06ef69b6"),
-            ("es-AR", "3ec76252c7ed8d8c"),
-            ("fil", "8df59f98704d3b0c"),
-            ("fr", "bd076f44d0623175"),
-            ("ja", "8df59f98704d3b0c"),
-            ("ru", "8f773f51e85a65c1"),
-            ("sr", "3ec76252c7ed8d8c"),
-            ("sr-Latn", "3ec76252c7ed8d8c"),
-            ("th", "8df59f98704d3b0c"),
-            ("th-u-nu-thai", "db1d187d375ccfd2"),
-            ("tr", "3ec76252c7ed8d8c"),
-            ("und", "8df59f98704d3b0c"),
-        ]),
+        &TestingProvider::with_decimal_symbol_like_data(),
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
@@ -473,6 +468,108 @@ fn explicit_preresolved() {
         "ru-Cyrl-RU",
         "sr-ME",
     ];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_und() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([langid!("und")])
+            .with_fallback_mode(FallbackMode::RuntimeManual),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_hybrid_und() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([langid!("und")])
+            .with_fallback_mode(FallbackMode::Hybrid),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_preresolved_und() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([langid!("und")])
+            .with_fallback_mode(FallbackMode::Preresolved),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_empty() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([])
+            .with_fallback_mode(FallbackMode::RuntimeManual),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_hybrid_empty() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([])
+            .with_fallback_mode(FallbackMode::Hybrid),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_preresolved_empty() {
+    let exported = export_to_map(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales([])
+            .with_fallback_mode(FallbackMode::Preresolved),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales: [&str; 0] = [];
 
     // Should return the exact explicit locales set.
     assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
