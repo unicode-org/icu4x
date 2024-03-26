@@ -145,7 +145,7 @@ pub struct ZeroAsciiIgnoreCaseTrieCursor<'a> {
 }
 
 impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
-    /// Steps the cursor one byte into the trie.
+    /// Steps the cursor one character into the trie based on the character's byte value.
     ///
     /// # Examples
     ///
@@ -222,7 +222,8 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
         reader::take_value(&mut self.trie.store)
     }
 
-    /// Probes the next byte in the cursor, stepping the cursor and returning the byte.
+    /// Steps the cursor one character into the trie based on an edge index,
+    /// returning the corresponding character as a byte.
     ///
     /// This function is similar to [`Self::step()`], but it takes an index instead of a char.
     /// This enables stepwise iteration over the contents of the trie.
