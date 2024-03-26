@@ -6,8 +6,8 @@ use std::borrow::Borrow;
 
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
+use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
-use icu_relativetime::provider::*;
 use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 
@@ -123,9 +123,9 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
     }
 }
 
-/// Try to convert an Option<String> to SingularSubPattern.
-/// If pattern is None, we return None
-/// If pattern is Some(pattern), we try to parse the pattern as SingularSubPattern failing
+/// Try to convert an `Option<String>` to [`SingularSubPattern`].
+/// If pattern is `None`, we return `None`
+/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SingularSubPattern`] failing
 /// if an error is encountered
 fn optional_convert<'a, B: Borrow<Option<String>>>(
     pattern: B,

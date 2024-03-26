@@ -6,7 +6,7 @@
 //!
 //! This module can be used as a target for the `icu_datagen` crate.
 //!
-//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md) for more information about different data providers.
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
@@ -56,5 +56,7 @@
 //! ```
 
 mod blob_exporter;
+
+mod iter;
 
 pub use blob_exporter::BlobExporter;

@@ -468,13 +468,68 @@ impl DatagenDriver {
     }
 }
 
+struct ExplicitImplicitLocaleSets {
+    explicit: HashSet<DataLocale>,
+    implicit: HashSet<DataLocale>,
+}
+
+/// Resolves the set of explicit langids and the supported locales into two sets of locales:
+///
+/// - `explicit` contains the explicit langids but with aux keys and extension keywords included.
+///   For example, if `ar-SA` is requested (explicit langid), and `ar` and `ar-u-nu-latn` are supported,
+///   then `ar-SA` and `ar-SA-u-nu-latn` will be returned as `explicit`.
+/// - `implcit` contains all supported locales reachable by fallback from an `explicit` locale.
+///   These locales can be included without increasing data payload size.
+fn make_explicit_implicit_sets(
+    key: DataKey,
+    explicit_langids: &HashSet<LanguageIdentifier>,
+    supported_map: &HashMap<LanguageIdentifier, HashSet<DataLocale>>,
+    fallbacker: &Lazy<
+        Result<LocaleFallbacker, DataError>,
+        impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+    >,
+) -> Result<ExplicitImplicitLocaleSets, DataError> {
+    let mut implicit = HashSet::new();
+    // TODO: Make including the default locale configurable
+    implicit.insert(DataLocale::default());
+
+    let mut explicit: HashSet<DataLocale> = Default::default();
+    for explicit_langid in explicit_langids.iter() {
+        explicit.insert(explicit_langid.into());
+        if let Some(locales) = supported_map.get(explicit_langid) {
+            explicit.extend(locales.iter().cloned()); // adds ar-EG-u-nu-latn
+        }
+        if explicit_langid == &LanguageIdentifier::UND {
+            continue;
+        }
+        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+        let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+        let mut iter = fallbacker_with_config.fallback_for(explicit_langid.into());
+        while !iter.get().is_und() {
+            implicit.insert(iter.get().clone());
+            // Inherit aux keys and extension keywords from parent locales
+            let iter_langid = iter.get().get_langid();
+            if let Some(locales) = supported_map.get(&iter_langid) {
+                implicit.extend(locales.iter().cloned()); // adds ar-u-nu-latn
+                for locale in locales {
+                    let mut morphed_locale = locale.clone();
+                    morphed_locale.set_langid(explicit_langid.clone());
+                    explicit.insert(morphed_locale); // adds ar-SA-u-nu-latn
+                }
+            }
+            iter.step();
+        }
+    }
+    Ok(ExplicitImplicitLocaleSets { explicit, implicit })
+}
+
 /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
 fn select_locales_for_key(
     provider: &dyn ExportableProvider,
     key: DataKey,
     fallback: FallbackMode,
-    locales: Option<&HashSet<LanguageIdentifier>>,
+    explicit_langids: Option<&HashSet<LanguageIdentifier>>,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
     fallbacker: &Lazy<
@@ -482,28 +537,43 @@ fn select_locales_for_key(
         impl FnOnce() -> Result<LocaleFallbacker, DataError>,
     >,
 ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-    let mut result = provider
+    // A map from langid to data locales. Keys that have aux keys or extension keywords
+    // may have multiple data locales per langid.
+    let mut supported_map: HashMap<LanguageIdentifier, HashSet<DataLocale>> = Default::default();
+    for locale in provider
         .supported_locales_for_key(key)
         .map_err(|e| e.with_key(key))?
-        .into_iter()
-        .collect::<HashSet<DataLocale>>();
+    {
+        use std::collections::hash_map::Entry;
+        match supported_map.entry(locale.get_langid()) {
+            Entry::Occupied(mut entry) => entry.get_mut().insert(locale),
+            Entry::Vacant(entry) => entry.insert(Default::default()).insert(locale),
+        };
+    }
 
     if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
         || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
     {
-        result.retain(|locale| {
-            let model = crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
-            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let model =
+                    crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
+                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+            });
+            !locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(result);
+        return Ok(supported_map.into_values().flatten().collect());
     } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
-        result.retain(|locale| {
-            let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
-            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
+                segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+            });
+            !locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(result);
+        return Ok(supported_map.into_values().flatten().collect());
     } else if key == icu_collator::provider::CollationDataV1Marker::KEY
         || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
         || key == icu_collator::provider::CollationJamoV1Marker::KEY
@@ -511,54 +581,50 @@ fn select_locales_for_key(
         || key == icu_collator::provider::CollationReorderingV1Marker::KEY
         || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
     {
-        result.retain(|locale| {
-            let Some(collation) = locale
-                .get_unicode_ext(&key!("co"))
-                .and_then(|co| co.as_single_subtag().copied())
-            else {
-                return true;
-            };
-            additional_collations.contains(collation.as_str())
-                || if collation.starts_with("search") {
-                    additional_collations.contains("search*")
-                } else {
-                    !["big5han", "gb2312"].contains(&collation.as_str())
-                }
+        supported_map.retain(|_, locales| {
+            locales.retain(|locale| {
+                let Some(collation) = locale
+                    .get_unicode_ext(&key!("co"))
+                    .and_then(|co| co.as_single_subtag().copied())
+                else {
+                    return true;
+                };
+                additional_collations.contains(collation.as_str())
+                    || if collation.starts_with("search") {
+                        additional_collations.contains("search*")
+                    } else {
+                        !["big5han", "gb2312"].contains(&collation.as_str())
+                    }
+            });
+            !locales.is_empty()
         });
     }
 
-    result = match (locales, fallback) {
+    let result = match (explicit_langids, fallback) {
         // Case 1: `None` simply exports all supported locales for this key.
-        (None, _) => result,
+        (None, _) => supported_map.into_values().flatten().collect(),
         // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
         // one of the explicit locales. This ensures extensions are included. In addition, any
         // explicit locales are added to the list, even if they themselves don't contain data;
         // fallback should be performed upon exporting.
-        (Some(explicit), FallbackMode::Preresolved) => result
-            .into_iter()
-            .chain(explicit.iter().map(|langid| langid.into()))
-            .filter(|locale| explicit.contains(&locale.get_langid()))
-            .collect(),
+        (Some(explicit_langids), FallbackMode::Preresolved) => {
+            let ExplicitImplicitLocaleSets { explicit, .. } =
+                make_explicit_implicit_sets(key, explicit_langids, &supported_map, fallbacker)?;
+            explicit
+        }
         // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-        (Some(explicit), _) => {
-            let include_und = explicit.contains(&LanguageIdentifier::UND);
-            let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
-            let mut implicit = HashSet::new();
-            // TODO: Make including the default locale configurable
-            implicit.insert(DataLocale::default());
+        (Some(explicit_langids), _) => {
+            let include_und = explicit_langids.contains(&LanguageIdentifier::UND);
+
+            let ExplicitImplicitLocaleSets { explicit, implicit } =
+                make_explicit_implicit_sets(key, explicit_langids, &supported_map, fallbacker)?;
+
             let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
             let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
-            for locale in explicit.iter() {
-                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                while !iter.get().is_und() {
-                    implicit.insert(iter.get().clone());
-                    iter.step();
-                }
-            }
-
-            result
-                .into_iter()
+            supported_map
+                .into_values()
+                .flatten()
                 .chain(explicit.iter().cloned())
                 .filter(|locale_orig| {
                     let mut locale = locale_orig.clone();
@@ -705,7 +771,7 @@ fn test_collation_filtering() {
             Some(&HashSet::from_iter([cas.language.clone()])),
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
-            &once_cell::sync::Lazy::new(|| unreachable!()),
+            &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
         )
         .unwrap()
         .into_iter()

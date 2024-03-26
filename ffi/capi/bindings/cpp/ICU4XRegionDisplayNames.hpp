@@ -40,7 +40,7 @@ class ICU4XRegionDisplayNames {
 
   /**
    * Returns the locale specific display name of a region.
-   * Note that the funtion returns an empty string in case the display name for a given
+   * Note that the function returns an empty string in case the display name for a given
    * region code is not found.
    * 
    * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
@@ -49,7 +49,7 @@ class ICU4XRegionDisplayNames {
 
   /**
    * Returns the locale specific display name of a region.
-   * Note that the funtion returns an empty string in case the display name for a given
+   * Note that the function returns an empty string in case the display name for a given
    * region code is not found.
    * 
    * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
@@ -83,7 +83,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XRe
   auto diplomat_result_raw_out_value = capi::ICU4XRegionDisplayNames_of(this->inner.get(), region.data(), region.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
@@ -95,7 +95,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XRegionDisplayNames::of(con
   auto diplomat_result_raw_out_value = capi::ICU4XRegionDisplayNames_of(this->inner.get(), region.data(), region.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

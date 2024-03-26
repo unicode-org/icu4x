@@ -13,6 +13,7 @@
 
 class ICU4XPluralOperands;
 #include "ICU4XError.hpp"
+class ICU4XFixedDecimal;
 
 /**
  * A destruction policy for using ICU4XPluralOperands with std::unique_ptr.
@@ -24,8 +25,6 @@ struct ICU4XPluralOperandsDeleter {
 };
 
 /**
- * FFI version of `PluralOperands`.
- * 
  * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
  */
 class ICU4XPluralOperands {
@@ -37,6 +36,13 @@ class ICU4XPluralOperands {
    * See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
   static diplomat::result<ICU4XPluralOperands, ICU4XError> create_from_string(const std::string_view s);
+
+  /**
+   * Construct from a FixedDecimal
+   * 
+   * Retains at most 18 digits each from the integer and fraction parts.
+   */
+  static ICU4XPluralOperands create_from_fixed_decimal(const ICU4XFixedDecimal& x);
   inline const capi::ICU4XPluralOperands* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPluralOperands* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XPluralOperands(capi::ICU4XPluralOperands* i) : inner(i) {}
@@ -47,6 +53,7 @@ class ICU4XPluralOperands {
   std::unique_ptr<capi::ICU4XPluralOperands, ICU4XPluralOperandsDeleter> inner;
 };
 
+#include "ICU4XFixedDecimal.hpp"
 
 inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::create_from_string(const std::string_view s) {
   auto diplomat_result_raw_out_value = capi::ICU4XPluralOperands_create_from_string(s.data(), s.size());
@@ -57,5 +64,8 @@ inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::cr
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XPluralOperands ICU4XPluralOperands::create_from_fixed_decimal(const ICU4XFixedDecimal& x) {
+  return ICU4XPluralOperands(capi::ICU4XPluralOperands_create_from_fixed_decimal(x.AsFFI()));
 }
 #endif

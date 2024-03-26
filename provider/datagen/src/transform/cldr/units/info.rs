@@ -8,13 +8,13 @@ use crate::transform::cldr::{
     cldr_serde::{self},
     units::helpers::ScientificNumber,
 };
+use icu_experimental::units::{
+    measureunit::MeasureUnitParser,
+    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
+};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
-};
-use icu_unitsconversion::{
-    measureunit::MeasureUnitParser,
-    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
 };
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
@@ -26,7 +26,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         self.check_req::<UnitsInfoV1Marker>(_req)?;
 
         // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
-        let units_data: &cldr_serde::units::units_constants::Resource = self
+        let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
@@ -73,9 +73,8 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                     .with_display_context(&e)
             })?;
 
-        let binding = units_conversion_trie.clone().convert_store();
-        let parser = MeasureUnitParser::from_payload(binding);
-        let units_conversion_trie = units_conversion_trie.convert_store().into_zerotrie();
+        let units_conversion_trie = units_conversion_trie.clone().convert_store();
+        let parser = MeasureUnitParser::from_payload(&units_conversion_trie);
 
         let convert_infos = convert_units_vec
             .iter()
@@ -109,9 +108,9 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
 #[test]
 fn test_basic() {
+    use icu_experimental::units::provider::*;
     use icu_locid::locale;
     use icu_provider::prelude::*;
-    use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
     use zerofrom::ZeroFrom;

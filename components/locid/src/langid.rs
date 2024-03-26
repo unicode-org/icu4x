@@ -203,6 +203,27 @@ impl LanguageIdentifier {
         self.write_cmp_bytes(other)
     }
 
+    pub(crate) fn as_tuple(
+        &self,
+    ) -> (
+        subtags::Language,
+        Option<subtags::Script>,
+        Option<subtags::Region>,
+        &subtags::Variants,
+    ) {
+        (self.language, self.script, self.region, &self.variants)
+    }
+
+    /// Compare this [`LanguageIdentifier`] with another [`LanguageIdentifier`] field-by-field.
+    /// The result is a total ordering sufficient for use in a [`BTreeMap`].
+    ///
+    /// Unlike [`Self::strict_cmp`], this function's ordering may not equal string ordering.
+    ///
+    /// [`BTreeMap`]: alloc::collections::BTreeMap
+    pub fn total_cmp(&self, other: &Self) -> Ordering {
+        self.as_tuple().cmp(&other.as_tuple())
+    }
+
     /// Compare this [`LanguageIdentifier`] with an iterator of BCP-47 subtags.
     ///
     /// This function has the same equality semantics as [`LanguageIdentifier::strict_cmp`]. It is intended as
@@ -267,7 +288,6 @@ impl LanguageIdentifier {
     ///
     /// ```
     /// use icu::locid::LanguageIdentifier;
-    /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "pl-LaTn-pL",

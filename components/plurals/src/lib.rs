@@ -58,7 +58,7 @@
 //!
 //! [Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
@@ -482,7 +482,6 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
-    /// use std::convert::TryFrom;
     /// #
     /// # let pr = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
     /// #     .expect("locale should be present");
@@ -581,7 +580,6 @@ impl PluralRules {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralOperands};
 /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
-/// use std::convert::TryFrom;
 ///
 /// let ranges = PluralRulesWithRanges::try_new(
 ///     &locale!("ar").into(),

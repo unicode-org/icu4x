@@ -265,7 +265,7 @@ pub(crate) enum Tag {
     /// Tag for a lead surrogate code unit.
     /// Optional optimization for UTF-16 string processing.
     /// Bits 31..10: Unused, 0.
-    ///       9.. 8: =0: All associated supplementary code points are unassigned-implict.
+    ///       9.. 8: =0: All associated supplementary code points are unassigned-implicit.
     ///              =1: All associated supplementary code points fall back to the base data.
     ///              else: (Normally 2) Look up the data for the supplementary code point.
     /// Not used by ICU4X.
@@ -1980,7 +1980,7 @@ where
                                         //   `head[len - 2]` isn't a leading zero.
                                         // * If `len == 1`: The loop condition is false, because
                                         //   `head[len - 1]` isn't a leading zero, and `&&`
-                                        //   short-circuts, so the `head[len - 2]` access doesn't
+                                        //   short-circuits, so the `head[len - 2]` access doesn't
                                         //   occur.
                                         #[allow(clippy::indexing_slicing)]
                                         while head[len - 1] == 0 && head[len - 2] == 0 {

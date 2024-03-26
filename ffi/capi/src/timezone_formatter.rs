@@ -40,6 +40,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X TimeZoneFormatter object capable of formatting an [`ICU4XCustomTimeZone`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::FormattedTimeZone, Struct, hidden)]
     pub struct ICU4XTimeZoneFormatter(pub TimeZoneFormatter);
 
     #[diplomat::enum_convert(IsoFormat, needs_wildcard)]
@@ -275,6 +276,7 @@ pub mod ffi {
             icu::datetime::time_zone::TimeZoneFormatter::format_to_string,
             FnInStruct
         )]
+        #[diplomat::rust_link(icu::datetime::FormattedTimeZone::write_to, FnInStruct, hidden)]
         pub fn format_custom_time_zone(
             &self,
             value: &ICU4XCustomTimeZone,

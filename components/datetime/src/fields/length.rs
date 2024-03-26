@@ -214,7 +214,7 @@ impl TryFrom<u8> for FieldNumericOverrides {
 }
 
 impl FieldNumericOverrides {
-    /// Conver this to the corresponding string code
+    /// Convert this to the corresponding string code
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Hanidec => "hanidec",

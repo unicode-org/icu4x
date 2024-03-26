@@ -6,14 +6,14 @@ use core::ops::{Div, Mul};
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
+use icu_experimental::units::measureunit::MeasureUnitParser;
+use icu_experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu_provider::DataError;
-use icu_unitsconversion::measureunit::MeasureUnitParser;
-use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use zerovec::ZeroVec;
 
-use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
+use crate::transform::cldr::cldr_serde::units::info::Constant;
 
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:

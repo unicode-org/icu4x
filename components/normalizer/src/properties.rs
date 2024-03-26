@@ -90,7 +90,7 @@ impl CanonicalComposition {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             canonical_compositions: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
@@ -302,7 +302,17 @@ impl CanonicalDecomposition {
             let offset24 = offset - tables.scalars16.len();
             if let Some(first_c) = tables.scalars24.get(offset24) {
                 if len == 1 {
-                    return Decomposed::Singleton(first_c);
+                    if c != first_c {
+                        return Decomposed::Singleton(first_c);
+                    } else {
+                        // Singleton representation used to avoid
+                        // NFC passthrough of characters that combine
+                        // with starters that can occur as the first
+                        // character of an expansion decomposition.
+                        // See section 5 of
+                        // https://www.unicode.org/L2/L2024/24009-utc178-properties-recs.pdf
+                        return Decomposed::Default;
+                    }
                 }
                 if let Some(second_c) = tables.scalars24.get(offset24 + 1) {
                     return Decomposed::Expansion(first_c, second_c);

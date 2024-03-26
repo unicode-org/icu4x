@@ -9,7 +9,7 @@ description = "Build all permutations of all features for the provided chunk ind
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
-env = { RUSTFLAGS = "-Dwarnings" }
+env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
 command = "cargo"
 args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
@@ -18,6 +18,7 @@ description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
+env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
 command = "cargo"
 args = ["check-all-features"]
 
@@ -26,6 +27,7 @@ description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.10"]
+env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/provider/datagen/tests/data/baked" }
 command = "cargo"
 args = ["build-all-features"]
 
@@ -37,6 +39,12 @@ category = "ICU4X Development"
 env = { RUSTFLAGS = "--cfg=icu4x_run_size_tests" }
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
+
+[tasks.test-dev-without-assertions]
+description = "Run all Rust unit and integration tests without debug assertions (GIGO mode)"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--profile=dev-without-assertions", "--all-features", "--tests", "--no-fail-fast"]
 
 [tasks.test-docs]
 description = "Run all Rust doctests with all features"
@@ -54,7 +62,7 @@ exit_on_error true
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-cd docs/tutorials/rust
+cd tutorials/rust
 
 exec --fail-on-error cargo check --manifest-path default/Cargo.toml
 exec --fail-on-error cargo check --manifest-path buffer/Cargo.toml
@@ -76,7 +84,7 @@ set_env CARGO_TARGET_DIR ${project_dir}/target
 
 exec --fail-on-error cargo build -p icu_datagen
 
-cd docs/tutorials/rust
+cd tutorials/rust
 
 mkdir bin
 cp ${project_dir}/target/debug/icu4x-datagen bin/icu4x-datagen
@@ -94,7 +102,7 @@ exec --fail-on-error make -C buffer buffer_data.postcard
 exec --fail-on-error cargo run --manifest-path buffer/Cargo.toml
 
 exec --fail-on-error make -C custom_compiled baked_data/mod.rs
-set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/rust/custom_compiled/baked_data
+set_env ICU4X_DATA_DIR ${project_dir}/tutorials/rust/custom_compiled/baked_data
 exec --fail-on-error cargo run --manifest-path custom_compiled/Cargo.toml
 '''
 
@@ -105,7 +113,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd docs/tutorials/rust
+cd tutorials/rust
 
 # Delete the lockfile to make a clean crates.io build
 rm -f Cargo.lock
@@ -116,7 +124,8 @@ pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
 exec --fail-on-error cargo run --release --manifest-path default/Cargo.toml
-exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
+# icu_experimental is not currently published
+# exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
 exec --fail-on-error cargo run --release --manifest-path sync/Cargo.toml
 exec --fail-on-error cargo run --release --manifest-path baked/Cargo.toml
 

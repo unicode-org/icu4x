@@ -14,13 +14,13 @@ use displaydoc::Display;
 #[derive(Copy, Clone, Display, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Error {
-    /// Could not construct CodePointTrie from deserialized values
+    /// Could not construct [`CodePointTrie`] from deserialized values
     #[displaydoc("Could not construct CodePointTrie from deserialized values: {reason}")]
     FromDeserialized {
         /// Reason for inability to deserialize values.
         reason: &'static str,
     },
-    /// CodePointTrie must be constructed from data vector with at least one element
+    /// [`CodePointTrie`] must be constructed from data vector with at least one element
     #[displaydoc("CodePointTrie must be constructed from data vector with at least one element")]
     EmptyDataVector,
 }

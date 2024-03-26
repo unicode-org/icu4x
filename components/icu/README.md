@@ -105,14 +105,18 @@ functionality are compiled. These features are:
 - `logging`: Enables logging through the `log` crate.
 - `serde`: Activates `serde` implementations for core library types, such as `Locale`, as well
    as `*_with_buffer_provider` constructors for explicit data management.
-- `experimental`: Whether to enable experimental preview features. Modules enabled with
-  this feature may not be production-ready and could change at any time.
 
 The following Cargo features are only available on the individual crates, but not on this meta-crate:
 
 - `datagen`: Whether to implement functionality that is only required during data generation.
 - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
   when running `cargo bench`.
+
+## Experimental modules
+
+Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+are on track to be eventually stabilized into this crate.
+
 
 [CLDR]: http://cldr.unicode.org/
 [`DataProvider`]: icu_provider::DataProvider
@@ -122,7 +126,7 @@ The following Cargo features are only available on the individual crates, but no
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-[data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_provider.md#loading-additional-data-at-runtime
+[data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 <!-- cargo-rdme end -->
 

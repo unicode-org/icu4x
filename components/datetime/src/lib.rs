@@ -112,7 +112,7 @@
 //! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
 //! [`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
@@ -162,6 +162,7 @@ pub use calendar::CldrCalendar;
 pub use calendar::InternalCldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
+pub use error::MismatchedCalendarError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, TypedDateTimeNames};

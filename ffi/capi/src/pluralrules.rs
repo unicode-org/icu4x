@@ -13,7 +13,6 @@ pub mod ffi {
 
     use crate::errors::ffi::ICU4XError;
 
-    /// FFI version of `PluralCategory`.
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(PluralCategory)]
     pub enum ICU4XPluralCategory {
@@ -30,14 +29,11 @@ pub mod ffi {
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
-        pub fn get_for_cldr_string(s: &DiplomatStr) -> Result<ICU4XPluralCategory, ()> {
-            PluralCategory::get_for_cldr_bytes(s)
-                .ok_or(())
-                .map(Into::into)
+        pub fn get_for_cldr_string(s: &DiplomatStr) -> Option<ICU4XPluralCategory> {
+            PluralCategory::get_for_cldr_bytes(s).map(Into::into)
         }
     }
 
-    /// FFI version of `PluralRules`.
     #[diplomat::rust_link(icu::plurals::PluralRules, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XPluralRules(PluralRules);
@@ -92,7 +88,6 @@ pub mod ffi {
         }
     }
 
-    /// FFI version of `PluralOperands`.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::plurals::PluralOperands, Struct)]
     pub struct ICU4XPluralOperands(pub icu_plurals::PluralOperands);
@@ -106,9 +101,18 @@ pub mod ffi {
                 &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
             ))))
         }
+
+        /// Construct from a FixedDecimal
+        ///
+        /// Retains at most 18 digits each from the integer and fraction parts.
+        #[cfg(feature = "icu_decimal")]
+        pub fn create_from_fixed_decimal(
+            x: &crate::fixed_decimal::ffi::ICU4XFixedDecimal,
+        ) -> Box<Self> {
+            Box::new(Self((&x.0).into()))
+        }
     }
 
-    /// FFI version of `PluralRules::categories()` data.
     #[diplomat::out]
     pub struct ICU4XPluralCategories {
         pub zero: bool,

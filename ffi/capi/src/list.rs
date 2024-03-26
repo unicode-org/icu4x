@@ -115,6 +115,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         pub fn format(
             &self,
             list: &ICU4XList,

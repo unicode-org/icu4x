@@ -9,7 +9,7 @@
 //! command-line utility.
 //!
 //!
-//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md).
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
 //!
 //! # Examples
 //!
@@ -107,14 +107,9 @@
 //!   * enables the deprecated pre-1.3 API
 //!   * enabled by default for semver stability
 //!   * will be removed in 2.0.
-//!
-//! Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
-//! affect the behaviour of [`all_keys`]:
-//! * `icu_compactdecimal`
-//! * `icu_displaynames`
-//! * `icu_relativetime`
-//! * `icu_transliterate`
-//! * ...
+//! * `icu_experimental`
+//!   * enables data generation for keys defined in the unstable `icu_experimental` crate
+//!   * note that this features affects the behaviour of `all_keys`
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
 
@@ -368,7 +363,6 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_file("keys.txt")?,
@@ -407,7 +401,6 @@ fn keys_from_file_inner<R: std::io::Read>(source: R) -> std::io::Result<Vec<Data
 /// #### build.rs
 /// ```no_run
 /// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,

@@ -16,7 +16,6 @@ use crate::FixedDecimal;
 /// # Examples
 ///
 /// ```
-/// # use std::convert::TryFrom;
 /// # use std::str::FromStr;
 /// use fixed_decimal::Error;
 /// use fixed_decimal::FixedDecimal;

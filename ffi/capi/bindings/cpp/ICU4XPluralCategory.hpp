@@ -14,8 +14,6 @@
 
 
 /**
- * FFI version of `PluralCategory`.
- * 
  * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
  */
 enum struct ICU4XPluralCategory {
