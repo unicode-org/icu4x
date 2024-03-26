@@ -53,7 +53,24 @@ impl ConverterFactory {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_unstable)]
+    /// Creates a new [`ConverterFactory`] from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new() -> Result<Self, ConversionError> {
+        let payload = crate::provider::Baked
+            .load(DataRequest {
+                locale: &DataLocale::default(),
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self { payload })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, ConversionError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
