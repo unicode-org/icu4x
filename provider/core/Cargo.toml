@@ -51,7 +51,7 @@ icu_provider_adapters = { path = "../adapters" }
 icu_locid_transform = { path = "../../components/locid_transform" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 bench = []
