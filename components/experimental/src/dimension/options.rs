@@ -22,12 +22,17 @@ impl From<Width> for CurrencyFormatterOptions {
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[non_exhaustive]
 pub enum Width {
-    /// Represents the short currency format.
-    /// For example, "$1.00" in English. (TODO: is this correct?)
+    /// Format the currency with the standard (short) currency symbol.
+    ///
+    /// For example, 1 USD formats as "$1.00" in en-US and "US$1" in most other locales.
     Short,
 
-    /// Represents the narrow currency format.
-    /// For example, "$1" in English. (TODO: is this correct?)
+    /// Format the currency with the narrow currency symbol.
+    ///
+    /// The narrow symbol may be ambiguous, so it should be evident from context which
+    /// currency is being represented.
+    ///
+    /// For example, 1 USD formats as "$1.00" in most locales.
     Narrow,
 }
 
