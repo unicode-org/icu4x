@@ -135,6 +135,12 @@ make_exportable_provider!(
     ]
 );
 
+fn families(
+    langids: impl IntoIterator<Item = LanguageIdentifier>,
+) -> impl IntoIterator<Item = LocaleFamily> {
+    langids.into_iter().map(LocaleFamily::with_descendants)
+}
+
 fn export_to_map(
     driver_1_4: DatagenDriver,
     driver_1_5: DatagenDriver,
@@ -360,12 +366,7 @@ fn explicit_preferred() {
             .with_fallback_mode(FallbackMode::PreferredForExporter),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(
-                SELECTED_LOCALES
-                    .into_iter()
-                    .map(LocaleFamily::with_descendants),
-                Default::default(),
-            ),
+            .with_locales_and_fallback(families(SELECTED_LOCALES), Default::default()),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -414,16 +415,11 @@ fn explicit_hybrid() {
             .with_fallback_mode(FallbackMode::Hybrid),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(
-                SELECTED_LOCALES
-                    .into_iter()
-                    .map(LocaleFamily::with_descendants),
-                {
-                    let mut options = FallbackOptions::default();
-                    options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
-                    options
-                },
-            ),
+            .with_locales_and_fallback(families(SELECTED_LOCALES), {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -472,16 +468,11 @@ fn explicit_runtime() {
             .with_fallback_mode(FallbackMode::RuntimeManual),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(
-                SELECTED_LOCALES
-                    .into_iter()
-                    .map(LocaleFamily::with_descendants),
-                {
-                    let mut options = FallbackOptions::default();
-                    options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
-                    options
-                },
-            ),
+            .with_locales_and_fallback(families(SELECTED_LOCALES), {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                options
+            }),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
