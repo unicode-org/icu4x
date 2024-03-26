@@ -160,8 +160,8 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
-        LocaleFamily,
+        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, DeduplicationStrategy,
+        FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};

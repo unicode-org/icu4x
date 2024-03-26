@@ -52,7 +52,7 @@ impl LocalesAndNoFallbackOptions {
 /// the locale fallback algorithm. If internal fallback is requested for an exporter that does
 /// not support it, an error will occur.
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 pub enum RuntimeFallbackLocation {
     /// Include fallbacking code in the exported data provider.
     Internal,
@@ -65,7 +65,7 @@ pub enum RuntimeFallbackLocation {
     External,
 }
 
-/// Choices for determining the deduplication of exported data payloads.
+/// Choices for determining the deduplication of locales for exported data payloads.
 ///
 /// Deduplication affects the lookup table from locales to data payloads. If a child locale
 /// points to the same payload as its parent locale, then the child locale can be removed from
@@ -85,7 +85,7 @@ pub enum RuntimeFallbackLocation {
 /// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
 /// [`NoDeduplication`]: DeduplicationStrategy::NoDeduplication
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 pub enum DeduplicationStrategy {
     /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,

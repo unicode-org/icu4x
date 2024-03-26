@@ -86,23 +86,52 @@ fn main() -> eyre::Result<()> {
         config::KeyInclude::Explicit(set) => driver.with_keys(set),
         config::KeyInclude::ForBinary(path) => driver.with_keys(icu_datagen::keys_from_bin(path)?),
     };
-    driver = driver.with_fallback_mode(config.fallback);
-    driver = driver.with_additional_collations(config.additional_collations);
-    driver = match config.locales {
-        config::LocaleInclude::All => driver.with_all_locales(),
-        config::LocaleInclude::None => driver.with_locales([]),
-        config::LocaleInclude::Explicit(set) => driver.with_locales(set),
-        config::LocaleInclude::CldrSet(levels) => {
-            driver.with_locales(provider.locales_for_coverage_levels(levels.iter().copied())?)
-        }
-        config::LocaleInclude::Recommended => {
-            driver.with_locales(provider.locales_for_coverage_levels([
-                CoverageLevel::Modern,
-                CoverageLevel::Moderate,
-                CoverageLevel::Basic,
-            ])?)
-        }
+    enum LanguageIdentifiersOrLocaleFamilies {
+        LanguageIdentifiers(Vec<LanguageIdentifier>),
+        LocaleFamilies(Vec<LocaleFamily>),
+    }
+    use LanguageIdentifiersOrLocaleFamilies::*;
+    let locales_intermediate: LanguageIdentifiersOrLocaleFamilies = match config.locales {
+        config::LocaleInclude::All => LocaleFamilies(vec![LocaleFamily::full()]),
+        config::LocaleInclude::None => LanguageIdentifiers(vec![]),
+        config::LocaleInclude::Explicit(set) => LanguageIdentifiers(set.into_iter().collect()),
+        config::LocaleInclude::CldrSet(levels) => LanguageIdentifiers(
+            provider
+                .locales_for_coverage_levels(levels.iter().copied())?
+                .into_iter()
+                .collect(),
+        ),
+        config::LocaleInclude::Recommended => LanguageIdentifiers(
+            provider
+                .locales_for_coverage_levels([
+                    CoverageLevel::Modern,
+                    CoverageLevel::Moderate,
+                    CoverageLevel::Basic,
+                ])?
+                .into_iter()
+                .collect(),
+        ),
     };
+    if config.without_fallback {
+        let locale_families = match locales_intermediate {
+            LanguageIdentifiers(lids) => lids,
+            LocaleFamilies(lfs) => eyre::bail!("--without-fallback needs an explicit locale list"),
+        };
+        driver = driver.with_locales_no_fallback(locale_families, Default::default());
+    } else {
+        let locale_families = match locales_intermediate {
+            LanguageIdentifiers(lids) => lids
+                .into_iter()
+                .map(LocaleFamily::with_descendants)
+                .collect(),
+            LocaleFamilies(lfs) => lfs,
+        };
+        let mut options: FallbackOptions = Default::default();
+        options.deduplication_strategy = config.deduplication_strategy;
+        options.runtime_fallback_location = config.runtime_fallback_location;
+        driver = driver.with_locales_and_fallback(locale_families, options);
+    }
+    driver = driver.with_additional_collations(config.additional_collations);
     driver = match config.segmenter_models {
         config::SegmenterModelInclude::None => driver.with_segmenter_models([]),
         config::SegmenterModelInclude::Recommended => driver.with_segmenter_models([
