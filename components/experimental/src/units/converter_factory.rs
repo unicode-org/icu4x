@@ -4,7 +4,6 @@
 
 use super::ConversionError;
 use icu_provider::prelude::*;
-use icu_provider::DataPayload;
 use litemap::LiteMap;
 use num_bigint::BigInt;
 use num_rational::Ratio;
@@ -45,27 +44,17 @@ impl ConverterFactory {
         options: skip,
         error: ConversionError,
         #[cfg(skip)]
+        functions: [
+            new_factory,
+            try_new_factory_with_any_provider,
+            try_new_factory_with_buffer_provider,
+            try_new_factory_unstable,
+            Self
+        ]
     );
 
-    /// Creates a new [`ConverterFactory`] from compiled locale data and an options bag.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new() -> Result<Self, ConversionError> {
-        let payload = crate::provider::Baked
-            .load(DataRequest {
-                locale: &DataLocale::default(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-
-        Ok(Self { payload })
-    }
-
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, ConversionError>
+    pub fn try_new_factory_unstable<D>(provider: &D) -> Result<Self, ConversionError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
