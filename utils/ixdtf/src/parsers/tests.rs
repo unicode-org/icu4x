@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 use crate::{
     parsers::{
         records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord},
-        IxdtfOptions, IxdtfParser,
+        IxdtfParser,
     },
     ParserError,
 };
@@ -291,10 +291,7 @@ fn temporal_year_month() {
     ];
 
     for ym in possible_year_months {
-        let result = IxdtfParser::new(ym)
-            .with_option(IxdtfOptions::YearMonth)
-            .parse()
-            .unwrap();
+        let result = IxdtfParser::new(ym).parse_year_month().unwrap();
 
         let date = result.date.unwrap();
 
@@ -307,21 +304,15 @@ fn temporal_year_month() {
 fn invalid_year_month() {
     // Valid AnnotatedDateTime, but not a valid AnnotatedYearMonth.
     let bad_value = "+002020-11T12:28:32[!u-ca=iso8601]";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::YearMonth)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_year_month();
     assert_eq!(err, Err(ParserError::InvalidEnd));
 
     let bad_value = "-202011[!u-ca=iso8601]";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::YearMonth)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_year_month();
     assert_eq!(err, Err(ParserError::DateMonth));
 
     let bad_value = "-00202011Z[Europe/Berlin]";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::YearMonth)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_year_month();
     assert_eq!(err, Err(ParserError::InvalidEnd));
 }
 
@@ -330,10 +321,7 @@ fn temporal_month_day() {
     let possible_month_day = ["11-07", "1107[+04:00]", "--11-07", "--1107[+04:00]"];
 
     for md in possible_month_day {
-        let result = IxdtfParser::new(md)
-            .with_option(IxdtfOptions::MonthDay)
-            .parse()
-            .unwrap();
+        let result = IxdtfParser::new(md).parse_month_day().unwrap();
 
         let date = result.date.unwrap();
 
@@ -345,9 +333,7 @@ fn temporal_month_day() {
 #[test]
 fn invalid_month_day() {
     let bad_value = "-11-07";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::MonthDay)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_month_day();
     assert_eq!(err, Err(ParserError::MonthDayHyphen))
 }
 
@@ -363,10 +349,7 @@ fn temporal_time() {
     ];
 
     for time in possible_times {
-        let result = IxdtfParser::new(time)
-            .with_option(IxdtfOptions::Time)
-            .parse()
-            .unwrap();
+        let result = IxdtfParser::new(time).parse_time().unwrap();
         let time = result.time.unwrap();
         assert_eq!(time.hour, 12);
         assert_eq!(time.minute, 1);
@@ -377,9 +360,7 @@ fn temporal_time() {
 #[test]
 fn invalid_time() {
     let bad_value = "20240801";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::Time)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_time();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -387,9 +368,7 @@ fn invalid_time() {
     );
 
     let bad_value = "24-12-08";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::Time)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_time();
     assert_eq!(
         err,
         Err(ParserError::TimeHour),
@@ -398,9 +377,7 @@ fn invalid_time() {
 
     // Attempts to parse UTC offset: -12, leaving -08 on end as junk.
     let bad_value = "T19-12-08";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::Time)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_time();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -408,9 +385,7 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:12-089";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::Time)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_time();
     assert_eq!(
         err,
         Err(ParserError::InvalidEnd),
@@ -418,9 +393,7 @@ fn invalid_time() {
     );
 
     let bad_value = "T19:120-08";
-    let err = IxdtfParser::new(bad_value)
-        .with_option(IxdtfOptions::Time)
-        .parse();
+    let err = IxdtfParser::new(bad_value).parse_time();
     assert_eq!(
         err,
         Err(ParserError::TimeSeparator),
