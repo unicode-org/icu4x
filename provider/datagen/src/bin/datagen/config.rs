@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datagen::LocaleFamily;
 pub use icu_datagen::{
     CollationHanDatabase, CoverageLevel, DeduplicationStrategy, FallbackMode,
     RuntimeFallbackLocation, TrieType,
@@ -86,7 +87,7 @@ pub enum LocaleInclude {
     Recommended,
     All,
     None,
-    Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LanguageIdentifier>),
+    Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LocaleFamily>),
     CldrSet(#[serde(serialize_with = "sorted_set")] HashSet<CoverageLevel>),
 }
 

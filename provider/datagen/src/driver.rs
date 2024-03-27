@@ -4,7 +4,9 @@
 
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
+use displaydoc::Display;
 use icu_locid::extensions::unicode::key;
+use icu_locid::ParserError;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::LocaleFallbacker;
@@ -14,6 +16,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
+use std::str::FromStr;
 use std::time::Duration;
 use std::time::Instant;
 use writeable::Writeable;
@@ -147,19 +150,104 @@ impl LocaleFamily {
     }
 }
 
-impl fmt::Display for LocaleFamily {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Writeable for LocaleFamily {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         match (
             &self.langid,
             self.include_ancestors,
             self.include_descendants,
         ) {
-            (Some(langid), true, true) => write!(f, "{}", langid),
-            (Some(langid), true, false) => write!(f, "^{}", langid),
-            (Some(langid), false, false) => write!(f, "@{}", langid),
+            (Some(langid), true, true) => langid.write_to(sink),
+            (Some(langid), true, false) => {
+                sink.write_char('^')?;
+                langid.write_to(sink)
+            },
+            (Some(langid), false, false) => {
+                sink.write_char('@')?;
+                langid.write_to(sink)
+            },
             (Some(_), false, true) => unreachable!(),
-            (None, _, _) => write!(f, "full"),
+            (None, _, _) => sink.write_str("full"),
         }
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        match (
+            &self.langid,
+            self.include_ancestors,
+            self.include_descendants,
+        ) {
+            (Some(langid), true, true) => langid.writeable_length_hint(),
+            (Some(langid), true, false) => langid.writeable_length_hint() + 1,
+            (Some(langid), false, false) => langid.writeable_length_hint() + 1,
+            (Some(_), false, true) => unreachable!(),
+            (None, _, _) => writeable::LengthHint::exact(4),
+        }
+    }
+}
+
+writeable::impl_display_with_writeable!(LocaleFamily);
+
+/// An error while parsing a [`LocaleFamily`].
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
+#[non_exhaustive]
+pub enum LocaleFamilyParseError {
+    /// An error bubbled up from parsing a [`LanguageIdentifier`].
+    #[displaydoc("{0}")]
+    LanguageIdentifier(ParserError),
+    /// Some other error specific to parsing the family, such as an invalid lead byte.
+    #[displaydoc("Invalid locale family")]
+    InvalidFamily,
+}
+
+impl From<ParserError> for LocaleFamilyParseError {
+    fn from(err: ParserError) -> Self {
+        Self::LanguageIdentifier(err)
+    }
+}
+
+impl FromStr for LocaleFamily {
+    type Err = LocaleFamilyParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "full" {
+            return Ok(Self::full());
+        }
+        let (first, remainder) = s.as_bytes().split_first().ok_or(LocaleFamilyParseError::InvalidFamily)?;
+        match first {
+            b'^' => Ok(Self {
+                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                include_ancestors: true,
+                include_descendants: false,
+            }),
+            b'@' => Ok(Self {
+                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                include_ancestors: false,
+                include_descendants: false,
+            }),
+            b if b.is_ascii_alphanumeric() => Ok(Self {
+                langid: Some(s.parse()?),
+                include_ancestors: true,
+                include_descendants: true,
+            }),
+            _ => Err(LocaleFamilyParseError::InvalidFamily)
+        }
+    }
+}
+
+impl serde::Serialize for LocaleFamily {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer {
+        self.write_to_string().serialize(serializer)
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for LocaleFamily {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de> {
+                use serde::de::Error;
+        <&str>::deserialize(deserializer)?.parse().map_err(|e| D::Error::custom(&e))
     }
 }
 
