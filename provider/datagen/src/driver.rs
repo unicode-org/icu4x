@@ -217,7 +217,7 @@ impl fmt::Display for LocalesWithOrWithoutFallback {
                 write!(f, "{start}, ")?;
                 match options.deduplication_strategy {
                     Some(x) => x.describe(f)?,
-                    None => "default deduplication",
+                    None => write!(f, "default deduplication")?,
                 }
                 write!(f, ", and these locales: {:?}", sorted_locales)
             }
