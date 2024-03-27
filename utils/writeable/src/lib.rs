@@ -319,6 +319,57 @@ pub trait Writeable {
     }
 }
 
+/// A [`Writeable`] that is either one type or another type.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_enums)] // defined to be an enumeration over two types
+pub enum EitherWriteable<W0, W1> {
+    /// A value of type `W0`.
+    A(W0),
+    /// A value of type `W1`.
+    B(W1),
+}
+
+impl<W0, W1> Writeable for EitherWriteable<W0, W1>
+where
+    W0: Writeable,
+    W1: Writeable,
+{
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        match self {
+            EitherWriteable::A(w) => w.write_to(sink),
+            EitherWriteable::B(w) => w.write_to(sink),
+        }
+    }
+
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        match self {
+            EitherWriteable::A(w) => w.write_to_parts(sink),
+            EitherWriteable::B(w) => w.write_to_parts(sink),
+        }
+    }
+
+    fn writeable_length_hint(&self) -> LengthHint {
+        match self {
+            EitherWriteable::A(w) => w.writeable_length_hint(),
+            EitherWriteable::B(w) => w.writeable_length_hint(),
+        }
+    }
+
+    fn write_to_string(&self) -> Cow<str> {
+        match self {
+            EitherWriteable::A(w) => w.write_to_string(),
+            EitherWriteable::B(w) => w.write_to_string(),
+        }
+    }
+
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        match self {
+            EitherWriteable::A(w) => w.write_cmp_bytes(other),
+            EitherWriteable::B(w) => w.write_cmp_bytes(other),
+        }
+    }
+}
+
 /// Implements [`Display`](core::fmt::Display) for types that implement [`Writeable`].
 ///
 /// It's recommended to do this for every [`Writeable`] type, as it will add
