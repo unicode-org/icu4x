@@ -104,7 +104,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the hour in this time
   ///
-  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
+  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
   int get hour {
     final result = _ICU4XIsoDateTime_hour(_ffi);
     return result;
@@ -112,7 +112,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the minute in this time
   ///
-  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
+  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
   int get minute {
     final result = _ICU4XIsoDateTime_minute(_ffi);
     return result;
@@ -120,7 +120,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the second in this time
   ///
-  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
+  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
   int get second {
     final result = _ICU4XIsoDateTime_second(_ffi);
     return result;
@@ -128,7 +128,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the nanosecond in this time
   ///
-  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
+  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
   int get nanosecond {
     final result = _ICU4XIsoDateTime_nanosecond(_ffi);
     return result;
