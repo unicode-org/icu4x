@@ -23,28 +23,6 @@ use writeable::Writeable;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct NoFallbackOptions {}
 
-#[derive(Debug, Clone)]
-struct LocalesAndNoFallbackOptions {
-    locales: HashSet<LanguageIdentifier>,
-    _options: NoFallbackOptions,
-}
-
-impl LocalesAndNoFallbackOptions {
-    fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut sorted_locales = self
-            .locales
-            .iter()
-            .map(ToString::to_string)
-            .collect::<Vec<_>>();
-        sorted_locales.sort();
-        write!(
-            f,
-            "without fallback and these locales: {:?}",
-            sorted_locales
-        )
-    }
-}
-
 /// Choices for the code location of runtime fallback.
 ///
 /// Some data providers support "internal" fallback in which all data requests automatically run
@@ -214,44 +192,45 @@ pub struct FallbackOptions {
 }
 
 #[derive(Debug, Clone)]
-struct LocalesAndFallbackOptions {
-    locales: HashSet<LocaleFamily>,
-    options: FallbackOptions,
-}
-
-impl LocalesAndFallbackOptions {
-    fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut sorted_locales = self
-            .locales
-            .iter()
-            .map(ToString::to_string)
-            .collect::<Vec<_>>();
-        sorted_locales.sort();
-        let start = match self.options.runtime_fallback_location {
-            None => "with fallback",
-            Some(RuntimeFallbackLocation::Internal) => "with internal fallback",
-            Some(RuntimeFallbackLocation::External) => "with external fallback",
-        };
-        write!(f, "{start}, ")?;
-        match self.options.deduplication_strategy {
-            Some(x) => x.describe(f)?,
-            None => write!(f, "default deduplication")?,
-        }
-        write!(f, ", and these locales: {:?}", sorted_locales)
-    }
-}
-
-#[derive(Debug, Clone)]
 enum LocalesWithOrWithoutFallback {
-    WithFallback(LocalesAndFallbackOptions),
-    WithoutFallback(LocalesAndNoFallbackOptions),
+    WithFallback {
+        locales: HashSet<LocaleFamily>,
+        options: FallbackOptions,
+    },
+    WithoutFallback {
+        locales: HashSet<LanguageIdentifier>,
+    },
 }
 
 impl fmt::Display for LocalesWithOrWithoutFallback {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::WithFallback(config) => config.describe(f),
-            Self::WithoutFallback(config) => config.describe(f),
+            Self::WithFallback { locales, options } => {
+                let mut sorted_locales =
+                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
+                sorted_locales.sort();
+                let start = match options.runtime_fallback_location {
+                    None => unreachable!(),
+                    Some(RuntimeFallbackLocation::Internal) => "with internal fallback",
+                    Some(RuntimeFallbackLocation::External) => "with external fallback",
+                };
+                write!(f, "{start}, ")?;
+                match options.deduplication_strategy {
+                    Some(x) => x.describe(f)?,
+                    None => unreachable!(),
+                }
+                write!(f, ", and these locales: {:?}", sorted_locales)
+            }
+            Self::WithoutFallback { locales } => {
+                let mut sorted_locales =
+                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
+                sorted_locales.sort();
+                write!(
+                    f,
+                    "without fallback and these locales: {:?}",
+                    sorted_locales
+                )
+            }
         }
     }
 }
@@ -356,15 +335,12 @@ impl DatagenDriver {
     pub fn with_locales_no_fallback(
         self,
         locales: impl IntoIterator<Item = LanguageIdentifier>,
-        options: NoFallbackOptions,
+        _options: NoFallbackOptions,
     ) -> Self {
         Self {
-            locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback(
-                LocalesAndNoFallbackOptions {
-                    locales: locales.into_iter().collect(),
-                    _options: options,
-                },
-            )),
+            locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback {
+                locales: locales.into_iter().collect(),
+            }),
             ..self
         }
     }
@@ -382,12 +358,10 @@ impl DatagenDriver {
         options: FallbackOptions,
     ) -> Self {
         Self {
-            locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback(
-                LocalesAndFallbackOptions {
-                    locales: locales.into_iter().collect(),
-                    options,
-                },
-            )),
+            locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback {
+                locales: locales.into_iter().collect(),
+                options,
+            }),
             ..self
         }
     }
@@ -519,37 +493,36 @@ impl DatagenDriver {
             (Some(locales_fallback), _, _) => locales_fallback,
             // 1.4 API
             (_, Some(legacy_locales), FallbackMode::PreferredForExporter) => {
-                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                LocalesWithOrWithoutFallback::WithFallback {
                     locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: None,
                         deduplication_strategy: None,
                     },
-                })
+                }
             }
             (_, Some(legacy_locales), FallbackMode::Runtime) => {
-                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                LocalesWithOrWithoutFallback::WithFallback {
                     locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
                     },
-                })
+                }
             }
             (_, Some(legacy_locales), FallbackMode::RuntimeManual) => {
-                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                LocalesWithOrWithoutFallback::WithFallback {
                     locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
                     },
-                })
+                }
             }
             (_, Some(Some(locales)), FallbackMode::Preresolved) => {
-                LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
+                LocalesWithOrWithoutFallback::WithoutFallback {
                     locales: locales.into_iter().collect(),
-                    _options: NoFallbackOptions {},
-                })
+                }
             }
             (_, Some(None), FallbackMode::Preresolved) => {
                 return Err(DataError::custom(
@@ -557,13 +530,13 @@ impl DatagenDriver {
                 ));
             }
             (_, Some(legacy_locales), FallbackMode::Hybrid) => {
-                LocalesWithOrWithoutFallback::WithFallback(LocalesAndFallbackOptions {
+                LocalesWithOrWithoutFallback::WithFallback {
                     locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::NoDeduplication),
                     },
-                })
+                }
             }
             // Failure case
             _ => {
@@ -580,11 +553,11 @@ impl DatagenDriver {
         log::info!("Datagen configured {locales_fallback}");
 
         let deduplication_strategy = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback(_) => {
+            LocalesWithOrWithoutFallback::WithoutFallback { .. } => {
                 DeduplicationStrategy::NoDeduplication
             }
-            LocalesWithOrWithoutFallback::WithFallback(config) => {
-                match config.options.deduplication_strategy {
+            LocalesWithOrWithoutFallback::WithFallback { options, .. } => {
+                match options.deduplication_strategy {
                     // TODO: Default to RetainBaseLanguages here
                     None => {
                         if sink.supports_built_in_fallback() {
@@ -599,9 +572,9 @@ impl DatagenDriver {
         };
 
         let uses_internal_fallback = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback(_) => false,
-            LocalesWithOrWithoutFallback::WithFallback(config) => {
-                match config.options.runtime_fallback_location {
+            LocalesWithOrWithoutFallback::WithoutFallback { .. } => false,
+            LocalesWithOrWithoutFallback::WithFallback { options, .. } => {
+                match options.runtime_fallback_location {
                     None => sink.supports_built_in_fallback(),
                     Some(RuntimeFallbackLocation::Internal) => true,
                     Some(RuntimeFallbackLocation::External) => false,
@@ -961,22 +934,22 @@ fn select_locales_for_key(
         });
     }
 
-    let config = match locales_fallback {
+    let locale_families = match locales_fallback {
         // `FallbackMode::Preresolved` exports all supported locales whose langid matches
         // one of the explicit locales. This ensures extensions are included. In addition, any
         // explicit locales are added to the list, even if they themselves don't contain data;
         // fallback should be performed upon exporting.
-        LocalesWithOrWithoutFallback::WithoutFallback(config) => {
-            let mut it = config.locales.iter().map(|langid| (langid, false));
+        LocalesWithOrWithoutFallback::WithoutFallback { locales, .. } => {
+            let mut it = locales.iter().map(|langid| (langid, false));
             let ExplicitImplicitLocaleSets { explicit, .. } =
                 make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
             return Ok(explicit);
         }
         // All other modes resolve to fallback-aware inclusion.
-        LocalesWithOrWithoutFallback::WithFallback(config) => config,
+        LocalesWithOrWithoutFallback::WithFallback { locales, .. } => locales,
     };
 
-    let mut it = config.locales.iter().filter_map(|x| {
+    let mut it = locale_families.iter().filter_map(|x| {
         x.langid
             .as_ref()
             .map(|langid| (langid, x.include_ancestors))
@@ -990,7 +963,7 @@ fn select_locales_for_key(
         .chain(explicit.iter().cloned());
 
     // Need to check this ahead of time because we can avoid loading the fallbacker.
-    if config.locales.contains(&LocaleFamily::full()) {
+    if locale_families.contains(&LocaleFamily::full()) {
         return Ok(supported_and_explicit.collect());
     }
 
@@ -1140,10 +1113,9 @@ fn test_collation_filtering() {
         let resolved_locales = select_locales_for_key(
             &crate::DatagenProvider::new_testing(),
             icu_collator::provider::CollationDataV1Marker::KEY,
-            &LocalesWithOrWithoutFallback::WithoutFallback(LocalesAndNoFallbackOptions {
+            &LocalesWithOrWithoutFallback::WithoutFallback {
                 locales: [cas.language.clone()].into_iter().collect(),
-                _options: Default::default(),
-            }),
+            },
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
             &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
