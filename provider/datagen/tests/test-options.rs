@@ -262,7 +262,7 @@ fn all_hybrid() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales_and_fallback([LocaleFamily::full()], {
                 let mut options = FallbackOptions::default();
-                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options.deduplication_strategy = Some(DeduplicationStrategy::None);
                 options
             }),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -417,7 +417,7 @@ fn explicit_hybrid() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales_and_fallback(families(SELECTED_LOCALES), {
                 let mut options = FallbackOptions::default();
-                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options.deduplication_strategy = Some(DeduplicationStrategy::None);
                 options
             }),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -576,7 +576,7 @@ fn explicit_hybrid_und() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], {
                 let mut options = FallbackOptions::default();
-                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options.deduplication_strategy = Some(DeduplicationStrategy::None);
                 options
             }),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -644,7 +644,7 @@ fn explicit_hybrid_empty() {
             .with_keys([HelloWorldV1Marker::KEY])
             .with_locales_and_fallback([], {
                 let mut options = FallbackOptions::default();
-                options.deduplication_strategy = Some(DeduplicationStrategy::NoDeduplication);
+                options.deduplication_strategy = Some(DeduplicationStrategy::None);
                 options
             }),
         &TestingProvider::with_decimal_symbol_like_data(),

@@ -56,10 +56,10 @@ pub enum RuntimeFallbackLocation {
 /// |---|---|---|---|
 /// | [`Maximal`] | Smallest | No | Yes |
 /// | `RetainBaseLanguages` (TODO(#58): coming soon) | Small | Yes | Yes |
-/// | [`NoDeduplication`] | Medium/Small | Yes | No |
+/// | [`None`] | Medium/Small | Yes | No |
 ///
 /// [`Maximal`]: DeduplicationStrategy::Maximal
-/// [`NoDeduplication`]: DeduplicationStrategy::NoDeduplication
+/// [`None`]: DeduplicationStrategy::None
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 pub enum DeduplicationStrategy {
@@ -72,7 +72,7 @@ pub enum DeduplicationStrategy {
     RetainBaseLanguages,
     */
     /// Keeps all selected locales in the lookup table.
-    NoDeduplication,
+    None,
 }
 
 /// A family of locales to export.
@@ -489,7 +489,7 @@ impl DatagenDriver {
                     locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
-                        deduplication_strategy: Some(DeduplicationStrategy::NoDeduplication),
+                        deduplication_strategy: Some(DeduplicationStrategy::None),
                     },
                 }
             }
@@ -514,7 +514,7 @@ impl DatagenDriver {
                     "Datagen configured without fallback with these locales: {:?}",
                     sorted_locales
                 );
-                (false, DeduplicationStrategy::NoDeduplication)
+                (false, DeduplicationStrategy::None)
             }
             LocalesWithOrWithoutFallback::WithFallback { options, locales } => {
                 let uses_internal_fallback = match options.runtime_fallback_location {
@@ -528,7 +528,7 @@ impl DatagenDriver {
                         if sink.supports_built_in_fallback() {
                             DeduplicationStrategy::Maximal
                         } else {
-                            DeduplicationStrategy::NoDeduplication
+                            DeduplicationStrategy::None
                         }
                     }
                     Some(x) => x,
@@ -547,7 +547,7 @@ impl DatagenDriver {
                         DeduplicationStrategy::Maximal => "maximal deduplication",
                         // TODO(#58): Add `RetainBaseLanguages`
                         // DeduplicationStrategy::RetainBaseLanguages => "deduplication retaining base languages",
-                        DeduplicationStrategy::NoDeduplication => "no deduplication",
+                        DeduplicationStrategy::None => "no deduplication",
                     },
                     sorted_locales
                 );
@@ -713,7 +713,7 @@ impl DatagenDriver {
                         })
                         .max()
                 }
-                DeduplicationStrategy::NoDeduplication => locales_to_export
+                DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
                     .filter_map(|locale| {
                         let instant2 = Instant::now();
