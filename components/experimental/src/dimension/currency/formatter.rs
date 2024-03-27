@@ -27,7 +27,7 @@ pub struct CurrencyFormatter {
     options: CurrencyFormatterOptions,
 
     /// Essential data for the currency formatter.
-    essential: DataPayload<super::provider::currency::CurrencyEssentialsV1Marker>,
+    essential: DataPayload<super::super::provider::currency::CurrencyEssentialsV1Marker>,
 
     // TODO: Remove this allow once the `fixed_decimal_formatter` is used.
     #[allow(dead_code)]
@@ -87,7 +87,7 @@ impl CurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::provider::currency::CurrencyEssentialsV1Marker>
+            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
