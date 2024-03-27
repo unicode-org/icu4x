@@ -245,7 +245,7 @@ pub struct Cli {
 
     // TODO(#2856): Change the default to Auto in 2.0
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
-    #[arg(hide = true, help = "Deprecated: alias for --locales full")]
+    #[arg(hide = true, help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback")]
     fallback: Fallback,
 
     #[arg(long)]
