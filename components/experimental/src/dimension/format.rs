@@ -6,15 +6,12 @@ use fixed_decimal::FixedDecimal;
 
 use writeable::Writeable;
 
-use super::options::Width;
+use super::{options::Width, provider::currency};
 use crate::dimension::{
     options::CurrencyFormatterOptions, provider::currency::CurrencyEssentialsV1,
 };
 
-use super::{
-    provider::currency::{self},
-    CurrencyCode,
-};
+use super::currency_formatter::CurrencyCode;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
@@ -83,7 +80,7 @@ mod tests {
     use tinystr::*;
     use writeable::Writeable;
 
-    use crate::dimension::{CurrencyCode, CurrencyFormatter};
+    use crate::dimension::currency_formatter::{CurrencyCode, CurrencyFormatter};
 
     #[test]
     pub fn test_en_us() {
