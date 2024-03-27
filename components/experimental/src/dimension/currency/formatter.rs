@@ -9,6 +9,7 @@ use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
+use super::super::provider::currency::CurrencyEssentialsV1Marker;
 use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 
@@ -27,7 +28,7 @@ pub struct CurrencyFormatter {
     options: CurrencyFormatterOptions,
 
     /// Essential data for the currency formatter.
-    essential: DataPayload<super::super::provider::currency::CurrencyEssentialsV1Marker>,
+    essential: DataPayload<CurrencyEssentialsV1Marker>,
 
     // TODO: Remove this allow once the `fixed_decimal_formatter` is used.
     #[allow(dead_code)]
