@@ -43,25 +43,34 @@ impl ConverterFactory {
         locale: skip,
         options: skip,
         error: DataError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
 
-    /// Creates a new [`ConverterFactory`] from compiled locale data.
+    /// Creates a new [`ConverterFactory`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    );
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
+        }
+    }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
-        let payload = provider
-            .load(DataRequest {
-                locale: &DataLocale::default(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
+        let payload = provider.load(DataRequest::default())?.take_payload()?;
 
         Ok(Self { payload })
     }
