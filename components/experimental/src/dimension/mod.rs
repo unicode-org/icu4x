@@ -10,11 +10,10 @@ use icu_provider::prelude::*;
 use options::CurrencyFormatterOptions;
 use tinystr::TinyAsciiStr;
 
-use self::{error::DimensionError, format::FormattedCurrency};
+use self::format::FormattedCurrency;
 
 extern crate alloc;
 
-pub mod error;
 pub mod format;
 pub mod options;
 pub mod provider;
@@ -49,7 +48,7 @@ impl CurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
         options: options::CurrencyFormatterOptions,
-        error: DimensionError,
+        error: DataError,
         #[cfg(skip)]
     );
 
@@ -62,9 +61,15 @@ impl CurrencyFormatter {
     pub fn try_new(
         locale: &DataLocale,
         options: options::CurrencyFormatterOptions,
-    ) -> Result<Self, DimensionError> {
+    ) -> Result<Self, DataError> {
         let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())
+                // TODO: replace this `map_err` with `?` once the `FixedDecimalFormatter::try_new` returns a `Result` with `DataError`.
+                .map_err(|_| {
+                    DataError::custom(
+                        "Failed to create a FixedDecimalFormatter for CurrencyFormatter",
+                    )
+                })?;
         let essential = crate::provider::Baked
             .load(DataRequest {
                 locale,
@@ -84,7 +89,7 @@ impl CurrencyFormatter {
         provider: &D,
         locale: &DataLocale,
         options: options::CurrencyFormatterOptions,
-    ) -> Result<Self, DimensionError>
+    ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<provider::currency::CurrencyEssentialsV1Marker>
@@ -94,7 +99,11 @@ impl CurrencyFormatter {
             provider,
             locale,
             FixedDecimalFormatterOptions::default(),
-        )?;
+        )
+        // TODO: replace this `map_err` with `?` once the `FixedDecimalFormatter::try_new` returns a `Result` with `DataError`.
+        .map_err(|_| {
+            DataError::custom("Failed to create a FixedDecimalFormatter for CurrencyFormatter")
+        })?;
         let essential = provider
             .load(DataRequest {
                 locale,
