@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::ConversionError;
 use icu_provider::prelude::*;
+use icu_provider::DataError;
 use litemap::LiteMap;
 use num_bigint::BigInt;
 use num_rational::Ratio;
@@ -42,7 +42,8 @@ impl ConverterFactory {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
         options: skip,
-        error: ConversionError,
+        error: DataError,
+
     /// Creates a new [`ConverterFactory`] from compiled locale data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -51,7 +52,7 @@ impl ConverterFactory {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, ConversionError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
