@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub use icu_datagen::{CollationHanDatabase, CoverageLevel, FallbackMode, TrieType};
+use icu_datagen::LocaleFamily;
+pub use icu_datagen::{
+    CollationHanDatabase, CoverageLevel, DeduplicationStrategy, FallbackMode,
+    RuntimeFallbackLocation, TrieType,
+};
 pub use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::{BTreeSet, HashSet};
@@ -12,8 +16,10 @@ use std::path::{Path, PathBuf};
 #[serde(rename_all = "camelCase")]
 pub struct Config {
     pub keys: KeyInclude,
-    pub fallback: FallbackMode,
     pub locales: LocaleInclude,
+    pub without_fallback: bool,
+    pub deduplication_strategy: Option<DeduplicationStrategy>,
+    pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
     #[serde(
         default,
         skip_serializing_if = "is_default",
@@ -81,7 +87,7 @@ pub enum LocaleInclude {
     Recommended,
     All,
     None,
-    Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LanguageIdentifier>),
+    Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LocaleFamily>),
     CldrSet(#[serde(serialize_with = "sorted_set")] HashSet<CoverageLevel>),
 }
 

@@ -65,17 +65,19 @@ fn main() {
     let source = DatagenProvider::new_latest_tested();
 
     let driver = DatagenDriver::new()
-        .with_locales(
+        .with_locales_and_fallback(
             source
                 .locales_for_coverage_levels([
                     CoverageLevel::Modern,
                     CoverageLevel::Moderate,
                     CoverageLevel::Basic,
                 ])
-                .unwrap(),
+                .unwrap()
+                .into_iter()
+                .map(LocaleFamily::with_descendants),
+            Default::default(),
         )
-        .with_recommended_segmenter_models()
-        .with_fallback_mode(FallbackMode::Runtime);
+        .with_recommended_segmenter_models();
 
     let mut options = Options::default();
     options.overwrite = true;
