@@ -131,7 +131,7 @@ impl FixedDecimalFormatter {
         locale: include,
         options: options::FixedDecimalFormatterOptions,
         error: DecimalError,
-        /// Creates a new [`FixedDecimalFormatter`] from compiled locale data and an options bag.
+        /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///

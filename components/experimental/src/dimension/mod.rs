@@ -52,7 +52,7 @@ impl CurrencyFormatter {
         #[cfg(skip)]
     );
 
-    /// Creates a new [`CurrencyFormatter`] from compiled locale data and an options bag.
+    /// Creates a new [`CurrencyFormatter`] from compiled data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
