@@ -78,11 +78,10 @@ pub enum RuntimeFallbackLocation {
 /// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
 /// |---|---|---|---|
 /// | [`Maximal`] | Smallest | No | Yes |
-/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
+/// | `RetainBaseLanguages` (TODO(#58): coming soon) | Small | Yes | Yes |
 /// | [`NoDeduplication`] | Medium/Small | Yes | No |
 ///
 /// [`Maximal`]: DeduplicationStrategy::Maximal
-/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
 /// [`NoDeduplication`]: DeduplicationStrategy::NoDeduplication
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
