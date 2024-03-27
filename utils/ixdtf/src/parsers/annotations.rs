@@ -23,7 +23,7 @@ use alloc::vec::Vec;
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {
     pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
-    pub(crate) calendar: Option<&'a str>,
+    pub(crate) calendar: Option<Annotation<'a>>,
     pub(crate) annotations: Vec<Annotation<'a>>,
 }
 
@@ -54,7 +54,7 @@ pub(crate) fn parse_annotation_set<'a>(cursor: &mut Cursor<'a>) -> ParserResult<
 /// Parse any number of `KeyValueAnnotation`s
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
-) -> ParserResult<(Option<&'a str>, Vec<Annotation<'a>>)> {
+) -> ParserResult<(Option<Annotation<'a>>, Vec<Annotation<'a>>)> {
     let mut annotations = Vec::default();
     let mut calendar = None;
     let mut calendar_crit = false;
@@ -62,10 +62,12 @@ pub(crate) fn parse_annotations<'a>(
     while cursor.check_or(false, is_annotation_open) {
         let kv = parse_kv_annotation(cursor)?;
 
+        // Check if the key is the registered key "u-ca".
         if kv.key == "u-ca" {
+            // If the calendar is not yet set, set calendar.
             if calendar.is_none() {
-                calendar = Some(kv.value);
                 calendar_crit = kv.critical;
+                calendar = Some(kv);
                 continue;
             }
 
