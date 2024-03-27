@@ -7,6 +7,8 @@
 #![allow(unused_variables)]
 #![allow(unused_assignments)]
 
+use std::collections::HashSet;
+
 use clap::Parser;
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
@@ -87,16 +89,16 @@ fn main() -> eyre::Result<()> {
         config::KeyInclude::Explicit(set) => driver.with_keys(set),
         config::KeyInclude::ForBinary(path) => driver.with_keys(icu_datagen::keys_from_bin(path)?),
     };
-    enum LanguageIdentifiersOrLocaleFamilies {
+    enum LanguageIdentifiersOrLocaleFamilies<'a> {
         LanguageIdentifiers(Vec<LanguageIdentifier>),
-        LocaleFamilies(Vec<LocaleFamily>),
+        Strings(HashSet<&'a str>),
         AllLocales,
     }
     use LanguageIdentifiersOrLocaleFamilies::*;
     let locales_intermediate: LanguageIdentifiersOrLocaleFamilies = match config.locales {
         config::LocaleInclude::All => AllLocales,
         config::LocaleInclude::None => LanguageIdentifiers(vec![]),
-        config::LocaleInclude::Explicit(set) => LocaleFamilies(set.into_iter().collect()),
+        config::LocaleInclude::Explicit(set) => Strings(set),
         config::LocaleInclude::CldrSet(levels) => LanguageIdentifiers(
             provider
                 .locales_for_coverage_levels(levels.iter().copied())?
@@ -118,9 +120,9 @@ fn main() -> eyre::Result<()> {
         let locale_families = match locales_intermediate {
             AllLocales => eyre::bail!("--without-fallback needs an explicit locale list"),
             LanguageIdentifiers(lids) => lids,
-            LocaleFamilies(lfs) => lfs
+            Strings(strings) => strings
                 .into_iter()
-                .map(|family| family.write_to_string().parse().wrap_err(family))
+                .map(|s| s.parse().wrap_err(s))
                 .collect::<eyre::Result<Vec<LanguageIdentifier>>>()?,
         };
         driver = driver.with_locales_no_fallback(locale_families, Default::default());
@@ -131,7 +133,10 @@ fn main() -> eyre::Result<()> {
                 .into_iter()
                 .map(LocaleFamily::with_descendants)
                 .collect(),
-            LocaleFamilies(lfs) => lfs,
+            Strings(strings) => strings
+                .into_iter()
+                .map(|s| s.parse().wrap_err(s))
+                .collect::<eyre::Result<Vec<LocaleFamily>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
         options.deduplication_strategy = config.deduplication_strategy;
