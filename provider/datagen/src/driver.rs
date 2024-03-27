@@ -249,7 +249,24 @@ impl<'de> serde::Deserialize<'de> for LocaleFamily {
         where
             D: serde::Deserializer<'de> {
                 use serde::de::Error;
-        <&str>::deserialize(deserializer)?.parse().map_err(|e| D::Error::custom(&e))
+        <&str>::deserialize(deserializer)?.parse().map_err(D::Error::custom)
+    }
+}
+
+#[test]
+fn test_locale_family_parsing() {
+    let valid_families = ["und", "de-CH", "^es", "@pt-BR", "full"];
+    let invalid_families = ["invalid", "@invalid", "-foo", "@full", "full-001"];
+    for family_str in valid_families {
+        let family = family_str.parse::<LocaleFamily>().unwrap();
+        let family_to_str = family.to_string();
+        assert_eq!(family_str, family_to_str);
+        let family_json = serde_json::to_string(&family).unwrap();
+        let family_from_json = serde_json::from_str(&family_json).unwrap();
+        assert_eq!(family, family_from_json);
+    }
+    for family_str in invalid_families {
+        assert!(family_str.parse::<LocaleFamily>().is_err());
     }
 }
 
