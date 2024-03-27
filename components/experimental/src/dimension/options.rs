@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Options for [`CurrencyFormatter`](crate::dimension::CurrencyFormatter).
+//! Options for [`CurrencyFormatter`](crate::dimension::formatter::CurrencyFormatter).
 
 /// A collection of configuration options that determine the formatting behavior of
 /// [`CurrencyFormatter`](crate::dimension::formatter::CurrencyFormatter).
