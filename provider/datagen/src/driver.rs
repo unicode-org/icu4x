@@ -210,14 +210,14 @@ impl fmt::Display for LocalesWithOrWithoutFallback {
                     locales.iter().map(ToString::to_string).collect::<Vec<_>>();
                 sorted_locales.sort();
                 let start = match options.runtime_fallback_location {
-                    None => unreachable!(),
+                    None => "with fallback",
                     Some(RuntimeFallbackLocation::Internal) => "with internal fallback",
                     Some(RuntimeFallbackLocation::External) => "with external fallback",
                 };
                 write!(f, "{start}, ")?;
                 match options.deduplication_strategy {
                     Some(x) => x.describe(f)?,
-                    None => unreachable!(),
+                    None => "default deduplication",
                 }
                 write!(f, ", and these locales: {:?}", sorted_locales)
             }
