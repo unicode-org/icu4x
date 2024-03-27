@@ -11,6 +11,7 @@ use clap::Parser;
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
+use writeable::Writeable;
 
 mod args;
 pub mod config;
@@ -89,10 +90,11 @@ fn main() -> eyre::Result<()> {
     enum LanguageIdentifiersOrLocaleFamilies {
         LanguageIdentifiers(Vec<LanguageIdentifier>),
         LocaleFamilies(Vec<LocaleFamily>),
+        AllLocales,
     }
     use LanguageIdentifiersOrLocaleFamilies::*;
     let locales_intermediate: LanguageIdentifiersOrLocaleFamilies = match config.locales {
-        config::LocaleInclude::All => LocaleFamilies(vec![LocaleFamily::full()]),
+        config::LocaleInclude::All => AllLocales,
         config::LocaleInclude::None => LanguageIdentifiers(vec![]),
         config::LocaleInclude::Explicit(set) => LocaleFamilies(set.into_iter().collect()),
         config::LocaleInclude::CldrSet(levels) => LanguageIdentifiers(
@@ -114,12 +116,17 @@ fn main() -> eyre::Result<()> {
     };
     if config.without_fallback {
         let locale_families = match locales_intermediate {
+            AllLocales => eyre::bail!("--without-fallback needs an explicit locale list"),
             LanguageIdentifiers(lids) => lids,
-            LocaleFamilies(lfs) => eyre::bail!("--without-fallback needs an explicit locale list"),
+            LocaleFamilies(lfs) => lfs
+                .into_iter()
+                .map(|family| family.write_to_string().parse())
+                .collect::<Result<Vec<LanguageIdentifier>, icu_locid::ParserError>>()?,
         };
         driver = driver.with_locales_no_fallback(locale_families, Default::default());
     } else {
         let locale_families = match locales_intermediate {
+            AllLocales => vec![LocaleFamily::full()],
             LanguageIdentifiers(lids) => lids
                 .into_iter()
                 .map(LocaleFamily::with_descendants)

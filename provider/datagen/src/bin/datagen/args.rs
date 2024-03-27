@@ -245,7 +245,10 @@ pub struct Cli {
 
     // TODO(#2856): Change the default to Auto in 2.0
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
-    #[arg(hide = true, help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback")]
+    #[arg(
+        hide = true,
+        help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback"
+    )]
     fallback: Fallback,
 
     #[arg(long)]
@@ -380,10 +383,7 @@ impl Cli {
             config::LocaleInclude::Explicit(
                 self.locales
                     .iter()
-                    .map(|s| {
-                        s.parse::<LocaleFamily>()
-                            .with_context(|| s.to_string())
-                    })
+                    .map(|s| s.parse::<LocaleFamily>().with_context(|| s.to_string()))
                     .collect::<Result<_, eyre::Error>>()?,
             )
         })

@@ -6,8 +6,8 @@ use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use displaydoc::Display;
 use icu_locid::extensions::unicode::key;
-use icu_locid::ParserError;
 use icu_locid::LanguageIdentifier;
+use icu_locid::ParserError;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::LocaleFallbacker;
 use icu_provider::datagen::*;
@@ -161,11 +161,11 @@ impl Writeable for LocaleFamily {
             (Some(langid), true, false) => {
                 sink.write_char('^')?;
                 langid.write_to(sink)
-            },
+            }
             (Some(langid), false, false) => {
                 sink.write_char('@')?;
                 langid.write_to(sink)
-            },
+            }
             (Some(_), false, true) => unreachable!(),
             (None, _, _) => sink.write_str("full"),
         }
@@ -214,7 +214,10 @@ impl FromStr for LocaleFamily {
         if s == "full" {
             return Ok(Self::full());
         }
-        let (first, remainder) = s.as_bytes().split_first().ok_or(LocaleFamilyParseError::InvalidFamily)?;
+        let (first, remainder) = s
+            .as_bytes()
+            .split_first()
+            .ok_or(LocaleFamilyParseError::InvalidFamily)?;
         match first {
             b'^' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
@@ -231,25 +234,29 @@ impl FromStr for LocaleFamily {
                 include_ancestors: true,
                 include_descendants: true,
             }),
-            _ => Err(LocaleFamilyParseError::InvalidFamily)
+            _ => Err(LocaleFamilyParseError::InvalidFamily),
         }
     }
 }
 
 impl serde::Serialize for LocaleFamily {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer {
+    where
+        S: serde::Serializer,
+    {
         self.write_to_string().serialize(serializer)
     }
 }
 
 impl<'de> serde::Deserialize<'de> for LocaleFamily {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de> {
-                use serde::de::Error;
-        <&str>::deserialize(deserializer)?.parse().map_err(D::Error::custom)
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        <&str>::deserialize(deserializer)?
+            .parse()
+            .map_err(D::Error::custom)
     }
 }
 
