@@ -975,30 +975,29 @@ fn select_locales_for_key(
     let mut it = config
         .locales
         .iter()
+        .filter(|x| *x != &LocaleFamily::full()) // doesn't map to a valid langid
         .map(|x| (&x.langid, x.include_ancestors));
     let ExplicitImplicitLocaleSets { explicit, implicit } =
         make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
 
-    // TODO(#4629): Allow the exclusion of und
-    let include_und = true;
+    let supported_and_explicit = supported_map
+        .into_values()
+        .flatten()
+        .chain(explicit.iter().cloned());
 
-    let include_full = config.locales.contains(&LocaleFamily::full());
-
-    if include_full {
-        return Ok(supported_map.into_values().flatten().collect());
+    // Need to check this ahead of time because we can avoid loading the fallbacker.
+    if config.locales.contains(&LocaleFamily::full()) {
+        return Ok(supported_and_explicit.collect());
     }
 
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
-    let result = supported_map
-        .into_values()
-        .flatten()
-        .chain(explicit.iter().cloned())
+    // TODO(#4629): Allow the exclusion of und
+    let include_und = true;
+
+    let result = supported_and_explicit
         .filter(|locale_orig| {
-            if include_full {
-                return true;
-            }
             let mut locale = locale_orig.clone();
             locale.remove_aux();
             if implicit.contains(&locale) {
