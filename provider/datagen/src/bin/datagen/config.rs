@@ -14,9 +14,10 @@ use std::path::{Path, PathBuf};
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Config {
+pub struct Config<'a> {
     pub keys: KeyInclude,
-    pub locales: LocaleInclude,
+    #[serde(borrow)]
+    pub locales: LocaleInclude<'a>,
     pub without_fallback: bool,
     pub deduplication_strategy: Option<DeduplicationStrategy>,
     pub runtime_fallback_location: Option<RuntimeFallbackLocation>,
@@ -83,11 +84,11 @@ mod data_key_as_str {
 
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub enum LocaleInclude {
+pub enum LocaleInclude<'a> {
     Recommended,
     All,
     None,
-    Explicit(#[serde(serialize_with = "sorted_set")] HashSet<LocaleFamily>),
+    Explicit(#[serde(serialize_with = "sorted_set", borrow)] HashSet<&'a str>),
     CldrSet(#[serde(serialize_with = "sorted_set")] HashSet<CoverageLevel>),
 }
 
