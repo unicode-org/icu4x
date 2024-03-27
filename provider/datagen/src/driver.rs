@@ -5,7 +5,6 @@
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use icu_locid::extensions::unicode::key;
-use icu_locid::langid;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::LocaleFallbacker;
@@ -113,7 +112,7 @@ impl DeduplicationStrategy {
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LocaleFamily {
-    langid: LanguageIdentifier,
+    langid: Option<LanguageIdentifier>,
     include_ancestors: bool,
     include_descendants: bool,
 }
@@ -132,7 +131,7 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "en-US"
     pub fn with_descendants(langid: LanguageIdentifier) -> Self {
         Self {
-            langid,
+            langid: Some(langid),
             include_ancestors: true,
             include_descendants: true,
         }
@@ -151,7 +150,7 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "^en-US"
     pub fn without_descendants(langid: LanguageIdentifier) -> Self {
         Self {
-            langid,
+            langid: Some(langid),
             include_ancestors: true,
             include_descendants: false,
         }
@@ -164,7 +163,7 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "@en-US"
     pub fn single(langid: LanguageIdentifier) -> Self {
         Self {
-            langid,
+            langid: Some(langid),
             include_ancestors: false,
             include_descendants: false,
         }
@@ -175,7 +174,7 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "full"
     pub fn full() -> Self {
         Self {
-            langid: langid!("und"),
+            langid: None,
             include_ancestors: false,
             include_descendants: true,
         }
@@ -184,11 +183,16 @@ impl LocaleFamily {
 
 impl fmt::Display for LocaleFamily {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match (self.include_ancestors, self.include_descendants) {
-            (true, true) => write!(f, "{}", self.langid),
-            (true, false) => write!(f, "^{}", self.langid),
-            (false, false) => write!(f, "@{}", self.langid),
-            (false, true) => write!(f, "full"),
+        match (
+            &self.langid,
+            self.include_ancestors,
+            self.include_descendants,
+        ) {
+            (Some(langid), true, true) => write!(f, "{}", langid),
+            (Some(langid), true, false) => write!(f, "^{}", langid),
+            (Some(langid), false, false) => write!(f, "@{}", langid),
+            (Some(_), false, true) => unreachable!(),
+            (None, _, _) => write!(f, "full"),
         }
     }
 }
@@ -972,11 +976,11 @@ fn select_locales_for_key(
         LocalesWithOrWithoutFallback::WithFallback(config) => config,
     };
 
-    let mut it = config
-        .locales
-        .iter()
-        .filter(|x| *x != &LocaleFamily::full()) // doesn't map to a valid langid
-        .map(|x| (&x.langid, x.include_ancestors));
+    let mut it = config.locales.iter().filter_map(|x| {
+        x.langid
+            .as_ref()
+            .map(|langid| (langid, x.include_ancestors))
+    });
     let ExplicitImplicitLocaleSets { explicit, implicit } =
         make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
 
