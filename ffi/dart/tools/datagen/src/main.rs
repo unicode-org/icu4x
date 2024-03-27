@@ -78,12 +78,15 @@ fn main() -> eyre::Result<()> {
     let locales = matches
         .locales
         .iter()
-        .map(|l| l.parse::<LanguageIdentifier>())
+        .map(|l| {
+            l.parse::<LanguageIdentifier>()
+                .map(LocaleFamily::with_descendants)
+        })
         .collect::<Result<Vec<_>, _>>()?;
 
     DatagenDriver::new()
         .with_keys(keys)
-        .with_locales(locales)
+        .with_locales_and_fallback(locales, Default::default())
         .export(
             &ReexportableBlobDataProvider(BlobDataProvider::try_new_from_static_blob(
                 include_bytes!(concat!(core::env!("OUT_DIR"), "/all.blob")),
