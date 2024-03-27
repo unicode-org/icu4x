@@ -5,7 +5,7 @@
 //! Options for [`CurrencyFormatter`](crate::dimension::CurrencyFormatter).
 
 /// A collection of configuration options that determine the formatting behavior of
-/// [`CurrencyFormatter`](crate::dimension::CurrencyFormatter).
+/// [`CurrencyFormatter`](crate::dimension::formatter::CurrencyFormatter).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {

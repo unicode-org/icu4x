@@ -11,7 +11,7 @@ use crate::dimension::{
     options::CurrencyFormatterOptions, provider::currency::CurrencyEssentialsV1,
 };
 
-use super::currency_formatter::CurrencyCode;
+use super::formatter::CurrencyCode;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
@@ -80,7 +80,7 @@ mod tests {
     use tinystr::*;
     use writeable::Writeable;
 
-    use crate::dimension::currency_formatter::{CurrencyCode, CurrencyFormatter};
+    use crate::dimension::formatter::{CurrencyCode, CurrencyFormatter};
 
     #[test]
     pub fn test_en_us() {

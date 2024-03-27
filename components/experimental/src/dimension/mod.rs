@@ -4,8 +4,8 @@
 
 //! Experimental.
 
-pub mod currency_formatter;
 pub mod format;
+pub mod formatter;
 pub mod options;
 pub mod provider;
 pub mod ule;
