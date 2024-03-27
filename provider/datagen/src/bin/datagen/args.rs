@@ -283,7 +283,7 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn as_config(&self) -> eyre::Result<config::Config> {
+    pub fn as_config<'a>(&'a self) -> eyre::Result<config::Config<'a>> {
         Ok(config::Config {
             keys: self.make_keys()?,
             locales: self.make_locales()?,
@@ -382,9 +382,7 @@ impl Cli {
             }
             config::LocaleInclude::Explicit(
                 self.locales
-                    .iter()
-                    .map(|s| s.parse::<LocaleFamily>().with_context(|| s.to_string()))
-                    .collect::<Result<_, eyre::Error>>()?,
+                    .iter().map(|s| s.as_str()).collect()
             )
         })
     }
