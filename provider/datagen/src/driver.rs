@@ -985,6 +985,10 @@ fn select_locales_for_key(
 
     let include_full = config.locales.contains(&LocaleFamily::full());
 
+    if include_full {
+        return Ok(supported_map.into_values().flatten().collect());
+    }
+
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
