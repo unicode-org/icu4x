@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 
 use crate::{
     parsers::{
-        records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord},
+        records::{Annotation, DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord},
         IxdtfParser,
     },
     ParserError,
@@ -175,7 +175,7 @@ fn bad_extended_year() {
 fn good_annotations_date_time() {
     let mut basic =
         IxdtfParser::new("2020-11-08[!America/Argentina/ComodRivadavia][u-ca=iso8601][foo=bar]");
-    let mut omitted = IxdtfParser::new("+0020201108[u-ca=iso8601][f-1a2b=a0sa-2l4s]");
+    let mut omitted = IxdtfParser::new("+0020201108[!u-ca=iso8601][f-1a2b=a0sa-2l4s]");
 
     let result = basic.parse().unwrap();
 
@@ -189,13 +189,13 @@ fn good_annotations_date_time() {
         }
     );
 
-    assert_eq!(result.calendar, Some("iso8601"));
+    assert_eq!(result.calendar, Some(Annotation { critical: false, key: "u-ca", value: "iso8601"}));
 
     let omit_result = omitted.parse().unwrap();
 
     assert!(omit_result.tz.is_none());
 
-    assert_eq!(omit_result.calendar, Some("iso8601"));
+    assert_eq!(omit_result.calendar, Some(Annotation { critical: true, key: "u-ca", value: "iso8601"}));
 }
 
 #[test]
