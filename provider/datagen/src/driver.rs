@@ -75,18 +75,6 @@ pub enum DeduplicationStrategy {
     NoDeduplication,
 }
 
-impl DeduplicationStrategy {
-    fn describe(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = match self {
-            Self::Maximal => "maximal deduplication",
-            // TODO(#58): Add `RetainBaseLanguages`
-            // Self::RetainBaseLanguages => "deduplication retaining base languages",
-            Self::NoDeduplication => "no deduplication",
-        };
-        write!(f, "{s}")
-    }
-}
-
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LocaleFamily {
@@ -200,39 +188,6 @@ enum LocalesWithOrWithoutFallback {
     WithoutFallback {
         locales: HashSet<LanguageIdentifier>,
     },
-}
-
-impl fmt::Display for LocalesWithOrWithoutFallback {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::WithFallback { locales, options } => {
-                let mut sorted_locales =
-                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
-                sorted_locales.sort();
-                let start = match options.runtime_fallback_location {
-                    None => "with fallback",
-                    Some(RuntimeFallbackLocation::Internal) => "with internal fallback",
-                    Some(RuntimeFallbackLocation::External) => "with external fallback",
-                };
-                write!(f, "{start}, ")?;
-                match options.deduplication_strategy {
-                    Some(x) => x.describe(f)?,
-                    None => write!(f, "default deduplication")?,
-                }
-                write!(f, ", and these locales: {:?}", sorted_locales)
-            }
-            Self::WithoutFallback { locales } => {
-                let mut sorted_locales =
-                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
-                sorted_locales.sort();
-                write!(
-                    f,
-                    "without fallback and these locales: {:?}",
-                    sorted_locales
-                )
-            }
-        }
-    }
 }
 
 /// Configuration for a data export operation.
@@ -550,15 +505,25 @@ impl DatagenDriver {
             log::warn!("No keys selected");
         }
 
-        log::info!("Datagen configured {locales_fallback}");
-
-        let deduplication_strategy = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback { .. } => {
-                DeduplicationStrategy::NoDeduplication
+        let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
+            LocalesWithOrWithoutFallback::WithoutFallback { locales } => {
+                let mut sorted_locales =
+                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
+                sorted_locales.sort();
+                log::info!(
+                    "Datagen configured without fallback with these locales: {:?}",
+                    sorted_locales
+                );
+                (false, DeduplicationStrategy::NoDeduplication)
             }
-            LocalesWithOrWithoutFallback::WithFallback { options, .. } => {
-                match options.deduplication_strategy {
-                    // TODO: Default to RetainBaseLanguages here
+            LocalesWithOrWithoutFallback::WithFallback { options, locales } => {
+                let uses_internal_fallback = match options.runtime_fallback_location {
+                    None => sink.supports_built_in_fallback(),
+                    Some(RuntimeFallbackLocation::Internal) => true,
+                    Some(RuntimeFallbackLocation::External) => false,
+                };
+                let deduplication_strategy = match options.deduplication_strategy {
+                    // TODO(2.0): Default to RetainBaseLanguages here
                     None => {
                         if sink.supports_built_in_fallback() {
                             DeduplicationStrategy::Maximal
@@ -567,18 +532,26 @@ impl DatagenDriver {
                         }
                     }
                     Some(x) => x,
-                }
-            }
-        };
-
-        let uses_internal_fallback = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback { .. } => false,
-            LocalesWithOrWithoutFallback::WithFallback { options, .. } => {
-                match options.runtime_fallback_location {
-                    None => sink.supports_built_in_fallback(),
-                    Some(RuntimeFallbackLocation::Internal) => true,
-                    Some(RuntimeFallbackLocation::External) => false,
-                }
+                };
+                let mut sorted_locales =
+                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
+                sorted_locales.sort();
+                log::info!(
+                    "Datagen configured with {}, {}, and these locales: {:?}",
+                    if uses_internal_fallback {
+                        "internal fallback"
+                    } else {
+                        "external fallback "
+                    },
+                    match deduplication_strategy {
+                        DeduplicationStrategy::Maximal => "maximal deduplication",
+                        // TODO(#58): Add `RetainBaseLanguages`
+                        // DeduplicationStrategy::RetainBaseLanguages => "deduplication retaining base languages",
+                        DeduplicationStrategy::NoDeduplication => "no deduplication",
+                    },
+                    sorted_locales
+                );
+                (uses_internal_fallback, deduplication_strategy)
             }
         };
 
