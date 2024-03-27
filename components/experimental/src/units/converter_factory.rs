@@ -43,7 +43,11 @@ impl ConverterFactory {
         locale: skip,
         options: skip,
         error: ConversionError,
-        #[cfg(skip)]
+    /// Creates a new [`ConverterFactory`] from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
         functions: [
             try_new,
             try_new_with_any_provider,
