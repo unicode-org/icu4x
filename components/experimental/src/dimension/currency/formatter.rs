@@ -120,7 +120,7 @@ impl CurrencyFormatter {
     /// use icu_locid::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
-    /// use icu_experimental::dimension::{CurrencyCode, CurrencyFormatter};
+    /// use icu_experimental::dimension::currency::formatter::{CurrencyCode, CurrencyFormatter};
     ///
     /// let locale = locale!("en-US").into();
     /// let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
