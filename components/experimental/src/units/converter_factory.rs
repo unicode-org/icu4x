@@ -2,31 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::prelude::*;
+use icu_provider::DataError;
 use litemap::LiteMap;
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::{One, Zero};
-use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::AsULE;
-use zerovec::{ZeroSlice, ZeroVec};
+use zerovec::ZeroSlice;
 
 use crate::units::provider::{MeasureUnitItem, SignULE};
 
+use super::provider;
 use super::{
     converter::{
         OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
         UnitsConverterInner,
     },
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{Base, SiPrefix, Sign, UnitsInfoV1},
+    provider::{Base, SiPrefix, Sign},
 };
 
 /// ConverterFactory is a factory for creating a converter.
-pub struct ConverterFactory<'data> {
-    // TODO(#4522): Make the converter factory owns the data.
+pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
-    payload: &'data UnitsInfoV1<'data>,
-    payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    payload: DataPayload<provider::UnitsInfoV1Marker>,
 }
 
 impl From<Sign> for num_bigint::Sign {
@@ -38,20 +38,36 @@ impl From<Sign> for num_bigint::Sign {
     }
 }
 
-impl<'data> ConverterFactory<'data> {
-    #[cfg(feature = "datagen")]
-    pub fn from_payload(
-        payload: &'data UnitsInfoV1<'data>,
-        payload_store: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
-    ) -> Self {
-        Self {
-            payload,
-            payload_store,
-        }
+impl ConverterFactory {
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: skip,
+        error: DataError,
+
+    /// Creates a new [`ConverterFactory`] from compiled locale data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
+    {
+        let payload = provider
+            .load(DataRequest {
+                locale: &DataLocale::default(),
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self { payload })
     }
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(self.payload_store)
+        MeasureUnitParser::from_payload(self.payload.get().units_conversion_trie.as_borrowed())
     }
 
     /// Calculates the offset between two units by performing the following steps:
@@ -94,6 +110,7 @@ impl<'data> ConverterFactory<'data> {
 
         let input_conversion_info = self
             .payload
+            .get()
             .convert_infos
             .get(input_unit.contained_units[0].unit_id as usize);
         debug_assert!(
@@ -104,6 +121,7 @@ impl<'data> ConverterFactory<'data> {
 
         let output_conversion_info = self
             .payload
+            .get()
             .convert_infos
             .get(output_unit.contained_units[0].unit_id as usize);
         debug_assert!(
@@ -170,7 +188,11 @@ impl<'data> ConverterFactory<'data> {
             map: &mut LiteMap<u16, PowersInfo>,
         ) -> Option<()> {
             for item in units {
-                let items_from_item = factory.payload.convert_infos.get(item.unit_id as usize);
+                let items_from_item = factory
+                    .payload
+                    .get()
+                    .convert_infos
+                    .get(item.unit_id as usize);
 
                 debug_assert!(items_from_item.is_some(), "Failed to get convert info");
 
@@ -250,7 +272,11 @@ impl<'data> ConverterFactory<'data> {
         unit_item: &MeasureUnitItem,
         sign: i8,
     ) -> Option<Ratio<BigInt>> {
-        let conversion_info = self.payload.convert_infos.get(unit_item.unit_id as usize);
+        let conversion_info = self
+            .payload
+            .get()
+            .convert_infos
+            .get(unit_item.unit_id as usize);
         debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
         let conversion_info = conversion_info?;
 
