@@ -725,10 +725,16 @@ impl TimeZoneFormatter {
     where
         T: TimeZoneInput,
     {
-        FormattedTimeZone {
+        let r = FormattedTimeZone {
             time_zone_format: self,
             time_zone: value,
         }
+        .validate();
+        // TODO(2.0): Make this method fallible instead of GIGO
+        #[cfg(debug_assertions)]
+        return r.unwrap();
+        #[cfg(not(debug_assertions))]
+        return r.unwrap_or_else(|_| FormattedTimeZone::gigo_value());
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.

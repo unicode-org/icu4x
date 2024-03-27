@@ -368,7 +368,12 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         date: &impl DateTimeInput<Calendar = C>,
         time_zone: &impl TimeZoneInput,
     ) -> FormattedZonedDateTime<'l> {
-        self.0.format(date, time_zone)
+        let r = self.0.format(date, time_zone);
+        // TODO(2.0): Make this method fallible instead of GIGO
+        #[cfg(debug_assertions)]
+        return r.unwrap();
+        #[cfg(not(debug_assertions))]
+        return r.unwrap_or_else(|_| FormattedZonedDateTime::gigo_value());
     }
 
     /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.

@@ -477,9 +477,9 @@ where {
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
         if let Some(converted) = calendar::convert_datetime_if_necessary(&self.1, value)? {
-            Ok(self.0.format(&converted))
+            self.0.format(&converted)
         } else {
-            Ok(self.0.format(value))
+            self.0.format(value)
         }
     }
 

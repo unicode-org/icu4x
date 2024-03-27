@@ -395,23 +395,14 @@ where
     pub(crate) fn write_to<W: fmt::Write + ?Sized>(self, sink: &mut W) -> fmt::Result {
         let loc_datetime =
             DateTimeInputWithWeekConfig::new(self.datetime, self.names.week_calculator);
-        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
-            // TODO(#4340): Make the FixedDecimalFormatter optional
-            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
-            return Err(core::fmt::Error);
-        };
         write_pattern(
             self.pattern_items,
             self.pattern_metadata,
             Some(&self.names),
             Some(&self.names),
             &loc_datetime,
-            fixed_decimal_formatter,
+            self.names.fixed_decimal_formatter.expect("TODO"),
             sink,
         )
-        .map_err(|_e| {
-            icu_provider::_internal::log::warn!("{_e:?}");
-            core::fmt::Error
-        })
     }
 }

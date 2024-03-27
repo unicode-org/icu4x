@@ -4,7 +4,6 @@
 
 //! A collection of code for formatting DateTimes with time zones.
 
-use crate::error::DateTimeError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, ExtractedTimeZoneInput,
@@ -30,6 +29,18 @@ pub struct FormattedZonedDateTime<'l> {
     pub(crate) time_zone: ExtractedTimeZoneInput,
 }
 
+impl FormattedZonedDateTime<'_> {
+    #[cfg(not(debug_assertions))]
+    pub(crate) fn gigo_value() -> Self {
+        todo!()
+    }
+
+    pub(crate) fn validate(self) -> Result<Self, crate::Error> {
+        validate_pattern(self.zoned_datetime_format, &self.datetime, &self.time_zone)?;
+        Ok(self)
+    }
+}
+
 impl<'l> Writeable for FormattedZonedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern(
@@ -38,7 +49,6 @@ impl<'l> Writeable for FormattedZonedDateTime<'l> {
             &self.time_zone,
             sink,
         )
-        .map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -52,7 +62,6 @@ impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
             &self.time_zone,
             f,
         )
-        .map_err(|_| core::fmt::Error)
     }
 }
 
@@ -61,7 +70,7 @@ pub(crate) fn write_pattern<D, Z, W>(
     datetime: &D,
     time_zone: &Z,
     w: &mut W,
-) -> Result<(), Error>
+) -> fmt::Result
 where
     D: DateTimeInput,
     Z: TimeZoneInput,
@@ -73,10 +82,14 @@ where
         zoned_datetime_format.datetime_format.week_data.as_ref(),
     );
 
-    let pattern = patterns.get().0.select(
-        &loc_datetime,
-        zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
-    )?;
+    let pattern = patterns
+        .get()
+        .0
+        .select(
+            &loc_datetime,
+            zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
+        )
+        .expect("validated");
 
     let mut iter = pattern.items.iter().peekable();
     loop {
@@ -97,6 +110,44 @@ where
     Ok(())
 }
 
+pub(crate) fn validate_pattern<D, Z>(
+    zoned_datetime_format: &raw::ZonedDateTimeFormatter,
+    datetime: &D,
+    time_zone: &Z,
+) -> Result<(), crate::Error>
+where
+    D: DateTimeInput,
+    Z: TimeZoneInput,
+{
+    let patterns = &zoned_datetime_format.datetime_format.patterns;
+    let loc_datetime = DateTimeInputWithWeekConfig::new(
+        datetime,
+        zoned_datetime_format.datetime_format.week_data.as_ref(),
+    );
+
+    let pattern = patterns.get().0.select(
+        &loc_datetime,
+        zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
+    )?;
+
+    let mut iter = pattern.items.iter().peekable();
+    loop {
+        match iter.next() {
+            Some(PatternItem::Field(field)) => validate_field(
+                pattern.metadata,
+                field,
+                iter.peek(),
+                zoned_datetime_format,
+                &loc_datetime,
+                time_zone,
+            )?,
+            Some(PatternItem::Literal(..)) => {}
+            None => break,
+        }
+    }
+    Ok(())
+}
+
 fn write_field<D, Z, W>(
     pattern_metadata: PatternMetadata,
     field: fields::Field,
@@ -105,7 +156,7 @@ fn write_field<D, Z, W>(
     loc_datetime: &impl LocalizedDateTimeInput<D>,
     time_zone: &Z,
     w: &mut W,
-) -> Result<(), Error>
+) -> fmt::Result
 where
     D: DateTimeInput,
     Z: TimeZoneInput,
@@ -124,9 +175,10 @@ where
         .map(|s| s.get());
 
     match field.symbol {
-        FieldSymbol::TimeZone(_time_zone) => FormattedTimeZone {
+        FieldSymbol::TimeZone(..) => FormattedTimeZone {
             time_zone_format: &zoned_datetime_format.time_zone_format,
             time_zone,
+            // validated
         }
         .write_to(w)?,
         _ => datetime::write_field(
@@ -138,6 +190,50 @@ where
             loc_datetime,
             &zoned_datetime_format.datetime_format.fixed_decimal_format,
             w,
+        )?,
+    }
+    Ok(())
+}
+
+fn validate_field<D, Z>(
+    pattern_metadata: PatternMetadata,
+    field: fields::Field,
+    next_item: Option<&PatternItem>,
+    zoned_datetime_format: &raw::ZonedDateTimeFormatter,
+    loc_datetime: &impl LocalizedDateTimeInput<D>,
+    time_zone: &Z,
+) -> Result<(), crate::Error>
+where
+    D: DateTimeInput,
+    Z: TimeZoneInput,
+{
+    let date_symbols = zoned_datetime_format
+        .datetime_format
+        .date_symbols
+        .as_ref()
+        .map(|s| s.get());
+
+    let time_symbols = zoned_datetime_format
+        .datetime_format
+        .time_symbols
+        .as_ref()
+        .map(|s| s.get());
+
+    match field.symbol {
+        FieldSymbol::TimeZone(..) => {
+            FormattedTimeZone {
+                time_zone_format: &zoned_datetime_format.time_zone_format,
+                time_zone,
+            }
+            .validate()?;
+        }
+        _ => datetime::validate_field(
+            pattern_metadata,
+            field,
+            next_item,
+            date_symbols,
+            time_symbols,
+            loc_datetime,
         )?,
     }
     Ok(())

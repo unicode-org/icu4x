@@ -157,7 +157,12 @@ impl TimeFormatter {
     where
         T: IsoTimeInput,
     {
-        self.0.format(value)
+        let r = self.0.format(value);
+        // TODO(2.0): Make this method fallible instead of GIGO
+        #[cfg(debug_assertions)]
+        return r.unwrap();
+        #[cfg(not(debug_assertions))]
+        return r.unwrap_or_else(|_| FormattedDateTime::gigo_value());
     }
 
     /// Takes a [`IsoTimeInput`] implementer and returns it formatted as a string.
@@ -375,7 +380,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     where
         T: DateInput<Calendar = C>,
     {
-        self.0.format(value)
+        let r = self.0.format(value);
+        // TODO(2.0): Make this method fallible instead of GIGO
+        #[cfg(debug_assertions)]
+        return r.unwrap();
+        #[cfg(not(debug_assertions))]
+        return r.unwrap_or_else(|_| FormattedDateTime::gigo_value());
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
@@ -739,7 +749,12 @@ where {
     where
         T: DateTimeInput<Calendar = C>,
     {
-        self.0.format(value)
+        let r = self.0.format(value);
+        // TODO(2.0): Make this method fallible instead of GIGO
+        #[cfg(debug_assertions)]
+        return r.unwrap();
+        #[cfg(not(debug_assertions))]
+        return r.unwrap_or_else(|_| FormattedDateTime::gigo_value());
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
