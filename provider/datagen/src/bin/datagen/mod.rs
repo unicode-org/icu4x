@@ -120,8 +120,8 @@ fn main() -> eyre::Result<()> {
             LanguageIdentifiers(lids) => lids,
             LocaleFamilies(lfs) => lfs
                 .into_iter()
-                .map(|family| family.write_to_string().parse())
-                .collect::<Result<Vec<LanguageIdentifier>, icu_locid::ParserError>>()?,
+                .map(|family| family.write_to_string().parse().wrap_err(family))
+                .collect::<eyre::Result<Vec<LanguageIdentifier>>>()?,
         };
         driver = driver.with_locales_no_fallback(locale_families, Default::default());
     } else {
