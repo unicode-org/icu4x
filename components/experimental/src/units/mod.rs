@@ -20,17 +20,4 @@ pub enum ConversionError {
     /// For example, `meter` is a valid unit id, but `metre` is not.
     #[displaydoc("Invalid given unit")]
     InvalidUnit,
-
-    /// An error originating inside of the [data provider](icu_provider).
-    #[displaydoc("error loading data: {0}")]
-    Data(icu_provider::DataError),
-}
-
-#[cfg(feature = "std")]
-impl std::error::Error for ConversionError {}
-
-impl From<icu_provider::DataError> for ConversionError {
-    fn from(e: icu_provider::DataError) -> Self {
-        ConversionError::Data(e)
-    }
 }
