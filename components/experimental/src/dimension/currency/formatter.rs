@@ -20,7 +20,7 @@ extern crate alloc;
 ///   1. Rendering in the locale's currency system.
 ///   2. Locale-sensitive grouping separator positions.
 ///
-/// Read more about the options in the [`options`] module.
+/// Read more about the options in the [`super::options`] module.
 pub struct CurrencyFormatter {
     /// Options bag for the currency formatter to determine the behavior of the formatter.
     /// for example: currency width.
