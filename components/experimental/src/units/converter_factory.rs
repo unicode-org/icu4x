@@ -65,14 +65,12 @@ impl ConverterFactory {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
     {
-        let payload = provider
-            .load(DataRequest::default())?
-            .take_payload()?;
+        let payload = provider.load(DataRequest::default())?.take_payload()?;
 
         Ok(Self { payload })
     }
