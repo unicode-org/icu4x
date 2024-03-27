@@ -94,7 +94,7 @@ fn main() -> eyre::Result<()> {
     let locales_intermediate: LanguageIdentifiersOrLocaleFamilies = match config.locales {
         config::LocaleInclude::All => LocaleFamilies(vec![LocaleFamily::full()]),
         config::LocaleInclude::None => LanguageIdentifiers(vec![]),
-        config::LocaleInclude::Explicit(set) => LanguageIdentifiers(set.into_iter().collect()),
+        config::LocaleInclude::Explicit(set) => LocaleFamilies(set.into_iter().collect()),
         config::LocaleInclude::CldrSet(levels) => LanguageIdentifiers(
             provider
                 .locales_for_coverage_levels(levels.iter().copied())?

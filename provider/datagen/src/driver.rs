@@ -206,6 +206,8 @@ impl From<ParserError> for LocaleFamilyParseError {
     }
 }
 
+impl std::error::Error for LocaleFamilyParseError {}
+
 impl FromStr for LocaleFamily {
     type Err = LocaleFamilyParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {

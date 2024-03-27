@@ -381,7 +381,7 @@ impl Cli {
                 self.locales
                     .iter()
                     .map(|s| {
-                        s.parse::<LanguageIdentifier>()
+                        s.parse::<LocaleFamily>()
                             .with_context(|| s.to_string())
                     })
                     .collect::<Result<_, eyre::Error>>()?,
@@ -422,13 +422,13 @@ impl Cli {
             }
             (Some(x), _, false) => Ok(match x {
                 DeduplicationStrategy::Maximal => Some(config::DeduplicationStrategy::Maximal),
-                DeduplicationStrategy::None => Some(config::DeduplicationStrategy::NoDeduplication),
+                DeduplicationStrategy::None => Some(config::DeduplicationStrategy::None),
             }),
             (None, fallback_mode, false) => Ok(match fallback_mode {
                 Fallback::Auto => None,
-                Fallback::Hybrid => Some(config::DeduplicationStrategy::NoDeduplication),
-                Fallback::Runtime => Some(config::DeduplicationStrategy::NoDeduplication),
-                Fallback::RuntimeManual => Some(config::DeduplicationStrategy::NoDeduplication),
+                Fallback::Hybrid => Some(config::DeduplicationStrategy::None),
+                Fallback::Runtime => Some(config::DeduplicationStrategy::None),
+                Fallback::RuntimeManual => Some(config::DeduplicationStrategy::None),
                 Fallback::Preresolved => None,
             }),
         }
