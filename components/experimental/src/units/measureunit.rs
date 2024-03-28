@@ -5,7 +5,6 @@
 use alloc::vec::Vec;
 use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::ZeroVec;
 
 use crate::units::{
     power::get_power,
@@ -17,15 +16,17 @@ use crate::units::{
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
-    /// Contains the payload.
-    payload: &'data ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+    /// Contains the trie for the unit identifiers.
+    units_trie: &'data ZeroTrieSimpleAscii<[u8]>,
 }
 
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<ZeroVec<u8>>) -> Self {
-        Self { payload }
+    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<[u8]>) -> Self {
+        Self {
+            units_trie: payload,
+        }
     }
 
     /// Get the unit id.
@@ -33,7 +34,7 @@ impl<'data> MeasureUnitParser<'data> {
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
     fn get_unit_id<'a>(&'a self, part: &'a str) -> Result<(u16, &str), ConversionError> {
-        let mut cursor = self.payload.cursor();
+        let mut cursor = self.units_trie.cursor();
         let mut longest_match = Err(ConversionError::InvalidUnit);
 
         for (i, byte) in part.bytes().enumerate() {

@@ -25,7 +25,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 bench = []

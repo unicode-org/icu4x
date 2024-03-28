@@ -11,7 +11,7 @@ use icu_timezone::TimeZoneBcp47Id;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::hash::Hasher;
-use zerotrie::ZeroTriePerfectHash;
+use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTriePerfectHash};
 use zerovec::{ZeroSlice, ZeroVec};
 
 impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
@@ -38,10 +38,6 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
             })
             .collect();
 
-        // TODO(#4031): Use this ignore-case trie in the data. For now, check that it builds.
-        zerotrie::ZeroAsciiIgnoreCaseTrie::try_from(&map)
-            .expect("Data should work in case-insensitive trie");
-
         let data_struct = IanaToBcp47MapV1 {
             map: ZeroTriePerfectHash::try_from(&map)
                 .map_err(|e| {
@@ -61,6 +57,60 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
+impl DataProvider<IanaToBcp47MapV2Marker> for crate::DatagenProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV2Marker>, DataError> {
+        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
+            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
+
+        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+
+        // Sort and deduplicate the BCP-47 IDs:
+        let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
+        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
+        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
+
+        // Get the canonical IANA names.
+        // Note: The BTreeMap retains the order of the aliases, which is important for establishing
+        // the canonical order of the IANA names.
+        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
+
+        // Transform the map to use BCP indices:
+        #[allow(clippy::unwrap_used)] // structures are derived from each other
+        let map: BTreeMap<Vec<u8>, usize> = iana2bcp
+            .iter()
+            .map(|(iana, bcp)| {
+                let is_canonical = bcp2iana.get(bcp) == Some(iana);
+                let index = bcp47_ids.binary_search(bcp).unwrap();
+                (
+                    iana.as_bytes().to_vec(),
+                    (index << 1) | (is_canonical as usize),
+                )
+            })
+            .collect();
+
+        let data_struct = IanaToBcp47MapV2 {
+            map: ZeroAsciiIgnoreCaseTrie::try_from(&map)
+                .map_err(|e| {
+                    DataError::custom("Could not create ZeroTrie from timezone.json data")
+                        .with_display_context(&e)
+                })?
+                .convert_store(),
+            bcp47_ids,
+            bcp47_ids_checksum,
+        };
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(data_struct)),
+        })
+    }
+}
+
+impl IterableDataProvider<IanaToBcp47MapV2Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

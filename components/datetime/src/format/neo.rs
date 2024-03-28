@@ -1099,7 +1099,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::Time;
+    /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::neo_pattern::DateTimePattern;

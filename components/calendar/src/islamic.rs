@@ -40,7 +40,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -368,7 +368,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
     ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_observational_islamic_date(year, month, day, calendar)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
@@ -562,7 +562,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
     ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_ummalqura_date(year, month, day, calendar)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
@@ -845,7 +845,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
     ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_islamic_civil_date_with_calendar(year, month, day, calendar)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
@@ -1091,7 +1091,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
     ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_islamic_tabular_date_with_calendar(year, month, day, calendar)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

@@ -138,6 +138,11 @@ mod transform;
 mod tests;
 
 pub use driver::DatagenDriver;
+pub use driver::DeduplicationStrategy;
+pub use driver::FallbackOptions;
+pub use driver::LocaleFamily;
+pub use driver::NoFallbackOptions;
+pub use driver::RuntimeFallbackLocation;
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde
 pub use provider::TrieType;
@@ -155,7 +160,8 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
+        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, DeduplicationStrategy,
+        FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};

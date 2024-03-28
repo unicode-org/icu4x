@@ -5,3 +5,4 @@
 pub mod currency;
 pub mod extended_currency;
 pub mod percent;
+pub mod ule;
