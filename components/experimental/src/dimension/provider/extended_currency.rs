@@ -25,7 +25,7 @@ use zerovec::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
 /// </div>
 pub use crate::provider::Baked;
 
-use super::currency::{CurrencyPatternConfig, PatternSelection, PlaceholderValue};
+use super::currency::{CurrencyPatternConfig, PatternSelection};
 
 /// Currency Extended V1 data struct.
 #[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
@@ -47,7 +47,6 @@ pub struct CurrencyExtendedDataV1<'data> {
     /// A currency pattern config for the `other` count
     /// or there is no specific pattern for the currency has been found
     /// in the `patterns_config` map.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub other_pattern_config: CurrencyPatternConfig,
 
     /// Contains the counted display names for the currency.
@@ -118,5 +117,5 @@ pub struct ExtendedCurrencyPatternConfig {
     pub pattern_selection: PatternSelection,
     
     /// Points to the index of the placeholder in the extended placeholders list.
-    pub placeholder_value: Option<PlaceholderValue>,
+    pub placeholder_index: Option<u16>,
 }
