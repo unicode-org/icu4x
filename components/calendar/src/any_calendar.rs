@@ -40,7 +40,7 @@ use core::fmt;
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, types::Time};
+/// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time};
 /// use icu::locid::locale;
 /// # use std::rc::Rc;
 ///

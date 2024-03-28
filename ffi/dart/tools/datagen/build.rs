@@ -22,7 +22,7 @@ fn main() {
         } else {
             Default::default()
         })
-        .with_all_locales()
+        .with_locales_and_fallback([LocaleFamily::full()], Default::default())
         .export(
             &DatagenProvider::new_latest_tested(),
             BlobExporter::new_with_sink(Box::new(

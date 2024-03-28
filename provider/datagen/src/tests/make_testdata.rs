@@ -76,7 +76,10 @@ fn make_testdata() {
 
     DatagenDriver::new()
         .with_keys(crate::all_keys())
-        .with_locales(LOCALES.iter().cloned())
+        .with_locales_and_fallback(
+            LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+            Default::default(),
+        )
         .with_segmenter_models([
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
