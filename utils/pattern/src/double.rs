@@ -5,6 +5,7 @@
 //! Code for the [`DoublePlaceholder`] pattern backend.
 
 use core::{cmp::Ordering, str::FromStr};
+use writeable::EitherWriteable;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -62,16 +63,17 @@ impl FromStr for DoublePlaceholderKey {
     }
 }
 
-impl<W> PlaceholderValueProvider<DoublePlaceholderKey> for (W, W)
+impl<W0, W1> PlaceholderValueProvider<DoublePlaceholderKey> for (W0, W1)
 where
-    W: Writeable,
+    W0: Writeable,
+    W1: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
+    type W<'a> = EitherWriteable<&'a W0, &'a W1> where W0: 'a, W1: 'a;
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         match key {
-            DoublePlaceholderKey::Place0 => &self.0,
-            DoublePlaceholderKey::Place1 => &self.1,
+            DoublePlaceholderKey::Place0 => EitherWriteable::A(&self.0),
+            DoublePlaceholderKey::Place1 => EitherWriteable::B(&self.1),
         }
     }
 }
@@ -84,7 +86,10 @@ where
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         let [item0, item1] = self;
-        (item0, item1).value_for(key)
+        match key {
+            DoublePlaceholderKey::Place0 => item0,
+            DoublePlaceholderKey::Place1 => item1,
+        }
     }
 }
 
@@ -230,8 +235,8 @@ impl DoublePlaceholderInfo {
 /// assert_eq!(
 ///     Pattern::<DoublePlaceholder, _>::try_from_str("{1}{0}")
 ///         .unwrap()
-///         .interpolate_to_string((1, 2)),
-///     "21",
+///         .interpolate_to_string((1, "A")),
+///     "A1",
 /// );
 /// ```
 ///
