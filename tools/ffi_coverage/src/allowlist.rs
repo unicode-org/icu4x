@@ -197,6 +197,7 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::neo",
         "icu::datetime::neo_pattern",
+        "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeFormatter::try_new_experimental",
