@@ -204,6 +204,7 @@
 //! ```
 
 use crate::byte_phf::PerfectByteHashMap;
+use crate::cursor::AsciiProbeResult;
 use crate::helpers::*;
 use crate::options::*;
 use crate::varint::read_varint_meta2;
@@ -516,7 +517,7 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
 pub(crate) fn probe_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     trie: &mut &[u8],
     index: usize,
-) -> Option<u8> {
+) -> Option<AsciiProbeResult> {
     // Currently, the only option `step_parameterized` supports is `CaseSensitivity::IgnoreCase`.
     // `AsciiMode::BinarySpans` is tricky because the state can no longer be simply a trie.
     // If a span node is encountered, `None` is returned later in this function.
@@ -549,7 +550,10 @@ pub(crate) fn probe_parameterized<T: ZeroTrieWithOptions + ?Sized>(
                     *trie = &[];
                     return None;
                 }
-                return Some(*b);
+                return Some(AsciiProbeResult {
+                    byte: *b,
+                    total_siblings: 1,
+                });
             }
             NodeType::Branch => {
                 // Proceed to the branch node logic below
@@ -571,6 +575,8 @@ pub(crate) fn probe_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     }
     // Branch node
     let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+    debug_assert!(u8::try_from(x).is_ok());
+    let total_siblings = x as u8;
     // See comment above regarding this assertion
     debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
     let w = w & 0x3;
@@ -585,7 +591,10 @@ pub(crate) fn probe_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     } else {
         get_branch(trie, index, x, w)
     };
-    Some(search[index])
+    Some(AsciiProbeResult {
+        byte: search[index],
+        total_siblings,
+    })
 }
 
 /// Steps one node into the trie if the head node is a value node, returning the value.
