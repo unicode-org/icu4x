@@ -27,7 +27,7 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Bcp47ToIanaMapper(DataProvider provider) {
+  static Bcp47ToIanaMapper create(DataProvider provider) {
     final result = _ICU4XBcp47ToIanaMapper_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

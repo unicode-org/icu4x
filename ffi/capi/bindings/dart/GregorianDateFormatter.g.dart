@@ -30,7 +30,7 @@ final class GregorianDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory GregorianDateFormatter.withLength(DataProvider provider, Locale locale, DateLength length) {
+  static GregorianDateFormatter createWithLength(DataProvider provider, Locale locale, DateLength length) {
     final result = _ICU4XGregorianDateFormatter_create_with_length(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

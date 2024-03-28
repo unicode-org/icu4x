@@ -27,7 +27,7 @@ final class PluralRules implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
   ///
   /// Throws [Error] on failure.
-  factory PluralRules.cardinal(DataProvider provider, Locale locale) {
+  static PluralRules createCardinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_cardinal(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -40,7 +40,7 @@ final class PluralRules implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
   ///
   /// Throws [Error] on failure.
-  factory PluralRules.ordinal(DataProvider provider, Locale locale) {
+  static PluralRules createOrdinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_ordinal(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -59,7 +59,7 @@ final class PluralRules implements ffi.Finalizable {
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
-  PluralCategories get categories {
+  PluralCategories categories() {
     final result = _ICU4XPluralRules_categories(_ffi);
     return PluralCategories._fromFfi(result);
   }

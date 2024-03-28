@@ -29,7 +29,7 @@ final class Time implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Time(int hour, int minute, int second, int nanosecond) {
+  static Time create(int hour, int minute, int second, int nanosecond) {
     final result = _ICU4XTime_create(hour, minute, second, nanosecond);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -42,7 +42,7 @@ final class Time implements ffi.Finalizable {
   /// See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.midnight) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Time.midnight() {
+  static Time createMidnight() {
     final result = _ICU4XTime_create_midnight();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -53,7 +53,7 @@ final class Time implements ffi.Finalizable {
   /// Returns the hour in this time
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
-  int get hour {
+  int hour() {
     final result = _ICU4XTime_hour(_ffi);
     return result;
   }
@@ -61,7 +61,7 @@ final class Time implements ffi.Finalizable {
   /// Returns the minute in this time
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
-  int get minute {
+  int minute() {
     final result = _ICU4XTime_minute(_ffi);
     return result;
   }
@@ -69,7 +69,7 @@ final class Time implements ffi.Finalizable {
   /// Returns the second in this time
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
-  int get second {
+  int second() {
     final result = _ICU4XTime_second(_ffi);
     return result;
   }
@@ -77,7 +77,7 @@ final class Time implements ffi.Finalizable {
   /// Returns the nanosecond in this time
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
-  int get nanosecond {
+  int nanosecond() {
     final result = _ICU4XTime_nanosecond(_ffi);
     return result;
   }

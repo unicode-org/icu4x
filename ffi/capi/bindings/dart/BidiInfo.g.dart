@@ -27,7 +27,7 @@ final class BidiInfo implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiInfo_destroy));
 
   /// The number of paragraphs contained here
-  int get paragraphCount {
+  int paragraphCount() {
     final result = _ICU4XBidiInfo_paragraph_count(_ffi);
     return result;
   }
@@ -41,7 +41,7 @@ final class BidiInfo implements ffi.Finalizable {
   }
 
   /// The number of bytes in this full text
-  int get size {
+  int size() {
     final result = _ICU4XBidiInfo_size(_ffi);
     return result;
   }

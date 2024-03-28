@@ -27,7 +27,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ScriptWithExtensions(DataProvider provider) {
+  static ScriptWithExtensions create(DataProvider provider) {
     final result = _ICU4XScriptWithExtensions_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -54,7 +54,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// Borrow this object for a slightly faster variant with more operations
   ///
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
-  ScriptWithExtensionsBorrowed get asBorrowed {
+  ScriptWithExtensionsBorrowed asBorrowed() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
     final result = _ICU4XScriptWithExtensions_as_borrowed(_ffi);

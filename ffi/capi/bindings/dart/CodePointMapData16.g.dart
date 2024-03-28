@@ -69,7 +69,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
   /// See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData16.loadScript(DataProvider provider) {
+  static CodePointMapData16 loadScript(DataProvider provider) {
     final result = _ICU4XCodePointMapData16_load_script(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

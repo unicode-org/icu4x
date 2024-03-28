@@ -27,7 +27,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DecomposingNormalizer.nfd(DataProvider provider) {
+  static DecomposingNormalizer createNfd(DataProvider provider) {
     final result = _ICU4XDecomposingNormalizer_create_nfd(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -40,7 +40,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DecomposingNormalizer.nfkd(DataProvider provider) {
+  static DecomposingNormalizer createNfkd(DataProvider provider) {
     final result = _ICU4XDecomposingNormalizer_create_nfkd(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

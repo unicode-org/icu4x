@@ -95,7 +95,7 @@ enum AnyCalendarKind {
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
   ///
   /// Throws [Error] on failure.
-  String get bcp47 {
+  String bcp47() {
     final writeable = _Writeable();
     final result = _ICU4XAnyCalendarKind_bcp47(index, writeable._ffi);
     if (!result.isOk) {

@@ -27,7 +27,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CaseMapCloser(DataProvider provider) {
+  static CaseMapCloser create(DataProvider provider) {
     final result = _ICU4XCaseMapCloser_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

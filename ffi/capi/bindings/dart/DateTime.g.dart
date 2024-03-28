@@ -30,7 +30,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/struct.DateTime.html#method.new_from_iso) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DateTime.fromIsoInCalendar(int year, int month, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
+  static DateTime createFromIsoInCalendar(int year, int month, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
     final result = _ICU4XDateTime_create_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -43,7 +43,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_from_codes) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DateTime.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
+  static DateTime createFromCodesInCalendar(String eraCode, int year, String monthCode, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
     final monthCodeView = monthCode.utf8View;
@@ -58,7 +58,7 @@ final class DateTime implements ffi.Finalizable {
   /// Creates a new [`DateTime`] from an [`Date`] and [`Time`] object
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
-  factory DateTime.fromDateAndTime(Date date, Time time) {
+  static DateTime createFromDateAndTime(Date date, Time time) {
     final result = _ICU4XDateTime_create_from_date_and_time(date._ffi, time._ffi);
     return DateTime._fromFfi(result, []);
   }
@@ -66,7 +66,7 @@ final class DateTime implements ffi.Finalizable {
   /// Gets a copy of the date contained in this object
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
-  Date get date {
+  Date date() {
     final result = _ICU4XDateTime_date(_ffi);
     return Date._fromFfi(result, []);
   }
@@ -74,7 +74,7 @@ final class DateTime implements ffi.Finalizable {
   /// Gets the time contained in this object
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
-  Time get time {
+  Time time() {
     final result = _ICU4XDateTime_time(_ffi);
     return Time._fromFfi(result, []);
   }
@@ -98,7 +98,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the hour in this time
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
-  int get hour {
+  int hour() {
     final result = _ICU4XDateTime_hour(_ffi);
     return result;
   }
@@ -106,7 +106,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the minute in this time
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
-  int get minute {
+  int minute() {
     final result = _ICU4XDateTime_minute(_ffi);
     return result;
   }
@@ -114,7 +114,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the second in this time
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
-  int get second {
+  int second() {
     final result = _ICU4XDateTime_second(_ffi);
     return result;
   }
@@ -122,7 +122,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the nanosecond in this time
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
-  int get nanosecond {
+  int nanosecond() {
     final result = _ICU4XDateTime_nanosecond(_ffi);
     return result;
   }
@@ -130,7 +130,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-  int get dayOfMonth {
+  int dayOfMonth() {
     final result = _ICU4XDateTime_day_of_month(_ffi);
     return result;
   }
@@ -138,7 +138,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  IsoWeekday get dayOfWeek {
+  IsoWeekday dayOfWeek() {
     final result = _ICU4XDateTime_day_of_week(_ffi);
     return IsoWeekday.values.firstWhere((v) => v._ffi == result);
   }
@@ -174,7 +174,7 @@ final class DateTime implements ffi.Finalizable {
   /// about month identity.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  int get ordinalMonth {
+  int ordinalMonth() {
     final result = _ICU4XDateTime_ordinal_month(_ffi);
     return result;
   }
@@ -185,7 +185,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   ///
   /// Throws [Error] on failure.
-  String get monthCode {
+  String monthCode() {
     final writeable = _Writeable();
     final result = _ICU4XDateTime_month_code(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -197,7 +197,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the year number in the current era for this date
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  int get yearInEra {
+  int yearInEra() {
     final result = _ICU4XDateTime_year_in_era(_ffi);
     return result;
   }
@@ -207,7 +207,7 @@ final class DateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   ///
   /// Throws [Error] on failure.
-  String get era {
+  String era() {
     final writeable = _Writeable();
     final result = _ICU4XDateTime_era(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -219,7 +219,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-  int get monthsInYear {
+  int monthsInYear() {
     final result = _ICU4XDateTime_months_in_year(_ffi);
     return result;
   }
@@ -227,7 +227,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the number of days in the month represented by this date
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-  int get daysInMonth {
+  int daysInMonth() {
     final result = _ICU4XDateTime_days_in_month(_ffi);
     return result;
   }
@@ -235,7 +235,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the number of days in the year represented by this date
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-  int get daysInYear {
+  int daysInYear() {
     final result = _ICU4XDateTime_days_in_year(_ffi);
     return result;
   }
@@ -243,7 +243,7 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the [`Calendar`] object backing this date
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
-  Calendar get calendar {
+  Calendar calendar() {
     final result = _ICU4XDateTime_calendar(_ffi);
     return Calendar._fromFfi(result, []);
   }

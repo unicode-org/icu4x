@@ -32,7 +32,7 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory GregorianZonedDateTimeFormatter.withLengths(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength) {
+  static GregorianZonedDateTimeFormatter createWithLengths(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(provider._ffi, locale._ffi, dateLength.index, timeLength.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -48,7 +48,7 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory GregorianZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength, IsoTimeZoneOptions zoneOptions) {
+  static GregorianZonedDateTimeFormatter createWithLengthsAndIso8601TimeZoneFallback(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength, IsoTimeZoneOptions zoneOptions) {
     final temp = ffi2.Arena();
     final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(provider._ffi, locale._ffi, dateLength.index, timeLength.index, zoneOptions._toFfi(temp));
     temp.releaseAll();

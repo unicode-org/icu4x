@@ -14,6 +14,8 @@ final class TitlecaseOptions {
   LeadingAdjustment leadingAdjustment;
   TrailingCase trailingCase;
 
+  TitlecaseOptions({required this.leadingAdjustment, required this.trailingCase});
+
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
   // and passes it down to individual fields containing the borrow.
@@ -33,17 +35,10 @@ final class TitlecaseOptions {
   }
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
-  factory TitlecaseOptions({LeadingAdjustment? leadingAdjustment, TrailingCase? trailingCase}) {
+  static final TitlecaseOptions default_ = () {
     final result = _ICU4XTitlecaseOptionsV1_default_options();
-    final dart = TitlecaseOptions._fromFfi(result);
-    if (leadingAdjustment != null) {
-      dart.leadingAdjustment = leadingAdjustment;
-    }
-    if (trailingCase != null) {
-      dart.trailingCase = trailingCase;
-    }
-    return dart;
-  }
+    return TitlecaseOptions._fromFfi(result);
+  }();
 
   @override
   bool operator ==(Object other) =>

@@ -27,7 +27,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory RegionDisplayNames(DataProvider provider, Locale locale) {
+  static RegionDisplayNames create(DataProvider provider, Locale locale) {
     final result = _ICU4XRegionDisplayNames_create(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

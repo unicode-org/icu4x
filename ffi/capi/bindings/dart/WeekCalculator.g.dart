@@ -29,7 +29,7 @@ final class WeekCalculator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory WeekCalculator(DataProvider provider, Locale locale) {
+  static WeekCalculator create(DataProvider provider, Locale locale) {
     final result = _ICU4XWeekCalculator_create(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -38,7 +38,7 @@ final class WeekCalculator implements ffi.Finalizable {
   }
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
-  factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(IsoWeekday firstWeekday, int minWeekDays) {
+  static WeekCalculator createFromFirstDayOfWeekAndMinWeekDays(IsoWeekday firstWeekday, int minWeekDays) {
     final result = _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(firstWeekday._ffi, minWeekDays);
     return WeekCalculator._fromFfi(result, []);
   }
@@ -46,7 +46,7 @@ final class WeekCalculator implements ffi.Finalizable {
   /// Returns the weekday that starts the week for this object's locale
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
-  IsoWeekday get firstWeekday {
+  IsoWeekday firstWeekday() {
     final result = _ICU4XWeekCalculator_first_weekday(_ffi);
     return IsoWeekday.values.firstWhere((v) => v._ffi == result);
   }
@@ -55,7 +55,7 @@ final class WeekCalculator implements ffi.Finalizable {
   /// considered part of that year
   ///
   /// See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
-  int get minWeekDays {
+  int minWeekDays() {
     final result = _ICU4XWeekCalculator_min_week_days(_ffi);
     return result;
   }

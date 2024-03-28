@@ -37,7 +37,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   /// Get the number of scripts contained in here
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
-  int get count {
+  int count() {
     final result = _ICU4XScriptExtensionsSet_count(_ffi);
     return result;
   }

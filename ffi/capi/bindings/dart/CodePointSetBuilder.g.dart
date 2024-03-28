@@ -25,10 +25,10 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// Make a new set builder containing nothing
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
-  factory CodePointSetBuilder() {
+  static final CodePointSetBuilder singleton = () {
     final result = _ICU4XCodePointSetBuilder_create();
     return CodePointSetBuilder._fromFfi(result, []);
-  }
+  }();
 
   /// Build this into a set
   ///
@@ -52,7 +52,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// Returns whether this set is empty
   ///
   /// See the [Rust documentation for `is_empty`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
-  bool get isEmpty {
+  bool isEmpty() {
     final result = _ICU4XCodePointSetBuilder_is_empty(_ffi);
     return result;
   }

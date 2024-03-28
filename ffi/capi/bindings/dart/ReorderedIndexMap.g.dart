@@ -27,7 +27,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XReorderedIndexMap_destroy));
 
   /// Get this as a slice/array of indices
-  core.List<int> get asSlice {
+  core.List<int> asSlice() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
     final result = _ICU4XReorderedIndexMap_as_slice(_ffi);
@@ -35,13 +35,13 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   }
 
   /// The length of this map
-  int get length {
+  int length() {
     final result = _ICU4XReorderedIndexMap_len(_ffi);
     return result;
   }
 
   /// Whether this map is empty
-  bool get isEmpty {
+  bool isEmpty() {
     final result = _ICU4XReorderedIndexMap_is_empty(_ffi);
     return result;
   }

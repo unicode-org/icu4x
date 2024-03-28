@@ -35,28 +35,32 @@ typedef struct DiplomatWriteable {
 
 DiplomatWriteable diplomat_simple_writeable(char* buf, size_t buf_size);
 
-#define MAKE_SLICE_VIEW(name, c_ty) \
+#define MAKE_SLICES(name, c_ty) \
     typedef struct Diplomat##name##View { \
         const c_ty* data; \
         size_t len; \
-    } Diplomat##name##View;
+    } Diplomat##name##View; \
+    typedef struct Diplomat##name##Array { \
+        const c_ty* data; \
+        size_t len; \
+    } Diplomat##name##Array;
 
-MAKE_SLICE_VIEW(I8, int8_t)
-MAKE_SLICE_VIEW(U8, uint8_t)
-MAKE_SLICE_VIEW(I16, int16_t)
-MAKE_SLICE_VIEW(U16, uint16_t)
-MAKE_SLICE_VIEW(I32, int32_t)
-MAKE_SLICE_VIEW(U32, uint32_t)
-MAKE_SLICE_VIEW(I64, int64_t)
-MAKE_SLICE_VIEW(U64, uint64_t)
-MAKE_SLICE_VIEW(Isize, intptr_t)
-MAKE_SLICE_VIEW(Usize, size_t)
-MAKE_SLICE_VIEW(F32, float)
-MAKE_SLICE_VIEW(F64, double)
-MAKE_SLICE_VIEW(Bool, bool)
-MAKE_SLICE_VIEW(Char, char32_t)
-MAKE_SLICE_VIEW(String, char)
-MAKE_SLICE_VIEW(U16String, char16_t)
+MAKE_SLICES(I8, int8_t)
+MAKE_SLICES(U8, uint8_t)
+MAKE_SLICES(I16, int16_t)
+MAKE_SLICES(U16, uint16_t)
+MAKE_SLICES(I32, int32_t)
+MAKE_SLICES(U32, uint32_t)
+MAKE_SLICES(I64, int64_t)
+MAKE_SLICES(U64, uint64_t)
+MAKE_SLICES(Isize, intptr_t)
+MAKE_SLICES(Usize, size_t)
+MAKE_SLICES(F32, float)
+MAKE_SLICES(F64, double)
+MAKE_SLICES(Bool, bool)
+MAKE_SLICES(Char, char32_t)
+MAKE_SLICES(String, char)
+MAKE_SLICES(U16String, char16_t)
 
 
 #ifdef __cplusplus

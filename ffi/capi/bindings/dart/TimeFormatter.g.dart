@@ -29,7 +29,7 @@ final class TimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory TimeFormatter.withLength(DataProvider provider, Locale locale, TimeLength length) {
+  static TimeFormatter createWithLength(DataProvider provider, Locale locale, TimeLength length) {
     final result = _ICU4XTimeFormatter_create_with_length(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
