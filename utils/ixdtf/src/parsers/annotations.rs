@@ -66,7 +66,7 @@ pub(crate) fn parse_annotations<'a>(
             match calendar {
                 // If any calendar is critical, treat as erroneous and throw an error.
                 Some(seen_kv) if seen_kv.critical || kv.critical => {
-                    return Err(ParserError::CriticalDuplicateCalendar)
+                    return Err(ParserError::CriticalDuplicateCalendar);
                 }
                 Some(_) => {}
                 None => {
@@ -77,7 +77,7 @@ pub(crate) fn parse_annotations<'a>(
             }
         }
 
-        annotations.push(kv)
+        annotations.push(kv);
     }
 
     Ok((calendar, annotations))
