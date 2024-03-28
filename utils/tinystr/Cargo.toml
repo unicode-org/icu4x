@@ -36,7 +36,7 @@ rand = { version = "0.8.5", features = ["small_rng"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 default = ["alloc"]

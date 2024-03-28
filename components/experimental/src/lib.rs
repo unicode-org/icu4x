@@ -7,7 +7,7 @@
 //! It will usually undergo a major SemVer bump for every ICU4X release. Components in this
 //! crate will eventually stabilize and move to the `icu` crate.
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 // No boilerplate, each module has their own
 #![allow(clippy::module_inception)]
@@ -41,11 +41,13 @@ pub mod provider {
         icu_experimental_data::make_provider!(Baked);
         icu_experimental_data::impl_compactdecimal_long_v1!(Baked);
         icu_experimental_data::impl_compactdecimal_short_v1!(Baked);
+        icu_experimental_data::impl_currency_essentials_v1!(Baked);
         icu_experimental_data::impl_displaynames_languages_v1!(Baked);
         icu_experimental_data::impl_displaynames_locales_v1!(Baked);
         icu_experimental_data::impl_displaynames_regions_v1!(Baked);
         icu_experimental_data::impl_displaynames_scripts_v1!(Baked);
         icu_experimental_data::impl_displaynames_variants_v1!(Baked);
+        icu_experimental_data::impl_percent_essentials_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_day_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_hour_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_minute_v1!(Baked);

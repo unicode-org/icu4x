@@ -126,7 +126,7 @@ are on track to be eventually stabilized into this crate.
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-[data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_provider.md#loading-additional-data-at-runtime
+[data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 <!-- cargo-rdme end -->
 

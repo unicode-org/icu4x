@@ -145,7 +145,7 @@ pub struct ZeroAsciiIgnoreCaseTrieCursor<'a> {
 }
 
 impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
-    /// Steps the cursor one byte into the trie.
+    /// Steps the cursor one character into the trie based on the character's byte value.
     ///
     /// # Examples
     ///
@@ -222,6 +222,98 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
         reader::take_value(&mut self.trie.store)
     }
 
+    /// Steps the cursor one character into the trie based on an edge index,
+    /// returning the corresponding character as a byte.
+    ///
+    /// This function is similar to [`Self::step()`], but it takes an index instead of a char.
+    /// This enables stepwise iteration over the contents of the trie.
+    ///
+    /// If there are multiple possibilities for the next byte, the `index` argument allows
+    /// visiting them in order. Since this function steps the cursor, the cursor must be
+    /// cloned (a cheap operation) in order to visit multiple children.
+    ///
+    /// # Examples
+    ///
+    /// Continually query index 0 to extract the first item from a trie:
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// let data: &[(String, usize)] = &[
+    ///     ("ab".to_string(), 111),
+    ///     ("abc".to_string(), 22),
+    ///     ("abde".to_string(), 333),
+    ///     ("afg".to_string(), 44),
+    /// ];
+    ///
+    /// let trie: ZeroTrieSimpleAscii<Vec<u8>> =
+    ///     data.iter().map(|(s, v)| (s.as_str(), *v)).collect();
+    ///
+    /// let mut cursor = trie.cursor();
+    /// let mut key = String::new();
+    /// let value = loop {
+    ///     if let Some(value) = cursor.take_value() {
+    ///         break value;
+    ///     }
+    ///     let ch = cursor.probe(0).unwrap();
+    ///     key.push(char::from(ch));
+    /// };
+    ///
+    /// assert_eq!(key, "ab");
+    /// assert_eq!(value, 111);
+    /// ```
+    ///
+    /// Stepwise iterate over all entries in the trie:
+    ///
+    /// ```
+    /// # use zerotrie::ZeroTrieSimpleAscii;
+    /// # let data: &[(String, usize)] = &[
+    /// #     ("ab".to_string(), 111),
+    /// #     ("abc".to_string(), 22),
+    /// #     ("abde".to_string(), 333),
+    /// #     ("afg".to_string(), 44)
+    /// # ];
+    /// # let trie: ZeroTrieSimpleAscii<Vec<u8>> = data
+    /// #     .iter()
+    /// #     .map(|(s, v)| (s.as_str(), *v))
+    /// #     .collect();
+    /// // (trie built as in previous example)
+    ///
+    /// // Initialize the iteration at the first child of the trie.
+    /// let mut stack = Vec::from([(trie.cursor(), 0)]);
+    /// let mut key = Vec::new();
+    /// let mut results = Vec::new();
+    /// loop {
+    ///     let Some((ref mut cursor, ref mut index)) = stack.last_mut() else {
+    ///         // Nothing left in the trie.
+    ///         break;
+    ///     };
+    ///     // Check to see if there is a value at the current node.
+    ///     if let Some(value) = cursor.take_value() {
+    ///         results.push((String::from_utf8(key.clone()).unwrap(), value));
+    ///     }
+    ///     // Now check for children of the current node.
+    ///     let mut sub_cursor = cursor.clone();
+    ///     if let Some(ch) = sub_cursor.probe(*index) {
+    ///         // Found a child. Add the child to the stack, and also
+    ///         // increment the index, so that next time we visit the
+    ///         // current node, we check the next child.
+    ///         *index += 1;
+    ///         stack.push((sub_cursor, 0));
+    ///         key.push(ch);
+    ///     } else {
+    ///         // No more children. Pop this node from the stack.
+    ///         stack.pop();
+    ///         key.pop();
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(&results, data);
+    /// ```
+    pub fn probe(&mut self, index: usize) -> Option<u8> {
+        reader::probe_parameterized::<ZeroTrieSimpleAscii<[u8]>>(&mut self.trie.store, index)
+    }
+
     /// Checks whether the cursor points to an empty trie.
     ///
     /// Use this to determine when to stop iterating.
@@ -270,7 +362,7 @@ impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// assert_eq!(&*key_str, "aBc".as_bytes());
     /// ```
     ///
-    /// For more examples, see [`ZeroAsciiIgnoreCaseTrieCursor::step`].
+    /// For more examples, see [`ZeroTrieSimpleAsciiCursor::step`].
     #[inline]
     pub fn step(&mut self, byte: u8) -> Option<u8> {
         reader::step_parameterized::<ZeroAsciiIgnoreCaseTrie<[u8]>>(&mut self.trie.store, byte)
@@ -278,15 +370,22 @@ impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
 
     /// Takes the value at the current position.
     ///
-    /// For more details, see [`ZeroAsciiIgnoreCaseTrieCursor::take_value`].
+    /// For more details, see [`ZeroTrieSimpleAsciiCursor::take_value`].
     #[inline]
     pub fn take_value(&mut self) -> Option<usize> {
         reader::take_value(&mut self.trie.store)
     }
 
+    /// Probes the next byte in the cursor.
+    ///
+    /// For more details, see [`ZeroTrieSimpleAsciiCursor::probe`].
+    pub fn probe(&mut self, index: usize) -> Option<u8> {
+        reader::probe_parameterized::<ZeroAsciiIgnoreCaseTrie<[u8]>>(&mut self.trie.store, index)
+    }
+
     /// Checks whether the cursor points to an empty trie.
     ///
-    /// For more details, see [`ZeroAsciiIgnoreCaseTrieCursor::is_empty`].
+    /// For more details, see [`ZeroTrieSimpleAsciiCursor::is_empty`].
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.trie.is_empty()

@@ -507,6 +507,87 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     }
 }
 
+/// Steps one node into the trie, assuming all branch nodes are binary search and that
+/// there are no span nodes, using an index.
+///
+/// The input-output argument `trie` starts at the original trie and ends pointing to
+/// the sub-trie indexed by `index`.
+#[inline]
+pub(crate) fn probe_parameterized<T: ZeroTrieWithOptions + ?Sized>(
+    trie: &mut &[u8],
+    index: usize,
+) -> Option<u8> {
+    // Currently, the only option `step_parameterized` supports is `CaseSensitivity::IgnoreCase`.
+    // `AsciiMode::BinarySpans` is tricky because the state can no longer be simply a trie.
+    // If a span node is encountered, `None` is returned later in this function.
+    debug_assert!(
+        matches!(T::OPTIONS.ascii_mode, AsciiMode::AsciiOnly),
+        "Spans not yet implemented in step function"
+    );
+    // PHF can be easily implemented but the code is not yet reachable
+    debug_assert!(
+        matches!(T::OPTIONS.phf_mode, PhfMode::BinaryOnly),
+        "PHF not yet implemented in step function"
+    );
+    // Extended Capacity can be easily implemented but the code is not yet reachable
+    debug_assert!(
+        matches!(T::OPTIONS.capacity_mode, CapacityMode::Normal),
+        "Extended capacity not yet implemented in step function"
+    );
+    let (mut b, x, search);
+    loop {
+        (b, *trie) = match trie.split_first() {
+            Some(v) => v,
+            None => {
+                // Empty trie or only a value node
+                return None;
+            }
+        };
+        match byte_type(*b) {
+            NodeType::Ascii => {
+                if index > 0 {
+                    *trie = &[];
+                    return None;
+                }
+                return Some(*b);
+            }
+            NodeType::Branch => {
+                // Proceed to the branch node logic below
+                (x, *trie) = read_varint_meta2(*b, trie);
+                break;
+            }
+            NodeType::Span => {
+                // Question: Should we put the trie back into a valid state?
+                // Currently this code is unreachable so let's not worry about it.
+                debug_assert!(false, "Span node found in ASCII trie!");
+                return None;
+            }
+            NodeType::Value => {
+                // Skip the value node and go to the next node
+                (_, *trie) = read_varint_meta3(*b, trie);
+                continue;
+            }
+        };
+    }
+    // Branch node
+    let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+    // See comment above regarding this assertion
+    debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
+    let w = w & 0x3;
+    let x = if x == 0 { 256 } else { x };
+    if index >= x {
+        *trie = &[];
+        return None;
+    }
+    (search, *trie) = trie.debug_split_at(x);
+    *trie = if w == 0 {
+        get_branch_w0(trie, index, x)
+    } else {
+        get_branch(trie, index, x, w)
+    };
+    Some(search[index])
+}
+
 /// Steps one node into the trie if the head node is a value node, returning the value.
 /// If the head node is not a value node, no change is made.
 ///

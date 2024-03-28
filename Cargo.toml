@@ -5,7 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
-    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/.cargo/config.toml
+    # KEEP IN SYNC WITH workspace.dependencies and tutorials/.cargo/config.toml
 
     # Components
     "components/calendar",
@@ -89,7 +89,7 @@ members = [
     "tools/md-tests",
     "ffi/dart/tools/datagen",
 ]
-# Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
+# Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
 exclude = [
     # Testdata will still be published in the 1.x stream, but is deprecated
@@ -98,7 +98,7 @@ exclude = [
     # first.
     "provider/testdata",
     # Tutorials are tested outside the workspace to simulate external users
-    "docs",
+    "tutorials",
 ]
 
 [workspace.package]
@@ -122,7 +122,7 @@ include = [
 ]
 
 [workspace.dependencies]
-# KEEP IN SYNC WITH workspace.members and docs/tutorials/.cargo/config.toml
+# KEEP IN SYNC WITH workspace.members and tutorials/.cargo/config.toml
 
 # Components
 icu = { version = "~1.4.0", path = "components/icu", default-features = false }
@@ -193,6 +193,9 @@ zerofrom-derive = { version = "0.1.2", path = "utils/zerofrom/derive", default-f
 zerotrie = { version = "0.1.2", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.10.1", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.10.1", path = "utils/zerovec/derive", default-features = false }
+
+# External deps from crates.io
+criterion = { version = "0.5" }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }

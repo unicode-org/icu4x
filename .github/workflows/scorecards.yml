@@ -8,8 +8,6 @@ on:
   branch_protection_rule:
   schedule:
     - cron: '18 9 * * 4'
-  push:
-    branches: [ main ]
 
 # Declare default permissions as read only.
 permissions: read-all
