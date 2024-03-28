@@ -98,7 +98,7 @@ pub mod provider;
 pub use canonicalizer::LocaleCanonicalizer;
 pub use directionality::{Direction, LocaleDirectionality};
 pub use error::LocaleTransformError;
-pub use expander::LocaleExpander;
+pub use expander::{LocaleExpander, LocaleExpanderOptionsBag, LocaleExpanderSubtagPriority};
 #[doc(inline)]
 pub use fallback::LocaleFallbacker;
 
