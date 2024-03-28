@@ -12,7 +12,6 @@ pub mod ca;
 pub mod coverage_levels;
 #[cfg(feature = "experimental_components")]
 pub mod currencies;
-pub mod currency_data;
 #[cfg(feature = "experimental_components")]
 pub mod date_fields;
 pub mod directionality;

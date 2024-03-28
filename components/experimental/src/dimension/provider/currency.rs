@@ -106,6 +106,7 @@ pub enum PlaceholderValue {
     /// The place holder is the iso code.
     ISO,
 }
+
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
