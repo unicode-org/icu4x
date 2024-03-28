@@ -180,6 +180,37 @@ fn update_langid(
     }
 }
 
+#[inline]
+fn update_langid_minimize(
+    language: Language,
+    script: Option<Script>,
+    region: Option<Region>,
+    langid: &mut LanguageIdentifier,
+) -> TransformResult {
+    let mut modified = false;
+
+    if langid.language != language {
+        langid.language = language;
+        modified = true;
+    }
+
+    if langid.script != script {
+        langid.script = script;
+        modified = true;
+    }
+
+    if langid.region != region {
+        langid.region = region;
+        modified = true;
+    }
+
+    if modified {
+        TransformResult::Modified
+    } else {
+        TransformResult::Unmodified
+    }
+}
+
 impl LocaleExpander {
     /// Creates a [`LocaleExpander`] with compiled data for commonly-used locales
     /// (locales with *Basic* or higher [CLDR coverage]).
@@ -487,86 +518,24 @@ impl LocaleExpander {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
+            return update_langid_minimize(max.language, None, None, langid);
         }
 
         trial.script = None;
         trial.region = max.region;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language
-                || langid.script.is_some()
-                || langid.region != max.region
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region != max.region {
-                    langid.region = max.region;
-                }
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
+            return update_langid_minimize(max.language, None, max.region, langid);
         }
 
         trial.script = max.script;
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language
-                || langid.script != max.script
-                || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script != max.script {
-                    langid.script = max.script;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
+            return update_langid_minimize(max.language, max.script, None, langid);
         }
 
-        if langid.language != max.language
-            || langid.script != max.script
-            || langid.region != max.region
-        {
-            if langid.language != max.language {
-                langid.language = max.language
-            }
-            if langid.script != max.script {
-                langid.script = max.script;
-            }
-            if langid.region != max.region {
-                langid.region = max.region;
-            }
-            TransformResult::Modified
-        } else {
-            TransformResult::Unmodified
-        }
+        update_langid_minimize(max.language, max.script, max.region, langid)
     }
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
