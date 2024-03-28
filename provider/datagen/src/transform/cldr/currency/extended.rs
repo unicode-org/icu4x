@@ -33,7 +33,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
                 .numbers()
                 .read_and_parse(&langid, "currencies.json")?;
 
-        let currencies = currencies_resource.main.value.numbers.currencies;
+        // let currencies = &currencies_resource.main.value.numbers.currencies;
 
         let usd = currencies_resource
             .main

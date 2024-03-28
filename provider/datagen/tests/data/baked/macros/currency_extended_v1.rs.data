@@ -16,6 +16,7 @@ macro_rules! __impl_currency_extended_v1 {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                     },
+                    other_pattern_config: icu_experimental::dimension::provider::extended_currency::ExtendedCurrencyPatternConfig { pattern_selection: icu_experimental::dimension::provider::currency::PatternSelection::Standard, placeholder_index: None },
                     extended_placeholders: zerovec::VarZeroVec::new(),
                 };
                 static VALUES: [&<icu_experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
