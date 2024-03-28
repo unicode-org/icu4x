@@ -4,7 +4,6 @@
 
 use crate::{provider::*, LocaleTransformError};
 
-use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -482,8 +481,6 @@ impl LocaleExpander {
 
         let mut max = langid.clone();
         self.maximize(&mut max);
-        let variants = mem::take(&mut max.variants);
-        max.variants.clear();
         let mut trial = max.clone();
 
         trial.script = None;
@@ -501,7 +498,6 @@ impl LocaleExpander {
                 if langid.region.is_some() {
                     langid.region = None;
                 }
-                langid.variants = variants;
                 return TransformResult::Modified;
             } else {
                 return TransformResult::Unmodified;
@@ -525,7 +521,6 @@ impl LocaleExpander {
                 if langid.region != max.region {
                     langid.region = max.region;
                 }
-                langid.variants = variants;
                 return TransformResult::Modified;
             } else {
                 return TransformResult::Unmodified;
@@ -549,7 +544,6 @@ impl LocaleExpander {
                 if langid.region.is_some() {
                     langid.region = None;
                 }
-                langid.variants = variants;
                 return TransformResult::Modified;
             } else {
                 return TransformResult::Unmodified;
