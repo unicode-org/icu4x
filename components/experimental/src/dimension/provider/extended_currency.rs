@@ -38,11 +38,17 @@ use super::currency::{CurrencyPatternConfig, PatternSelection, PlaceholderValue}
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
-    /// A mapping from each currency's ISO code to its associated formatting patterns.
     // Using CurrencyPatternConfig until implementing AsULE for ExtendedCurrencyPatternConfig.
     // use short for long right now.
+    /// A mapping from each currency's ISO code to its associated formatting patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns_config: ZeroMap<'data, Count, CurrencyPatternConfig>,
+
+    /// A currency pattern config for the `other` count
+    /// or there is no specific pattern for the currency has been found
+    /// in the `patterns_config` map.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub other_pattern_config: CurrencyPatternConfig,
 
     /// Contains the counted display names for the currency.
     /// For example, for "en" locale, and "USD" currency:
@@ -108,9 +114,9 @@ impl From<PluralCategory> for Count {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ExtendedCurrencyPatternConfig {
-    // TODO: remove it once all of them are the same.
     /// The pattern selection for the current placeholder.
     pub pattern_selection: PatternSelection,
-    // /// Points to the index of the placeholder in the extended placeholders list.
-    // pub placeholder_value: Option<PlaceholderValue>,
+    
+    /// Points to the index of the placeholder in the extended placeholders list.
+    pub placeholder_value: Option<PlaceholderValue>,
 }
