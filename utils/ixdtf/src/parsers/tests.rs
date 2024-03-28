@@ -6,7 +6,10 @@ use alloc::vec::Vec;
 
 use crate::{
     parsers::{
-        records::{Annotation, DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord},
+        records::{
+            Annotation, DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
+            TimeZoneRecord,
+        },
         IxdtfParser,
     },
     ParserError,
@@ -189,13 +192,27 @@ fn good_annotations_date_time() {
         }
     );
 
-    assert_eq!(result.calendar, Some(Annotation { critical: false, key: "u-ca", value: "iso8601"}));
+    assert_eq!(
+        result.calendar,
+        Some(Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "iso8601"
+        })
+    );
 
     let omit_result = omitted.parse().unwrap();
 
     assert!(omit_result.tz.is_none());
 
-    assert_eq!(omit_result.calendar, Some(Annotation { critical: true, key: "u-ca", value: "iso8601"}));
+    assert_eq!(
+        omit_result.calendar,
+        Some(Annotation {
+            critical: true,
+            key: "u-ca",
+            value: "iso8601"
+        })
+    );
 }
 
 #[test]
@@ -278,6 +295,100 @@ fn invalid_annotations() {
         err,
         Err(ParserError::InvalidAnnotation),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
+    );
+}
+
+#[test]
+fn invalid_calendar_annotations() {
+    let bad_value = "2021-01-29 02:12:48+01:00:00[!u-ca=iso8601][u-ca=iso8601]";
+    let err = IxdtfParser::new(bad_value).parse();
+    assert_eq!(
+        err,
+        Err(ParserError::CriticalDuplicateCalendar),
+        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2021-01-29 02:12:48+01:00:00[u-ca=iso8601][!u-ca=iso8601]";
+    let err = IxdtfParser::new(bad_value).parse();
+    assert_eq!(
+        err,
+        Err(ParserError::CriticalDuplicateCalendar),
+        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
+    );
+
+    let bad_value = "2021-01-29 02:12:48+01:00:00[u-ca=japanese][u-ca=iso8601][!u-ca=gregorian]";
+    let err = IxdtfParser::new(bad_value).parse();
+    assert_eq!(
+        err,
+        Err(ParserError::CriticalDuplicateCalendar),
+        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
+    );
+}
+
+#[test]
+fn valid_calendar_annotations() {
+    let value = "2021-01-29 02:12:48+01:00:00[u-ca=japanese][u-ca=iso8601][u-ca=gregorian]";
+    let result = IxdtfParser::new(value).parse().unwrap();
+    assert_eq!(
+        result.calendar,
+        Some(Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "japanese"
+        }),
+        "Valid annotation parsing: \"{value}\" should parse calendar as 'japanese'."
+    );
+
+    assert_eq!(
+        result.annotations[0],
+        Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "iso8601"
+        },
+        "Valid annotation parsing: \"{value}\" should parse first annotation as 'iso8601'."
+    );
+
+    assert_eq!(
+        result.annotations[1],
+        Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "gregorian"
+        },
+        "Valid annotation parsing: \"{value}\" should parse second annotation as 'gregorian'."
+    );
+
+    let value = "2021-01-29 02:12:48+01:00:00[u-ca=gregorian][u-ca=iso8601][u-ca=japanese]";
+    let result = IxdtfParser::new(value).parse().unwrap();
+    assert_eq!(
+        result.calendar,
+        Some(Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "gregorian"
+        }),
+        "Valid annotation parsing: \"{value}\" should parse calendar as 'gregorian'."
+    );
+
+    assert_eq!(
+        result.annotations[0],
+        Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "iso8601"
+        },
+        "Valid annotation parsing: \"{value}\" should parse first annotation as 'iso8601'."
+    );
+
+    assert_eq!(
+        result.annotations[1],
+        Annotation {
+            critical: false,
+            key: "u-ca",
+            value: "japanese"
+        },
+        "Valid annotation parsing: \"{value}\" should parse second annotation as 'japanese'."
     );
 }
 
