@@ -187,7 +187,7 @@ fn update_langid(
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
-/// Options for [`LocaleExpander::minimize_with_options`].
+/// Controls whether to prioritize script or region when minimizing a locale.
 pub enum LocaleExpanderSubtagPriority {
     /// Prioritize script over region.
     Script,
@@ -195,9 +195,12 @@ pub enum LocaleExpanderSubtagPriority {
     Region,
 }
 
+/// Options for [`LocaleExpander::minimize_with_options`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct LocaleExpanderOptionsBag {
+    /// Controls whether to prioritize script or region when minimizing a locale.
     pub subtag_priority: LocaleExpanderSubtagPriority,
 }
 
@@ -210,6 +213,7 @@ impl Default for LocaleExpanderOptionsBag {
 }
 
 impl LocaleExpanderOptionsBag {
+    /// Creates a new [`LocaleExpanderOptionsBag`] with the given subtag priority.
     pub fn from_subtag_priority(subtag_priority: LocaleExpanderSubtagPriority) -> Self {
         Self { subtag_priority }
     }
