@@ -56,27 +56,28 @@ pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
 ) -> ParserResult<(Option<Annotation<'a>>, Vec<Annotation<'a>>)> {
     let mut annotations = Vec::default();
-    let mut calendar = None;
-    let mut calendar_crit = false;
+    let mut calendar: Option<Annotation<'a>> = None;
 
     while cursor.check_or(false, is_annotation_open) {
-        let kv = parse_kv_annotation(cursor)?;
+        let kv: Annotation<'a> = parse_kv_annotation(cursor)?;
 
         // Check if the key is the registered key "u-ca".
         if kv.key == "u-ca" {
-            // If the calendar is not yet set, set calendar.
-            if calendar.is_none() {
-                calendar_crit = kv.critical;
-                calendar = Some(kv);
-                continue;
-            }
-
-            if calendar_crit || kv.critical {
-                return Err(ParserError::CriticalDuplicateCalendar);
+            match calendar {
+                // If any calendar is critical, treat as erroneous and throw an error.
+                Some(seen_kv) if seen_kv.critical || kv.critical => {
+                    return Err(ParserError::CriticalDuplicateCalendar)
+                }
+                Some(_) => {}
+                None => {
+                    // If the calendar is not yet set, set calendar.
+                    calendar = Some(kv);
+                    continue;
+                }
             }
         }
 
-        annotations.push(kv);
+        annotations.push(kv)
     }
 
     Ok((calendar, annotations))
