@@ -23,7 +23,7 @@ use alloc::vec::Vec;
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {
     pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
-    pub(crate) calendar: Option<&'a str>,
+    pub(crate) calendar: Option<Annotation<'a>>,
     pub(crate) annotations: Vec<Annotation<'a>>,
 }
 
@@ -54,23 +54,26 @@ pub(crate) fn parse_annotation_set<'a>(cursor: &mut Cursor<'a>) -> ParserResult<
 /// Parse any number of `KeyValueAnnotation`s
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
-) -> ParserResult<(Option<&'a str>, Vec<Annotation<'a>>)> {
+) -> ParserResult<(Option<Annotation<'a>>, Vec<Annotation<'a>>)> {
     let mut annotations = Vec::default();
-    let mut calendar = None;
-    let mut calendar_crit = false;
+    let mut calendar: Option<Annotation<'a>> = None;
 
     while cursor.check_or(false, is_annotation_open) {
-        let kv = parse_kv_annotation(cursor)?;
+        let kv: Annotation<'a> = parse_kv_annotation(cursor)?;
 
+        // Check if the key is the registered key "u-ca".
         if kv.key == "u-ca" {
-            if calendar.is_none() {
-                calendar = Some(kv.value);
-                calendar_crit = kv.critical;
-                continue;
-            }
-
-            if calendar_crit || kv.critical {
-                return Err(ParserError::CriticalDuplicateCalendar);
+            match calendar {
+                // If any calendar is critical, treat as erroneous and throw an error.
+                Some(seen_kv) if seen_kv.critical || kv.critical => {
+                    return Err(ParserError::CriticalDuplicateCalendar);
+                }
+                Some(_) => {}
+                None => {
+                    // If the calendar is not yet set, set calendar.
+                    calendar = Some(kv);
+                    continue;
+                }
             }
         }
 
