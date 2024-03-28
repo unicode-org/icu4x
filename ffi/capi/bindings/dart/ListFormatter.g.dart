@@ -27,7 +27,7 @@ final class ListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ListFormatter.andWithLength(DataProvider provider, Locale locale, ListLength length) {
+  static ListFormatter createAndWithLength(DataProvider provider, Locale locale, ListLength length) {
     final result = _ICU4XListFormatter_create_and_with_length(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -40,7 +40,7 @@ final class ListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ListFormatter.orWithLength(DataProvider provider, Locale locale, ListLength length) {
+  static ListFormatter createOrWithLength(DataProvider provider, Locale locale, ListLength length) {
     final result = _ICU4XListFormatter_create_or_with_length(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -53,7 +53,7 @@ final class ListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ListFormatter.unitWithLength(DataProvider provider, Locale locale, ListLength length) {
+  static ListFormatter createUnitWithLength(DataProvider provider, Locale locale, ListLength length) {
     final result = _ICU4XListFormatter_create_unit_with_length(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

@@ -27,7 +27,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CustomTimeZone.fromString(String s) {
+  static CustomTimeZone createFromString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final result = _ICU4XCustomTimeZone_create_from_string(sView.allocIn(temp), sView.length);
@@ -41,18 +41,18 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone with no information.
   ///
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
-  factory CustomTimeZone.empty() {
+  static final CustomTimeZone empty = () {
     final result = _ICU4XCustomTimeZone_create_empty();
     return CustomTimeZone._fromFfi(result, []);
-  }
+  }();
 
   /// Creates a time zone for UTC.
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
-  factory CustomTimeZone.utc() {
+  static final CustomTimeZone utc = () {
     final result = _ICU4XCustomTimeZone_create_utc();
     return CustomTimeZone._fromFfi(result, []);
-  }
+  }();
 
   /// Sets the `gmt_offset` field from offset seconds.
   ///
@@ -89,7 +89,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   ///
   /// Throws [Error] on failure.
-  int get gmtOffsetSeconds {
+  int gmtOffsetSeconds() {
     final result = _ICU4XCustomTimeZone_gmt_offset_seconds(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -104,7 +104,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
   ///
   /// Throws [Error] on failure.
-  bool get isGmtOffsetPositive {
+  bool isGmtOffsetPositive() {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_positive(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -119,7 +119,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
   ///
   /// Throws [Error] on failure.
-  bool get isGmtOffsetZero {
+  bool isGmtOffsetZero() {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_zero(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -214,7 +214,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   ///
   /// Throws [Error] on failure.
-  String get timeZoneId {
+  String timeZoneId() {
     final writeable = _Writeable();
     final result = _ICU4XCustomTimeZone_time_zone_id(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -261,7 +261,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
   ///
   /// Throws [Error] on failure.
-  String get metazoneId {
+  String metazoneId() {
     final writeable = _Writeable();
     final result = _ICU4XCustomTimeZone_metazone_id(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -308,7 +308,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   ///
   /// Throws [Error] on failure.
-  String get zoneVariant {
+  String zoneVariant() {
     final writeable = _Writeable();
     final result = _ICU4XCustomTimeZone_zone_variant(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -344,7 +344,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   ///
   /// Throws [Error] on failure.
-  bool get isStandardTime {
+  bool isStandardTime() {
     final result = _ICU4XCustomTimeZone_is_standard_time(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -361,7 +361,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   ///
   /// Throws [Error] on failure.
-  bool get isDaylightTime {
+  bool isDaylightTime() {
     final result = _ICU4XCustomTimeZone_is_daylight_time(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

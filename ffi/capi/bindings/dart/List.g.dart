@@ -23,14 +23,14 @@ final class List implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XList_destroy));
 
   /// Create a new list of strings
-  factory List() {
+  static final List singleton = () {
     final result = _ICU4XList_create();
     return List._fromFfi(result, []);
-  }
+  }();
 
   /// Create a new list of strings with preallocated space to hold
   /// at least `capacity` elements
-  factory List.withCapacity(int capacity) {
+  static List createWithCapacity(int capacity) {
     final result = _ICU4XList_create_with_capacity(capacity);
     return List._fromFfi(result, []);
   }
@@ -47,13 +47,13 @@ final class List implements ffi.Finalizable {
   }
 
   /// The number of elements in this list
-  int get length {
+  int length() {
     final result = _ICU4XList_len(_ffi);
     return result;
   }
 
   /// Whether this list is empty
-  bool get isEmpty {
+  bool isEmpty() {
     final result = _ICU4XList_is_empty(_ffi);
     return result;
   }

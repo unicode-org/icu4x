@@ -33,7 +33,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   ///
   /// Throws [Error] on failure.
-  factory TimeZoneFormatter.withLocalizedGmtFallback(DataProvider provider, Locale locale) {
+  static TimeZoneFormatter createWithLocalizedGmtFallback(DataProvider provider, Locale locale) {
     final result = _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -50,7 +50,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   ///
   /// Throws [Error] on failure.
-  factory TimeZoneFormatter.withIso8601Fallback(DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
+  static TimeZoneFormatter createWithIso8601Fallback(DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(provider._ffi, locale._ffi, options._toFfi(temp));
     temp.releaseAll();

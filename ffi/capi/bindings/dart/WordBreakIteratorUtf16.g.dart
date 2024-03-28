@@ -36,7 +36,7 @@ final class WordBreakIteratorUtf16 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  SegmenterWordType get wordType {
+  SegmenterWordType wordType() {
     final result = _ICU4XWordBreakIteratorUtf16_word_type(_ffi);
     return SegmenterWordType.values[result];
   }
@@ -44,7 +44,7 @@ final class WordBreakIteratorUtf16 implements ffi.Finalizable {
   /// Return true when break boundary is word-like such as letter/number/CJK
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
-  bool get isWordLike {
+  bool isWordLike() {
     final result = _ICU4XWordBreakIteratorUtf16_is_word_like(_ffi);
     return result;
   }

@@ -30,7 +30,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LineSegmenter.auto(DataProvider provider) {
+  static LineSegmenter createAuto(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_auto(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -44,7 +44,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LineSegmenter.lstm(DataProvider provider) {
+  static LineSegmenter createLstm(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_lstm(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -58,7 +58,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LineSegmenter.dictionary(DataProvider provider) {
+  static LineSegmenter createDictionary(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_dictionary(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -72,7 +72,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LineSegmenter.autoWithOptions(DataProvider provider, LineBreakOptions options) {
+  static LineSegmenter create_auto_with_options(DataProvider provider, LineBreakOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLineSegmenter_create_auto_with_options_v1(provider._ffi, options._toFfi(temp));
     temp.releaseAll();
@@ -88,7 +88,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LineSegmenter.lstmWithOptions(DataProvider provider, LineBreakOptions options) {
+  static LineSegmenter create_lstm_with_options(DataProvider provider, LineBreakOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLineSegmenter_create_lstm_with_options_v1(provider._ffi, options._toFfi(temp));
     temp.releaseAll();
@@ -104,7 +104,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LineSegmenter.dictionaryWithOptions(DataProvider provider, LineBreakOptions options) {
+  static LineSegmenter create_dictionary_with_options(DataProvider provider, LineBreakOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XLineSegmenter_create_dictionary_with_options_v1(provider._ffi, options._toFfi(temp));
     temp.releaseAll();

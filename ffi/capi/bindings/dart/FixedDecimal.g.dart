@@ -25,7 +25,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// Construct an [`FixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory FixedDecimal.fromInt(int v) {
+  static FixedDecimal create_from_int(int v) {
     final result = _ICU4XFixedDecimal_create_from_i64(v);
     return FixedDecimal._fromFfi(result, []);
   }
@@ -37,7 +37,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory FixedDecimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
+  static FixedDecimal create_from_double_with_lower_magnitude(double f, int magnitude) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -52,7 +52,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory FixedDecimal.fromDoubleWithSignificantDigits(double f, int digits) {
+  static FixedDecimal create_from_double_with_significant_digits(double f, int digits) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -68,7 +68,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory FixedDecimal.fromDoubleWithDoublePrecision(double f) {
+  static FixedDecimal create_from_double_with_double_precision(double f) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -81,7 +81,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
   ///
   /// Throws [Error] on failure.
-  factory FixedDecimal.fromString(String v) {
+  static FixedDecimal createFromString(String v) {
     final temp = ffi2.Arena();
     final vView = v.utf8View;
     final result = _ICU4XFixedDecimal_create_from_string(vView.allocIn(temp), vView.length);
@@ -99,31 +99,31 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
-  int get magnitudeStart {
+  int magnitudeStart() {
     final result = _ICU4XFixedDecimal_magnitude_start(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
-  int get magnitudeEnd {
+  int magnitudeEnd() {
     final result = _ICU4XFixedDecimal_magnitude_end(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
-  int get nonzeroMagnitudeStart {
+  int nonzeroMagnitudeStart() {
     final result = _ICU4XFixedDecimal_nonzero_magnitude_start(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
-  int get nonzeroMagnitudeEnd {
+  int nonzeroMagnitudeEnd() {
     final result = _ICU4XFixedDecimal_nonzero_magnitude_end(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
-  bool get isZero {
+  bool isZero() {
     final result = _ICU4XFixedDecimal_is_zero(_ffi);
     return result;
   }
@@ -136,7 +136,7 @@ final class FixedDecimal implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
-  FixedDecimalSign get sign {
+  FixedDecimalSign sign() {
     final result = _ICU4XFixedDecimal_sign(_ffi);
     return FixedDecimalSign.values[result];
   }
@@ -144,7 +144,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// Set the sign of the [`FixedDecimal`].
   ///
   /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
-  set sign(FixedDecimalSign sign) {
+  void setSign(FixedDecimalSign sign) {
     _ICU4XFixedDecimal_set_sign(_ffi, sign.index);
   }
 
@@ -290,7 +290,6 @@ final class FixedDecimal implements ffi.Finalizable {
   /// Format the [`FixedDecimal`] as a string.
   ///
   /// See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
-  @override
   String toString() {
     final writeable = _Writeable();
     _ICU4XFixedDecimal_to_string(_ffi, writeable._ffi);

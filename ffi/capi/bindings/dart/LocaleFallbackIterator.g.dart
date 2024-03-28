@@ -29,7 +29,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
   /// Gets a snapshot of the current state of the locale.
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
-  Locale get get {
+  Locale get() {
     final result = _ICU4XLocaleFallbackIterator_get(_ffi);
     return Locale._fromFfi(result, []);
   }
