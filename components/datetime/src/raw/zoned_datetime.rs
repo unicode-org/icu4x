@@ -214,12 +214,13 @@ impl ZonedDateTimeFormatter {
         &'l self,
         date: &impl DateTimeInput,
         time_zone: &impl TimeZoneInput,
-    ) -> FormattedZonedDateTime<'l> {
+    ) -> Result<FormattedZonedDateTime<'l>, crate::Error> {
         // Todo: optimize extraction #2143
         FormattedZonedDateTime {
             zoned_datetime_format: self,
             datetime: ExtractedDateTimeInput::extract_from(date),
             time_zone: ExtractedTimeZoneInput::extract_from(time_zone),
         }
+        .validate()
     }
 }

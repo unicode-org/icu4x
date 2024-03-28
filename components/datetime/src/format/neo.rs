@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::write_pattern;
+use super::datetime::{validate_pattern, write_pattern};
 use crate::calendar::{CldrCalendar, MonthNamesV1Provider, YearNamesV1Provider};
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;
@@ -1036,11 +1036,17 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     where
         T: DateTimeInput<Calendar = C>,
     {
-        FormattedDateTimePattern {
+        let r = FormattedDateTimePattern {
             pattern: self.inner.pattern,
             datetime: ExtractedDateTimeInput::extract_from(datetime),
             names: self.inner.names,
         }
+        .validate();
+        // TODO(2.0): Make this method fallible instead of GIGO
+        #[cfg(debug_assertions)]
+        return r.unwrap();
+        #[cfg(not(debug_assertions))]
+        return r.unwrap_or_else(|_| FormattedDateTimePattern::gigo_value());
     }
 
     /// Formats a date without a time of day.
@@ -1167,28 +1173,42 @@ pub struct FormattedDateTimePattern<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
+impl FormattedDateTimePattern<'_> {
+    #[cfg(not(debug_assertions))]
+    pub(crate) fn gigo_value() -> Self {
+        todo!()
+    }
+
+    pub(crate) fn validate(self) -> Result<Self, crate::Error> {
+        let loc_datetime =
+            DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
+        if self.names.fixed_decimal_formatter.is_none() {
+            return Err(crate::Error::FixedDecimal);
+        }
+        validate_pattern(
+            self.pattern.0.items.iter(),
+            self.pattern.0.metadata,
+            Some(&self.names),
+            Some(&self.names),
+            &loc_datetime,
+        )?;
+        Ok(self)
+    }
+}
+
 impl<'a> Writeable for FormattedDateTimePattern<'a> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let loc_datetime =
             DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
-        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
-            // TODO(#4340): Make the FixedDecimalFormatter optional
-            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
-            return Err(core::fmt::Error);
-        };
         write_pattern(
             self.pattern.0.items.iter(),
             self.pattern.0.metadata,
             Some(&self.names),
             Some(&self.names),
             &loc_datetime,
-            fixed_decimal_formatter,
+            self.names.fixed_decimal_formatter.expect("validated"),
             sink,
         )
-        .map_err(|_e| {
-            icu_provider::_internal::log::warn!("{_e:?}");
-            core::fmt::Error
-        })
     }
 
     // TODO(#489): Implement writeable_length_hint

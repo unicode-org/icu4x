@@ -138,7 +138,7 @@ impl TimeFormatter {
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: IsoTimeInput,
     {
@@ -151,6 +151,7 @@ impl TimeFormatter {
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
         }
+        .validate()
     }
 }
 
@@ -307,7 +308,7 @@ impl DateFormatter {
     /// Takes a [`DateInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: DateInput,
     {
@@ -320,6 +321,7 @@ impl DateFormatter {
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
         }
+        .validate()
     }
 }
 
@@ -529,7 +531,7 @@ impl DateTimeFormatter {
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: DateTimeInput,
     {
@@ -543,6 +545,7 @@ impl DateTimeFormatter {
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,
         }
+        .validate()
     }
 
     /// Returns a [`components::Bag`](crate::options::components::Bag) that represents the resolved components for the

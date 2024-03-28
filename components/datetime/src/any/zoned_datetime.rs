@@ -483,9 +483,9 @@ impl ZonedDateTimeFormatter {
         time_zone: &impl TimeZoneInput,
     ) -> Result<FormattedZonedDateTime<'l>, DateTimeError> {
         if let Some(converted) = self.convert_if_necessary(date)? {
-            Ok(self.0.format(&converted, time_zone))
+            self.0.format(&converted, time_zone)
         } else {
-            Ok(self.0.format(date, time_zone))
+            self.0.format(date, time_zone)
         }
     }
 

@@ -268,7 +268,6 @@ impl From<DateTimeError> for ICU4XError {
     fn from(e: DateTimeError) -> Self {
         match e {
             DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
-            DateTimeError::Format(err) => err.into(),
             DateTimeError::Data(err) => err.into(),
             DateTimeError::MissingInputField(_) => ICU4XError::DateTimeMissingInputFieldError,
             // TODO(#1324): Add back skeleton errors
