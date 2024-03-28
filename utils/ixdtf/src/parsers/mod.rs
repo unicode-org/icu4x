@@ -36,20 +36,6 @@ macro_rules! assert_syntax {
     };
 }
 
-/// Parsing options that can be provided to `IxdtfParser` to change parsing behavior.
-#[non_exhaustive]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum IxdtfOptions {
-    /// No modified parsing, i.e. parses as a date time
-    None,
-    /// Parses the value as an annotated YearMonth.
-    YearMonth,
-    /// Parses the value as an annotated MonthDay.
-    MonthDay,
-    /// Parses the value as an annotated Time.
-    Time,
-}
-
 /// `IxdtfParser` is the primary parser implementation of `ixdtf`.
 ///
 /// This parser provides various options for parsing date/time strings with the extended notation
@@ -59,7 +45,6 @@ pub enum IxdtfOptions {
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
 pub struct IxdtfParser<'a> {
-    options: IxdtfOptions,
     cursor: Cursor<'a>,
 }
 
@@ -67,29 +52,32 @@ impl<'a> IxdtfParser<'a> {
     /// Creates a new `IXDTFParser` from a provided `&str`.
     pub fn new(value: &'a str) -> Self {
         Self {
-            options: IxdtfOptions::None,
             cursor: Cursor::new(value),
         }
     }
 
-    /// Set an additional parser option.
-    pub fn with_option(mut self, option: IxdtfOptions) -> Self {
-        self.options = option;
-        self
-    }
-
-    /// Parses the source as a [DateTime string][temporal-dt].
+    /// Parses the source as an annotated [DateTime string][temporal-dt].
     ///
     /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
     ///
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        match self.options {
-            IxdtfOptions::None => datetime::parse_annotated_date_time(&mut self.cursor),
-            IxdtfOptions::YearMonth => datetime::parse_annotated_year_month(&mut self.cursor),
-            IxdtfOptions::MonthDay => datetime::parse_annotated_month_day(&mut self.cursor),
-            IxdtfOptions::Time => time::parse_annotated_time_record(&mut self.cursor),
-        }
+        datetime::parse_annotated_date_time(&mut self.cursor)
+    }
+
+    /// Parses the source as an annotated YearMonth string.
+    pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+        datetime::parse_annotated_year_month(&mut self.cursor)
+    }
+
+    /// Parses the source as an annotated MonthDay string.
+    pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+        datetime::parse_annotated_month_day(&mut self.cursor)
+    }
+
+    /// Parses the source as an annotated Time string.
+    pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+        time::parse_annotated_time_record(&mut self.cursor)
     }
 }
 

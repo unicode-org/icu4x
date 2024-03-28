@@ -310,22 +310,22 @@ fn days_in_month(year: i32, month: u8) -> Option<u8> {
     match month {
         1 | 3 | 5 | 7 | 8 | 10 | 12 => Some(31),
         4 | 6 | 9 | 11 => Some(30),
-        2 => Some((28 + in_leap_year(year)) as u8),
+        2 => Some(28 + u8::from(in_leap_year(year))),
         _ => None,
     }
 }
 
 /// Utility that returns whether a year is a leap year.
 #[inline]
-fn in_leap_year(year: i32) -> i8 {
+fn in_leap_year(year: i32) -> bool {
     if year % 4 != 0 {
-        0
+        false
     } else if year % 4 == 0 && year % 100 != 0 {
-        1
+        true
     } else if year % 100 == 0 && year % 400 != 0 {
-        0
+        false
     } else {
         assert_eq!(year % 400, 0);
-        0
+        true
     }
 }
