@@ -46,7 +46,7 @@ impl From<&WeekDataV1> for WeekCalculator {
 }
 
 impl WeekCalculator {
-    /// Creates a new [`WeekCalculator`] from compiled locale data.
+    /// Creates a new [`WeekCalculator`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

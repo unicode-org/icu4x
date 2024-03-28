@@ -88,12 +88,8 @@ impl<'data> ChineseBasedCacheV1<'data> {
             return None;
         }
 
-        let Some(this_packed) = self.data.get(delta) else {
-            return None;
-        };
-        let Some(prev_packed) = self.data.get(delta - 1) else {
-            return None;
-        };
+        let this_packed = self.data.get(delta)?;
+        let prev_packed = self.data.get(delta - 1)?;
 
         let iso_in_year = iso.day_of_year();
         let fetched_data_ny_in_iso = u16::from(this_packed.ny_day_of_iso_year());
@@ -109,9 +105,7 @@ impl<'data> ChineseBasedCacheV1<'data> {
             if delta <= 2 {
                 return None;
             }
-            let Some(prev2_packed) = self.data.get(delta - 2) else {
-                return None;
-            };
+            let prev2_packed = self.data.get(delta - 2)?;
 
             let days_in_prev_year = prev2_packed.days_in_year();
 

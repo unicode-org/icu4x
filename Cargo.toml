@@ -194,6 +194,9 @@ zerotrie = { version = "0.1.2", path = "utils/zerotrie", default-features = fals
 zerovec = { version = "0.10.1", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.10.1", path = "utils/zerovec/derive", default-features = false }
 
+# External deps from crates.io
+criterion = { version = "0.5" }
+
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # icu_benchmark_binsize never used as a dep

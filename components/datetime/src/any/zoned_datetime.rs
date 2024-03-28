@@ -17,7 +17,7 @@ use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
-use icu_calendar::{types::Time, DateTime};
+use icu_calendar::{DateTime, Time};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use writeable::Writeable;
