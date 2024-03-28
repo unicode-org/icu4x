@@ -18,7 +18,7 @@ const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
 pub const MAX_PLACEHOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 
 /// `CurrencyPatternConfigULE` is a type optimized for efficient storing and
-/// deserialization of `CurrencyPatterns` using the `ZeroVec` model.
+/// deserialization of `CurrencyPatternConfig` using the `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
