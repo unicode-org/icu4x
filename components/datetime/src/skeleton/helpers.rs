@@ -312,7 +312,17 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
-                    return Some(PatternItem::Field(*requested_field));
+                    let length = requested_field.length;
+                    #[cfg(feature = "experimental")]
+                    let length = if requested_field.symbol.is_at_least_abbreviated() {
+                        length.numeric_to_abbr()
+                    } else {
+                        length
+                    };
+                    return Some(PatternItem::Field(Field {
+                        length,
+                        ..*pattern_field
+                    }));
                 }
             }
         }

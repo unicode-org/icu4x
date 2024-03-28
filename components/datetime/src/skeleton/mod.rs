@@ -329,6 +329,54 @@ mod test {
         );
     }
 
+    #[test]
+    fn test_skeleton_matching_weekday_short() {
+        let components = components::Bag {
+            weekday: Some(components::Text::Short),
+            ..Default::default()
+        };
+        let requested_fields = components.to_vec_fields();
+        let (_, skeletons) = get_data_payload();
+
+        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+                assert_eq!(
+                    available_format_pattern
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string()
+                        .as_str(),
+                    // Requesting E, CLDR has ccc, should not be shortened to c
+                    "ccc"
+                )
+            }
+            best => panic!("Unexpected {best:?}"),
+        };
+    }
+
+    #[test]
+    fn test_skeleton_matching_weekday_long() {
+        let components = components::Bag {
+            weekday: Some(components::Text::Long),
+            ..Default::default()
+        };
+        let requested_fields = components.to_vec_fields();
+        let (_, skeletons) = get_data_payload();
+
+        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+                assert_eq!(
+                    available_format_pattern
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string()
+                        .as_str(),
+                    // Requesting EEEE, CLDR has ccc, should be lengthened to cccc
+                    "cccc"
+                )
+            }
+            best => panic!("Unexpected {best:?}"),
+        };
+    }
+
     /// Skeletons are represented in bincode as a vec of field, but bincode shouldn't be completely
     /// trusted, test that the bincode gets validated correctly.
     struct TestInvalidSkeleton(Vec<Field>);
