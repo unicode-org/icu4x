@@ -5,37 +5,16 @@
 use crate::provider::IterableDataProviderInternal;
 use crate::transform::cldr::cldr_serde;
 
-use crate::transform::cldr::cldr_serde::currencies;
-use crate::transform::cldr::cldr_serde::currencies::data::CurrencyPatterns;
-use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
-
-use crate::DatagenProvider;
 
 use std::borrow::Cow;
 
-use icu_locid::extensions::private::Subtag;
-use icu_locid::extensions::transform::Value;
-use icu_locid::Locale;
-use icu_pattern::DoublePlaceholderPattern;
-use rayon::iter::Map;
+use icu_experimental::dimension::provider::currency::PatternSelection;
 
-use std::collections::BTreeMap;
-use std::collections::HashMap;
 use std::collections::HashSet;
-use std::str::FromStr;
 use tinystr::tinystr;
-use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
-use icu_pattern::DoublePlaceholder;
-use icu_pattern::DoublePlaceholderKey;
-use icu_pattern::Pattern;
-use icu_pattern::PatternItemCow;
-
-use icu_experimental::dimension::ule::MAX_PLACEHOLDER_INDEX;
-use icu_properties::sets::load_for_general_category_group;
-use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
 
 use icu_experimental::dimension::provider::extended_currency::*;
@@ -80,6 +59,10 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
 
         let data = CurrencyExtendedDataV1 {
             patterns_config,
+            other_pattern_config: ExtendedCurrencyPatternConfig {
+                pattern_selection: PatternSelection::Standard,
+                placeholder_index: None,
+            },
             extended_placeholders: VarZeroVec::from(&extended_placeholders),
         };
 
@@ -90,27 +73,27 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl DatagenProvider {
-    fn supported_locales_currencies(
-        &self,
-        currency: Value,
-        keylengths: &'static [Subtag],
-        currencies: &BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
-        lang_id: &icu_locid::LanguageIdentifier,
-    ) -> Result<HashSet<DataLocale>, DataError> {
-        let mut r = HashSet::new();
+// impl DatagenProvider {
+//     fn supported_locales_currencies(
+//         &self,
+//         currency: Value,
+//         keylengths: &'static [Subtag],
+//         currencies: &BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
+//         lang_id: &icu_locid::LanguageIdentifier,
+//     ) -> Result<HashSet<DataLocale>, DataError> {
+//         let mut r = HashSet::new();
 
-        r.extend(currencies.keys().flat_map(|currency_iso| {
-            let locale: Locale = lang_id.clone().into();
-            let mut locale = DataLocale::from(locale);
+//         r.extend(currencies.keys().flat_map(|currency_iso| {
+//             let locale: Locale = lang_id.clone().into();
+//             let mut locale = DataLocale::from(locale);
 
-            locale.set_aux();
-            locale
-        }));
+//             locale.set_aux();
+//             locale
+//         }));
 
-        Ok(r)
-    }
-}
+//         Ok(r)
+//     }
+// }
 
 impl IterableDataProviderInternal<CurrencyExtendedDataV1Marker> for crate::DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {

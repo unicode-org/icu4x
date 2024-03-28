@@ -42,12 +42,12 @@ pub struct CurrencyExtendedDataV1<'data> {
     // use short for long right now.
     /// A mapping from each currency's ISO code to its associated formatting patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns_config: ZeroMap<'data, Count, CurrencyPatternConfig>,
+    pub patterns_config: ZeroMap<'data, Count, ExtendedCurrencyPatternConfig>,
 
     /// A currency pattern config for the `other` count
     /// or there is no specific pattern for the currency has been found
     /// in the `patterns_config` map.
-    pub other_pattern_config: CurrencyPatternConfig,
+    pub other_pattern_config: ExtendedCurrencyPatternConfig,
 
     /// Contains the counted display names for the currency.
     /// For example, for "en" locale, and "USD" currency:
@@ -115,7 +115,7 @@ impl From<PluralCategory> for Count {
 pub struct ExtendedCurrencyPatternConfig {
     /// The pattern selection for the current placeholder.
     pub pattern_selection: PatternSelection,
-    
+
     /// Points to the index of the placeholder in the extended placeholders list.
     pub placeholder_index: Option<u16>,
 }
