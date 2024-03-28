@@ -9,6 +9,9 @@ use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 use crate::TransformResult;
 
 /// Implements the *Add Likely Subtags* and *Remove Likely Subtags*
@@ -178,6 +181,37 @@ fn update_langid(
         TransformResult::Modified
     } else {
         TransformResult::Unmodified
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
+/// Options for [`LocaleExpander::minimize_with_options`].
+pub enum LocaleExpanderSubtagPriority {
+    /// Prioritize script over region.
+    Script,
+    /// Prioritize region over script.
+    Region,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct LocaleExpanderOptionsBag {
+    pub subtag_priority: LocaleExpanderSubtagPriority,
+}
+
+impl Default for LocaleExpanderOptionsBag {
+    fn default() -> Self {
+        Self {
+            subtag_priority: LocaleExpanderSubtagPriority::Region,
+        }
+    }
+}
+
+impl LocaleExpanderOptionsBag {
+    pub fn from_subtag_priority(subtag_priority: LocaleExpanderSubtagPriority) -> Self {
+        Self { subtag_priority }
     }
 }
 
@@ -477,83 +511,165 @@ impl LocaleExpander {
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("zh"));
     /// ```
-    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
+    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, langid: T) -> TransformResult {
+        self.minimize_with_options(langid, LocaleExpanderOptionsBag::default())
+    }
+
+    /// This returns a new Locale that is the result of running the
+    /// 'Remove Likely Subtags' algorithm from
+    /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>
+    /// with the options given by [`LocaleExpanderOptionsBag`].
+    ///
+    /// If the result of running the algorithm would result in a new locale, the
+    /// locale argument is updated in place to match the result, and the method
+    /// returns [`TransformResult::Modified`]. Otherwise, the method
+    /// returns [`TransformResult::Unmodified`] and the locale argument is
+    /// unchanged.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_locid_transform::{
+    ///     LocaleExpander, LocaleExpanderOptionsBag, LocaleExpanderSubtagPriority,
+    ///     TransformResult
+    /// };
+    ///
+    /// let lc = LocaleExpander::new();
+    ///
+    /// let mut locale = locale!("zh_TW");
+    /// assert_eq!(
+    ///     lc.minimize_with_options(
+    ///         &mut locale,
+    ///         LocaleExpanderOptionsBag::from_subtag_priority(
+    ///             LocaleExpanderSubtagPriority::Script
+    ///         )
+    ///     ),
+    ///     TransformResult::Modified
+    /// );
+    /// assert_eq!(locale, locale!("zh_Hant"));
+    /// ```
+    pub fn minimize_with_options<T: AsMut<LanguageIdentifier>>(
+        &self,
+        mut langid: T,
+        options: LocaleExpanderOptionsBag,
+    ) -> TransformResult {
         let langid = langid.as_mut();
 
         let mut max = langid.clone();
         self.maximize(&mut max);
         let variants = mem::take(&mut max.variants);
         max.variants.clear();
-        let mut trial = max.clone();
 
-        trial.script = None;
-        trial.region = None;
-        self.maximize(&mut trial);
-        if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
+        let languagemax = |langid: &mut LanguageIdentifier| -> Option<TransformResult> {
+            let mut trial = max.clone();
+            trial.script = None;
+            trial.region = None;
+            self.maximize(&mut trial);
+            if trial == max {
+                if langid.language != max.language
+                    || langid.script.is_some()
+                    || langid.region.is_some()
+                {
+                    if langid.language != max.language {
+                        langid.language = max.language
+                    }
+                    if langid.script.is_some() {
+                        langid.script = None;
+                    }
+                    if langid.region.is_some() {
+                        langid.region = None;
+                    }
+                    return Some(TransformResult::Modified);
+                } else {
+                    return Some(TransformResult::Unmodified);
                 }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                langid.variants = variants;
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
             }
-        }
+            None
+        };
 
-        trial.script = None;
-        trial.region = max.region;
-        self.maximize(&mut trial);
-        if trial == max {
-            if langid.language != max.language
-                || langid.script.is_some()
-                || langid.region != max.region
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region != max.region {
-                    langid.region = max.region;
-                }
-                langid.variants = variants;
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
-        }
+        let languagemax_regionmax = |langid: &mut LanguageIdentifier| -> Option<TransformResult> {
+            let mut trial = max.clone();
+            trial.script = None;
+            trial.region = max.region;
+            self.maximize(&mut trial);
 
-        trial.script = max.script;
-        trial.region = None;
-        self.maximize(&mut trial);
-        if trial == max {
-            if langid.language != max.language
-                || langid.script != max.script
-                || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
+            if trial == max {
+                if langid.language != max.language
+                    || langid.script.is_some()
+                    || langid.region != max.region
+                {
+                    if langid.language != max.language {
+                        langid.language = max.language
+                    }
+                    if langid.script.is_some() {
+                        langid.script = None;
+                    }
+                    if langid.region != max.region {
+                        langid.region = max.region;
+                    }
+                    return Some(TransformResult::Modified);
+                } else {
+                    return Some(TransformResult::Unmodified);
                 }
-                if langid.script != max.script {
-                    langid.script = max.script;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                langid.variants = variants;
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
             }
+            None
+        };
+
+        let languagemax_scriptmax = |langid: &mut LanguageIdentifier| -> Option<TransformResult> {
+            let mut trial = max.clone();
+            trial.script = max.script;
+            trial.region = None;
+            self.maximize(&mut trial);
+            if trial == max {
+                if langid.language != max.language
+                    || langid.script != max.script
+                    || langid.region.is_some()
+                {
+                    if langid.language != max.language {
+                        langid.language = max.language
+                    }
+                    if langid.script != max.script {
+                        langid.script = max.script;
+                    }
+                    if langid.region.is_some() {
+                        langid.region = None;
+                    }
+                    return Some(TransformResult::Modified);
+                } else {
+                    return Some(TransformResult::Unmodified);
+                }
+            }
+            None
+        };
+
+        'fail: {
+            let res = 'success: {
+                if let Some(result) = languagemax(langid) {
+                    break 'success result;
+                }
+                match options.subtag_priority {
+                    LocaleExpanderSubtagPriority::Script => {
+                        if let Some(result) = languagemax_scriptmax(langid) {
+                            break 'success result;
+                        }
+                        if let Some(result) = languagemax_regionmax(langid) {
+                            break 'success result;
+                        }
+                    }
+                    LocaleExpanderSubtagPriority::Region => {
+                        if let Some(result) = languagemax_regionmax(langid) {
+                            break 'success result;
+                        }
+                        if let Some(result) = languagemax_scriptmax(langid) {
+                            break 'success result;
+                        }
+                    }
+                }
+                break 'fail;
+            };
+            langid.variants = variants;
+            return res;
         }
 
         if langid.language != max.language
@@ -753,5 +869,37 @@ mod tests {
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
         assert_eq!(locale, locale!("zh-Hans-CN"));
+    }
+
+    #[test]
+    fn test_minimize_favor_script() {
+        let lc = LocaleExpander::new();
+        let mut locale = locale!("yue-Hans");
+        assert_eq!(
+            lc.minimize_with_options(
+                &mut locale,
+                LocaleExpanderOptionsBag::from_subtag_priority(
+                    LocaleExpanderSubtagPriority::Script
+                )
+            ),
+            TransformResult::Unmodified
+        );
+        assert_eq!(locale, locale!("yue-Hans"));
+    }
+
+    #[test]
+    fn test_minimize_favor_region() {
+        let lc = LocaleExpander::new();
+        let mut locale = locale!("yue-Hans");
+        assert_eq!(
+            lc.minimize_with_options(
+                &mut locale,
+                LocaleExpanderOptionsBag::from_subtag_priority(
+                    LocaleExpanderSubtagPriority::Region
+                )
+            ),
+            TransformResult::Modified
+        );
+        assert_eq!(locale, locale!("yue-CN"));
     }
 }
