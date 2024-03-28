@@ -173,7 +173,13 @@ where
             metadata: buffer_response.metadata,
             payload: buffer_response
                 .payload
-                .map(|p| p.into_deserialized(buffer_format))
+                .and_then(|p| {
+                    if req.metadata.drop_payload {
+                        None
+                    } else {
+                        Some(p.into_deserialized(buffer_format))
+                    }
+                })
                 .transpose()
                 .map_err(|e| e.with_req(key, req))?,
         })
