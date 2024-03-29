@@ -583,4 +583,3 @@ icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::get#Fn
 icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
-icu::segmenter::WordType::is_word_like#FnInEnum
