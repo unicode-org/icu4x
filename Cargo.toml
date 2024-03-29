@@ -88,6 +88,7 @@ members = [
     "tools/testdata-scripts",
     "tools/md-tests",
     "ffi/dart/tools/datagen",
+    "tools/graveyard",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
