@@ -17,8 +17,8 @@ const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
 // TODO(#4013): Remove this constant once we have an invariant that the injecting text index is always less than 2046.
 pub const MAX_PLACEHOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 
-/// `CurrencyPatternConfigULE` is a type optimized for efficient storing and
-/// deserialization of `CurrencyPatternConfig` using the `ZeroVec` model.
+/// [`CurrencyPatternConfigULE`] is a type optimized for efficient storing and
+/// deserialization of [`CurrencyPatternConfig`] using the `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
