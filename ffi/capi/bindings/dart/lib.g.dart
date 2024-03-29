@@ -126,6 +126,7 @@ part 'UnicodeSetData.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
+part 'WeekendContainsDay.g.dart';
 part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
