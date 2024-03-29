@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
 use alloc::vec::Vec;
 
 use crate::{
@@ -296,19 +297,19 @@ fn invalid_annotations() {
         Err(ParserError::InvalidAnnotation),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
+
+    let bad_value = "2021-01-29 02:12:48+01:00:00[u-ca=iso8601][!foo=bar]";
+    let err = IxdtfParser::new(bad_value).parse();
+    assert_eq!(
+        err,
+        Err(ParserError::UnrecognizedCritical),
+        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
+    );
 }
 
 #[test]
 fn invalid_calendar_annotations() {
-    let bad_value = "2021-01-29 02:12:48+01:00:00[!u-ca=iso8601][u-ca=iso8601]";
-    let err = IxdtfParser::new(bad_value).parse();
-    assert_eq!(
-        err,
-        Err(ParserError::CriticalDuplicateCalendar),
-        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
-    );
-
-    let bad_value = "2021-01-29 02:12:48+01:00:00[u-ca=iso8601][!u-ca=iso8601]";
+    let bad_value = "2021-01-29 02:12:48+01:00:00[!u-ca=iso8601][u-ca=japanese]";
     let err = IxdtfParser::new(bad_value).parse();
     assert_eq!(
         err,
@@ -326,9 +327,32 @@ fn invalid_calendar_annotations() {
 }
 
 #[test]
+fn duplicate_same_calendar() {
+    let invalid_annotations = [
+        "2020-11-11[!u-ca=iso8601][u-ca=iso8601]",
+        "2020-11-11[u-ca=iso8601][!u-ca=iso8601]",
+    ];
+
+    for invalid in invalid_annotations {
+        let err = IxdtfParser::new(invalid).parse();
+        assert_eq!(
+            err,
+            Err(ParserError::CriticalDuplicateCalendar),
+            "Invalid ISO annotation parsing: \"{invalid}\" should fail parsing."
+        );
+    }
+}
+
+#[test]
 fn valid_calendar_annotations() {
     let value = "2021-01-29 02:12:48+01:00:00[u-ca=japanese][u-ca=iso8601][u-ca=gregorian]";
-    let result = IxdtfParser::new(value).parse().unwrap();
+    let mut annotations = Vec::default();
+    let result = IxdtfParser::new(value)
+        .parse_with_annotation_handler(|annotation| {
+            annotations.push(annotation);
+            Ok(())
+        })
+        .unwrap();
     assert_eq!(
         result.calendar,
         Some(Annotation {
@@ -340,7 +364,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        result.annotations[0],
+        annotations[0],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -350,7 +374,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        result.annotations[1],
+        annotations[1],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -360,7 +384,13 @@ fn valid_calendar_annotations() {
     );
 
     let value = "2021-01-29 02:12:48+01:00:00[u-ca=gregorian][u-ca=iso8601][u-ca=japanese]";
-    let result = IxdtfParser::new(value).parse().unwrap();
+    let mut annotations = Vec::default();
+    let result = IxdtfParser::new(value)
+        .parse_with_annotation_handler(|annotation| {
+            annotations.push(annotation);
+            Ok(())
+        })
+        .unwrap();
     assert_eq!(
         result.calendar,
         Some(Annotation {
@@ -372,7 +402,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        result.annotations[0],
+        annotations[0],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -382,7 +412,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        result.annotations[1],
+        annotations[1],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -510,22 +540,6 @@ fn invalid_time() {
         Err(ParserError::TimeSeparator),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
-}
-
-#[test]
-fn temporal_invalid_annotations() {
-    let invalid_annotations = [
-        "2020-11-11[!u-ca=iso8601][u-ca=iso8601]",
-        "2020-11-11[u-ca=iso8601][!u-ca=iso8601]",
-    ];
-
-    for invalid in invalid_annotations {
-        let err_result = IxdtfParser::new(invalid).parse();
-        assert!(
-            err_result.is_err(),
-            "Invalid ISO annotation parsing: \"{invalid}\" should fail parsing."
-        );
-    }
 }
 
 #[test]
@@ -716,7 +730,6 @@ fn test_correct_datetime() {
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 
@@ -734,7 +747,6 @@ fn test_correct_datetime() {
             time: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 
@@ -757,7 +769,6 @@ fn test_correct_datetime() {
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 
@@ -780,7 +791,6 @@ fn test_correct_datetime() {
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 
@@ -803,7 +813,6 @@ fn test_correct_datetime() {
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 
@@ -826,7 +835,6 @@ fn test_correct_datetime() {
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 
@@ -849,7 +857,6 @@ fn test_correct_datetime() {
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         })
     );
 }

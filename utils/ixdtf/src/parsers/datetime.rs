@@ -18,9 +18,7 @@ use crate::{
     ParserError, ParserResult,
 };
 
-use alloc::vec::Vec;
-
-use super::records::UTCOffsetRecord;
+use super::records::{Annotation, UTCOffsetRecord};
 
 #[derive(Debug, Default, Clone)]
 /// A `DateTime` Parse Node that contains the date, time, and offset info.
@@ -43,6 +41,7 @@ pub(crate) struct DateTimeRecord {
 /// [instant]: https://tc39.es/proposal-temporal/#prod-TemporalInstantString
 pub(crate) fn parse_annotated_date_time<'a>(
     cursor: &mut Cursor<'a>,
+    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let date_time = parse_date_time(cursor)?;
 
@@ -57,11 +56,10 @@ pub(crate) fn parse_annotated_date_time<'a>(
             offset: date_time.time_zone,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         });
     }
 
-    let annotation_set = annotations::parse_annotation_set(cursor)?;
+    let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
 
     cursor.close()?;
 
@@ -71,13 +69,13 @@ pub(crate) fn parse_annotated_date_time<'a>(
         offset: date_time.time_zone,
         tz: annotation_set.tz,
         calendar: annotation_set.calendar,
-        annotations: annotation_set.annotations,
     })
 }
 
 /// Parses an AnnotatedMonthDay.
 pub(crate) fn parse_annotated_month_day<'a>(
     cursor: &mut Cursor<'a>,
+    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let date = parse_month_day(cursor)?;
 
@@ -90,11 +88,10 @@ pub(crate) fn parse_annotated_month_day<'a>(
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         });
     }
 
-    let annotation_set = annotations::parse_annotation_set(cursor)?;
+    let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
 
     Ok(IxdtfParseRecord {
         date: Some(date),
@@ -102,13 +99,13 @@ pub(crate) fn parse_annotated_month_day<'a>(
         offset: None,
         tz: annotation_set.tz,
         calendar: annotation_set.calendar,
-        annotations: annotation_set.annotations,
     })
 }
 
 /// Parse an annotated YearMonth
 pub(crate) fn parse_annotated_year_month<'a>(
     cursor: &mut Cursor<'a>,
+    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let year = parse_date_year(cursor)?;
     cursor.advance_if(cursor.check_or(false, is_hyphen));
@@ -129,11 +126,10 @@ pub(crate) fn parse_annotated_year_month<'a>(
             offset: None,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         });
     }
 
-    let annotation_set = annotations::parse_annotation_set(cursor)?;
+    let annotation_set = annotations::parse_annotation_set(cursor, handler)?;
 
     Ok(IxdtfParseRecord {
         date: Some(date),
@@ -141,7 +137,6 @@ pub(crate) fn parse_annotated_year_month<'a>(
         offset: None,
         tz: annotation_set.tz,
         calendar: annotation_set.calendar,
-        annotations: annotation_set.annotations,
     })
 }
 

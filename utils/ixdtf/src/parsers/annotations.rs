@@ -18,17 +18,17 @@ use crate::{
     ParserError, ParserResult,
 };
 
-use alloc::vec::Vec;
-
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {
     pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
     pub(crate) calendar: Option<Annotation<'a>>,
-    pub(crate) annotations: Vec<Annotation<'a>>,
 }
 
 /// Parse a `TimeZoneAnnotation` `Annotations` set
-pub(crate) fn parse_annotation_set<'a>(cursor: &mut Cursor<'a>) -> ParserResult<AnnotationSet<'a>> {
+pub(crate) fn parse_annotation_set<'a>(
+    cursor: &mut Cursor<'a>,
+    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+) -> ParserResult<AnnotationSet<'a>> {
     // Parse the first annotation.
     let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
 
@@ -36,26 +36,24 @@ pub(crate) fn parse_annotation_set<'a>(cursor: &mut Cursor<'a>) -> ParserResult<
     let annotations = cursor.check_or(false, is_annotation_open);
 
     if annotations {
-        let annotations = parse_annotations(cursor)?;
+        let calendar = parse_annotations(cursor, handler)?;
         return Ok(AnnotationSet {
             tz: tz_annotation,
-            calendar: annotations.0,
-            annotations: annotations.1,
+            calendar,
         });
     }
 
     Ok(AnnotationSet {
         tz: tz_annotation,
         calendar: None,
-        annotations: Vec::default(),
     })
 }
 
 /// Parse any number of `KeyValueAnnotation`s
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
-) -> ParserResult<(Option<Annotation<'a>>, Vec<Annotation<'a>>)> {
-    let mut annotations = Vec::default();
+    mut handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+) -> ParserResult<Option<Annotation<'a>>> {
     let mut calendar: Option<Annotation<'a>> = None;
 
     while cursor.check_or(false, is_annotation_open) {
@@ -64,8 +62,8 @@ pub(crate) fn parse_annotations<'a>(
         // Check if the key is the registered key "u-ca".
         if kv.key == "u-ca" {
             match calendar {
-                // If any calendar is critical, treat as erroneous and throw an error.
-                Some(seen_kv) if seen_kv.critical || kv.critical => {
+                // If any calendar is critical with a value that is not aligned with the set calendar, treat as erroneous and throw an error.
+                Some(seen_kv) if seen_kv.value != kv.value && (seen_kv.critical || kv.critical) => {
                     return Err(ParserError::CriticalDuplicateCalendar);
                 }
                 Some(_) => {}
@@ -77,10 +75,10 @@ pub(crate) fn parse_annotations<'a>(
             }
         }
 
-        annotations.push(kv);
+        handler(kv)?;
     }
 
-    Ok((calendar, annotations))
+    Ok(calendar)
 }
 
 /// Parse an annotation with an `AnnotationKey`=`AnnotationValue` pair.

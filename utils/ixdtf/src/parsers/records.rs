@@ -4,8 +4,6 @@
 
 //! The records that `ixdtf`'s contain the resulting values of parsing.
 
-use alloc::vec::Vec;
-
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
@@ -20,8 +18,6 @@ pub struct IxdtfParseRecord<'a> {
     pub tz: Option<TimeZoneAnnotation<'a>>,
     /// The parsed calendar value.
     pub calendar: Option<Annotation<'a>>,
-    /// A collection of annotations provided on an IXDTF string.
-    pub annotations: Vec<Annotation<'a>>,
 }
 
 #[non_exhaustive]
