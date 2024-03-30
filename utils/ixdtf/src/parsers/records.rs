@@ -17,7 +17,7 @@ pub struct IxdtfParseRecord<'a> {
     /// Parsed `TimeZone` annotation with critical flag and data (UTCOffset | IANA name)
     pub tz: Option<TimeZoneAnnotation<'a>>,
     /// The parsed calendar value.
-    pub calendar: Option<Annotation<'a>>,
+    pub calendar: Option<&'a str>,
 }
 
 #[non_exhaustive]

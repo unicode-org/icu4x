@@ -21,7 +21,7 @@ use crate::{
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {
     pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
-    pub(crate) calendar: Option<Annotation<'a>>,
+    pub(crate) calendar: Option<&'a str>,
 }
 
 /// Parse a `TimeZoneAnnotation` `Annotations` set
@@ -53,7 +53,7 @@ pub(crate) fn parse_annotation_set<'a>(
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
     mut handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-) -> ParserResult<Option<Annotation<'a>>> {
+) -> ParserResult<Option<&'a str>> {
     let mut calendar: Option<Annotation<'a>> = None;
 
     while cursor.check_or(false, is_annotation_open) {
@@ -87,7 +87,7 @@ pub(crate) fn parse_annotations<'a>(
         }
     }
 
-    Ok(calendar)
+    Ok(calendar.map(|a| a.value))
 }
 
 /// Parse an annotation with an `AnnotationKey`=`AnnotationValue` pair.

@@ -193,27 +193,13 @@ fn good_annotations_date_time() {
         }
     );
 
-    assert_eq!(
-        result.calendar,
-        Some(Annotation {
-            critical: false,
-            key: "u-ca",
-            value: "iso8601"
-        })
-    );
+    assert_eq!(result.calendar, Some("iso8601"));
 
     let omit_result = omitted.parse().unwrap();
 
     assert!(omit_result.tz.is_none());
 
-    assert_eq!(
-        omit_result.calendar,
-        Some(Annotation {
-            critical: true,
-            key: "u-ca",
-            value: "iso8601"
-        })
-    );
+    assert_eq!(omit_result.calendar, Some("iso8601"));
 }
 
 #[test]
@@ -337,7 +323,7 @@ fn duplicate_same_calendar() {
         let result = IxdtfParser::new(duplicate).parse().unwrap();
         let calendar = result.calendar.unwrap();
         assert_eq!(
-            calendar.value, "iso8601",
+            calendar, "iso8601",
             "Invalid Ixdtf parsing: \"{duplicate}\" should fail parsing."
         );
     }
@@ -355,11 +341,7 @@ fn valid_calendar_annotations() {
         .unwrap();
     assert_eq!(
         result.calendar,
-        Some(Annotation {
-            critical: false,
-            key: "u-ca",
-            value: "japanese"
-        }),
+        Some("japanese"),
         "Valid annotation parsing: \"{value}\" should parse calendar as 'japanese'."
     );
 
@@ -393,11 +375,7 @@ fn valid_calendar_annotations() {
         .unwrap();
     assert_eq!(
         result.calendar,
-        Some(Annotation {
-            critical: false,
-            key: "u-ca",
-            value: "gregorian"
-        }),
+        Some("gregorian"),
         "Valid annotation parsing: \"{value}\" should parse calendar as 'gregorian'."
     );
 

@@ -65,11 +65,20 @@ impl<'a> IxdtfParser<'a> {
         self.parse_with_annotation_handler(Some)
     }
 
-    // TODO: Build out docs after consensus
     /// Parses the source as an annotated DateTime string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific reason to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
     pub fn parse_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation>,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
     ) -> ParserResult<IxdtfParseRecord<'a>> {
         datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
@@ -79,8 +88,17 @@ impl<'a> IxdtfParser<'a> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
-    // TODO: Build out docs after consensus
     /// Parses the source as an annotated YearMonth string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific use case to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
     pub fn parse_year_month_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
@@ -93,8 +111,17 @@ impl<'a> IxdtfParser<'a> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
-    // TODO: Build out docs after consensus
     /// Parses the source as an annotated MonthDay string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific reason to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
     pub fn parse_month_day_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
@@ -107,8 +134,17 @@ impl<'a> IxdtfParser<'a> {
         self.parse_time_with_annotation_handler(Some)
     }
 
-    // TODO: Build out docs after consensus
     /// Parses the source as an annotated Time string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific reason to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
     pub fn parse_time_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
