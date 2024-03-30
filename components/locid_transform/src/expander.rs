@@ -542,7 +542,11 @@ impl LocaleExpander {
         self.minimize_favor_region(langid, false)
     }
 
-    fn minimize_favor_region<T: AsMut<LanguageIdentifier>>(&self, mut langid: T, favor_region: bool) -> TransformResult {
+    fn minimize_favor_region<T: AsMut<LanguageIdentifier>>(
+        &self,
+        mut langid: T,
+        favor_region: bool,
+    ) -> TransformResult {
         let langid = langid.as_mut();
 
         let mut max = langid.clone();
@@ -561,7 +565,7 @@ impl LocaleExpander {
             trial.script = None;
             trial.region = max.region;
             self.maximize(&mut trial);
-    
+
             if trial == max {
                 return update_langid_minimize(max.language, None, max.region, langid);
             }
@@ -579,11 +583,11 @@ impl LocaleExpander {
             if trial == max {
                 return update_langid_minimize(max.language, max.script, None, langid);
             }
-            
+
             trial.script = None;
             trial.region = max.region;
             self.maximize(&mut trial);
-    
+
             if trial == max {
                 return update_langid_minimize(max.language, None, max.region, langid);
             }
@@ -787,10 +791,7 @@ mod tests {
     fn test_minimize_favor_region() {
         let lc = LocaleExpander::new();
         let mut locale = locale!("yue-Hans");
-        assert_eq!(
-            lc.minimize(&mut locale),
-            TransformResult::Modified
-        );
+        assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
         assert_eq!(locale, locale!("yue-CN"));
     }
 }
