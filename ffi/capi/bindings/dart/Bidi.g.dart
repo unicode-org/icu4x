@@ -29,7 +29,7 @@ final class Bidi implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Bidi(DataProvider provider) {
+  static Bidi create(DataProvider provider) {
     final result = _ICU4XBidi_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

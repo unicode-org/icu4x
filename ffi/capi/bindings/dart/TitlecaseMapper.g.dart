@@ -27,7 +27,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory TitlecaseMapper(DataProvider provider) {
+  static TitlecaseMapper create(DataProvider provider) {
     final result = _ICU4XTitlecaseMapper_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

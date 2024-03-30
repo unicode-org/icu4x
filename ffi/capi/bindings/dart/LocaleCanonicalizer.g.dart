@@ -29,7 +29,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LocaleCanonicalizer(DataProvider provider) {
+  static LocaleCanonicalizer create(DataProvider provider) {
     final result = _ICU4XLocaleCanonicalizer_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -42,7 +42,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LocaleCanonicalizer.extended(DataProvider provider) {
+  static LocaleCanonicalizer createExtended(DataProvider provider) {
     final result = _ICU4XLocaleCanonicalizer_create_extended(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

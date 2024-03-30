@@ -30,17 +30,17 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
-  factory DataProvider.compiled() {
+  static final DataProvider compiled = () {
     final result = _ICU4XDataProvider_create_compiled();
     return DataProvider._fromFfi(result, []);
-  }
+  }();
 
   /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DataProvider.fromByteSlice(ByteBuffer blob) {
+  static DataProvider createFromByteSlice(ByteBuffer blob) {
     final temp = ffi2.Arena();
     final blobView = blob;
     final result = _ICU4XDataProvider_create_from_byte_slice(blobView.allocIn(temp), blobView.length);
@@ -54,10 +54,10 @@ final class DataProvider implements ffi.Finalizable {
   /// Constructs an empty [`DataProvider`].
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
-  factory DataProvider.empty() {
+  static final DataProvider empty = () {
     final result = _ICU4XDataProvider_create_empty();
     return DataProvider._fromFfi(result, []);
-  }
+  }();
 
   /// Creates a provider that tries the current provider and then, if the current provider
   /// doesn't support the data key, another provider `other`.

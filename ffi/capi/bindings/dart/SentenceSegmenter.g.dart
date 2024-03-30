@@ -29,7 +29,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory SentenceSegmenter(DataProvider provider) {
+  static SentenceSegmenter create(DataProvider provider) {
     final result = _ICU4XSentenceSegmenter_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

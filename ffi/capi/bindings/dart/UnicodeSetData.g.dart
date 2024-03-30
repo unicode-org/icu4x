@@ -50,7 +50,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadBasicEmoji(DataProvider provider) {
+  static UnicodeSetData loadBasicEmoji(DataProvider provider) {
     final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -61,7 +61,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsMain(DataProvider provider, Locale locale) {
+  static UnicodeSetData loadExemplarsMain(DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_main(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -72,7 +72,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsAuxiliary(DataProvider provider, Locale locale) {
+  static UnicodeSetData loadExemplarsAuxiliary(DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -83,7 +83,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsPunctuation(DataProvider provider, Locale locale) {
+  static UnicodeSetData loadExemplarsPunctuation(DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -94,7 +94,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsNumbers(DataProvider provider, Locale locale) {
+  static UnicodeSetData loadExemplarsNumbers(DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_numbers(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -105,7 +105,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsIndex(DataProvider provider, Locale locale) {
+  static UnicodeSetData loadExemplarsIndex(DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_index(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

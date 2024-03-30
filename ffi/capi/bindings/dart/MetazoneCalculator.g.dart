@@ -31,7 +31,7 @@ final class MetazoneCalculator implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory MetazoneCalculator(DataProvider provider) {
+  static MetazoneCalculator create(DataProvider provider) {
     final result = _ICU4XMetazoneCalculator_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

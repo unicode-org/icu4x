@@ -29,7 +29,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_iso_datetime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime) for more information.
   ///
   /// Throws [Error] on failure.
-  factory IsoDateTime(int year, int month, int day, int hour, int minute, int second, int nanosecond) {
+  static IsoDateTime create(int year, int month, int day, int hour, int minute, int second, int nanosecond) {
     final result = _ICU4XIsoDateTime_create(year, month, day, hour, minute, second, nanosecond);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -40,7 +40,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Creates a new [`IsoDateTime`] from an [`IsoDate`] and [`Time`] object
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
-  factory IsoDateTime.fromDateAndTime(IsoDate date, Time time) {
+  static IsoDateTime create_from_date_and_time(IsoDate date, Time time) {
     final result = _ICU4XIsoDateTime_crate_from_date_and_time(date._ffi, time._ffi);
     return IsoDateTime._fromFfi(result, []);
   }
@@ -48,15 +48,15 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
   ///
   /// See the [Rust documentation for `local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.local_unix_epoch) for more information.
-  factory IsoDateTime.localUnixEpoch() {
+  static final IsoDateTime localUnixEpoch = () {
     final result = _ICU4XIsoDateTime_local_unix_epoch();
     return IsoDateTime._fromFfi(result, []);
-  }
+  }();
 
   /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
   ///
   /// See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
-  factory IsoDateTime.fromMinutesSinceLocalUnixEpoch(int minutes) {
+  static IsoDateTime createFromMinutesSinceLocalUnixEpoch(int minutes) {
     final result = _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes);
     return IsoDateTime._fromFfi(result, []);
   }
@@ -64,7 +64,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Gets the date contained in this object
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
-  IsoDate get date {
+  IsoDate date() {
     final result = _ICU4XIsoDateTime_date(_ffi);
     return IsoDate._fromFfi(result, []);
   }
@@ -72,7 +72,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Gets the time contained in this object
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
-  Time get time {
+  Time time() {
     final result = _ICU4XIsoDateTime_time(_ffi);
     return Time._fromFfi(result, []);
   }
@@ -89,7 +89,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
   ///
   /// See the [Rust documentation for `minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch) for more information.
-  int get minutesSinceLocalUnixEpoch {
+  int minutesSinceLocalUnixEpoch() {
     final result = _ICU4XIsoDateTime_minutes_since_local_unix_epoch(_ffi);
     return result;
   }
@@ -105,7 +105,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the hour in this time
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
-  int get hour {
+  int hour() {
     final result = _ICU4XIsoDateTime_hour(_ffi);
     return result;
   }
@@ -113,7 +113,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the minute in this time
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
-  int get minute {
+  int minute() {
     final result = _ICU4XIsoDateTime_minute(_ffi);
     return result;
   }
@@ -121,7 +121,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the second in this time
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
-  int get second {
+  int second() {
     final result = _ICU4XIsoDateTime_second(_ffi);
     return result;
   }
@@ -129,7 +129,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the nanosecond in this time
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
-  int get nanosecond {
+  int nanosecond() {
     final result = _ICU4XIsoDateTime_nanosecond(_ffi);
     return result;
   }
@@ -137,7 +137,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-  int get dayOfMonth {
+  int dayOfMonth() {
     final result = _ICU4XIsoDateTime_day_of_month(_ffi);
     return result;
   }
@@ -145,7 +145,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  IsoWeekday get dayOfWeek {
+  IsoWeekday dayOfWeek() {
     final result = _ICU4XIsoDateTime_day_of_week(_ffi);
     return IsoWeekday.values.firstWhere((v) => v._ffi == result);
   }
@@ -177,7 +177,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns 1-indexed number of the month of this date in its year
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  int get month {
+  int month() {
     final result = _ICU4XIsoDateTime_month(_ffi);
     return result;
   }
@@ -185,7 +185,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the year number for this date
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  int get year {
+  int year() {
     final result = _ICU4XIsoDateTime_year(_ffi);
     return result;
   }
@@ -193,7 +193,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns whether this date is in a leap year
   ///
   /// See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
-  bool get isInLeapYear {
+  bool isInLeapYear() {
     final result = _ICU4XIsoDateTime_is_in_leap_year(_ffi);
     return result;
   }
@@ -201,7 +201,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-  int get monthsInYear {
+  int monthsInYear() {
     final result = _ICU4XIsoDateTime_months_in_year(_ffi);
     return result;
   }
@@ -209,7 +209,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the number of days in the month represented by this date
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-  int get daysInMonth {
+  int daysInMonth() {
     final result = _ICU4XIsoDateTime_days_in_month(_ffi);
     return result;
   }
@@ -217,7 +217,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Returns the number of days in the year represented by this date
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-  int get daysInYear {
+  int daysInYear() {
     final result = _ICU4XIsoDateTime_days_in_year(_ffi);
     return result;
   }

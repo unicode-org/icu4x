@@ -29,7 +29,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LocaleFallbacker(DataProvider provider) {
+  static LocaleFallbacker create(DataProvider provider) {
     final result = _ICU4XLocaleFallbacker_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -40,10 +40,10 @@ final class LocaleFallbacker implements ffi.Finalizable {
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
-  factory LocaleFallbacker.withoutData() {
+  static final LocaleFallbacker withoutData = () {
     final result = _ICU4XLocaleFallbacker_create_without_data();
     return LocaleFallbacker._fromFfi(result, []);
-  }
+  }();
 
   /// Associates this `LocaleFallbacker` with configuration options.
   ///

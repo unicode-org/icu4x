@@ -27,7 +27,7 @@ final class Collator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Collator(DataProvider provider, Locale locale, CollatorOptions options) {
+  static Collator create(DataProvider provider, Locale locale, CollatorOptions options) {
     final temp = ffi2.Arena();
     final result = _ICU4XCollator_create_v1(provider._ffi, locale._ffi, options._toFfi(temp));
     temp.releaseAll();
@@ -57,7 +57,7 @@ final class Collator implements ffi.Finalizable {
   /// will have `Auto` as the value.
   ///
   /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options) for more information.
-  ResolvedCollatorOptions get resolvedOptions {
+  ResolvedCollatorOptions resolvedOptions() {
     final result = _ICU4XCollator_resolved_options(_ffi);
     return ResolvedCollatorOptions._fromFfi(result);
   }

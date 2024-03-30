@@ -30,7 +30,7 @@ final class DateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory DateFormatter.withLength(DataProvider provider, Locale locale, DateLength dateLength) {
+  static DateFormatter createWithLength(DataProvider provider, Locale locale, DateLength dateLength) {
     final result = _ICU4XDateFormatter_create_with_length(provider._ffi, locale._ffi, dateLength.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

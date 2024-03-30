@@ -42,7 +42,7 @@ final class BidiParagraph implements ffi.Finalizable {
   /// The primary direction of this paragraph
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
-  BidiDirection get direction {
+  BidiDirection direction() {
     final result = _ICU4XBidiParagraph_direction(_ffi);
     return BidiDirection.values[result];
   }
@@ -50,19 +50,19 @@ final class BidiParagraph implements ffi.Finalizable {
   /// The number of bytes in this paragraph
   ///
   /// See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
-  int get size {
+  int size() {
     final result = _ICU4XBidiParagraph_size(_ffi);
     return result;
   }
 
   /// The start index of this paragraph within the source text
-  int get rangeStart {
+  int rangeStart() {
     final result = _ICU4XBidiParagraph_range_start(_ffi);
     return result;
   }
 
   /// The end index of this paragraph within the source text
-  int get rangeEnd {
+  int rangeEnd() {
     final result = _ICU4XBidiParagraph_range_end(_ffi);
     return result;
   }

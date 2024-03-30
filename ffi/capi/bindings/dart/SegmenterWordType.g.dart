@@ -11,7 +11,7 @@ enum SegmenterWordType {
   letter;
 
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html#method.is_word_like) for more information.
-  bool get isWordLike {
+  bool isWordLike() {
     final result = _ICU4XSegmenterWordType_is_word_like(index);
     return result;
   }

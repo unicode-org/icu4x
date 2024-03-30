@@ -33,7 +33,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Locale.fromString(String name) {
+  static Locale createFromString(String name) {
     final temp = ffi2.Arena();
     final nameView = name.utf8View;
     final result = _ICU4XLocale_create_from_string(nameView.allocIn(temp), nameView.length);
@@ -47,10 +47,10 @@ final class Locale implements ffi.Finalizable {
   /// Construct a default undefined [`Locale`] "und".
   ///
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
-  factory Locale.und() {
+  static final Locale und = () {
     final result = _ICU4XLocale_create_und();
     return Locale._fromFfi(result, []);
-  }
+  }();
 
   /// Clones the [`Locale`].
   ///
@@ -66,7 +66,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   ///
   /// Throws [Error] on failure.
-  String get basename {
+  String basename() {
     final writeable = _Writeable();
     final result = _ICU4XLocale_basename(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -97,7 +97,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   ///
   /// Throws [Error] on failure.
-  String get language {
+  String language() {
     final writeable = _Writeable();
     final result = _ICU4XLocale_language(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -111,7 +111,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  set language(String bytes) {
+  void setLanguage(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_language(_ffi, bytesView.allocIn(temp), bytesView.length);
@@ -127,7 +127,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   ///
   /// Throws [Error] on failure.
-  String get region {
+  String region() {
     final writeable = _Writeable();
     final result = _ICU4XLocale_region(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -141,7 +141,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  set region(String bytes) {
+  void setRegion(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_region(_ffi, bytesView.allocIn(temp), bytesView.length);
@@ -157,7 +157,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   ///
   /// Throws [Error] on failure.
-  String get script {
+  String script() {
     final writeable = _Writeable();
     final result = _ICU4XLocale_script(_ffi, writeable._ffi);
     if (!result.isOk) {
@@ -171,7 +171,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  set script(String bytes) {
+  void setScript(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_script(_ffi, bytesView.allocIn(temp), bytesView.length);
@@ -206,7 +206,6 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.write_to) for more information.
   ///
   /// Throws [Error] on failure.
-  @override
   String toString() {
     final writeable = _Writeable();
     final result = _ICU4XLocale_to_string(_ffi, writeable._ffi);

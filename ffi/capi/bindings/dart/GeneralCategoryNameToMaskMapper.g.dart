@@ -51,7 +51,7 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
-  factory GeneralCategoryNameToMaskMapper.load(DataProvider provider) {
+  static GeneralCategoryNameToMaskMapper load(DataProvider provider) {
     final result = _ICU4XGeneralCategoryNameToMaskMapper_load(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
