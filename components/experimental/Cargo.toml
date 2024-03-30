@@ -66,6 +66,10 @@ icu_locid = { path = "../../components/locid" }
 #TODO: remove this once we are not using `BigRational` anymore.
 num-rational = "0.4.1"
 
+icu_experimental_data = { workspace = true }
+icu_locid_transform_data = { workspace = true }
+icu_properties_data = { workspace = true }
+
 [features]
 default = ["compiled_data"]
 compiled_data = ["dep:icu_experimental_data", "icu_locid_transform/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_properties/compiled_data", "icu_normalizer/compiled_data"]
