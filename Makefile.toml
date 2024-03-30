@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extend = [
-    { path = "./docs/tutorials/gn/gn.toml"}, #
+    { path = "./tutorials/gn/gn.toml"}, #
     { path = "./tools/make/data.toml"}, #
     { path = "./tools/make/valgrind.toml"}, #
     { path = "./tools/make/tidy.toml"}, #

@@ -1,5 +1,4 @@
 import { u16, usize } from "./diplomat-runtime"
-import { FFIError } from "./diplomat-runtime"
 
 /**
 
@@ -27,10 +26,9 @@ export class ICU4XScriptExtensionsSet {
 
   /**
 
-   * Get script at index, returning an error if out of bounds
+   * Get script at index
 
    * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
-   * @throws {@link FFIError}<void>
    */
-  script_at(index: usize): u16 | never;
+  script_at(index: usize): u16 | undefined;
 }

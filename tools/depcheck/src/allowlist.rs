@@ -136,6 +136,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "elsa",
     "erased-serde",
     "icu_codepointtrie_builder",
+    "icu_pattern",
     "icu_provider_adapters",
     "itertools",
     "itoa",

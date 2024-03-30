@@ -26,7 +26,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         self.check_req::<UnitsInfoV1Marker>(_req)?;
 
         // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
-        let units_data: &cldr_serde::units::units_constants::Resource = self
+        let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
@@ -73,9 +73,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                     .with_display_context(&e)
             })?;
 
-        let binding = units_conversion_trie.clone().convert_store();
-        let parser = MeasureUnitParser::from_payload(&binding);
-        let units_conversion_trie = units_conversion_trie.convert_store().into_zerotrie();
+        let parser = MeasureUnitParser::from_payload(units_conversion_trie.as_borrowed());
 
         let convert_infos = convert_units_vec
             .iter()
@@ -90,7 +88,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
 
         let result = UnitsInfoV1 {
-            units_conversion_trie,
+            units_conversion_trie: units_conversion_trie.convert_store(),
             convert_infos: VarZeroVec::from(&convert_infos),
         };
 

@@ -36,10 +36,10 @@ serde_json = "1.0"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 iai = "0.1.1"
 icu = { path = "../../components/icu", default-features = false }
-icu_properties = { path = "../../components/properties", default-features = false }
+icu_properties = { path = "../../components/properties" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 std = []
@@ -57,15 +57,15 @@ denylist = ["bench"]
 [[bench]]
 name = "codepointtrie"
 harness = false
-path = "src/codepointtrie/benches/codepointtrie.rs"
+path = "benches/codepointtrie.rs"
 
 [[bench]]
 name = "iai_cpt"
 harness = false
 required-features = ["bench"]
-path = "src/codepointtrie/benches/iai_cpt.rs"
+path = "benches/iai_cpt.rs"
 
 [[bench]]
 name = "inv_list"
 harness = false
-path = "src/codepointinvlist/benches/inv_list.rs"
+path = "benches/inv_list.rs"

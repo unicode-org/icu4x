@@ -35,31 +35,23 @@ fn make_testdata() {
             .unwrap();
 
         Box::new(MultiExporter::new(vec![
-            #[cfg(feature = "fs_provider")]
+            #[cfg(feature = "fs_exporter")]
             Box::new(
-                crate::fs_provider::FilesystemExporter::try_new(
-                    Box::new(crate::fs_provider::serializers::Json::pretty()),
+                crate::fs_exporter::FilesystemExporter::try_new(
+                    Box::new(crate::fs_exporter::serializers::Json::pretty()),
                     {
-                        let mut options = crate::fs_provider::ExporterOptions::default();
+                        let mut options = crate::fs_exporter::ExporterOptions::default();
                         options.root = "tests/data/json".into();
-                        options.overwrite = crate::fs_provider::OverwriteOption::RemoveAndReplace;
+                        options.overwrite = crate::fs_exporter::OverwriteOption::RemoveAndReplace;
                         options
                     },
                 )
                 .unwrap(),
             ),
-            #[cfg(feature = "baked_provider")]
+            #[cfg(feature = "baked_exporter")]
             // Generates a stub data directory that can be used with `ICU4X_DATA_DIR`
-            // for faster development and debugging. For example, put the following in
-            // VSCode settings.json:
-            //
-            // ```javascript
-            // "rust-analyzer.cargo.extraEnv": {
-            //   // Relative to provider/baked/x/src
-            //   "ICU4X_DATA_DIR": "../../../datagen/tests/data/stub"
-            // },
-            // ```
-            Box::new(BakedStubdataExporter(
+            // for faster development and debugging. See CONTRIBUTING.md
+            Box::new(StubExporter(
                 crate::baked_exporter::BakedExporter::new(
                     "tests/data/baked".into(),
                     crate::baked_exporter::Options {
@@ -84,7 +76,10 @@ fn make_testdata() {
 
     DatagenDriver::new()
         .with_keys(crate::all_keys())
-        .with_locales(LOCALES.iter().cloned())
+        .with_locales_and_fallback(
+            LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+            Default::default(),
+        )
         .with_segmenter_models([
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
@@ -287,9 +282,9 @@ struct MeasuringAllocator;
 impl MeasuringAllocator {
     // We need to track allocations on each thread independently
     thread_local! {
-        static ACTIVE: Cell<bool> = Cell::new(false);
-        static TOTAL_ALLOCATED: Cell<u64> = Cell::new(0);
-        static TOTAL_DEALLOCATED: Cell<u64> = Cell::new(0);
+        static ACTIVE: Cell<bool> = const { Cell::new(false) };
+        static TOTAL_ALLOCATED: Cell<u64> = const { Cell::new(0) };
+        static TOTAL_DEALLOCATED: Cell<u64> = const { Cell::new(0) };
     }
 
     pub fn start_measure() {

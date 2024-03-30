@@ -532,7 +532,7 @@ impl NeoTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::Time;
+    /// use icu::calendar::Time;
     /// use icu::datetime::neo::NeoTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;

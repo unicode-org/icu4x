@@ -10,7 +10,7 @@
 description = "Run C API tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "docs/tutorials/c", "test"]
+args = ["-C", "tutorials/c", "test"]
 
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
@@ -19,15 +19,15 @@ dependencies = ["install-unknown-linux-nightly"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error make -C docs/tutorials/c-tiny/fixeddecimal
-exec --fail-on-error make -C docs/tutorials/c-tiny/segmenter
+exec --fail-on-error make -C tutorials/c-tiny/fixeddecimal
+exec --fail-on-error make -C tutorials/c-tiny/segmenter
 '''
 
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "docs/tutorials/cpp", "test"]
+args = ["-C", "tutorials/cpp", "test"]
 
 
 # JS/WASM tasks
@@ -44,7 +44,7 @@ description = "Test the Tiny WASM example"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
 command = "make"
-args = ["-C", "docs/tutorials/js-tiny", "test"]
+args = ["-C", "tutorials/js-tiny", "test"]
 
 
 # Dart tasks

@@ -193,6 +193,11 @@ class ICU4XLocale {
   ICU4XOrdering strict_cmp(const std::string_view other) const;
 
   /**
+   * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.total_cmp) for more information.
+   */
+  ICU4XOrdering total_cmp(const ICU4XLocale& other) const;
+
+  /**
    * Deprecated
    * 
    * Use `create_from_string("en").
@@ -428,6 +433,9 @@ inline bool ICU4XLocale::normalizing_eq(const std::string_view other) const {
 }
 inline ICU4XOrdering ICU4XLocale::strict_cmp(const std::string_view other) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XLocale_strict_cmp(this->inner.get(), other.data(), other.size()));
+}
+inline ICU4XOrdering ICU4XLocale::total_cmp(const ICU4XLocale& other) const {
+  return static_cast<ICU4XOrdering>(capi::ICU4XLocale_total_cmp(this->inner.get(), other.AsFFI()));
 }
 inline ICU4XLocale ICU4XLocale::create_en() {
   return ICU4XLocale(capi::ICU4XLocale_create_en());

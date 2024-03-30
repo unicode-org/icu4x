@@ -35,4 +35,8 @@ export class ICU4XPluralOperands {
     buf_arg_s.free();
     return diplomat_out;
   }
+
+  static create_from_fixed_decimal(arg_x) {
+    return new ICU4XPluralOperands(wasm.ICU4XPluralOperands_create_from_fixed_decimal(arg_x.underlying), true, []);
+  }
 }

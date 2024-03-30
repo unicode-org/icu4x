@@ -4,7 +4,6 @@
 
 use crate::{provider::*, LocaleTransformError};
 
-use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -170,6 +169,37 @@ fn update_langid(
     }
 
     if langid.region.is_none() && region.is_some() {
+        langid.region = region;
+        modified = true;
+    }
+
+    if modified {
+        TransformResult::Modified
+    } else {
+        TransformResult::Unmodified
+    }
+}
+
+#[inline]
+fn update_langid_minimize(
+    language: Language,
+    script: Option<Script>,
+    region: Option<Region>,
+    langid: &mut LanguageIdentifier,
+) -> TransformResult {
+    let mut modified = false;
+
+    if langid.language != language {
+        langid.language = language;
+        modified = true;
+    }
+
+    if langid.script != script {
+        langid.script = script;
+        modified = true;
+    }
+
+    if langid.region != region {
         langid.region = region;
         modified = true;
     }
@@ -482,97 +512,30 @@ impl LocaleExpander {
 
         let mut max = langid.clone();
         self.maximize(&mut max);
-        let variants = mem::take(&mut max.variants);
-        max.variants.clear();
         let mut trial = max.clone();
 
         trial.script = None;
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                langid.variants = variants;
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
+            return update_langid_minimize(max.language, None, None, langid);
         }
 
         trial.script = None;
         trial.region = max.region;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language
-                || langid.script.is_some()
-                || langid.region != max.region
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region != max.region {
-                    langid.region = max.region;
-                }
-                langid.variants = variants;
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
+            return update_langid_minimize(max.language, None, max.region, langid);
         }
 
         trial.script = max.script;
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language
-                || langid.script != max.script
-                || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script != max.script {
-                    langid.script = max.script;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                langid.variants = variants;
-                return TransformResult::Modified;
-            } else {
-                return TransformResult::Unmodified;
-            }
+            return update_langid_minimize(max.language, max.script, None, langid);
         }
 
-        if langid.language != max.language
-            || langid.script != max.script
-            || langid.region != max.region
-        {
-            if langid.language != max.language {
-                langid.language = max.language
-            }
-            if langid.script != max.script {
-                langid.script = max.script;
-            }
-            if langid.region != max.region {
-                langid.region = max.region;
-            }
-            TransformResult::Modified
-        } else {
-            TransformResult::Unmodified
-        }
+        update_langid_minimize(max.language, max.script, max.region, langid)
     }
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public

@@ -259,8 +259,10 @@ registry!(
     #[cfg(all())]
     icu_decimal::provider::DecimalSymbolsV1Marker = "decimal/symbols@1",
     #[cfg(feature = "experimental_components")]
-    icu_experimental::dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    icu_experimental::dimension::provider::PercentEssentialsV1Marker = "percent/essentials@1",
+    icu_experimental::dimension::provider::currency::CurrencyEssentialsV1Marker =
+        "currency/essentials@1",
+    icu_experimental::dimension::provider::percent::PercentEssentialsV1Marker =
+        "percent/essentials@1",
     #[cfg(feature = "experimental_components")]
     icu_experimental::displaynames::provider::RegionDisplayNamesV1Marker = "displaynames/regions@1",
     icu_experimental::displaynames::provider::LanguageDisplayNamesV1Marker =
@@ -499,6 +501,7 @@ registry!(
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
     icu_timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
     icu_timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
+    icu_timezone::provider::names::IanaToBcp47MapV2Marker = "time_zone/iana_to_bcp47@2",
     #[cfg(feature = "experimental_components")]
     icu_experimental::transliterate::provider::TransliteratorRulesV1Marker =
         "transliterator/rules@1",
