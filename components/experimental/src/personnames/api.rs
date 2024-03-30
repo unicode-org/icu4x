@@ -4,8 +4,8 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use displaydoc::Display;
 use core::fmt;
+use displaydoc::Display;
 use icu_locid::Locale;
 use icu_provider::DataError;
 
