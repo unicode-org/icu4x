@@ -4,6 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
+use displaydoc::Display;
 use core::fmt;
 use icu_locid::Locale;
 use icu_provider::DataError;
@@ -32,13 +33,19 @@ pub trait PersonName {
 
 ///
 /// Error handling for the person name formatter.
-#[derive(Clone, Eq, PartialEq, Debug)]
+#[derive(Clone, Eq, PartialEq, Debug, Display)]
 pub enum PersonNamesFormatterError {
+    #[displaydoc("{0}")]
     ParseError(String),
+    #[displaydoc("Invalid person name")]
     InvalidPersonName,
+    #[displaydoc("Invalid person name")]
     InvalidLocale,
+    #[displaydoc("Invalid CLDR data")]
     InvalidCldrData,
+    #[displaydoc("{0}")]
     Data(DataError),
+    #[displaydoc("{0}")]
     Properties(icu_properties::Error),
 }
 
@@ -324,4 +331,27 @@ pub struct PersonNamesFormatterOptions {
     pub length: FormattingLength,
     pub usage: FormattingUsage,
     pub formality: FormattingFormality,
+}
+
+impl PersonNamesFormatterOptions {
+    // TODO: Remove this function. It depends on compiled_data for the LocaleExpander.
+    #[cfg(feature = "compiled_data")]
+    pub fn new(
+        target_locale: Locale,
+        order: FormattingOrder,
+        length: FormattingLength,
+        usage: FormattingUsage,
+        formality: FormattingFormality,
+    ) -> Self {
+        let lc = icu_locid_transform::LocaleExpander::new();
+        let mut final_locale = target_locale.clone();
+        lc.maximize(&mut final_locale);
+        Self {
+            target_locale: final_locale,
+            order,
+            length,
+            usage,
+            formality,
+        }
+    }
 }
