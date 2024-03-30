@@ -145,6 +145,30 @@ impl Writeable for String {
     }
 }
 
+impl Writeable for char {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_char(*self)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        LengthHint::exact(self.len_utf8())
+    }
+
+    #[inline]
+    fn write_to_string(&self) -> Cow<str> {
+        let mut s = String::with_capacity(self.len_utf8());
+        s.push(*self);
+        Cow::Owned(s)
+    }
+
+    #[inline]
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.encode_utf8(&mut [0u8; 4]).as_bytes().cmp(other)
+    }
+}
+
 impl<T: Writeable + ?Sized> Writeable for &T {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -186,6 +210,22 @@ fn test_string_impls() {
     // test String impl
     let arr: &[String] = &[String::new(), "abc".to_owned()];
     check_writeable_slice(arr);
+
+    // test char impl
+    let chars = ['a', 'β', '你', '😀'];
+    for i in 0..chars.len() {
+        let s = String::from(chars[i]);
+        assert_writeable_eq!(&chars[i], s);
+        for j in 0..chars.len() {
+            assert_eq!(
+                chars[j].write_cmp_bytes(s.as_bytes()),
+                chars[j].cmp(&chars[i]),
+                "{:?} vs {:?}",
+                chars[j],
+                chars[i]
+            );
+        }
+    }
 
     // test &T impl
     let arr: &[&String] = &[&String::new(), &"abc".to_owned()];
