@@ -62,80 +62,56 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        self.parse_with_annotation_handler(|annotation| {
-            if annotation.critical && annotation.key != "u-ca" {
-                Err(ParserError::UnrecognizedCritical)
-            } else {
-                Ok(())
-            }
-        })
+        self.parse_with_annotation_handler(Some)
     }
 
     // TODO: Build out docs after consensus
     /// Parses the source as an annotated DateTime string with an Annotation handler.
     pub fn parse_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation>,
     ) -> ParserResult<IxdtfParseRecord<'a>> {
         datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
 
     /// Parses the source as an annotated YearMonth string.
     pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        self.parse_year_month_with_annotation_handler(|annotation| {
-            if annotation.critical && annotation.key != "u-ca" {
-                Err(ParserError::UnrecognizedCritical)
-            } else {
-                Ok(())
-            }
-        })
+        self.parse_year_month_with_annotation_handler(Some)
     }
 
     // TODO: Build out docs after consensus
     /// Parses the source as an annotated YearMonth string with an Annotation handler.
     pub fn parse_year_month_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
     ) -> ParserResult<IxdtfParseRecord<'a>> {
         datetime::parse_annotated_year_month(&mut self.cursor, handler)
     }
 
     /// Parses the source as an annotated MonthDay string.
     pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        self.parse_month_day_with_annotation_handler(|annotation| {
-            if annotation.critical && annotation.key != "u-ca" {
-                Err(ParserError::UnrecognizedCritical)
-            } else {
-                Ok(())
-            }
-        })
+        self.parse_month_day_with_annotation_handler(Some)
     }
 
     // TODO: Build out docs after consensus
     /// Parses the source as an annotated MonthDay string with an Annotation handler.
     pub fn parse_month_day_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
     ) -> ParserResult<IxdtfParseRecord<'a>> {
         datetime::parse_annotated_month_day(&mut self.cursor, handler)
     }
 
     /// Parses the source as an annotated Time string.
     pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        self.parse_time_with_annotation_handler(|annotation| {
-            if annotation.critical && annotation.key != "u-ca" {
-                Err(ParserError::UnrecognizedCritical)
-            } else {
-                Ok(())
-            }
-        })
+        self.parse_time_with_annotation_handler(Some)
     }
 
     // TODO: Build out docs after consensus
     /// Parses the source as an annotated Time string with an Annotation handler.
     pub fn parse_time_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
     ) -> ParserResult<IxdtfParseRecord<'a>> {
         time::parse_annotated_time_record(&mut self.cursor, handler)
     }

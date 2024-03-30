@@ -27,7 +27,7 @@ pub(crate) struct AnnotationSet<'a> {
 /// Parse a `TimeZoneAnnotation` `Annotations` set
 pub(crate) fn parse_annotation_set<'a>(
     cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<AnnotationSet<'a>> {
     // Parse the first annotation.
     let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
@@ -52,30 +52,39 @@ pub(crate) fn parse_annotation_set<'a>(
 /// Parse any number of `KeyValueAnnotation`s
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
-    mut handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+    mut handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<Option<Annotation<'a>>> {
     let mut calendar: Option<Annotation<'a>> = None;
 
     while cursor.check_or(false, is_annotation_open) {
-        let kv: Annotation<'a> = parse_kv_annotation(cursor)?;
+        let annotation = handler(parse_kv_annotation(cursor)?);
 
-        // Check if the key is the registered key "u-ca".
-        if kv.key == "u-ca" {
-            match calendar {
-                // If any calendar is critical with a value that is not aligned with the set calendar, treat as erroneous and throw an error.
-                Some(seen_kv) if seen_kv.value != kv.value && (seen_kv.critical || kv.critical) => {
-                    return Err(ParserError::CriticalDuplicateCalendar);
-                }
-                Some(_) => {}
-                None => {
-                    // If the calendar is not yet set, set calendar.
-                    calendar = Some(kv);
-                    continue;
+        match annotation {
+            // Check if the key is the registered key "u-ca".
+            Some(kv) if kv.key == "u-ca" => {
+                // Check the calendar
+                match calendar {
+                    Some(calendar)
+                        // if calendars do not match and one of them is critical
+                        if calendar.value != kv.value && (calendar.critical || kv.critical) =>
+                    {
+                        return Err(ParserError::CriticalDuplicateCalendar)
+                    }
+                    // If there is not yet a calendar, save it.
+                    None => {
+                        calendar = Some(kv);
+                    }
+                    _ => {}
                 }
             }
+            Some(unknown_kv) => {
+                // Throw an error on any unrecognized annotations that are marked as critical.
+                if unknown_kv.critical {
+                    return Err(ParserError::UnrecognizedCritical);
+                }
+            }
+            None => {}
         }
-
-        handler(kv)?;
     }
 
     Ok(calendar)

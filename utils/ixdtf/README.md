@@ -145,21 +145,13 @@ agnostic regarding the ambiguity caused by the criticality of an unknown key. Th
 be provided to the user to handle the unknown key's critical flag as they see fit.
 
 ```rust
-use ixdtf::parsers::IxdtfParser;
+use ixdtf::{parsers::IxdtfParser, ParserError};
 
 let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 
-let mut ixdtf = IxdtfParser::new(example_one);
+let result = IxdtfParser::new(example_one).parse();
 
-let result = ixdtf.parse().unwrap();
-
-let annotation = &result.annotations[0];
-
-// While an unknown annotation should not be critical, it is up to the user
-// to act on that error.
-assert!(annotation.critical);
-assert_eq!(annotation.key, "answer-to-universe");
-assert_eq!(annotation.value, "fortytwo");
+assert_eq!(result, Err(ParserError::UnrecognizedCritical));
 ```
 
 (4) belongs to group (b) and shows an ambiguous Time Zone caused by a misalignment

@@ -328,17 +328,17 @@ fn invalid_calendar_annotations() {
 
 #[test]
 fn duplicate_same_calendar() {
-    let invalid_annotations = [
+    let duplicate_calendars = [
         "2020-11-11[!u-ca=iso8601][u-ca=iso8601]",
         "2020-11-11[u-ca=iso8601][!u-ca=iso8601]",
     ];
 
-    for invalid in invalid_annotations {
-        let err = IxdtfParser::new(invalid).parse();
+    for duplicate in duplicate_calendars {
+        let result = IxdtfParser::new(duplicate).parse().unwrap();
+        let calendar = result.calendar.unwrap();
         assert_eq!(
-            err,
-            Err(ParserError::CriticalDuplicateCalendar),
-            "Invalid ISO annotation parsing: \"{invalid}\" should fail parsing."
+            calendar.value, "iso8601",
+            "Invalid Ixdtf parsing: \"{duplicate}\" should fail parsing."
         );
     }
 }
@@ -349,8 +349,8 @@ fn valid_calendar_annotations() {
     let mut annotations = Vec::default();
     let result = IxdtfParser::new(value)
         .parse_with_annotation_handler(|annotation| {
-            annotations.push(annotation);
-            Ok(())
+            annotations.push(annotation.clone());
+            Some(annotation)
         })
         .unwrap();
     assert_eq!(
@@ -364,7 +364,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        annotations[0],
+        annotations[1],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -374,7 +374,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        annotations[1],
+        annotations[2],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -387,8 +387,8 @@ fn valid_calendar_annotations() {
     let mut annotations = Vec::default();
     let result = IxdtfParser::new(value)
         .parse_with_annotation_handler(|annotation| {
-            annotations.push(annotation);
-            Ok(())
+            annotations.push(annotation.clone());
+            Some(annotation)
         })
         .unwrap();
     assert_eq!(
@@ -402,7 +402,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        annotations[0],
+        annotations[1],
         Annotation {
             critical: false,
             key: "u-ca",
@@ -412,7 +412,7 @@ fn valid_calendar_annotations() {
     );
 
     assert_eq!(
-        annotations[1],
+        annotations[2],
         Annotation {
             critical: false,
             key: "u-ca",

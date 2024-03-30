@@ -24,7 +24,7 @@ use super::{annotations, records::IxdtfParseRecord};
 /// value does not align
 pub(crate) fn parse_annotated_time_record<'a>(
     cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let designator = cursor.check_or(false, is_time_designator);
     cursor.advance_if(designator);

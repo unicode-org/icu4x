@@ -41,7 +41,7 @@ pub(crate) struct DateTimeRecord {
 /// [instant]: https://tc39.es/proposal-temporal/#prod-TemporalInstantString
 pub(crate) fn parse_annotated_date_time<'a>(
     cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let date_time = parse_date_time(cursor)?;
 
@@ -75,7 +75,7 @@ pub(crate) fn parse_annotated_date_time<'a>(
 /// Parses an AnnotatedMonthDay.
 pub(crate) fn parse_annotated_month_day<'a>(
     cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let date = parse_month_day(cursor)?;
 
@@ -105,7 +105,7 @@ pub(crate) fn parse_annotated_month_day<'a>(
 /// Parse an annotated YearMonth
 pub(crate) fn parse_annotated_year_month<'a>(
     cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> ParserResult<()>,
+    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let year = parse_date_year(cursor)?;
     cursor.advance_if(cursor.check_or(false, is_hyphen));
