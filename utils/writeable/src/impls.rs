@@ -4,6 +4,7 @@
 
 use crate::*;
 use alloc::borrow::Cow;
+use alloc::borrow::ToOwned;
 use core::fmt;
 
 macro_rules! impl_write_num {
@@ -169,6 +170,33 @@ impl Writeable for char {
     }
 }
 
+impl<'a, T: Writeable + ToOwned + ?Sized> Writeable for Cow<'a, T> {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        (&self as &T).write_to(sink)
+    }
+
+    #[inline]
+    fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        (&self as &T).write_to_parts(sink)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        (&self as &T).writeable_length_hint()
+    }
+
+    #[inline]
+    fn write_to_string(&self) -> Cow<str> {
+        (&self as &T).write_to_string().into_owned().into()
+    }
+
+    #[inline]
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        (&self as &T).write_cmp_bytes(other)
+    }
+}
+
 impl<T: Writeable + ?Sized> Writeable for &T {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -226,6 +254,10 @@ fn test_string_impls() {
             );
         }
     }
+
+    // test Cow impl
+    let arr: &[Cow<str>] = &[Cow::Borrowed(""), Cow::Owned("abc".to_string())];
+    check_writeable_slice(arr);
 
     // test &T impl
     let arr: &[&String] = &[&String::new(), &"abc".to_owned()];
