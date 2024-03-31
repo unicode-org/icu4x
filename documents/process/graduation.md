@@ -27,6 +27,8 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] All options and conditional code paths should have a corresponding docs test with the heading `# Examples`
   - [ ] All functions that are conditional on a Cargo feature should say so (last line before `# Examples`): ```✨ *Enabled with the `alloc` Cargo feature.*```
   - [ ] Compiled data constructors should say "with compiled data" in the first sentence and should have a Cargo feature alert following the above syntax.
+- [ ] The APIs should follow ICU4X style
+  - [ ] All options bags should be `Copy` (and contain references if they need to). Exceptions can be made by discussion.
 - [ ] The data structs should fully follow ZeroVec style
   - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/make-testdata.rs) test
   - [ ] Constructors should avoid allocating memory in the common case
