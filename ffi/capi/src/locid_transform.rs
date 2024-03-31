@@ -107,5 +107,10 @@ pub mod ffi {
         pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
             self.0.minimize(&mut locale.0).into()
         }
+
+        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::minimize_favor_script, FnInStruct)]
+        pub fn minimize_favor_script(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+            self.0.minimize_favor_script(&mut locale.0).into()
+        }
     }
 }

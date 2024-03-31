@@ -30,6 +30,8 @@ diplomat_result_box_ICU4XLocaleExpander_ICU4XError ICU4XLocaleExpander_create_ex
 ICU4XTransformResult ICU4XLocaleExpander_maximize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
 
 ICU4XTransformResult ICU4XLocaleExpander_minimize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
+
+ICU4XTransformResult ICU4XLocaleExpander_minimize_favor_script(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
 void ICU4XLocaleExpander_destroy(ICU4XLocaleExpander* self);
 
 #ifdef __cplusplus
