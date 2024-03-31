@@ -508,7 +508,7 @@ impl LocaleExpander {
     /// assert_eq!(locale, locale!("zh"));
     /// ```
     pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, langid: T) -> TransformResult {
-        self.minimize_favor_region(langid, true)
+        self.minimize_impl(langid, true)
     }
 
     /// This returns a new Locale that is the result of running the
@@ -525,9 +525,7 @@ impl LocaleExpander {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::{
-    ///     LocaleExpander, TransformResult
-    /// };
+    /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
     ///
@@ -539,10 +537,10 @@ impl LocaleExpander {
         &self,
         langid: T,
     ) -> TransformResult {
-        self.minimize_favor_region(langid, false)
+        self.minimize_impl(langid, false)
     }
 
-    fn minimize_favor_region<T: AsMut<LanguageIdentifier>>(
+    fn minimize_impl<T: AsMut<LanguageIdentifier>>(
         &self,
         mut langid: T,
         favor_region: bool,
