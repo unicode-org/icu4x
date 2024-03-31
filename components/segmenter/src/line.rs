@@ -170,7 +170,7 @@ pub enum LineBreakWordOption {
 
 /// Options to tailor line-breaking behavior.
 #[non_exhaustive]
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub struct LineBreakOptions {
     /// Strictness of line-breaking rules. See [`LineBreakStrictness`].
     pub strictness: LineBreakStrictness,

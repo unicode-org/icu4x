@@ -285,6 +285,17 @@ pub mod ffi {
             self.0.format(&value.0).write_to(write)?;
             Ok(())
         }
+
+        /// Formats a [`ICU4XCustomTimeZone`] to a string, performing no fallback
+        #[diplomat::rust_link(icu::datetime::FormattedTimeZone::write_no_fallback, FnInStruct)]
+        pub fn format_custom_time_zone_no_fallback(
+            &self,
+            value: &ICU4XCustomTimeZone,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            self.0.format(&value.0).write_no_fallback(write)??;
+            Ok(())
+        }
     }
 }
 
