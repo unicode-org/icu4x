@@ -312,7 +312,7 @@ impl Cli {
             additional_collations: self
                 .include_collations
                 .iter()
-                .map(|c| c.to_datagen_value().to_owned())
+                .map(|c| c.to_datagen_value())
                 .collect(),
             segmenter_models: self.make_segmenter_models()?,
             export: self.make_exporter()?,
@@ -380,10 +380,7 @@ impl Cli {
             if self.locales.as_slice() == ["all"] {
                 log::warn!("`--locales all` selects the Allar language. Use `--locales full` for all locales");
             }
-            config::LocaleInclude::Explicit(
-                self.locales
-                    .iter().map(|s| s.as_str()).collect()
-            )
+            config::LocaleInclude::Explicit(self.locales.iter().map(|s| s.as_str()).collect())
         })
     }
 

@@ -455,12 +455,16 @@ impl DatagenDriver {
     /// are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
-    pub fn with_additional_collations(
-        self,
-        additional_collations: impl IntoIterator<Item = String>,
-    ) -> Self {
+    pub fn with_additional_collations<II>(self, additional_collations: II) -> Self
+    where
+        II: IntoIterator,
+        II::Item: AsRef<str>,
+    {
         Self {
-            additional_collations: additional_collations.into_iter().collect(),
+            additional_collations: additional_collations
+                .into_iter()
+                .map(|s| s.as_ref().to_string())
+                .collect(),
             ..self
         }
     }
