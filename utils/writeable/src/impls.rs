@@ -188,7 +188,7 @@ impl<'a, T: Writeable + ToOwned + ?Sized> Writeable for Cow<'a, T> {
 
     #[inline]
     fn write_to_string(&self) -> Cow<str> {
-        (&self as &T).write_to_string().into_owned().into()
+        (&self as &T).write_to_string()
     }
 
     #[inline]
