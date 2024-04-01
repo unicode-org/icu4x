@@ -122,7 +122,7 @@ fn main() -> eyre::Result<()> {
             LanguageIdentifiers(lids) => lids,
             Strings(strings) => strings
                 .into_iter()
-                .map(|s| s.parse().wrap_err(s))
+                .map(|s| s.parse().wrap_err_with(|| s.to_string()))
                 .collect::<eyre::Result<Vec<LanguageIdentifier>>>()?,
         };
         driver = driver.with_locales_no_fallback(locale_families, Default::default());
@@ -135,7 +135,7 @@ fn main() -> eyre::Result<()> {
                 .collect(),
             Strings(strings) => strings
                 .into_iter()
-                .map(|s| s.parse().wrap_err(s))
+                .map(|s| s.parse().wrap_err_with(|| s.to_string()))
                 .collect::<eyre::Result<Vec<LocaleFamily>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
