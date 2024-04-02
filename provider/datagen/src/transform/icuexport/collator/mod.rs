@@ -11,16 +11,75 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_locid::extensions::unicode::key;
 use icu_locid::extensions::unicode::Value;
 use icu_locid::subtags::language;
+use icu_locid::subtags::Language;
+use icu_locid::subtags::Region;
+use icu_locid::subtags::Script;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
+use icu_locid_transform::provider::CollationFallbackSupplementV1Marker;
+use icu_locid_transform::provider::LocaleFallbackSupplementV1;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
+use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
 
 mod collator_serde;
+
+impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
+        self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
+
+        let data = LocaleFallbackSupplementV1 {
+            parents: self
+                .cldr()?
+                .core()
+                .read_and_parse::<super::super::cldr::cldr_serde::parent_locales::Resource>(
+                    "supplemental/parentLocales.json",
+                )?
+                .supplemental
+                .parent_locales
+                .collations
+                .iter()
+                .map(|(from, to)| {
+                    (
+                        <&UnvalidatedStr>::from(from.as_str()),
+                        <(Language, Option<Script>, Option<Region>)>::from(to),
+                    )
+                })
+                .collect(),
+            unicode_extension_defaults: [
+                (
+                    key!("co"),
+                    <&UnvalidatedStr>::from("zh"),
+                    <&UnvalidatedStr>::from("pinyin"),
+                ),
+                (
+                    key!("co"),
+                    <&UnvalidatedStr>::from("zh-Hant"),
+                    <&UnvalidatedStr>::from("stroke"),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        };
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
 
 impl crate::DatagenProvider {
     /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603

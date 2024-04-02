@@ -6,7 +6,7 @@
 //!
 //! This module can be used as a target for the `icu_datagen` crate.
 //!
-//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md) for more information about different data providers.
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
@@ -255,6 +255,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
+                .replace("icu::pattern", "icu_pattern")
                 .replace("icu::experimental", "icu_experimental");
         }
 

@@ -40,7 +40,7 @@ icu_datagen = { path = "../../provider/datagen", features = ["networking"] }
 writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 # Enables the "export" module and FilesystemExporter

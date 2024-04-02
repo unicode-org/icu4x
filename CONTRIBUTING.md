@@ -4,7 +4,7 @@
 
 The core team has identified good starter projects and gave them **[good first issue](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22+-label%3A%22blocked%22+) label**.  This is a great place to start as a volunteer.
 
-In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](docs/process/charter.md) and [style guide][style_guide] used by the project.
+In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](documents/process/charter.md) and [style guide][style_guide] used by the project.
 
 Issues are open to everyone to discuss and can be used to jump-start Pull Requests intended for the project.
 
@@ -231,15 +231,15 @@ After a round of review, if there are blocking issues, the author must update th
 
 The following PR has one non-blocking review, two approvals, and two pending reviews. The author should wait for reviews from *EvanJP* and *nciric* before merging.
 
-![One comment, two checkmarks, two pending](docs/assets/reviewers-1.png)
+![One comment, two checkmarks, two pending](documents/assets/reviewers-1.png)
 
 The following PR has two non-blocking reviews and one approval. Since there are no pending reviews, the author may merge this PR.
 
-![Two comments, one checkmark](docs/assets/reviewers-2.png)
+![Two comments, one checkmark](documents/assets/reviewers-2.png)
 
 The following PR has one non-blocking review, one blocking review, one approval, and one pending review. The author should wait for sffc to resolve their blocking review and for nciric to leave a review before merging.
 
-![Two comments, one checkmark](docs/assets/reviewers-3.png)
+![Two comments, one checkmark](documents/assets/reviewers-3.png)
 
 *Note:* GitHub turns approvals into non-blocking reviews when new commits are pushed to a branch.
 
@@ -326,7 +326,7 @@ _(followed by the original boilerplate from Unicode data)_
 
 Please discuss first.
 
-[style_guide]: docs/process/style_guide.md
+[style_guide]: documents/process/style_guide.md
 [policies]: https://www.unicode.org/policies/licensing_policy.html
 [unicode-corporate-clas]: https://www.unicode.org/policies/corporate-cla-list/
 [signing]: https://www.unicode.org/policies/licensing_policy.html#signing

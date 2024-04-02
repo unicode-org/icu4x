@@ -23,7 +23,7 @@ const ACUTE: char = '\u{301}';
 
 // Used to control the behavior of CaseMapper::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
-#[derive(Default)]
+#[derive(Copy, Clone, Default)]
 pub struct FoldOptions {
     exclude_special_i: bool,
 }
