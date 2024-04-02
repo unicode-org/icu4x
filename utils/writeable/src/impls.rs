@@ -266,6 +266,18 @@ fn test_string_impls() {
     let arr: &[Cow<str>] = &[Cow::Borrowed(""), Cow::Owned("abc".to_string())];
     check_writeable_slice(arr);
 
+    // test Box impl
+    let arr: &[Box<str>] = &["".into(), "abc".into()];
+    check_writeable_slice(arr);
+
+    // test Rc impl
+    let arr: &[alloc::rc::Rc<str>] = &["".into(), "abc".into()];
+    check_writeable_slice(arr);
+
+    // test Arc impl
+    let arr: &[alloc::sync::Arc<str>] = &["".into(), "abc".into()];
+    check_writeable_slice(arr);
+
     // test &T impl
     let arr: &[&String] = &[&String::new(), &"abc".to_owned()];
     check_writeable_slice(arr);
