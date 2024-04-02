@@ -220,12 +220,16 @@ macro_rules! impl_write_smart_pointer {
             }
         }
     };
+    ($ty:path) => {
+        // Add a harmless duplicate Writeable bound
+        impl_write_smart_pointer!($ty, T: Writeable);
+    };
 }
 
 impl_write_smart_pointer!(Cow<'a, T>, T: alloc::borrow::ToOwned);
-impl_write_smart_pointer!(alloc::boxed::Box<T>, T: Writeable);
-impl_write_smart_pointer!(alloc::rc::Rc<T>, T: Writeable);
-impl_write_smart_pointer!(alloc::sync::Arc<T>, T: Writeable);
+impl_write_smart_pointer!(alloc::boxed::Box<T>);
+impl_write_smart_pointer!(alloc::rc::Rc<T>);
+impl_write_smart_pointer!(alloc::sync::Arc<T>);
 
 #[test]
 fn test_string_impls() {
