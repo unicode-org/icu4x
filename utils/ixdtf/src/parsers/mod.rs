@@ -6,11 +6,11 @@
 
 use crate::{ParserError, ParserResult};
 
-extern crate alloc;
-
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
 use records::IxdtfParseRecord;
+
+use self::records::Annotation;
 
 pub mod records;
 
@@ -62,22 +62,94 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        datetime::parse_annotated_date_time(&mut self.cursor)
+        self.parse_with_annotation_handler(Some)
+    }
+
+    /// Parses the source as an annotated DateTime string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific reason to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
+    pub fn parse_with_annotation_handler(
+        &mut self,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
+    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
 
     /// Parses the source as an annotated YearMonth string.
     pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        datetime::parse_annotated_year_month(&mut self.cursor)
+        self.parse_year_month_with_annotation_handler(Some)
+    }
+
+    /// Parses the source as an annotated YearMonth string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific use case to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
+    pub fn parse_year_month_with_annotation_handler(
+        &mut self,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
+    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        datetime::parse_annotated_year_month(&mut self.cursor, handler)
     }
 
     /// Parses the source as an annotated MonthDay string.
     pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        datetime::parse_annotated_month_day(&mut self.cursor)
+        self.parse_month_day_with_annotation_handler(Some)
+    }
+
+    /// Parses the source as an annotated MonthDay string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific reason to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
+    pub fn parse_month_day_with_annotation_handler(
+        &mut self,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
+    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        datetime::parse_annotated_month_day(&mut self.cursor, handler)
     }
 
     /// Parses the source as an annotated Time string.
     pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
-        time::parse_annotated_time_record(&mut self.cursor)
+        self.parse_time_with_annotation_handler(Some)
+    }
+
+    /// Parses the source as an annotated Time string with an Annotation handler.
+    ///
+    /// # Annotation Handling
+    ///
+    /// The annotation handler provides a parsed annotation to the callback and expects a return
+    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
+    /// returns. Returning None will ignore the standard checks for that annotation.
+    ///
+    /// Unless the user's application has a specific reason to bypass action on an annotation, such
+    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
+    /// it's critical flag, it is recommended to return the annotation value.
+    pub fn parse_time_with_annotation_handler(
+        &mut self,
+        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
+    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        time::parse_annotated_time_record(&mut self.cursor, handler)
     }
 }
 
