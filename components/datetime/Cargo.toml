@@ -21,7 +21,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-either = { version = "1.6.1", default-features = false }
+either = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
