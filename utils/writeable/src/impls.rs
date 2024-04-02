@@ -195,6 +195,57 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 }
 
+impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
+    type Error = T::Error;
+
+    #[inline]
+    fn try_write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> WriteableResult<Self::Error> {
+        (*self).try_write_to(sink)
+    }
+
+    fn try_write_to_with_handler<
+        E,
+        W: fmt::Write + ?Sized,
+        F: FnMut(Self::Error, &mut W) -> WriteableResult<E>,
+    >(
+        &self,
+        sink: &mut W,
+        handler: F,
+    ) -> WriteableResult<E> {
+        (*self).try_write_to_with_handler(sink, handler)
+    }
+
+    #[inline]
+    fn try_write_to_parts<S: FalliblePartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> WriteableResult<Self::Error> {
+        (*self).try_write_to_parts(sink)
+    }
+
+    fn try_write_to_parts_with_handler<
+        E,
+        S: FalliblePartsWrite + ?Sized,
+        F: FnMut(Self::Error, &mut S) -> WriteableResult<E>,
+    >(
+        &self,
+        sink: &mut S,
+        handler: F,
+    ) -> WriteableResult<E> {
+        (*self).try_write_to_parts_with_handler(sink, handler)
+    }
+
+    #[inline]
+    fn lossy(&self) -> LossyWriteable<&Self> {
+        LossyWriteable(self)
+    }
+
+    #[inline]
+    fn panicky(&self) -> PanickyWriteable<&Self> {
+        PanickyWriteable(self)
+    }
+}
+
 macro_rules! impl_write_smart_pointer {
     ($ty:path, T: $extra_bound:path) => {
         impl<'a, T: ?Sized + Writeable + $extra_bound> Writeable for $ty {

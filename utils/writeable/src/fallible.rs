@@ -6,6 +6,29 @@ use core::{convert::Infallible, fmt};
 
 use crate::*;
 
+#[derive(Debug)]
+pub struct MissingWriteableError;
+
+impl Writeable for MissingWriteableError {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        // Substitute with the Unicode replacement character
+        sink.write_char('\u{FFFD}')
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        LengthHint::exact(3)
+    }
+}
+
+impl_display_with_writeable!(MissingWriteableError);
+
+#[test]
+fn test_missing_writeable_error() {
+    assert_writeable_eq!(MissingWriteableError, "�");
+}
+
 pub type WriteableResult<E> = Result<Result<(), E>, fmt::Error>;
 
 pub trait FalliblePartsWrite: PartsWrite {
@@ -22,10 +45,7 @@ pub trait FalliblePartsWrite: PartsWrite {
 pub trait FallibleWriteable {
     type Error;
 
-    fn try_write_to<W: fmt::Write + ?Sized>(
-        &self,
-        sink: &mut W,
-    ) -> WriteableResult<Self::Error> {
+    fn try_write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> WriteableResult<Self::Error> {
         self.try_write_to_with_handler(sink, |e, _| Ok(Err(e)))
     }
 
@@ -66,16 +86,18 @@ pub trait FallibleWriteable {
 }
 
 #[derive(Debug)]
-pub struct LossyWriteable<T>(T);
+pub struct LossyWriteable<T>(pub(crate) T);
 
-fn lossy_handler<E: Writeable, W: fmt::Write + ?Sized>(err: E, sink: &mut W) -> WriteableResult<Infallible> {
-    err.write_to(sink)?;
-    Ok(Ok(()))
-}
-
-impl<T> Writeable for LossyWriteable<T> where T: FallibleWriteable, T::Error: Writeable {
+impl<T> Writeable for LossyWriteable<T>
+where
+    T: FallibleWriteable,
+    T::Error: Writeable,
+{
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let infallible_result = self.0.try_write_to_with_handler(sink, lossy_handler)?;
+        let infallible_result = self.0.try_write_to_with_handler(sink, |err, sink| {
+            err.write_to(sink)?;
+            Ok(Ok::<(), Infallible>(()))
+        })?;
         Ok(infallible_result.unwrap_or_else(|never| match never {}))
     }
 
@@ -97,13 +119,41 @@ impl<T> Writeable for LossyWriteable<T> where T: FallibleWriteable, T::Error: Wr
 }
 
 #[derive(Debug)]
-pub struct PanickyWriteable<T>(T);
+pub struct PanickyWriteable<T>(pub(crate) T);
+
+impl<T> Writeable for PanickyWriteable<T>
+where
+    T: FallibleWriteable,
+    T::Error: fmt::Debug,
+{
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        let result = self.0.try_write_to_with_handler(sink, |e, _| Ok(Err(e)))?;
+        result.unwrap();
+        Ok(())
+    }
+
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        todo!()
+    }
+
+    fn writeable_length_hint(&self) -> LengthHint {
+        todo!()
+    }
+
+    fn write_to_string(&self) -> Cow<str> {
+        todo!()
+    }
+
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        todo!()
+    }
+}
 
 impl<T> FallibleWriteable for Option<T>
 where
     T: Writeable,
 {
-    type Error = ();
+    type Error = MissingWriteableError;
 
     fn try_write_to_with_handler<
         E,
@@ -116,7 +166,7 @@ where
     ) -> WriteableResult<E> {
         match self {
             Some(writeable) => writeable.write_to(sink).map(Ok),
-            None => handler((), sink),
+            None => handler(MissingWriteableError, sink),
         }
     }
 
@@ -131,7 +181,7 @@ where
     ) -> WriteableResult<E> {
         match self {
             Some(writeable) => writeable.write_to_parts(sink).map(Ok),
-            None => handler((), sink),
+            None => handler(MissingWriteableError, sink),
         }
     }
 }
@@ -144,6 +194,13 @@ fn test_basic() {
     assert_eq!(sink, "abc");
     assert!(matches!(
         None::<&str>.try_write_to(&mut sink),
-        Ok(Err(()))
+        Ok(Err(MissingWriteableError))
     ));
+
+    sink.clear();
+    Some("def").lossy().write_to(&mut sink).unwrap();
+    assert_eq!(sink, "def");
+    sink.clear();
+    None::<&str>.lossy().write_to(&mut sink).unwrap();
+    assert_eq!(sink, "�");
 }
