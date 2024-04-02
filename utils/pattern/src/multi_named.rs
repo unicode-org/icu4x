@@ -207,11 +207,13 @@ impl PatternBackend for MultiNamedPlaceholder {
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
-        todo!()
+        let mut iter = MultiNamedPlaceholderPatternIterator::new(store);
+        while let Some(_) = iter.try_next()? {}
+        Ok(())
     }
 
     fn iter_items(store: &Self::Store) -> Self::Iter<'_> {
-        todo!()
+        MultiNamedPlaceholderPatternIterator::new(store)
     }
 
     #[cfg(feature = "alloc")]
@@ -237,6 +239,45 @@ pub struct MultiNamedPlaceholderPatternIterator<'a> {
 impl<'a> Iterator for MultiNamedPlaceholderPatternIterator<'a> {
     type Item = PatternItem<'a, MultiNamedPlaceholder>;
     fn next(&mut self) -> Option<Self::Item> {
+        todo!()
+    }
+}
+
+impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
+    fn new(store: &'a str) -> Self {
+        Self {
+            store,
+            current_offset: 0,
+        }
+    }
+
+    fn try_next(&mut self) -> Result<Option<PatternItem<'a, MultiNamedPlaceholder>>, Error> {
+        enum State {
+            Start,
+            Literal,
+            AfterQuote,
+            QuotedLiteral,
+            AfterQuotedLiteral,
+            Placeholder,
+        }
+        let start = self.current_offset;
+        let mut chars_iter = self.store.get(start..).unwrap().chars();
+        let initial_len = chars_iter.as_str().len();
+        let mut state = State::Start;
+        for c in chars_iter {
+            match (state, c) {
+                (State::Start, '{') => {
+                    state = State::Placeholder;
+                }
+                (State::Start | State::Literal, '\'') => {
+                    state = State::AfterQuote;
+                }
+                (State::AfterQuote, '\'') => {
+                    todo!()
+                },
+                _ => todo!()
+            }
+        }
         todo!()
     }
 }
