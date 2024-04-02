@@ -113,6 +113,105 @@ fn test_currency() {
 }
 
 #[test]
+fn test_bo() {
+    let locale: Locale = ("bo").parse().unwrap();
+    let options = CollatorOptions::new();
+    let collator = Collator::try_new(&locale.into(), options).unwrap();
+
+    assert_eq!(
+        collator.compare(
+            "\u{0F40}\u{0F71}\u{0F62}\u{0F92}\u{0F72}",
+            "\u{0F40}\u{0F71}\u{0F62}\u{0F0B}\u{0F92}\u{0F72}"
+        ),
+        Ordering::Greater
+    );
+
+    assert_eq!(
+        collator.compare(
+            "\u{0F40}\u{0F71}\u{0F62}\u{0F0B}\u{0F92}\u{0F72}",
+            "\u{0F40}\u{0F62}\u{0F92}\u{0F72}"
+        ),
+        Ordering::Greater
+    );
+
+    assert_eq!(
+        collator.compare(
+            "\u{0F40}\u{0F62}\u{0F92}\u{0F72}",
+            "\u{0F42}\u{0F7C}\u{0F51}\u{0F0B}"
+        ),
+        Ordering::Less
+    );
+
+    assert_eq!(
+        collator.compare(
+            "\u{0F42}\u{0F7C}\u{0F51}\u{0F0B}",
+            "\u{0F42}\u{0F7C}\u{0F51}"
+        ),
+        Ordering::Greater
+    );
+
+    assert_eq!(
+        collator.compare("\u{0F42}\u{0F7C}\u{0F51}", "\u{0F40}\u{0FB1}\u{0F72}"),
+        Ordering::Greater
+    );
+
+    assert_eq!(
+        collator.compare(
+            "\u{0F40}\u{0FB1}\u{0F72}",
+            "\u{0F40}\u{0F71}\u{0FB1}\u{0F72}"
+        ),
+        Ordering::Less
+    );
+
+    assert_eq!(
+        collator.compare("\u{0F40}\u{0F71}\u{0FB1}\u{0F72}", "\u{0F40}\u{0F71}"),
+        Ordering::Greater
+    );
+}
+
+#[test]
+fn test_bs() {
+    let left_side = vec![
+        "\u{0107}",  // ć
+        "\u{0161}",  // š
+        "\u{0448}",  // ш
+        "d\u{017E}", // dž
+        "l\u{006A}", // lj
+        "\u{0459}",  // љ
+    ];
+    let right_side = vec![
+        "\u{010D}",  // č
+        "\u{0073}",  // s
+        "\u{0441}",  // с
+        "d\u{006A}", // dj
+        "\u{006C}",  // l
+        "\u{043B}",  // л
+    ];
+
+    {
+        let locale: Locale = ("bs").parse().unwrap();
+        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        for (left, right) in left_side.iter().zip(right_side.iter()) {
+            assert_eq!(collator.compare(left, right), Ordering::Greater);
+        }
+    }
+
+    {
+        let locale: Locale = ("bs-Cyrl").parse().unwrap();
+        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let expect_bs_cyrl = vec![
+            Ordering::Less, // Ordering changes in Cyrillic
+            Ordering::Greater,
+            Ordering::Greater,
+            Ordering::Greater,
+            Ordering::Greater,
+            Ordering::Greater,
+        ];
+        check_expectations(&collator, &left_side, &right_side, &expect_bs_cyrl);
+    }
+}
+
+#[test]
 fn test_de() {
     // Adapted from `CollationGermanTest` in decoll.cpp of ICU4C.
     let left = [
@@ -619,6 +718,37 @@ fn test_ja_chooon_kigoo() {
         for higher in tail {
             assert_eq!(collator.compare(lower, higher), Ordering::Less);
         }
+    }
+}
+
+#[test]
+fn test_ja_unihan() {
+    let left = vec!["川", "東京", "あい", "飛行機"];
+    let right = vec!["州", "京都", "愛", "飞行机"];
+
+    {
+        let locale: Locale = ("ja").parse().unwrap();
+        let options = CollatorOptions::new();
+        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let expectations_ja = vec![
+            Ordering::Greater,
+            Ordering::Greater,
+            Ordering::Less,
+            Ordering::Less,
+        ];
+        check_expectations(&collator, &left, &right, &expectations_ja);
+    }
+
+    {
+        let locale: Locale = ("ja-u-co-unihan").parse().unwrap();
+        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let expectations_ja_unihan = vec![
+            Ordering::Less, // Ordering changes
+            Ordering::Greater,
+            Ordering::Less,
+            Ordering::Less,
+        ];
+        check_expectations(&collator, &left, &right, &expectations_ja_unihan);
     }
 }
 
@@ -1724,7 +1854,3 @@ fn test_ecma_sensitivity() {
 // TODO: Test that nn and nb are aliases for no
 
 // TODO: Consider testing ff-Adlm for supplementary-plane tailoring, including contractions
-
-// TODO: Test Tibetan
-
-// TODO: Test de-AT-u-co-phonebk vs de-DE-u-co-phonebk
