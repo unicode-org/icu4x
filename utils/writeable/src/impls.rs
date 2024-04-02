@@ -236,6 +236,8 @@ fn test_string_impls() {
     fn check_writeable_slice<W: Writeable + core::fmt::Display>(writeables: &[W]) {
         assert_writeable_eq!(&writeables[0], "");
         assert_writeable_eq!(&writeables[1], "abc");
+        assert!(matches!(writeables[0].write_to_string(), Cow::Borrowed(_)));
+        assert!(matches!(writeables[1].write_to_string(), Cow::Borrowed(_)));
     }
 
     // test str impl
