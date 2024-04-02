@@ -235,6 +235,39 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
         (*self).try_write_to_parts_with_handler(sink, handler)
     }
 
+    fn try_writeable_length_hint_with_handler<
+        E,
+        F: FnMut(Self::Error) -> Result<Self::Error, E>,
+    >(
+        &self,
+        handler: F,
+    ) -> Result<LengthHint, E> {
+        (*self).try_writeable_length_hint_with_handler(handler)
+    }
+
+    fn try_write_to_string_with_handlers<
+        E,
+        F0: FnMut(Self::Error, &mut String) -> WriteableResult<E>,
+        F1: FnMut(Self::Error) -> Result<Self::Error, E>,
+    >(
+        &self,
+        handler0: F0,
+        handler1: F1,
+    ) -> Result<Cow<str>, E> {
+        (*self).try_write_to_string_with_handlers(handler0, handler1)
+    }
+
+    fn try_write_cmp_bytes_with_handler<
+        E,
+        F: FnMut(Self::Error, &mut cmp::WriteComparator) -> WriteableResult<E>,
+    >(
+        &self,
+        other: &[u8],
+        handler: F,
+    ) -> Result<core::cmp::Ordering, E> {
+        (*self).try_write_cmp_bytes_with_handler(other, handler)
+    }
+
     #[inline]
     fn lossy(&self) -> LossyWriteable<&Self> {
         LossyWriteable(self)
