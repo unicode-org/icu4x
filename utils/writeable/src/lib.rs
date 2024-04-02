@@ -69,8 +69,11 @@ extern crate alloc;
 mod cmp;
 #[cfg(feature = "either")]
 mod either;
+mod fallible;
 mod impls;
 mod ops;
+
+pub use fallible::*;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
