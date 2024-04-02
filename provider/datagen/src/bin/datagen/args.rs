@@ -283,7 +283,7 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn as_config<'a>(&'a self) -> eyre::Result<config::Config<'a>> {
+    pub fn as_config(&self) -> eyre::Result<config::Config<'_>> {
         Ok(config::Config {
             keys: self.make_keys()?,
             locales: self.make_locales()?,
