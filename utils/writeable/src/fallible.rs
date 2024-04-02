@@ -6,19 +6,7 @@ use core::{convert::Infallible, fmt};
 
 use crate::*;
 
-#[derive(Debug)]
-pub enum WriteableError<E> {
-    Sink(fmt::Error),
-    Writeable(E),
-}
-
-impl<E> From<fmt::Error> for WriteableError<E> {
-    fn from(e: fmt::Error) -> Self {
-        Self::Sink(e)
-    }
-}
-
-pub type WriteableResult<E> = Result<(), WriteableError<E>>;
+pub type WriteableResult<E> = Result<Result<(), E>, fmt::Error>;
 
 pub trait FalliblePartsWrite: PartsWrite {
     type Error;
@@ -37,8 +25,8 @@ pub trait FallibleWriteable {
     fn try_write_to<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
-    ) -> Result<(), WriteableError<Self::Error>> {
-        self.try_write_to_with_handler(sink, |e, _| Err(WriteableError::Writeable(e)))
+    ) -> WriteableResult<Self::Error> {
+        self.try_write_to_with_handler(sink, |e, _| Ok(Err(e)))
     }
 
     fn try_write_to_with_handler<
@@ -55,7 +43,7 @@ pub trait FallibleWriteable {
         &self,
         sink: &mut S,
     ) -> WriteableResult<Self::Error> {
-        self.try_write_to_parts_with_handler(sink, |e, _| Err(WriteableError::Writeable(e)))
+        self.try_write_to_parts_with_handler(sink, |e, _| Ok(Err(e)))
     }
 
     fn try_write_to_parts_with_handler<
@@ -82,18 +70,13 @@ pub struct LossyWriteable<T>(T);
 
 fn lossy_handler<E: Writeable, W: fmt::Write + ?Sized>(err: E, sink: &mut W) -> WriteableResult<Infallible> {
     err.write_to(sink)?;
-    Ok(())
+    Ok(Ok(()))
 }
 
 impl<T> Writeable for LossyWriteable<T> where T: FallibleWriteable, T::Error: Writeable {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let nested = match self.0.try_write_to_with_handler(sink, lossy_handler) {
-            Ok(()) => Ok(Ok(())),
-            Err(WriteableError::Sink(err)) => Err(err),
-            Err(WriteableError::Writeable(infallible)) => Ok(Err(infallible)),
-        };
-        let nested = nested?;
-        Ok(nested.unwrap_or_else(|never| match never {}))
+        let infallible_result = self.0.try_write_to_with_handler(sink, lossy_handler)?;
+        Ok(infallible_result.unwrap_or_else(|never| match never {}))
     }
 
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
@@ -132,10 +115,9 @@ where
         mut handler: F,
     ) -> WriteableResult<E> {
         match self {
-            Some(writeable) => writeable.write_to(sink)?,
-            None => handler((), sink)?,
-        };
-        Ok(())
+            Some(writeable) => writeable.write_to(sink).map(Ok),
+            None => handler((), sink),
+        }
     }
 
     fn try_write_to_parts_with_handler<
@@ -148,10 +130,9 @@ where
         mut handler: F,
     ) -> WriteableResult<E> {
         match self {
-            Some(writeable) => writeable.write_to_parts(sink)?,
-            None => handler((), sink)?,
-        };
-        Ok(())
+            Some(writeable) => writeable.write_to_parts(sink).map(Ok),
+            None => handler((), sink),
+        }
     }
 }
 
@@ -159,10 +140,10 @@ where
 fn test_basic() {
     let mut sink = String::new();
 
-    Some("abc").try_write_to(&mut sink).unwrap();
+    Some("abc").try_write_to(&mut sink).unwrap().unwrap();
     assert_eq!(sink, "abc");
     assert!(matches!(
         None::<&str>.try_write_to(&mut sink),
-        Err(WriteableError::Writeable(_))
+        Ok(Err(()))
     ));
 }
