@@ -1606,6 +1606,7 @@ version = "0.1.5"
 dependencies = [
  "databake",
  "displaydoc",
+ "either",
  "postcard",
  "serde",
  "serde_json",
@@ -1771,6 +1772,10 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "1.4.0"
+
+[[package]]
+name = "icu_segmenter_lstm"
+version = "1.0.0"
 
 [[package]]
 name = "icu_testdata_scripts"
@@ -3530,6 +3535,7 @@ name = "writeable"
 version = "0.5.4"
 dependencies = [
  "criterion",
+ "either",
  "icu_benchmark_macros",
  "rand",
 ]
