@@ -5,7 +5,7 @@
 //! Code for the [`DoublePlaceholder`] pattern backend.
 
 use core::{cmp::Ordering, str::FromStr};
-use writeable::EitherWriteable;
+use either::Either;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -68,12 +68,12 @@ where
     W0: Writeable,
     W1: Writeable,
 {
-    type W<'a> = EitherWriteable<&'a W0, &'a W1> where W0: 'a, W1: 'a;
+    type W<'a> = Either<&'a W0, &'a W1> where W0: 'a, W1: 'a;
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
         match key {
-            DoublePlaceholderKey::Place0 => EitherWriteable::A(&self.0),
-            DoublePlaceholderKey::Place1 => EitherWriteable::B(&self.1),
+            DoublePlaceholderKey::Place0 => Either::Left(&self.0),
+            DoublePlaceholderKey::Place1 => Either::Right(&self.1),
         }
     }
 }

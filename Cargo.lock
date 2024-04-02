@@ -1606,6 +1606,7 @@ version = "0.1.5"
 dependencies = [
  "databake",
  "displaydoc",
+ "either",
  "postcard",
  "serde",
  "serde_json",
@@ -3530,6 +3531,7 @@ name = "writeable"
 version = "0.5.4"
 dependencies = [
  "criterion",
+ "either",
  "icu_benchmark_macros",
  "rand",
 ]

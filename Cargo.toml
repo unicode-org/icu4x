@@ -196,6 +196,7 @@ zerovec-derive = { version = "0.10.1", path = "utils/zerovec/derive", default-fe
 
 # External deps from crates.io
 criterion = { version = "0.5" }
+either = { version = "1", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
