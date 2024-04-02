@@ -55,6 +55,7 @@ mod common;
 mod double;
 mod error;
 mod frontend;
+mod multi_named;
 #[cfg(feature = "alloc")]
 mod parser;
 mod single;
@@ -66,6 +67,8 @@ pub use common::PatternItemCow;
 pub use common::PlaceholderValueProvider;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
+pub use multi_named::MultiNamedPlaceholder;
+pub use multi_named::MultiNamedPlaceholderKey;
 pub use error::PatternError;
 pub use frontend::Pattern;
 #[cfg(feature = "alloc")]
@@ -114,6 +117,22 @@ pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 /// assert_writeable_eq!(pattern.interpolate(["Alice", "Bob"]), "Hello, Alice and Bob!");
 /// ```
 pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
+
+/// # Examples
+///
+/// ```
+/// use icu_pattern::MultiNamedPlaceholderPattern;
+/// use writeable::assert_writeable_eq;
+/// use std::collections::BTreeMap;
+///
+/// // Create a pattern from the string syntax:
+/// let pattern =
+///     MultiNamedPlaceholderPattern::try_from_str("Hello, {person0} and {person1}!").unwrap();
+///
+/// // Interpolate some values into the pattern:
+/// assert_writeable_eq!(pattern.interpolate([("person0", "Alice"), ("person1", "Bob")].into_iter().collect::<BTreeMap<&str, &str>>()), "Hello, Alice and Bob!");
+/// ```
+pub type MultiNamedPlaceholderPattern<Store> = Pattern<MultiNamedPlaceholder, Store>;
 
 #[test]
 #[cfg(feature = "alloc")]
