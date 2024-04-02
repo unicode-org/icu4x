@@ -16,6 +16,7 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 pub mod chinese_based;
+pub mod islamic;
 pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
 
 use crate::types::IsoWeekday;
