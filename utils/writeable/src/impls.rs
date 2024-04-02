@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::*;
-use alloc::borrow::Cow;
-use alloc::borrow::ToOwned;
 use core::fmt;
 
 macro_rules! impl_write_num {
@@ -170,33 +168,6 @@ impl Writeable for char {
     }
 }
 
-impl<'a, T: Writeable + ToOwned + ?Sized> Writeable for Cow<'a, T> {
-    #[inline]
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        (&self as &T).write_to(sink)
-    }
-
-    #[inline]
-    fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        (&self as &T).write_to_parts(sink)
-    }
-
-    #[inline]
-    fn writeable_length_hint(&self) -> LengthHint {
-        (&self as &T).writeable_length_hint()
-    }
-
-    #[inline]
-    fn write_to_string(&self) -> Cow<str> {
-        (&self as &T).write_to_string()
-    }
-
-    #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        (&self as &T).write_cmp_bytes(other)
-    }
-}
-
 impl<T: Writeable + ?Sized> Writeable for &T {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -223,6 +194,38 @@ impl<T: Writeable + ?Sized> Writeable for &T {
         (*self).write_cmp_bytes(other)
     }
 }
+
+macro_rules! impl_write_smart_pointer {
+    ($ty:path, T: $extra_bound:path) => {
+        impl<'a, T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
+            #[inline]
+            fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+                core::borrow::Borrow::<T>::borrow(self).write_to(sink)
+            }
+            #[inline]
+            fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+                core::borrow::Borrow::<T>::borrow(self).write_to_parts(sink)
+            }
+            #[inline]
+            fn writeable_length_hint(&self) -> LengthHint {
+                core::borrow::Borrow::<T>::borrow(self).writeable_length_hint()
+            }
+            #[inline]
+            fn write_to_string(&self) -> Cow<str> {
+                core::borrow::Borrow::<T>::borrow(self).write_to_string()
+            }
+            #[inline]
+            fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+                core::borrow::Borrow::<T>::borrow(self).write_cmp_bytes(other)
+            }
+        }
+    };
+}
+
+impl_write_smart_pointer!(Cow<'a, T>, T: alloc::borrow::ToOwned);
+impl_write_smart_pointer!(alloc::boxed::Box<T>, T: Writeable);
+impl_write_smart_pointer!(alloc::rc::Rc<T>, T: Writeable);
+impl_write_smart_pointer!(alloc::sync::Arc<T>, T: Writeable);
 
 #[test]
 fn test_string_impls() {
