@@ -18,6 +18,7 @@
 pub mod chinese_based;
 pub mod islamic;
 pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
+pub use islamic::IslamicObservationalCacheV1Marker;
 
 use crate::types::IsoWeekday;
 use core::str::FromStr;
@@ -46,6 +47,7 @@ const _: () = {
     icu_calendar_data::make_provider!(Baked);
     icu_calendar_data::impl_calendar_chinesecache_v1!(Baked);
     icu_calendar_data::impl_calendar_dangicache_v1!(Baked);
+    icu_calendar_data::impl_calendar_islamicobservationalcache_v1!(Baked);
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);
     icu_calendar_data::impl_calendar_japanext_v1!(Baked);
     icu_calendar_data::impl_datetime_week_data_v1!(Baked);
@@ -57,6 +59,7 @@ const _: () = {
 pub const KEYS: &[DataKey] = &[
     ChineseCacheV1Marker::KEY,
     DangiCacheV1Marker::KEY,
+    IslamicObservationalCacheV1Marker::KEY,
     JapaneseErasV1Marker::KEY,
     JapaneseExtendedErasV1Marker::KEY,
     WeekDataV2Marker::KEY,

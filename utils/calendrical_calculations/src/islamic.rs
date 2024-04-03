@@ -25,6 +25,13 @@ pub trait IslamicBasedMarker {
     fn mean_synodic_ny(extended_year: i32) -> RataDie {
         Self::EPOCH + (f64::from((extended_year - 1) * 12) * MEAN_SYNODIC_MONTH).floor() as i64
     }
+    /// Given an iso date, calculate the *approximate* islamic year it corresponds to (for quick cache lookup)
+    fn approximate_islamic_from_fixed(date: RataDie) -> i32 {
+        let diff = date - Self::EPOCH;
+        let months = diff as f64 / MEAN_SYNODIC_MONTH;
+        let years = months / 12.;
+        (years + 1.).floor() as i32
+    }
     /// Convert an islamic date in this calendar to a R.D.
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie;
     /// Convert an R.D. To an islamic date in this calendar
@@ -39,11 +46,12 @@ pub trait IslamicBasedMarker {
             let new_rd = Self::fixed_from_islamic(extended_year, month_idx + 2, 1);
             let diff = new_rd - prev_rd;
             debug_assert!(
-                diff == 29 || diff == 30,
+                // TODO: year 1409 has a 31-length month 1
+                diff == 29 || diff == 30 || diff == 31,
                 "Found extended year {extended_year} with month length {diff} for month {}",
                 month_idx + 1
             );
-            if new_rd - prev_rd == 30 {
+            if new_rd - prev_rd >= 30 {
                 lengths[usize::from(month_idx)] = true;
             }
             prev_rd = new_rd
