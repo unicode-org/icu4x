@@ -60,6 +60,8 @@ assert_eq!(
 
 ICU4X is developed by the ICU4X Technical Committee (ICU4X-TC) in the Unicode Consortium. The ICU4X-TC leads strategy and development of internationalization solutions for modern platforms and ecosystems, including client-side and resource-constrained environments. See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
 
+ICU4X-TC convenes approximately once per quarter in advance of ICU4X releases. Most work in the interim takes place in the ICU4X Working Group (ICU4X WG), which makes technical recommendations, lands them in the repository, and records them in CHANGELOG.md. The recommendations of ICU4X WG are subject to approval by the ICU4X-TC.
+
 Please subscribe to this repository to participate in discussions.  If you want to contribute, see our [contributing.md](CONTRIBUTING.md).
 
 ## Charter

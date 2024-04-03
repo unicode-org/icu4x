@@ -4948,7 +4948,7 @@ displaynames/variants@1, th, 3709B, ed1d48e400b1c35c
 displaynames/variants@1, tr, 1094B, f75a0ab8f0d0bc98
 fallback/likelysubtags@1, und, 1963B, ea452a518b2defb6
 fallback/parents@1, und, 2553B, 8f3b5fb7bff27d97
-fallback/supplement/co@1, und, 70B, 71e01f2099eca417
+fallback/supplement/co@1, und, 246B, 78151ac4e67429c5
 list/and@1, ar, 18B, 82ed6c556b40aa1e
 list/and@1, ar-EG, 18B, 82ed6c556b40aa1e
 list/and@1, bn, 31B, 19758d48131799f1
@@ -5806,6 +5806,7 @@ time_zone/generic_short@1, th, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, tr, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, und, 21B, 70edef5aa0f7a054
 time_zone/iana_to_bcp47@1, und, 9668B, 3eddd693286f5c87
+time_zone/iana_to_bcp47@2, und, 9534B, 65b1891c737637a4
 time_zone/metazone_period@1, und, 11015B, d4b06ab9ff8b3a53
 time_zone/specific_long@1, ar, 11362B, a886b0294ef9f145
 time_zone/specific_long@1, ar-EG, 11362B, a886b0294ef9f145

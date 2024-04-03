@@ -50,7 +50,7 @@ use crate::iso::Iso;
 use crate::provider::chinese_based::ChineseCacheV1Marker;
 use crate::types::{Era, FormattableYear};
 use crate::AsCalendar;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -395,7 +395,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_chinese_date_with_calendar(year, month, day, calendar)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

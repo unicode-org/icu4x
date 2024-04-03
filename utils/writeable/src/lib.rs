@@ -67,6 +67,8 @@
 extern crate alloc;
 
 mod cmp;
+#[cfg(feature = "either")]
+mod either;
 mod impls;
 mod ops;
 

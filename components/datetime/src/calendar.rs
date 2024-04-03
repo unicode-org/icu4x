@@ -760,7 +760,7 @@ pub(crate) fn convert_datetime_if_necessary<'a>(
             });
         }
         let date = value.to_iso();
-        let time = icu_calendar::types::Time::new(
+        let time = icu_calendar::Time::new(
             value.hour().unwrap_or_default(),
             value.minute().unwrap_or_default(),
             value.second().unwrap_or_default(),

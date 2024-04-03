@@ -88,6 +88,7 @@ members = [
     "tools/testdata-scripts",
     "tools/md-tests",
     "ffi/dart/tools/datagen",
+    "tools/graveyard",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
@@ -193,6 +194,10 @@ zerofrom-derive = { version = "0.1.2", path = "utils/zerofrom/derive", default-f
 zerotrie = { version = "0.1.2", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.10.1", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.10.1", path = "utils/zerovec/derive", default-features = false }
+
+# External deps from crates.io
+criterion = { version = "0.5" }
+either = { version = "1", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }

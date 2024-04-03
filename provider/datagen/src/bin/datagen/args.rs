@@ -46,7 +46,7 @@ enum CollationTable {
     SearchAll,
 }
 
-// Mirrors crate::options::FallbackMode
+// Mirrors crate::FallbackMode
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Fallback {
     Auto,
@@ -54,6 +54,20 @@ enum Fallback {
     Runtime,
     RuntimeManual,
     Preresolved,
+}
+
+// Mirrors crate::DeduplicationStrategy
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum DeduplicationStrategy {
+    Maximal,
+    None,
+}
+
+// Mirrors crate::RuntimeFallbackLocation
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum RuntimeFallbackLocation {
+    Internal,
+    External,
 }
 
 impl CollationTable {
@@ -231,7 +245,34 @@ pub struct Cli {
 
     // TODO(#2856): Change the default to Auto in 2.0
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
+    #[arg(
+        hide = true,
+        help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback"
+    )]
     fallback: Fallback,
+
+    #[arg(long)]
+    #[arg(
+        help = "disables locale fallback, instead exporting exactly the locales specified in --locales. \
+                Cannot be used with --deduplication-strategy, --runtime-fallback-location"
+    )]
+    without_fallback: bool,
+
+    #[arg(long, value_enum)]
+    #[arg(help = "configures where runtime fallback should take place in code. \
+                If not set, determined by the exporter: \
+                internal fallback is used if the exporter supports it. \
+                Cannot be used with --without-fallback")]
+    runtime_fallback_location: Option<RuntimeFallbackLocation>,
+
+    #[arg(long, value_enum)]
+    #[arg(
+        help = "configures the deduplication of locales for exported data payloads. \
+                If not set, determined by `runtime_fallback_location`: \
+                if internal fallback is enabled, a more aggressive deduplication strategy is used. \
+                Cannot be used with --without-fallback"
+    )]
+    deduplication_strategy: Option<DeduplicationStrategy>,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -246,6 +287,9 @@ impl Cli {
         Ok(config::Config {
             keys: self.make_keys()?,
             locales: self.make_locales()?,
+            without_fallback: self.make_without_fallback(),
+            deduplication_strategy: self.make_deduplication_strategy()?,
+            runtime_fallback_location: self.make_runtime_fallback_location()?,
             cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
             icu_export: self.make_path(
                 &self.icuexport_root,
@@ -272,13 +316,6 @@ impl Cli {
                 .collect(),
             segmenter_models: self.make_segmenter_models()?,
             export: self.make_exporter()?,
-            fallback: match self.fallback {
-                Fallback::Auto => config::FallbackMode::PreferredForExporter,
-                Fallback::Hybrid => config::FallbackMode::Hybrid,
-                Fallback::Runtime => config::FallbackMode::Runtime,
-                Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
-                Fallback::Preresolved => config::FallbackMode::Preresolved,
-            },
             overwrite: self.overwrite,
         })
     }
@@ -346,10 +383,7 @@ impl Cli {
             config::LocaleInclude::Explicit(
                 self.locales
                     .iter()
-                    .map(|s| {
-                        s.parse::<LanguageIdentifier>()
-                            .with_context(|| s.to_string())
-                    })
+                    .map(|s| s.parse::<LocaleFamily>().with_context(|| s.to_string()))
                     .collect::<Result<_, eyre::Error>>()?,
             )
         })
@@ -370,6 +404,64 @@ impl Cli {
             #[cfg(not(feature = "networking"))]
             _ => config::PathOrTag::None,
         })
+    }
+
+    fn make_without_fallback(&self) -> bool {
+        self.without_fallback || matches!(self.fallback, Fallback::Preresolved)
+    }
+
+    fn make_deduplication_strategy(&self) -> eyre::Result<Option<config::DeduplicationStrategy>> {
+        match (
+            self.deduplication_strategy,
+            self.fallback,
+            self.without_fallback,
+        ) {
+            (None, _, true) => Ok(None),
+            (Some(_), _, true) => {
+                eyre::bail!("cannot combine --without-fallback and --deduplication-strategy")
+            }
+            (Some(x), _, false) => Ok(match x {
+                DeduplicationStrategy::Maximal => Some(config::DeduplicationStrategy::Maximal),
+                DeduplicationStrategy::None => Some(config::DeduplicationStrategy::None),
+            }),
+            (None, fallback_mode, false) => Ok(match fallback_mode {
+                Fallback::Auto => None,
+                Fallback::Hybrid => Some(config::DeduplicationStrategy::None),
+                Fallback::Runtime => Some(config::DeduplicationStrategy::None),
+                Fallback::RuntimeManual => Some(config::DeduplicationStrategy::None),
+                Fallback::Preresolved => None,
+            }),
+        }
+    }
+
+    fn make_runtime_fallback_location(
+        &self,
+    ) -> eyre::Result<Option<config::RuntimeFallbackLocation>> {
+        match (
+            self.runtime_fallback_location,
+            self.fallback,
+            self.without_fallback,
+        ) {
+            (None, _, true) => Ok(None),
+            (Some(_), _, true) => {
+                eyre::bail!("cannot combine --without-fallback and --runtime-fallback-location")
+            }
+            (Some(x), _, false) => Ok(match x {
+                RuntimeFallbackLocation::Internal => {
+                    Some(config::RuntimeFallbackLocation::Internal)
+                }
+                RuntimeFallbackLocation::External => {
+                    Some(config::RuntimeFallbackLocation::External)
+                }
+            }),
+            (None, fallback_mode, false) => Ok(match fallback_mode {
+                Fallback::Auto => None,
+                Fallback::Hybrid => Some(config::RuntimeFallbackLocation::External),
+                Fallback::Runtime => Some(config::RuntimeFallbackLocation::Internal),
+                Fallback::RuntimeManual => Some(config::RuntimeFallbackLocation::External),
+                Fallback::Preresolved => None,
+            }),
+        }
     }
 
     fn make_segmenter_models(&self) -> eyre::Result<config::SegmenterModelInclude> {

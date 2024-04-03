@@ -142,6 +142,7 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 ///
 /// assert_eq!(trie.get(b"foo"), Some(1));
 /// assert_eq!(trie.get(b"bar"), Some(2));
+/// assert_eq!(trie.get(b"BAR"), Some(2));
 /// assert_eq!(trie.get(b"bazzoo"), Some(3));
 /// assert_eq!(trie.get(b"unknown"), None);
 ///

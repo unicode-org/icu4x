@@ -118,6 +118,7 @@ export { ICU4XUnicodeSetData } from './ICU4XUnicodeSetData.mjs';
 export { ICU4XWeekCalculator } from './ICU4XWeekCalculator.mjs';
 export { ICU4XWeekOf } from './ICU4XWeekOf.mjs';
 export { ICU4XWeekRelativeUnit } from './ICU4XWeekRelativeUnit.mjs';
+export { ICU4XWeekendContainsDay } from './ICU4XWeekendContainsDay.mjs';
 export { ICU4XWordBreakIteratorLatin1 } from './ICU4XWordBreakIteratorLatin1.mjs';
 export { ICU4XWordBreakIteratorUtf16 } from './ICU4XWordBreakIteratorUtf16.mjs';
 export { ICU4XWordBreakIteratorUtf8 } from './ICU4XWordBreakIteratorUtf8.mjs';

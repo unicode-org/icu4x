@@ -39,7 +39,7 @@ use crate::types::FormattableMonth;
 use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 
@@ -438,7 +438,7 @@ impl DateTime<Hebrew> {
     ) -> Result<DateTime<Hebrew>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_hebrew_date(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
@@ -461,7 +461,7 @@ impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
         #[allow(deprecated)]
         Ok(DateTime {
             date: Date::try_new_hebrew_date_with_calendar(year, month, day, calendar)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
