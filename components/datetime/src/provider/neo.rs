@@ -4,7 +4,7 @@
 
 mod adapter;
 
-use crate::neo_skeleton::NeoDateSkeleton;
+use crate::neo_skeleton::{NeoDateSkeleton, NeoTimeSkeleton};
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
@@ -629,8 +629,22 @@ pub struct PackedSkeletonDataV1<'data> {
 }
 
 impl<'data> PackedSkeletonDataV1<'data> {
-    pub(crate) fn get_for_date_skeleton(&self, skeleton: NeoDateSkeleton) -> &'data PatternULE {
-        todo!()
+    pub(crate) fn get_for_date_skeleton(
+        &self,
+        sk: NeoDateSkeleton,
+    ) -> Option<&runtime::PatternULE> {
+        self.get_for_discriminant(sk.components.discriminant())
+    }
+    pub(crate) fn get_for_time_skeleton(
+        &self,
+        sk: NeoTimeSkeleton,
+    ) -> Option<&runtime::PatternULE> {
+        self.get_for_discriminant(sk.components.discriminant())
+    }
+    fn get_for_discriminant(&self, discriminant: u8) -> Option<&runtime::PatternULE> {
+        self.indices
+            .get(discriminant as usize)
+            .and_then(|index_info| self.patterns.get(index_info.index as usize))
     }
 }
 

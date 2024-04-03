@@ -310,6 +310,28 @@ impl NeoDateComponents {
         Self::YearQuarter,
     ];
 
+    pub(crate) fn discriminant(self) -> u8 {
+        match self {
+            Self::Day(NeoDayComponents::Day) => 0,
+            Self::Day(NeoDayComponents::MonthDay) => 1,
+            Self::Day(NeoDayComponents::YearMonthDay) => 2,
+            Self::Day(NeoDayComponents::EraYearMonthDay) => 3,
+            Self::Day(NeoDayComponents::DayWeekday) => 4,
+            Self::Day(NeoDayComponents::MonthDayWeekday) => 5,
+            Self::Day(NeoDayComponents::YearMonthDayWeekday) => 6,
+            Self::Day(NeoDayComponents::EraYearMonthDayWeekday) => 7,
+            Self::Day(NeoDayComponents::Weekday) => 8,
+            Self::Month => 9,
+            Self::YearMonth => 10,
+            Self::EraYearMonth => 11,
+            Self::Year => 12,
+            Self::EraYear => 13,
+            Self::YearWeek => 14,
+            Self::Quarter => 15,
+            Self::YearQuarter => 16,
+        }
+    }
+
     fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
             Self::Day(day_components) => day_components.to_components_bag_with_length(length),
@@ -345,6 +367,13 @@ impl NeoDateComponents {
             Self::Quarter => todo!(),
             Self::YearQuarter => todo!(),
         }
+    }
+}
+
+#[test]
+fn test_neo_date_components_discriminants() {
+    for (i, component) in NeoDateComponents::VALUES.iter().enumerate() {
+        assert_eq!(component.discriminant() as usize, i);
     }
 }
 
@@ -409,6 +438,23 @@ impl NeoTimeComponents {
         Self::Hour24MinuteSecond,
     ];
 
+    pub(crate) fn discriminant(self) -> u8 {
+        match self {
+            Self::Hour => 0,
+            Self::HourMinute => 1,
+            Self::HourMinuteSecond => 2,
+            Self::DayPeriodHour12 => 3,
+            Self::Hour12 => 4,
+            Self::DayPeriodHour12Minute => 5,
+            Self::Hour12Minute => 6,
+            Self::DayPeriodHour12MinuteSecond => 7,
+            Self::Hour12MinuteSecond => 8,
+            Self::Hour24 => 9,
+            Self::Hour24Minute => 10,
+            Self::Hour24MinuteSecond => 11,
+        }
+    }
+
     fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
             Self::Hour => components::Bag {
@@ -436,6 +482,13 @@ impl NeoTimeComponents {
             Self::Hour24Minute => todo!(),
             Self::Hour24MinuteSecond => todo!(),
         }
+    }
+}
+
+#[test]
+fn test_neo_time_components_discriminants() {
+    for (i, component) in NeoTimeComponents::VALUES.iter().enumerate() {
+        assert_eq!(component.discriminant() as usize, i);
     }
 }
 
@@ -505,7 +558,7 @@ pub struct NeoTimeZoneSkeleton {
 
 /// A skeleton for formatting parts of a date (without time or time zone).
 #[derive(Debug, Copy, Clone)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)] // well-defined type
 pub struct NeoDateSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -530,7 +583,7 @@ impl NeoDateSkeleton {
 
 /// A skeleton for formatting parts of a time (without date or time zone).
 #[derive(Debug, Copy, Clone)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)] // well-defined type
 pub struct NeoTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
@@ -555,7 +608,7 @@ impl NeoTimeSkeleton {
 
 /// A skeleton for formatting parts of a date and time (without time zone).
 #[derive(Debug, Copy, Clone)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)] // well-defined type
 pub struct NeoDateTimeSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,

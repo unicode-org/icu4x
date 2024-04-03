@@ -9,7 +9,7 @@ use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::NeoDateSkeleton;
+use crate::neo_skeleton::{NeoDateSkeleton, NeoTimeSkeleton};
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
@@ -23,8 +23,8 @@ use zerovec::ZeroSlice;
 pub(crate) enum DatePatternSelectionData {
     SingleDate(DataPayload<ErasedDatePatternV1Marker>),
     SkeletonDate {
-        payload: DataPayload<ErasedPackedSkeletonDataV1Marker>,
         skeleton: NeoDateSkeleton,
+        payload: DataPayload<ErasedPackedSkeletonDataV1Marker>,
     },
     #[allow(dead_code)] // TODO(#4478)
     OptionalEra {
@@ -35,17 +35,22 @@ pub(crate) enum DatePatternSelectionData {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum DatePatternDataBorrowed<'a> {
-    Resolved(&'a DatePatternV1<'a>),
+    Resolved(runtime::PatternBorrowed<'a>),
 }
 
 #[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
     SingleTime(DataPayload<TimePatternV1Marker>),
+    #[allow(dead_code)] // TODO
+    SkeletonTime {
+        skeleton: NeoTimeSkeleton,
+        payload: DataPayload<ErasedPackedSkeletonDataV1Marker>,
+    },
 }
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum TimePatternDataBorrowed<'a> {
-    Resolved(&'a TimePatternV1<'a>),
+    Resolved(runtime::PatternBorrowed<'a>),
 }
 
 #[derive(Debug)]
@@ -114,12 +119,43 @@ impl DatePatternSelectionData {
         Ok(Self::SingleDate(payload))
     }
 
+    pub(crate) fn try_new_with_skeleton<M>(
+        provider: &(impl DataProvider<M> + ?Sized),
+        locale: &DataLocale,
+        skeleton: NeoDateSkeleton,
+    ) -> Result<Self, Error>
+    where
+        M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+    {
+        let payload = provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        Ok(Self::SkeletonDate {
+            skeleton: skeleton,
+            payload,
+        })
+    }
+
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
-            DatePatternSelectionData::SkeletonDate { payload, skeleton } => &payload.get().get_for_date_skeleton(*skeleton).items,
+            DatePatternSelectionData::SkeletonDate { skeleton, payload } => &payload
+                .get()
+                .get_for_date_skeleton(*skeleton)
+                .map(|pattern_ule| &pattern_ule.items)
+                .unwrap_or_else(|| {
+                    debug_assert!(
+                        false,
+                        "failed to get pattern for date skeleton: {skeleton:?}"
+                    );
+                    ZeroSlice::new_empty()
+                }),
             // Assumption: with_era has all the fields of without_era
             DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern.items,
         };
@@ -130,7 +166,22 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SingleDate(payload) => {
-                DatePatternDataBorrowed::Resolved(payload.get())
+                DatePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
+            }
+            DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
+                DatePatternDataBorrowed::Resolved(
+                    payload
+                        .get()
+                        .get_for_date_skeleton(*skeleton)
+                        .map(|pattern_ule| pattern_ule.as_borrowed())
+                        .unwrap_or_else(|| {
+                            debug_assert!(
+                                false,
+                                "failed to get pattern for date skeleton: {skeleton:?}"
+                            );
+                            runtime::PatternBorrowed::DEFAULT
+                        }),
+                )
             }
             DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
         }
@@ -141,23 +192,23 @@ impl<'a> DatePatternDataBorrowed<'a> {
     #[inline]
     pub(crate) fn metadata(self) -> PatternMetadata {
         match self {
-            Self::Resolved(data) => data.pattern.metadata,
+            Self::Resolved(pb) => pb.metadata,
         }
     }
 
     #[inline]
     pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         match self {
-            Self::Resolved(data) => data.pattern.items.iter(),
+            Self::Resolved(pb) => pb.items.iter(),
         }
     }
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pattern = match self {
-            Self::Resolved(data) => &data.pattern,
+        let pb = match self {
+            Self::Resolved(pb) => pb,
         };
-        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
+        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
     }
 }
 
@@ -193,19 +244,43 @@ impl TimePatternSelectionData {
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        match self {
-            TimePatternSelectionData::SingleTime(payload) => payload.get(),
-        }
-        .pattern
-        .items
-        .iter()
+        let items: &ZeroSlice<PatternItem> = match self {
+            TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
+            TimePatternSelectionData::SkeletonTime { skeleton, payload } => &payload
+                .get()
+                .get_for_time_skeleton(*skeleton)
+                .map(|pattern_ule| &pattern_ule.items)
+                .unwrap_or_else(|| {
+                    debug_assert!(
+                        false,
+                        "failed to get pattern for time skeleton: {skeleton:?}"
+                    );
+                    ZeroSlice::new_empty()
+                }),
+        };
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SingleTime(payload) => {
-                TimePatternDataBorrowed::Resolved(payload.get())
+                TimePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
+            }
+            TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
+                TimePatternDataBorrowed::Resolved(
+                    payload
+                        .get()
+                        .get_for_time_skeleton(*skeleton)
+                        .map(|pattern_ule| pattern_ule.as_borrowed())
+                        .unwrap_or_else(|| {
+                            debug_assert!(
+                                false,
+                                "failed to get pattern for time skeleton: {skeleton:?}"
+                            );
+                            runtime::PatternBorrowed::DEFAULT
+                        }),
+                )
             }
         }
     }
@@ -215,23 +290,23 @@ impl<'a> TimePatternDataBorrowed<'a> {
     #[inline]
     pub(crate) fn metadata(self) -> PatternMetadata {
         match self {
-            Self::Resolved(data) => data.pattern.metadata,
+            Self::Resolved(pb) => pb.metadata,
         }
     }
 
     #[inline]
     pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         match self {
-            Self::Resolved(data) => data.pattern.items.iter(),
+            Self::Resolved(pb) => pb.items.iter(),
         }
     }
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pattern = match self {
-            Self::Resolved(data) => &data.pattern,
+        let pb = match self {
+            Self::Resolved(pb) => pb,
         };
-        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
+        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
     }
 }
 
@@ -337,16 +412,13 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
     #[inline]
     pub(crate) fn metadata(self) -> PatternMetadata {
         match self {
-            Self::Date(DatePatternDataBorrowed::Resolved(data)) => data.pattern.metadata,
-            Self::Time(TimePatternDataBorrowed::Resolved(data)) => data.pattern.metadata,
+            Self::Date(DatePatternDataBorrowed::Resolved(pb)) => pb.metadata,
+            Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb.metadata,
             Self::DateTimeGlue {
                 date: DatePatternDataBorrowed::Resolved(date),
                 time: TimePatternDataBorrowed::Resolved(time),
                 ..
-            } => PatternMetadata::merge_date_and_time_metadata(
-                date.pattern.metadata,
-                time.pattern.metadata,
-            ),
+            } => PatternMetadata::merge_date_and_time_metadata(date.metadata, time.metadata),
         }
     }
 
@@ -363,17 +435,13 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
                     Err(1) => self
                         .date_pattern()
                         .map(|data| match data {
-                            DatePatternDataBorrowed::Resolved(pattern) => {
-                                pattern.pattern.items.as_ule_slice()
-                            }
+                            DatePatternDataBorrowed::Resolved(pb) => pb.items.as_ule_slice(),
                         })
                         .unwrap_or(&[]),
                     Err(0) => self
                         .time_pattern()
                         .map(|data| match data {
-                            TimePatternDataBorrowed::Resolved(pattern) => {
-                                pattern.pattern.items.as_ule_slice()
-                            }
+                            TimePatternDataBorrowed::Resolved(pb) => pb.items.as_ule_slice(),
                         })
                         .unwrap_or(&[]),
                     _ => &[],
@@ -383,12 +451,12 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
     }
 
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pattern = match self {
-            Self::Date(DatePatternDataBorrowed::Resolved(data)) => &data.pattern,
-            Self::Time(TimePatternDataBorrowed::Resolved(data)) => &data.pattern,
+        let pb = match self {
+            Self::Date(DatePatternDataBorrowed::Resolved(pb)) => pb,
+            Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb,
             Self::DateTimeGlue { .. } => todo!(),
         };
-        DateTimePattern::from_runtime_pattern(pattern.clone().into_owned())
+        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
     }
 }
 

@@ -10,6 +10,7 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_pattern::DateTimePattern;
+use crate::neo_skeleton::{NeoDateSkeleton, TypedNeoSkeletonData};
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -186,6 +187,91 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
+            Some(provider),           // year
+            Some(provider),           // month
+            Some(provider),           // weekday
+            None::<&PhantomProvider>, // day period
+            Some(loader),             // fixed decimal formatter
+            Some(loader),             // week calculator
+            locale,
+            selection.pattern_items_for_data_loading(),
+        )?;
+        Ok(Self {
+            selection,
+            names,
+            _calendar: PhantomData,
+        })
+    }
+
+    /// Creates a [`TypedNeoDateFormatter`] for a date skeleton.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoDateFormatter;
+    /// use icu::datetime::neo_skeleton::{NeoDateSkeleton, NeoDateComponents, NeoSkeletonLength, YearMonthMarker};
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
+    ///     &locale!("es-MX").into(),
+    ///     NeoDateSkeleton {
+    ///         components: NeoDateComponents::YearMonth,
+    ///         length: NeoSkeletonLength::Medium,
+    ///     },
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+    ///     "diciembre de 2023"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_skeleton<S>(
+        locale: &DataLocale,
+        skeleton: NeoDateSkeleton,
+    ) -> Result<Self, Error>
+    where
+        S: ?Sized + TypedNeoSkeletonData<C>,
+        crate::provider::Baked: Sized
+            // Calendar-specific date formatting keys
+            + DataProvider<S::DateSkeletonPatternsV1Marker>
+            + DataProvider<S::YearNamesV1Marker>
+            + DataProvider<S::MonthNamesV1Marker>,
+    {
+        // TODO: Consolidate the skeleton argument and S type parameter
+        Self::try_new_with_skeleton_internal::<S, _, _>(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            skeleton,
+        )
+    }
+
+    fn try_new_with_skeleton_internal<S, P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        skeleton: NeoDateSkeleton,
+    ) -> Result<Self, Error>
+    where
+        S: ?Sized + TypedNeoSkeletonData<C>,
+        P: ?Sized
+            // Date formatting keys
+            + DataProvider<S::DateSkeletonPatternsV1Marker>
+            + DataProvider<S::YearNamesV1Marker>
+            + DataProvider<S::MonthNamesV1Marker>
+            + DataProvider<WeekdayNamesV1Marker>, // TODO: make this S::WeekdayNamesV1Marker
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
+    {
+        let selection = DatePatternSelectionData::try_new_with_skeleton::<
+            S::DateSkeletonPatternsV1Marker,
+        >(provider, locale, skeleton)?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker>(
             Some(provider),           // year
             Some(provider),           // month
             Some(provider),           // weekday

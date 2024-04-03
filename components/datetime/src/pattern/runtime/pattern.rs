@@ -8,7 +8,7 @@ use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_provider::prelude::*;
-use zerovec::ZeroVec;
+use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
@@ -28,12 +28,20 @@ pub struct Pattern<'data> {
     pub metadata: PatternMetadata,
 }
 
+#[derive(Debug, Copy, Clone)]
+pub struct PatternBorrowed<'data> {
+    pub items: &'data ZeroSlice<PatternItem>,
+    pub metadata: PatternMetadata,
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[zerovec::make_ule(PatternMetadataULE)]
 #[zerovec::skip_derive(Ord)]
 pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
+    pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
+
     #[inline]
     pub(crate) fn time_granularity(self) -> TimeGranularity {
         TimeGranularity::from_ordinal(self.0)
@@ -72,7 +80,7 @@ impl PatternMetadata {
 impl Default for PatternMetadata {
     #[inline]
     fn default() -> Self {
-        Self::from_time_granularity(TimeGranularity::None)
+        Self::DEFAULT
     }
 }
 
@@ -80,6 +88,36 @@ impl<'data> Pattern<'data> {
     pub fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
+            metadata: self.metadata,
+        }
+    }
+
+    pub fn as_borrowed(&self) -> PatternBorrowed {
+        PatternBorrowed {
+            items: &self.items,
+            metadata: self.metadata,
+        }
+    }
+}
+
+impl PatternULE {
+    pub fn as_borrowed(&self) -> PatternBorrowed {
+        PatternBorrowed {
+            items: &self.items,
+            metadata: PatternMetadata::from_unaligned(self.metadata),
+        }
+    }
+}
+
+impl<'data> PatternBorrowed<'data> {
+    pub(crate) const DEFAULT: PatternBorrowed<'static> = PatternBorrowed {
+        items: ZeroSlice::new_empty(),
+        metadata: PatternMetadata::DEFAULT,
+    };
+
+    pub fn to_pattern(&self) -> Pattern<'data> {
+        Pattern {
+            items: self.items.as_zerovec(),
             metadata: self.metadata,
         }
     }
