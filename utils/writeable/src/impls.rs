@@ -206,7 +206,8 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     fn try_write_to_with_handler<
         E,
         W: fmt::Write + ?Sized,
-        F: FnMut(Self::Error, &mut W) -> WriteableResult<E>,
+        L: Writeable,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         sink: &mut W,
@@ -226,7 +227,8 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     fn try_write_to_parts_with_handler<
         E,
         S: FalliblePartsWrite + ?Sized,
-        F: FnMut(Self::Error, &mut S) -> WriteableResult<E>,
+        L: Writeable,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         sink: &mut S,
@@ -237,7 +239,8 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
 
     fn try_writeable_length_hint_with_handler<
         E,
-        F: FnMut(Self::Error) -> Result<Self::Error, E>,
+        L: Writeable,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         handler: F,
@@ -247,8 +250,9 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
 
     fn try_write_to_string_with_handlers<
         E,
-        F0: FnMut(Self::Error, &mut String) -> WriteableResult<E>,
-        F1: FnMut(Self::Error) -> Result<Self::Error, E>,
+        L: Writeable,
+        F0: FnMut(Self::Error) -> Result<L, E>,
+        F1: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         handler0: F0,
@@ -259,7 +263,8 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
 
     fn try_write_cmp_bytes_with_handler<
         E,
-        F: FnMut(Self::Error, &mut cmp::WriteComparator) -> WriteableResult<E>,
+        L: Writeable,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         other: &[u8],
