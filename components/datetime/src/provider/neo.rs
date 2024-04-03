@@ -4,6 +4,7 @@
 
 mod adapter;
 
+use crate::neo_skeleton::NeoDateSkeleton;
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
@@ -627,6 +628,12 @@ pub struct PackedSkeletonDataV1<'data> {
     pub patterns: VarZeroVec<'data, PatternULE>,
 }
 
+impl<'data> PackedSkeletonDataV1<'data> {
+    pub(crate) fn get_for_date_skeleton(&self, skeleton: NeoDateSkeleton) -> &'data PatternULE {
+        todo!()
+    }
+}
+
 #[icu_provider::data_struct(marker(
     DateTimeSkeletonPatternsV1Marker,
     "datetime/patterns/datetime_skeleton@1"
@@ -662,4 +669,9 @@ impl DataMarker for ErasedMonthNamesV1Marker {
 pub(crate) struct ErasedDatePatternV1Marker;
 impl DataMarker for ErasedDatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
+}
+
+pub(crate) struct ErasedPackedSkeletonDataV1Marker;
+impl DataMarker for ErasedPackedSkeletonDataV1Marker {
+    type Yokeable = PackedSkeletonDataV1<'static>;
 }

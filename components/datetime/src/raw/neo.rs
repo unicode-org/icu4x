@@ -9,6 +9,7 @@ use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
+use crate::neo_skeleton::NeoDateSkeleton;
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
@@ -16,10 +17,15 @@ use crate::provider::neo::*;
 use crate::Error;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
+use zerovec::ZeroSlice;
 
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
     SingleDate(DataPayload<ErasedDatePatternV1Marker>),
+    SkeletonDate {
+        payload: DataPayload<ErasedPackedSkeletonDataV1Marker>,
+        skeleton: NeoDateSkeleton,
+    },
     #[allow(dead_code)] // TODO(#4478)
     OptionalEra {
         with_era: DataPayload<ErasedDatePatternV1Marker>,
@@ -111,14 +117,13 @@ impl DatePatternSelectionData {
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        match self {
-            DatePatternSelectionData::SingleDate(payload) => payload.get(),
+        let items: &ZeroSlice<PatternItem> = match self {
+            DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
+            DatePatternSelectionData::SkeletonDate { payload, skeleton } => &payload.get().get_for_date_skeleton(*skeleton).items,
             // Assumption: with_era has all the fields of without_era
-            DatePatternSelectionData::OptionalEra { with_era, .. } => with_era.get(),
-        }
-        .pattern
-        .items
-        .iter()
+            DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern.items,
+        };
+        items.iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
