@@ -198,6 +198,7 @@ impl<T: Writeable + ?Sized> Writeable for &T {
 impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     type Error = T::Error;
 
+    #[inline]
     fn fallible_write_to<
         W: fmt::Write + ?Sized,
         L: Writeable,
@@ -207,10 +208,11 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
         &self,
         sink: &mut W,
         handler: F,
-    ) -> WriteableResult<E> {
+    ) -> Result<Result<(), E>, fmt::Error> {
         (*self).fallible_write_to(sink, handler)
     }
 
+    #[inline]
     fn fallible_write_to_parts<
         S: FalliblePartsWrite + ?Sized,
         L: Writeable,
@@ -220,10 +222,11 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
         &self,
         sink: &mut S,
         handler: F,
-    ) -> WriteableResult<E> {
+    ) -> Result<Result<(), E>, fmt::Error> {
         (*self).fallible_write_to_parts(sink, handler)
     }
 
+    #[inline]
     fn fallible_writeable_length_hint<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         handler: F,
@@ -231,6 +234,7 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
         (*self).fallible_writeable_length_hint(handler)
     }
 
+    #[inline]
     fn fallible_write_to_string<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         handler: F,
@@ -238,6 +242,7 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
         (*self).fallible_write_to_string(handler)
     }
 
+    #[inline]
     fn fallible_write_cmp_bytes<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         other: &[u8],
