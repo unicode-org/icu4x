@@ -86,29 +86,21 @@ pub trait FallibleWriteable {
         S: FalliblePartsWrite + ?Sized,
         L: Writeable,
         E,
-        F: FnMut(Self::Error) -> Result<L, E>
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         sink: &mut S,
         handler: F,
     ) -> WriteableResult<E>;
 
-    fn fallible_writeable_length_hint<
-        E,
-        L: Writeable,
-        F: FnMut(Self::Error) -> Result<L, E>,
-    >(
+    fn fallible_writeable_length_hint<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         _handler: F,
     ) -> Result<LengthHint, E> {
         Ok(LengthHint::undefined())
     }
 
-    fn fallible_write_to_string<
-        E,
-        L: Writeable,
-        F: FnMut(Self::Error) -> Result<L, E>,
-    >(
+    fn fallible_write_to_string<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         mut handler: F,
     ) -> Result<Cow<str>, E> {
@@ -124,11 +116,7 @@ pub trait FallibleWriteable {
         }
     }
 
-    fn fallible_write_cmp_bytes<
-        E,
-        L: Writeable,
-        F: FnMut(Self::Error) -> Result<L, E>,
-    >(
+    fn fallible_write_cmp_bytes<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         other: &[u8],
         handler: F,
@@ -158,16 +146,21 @@ pub trait FallibleWriteable {
 #[derive(Debug)]
 pub struct ResultyWriteable<T>(pub(crate) T);
 
-impl<T> ResultyWriteable<T> where T: FallibleWriteable {
+impl<T> ResultyWriteable<T>
+where
+    T: FallibleWriteable,
+{
     pub fn try_write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> WriteableResult<T::Error> {
-        self.0.fallible_write_to(sink, |e| Err::<NeverWriteable, _>(e))
+        self.0
+            .fallible_write_to(sink, |e| Err::<NeverWriteable, _>(e))
     }
 
     pub fn try_write_to_parts<S: FalliblePartsWrite + ?Sized>(
         &self,
         sink: &mut S,
     ) -> WriteableResult<T::Error> {
-        self.0.fallible_write_to_parts(sink, |e| Err::<NeverWriteable, _>(e))
+        self.0
+            .fallible_write_to_parts(sink, |e| Err::<NeverWriteable, _>(e))
     }
 }
 
@@ -180,9 +173,9 @@ where
     T::Error: Writeable,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let infallible_result = self.0.fallible_write_to(sink, |err| {
-            Ok::<_, Infallible>(err)
-        })?;
+        let infallible_result = self
+            .0
+            .fallible_write_to(sink, |err| Ok::<_, Infallible>(err))?;
         Ok(infallible_result.unwrap_or_else(|never| match never {}))
     }
 
@@ -201,17 +194,13 @@ where
 
     fn write_to_string(&self) -> Cow<str> {
         self.0
-            .fallible_write_to_string(
-                |err| Ok::<_, Infallible>(err),
-            )
+            .fallible_write_to_string(|err| Ok::<_, Infallible>(err))
             .unwrap_or_else(|never| match never {})
     }
 
     fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         self.0
-            .fallible_write_cmp_bytes(other, |e| {
-                Ok::<_, Infallible>(e)
-            })
+            .fallible_write_cmp_bytes(other, |e| Ok::<_, Infallible>(e))
             .unwrap_or_else(|never| match never {})
     }
 }
@@ -235,7 +224,9 @@ where
     T::Error: fmt::Debug,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let result = self.0.fallible_write_to(sink, |err| Err::<NeverWriteable, _>(err))?;
+        let result = self
+            .0
+            .fallible_write_to(sink, |err| Err::<NeverWriteable, _>(err))?;
         result.unwrap();
         Ok(())
     }
@@ -248,7 +239,9 @@ where
     */
 
     fn writeable_length_hint(&self) -> LengthHint {
-        let result = self.0.fallible_writeable_length_hint(|e| Err::<NeverWriteable, _>(e));
+        let result = self
+            .0
+            .fallible_writeable_length_hint(|e| Err::<NeverWriteable, _>(e));
         result.unwrap()
     }
 
@@ -287,7 +280,7 @@ where
         W: fmt::Write + ?Sized,
         L: Writeable,
         E,
-        F: FnMut(Self::Error) -> Result<L, E>
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         sink: &mut W,
@@ -298,7 +291,7 @@ where
             None => match handler(MissingWriteableError) {
                 Ok(l) => l.write_to(sink).map(Ok),
                 Err(e) => Ok(Err(e)),
-            }
+            },
         }
     }
 
@@ -306,7 +299,7 @@ where
         S: FalliblePartsWrite + ?Sized,
         L: Writeable,
         E,
-        F: FnMut(Self::Error) -> Result<L, E>
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
         sink: &mut S,
@@ -316,16 +309,12 @@ where
             Some(writeable) => writeable.write_to_parts(sink).map(Ok),
             None => match handler(MissingWriteableError) {
                 Ok(l) => l.write_to_parts(sink).map(Ok),
-                Err(e) => Ok(Err(e))
-            }
+                Err(e) => Ok(Err(e)),
+            },
         }
     }
 
-    fn fallible_writeable_length_hint<
-        E,
-        L: Writeable,
-        F: FnMut(Self::Error) -> Result<L, E>,
-    >(
+    fn fallible_writeable_length_hint<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         mut handler: F,
     ) -> Result<LengthHint, E> {
@@ -335,26 +324,19 @@ where
         }
     }
 
-    fn fallible_write_to_string<
-        E,
-        L: Writeable,
-        F: FnMut(Self::Error) -> Result<L, E>,
-    >(
+    fn fallible_write_to_string<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         mut handler: F,
     ) -> Result<Cow<str>, E> {
         match self {
             Some(writeable) => Ok(writeable.write_to_string()),
-            None => handler(MissingWriteableError)
-                .map(|e| Cow::Owned(e.write_to_string().into_owned())),
+            None => {
+                handler(MissingWriteableError).map(|e| Cow::Owned(e.write_to_string().into_owned()))
+            }
         }
     }
 
-    fn fallible_write_cmp_bytes<
-        E,
-        L: Writeable,
-        F: FnMut(Self::Error) -> Result<L, E>,
-    >(
+    fn fallible_write_cmp_bytes<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         other: &[u8],
         mut handler: F,
@@ -370,7 +352,11 @@ where
 fn test_basic() {
     let mut sink = String::new();
 
-    Some("abcdefg").resulty().try_write_to(&mut sink).unwrap().unwrap();
+    Some("abcdefg")
+        .resulty()
+        .try_write_to(&mut sink)
+        .unwrap()
+        .unwrap();
     assert_eq!(sink, "abcdefg");
     assert!(matches!(
         None::<&str>.resulty().try_write_to(&mut sink),
