@@ -132,27 +132,28 @@ pub trait FallibleWriteable {
         }
         Ok(wc.finish().reverse())
     }
+}
 
+pub trait FallibleWriteableConvenience: FallibleWriteable {
     #[inline]
     fn checked(&self) -> CheckedWriteable<&Self> {
         CheckedWriteable(self)
     }
-
     #[inline]
     fn lossy(&self) -> LossyWriteable<&Self> {
         LossyWriteable(self)
     }
-
     #[inline]
     fn panicky(&self) -> PanickyWriteable<&Self> {
         PanickyWriteable(self)
     }
-
     #[inline]
     fn gigo(&self) -> GigoWriteable<&Self> {
         GigoWriteable(self)
     }
 }
+
+impl<T> FallibleWriteableConvenience for T where T: FallibleWriteable {}
 
 #[derive(Debug)]
 pub struct CheckedWriteable<T>(pub(crate) T);
@@ -232,16 +233,7 @@ where
     }
 }
 
-impl<T> fmt::Display for LossyWriteable<T>
-where
-    T: FallibleWriteable,
-    T::Error: Writeable,
-{
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
+impl_display_with_writeable!([T] LossyWriteable<T> where T: FallibleWriteable, T::Error: Writeable);
 
 #[derive(Debug)]
 pub struct PanickyWriteable<T>(pub(crate) T);
@@ -288,15 +280,7 @@ where
     }
 }
 
-impl<T> fmt::Display for PanickyWriteable<T>
-where
-    T: FallibleWriteable,
-    T::Error: fmt::Debug,
-{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
+impl_display_with_writeable!([T] PanickyWriteable<T> where T: FallibleWriteable, T::Error: fmt::Debug);
 
 #[derive(Debug)]
 pub struct GigoWriteable<T>(pub(crate) T);
@@ -344,15 +328,7 @@ where
     }
 }
 
-impl<T> fmt::Display for GigoWriteable<T>
-where
-    T: FallibleWriteable,
-    T::Error: Writeable + fmt::Debug,
-{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
+impl_display_with_writeable!([T] GigoWriteable<T> where T: FallibleWriteable, T::Error: Writeable, T::Error: fmt::Debug);
 
 impl<T> FallibleWriteable for Option<T>
 where

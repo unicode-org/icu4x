@@ -250,21 +250,6 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     ) -> Result<core::cmp::Ordering, E> {
         (*self).fallible_write_cmp_bytes(other, handler)
     }
-
-    #[inline]
-    fn checked(&self) -> CheckedWriteable<&Self> {
-        CheckedWriteable(self)
-    }
-
-    #[inline]
-    fn lossy(&self) -> LossyWriteable<&Self> {
-        LossyWriteable(self)
-    }
-
-    #[inline]
-    fn panicky(&self) -> PanickyWriteable<&Self> {
-        PanickyWriteable(self)
-    }
 }
 
 macro_rules! impl_write_smart_pointer {

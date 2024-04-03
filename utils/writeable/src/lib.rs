@@ -329,8 +329,61 @@ pub trait Writeable {
 /// It's recommended to do this for every [`Writeable`] type, as it will add
 /// support for `core::fmt` features like [`fmt!`](std::fmt),
 /// [`print!`](std::print), [`write!`](std::write), etc.
+///
+/// # Examples
+///
+/// On types with no generics:
+///
+/// ```
+/// use core::fmt;
+/// use writeable::Writeable;
+/// use writeable::impl_display_with_writeable;
+///
+/// struct MyWriteable;
+///
+/// impl Writeable for MyWriteable {
+///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+///         sink.write_str("example")
+///     }
+/// }
+///
+/// writeable::impl_display_with_writeable!(MyWriteable);
+///
+/// assert_eq!(MyWriteable.to_string(), "example");
+/// ```
+///
+/// When the type has generics:
+///
+/// ```
+/// use core::fmt;
+/// use writeable::Writeable;
+/// use writeable::impl_display_with_writeable;
+///
+/// struct MyWriteable<T>(T);
+///
+/// impl<T: Writeable> Writeable for MyWriteable<T> {
+///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+///         sink.write_str("Example: ")?;
+///         self.0.write_to(sink)
+///     }
+/// }
+///
+/// writeable::impl_display_with_writeable!([T] MyWriteable<T> where T: Writeable);
+///
+/// assert_eq!(MyWriteable("Hello").to_string(), "Example: Hello");
+/// ```
 #[macro_export]
 macro_rules! impl_display_with_writeable {
+    ([$($decl:ident),+] $type:path where $($item:path : $bound:path),+) => {
+        /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
+        /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
+        impl<$($decl),+> core::fmt::Display for $type where $($item: $bound),+ {
+            #[inline]
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                $crate::Writeable::write_to(&self, f)
+            }
+        }
+    };
     ($type:ty) => {
         /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
         /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
