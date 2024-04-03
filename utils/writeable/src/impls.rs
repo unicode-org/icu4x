@@ -214,7 +214,7 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
 
     #[inline]
     fn fallible_write_to_parts<
-        S: FalliblePartsWrite + ?Sized,
+        S: PartsWrite + ?Sized,
         L: Writeable,
         E,
         F: FnMut(Self::Error) -> Result<L, E>,
@@ -252,8 +252,8 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     }
 
     #[inline]
-    fn resulty(&self) -> ResultyWriteable<&Self> {
-        ResultyWriteable(self)
+    fn checked(&self) -> CheckedWriteable<&Self> {
+        CheckedWriteable(self)
     }
 
     #[inline]

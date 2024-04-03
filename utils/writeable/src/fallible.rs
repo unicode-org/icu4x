@@ -71,17 +71,6 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
     }
 }
 
-pub trait FalliblePartsWrite: PartsWrite {
-    type Error;
-    type SubFalliblePartsWrite: FalliblePartsWrite + ?Sized;
-
-    fn try_with_part(
-        &mut self,
-        part: Part,
-        f: impl FnMut(&mut Self::SubPartsWrite) -> Result<Result<(), Self::Error>, fmt::Error>,
-    ) -> Result<Result<(), Self::Error>, fmt::Error>;
-}
-
 pub trait FallibleWriteable {
     type Error;
 
@@ -97,7 +86,7 @@ pub trait FallibleWriteable {
     ) -> Result<Result<(), E>, fmt::Error>;
 
     fn fallible_write_to_parts<
-        S: FalliblePartsWrite + ?Sized,
+        S: PartsWrite + ?Sized,
         L: Writeable,
         E,
         F: FnMut(Self::Error) -> Result<L, E>,
@@ -145,8 +134,8 @@ pub trait FallibleWriteable {
     }
 
     #[inline]
-    fn resulty(&self) -> ResultyWriteable<&Self> {
-        ResultyWriteable(self)
+    fn checked(&self) -> CheckedWriteable<&Self> {
+        CheckedWriteable(self)
     }
 
     #[inline]
@@ -166,13 +155,13 @@ pub trait FallibleWriteable {
 }
 
 #[derive(Debug)]
-pub struct ResultyWriteable<T>(pub(crate) T);
+pub struct CheckedWriteable<T>(pub(crate) T);
 
 fn resulty_handler<E>(e: E) -> Result<NeverWriteable, E> {
     Err(e)
 }
 
-impl<T> ResultyWriteable<T>
+impl<T> CheckedWriteable<T>
 where
     T: FallibleWriteable,
 {
@@ -185,11 +174,16 @@ where
     }
 
     #[inline]
-    pub fn try_write_to_parts<S: FalliblePartsWrite + ?Sized>(
+    pub fn try_write_to_parts<S: PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
     ) -> Result<Result<(), T::Error>, fmt::Error> {
         self.0.fallible_write_to_parts(sink, resulty_handler)
+    }
+
+    #[inline]
+    pub fn try_write_to_string(&self) -> Result<Cow<str>, T::Error> {
+        self.0.fallible_write_to_string(resulty_handler)
     }
 }
 
@@ -212,13 +206,12 @@ where
         Ok(())
     }
 
-    // TODO: for now, use the default impl
-    /*
     #[inline]
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-        todo!()
+        let result = self.0.fallible_write_to_parts(sink, lossy_handler)?;
+        result.unwrap_infallible();
+        Ok(())
     }
-    */
 
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
@@ -269,13 +262,12 @@ where
         Ok(())
     }
 
-    // TODO: for now, use the default impl
-    /*
     #[inline]
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-        todo!()
+        let result = self.0.fallible_write_to_parts(sink, panicky_handler)?;
+        result.unwrap();
+        Ok(())
     }
-    */
 
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
@@ -326,13 +318,12 @@ where
         Ok(())
     }
 
-    // TODO: for now, use the default impl
-    /*
     #[inline]
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-        todo!()
+        let result = self.0.fallible_write_to_parts(sink, gigo_handler)?;
+        result.unwrap_infallible();
+        Ok(())
     }
-    */
 
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
@@ -389,7 +380,7 @@ where
     }
 
     fn fallible_write_to_parts<
-        S: FalliblePartsWrite + ?Sized,
+        S: PartsWrite + ?Sized,
         L: Writeable,
         E,
         F: FnMut(Self::Error) -> Result<L, E>,
@@ -453,13 +444,13 @@ fn test_basic() {
     let mut sink = String::new();
 
     Some("abcdefg")
-        .resulty()
+        .checked()
         .try_write_to(&mut sink)
         .unwrap()
         .unwrap();
     assert_eq!(sink, "abcdefg");
     assert!(matches!(
-        None::<&str>.resulty().try_write_to(&mut sink),
+        None::<&str>.checked().try_write_to(&mut sink),
         Ok(Err(MissingWriteableError))
     ));
 
