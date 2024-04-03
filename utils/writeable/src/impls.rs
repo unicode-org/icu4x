@@ -204,9 +204,9 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     }
 
     fn try_write_to_with_handler<
-        E,
         W: fmt::Write + ?Sized,
         L: Writeable,
+        E,
         F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
@@ -225,9 +225,9 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     }
 
     fn try_write_to_parts_with_handler<
-        E,
         S: FalliblePartsWrite + ?Sized,
         L: Writeable,
+        E,
         F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
@@ -251,14 +251,12 @@ impl<T: FallibleWriteable + ?Sized> FallibleWriteable for &T {
     fn try_write_to_string_with_handlers<
         E,
         L: Writeable,
-        F0: FnMut(Self::Error) -> Result<L, E>,
-        F1: FnMut(Self::Error) -> Result<L, E>,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
-        handler0: F0,
-        handler1: F1,
+        handler: F,
     ) -> Result<Cow<str>, E> {
-        (*self).try_write_to_string_with_handlers(handler0, handler1)
+        (*self).try_write_to_string_with_handlers(handler)
     }
 
     fn try_write_cmp_bytes_with_handler<

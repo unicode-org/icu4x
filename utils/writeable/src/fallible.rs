@@ -22,20 +22,37 @@ impl Writeable for MissingWriteableError {
     }
 }
 
-#[derive(Debug)]
-pub enum NeverWriteable {}
-
-impl Writeable for NeverWriteable {
-    fn write_to<W: fmt::Write + ?Sized>(&self, _sink: &mut W) -> fmt::Result {
-        match *self {}
-    }
-}
-
 impl_display_with_writeable!(MissingWriteableError);
 
 #[test]
 fn test_missing_writeable_error() {
     assert_writeable_eq!(MissingWriteableError, "�");
+}
+
+#[derive(Debug)]
+pub enum NeverWriteable {}
+
+impl Writeable for NeverWriteable {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, _sink: &mut W) -> fmt::Result {
+        match *self {}
+    }
+    #[inline]
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, _sink: &mut S) -> fmt::Result {
+        match *self {}
+    }
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        match *self {}
+    }
+    #[inline]
+    fn write_to_string(&self) -> Cow<str> {
+        match *self {}
+    }
+    #[inline]
+    fn write_cmp_bytes(&self, _other: &[u8]) -> core::cmp::Ordering {
+        match *self {}
+    }
 }
 
 pub type WriteableResult<E> = Result<Result<(), E>, fmt::Error>;
@@ -59,9 +76,9 @@ pub trait FallibleWriteable {
     }
 
     fn try_write_to_with_handler<
-        E,
         W: fmt::Write + ?Sized,
         L: Writeable,
+        E,
         F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
@@ -77,9 +94,9 @@ pub trait FallibleWriteable {
     }
 
     fn try_write_to_parts_with_handler<
-        E,
         S: FalliblePartsWrite + ?Sized,
         L: Writeable,
+        E,
         F: FnMut(Self::Error) -> Result<L, E>
     >(
         &self,
@@ -101,19 +118,17 @@ pub trait FallibleWriteable {
     fn try_write_to_string_with_handlers<
         E,
         L: Writeable,
-        F0: FnMut(Self::Error) -> Result<L, E>,
-        F1: FnMut(Self::Error) -> Result<L, E>,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
-        handler0: F0,
-        handler1: F1,
+        mut handler: F,
     ) -> Result<Cow<str>, E> {
-        let hint = self.try_writeable_length_hint_with_handler(handler1)?;
+        let hint = self.try_writeable_length_hint_with_handler(&mut handler)?;
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
         }
         let mut output = String::with_capacity(hint.capacity());
-        match self.try_write_to_with_handler(&mut output, handler0) {
+        match self.try_write_to_with_handler(&mut output, handler) {
             Ok(Ok(())) => Ok(Cow::Owned(output)),
             Ok(Err(err)) => Err(err),
             Err(core::fmt::Error) => unreachable!("writing to string is infallible"),
@@ -178,9 +193,6 @@ where
     fn write_to_string(&self) -> Cow<str> {
         self.0
             .try_write_to_string_with_handlers(
-                |err| {
-                    Ok::<_, Infallible>(err)
-                },
                 |err| Ok::<_, Infallible>(err),
             )
             .unwrap_or_else(|never| match never {})
@@ -234,7 +246,7 @@ where
     fn write_to_string(&self) -> Cow<str> {
         let result = self
             .0
-            .try_write_to_string_with_handlers(|e| Err::<NeverWriteable, _>(e), Err);
+            .try_write_to_string_with_handlers(|e| Err::<NeverWriteable, _>(e));
         result.unwrap()
     }
 
@@ -263,9 +275,9 @@ where
     type Error = MissingWriteableError;
 
     fn try_write_to_with_handler<
-        E,
         W: fmt::Write + ?Sized,
         L: Writeable,
+        E,
         F: FnMut(Self::Error) -> Result<L, E>
     >(
         &self,
@@ -282,9 +294,9 @@ where
     }
 
     fn try_write_to_parts_with_handler<
-        E,
         S: FalliblePartsWrite + ?Sized,
         L: Writeable,
+        E,
         F: FnMut(Self::Error) -> Result<L, E>
     >(
         &self,
@@ -317,16 +329,14 @@ where
     fn try_write_to_string_with_handlers<
         E,
         L: Writeable,
-        F0: FnMut(Self::Error) -> Result<L, E>,
-        F1: FnMut(Self::Error) -> Result<L, E>,
+        F: FnMut(Self::Error) -> Result<L, E>,
     >(
         &self,
-        _handler0: F0,
-        mut handler1: F1,
+        mut handler: F,
     ) -> Result<Cow<str>, E> {
         match self {
             Some(writeable) => Ok(writeable.write_to_string()),
-            None => handler1(MissingWriteableError)
+            None => handler(MissingWriteableError)
                 .map(|e| Cow::Owned(e.write_to_string().into_owned())),
         }
     }
