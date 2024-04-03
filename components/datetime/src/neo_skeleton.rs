@@ -13,9 +13,10 @@ use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoSkeletonData<C: CldrCalendar> {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoComponents;
+pub trait TypedNeoSkeletonData<C>
+where
+    C: CldrCalendar + ?Sized,
+{
     /// Marker for loading year names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
     type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
@@ -40,6 +41,24 @@ pub trait TypedNeoSkeletonData<C: CldrCalendar> {
     /// Marker for loading date/time combined patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DateTimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = DateTimeSkeletonsV1<'static>>;
+}
+
+/// Sealed trait implemented by neo skeleton marker types.
+pub trait TypedNeoDateSkeletonComponents<C>: TypedNeoSkeletonData<C>
+where
+    C: CldrCalendar + ?Sized,
+{
+    /// Components in the neo skeleton.
+    const COMPONENTS: NeoDateComponents;
+}
+
+/// Sealed trait implemented by neo skeleton marker types.
+pub trait TypedNeoSkeletonComponents<C>: TypedNeoSkeletonData<C>
+where
+    C: CldrCalendar + ?Sized,
+{
+    /// Components in the neo skeleton.
+    const COMPONENTS: NeoComponents;
 }
 
 /// A specification for the length of a date or component of a date.
@@ -110,8 +129,6 @@ impl<C> TypedNeoSkeletonData<C> for YearMonthMarker
 where
     C: CldrCalendar,
 {
-    const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::YearMonth);
-
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
@@ -125,17 +142,70 @@ where
     type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
+impl<C> TypedNeoDateSkeletonComponents<C> for YearMonthMarker
+where
+    C: CldrCalendar,
+{
+    const COMPONENTS: NeoDateComponents = NeoDateComponents::YearMonth;
+}
+
 // TODO: Add more of these TypedNeoSkeletonData marker types.
 
 /// Representation of a semantic skeleton with marker types.
 #[derive(Debug, Copy, Clone)]
-pub struct TypedNeoSkeleton<C: CldrCalendar, T: TypedNeoSkeletonData<C>> {
+pub struct TypedNeoDateSkeleton<T: ?Sized, C: ?Sized> {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
-    _phantom: PhantomData<(C, T)>,
+    _phantom_t: PhantomData<T>,
+    _phantom_c: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, T: TypedNeoSkeletonData<C>> TypedNeoSkeleton<C, T> {
+impl<T, C> TypedNeoDateSkeleton<T, C>
+where
+    T: TypedNeoDateSkeletonComponents<C> + ?Sized,
+    C: CldrCalendar + ?Sized,
+{
+    /// Creates a new [`TypedNeoDateSkeleton`] with the given length.
+    pub fn with_length(length: NeoSkeletonLength) -> Self {
+        Self {
+            length,
+            _phantom_t: PhantomData,
+            _phantom_c: PhantomData,
+        }
+    }
+
+    /// Converts this [`TypedNeoDateSkeleton`] to a [`NeoDateSkeleton`].
+    pub fn to_neo_skeleton(self) -> NeoDateSkeleton {
+        NeoDateSkeleton {
+            length: self.length,
+            components: T::COMPONENTS,
+        }
+    }
+}
+
+/// Representation of a semantic skeleton with marker types.
+#[derive(Debug, Copy, Clone)]
+pub struct TypedNeoSkeleton<T: ?Sized, C: ?Sized> {
+    /// Desired formatting length.
+    pub length: NeoSkeletonLength,
+    _phantom_t: PhantomData<T>,
+    _phantom_c: PhantomData<C>,
+}
+
+impl<T, C> TypedNeoSkeleton<T, C>
+where
+    T: TypedNeoSkeletonComponents<C> + ?Sized,
+    C: CldrCalendar + ?Sized,
+{
+    /// Creates a new [`TypedNeoSkeleton`] with the given length.
+    pub fn with_length(length: NeoSkeletonLength) -> Self {
+        Self {
+            length,
+            _phantom_t: PhantomData,
+            _phantom_c: PhantomData,
+        }
+    }
+
     /// Converts this [`TypedNeoSkeleton`] to a [`NeoSkeleton`].
     pub fn to_neo_skeleton(self) -> NeoSkeleton {
         NeoSkeleton {

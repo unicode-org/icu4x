@@ -10,7 +10,7 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoDateSkeleton, TypedNeoSkeletonData};
+use crate::neo_skeleton::{TypedNeoDateSkeleton, TypedNeoDateSkeletonComponents};
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -211,16 +211,13 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoDateFormatter;
-    /// use icu::datetime::neo_skeleton::{NeoDateSkeleton, NeoDateComponents, NeoSkeletonLength, YearMonthMarker};
+    /// use icu::datetime::neo_skeleton::{TypedNeoDateSkeleton, NeoSkeletonLength, YearMonthMarker};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateSkeleton {
-    ///         components: NeoDateComponents::YearMonth,
-    ///         length: NeoSkeletonLength::Medium,
-    ///     },
+    ///     TypedNeoDateSkeleton::with_length(NeoSkeletonLength::Medium)
     /// )
     /// .unwrap();
     ///
@@ -232,17 +229,16 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_skeleton<S>(
         locale: &DataLocale,
-        skeleton: NeoDateSkeleton,
+        skeleton: TypedNeoDateSkeleton<S, C>,
     ) -> Result<Self, Error>
     where
-        S: ?Sized + TypedNeoSkeletonData<C>,
+        S: ?Sized + TypedNeoDateSkeletonComponents<C>,
         crate::provider::Baked: Sized
             // Calendar-specific date formatting keys
             + DataProvider<S::DateSkeletonPatternsV1Marker>
             + DataProvider<S::YearNamesV1Marker>
             + DataProvider<S::MonthNamesV1Marker>,
     {
-        // TODO: Consolidate the skeleton argument and S type parameter
         Self::try_new_with_skeleton_internal::<S, _, _>(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -255,10 +251,10 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         provider: &P,
         loader: &L,
         locale: &DataLocale,
-        skeleton: NeoDateSkeleton,
+        skeleton: TypedNeoDateSkeleton<S, C>,
     ) -> Result<Self, Error>
     where
-        S: ?Sized + TypedNeoSkeletonData<C>,
+        S: ?Sized + TypedNeoDateSkeletonComponents<C>,
         P: ?Sized
             // Date formatting keys
             + DataProvider<S::DateSkeletonPatternsV1Marker>
@@ -269,7 +265,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         let selection = DatePatternSelectionData::try_new_with_skeleton::<
             S::DateSkeletonPatternsV1Marker,
-        >(provider, locale, skeleton)?;
+        >(provider, locale, skeleton.to_neo_skeleton())?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker>(
             Some(provider),           // year
