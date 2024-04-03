@@ -6,6 +6,7 @@ use core::{convert::Infallible, fmt};
 
 use crate::*;
 
+/// The error returned while writing `Option<T>` when it is the `None` variant.
 #[derive(Debug)]
 pub struct MissingWriteableError;
 
@@ -30,7 +31,7 @@ fn test_missing_writeable_error() {
 }
 
 #[derive(Debug)]
-pub enum NeverWriteable {}
+enum NeverWriteable {}
 
 impl Writeable for NeverWriteable {
     #[inline(always)] // to help the compiler find unreachable code paths
@@ -71,9 +72,84 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
     }
 }
 
+/// Lower-level trait for writeables that can fail while writing.
+///
+/// The methods on this trait should be implemented on custom writeables, but they generally
+/// should not called directly. For methods more useful in client code, see [`TryWriteable`].
+///
+/// # Implementor Notes
+///
+/// All functions take a `handler` argument. This argument is used by [`TryWriteable`] to
+/// customize the error handling behavior.
+///
+/// When your writeable implementation encounters an error, call the handler with an instance
+/// of your error type. The handler will either return `Ok` with a [`Writeable`] that should be
+/// written to the sink, or `Err` with an error that should be immediately returned up the stack.
+///
+/// When in lossy mode, [`FallibleWriteable::Error`] is itself used as the writeable replacement.
+///
+/// # Examples
+///
+/// Implementing [`FallibleWriteable`] on a custom type:
+///
+/// ```
+/// use core::fmt;
+/// use writeable::FallibleWriteable;
+/// use writeable::TryWriteable;
+/// use writeable::Writeable;
+/// use writeable::assert_writeable_eq;
+///
+/// struct HelloWriteable<T> {
+///     name: Option<T>
+/// }
+///
+/// impl<T: Writeable> FallibleWriteable for HelloWriteable<T> {
+///     type Error = &'static str;
+///
+///     fn fallible_write_to<
+///         W: fmt::Write + ?Sized,
+///         L: Writeable,
+///         E,
+///         F: FnMut(Self::Error) -> Result<L, E>,
+///     >(
+///         &self,
+///         sink: &mut W,
+///         mut handler: F,
+///     ) -> Result<Result<(), E>, fmt::Error> {
+///         sink.write_str("Hello, ")?;
+///         match self.name.as_ref() {
+///             Some(name) => name.write_to(sink)?,
+///             None => match handler("___") {
+///                 Ok(replacement) => replacement.write_to(sink)?,
+///                 Err(e) => return Ok(Err(e)),
+///             }
+///         };
+///         sink.write_char('!')?;
+///         Ok(Ok(()))
+///     }
+///
+///     // TODO: Implement the other methods in a similar way.
+/// }
+///
+/// // See it in action:
+/// assert_writeable_eq!(
+///     HelloWriteable { name: Some("Alice") }.lossy(),
+///     "Hello, Alice!"
+/// );
+/// assert_writeable_eq!(
+///     HelloWriteable { name: None::<&str> }.lossy(),
+///     "Hello, ___!"
+/// );
+/// ```
 pub trait FallibleWriteable {
+    /// The error type that the writeable may return.
+    ///
+    /// This type should implement [`Writeable`] so it can be used as a replacement in lossy mode.
     type Error;
 
+    /// Writes a string to the given sink.
+    ///
+    /// This is a low-level function for implementors. For more details, see [`FallibleWriteable`].
     fn fallible_write_to<
         W: fmt::Write + ?Sized,
         L: Writeable,
@@ -85,6 +161,9 @@ pub trait FallibleWriteable {
         handler: F,
     ) -> Result<Result<(), E>, fmt::Error>;
 
+    /// Writes a string and [`Part`] annotations to the given sink.
+    ///
+    /// This is a low-level function for implementors. For more details, see [`FallibleWriteable`].
     fn fallible_write_to_parts<
         S: PartsWrite + ?Sized,
         L: Writeable,
@@ -94,8 +173,13 @@ pub trait FallibleWriteable {
         &self,
         sink: &mut S,
         handler: F,
-    ) -> Result<Result<(), E>, fmt::Error>;
+    ) -> Result<Result<(), E>, fmt::Error> {
+        self.fallible_write_to(sink, handler)
+    }
 
+    /// Returns a hint for the length of the string to be written.
+    ///
+    /// This is a low-level function for implementors. For more details, see [`FallibleWriteable`].
     fn fallible_writeable_length_hint<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         _handler: F,
@@ -103,6 +187,9 @@ pub trait FallibleWriteable {
         Ok(LengthHint::undefined())
     }
 
+    /// Writes directly to a string, returning a borrowed [`Cow`] if able.
+    ///
+    /// This is a low-level function for implementors. For more details, see [`FallibleWriteable`].
     fn fallible_write_to_string<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         mut handler: F,
@@ -119,6 +206,10 @@ pub trait FallibleWriteable {
         }
     }
 
+    /// Compares the contents of this `Writeable` to the given bytes
+    /// without allocating a String to hold the `Writeable` contents.
+    ///
+    /// This is a low-level function for implementors. For more details, see [`FallibleWriteable`].
     fn fallible_write_cmp_bytes<E, L: Writeable, F: FnMut(Self::Error) -> Result<L, E>>(
         &self,
         other: &[u8],
@@ -134,27 +225,149 @@ pub trait FallibleWriteable {
     }
 }
 
-pub trait FallibleWriteableConvenience: FallibleWriteable {
+/// A writeable type with its own configurable error handling.
+///
+/// This trait offers four ways to consume errors:
+///
+/// - [`TryWriteable::checked`]
+/// - [`TryWriteable::lossy`]
+/// - [`TryWriteable::panicky`]
+/// - [`TryWriteable::gigo`]
+///
+/// This trait is blanked-implemented on all types implementing [`FallibleWriteable`],
+/// which is the lower-level trait that custom writeables should implement.
+pub trait TryWriteable: FallibleWriteable {
+    /// Handle errors with functions returning [`Result`].
+    ///
+    /// # Examples
+    ///
+    /// Successful behavior on `Option<T>`, which implements [`TryWriteable`]:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = Some("example");
+    /// assert_eq!(
+    ///     try_writeable.checked().try_write_to_string().unwrap(),
+    ///     "example"
+    /// );
+    /// ```
+    ///
+    /// Failure behavior:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = None::<&str>;
+    /// assert!(matches!(
+    ///     try_writeable.checked().try_write_to_string(),
+    ///     Err(_),
+    /// ));
+    /// ```
     #[inline]
     fn checked(&self) -> CheckedWriteable<&Self> {
         CheckedWriteable(self)
     }
+    /// Handle errors by writing a replacement to the output string.
+    ///
+    /// # Examples
+    ///
+    /// Successful behavior on `Option<T>`, which implements [`TryWriteable`]:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = Some("example");
+    /// writeable::assert_writeable_eq!(
+    ///     try_writeable.lossy(),
+    ///     "example"
+    /// );
+    /// ```
+    ///
+    /// Failure behavior:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = None::<&str>;
+    /// writeable::assert_writeable_eq!(
+    ///     try_writeable.lossy(),
+    ///     "�"
+    /// );
+    /// ```
     #[inline]
     fn lossy(&self) -> LossyWriteable<&Self> {
         LossyWriteable(self)
     }
+    /// Handle errors by panicking.
+    ///
+    /// # Examples
+    ///
+    /// Successful behavior on `Option<T>`, which implements [`TryWriteable`]:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = Some("example");
+    /// writeable::assert_writeable_eq!(
+    ///     try_writeable.panicky(),
+    ///     "example"
+    /// );
+    /// ```
+    ///
+    /// Failure behavior:
+    ///
+    /// ```should_panic
+    /// use writeable::TryWriteable;
+    /// use writeable::Writeable;
+    ///
+    /// let try_writeable = None::<&str>;
+    /// try_writeable.panicky().write_to_string();
+    /// ```
     #[inline]
     fn panicky(&self) -> PanickyWriteable<&Self> {
         PanickyWriteable(self)
     }
+    /// Handle errors by panicking in debug mode and writing a replacement in release mode.
+    ///
+    /// # Examples
+    ///
+    /// Successful behavior on `Option<T>`, which implements [`TryWriteable`]:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = Some("example");
+    /// writeable::assert_writeable_eq!(
+    ///     try_writeable.gigo(),
+    ///     "example"
+    /// );
+    /// ```
+    ///
+    /// Failure behavior:
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable = None::<&str>;
+    /// if cfg!(not(debug_assertions)) {
+    ///     writeable::assert_writeable_eq!(
+    ///         try_writeable.gigo(),
+    ///         "�"
+    ///     );
+    /// }
+    /// ```
     #[inline]
     fn gigo(&self) -> GigoWriteable<&Self> {
         GigoWriteable(self)
     }
 }
 
-impl<T> FallibleWriteableConvenience for T where T: FallibleWriteable {}
+impl<T> TryWriteable for T where T: FallibleWriteable {}
 
+/// A writeable that returns errors as results.
+///
+/// For more details, see [`TryWriteable::checked`].
 #[derive(Debug)]
 pub struct CheckedWriteable<T>(pub(crate) T);
 
@@ -188,6 +401,9 @@ where
     }
 }
 
+/// A writeable that writes replacements when errors are encountered.
+///
+/// For more details, see [`TryWriteable::lossy`].
 #[derive(Debug)]
 pub struct LossyWriteable<T>(pub(crate) T);
 
@@ -235,6 +451,9 @@ where
 
 impl_display_with_writeable!([T] LossyWriteable<T> where T: FallibleWriteable, T::Error: Writeable);
 
+/// A writeable that panics when errors are encountered.
+///
+/// For more details, see [`TryWriteable::panicky`].
 #[derive(Debug)]
 pub struct PanickyWriteable<T>(pub(crate) T);
 
@@ -282,6 +501,9 @@ where
 
 impl_display_with_writeable!([T] PanickyWriteable<T> where T: FallibleWriteable, T::Error: fmt::Debug);
 
+/// A writeable that panics in debug mode and writes replacements in release mode.
+///
+/// For more details, see [`TryWriteable::gigo`].
 #[derive(Debug)]
 pub struct GigoWriteable<T>(pub(crate) T);
 

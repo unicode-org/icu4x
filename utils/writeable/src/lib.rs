@@ -17,16 +17,19 @@
     )
 )]
 
-//! `writeable` is a utility crate of the [`ICU4X`] project.
-//!
-//! It includes [`Writeable`], a core trait representing an object that can be written to a
-//! sink implementing `std::fmt::Write`. It is an alternative to `std::fmt::Display` with the
+//! [`Writeable`] is a core trait representing an object that can be written to a
+//! sink implementing [`std::fmt::Write`]. It is an alternative to [`std::fmt::Display`] with the
 //! addition of a function indicating the number of bytes to be written.
 //!
-//! `Writeable` improves upon `std::fmt::Display` in two ways:
+//! [`Writeable`] improves upon [`std::fmt::Display`] in two ways:
 //!
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
+//!
+//! # Error Handling
+//!
+//! [`Writeable`] bubbles up [`std::fmt::Error`]s. In addition, writeables that can cause their
+//! own errors can be used with [`TryWriteable`].
 //!
 //! # Examples
 //!
@@ -182,7 +185,11 @@ pub trait PartsWrite: fmt::Write {
     ) -> fmt::Result;
 }
 
-/// `Writeable` is an alternative to `std::fmt::Display` with the addition of a length function.
+/// [`Writeable`] is an alternative to [`std::fmt::Display`] with the addition of a length function.
+///
+/// [`Writeable`] should be implemented on types that cannot fail while writing unless the
+/// sink fails to write, in which case a [`std::fmt::Error`] is returned. If other errors
+/// can occur, see [`TryWriteable`].
 pub trait Writeable {
     /// Writes a string to the given sink. Errors from the sink are bubbled up.
     /// The default implementation delegates to `write_to_parts`, and discards any
