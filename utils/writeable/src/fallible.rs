@@ -33,25 +33,41 @@ fn test_missing_writeable_error() {
 pub enum NeverWriteable {}
 
 impl Writeable for NeverWriteable {
-    #[inline]
+    #[inline(always)] // to help the compiler find unreachable code paths
     fn write_to<W: fmt::Write + ?Sized>(&self, _sink: &mut W) -> fmt::Result {
         match *self {}
     }
-    #[inline]
+    #[inline(always)] // to help the compiler find unreachable code paths
     fn write_to_parts<S: PartsWrite + ?Sized>(&self, _sink: &mut S) -> fmt::Result {
         match *self {}
     }
-    #[inline]
+    #[inline(always)] // to help the compiler find unreachable code paths
     fn writeable_length_hint(&self) -> LengthHint {
         match *self {}
     }
-    #[inline]
+    #[inline(always)] // to help the compiler find unreachable code paths
     fn write_to_string(&self) -> Cow<str> {
         match *self {}
     }
-    #[inline]
+    #[inline(always)] // to help the compiler find unreachable code paths
     fn write_cmp_bytes(&self, _other: &[u8]) -> core::cmp::Ordering {
         match *self {}
+    }
+}
+
+trait UnwrapInfallible {
+    type T;
+    fn unwrap_infallible(self) -> Self::T;
+}
+
+impl<T> UnwrapInfallible for Result<T, Infallible> {
+    type T = T;
+    #[inline(always)] // to help the compiler find unreachable code paths
+    fn unwrap_infallible(self) -> T {
+        match self {
+            Ok(t) => t,
+            Err(e) => match e {},
+        }
     }
 }
 
@@ -109,7 +125,7 @@ pub trait FallibleWriteable {
         let mut output = String::with_capacity(hint.capacity());
         match self.fallible_write_to(&mut output, handler) {
             Ok(Ok(())) => Ok(Cow::Owned(output)),
-            Ok(Err(err)) => Err(err),
+            Ok(Err(e)) => Err(e),
             Err(core::fmt::Error) => unreachable!("writing to string is infallible"),
         }
     }
@@ -142,10 +158,19 @@ pub trait FallibleWriteable {
     fn panicky(&self) -> PanickyWriteable<&Self> {
         PanickyWriteable(self)
     }
+
+    #[inline]
+    fn gigo(&self) -> GigoWriteable<&Self> {
+        GigoWriteable(self)
+    }
 }
 
 #[derive(Debug)]
 pub struct ResultyWriteable<T>(pub(crate) T);
+
+fn resulty_handler<E>(e: E) -> Result<NeverWriteable, E> {
+    Err(e)
+}
 
 impl<T> ResultyWriteable<T>
 where
@@ -156,8 +181,7 @@ where
         &self,
         sink: &mut W,
     ) -> Result<Result<(), T::Error>, fmt::Error> {
-        self.0
-            .fallible_write_to(sink, |e| Err::<NeverWriteable, _>(e))
+        self.0.fallible_write_to(sink, resulty_handler)
     }
 
     #[inline]
@@ -165,13 +189,16 @@ where
         &self,
         sink: &mut S,
     ) -> Result<Result<(), T::Error>, fmt::Error> {
-        self.0
-            .fallible_write_to_parts(sink, |e| Err::<NeverWriteable, _>(e))
+        self.0.fallible_write_to_parts(sink, resulty_handler)
     }
 }
 
 #[derive(Debug)]
 pub struct LossyWriteable<T>(pub(crate) T);
+
+fn lossy_handler<E>(e: E) -> Result<E, Infallible> {
+    Ok(e)
+}
 
 impl<T> Writeable for LossyWriteable<T>
 where
@@ -180,10 +207,9 @@ where
 {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let infallible_result = self
-            .0
-            .fallible_write_to(sink, |err| Ok::<_, Infallible>(err))?;
-        Ok(infallible_result.unwrap_or_else(|never| match never {}))
+        let result = self.0.fallible_write_to(sink, lossy_handler)?;
+        result.unwrap_infallible();
+        Ok(())
     }
 
     // TODO: for now, use the default impl
@@ -196,23 +222,20 @@ where
 
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
-        self.0
-            .fallible_writeable_length_hint(|err| Ok::<_, Infallible>(err))
-            .unwrap_or_else(|never| match never {})
+        let result = self.0.fallible_writeable_length_hint(lossy_handler);
+        result.unwrap_infallible()
     }
 
     #[inline]
     fn write_to_string(&self) -> Cow<str> {
-        self.0
-            .fallible_write_to_string(|err| Ok::<_, Infallible>(err))
-            .unwrap_or_else(|never| match never {})
+        let result = self.0.fallible_write_to_string(lossy_handler);
+        result.unwrap_infallible()
     }
 
     #[inline]
     fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        self.0
-            .fallible_write_cmp_bytes(other, |e| Ok::<_, Infallible>(e))
-            .unwrap_or_else(|never| match never {})
+        let result = self.0.fallible_write_cmp_bytes(other, lossy_handler);
+        result.unwrap_infallible()
     }
 }
 
@@ -230,6 +253,10 @@ where
 #[derive(Debug)]
 pub struct PanickyWriteable<T>(pub(crate) T);
 
+fn panicky_handler<E>(e: E) -> Result<NeverWriteable, E> {
+    Err(e)
+}
+
 impl<T> Writeable for PanickyWriteable<T>
 where
     T: FallibleWriteable,
@@ -237,9 +264,7 @@ where
 {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let result = self
-            .0
-            .fallible_write_to(sink, |err| Err::<NeverWriteable, _>(err))?;
+        let result = self.0.fallible_write_to(sink, panicky_handler)?;
         result.unwrap();
         Ok(())
     }
@@ -254,25 +279,19 @@ where
 
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
-        let result = self
-            .0
-            .fallible_writeable_length_hint(|e| Err::<NeverWriteable, _>(e));
+        let result = self.0.fallible_writeable_length_hint(panicky_handler);
         result.unwrap()
     }
 
     #[inline]
     fn write_to_string(&self) -> Cow<str> {
-        let result = self
-            .0
-            .fallible_write_to_string(|e| Err::<NeverWriteable, _>(e));
+        let result = self.0.fallible_write_to_string(panicky_handler);
         result.unwrap()
     }
 
     #[inline]
     fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        let result = self
-            .0
-            .fallible_write_cmp_bytes(other, |e| Err::<NeverWriteable, _>(e));
+        let result = self.0.fallible_write_cmp_bytes(other, panicky_handler);
         result.unwrap()
     }
 }
@@ -281,6 +300,63 @@ impl<T> fmt::Display for PanickyWriteable<T>
 where
     T: FallibleWriteable,
     T::Error: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.write_to(f)
+    }
+}
+
+#[derive(Debug)]
+pub struct GigoWriteable<T>(pub(crate) T);
+
+fn gigo_handler<E: fmt::Debug>(e: E) -> Result<E, Infallible> {
+    debug_assert!(false, "{e:?}");
+    Ok(e)
+}
+
+impl<T> Writeable for GigoWriteable<T>
+where
+    T: FallibleWriteable,
+    T::Error: Writeable + fmt::Debug,
+{
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        let result = self.0.fallible_write_to(sink, gigo_handler)?;
+        result.unwrap_infallible();
+        Ok(())
+    }
+
+    // TODO: for now, use the default impl
+    /*
+    #[inline]
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        todo!()
+    }
+    */
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        let result = self.0.fallible_writeable_length_hint(gigo_handler);
+        result.unwrap_infallible()
+    }
+
+    #[inline]
+    fn write_to_string(&self) -> Cow<str> {
+        let result = self.0.fallible_write_to_string(gigo_handler);
+        result.unwrap_infallible()
+    }
+
+    #[inline]
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        let result = self.0.fallible_write_cmp_bytes(other, gigo_handler);
+        result.unwrap_infallible()
+    }
+}
+
+impl<T> fmt::Display for GigoWriteable<T>
+where
+    T: FallibleWriteable,
+    T::Error: Writeable + fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.write_to(f)
@@ -337,7 +413,10 @@ where
     ) -> Result<LengthHint, E> {
         match self {
             Some(writeable) => Ok(writeable.writeable_length_hint()),
-            None => handler(MissingWriteableError).map(|l| l.writeable_length_hint()),
+            None => match handler(MissingWriteableError) {
+                Ok(l) => Ok(l.writeable_length_hint()),
+                Err(e) => Err(e),
+            },
         }
     }
 
@@ -347,9 +426,10 @@ where
     ) -> Result<Cow<str>, E> {
         match self {
             Some(writeable) => Ok(writeable.write_to_string()),
-            None => {
-                handler(MissingWriteableError).map(|e| Cow::Owned(e.write_to_string().into_owned()))
-            }
+            None => match handler(MissingWriteableError) {
+                Ok(l) => Ok(Cow::Owned(l.write_to_string().into_owned())),
+                Err(e) => Err(e),
+            },
         }
     }
 
@@ -360,7 +440,10 @@ where
     ) -> Result<core::cmp::Ordering, E> {
         match self {
             Some(writeable) => Ok(writeable.write_cmp_bytes(other)),
-            None => handler(MissingWriteableError).map(|l| l.write_cmp_bytes(other)),
+            None => match handler(MissingWriteableError) {
+                Ok(l) => Ok(l.write_cmp_bytes(other)),
+                Err(e) => Err(e),
+            },
         }
     }
 }
