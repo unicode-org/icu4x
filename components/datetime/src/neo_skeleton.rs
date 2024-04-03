@@ -4,8 +4,6 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-use core::marker::PhantomData;
-
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
@@ -150,71 +148,6 @@ where
 }
 
 // TODO: Add more of these TypedNeoSkeletonData marker types.
-
-/// Representation of a semantic skeleton with marker types.
-#[derive(Debug, Copy, Clone)]
-pub struct TypedNeoDateSkeleton<T: ?Sized, C: ?Sized> {
-    /// Desired formatting length.
-    pub length: NeoSkeletonLength,
-    _phantom_t: PhantomData<T>,
-    _phantom_c: PhantomData<C>,
-}
-
-impl<T, C> TypedNeoDateSkeleton<T, C>
-where
-    T: TypedNeoDateSkeletonComponents<C> + ?Sized,
-    C: CldrCalendar + ?Sized,
-{
-    /// Creates a new [`TypedNeoDateSkeleton`] with the given length.
-    pub fn with_length(length: NeoSkeletonLength) -> Self {
-        Self {
-            length,
-            _phantom_t: PhantomData,
-            _phantom_c: PhantomData,
-        }
-    }
-
-    /// Converts this [`TypedNeoDateSkeleton`] to a [`NeoDateSkeleton`].
-    pub fn to_neo_skeleton(self) -> NeoDateSkeleton {
-        NeoDateSkeleton {
-            length: self.length,
-            components: T::COMPONENTS,
-        }
-    }
-}
-
-/// Representation of a semantic skeleton with marker types.
-#[derive(Debug, Copy, Clone)]
-pub struct TypedNeoSkeleton<T: ?Sized, C: ?Sized> {
-    /// Desired formatting length.
-    pub length: NeoSkeletonLength,
-    _phantom_t: PhantomData<T>,
-    _phantom_c: PhantomData<C>,
-}
-
-impl<T, C> TypedNeoSkeleton<T, C>
-where
-    T: TypedNeoSkeletonComponents<C> + ?Sized,
-    C: CldrCalendar + ?Sized,
-{
-    /// Creates a new [`TypedNeoSkeleton`] with the given length.
-    pub fn with_length(length: NeoSkeletonLength) -> Self {
-        Self {
-            length,
-            _phantom_t: PhantomData,
-            _phantom_c: PhantomData,
-        }
-    }
-
-    /// Converts this [`TypedNeoSkeleton`] to a [`NeoSkeleton`].
-    pub fn to_neo_skeleton(self) -> NeoSkeleton {
-        NeoSkeleton {
-            length: self.length,
-            components: T::COMPONENTS,
-            time_zone: None,
-        }
-    }
-}
 
 /// A specification for a set of parts of a date that specifies a single day (as
 /// opposed to a whole month, week, or quarter).
