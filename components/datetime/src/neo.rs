@@ -24,7 +24,7 @@ use icu_calendar::provider::{
 };
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_provider::prelude::*;
+use icu_provider::{prelude::*, NeverMarker};
 use writeable::Writeable;
 
 /// Helper macro for generating any/buffer constructors in this file.
@@ -186,16 +186,17 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             provider, locale, length,
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            Some(provider),           // year
-            Some(provider),           // month
-            Some(provider),           // weekday
-            None::<&PhantomProvider>, // day period
-            Some(loader),             // fixed decimal formatter
-            Some(loader),             // week calculator
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
+        names
+            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
+                Some(provider),           // year
+                Some(provider),           // month
+                Some(provider),           // weekday
+                None::<&PhantomProvider>, // day period
+                Some(loader),             // fixed decimal formatter
+                Some(loader),             // week calculator
+                locale,
+                selection.pattern_items_for_data_loading(),
+            )?;
         Ok(Self {
             selection,
             names,
@@ -234,10 +235,11 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     where
         S: ?Sized + TypedNeoDateSkeletonComponents<C>,
         crate::provider::Baked: Sized
-            // Calendar-specific date formatting keys
+            // Date formatting keys
             + DataProvider<S::DateSkeletonPatternsV1Marker>
             + DataProvider<S::YearNamesV1Marker>
-            + DataProvider<S::MonthNamesV1Marker>,
+            + DataProvider<S::MonthNamesV1Marker>
+            + DataProvider<S::WeekdayNamesV1Marker>,
     {
         Self::try_new_with_skeleton_internal::<S, _, _>(
             &crate::provider::Baked,
@@ -260,20 +262,14 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             + DataProvider<S::DateSkeletonPatternsV1Marker>
             + DataProvider<S::YearNamesV1Marker>
             + DataProvider<S::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>, // TODO: make this S::WeekdayNamesV1Marker
+            + DataProvider<S::WeekdayNamesV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
-        let selection =
-            DatePatternSelectionData::try_new_with_skeleton::<S::DateSkeletonPatternsV1Marker>(
-                provider,
-                locale,
-                crate::neo_skeleton::NeoDateSkeleton {
-                    length,
-                    components: S::COMPONENTS,
-                },
-            )?;
+        let selection = DatePatternSelectionData::try_new_with_skeleton::<
+            S::DateSkeletonPatternsV1Marker,
+        >(provider, locale, length, S::COMPONENTS)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker>(
+        names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker, S::WeekdayNamesV1Marker>(
             Some(provider),           // year
             Some(provider),           // month
             Some(provider),           // weekday
@@ -518,7 +514,7 @@ impl NeoDateFormatter {
             length,
         )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker>(
+        names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker, WeekdayNamesV1Marker>(
             Some(&any_calendar_provider), // year
             Some(&any_calendar_provider), // month
             Some(provider),               // weekday
@@ -692,8 +688,7 @@ impl NeoTimeFormatter {
     {
         let selection = TimePatternSelectionData::try_new_with_length(provider, locale, length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        // NOTE: The Gregorian types below are placeholders only. They are not actually linked.
-        names.load_for_pattern::<GregorianYearNamesV1Marker, GregorianMonthNamesV1Marker>(
+        names.load_for_pattern::<NeverMarker<YearNamesV1>, NeverMarker<MonthNamesV1>, NeverMarker<LinearNamesV1>>(
             None::<&PhantomProvider>, // year
             None::<&PhantomProvider>, // month
             None::<&PhantomProvider>, // weekday
@@ -1102,16 +1097,17 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             _,
         >(provider, provider, locale, date_length, time_length)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker>(
-            Some(provider), // year
-            Some(provider), // month
-            Some(provider), // weekday
-            Some(provider), // day period
-            Some(loader),   // fixed decimal formatter
-            Some(loader),   // week calculator
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
+        names
+            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
+                Some(provider), // year
+                Some(provider), // month
+                Some(provider), // weekday
+                Some(provider), // day period
+                Some(loader),   // fixed decimal formatter
+                Some(loader),   // week calculator
+                locale,
+                selection.pattern_items_for_data_loading(),
+            )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::DateTimeGlue(selection),
             names,
@@ -1707,7 +1703,7 @@ impl NeoDateTimeFormatter {
                 time_length,
             )?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker>(
+        names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker, WeekdayNamesV1Marker>(
             Some(&any_calendar_provider), // year
             Some(&any_calendar_provider), // month
             Some(provider),               // weekday

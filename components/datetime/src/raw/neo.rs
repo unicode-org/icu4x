@@ -9,7 +9,7 @@ use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoDateSkeleton, NeoTimeSkeleton};
+use crate::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeSkeleton};
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
@@ -122,7 +122,8 @@ impl DatePatternSelectionData {
     pub(crate) fn try_new_with_skeleton<M>(
         provider: &(impl DataProvider<M> + ?Sized),
         locale: &DataLocale,
-        skeleton: NeoDateSkeleton,
+        length: NeoSkeletonLength,
+        components: NeoDateComponents,
     ) -> Result<Self, Error>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
@@ -135,7 +136,7 @@ impl DatePatternSelectionData {
             .take_payload()?
             .cast();
         Ok(Self::SkeletonDate {
-            skeleton: skeleton,
+            skeleton: NeoDateSkeleton { length, components },
             payload,
         })
     }
