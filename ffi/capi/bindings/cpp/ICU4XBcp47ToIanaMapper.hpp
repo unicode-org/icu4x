@@ -40,14 +40,14 @@ class ICU4XBcp47ToIanaMapper {
   /**
    * Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
    * 
-   * See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.IanaBcp47RoundTripMapper.html#method.bcp47_to_iana) for more information.
+   * See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.bcp47_to_iana) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> get_to_writeable(const std::string_view value, W& write) const;
 
   /**
    * Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
    * 
-   * See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.IanaBcp47RoundTripMapper.html#method.bcp47_to_iana) for more information.
+   * See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.bcp47_to_iana) for more information.
    */
   diplomat::result<std::string, ICU4XError> get(const std::string_view value) const;
   inline const capi::ICU4XBcp47ToIanaMapper* AsFFI() const { return this->inner.get(); }

@@ -19,6 +19,7 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::IanaToBcp47Mapper, Struct)]
     #[diplomat::rust_link(icu::timezone::IanaToBcp47Mapper::as_borrowed, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::timezone::IanaToBcp47MapperBorrowed, Struct, hidden)]
     pub struct ICU4XIanaToBcp47Mapper(pub IanaToBcp47Mapper);
 
     impl ICU4XIanaToBcp47Mapper {
@@ -33,11 +34,36 @@ pub mod ffi {
                 provider,
             )?)))
         }
+
+        #[diplomat::rust_link(icu::timezone::IanaToBcp47MapperBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::timezone::IanaToBcp47MapperBorrowed::get_bytes,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::timezone::IanaBcp47RoundTripMapperBorrowed::iana_to_bcp47,
+            FnInStruct
+        )]
+        pub fn get(
+            &self,
+            value: &DiplomatStr,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            use writeable::Writeable;
+            let handle = self.0.as_borrowed();
+            if let Some(s) = handle.get_bytes(value) {
+                Ok(s.0.write_to(write)?)
+            } else {
+                Err(ICU4XError::TimeZoneInvalidIdError)
+            }
+        }
     }
 
     /// An object capable of mapping from a BCP-47 time zone ID to an IANA ID.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapper, Struct)]
+    #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapperBorrowed, Struct, hidden)]
     #[diplomat::rust_link(
         icu::timezone::IanaBcp47RoundTripMapper::as_borrowed,
         FnInStruct,
@@ -59,8 +85,9 @@ pub mod ffi {
         }
 
         /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
+
         #[diplomat::rust_link(
-            icu::datetime::time_zone::IanaBcp47RoundTripMapper::bcp47_to_iana,
+            icu::timezone::IanaBcp47RoundTripMapperBorrowed::bcp47_to_iana,
             FnInStruct
         )]
         pub fn get(
