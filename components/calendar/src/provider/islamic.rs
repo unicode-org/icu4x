@@ -12,6 +12,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use calendrical_calculations::islamic::IslamicBasedMarker;
+use calendrical_calculations::rata_die::RataDie;
 use zerovec::ule::{AsULE, ULE};
 
 /// The struct containing compiled Islamic YearInfo
@@ -24,7 +26,7 @@ use zerovec::ule::{AsULE, ULE};
 /// Byte 1:         .. months    ] | [ ny offset    ]
 /// ```
 ///
-/// Where the New Year Offset is a signed offset from `epoch + MEAN_SYNODIC_MONTH * year` for the given
+/// Where the New Year Offset is a signed offset from `epoch + MEAN_SYNODIC_MONTH * year * 12` for the given
 /// calendar. This number does not appear to be less than 2, however we use all remaining bits for it in case of drift
 /// in the math.
 /// The month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
@@ -99,6 +101,21 @@ impl PackedIslamicYearInfo {
 
     pub(crate) fn days_in_year(self) -> u16 {
         self.last_day_of_month(12)
+    }
+
+    pub(crate) fn compute_with_ny<IB: IslamicBasedMarker>(extended_year: i32, ny: RataDie) -> Self {
+        let month_lengths = IB::month_lengths_for_year(extended_year, ny);
+        let ny_offset = ny - IB::mean_synodic_ny(extended_year);
+        let ny_offset = if ny_offset > 7 || ny_offset < -7 {
+            0
+        } else {
+            ny_offset as i8
+        };
+        Self::new(month_lengths, ny_offset)
+    }
+    pub(crate) fn compute<IB: IslamicBasedMarker>(extended_year: i32) -> Self {
+        let ny = IB::fixed_from_islamic(extended_year, 1, 1);
+        Self::compute_with_ny::<IB>(extended_year, ny)
     }
 }
 

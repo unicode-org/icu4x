@@ -37,10 +37,12 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::provider::islamic::PackedIslamicYearInfo;
 use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use calendrical_calculations::islamic::IslamicBasedMarker;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -137,6 +139,39 @@ impl IslamicTabular {
     /// there will be additional constructors that load from data providers.
     pub fn new_always_calculating() -> Self {
         IslamicTabular
+    }
+}
+
+struct IslamicYearInfo {
+    packed_data: PackedIslamicYearInfo,
+    /// Is the previous year 355 days (short = 354)
+    prev_year_long: bool,
+}
+
+impl IslamicYearInfo {
+    fn new(prev_year_long: bool, packed_data: PackedIslamicYearInfo) -> Self {
+        Self {
+            prev_year_long,
+            packed_data,
+        }
+    }
+
+    fn compute<IB: IslamicBasedMarker>(extended_year: i32) -> Self {
+        let ny = IB::fixed_from_islamic(extended_year, 1, 1);
+        let packed_data = PackedIslamicYearInfo::compute_with_ny::<IB>(extended_year, ny);
+        let prev_ny = IB::fixed_from_islamic(extended_year - 1, 1, 1);
+        let diff = ny - prev_ny;
+        debug_assert!(
+            diff == 354 || diff == 355,
+            "Found wrong year length for Islamic year {}: Expected 355 or 354, got {diff}",
+            extended_year - 1
+        );
+        Self::new(diff == 355, packed_data)
+    }
+
+    /// Get the new year R.D. given the extended year that this yearinfo is for    
+    fn new_year<IB: IslamicBasedMarker>(self, extended_year: i32) -> RataDie {
+        IB::mean_synodic_ny(extended_year) + i64::from(self.packed_data.ny_offset())
     }
 }
 
