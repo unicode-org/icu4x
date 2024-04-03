@@ -25,14 +25,14 @@ pub fn fixed_from_islamic_observational(year: i32, month: u8, day: u8) -> RataDi
     let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
         + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
     let lunar_phase =
-        Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
+        Astronomical::calculate_new_moon_at_or_before(RataDie::new(midmonth as i64));
     Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, Some(lunar_phase)) + day
         - 1
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L6983-L6995>
 pub fn observational_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
-    let lunar_phase = Astronomical::calculate_lunar_phase_at_or_before(date);
+    let lunar_phase = Astronomical::calculate_new_moon_at_or_before(date);
     let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
     let elapsed_months =
         ((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH).round() as i32;
@@ -172,7 +172,7 @@ pub fn observational_islamic_month_days(year: i32, month: u8) -> u8 {
         + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
     let lunar_phase: f64 =
-        Astronomical::calculate_lunar_phase_at_or_before(RataDie::new(midmonth as i64));
+        Astronomical::calculate_new_moon_at_or_before(RataDie::new(midmonth as i64));
     let f_date =
         Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, Some(lunar_phase));
 
