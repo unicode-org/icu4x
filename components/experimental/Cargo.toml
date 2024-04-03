@@ -54,7 +54,7 @@ icu_experimental_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4.0"
+criterion = { workspace = true }
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid" }

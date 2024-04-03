@@ -76,7 +76,10 @@ fn make_testdata() {
 
     DatagenDriver::new()
         .with_keys(crate::all_keys())
-        .with_locales(LOCALES.iter().cloned())
+        .with_locales_and_fallback(
+            LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+            Default::default(),
+        )
         .with_segmenter_models([
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
@@ -279,9 +282,9 @@ struct MeasuringAllocator;
 impl MeasuringAllocator {
     // We need to track allocations on each thread independently
     thread_local! {
-        static ACTIVE: Cell<bool> = Cell::new(false);
-        static TOTAL_ALLOCATED: Cell<u64> = Cell::new(0);
-        static TOTAL_DEALLOCATED: Cell<u64> = Cell::new(0);
+        static ACTIVE: Cell<bool> = const { Cell::new(false) };
+        static TOTAL_ALLOCATED: Cell<u64> = const { Cell::new(0) };
+        static TOTAL_DEALLOCATED: Cell<u64> = const { Cell::new(0) };
     }
 
     pub fn start_measure() {

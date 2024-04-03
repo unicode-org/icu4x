@@ -40,7 +40,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_collections = { path = "../../components/collections", features = ["databake"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]

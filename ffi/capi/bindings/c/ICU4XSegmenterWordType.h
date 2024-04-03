@@ -23,6 +23,7 @@ namespace capi {
 extern "C" {
 #endif
 
+bool ICU4XSegmenterWordType_is_word_like(ICU4XSegmenterWordType self);
 void ICU4XSegmenterWordType_destroy(ICU4XSegmenterWordType* self);
 
 #ifdef __cplusplus
