@@ -58,4 +58,8 @@ export class ICU4XLocaleExpander {
   minimize(arg_locale) {
     return ICU4XTransformResult_rust_to_js[wasm.ICU4XLocaleExpander_minimize(this.underlying, arg_locale.underlying)];
   }
+
+  minimize_favor_script(arg_locale) {
+    return ICU4XTransformResult_rust_to_js[wasm.ICU4XLocaleExpander_minimize_favor_script(this.underlying, arg_locale.underlying)];
+  }
 }
