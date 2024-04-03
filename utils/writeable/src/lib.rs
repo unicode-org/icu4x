@@ -343,13 +343,16 @@ pub trait Writeable {
 ///
 /// ```
 /// use core::fmt;
-/// use writeable::Writeable;
 /// use writeable::impl_display_with_writeable;
+/// use writeable::Writeable;
 ///
 /// struct MyWriteable;
 ///
 /// impl Writeable for MyWriteable {
-///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+///     fn write_to<W: fmt::Write + ?Sized>(
+///         &self,
+///         sink: &mut W,
+///     ) -> fmt::Result {
 ///         sink.write_str("example")
 ///     }
 /// }

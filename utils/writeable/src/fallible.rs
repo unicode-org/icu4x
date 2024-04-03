@@ -94,13 +94,13 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 ///
 /// ```
 /// use core::fmt;
+/// use writeable::assert_writeable_eq;
 /// use writeable::FallibleWriteable;
 /// use writeable::TryWriteable;
 /// use writeable::Writeable;
-/// use writeable::assert_writeable_eq;
 ///
 /// struct HelloWriteable<T> {
-///     name: Option<T>
+///     name: Option<T>,
 /// }
 ///
 /// impl<T: Writeable> FallibleWriteable for HelloWriteable<T> {
@@ -122,7 +122,7 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 ///             None => match handler("___") {
 ///                 Ok(replacement) => replacement.write_to(sink)?,
 ///                 Err(e) => return Ok(Err(e)),
-///             }
+///             },
 ///         };
 ///         sink.write_char('!')?;
 ///         Ok(Ok(()))
@@ -133,7 +133,10 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 ///
 /// // See it in action:
 /// assert_writeable_eq!(
-///     HelloWriteable { name: Some("Alice") }.lossy(),
+///     HelloWriteable {
+///         name: Some("Alice")
+///     }
+///     .lossy(),
 ///     "Hello, Alice!"
 /// );
 /// assert_writeable_eq!(
@@ -278,10 +281,7 @@ pub trait TryWriteable: FallibleWriteable {
     /// use writeable::TryWriteable;
     ///
     /// let try_writeable = Some("example");
-    /// writeable::assert_writeable_eq!(
-    ///     try_writeable.lossy(),
-    ///     "example"
-    /// );
+    /// writeable::assert_writeable_eq!(try_writeable.lossy(), "example");
     /// ```
     ///
     /// Failure behavior:
@@ -290,10 +290,7 @@ pub trait TryWriteable: FallibleWriteable {
     /// use writeable::TryWriteable;
     ///
     /// let try_writeable = None::<&str>;
-    /// writeable::assert_writeable_eq!(
-    ///     try_writeable.lossy(),
-    ///     "�"
-    /// );
+    /// writeable::assert_writeable_eq!(try_writeable.lossy(), "�");
     /// ```
     #[inline]
     fn lossy(&self) -> LossyWriteable<&Self> {
@@ -309,10 +306,7 @@ pub trait TryWriteable: FallibleWriteable {
     /// use writeable::TryWriteable;
     ///
     /// let try_writeable = Some("example");
-    /// writeable::assert_writeable_eq!(
-    ///     try_writeable.panicky(),
-    ///     "example"
-    /// );
+    /// writeable::assert_writeable_eq!(try_writeable.panicky(), "example");
     /// ```
     ///
     /// Failure behavior:
@@ -338,10 +332,7 @@ pub trait TryWriteable: FallibleWriteable {
     /// use writeable::TryWriteable;
     ///
     /// let try_writeable = Some("example");
-    /// writeable::assert_writeable_eq!(
-    ///     try_writeable.gigo(),
-    ///     "example"
-    /// );
+    /// writeable::assert_writeable_eq!(try_writeable.gigo(), "example");
     /// ```
     ///
     /// Failure behavior:
@@ -351,10 +342,7 @@ pub trait TryWriteable: FallibleWriteable {
     ///
     /// let try_writeable = None::<&str>;
     /// if cfg!(not(debug_assertions)) {
-    ///     writeable::assert_writeable_eq!(
-    ///         try_writeable.gigo(),
-    ///         "�"
-    ///     );
+    ///     writeable::assert_writeable_eq!(try_writeable.gigo(), "�");
     /// }
     /// ```
     #[inline]
