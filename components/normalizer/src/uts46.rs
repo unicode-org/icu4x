@@ -69,7 +69,7 @@ impl Uts46Mapper {
     /// operations from the "Map" and "Normalize" steps of the "Processing"
     /// section of UTS 46 lazily applied to it:
     ///
-    /// 0. The characters from https://www.unicode.org/versions/corrigendum4.html
+    /// 0. The characters from <https://www.unicode.org/versions/corrigendum4.html>
     ///    are decomposed.
     /// 1. The _ignored_ characters are ignored.
     /// 2. The _mapped_ characters are mapped.
@@ -102,7 +102,7 @@ impl Uts46Mapper {
     /// operations from the NFC check and statucs steps of the "Validity
     /// Criteria" section of UTS 46 lazily applied to it:
     ///
-    /// 0. The characters from https://www.unicode.org/versions/corrigendum4.html
+    /// 0. The characters from <https://www.unicode.org/versions/corrigendum4.html>
     ///    are treated as _disallowed_.
     /// 1. The _ignored_ characters are treated as _disallowed_.
     /// 2. The _mapped_ characters are mapped.
