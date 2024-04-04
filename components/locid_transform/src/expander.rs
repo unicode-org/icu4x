@@ -507,11 +507,49 @@ impl LocaleExpander {
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("zh"));
     /// ```
-    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
+    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, langid: T) -> TransformResult {
+        self.minimize_impl(langid, true)
+    }
+
+    /// This returns a new Locale that is the result of running the
+    /// 'Remove Likely Subtags, favoring script' algorithm from
+    /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
+    ///
+    /// If the result of running the algorithm would result in a new locale, the
+    /// locale argument is updated in place to match the result, and the method
+    /// returns [`TransformResult::Modified`]. Otherwise, the method
+    /// returns [`TransformResult::Unmodified`] and the locale argument is
+    /// unchanged.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_locid_transform::{LocaleExpander, TransformResult};
+    ///
+    /// let lc = LocaleExpander::new();
+    ///
+    /// let mut locale = locale!("zh_TW");
+    /// assert_eq!(lc.minimize_favor_script(&mut locale), TransformResult::Modified);
+    /// assert_eq!(locale, locale!("zh_Hant"));
+    /// ```
+    pub fn minimize_favor_script<T: AsMut<LanguageIdentifier>>(
+        &self,
+        langid: T,
+    ) -> TransformResult {
+        self.minimize_impl(langid, false)
+    }
+
+    fn minimize_impl<T: AsMut<LanguageIdentifier>>(
+        &self,
+        mut langid: T,
+        favor_region: bool,
+    ) -> TransformResult {
         let langid = langid.as_mut();
 
         let mut max = langid.clone();
         self.maximize(&mut max);
+
         let mut trial = max.clone();
 
         trial.script = None;
@@ -521,18 +559,36 @@ impl LocaleExpander {
             return update_langid_minimize(max.language, None, None, langid);
         }
 
-        trial.script = None;
-        trial.region = max.region;
-        self.maximize(&mut trial);
-        if trial == max {
-            return update_langid_minimize(max.language, None, max.region, langid);
-        }
+        if favor_region {
+            trial.script = None;
+            trial.region = max.region;
+            self.maximize(&mut trial);
 
-        trial.script = max.script;
-        trial.region = None;
-        self.maximize(&mut trial);
-        if trial == max {
-            return update_langid_minimize(max.language, max.script, None, langid);
+            if trial == max {
+                return update_langid_minimize(max.language, None, max.region, langid);
+            }
+
+            trial.script = max.script;
+            trial.region = None;
+            self.maximize(&mut trial);
+            if trial == max {
+                return update_langid_minimize(max.language, max.script, None, langid);
+            }
+        } else {
+            trial.script = max.script;
+            trial.region = None;
+            self.maximize(&mut trial);
+            if trial == max {
+                return update_langid_minimize(max.language, max.script, None, langid);
+            }
+
+            trial.script = None;
+            trial.region = max.region;
+            self.maximize(&mut trial);
+
+            if trial == max {
+                return update_langid_minimize(max.language, None, max.region, langid);
+            }
         }
 
         update_langid_minimize(max.language, max.script, max.region, langid)
@@ -716,5 +772,24 @@ mod tests {
         let mut locale = locale!("zh-CN");
         assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
         assert_eq!(locale, locale!("zh-Hans-CN"));
+    }
+
+    #[test]
+    fn test_minimize_favor_script() {
+        let lc = LocaleExpander::new();
+        let mut locale = locale!("yue-Hans");
+        assert_eq!(
+            lc.minimize_favor_script(&mut locale),
+            TransformResult::Unmodified
+        );
+        assert_eq!(locale, locale!("yue-Hans"));
+    }
+
+    #[test]
+    fn test_minimize_favor_region() {
+        let lc = LocaleExpander::new();
+        let mut locale = locale!("yue-Hans");
+        assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+        assert_eq!(locale, locale!("yue-CN"));
     }
 }
