@@ -64,6 +64,43 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
     };
+    (S: $skel:ident, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
+        pub fn $any_fn<S, P>(
+            provider: &P,
+            locale: &DataLocale,
+            $($arg: $ty),+
+        ) -> Result<Self, Error>
+        where
+            S: ?Sized + $skel<C>,
+            P: AnyProvider + ?Sized,
+        {
+            Self::$internal_fn::<S, _, _>(
+                &provider.as_downcasting(),
+                &ExternalLoaderAny(provider),
+                locale,
+                $($arg),+
+            )
+        }
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+        #[cfg(feature = "serde")]
+        pub fn $buffer_fn<S, P>(
+            provider: &P,
+            locale: &DataLocale,
+            $($arg: $ty),+
+        ) -> Result<Self, Error>
+        where
+            S: ?Sized + $skel<C>,
+            P: BufferProvider + ?Sized,
+        {
+            Self::$internal_fn::<S, _, _>(
+                &provider.as_deserializing(),
+                &ExternalLoaderBuffer(provider),
+                locale,
+                $($arg),+
+            )
+        }
+    };
 }
 
 size_test!(
@@ -244,6 +281,42 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         Self::try_new_with_skeleton_internal::<S, _, _>(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
+            locale,
+            length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        S: TypedNeoDateSkeletonComponents,
+        try_new_with_skeleton,
+        try_new_with_skeleton_with_any_provider,
+        try_new_with_skeleton_with_buffer_provider,
+        try_new_with_skeleton_internal,
+        length: NeoSkeletonLength
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    pub fn try_new_with_skeleton_unstable<S, P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: NeoSkeletonLength,
+    ) -> Result<Self, Error>
+    where
+        S: ?Sized + TypedNeoDateSkeletonComponents<C>,
+        P: ?Sized
+            // Date formatting keys
+            + DataProvider<S::DateSkeletonPatternsV1Marker>
+            + DataProvider<S::YearNamesV1Marker>
+            + DataProvider<S::MonthNamesV1Marker>
+            + DataProvider<S::WeekdayNamesV1Marker>
+            // FixedDecimalFormatter keys
+            + DataProvider<DecimalSymbolsV1Marker>
+            // WeekCalculator keys
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_with_skeleton_internal::<S, _, _>(
+            provider,
+            &ExternalLoaderUnstable(provider),
             locale,
             length,
         )
