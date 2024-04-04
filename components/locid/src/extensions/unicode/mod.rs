@@ -32,6 +32,8 @@ mod key;
 mod keywords;
 mod value;
 
+use core::cmp::Ordering;
+
 #[doc(inline)]
 pub use attribute::{attribute, Attribute};
 pub use attributes::Attributes;
@@ -132,6 +134,20 @@ impl Unicode {
     pub fn clear(&mut self) {
         self.keywords.clear();
         self.attributes.clear();
+    }
+
+    pub(crate) fn as_tuple(&self) -> (&Attributes, &Keywords) {
+        (&self.attributes, &self.keywords)
+    }
+
+    /// Returns an ordering suitable for use in [`BTreeSet`].
+    ///
+    /// The ordering may or may not be equivalent to string ordering, and it
+    /// may or may not be stable across ICU4X releases.
+    ///
+    /// [`BTreeSet`]: alloc::collections::BTreeSet
+    pub fn total_cmp(&self, other: &Self) -> Ordering {
+        self.as_tuple().cmp(&other.as_tuple())
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {

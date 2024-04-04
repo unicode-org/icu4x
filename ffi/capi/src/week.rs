@@ -11,6 +11,7 @@ pub mod ffi {
     use crate::locale::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
+    use icu_calendar::types::IsoWeekday;
     use icu_calendar::week::{RelativeUnit, WeekCalculator};
 
     #[diplomat::rust_link(icu::calendar::week::RelativeUnit, Enum)]
@@ -81,6 +82,36 @@ pub mod ffi {
         pub fn min_week_days(&self) -> u8 {
             self.0.min_week_days
         }
+
+        #[diplomat::rust_link(icu::calendar::week::WeekCalculator::weekend, FnInStruct)]
+        pub fn weekend(&self) -> ICU4XWeekendContainsDay {
+            let mut contains = ICU4XWeekendContainsDay::default();
+            for day in self.0.weekend() {
+                match day {
+                    IsoWeekday::Monday => contains.monday = true,
+                    IsoWeekday::Tuesday => contains.tuesday = true,
+                    IsoWeekday::Wednesday => contains.wednesday = true,
+                    IsoWeekday::Thursday => contains.thursday = true,
+                    IsoWeekday::Friday => contains.friday = true,
+                    IsoWeekday::Saturday => contains.saturday = true,
+                    IsoWeekday::Sunday => contains.sunday = true,
+                }
+            }
+            contains
+        }
+    }
+
+    /// Documents which days of the week are considered to be a part of the weekend
+    #[diplomat::rust_link(icu::calendar::week::WeekCalculator::weekend, FnInStruct)]
+    #[derive(Default)]
+    pub struct ICU4XWeekendContainsDay {
+        pub monday: bool,
+        pub tuesday: bool,
+        pub wednesday: bool,
+        pub thursday: bool,
+        pub friday: bool,
+        pub saturday: bool,
+        pub sunday: bool,
     }
 }
 

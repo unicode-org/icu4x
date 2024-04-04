@@ -33,6 +33,7 @@ pub mod ffi {
         Typedef,
         hidden
     )]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf8, Typedef, hidden)]
     pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
@@ -44,6 +45,13 @@ pub mod ffi {
     #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
     #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1, Typedef, hidden)]
     pub struct ICU4XWordBreakIteratorLatin1<'a>(WordBreakIteratorLatin1<'a, 'a>);
+
+    impl ICU4XSegmenterWordType {
+        #[diplomat::rust_link(icu::segmenter::WordType::is_word_like, FnInEnum)]
+        pub fn is_word_like(self) -> bool {
+            WordType::from(self).is_word_like()
+        }
+    }
 
     impl ICU4XWordSegmenter {
         /// Construct an [`ICU4XWordSegmenter`] with automatically selecting the best available LSTM
@@ -179,6 +187,11 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordBreakIterator::iter_with_word_type,
+            FnInStruct,
+            hidden
+        )]
         pub fn word_type(&self) -> ICU4XSegmenterWordType {
             self.0.word_type().into()
         }

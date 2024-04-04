@@ -11,7 +11,7 @@ use icu_timezone::TimeZoneBcp47Id;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::hash::Hasher;
-use zerotrie::{ZeroTriePerfectHash, ZeroAsciiIgnoreCaseTrie};
+use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTriePerfectHash};
 use zerovec::{ZeroSlice, ZeroVec};
 
 impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {

@@ -2,6 +2,7 @@ import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
 import { ICU4XIsoWeekday_js_to_rust, ICU4XIsoWeekday_rust_to_js } from "./ICU4XIsoWeekday.mjs"
+import { ICU4XWeekendContainsDay } from "./ICU4XWeekendContainsDay.mjs"
 
 const ICU4XWeekCalculator_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XWeekCalculator_destroy(underlying);
@@ -44,5 +45,15 @@ export class ICU4XWeekCalculator {
 
   min_week_days() {
     return wasm.ICU4XWeekCalculator_min_week_days(this.underlying);
+  }
+
+  weekend() {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(7, 1);
+      wasm.ICU4XWeekCalculator_weekend(diplomat_receive_buffer, this.underlying);
+      const out = new ICU4XWeekendContainsDay(diplomat_receive_buffer);
+      wasm.diplomat_free(diplomat_receive_buffer, 7, 1);
+      return out;
+    })();
   }
 }

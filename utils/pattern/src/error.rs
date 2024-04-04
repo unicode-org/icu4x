@@ -9,6 +9,8 @@ use displaydoc::Display;
 pub enum PatternError {
     #[displaydoc("Syntax error in pattern string or invalid serialized pattern")]
     InvalidPattern,
+    #[displaydoc("A placeholder is invalid or out of range for the pattern type")]
+    InvalidPlaceholder,
 }
 
 #[cfg(feature = "std")]

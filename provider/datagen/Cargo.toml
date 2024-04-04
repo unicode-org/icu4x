@@ -41,12 +41,13 @@ icu_decimal = { workspace = true, features = ["datagen"] }
 icu_list = { workspace = true, features = ["datagen"]}
 icu_locid_transform = { workspace = true, features = ["datagen"] }
 icu_normalizer = { workspace = true, features = ["datagen"] }
+icu_pattern = { workspace = true, features = ["alloc"] }
 icu_plurals = { workspace = true, features = ["datagen"] }
 icu_properties = { workspace = true, features = ["datagen"]}
 icu_segmenter = { workspace = true, features = ["datagen", "lstm"] }
 icu_timezone = { workspace = true, features = ["datagen"] }
-
 icu_experimental = { workspace = true, features = ["datagen"], optional = true }
+
 num-bigint = { version = "0.4.4", default-features = false, optional = true }
 num-rational = { version = "0.4", default-features = false, optional = true }
 
@@ -71,6 +72,7 @@ proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
+either = { workspace = true }
 elsa = "1.10"
 itertools = "0.10"
 log = "0.4"
@@ -92,7 +94,6 @@ ureq = { version = "2", optional = true }
 clap = { version = "4", optional = true, features = ["derive"] }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
-either = "1.9.0"
 
 [dev-dependencies]
 crlify = { path = "../../utils/crlify" }

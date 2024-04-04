@@ -31,7 +31,7 @@ use zerovec::ZeroVecError;
 /// the index array is larger. The minimum size is the "fast max" limit, which is the limit of the range
 /// of code points with 2 array lookups.
 ///
-/// See the document [Unicode Properties and Code Point Tries in ICU4X](https://github.com/unicode-org/icu4x/blob/main/docs/design/properties_code_point_trie.md).
+/// See the document [Unicode Properties and Code Point Tries in ICU4X](https://github.com/unicode-org/icu4x/blob/main/documents/design/properties_code_point_trie.md).
 ///
 /// Also see [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]

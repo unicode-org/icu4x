@@ -2,8 +2,8 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-# These word boundary rules are based on UAX #29, Unicode Version 15.0.0.
-# https://www.unicode.org/reports/tr29/tr29-41.html
+# These word boundary rules are based on UAX #29, Unicode Version 15.1.0.
+# https://www.unicode.org/reports/tr29/tr29-43.html
 
 segmenter_type = "word"
 
@@ -433,14 +433,118 @@ left = "ALetter_MidLetter"
 right = "Format"
 
 [[tables]]
+# WB4
+name = "ALetter_MidLetter"
+left = "ALetter_MidLetter"
+right = "ZWJ"
+
+[[tables]]
+# WB4
 name = "ALetter_Single_Quote"
 left = "ALetter_Single_Quote"
 right = "Extend"
 
 [[tables]]
+# WB4
 name = "ALetter_Single_Quote"
 left = "ALetter_Single_Quote"
 right = "Format"
+
+[[tables]]
+# WB4
+name = "ALetter_Single_Quote"
+left = "ALetter_Single_Quote"
+right = "ZWJ"
+
+[[tables]]
+# WB4
+name = "ALetter_MidNumLet"
+left = "ALetter_MidNumLet"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "ALetter_MidNumLet"
+left = "ALetter_MidNumLet"
+right = "Format"
+
+[[tables]]
+# WB4
+name = "ALetter_MidNumLet"
+left = "ALetter_MidNumLet"
+right = "ZWJ"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_MidLetter"
+left = "Hebrew_Letter_MidLetter"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_MidLetter"
+left = "Hebrew_Letter_MidLetter"
+right = "Format"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_MidLetter"
+left = "Hebrew_Letter_MidLetter"
+right = "ZWJ"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_MidNumLet"
+left = "Hebrew_Letter_MidNumLet"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_MidNumLet"
+left = "Hebrew_Letter_MidNumLet"
+right = "Format"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_MidNumLet"
+left = "Hebrew_Letter_MidNumLet"
+right = "ZWJ"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter_Single_Quote"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter_Single_Quote"
+right = "Format"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter_Single_Quote"
+right = "ZWJ"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Double_Quote"
+left = "Hebrew_Letter_Double_Quote"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Double_Quote"
+left = "Hebrew_Letter_Double_Quote"
+right = "Format"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Double_Quote"
+left = "Hebrew_Letter_Double_Quote"
+right = "ZWJ"
 
 [[tables]]
 name = "Numeric_Single_Quote"
@@ -526,6 +630,7 @@ right = "MidNumLet"
 name = "Hebrew_Letter_Single_Quote"
 left = "Hebrew_Letter"
 right = "Single_Quote"
+interm_break_state = false
 
 [[tables]]
 name = "Hebrew_Letter_Double_Quote"
@@ -630,12 +735,6 @@ left = [
   "Hebrew_Letter_Single_Quote"
 ]
 right = [ "ALetter", "Hebrew_Letter" ]
-break_state = false
-
-[[rules]]
-# WB7a
-left = [ "Hebrew_Letter" ]
-right = [ "Single_Quote" ]
 break_state = false
 
 [[rules]]

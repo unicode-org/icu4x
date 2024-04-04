@@ -302,7 +302,17 @@ impl CanonicalDecomposition {
             let offset24 = offset - tables.scalars16.len();
             if let Some(first_c) = tables.scalars24.get(offset24) {
                 if len == 1 {
-                    return Decomposed::Singleton(first_c);
+                    if c != first_c {
+                        return Decomposed::Singleton(first_c);
+                    } else {
+                        // Singleton representation used to avoid
+                        // NFC passthrough of characters that combine
+                        // with starters that can occur as the first
+                        // character of an expansion decomposition.
+                        // See section 5 of
+                        // https://www.unicode.org/L2/L2024/24009-utc178-properties-recs.pdf
+                        return Decomposed::Default;
+                    }
                 }
                 if let Some(second_c) = tables.scalars24.get(offset24 + 1) {
                     return Decomposed::Expansion(first_c, second_c);
