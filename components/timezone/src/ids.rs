@@ -192,9 +192,11 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         // nearby the input IANA name. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
         let mut stack = Vec::with_capacity(iana_id.len());
-        let Some((trie_value, mut string)) = self.iana_lookup_with_normalization(iana_id, |cursor| {
-            stack.push((cursor.clone(), 0, 1));
-        }) else {
+        let Some((trie_value, mut string)) =
+            self.iana_lookup_with_normalization(iana_id, |cursor| {
+                stack.push((cursor.clone(), 0, 1));
+            })
+        else {
             return None;
         };
         let Some(bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
