@@ -6,6 +6,7 @@ use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
 use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength};
+use icu_datetime::options::components;
 use icu_datetime::pattern::runtime::PatternPlurals;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
@@ -21,6 +22,34 @@ impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider 
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GregorianDateNeoSkeletonPatternsV1Marker>, DataError> {
+        let packed_skeleton_data = self.make_packed_skeleton_data(
+            req,
+            NeoDateComponents::VALUES.iter().map(|neo_components| {
+                (
+                    neo_components,
+                    !matches!(neo_components, NeoDateComponents::Quarter)
+                        && !matches!(neo_components, NeoDateComponents::YearQuarter),
+                )
+            }),
+            |length, neo_components| {
+                NeoDateSkeleton::for_length_and_components(length, **neo_components)
+                    .to_components_bag()
+            },
+        )?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
+        })
+    }
+}
+
+impl DatagenProvider {
+    fn make_packed_skeleton_data<C>(
+        &self,
+        req: DataRequest,
+        values: impl Iterator<Item = (C, bool)>,
+        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> components::Bag,
+    ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
         let mut skeletons_data_locale = req.locale.clone();
         skeletons_data_locale.set_unicode_ext(key!("ca"), value!("gregory"));
         let skeletons_data: DataPayload<DateSkeletonPatternsV1Marker> = self
@@ -33,10 +62,8 @@ impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider 
             self.load(req)?.take_payload()?;
         let mut patterns = vec![];
         let mut indices = vec![];
-        for skeleton_components in NeoDateComponents::VALUES {
-            if matches!(skeleton_components, NeoDateComponents::Quarter)
-                || matches!(skeleton_components, NeoDateComponents::YearQuarter)
-            {
+        for (neo_components, is_supported) in values {
+            if !is_supported {
                 indices.push(SkeletonDataIndex {
                     has_long: false,
                     has_medium: false,
@@ -57,8 +84,7 @@ impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider 
                 NeoSkeletonLength::Medium,
                 NeoSkeletonLength::Short,
             ]
-            .map(|length| NeoDateSkeleton::for_length_and_components(length, *skeleton_components))
-            .map(NeoDateSkeleton::to_components_bag)
+            .map(|length| to_components_bag(length, &neo_components))
             .map(|bag| {
                 bag.select_pattern(
                     skeletons_data.get(),
@@ -110,13 +136,9 @@ impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider 
             patterns.extend(short);
             indices.push(skeleton_data_index);
         }
-        let packed_skeleton_data = PackedSkeletonDataV1 {
+        Ok(PackedSkeletonDataV1 {
             indices: indices.into_iter().collect(),
             patterns: (&patterns).into(),
-        };
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
         })
     }
 }
