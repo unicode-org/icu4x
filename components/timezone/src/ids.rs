@@ -4,6 +4,7 @@
 
 use alloc::borrow::Cow;
 use alloc::string::String;
+use alloc::vec::Vec;
 use icu_provider::prelude::*;
 use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
 
