@@ -162,8 +162,13 @@ impl Bag {
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
+    /// 
+    /// Arguments:
+    /// 
+    /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
+    ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
     #[cfg(any(test, feature = "datagen", feature = "experimental"))]
-    pub(crate) fn to_vec_fields(&self) -> alloc::vec::Vec<Field> {
+    pub(crate) fn to_vec_fields(&self, default_hour_cycle: preferences::HourCycle) -> alloc::vec::Vec<Field> {
         let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
@@ -291,14 +296,18 @@ impl Bag {
             // fields::Hour::H23
             // fields::Hour::H24
 
+            let hour_cycle = match self.preferences {
+                Some(preferences::Bag {
+                    hour_cycle: Some(hour_cycle),
+                }) => hour_cycle,
+                _ => default_hour_cycle
+            };
+
             // When used in skeleton data or in a skeleton passed in an API for flexible date
             // pattern generation, it should match the 12-hour-cycle format preferred by the
             // locale (h or K); it should not match a 24-hour-cycle format (H or k).
             fields.push(Field {
-                symbol: FieldSymbol::Hour(match self.preferences {
-                    Some(preferences::Bag {
-                        hour_cycle: Some(hour_cycle),
-                    }) => match hour_cycle {
+                symbol: FieldSymbol::Hour(match hour_cycle {
                         // Skeletons only contain the h12, not h11. The pattern that is matched
                         // is free to use h11 or h12.
                         preferences::HourCycle::H11 | preferences::HourCycle::H12 => {
@@ -311,13 +320,7 @@ impl Bag {
                             // H - symbol
                             fields::Hour::H23
                         }
-                    },
-                    // TODO(#594) - This should default should be the locale default, which is
-                    // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
-                    // to load it as well as think about the best architecture for where that
-                    // data loading code should reside.
-                    _ => fields::Hour::H23,
-                }),
+                    }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
                     // h     1, 12  Numeric: minimum digits
@@ -834,7 +837,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(),
+            bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
@@ -861,7 +864,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(),
+            bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::TwoDigit).into(),

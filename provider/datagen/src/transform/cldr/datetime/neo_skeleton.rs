@@ -6,7 +6,7 @@ use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
 use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton};
-use icu_datetime::options::components;
+use icu_datetime::options::{components, preferences};
 use icu_datetime::pattern::runtime::PatternPlurals;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
@@ -117,6 +117,8 @@ impl DatagenProvider {
                 bag.select_pattern(
                     skeletons_data.get(),
                     &length_patterns_data.get().length_combinations,
+                    // TODO(#594): Select the correct default hour cycle
+                    preferences::HourCycle::H23,
                 )
                 .unwrap()
             });
