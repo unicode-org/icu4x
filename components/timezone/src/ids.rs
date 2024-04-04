@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
+use alloc::string::String;
 use icu_provider::prelude::*;
 use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
 
