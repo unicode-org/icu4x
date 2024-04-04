@@ -5,9 +5,10 @@
 use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
-use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength};
+use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton};
 use icu_datetime::options::components;
 use icu_datetime::pattern::runtime::PatternPlurals;
+use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
     neo::{GregorianDateNeoSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
@@ -33,6 +34,33 @@ impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider 
             }),
             |length, neo_components| {
                 NeoDateSkeleton::for_length_and_components(length, **neo_components)
+                    .to_components_bag()
+            },
+        )?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
+        })
+    }
+}
+
+impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
+        let packed_skeleton_data = self.make_packed_skeleton_data(
+            req,
+            NeoTimeComponents::VALUES.iter().map(|neo_components| {
+                (
+                    neo_components,
+                    matches!(neo_components, NeoTimeComponents::Hour)
+                    || matches!(neo_components, NeoTimeComponents::HourMinute)
+                    || matches!(neo_components, NeoTimeComponents::HourMinuteSecond),
+                )
+            }),
+            |length, neo_components| {
+                NeoTimeSkeleton::for_length_and_components(length, **neo_components)
                     .to_components_bag()
             },
         )?;
@@ -153,6 +181,14 @@ impl IterableDataProviderInternal<GregorianDateNeoSkeletonPatternsV1Marker> for 
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(Into::into));
 
+        Ok(r)
+    }
+}
+
+impl IterableDataProviderInternal<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        let mut r = HashSet::new();
+        r.extend(self.cldr()?.dates("generic").list_langs()?.map(Into::into));
         Ok(r)
     }
 }

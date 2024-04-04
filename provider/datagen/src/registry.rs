@@ -248,6 +248,8 @@ registry!(
     icu_datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
     icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker =
         "datetime/patterns/gregory/date_skeleton@1",
+    icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker =
+        "datetime/patterns/time_skeleton@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
         "time_zone/generic_long@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker =
