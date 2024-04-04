@@ -134,7 +134,10 @@ mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
-pub use iana_ids::{IanaBcp47RoundTripMapper, IanaToBcp47Mapper};
+pub use iana_ids::{
+    IanaBcp47RoundTripMapper, IanaBcp47RoundTripMapperBorrowed, IanaToBcp47Mapper,
+    IanaToBcp47MapperBorrowed,
+};
 pub use ids::{NormalizedIana, TimeZoneIdMapper, TimeZoneIdMapperBorrowed};
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
