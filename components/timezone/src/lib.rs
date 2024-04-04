@@ -127,6 +127,7 @@ extern crate alloc;
 
 mod error;
 mod iana_ids;
+mod ids;
 mod metazone;
 pub mod provider;
 mod time_zone;
@@ -134,6 +135,7 @@ mod types;
 
 pub use error::TimeZoneError;
 pub use iana_ids::{IanaBcp47RoundTripMapper, IanaToBcp47Mapper};
+pub use ids::{NormalizedIana, TimeZoneIdMapper, TimeZoneIdMapperBorrowed};
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
