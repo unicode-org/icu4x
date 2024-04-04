@@ -8,6 +8,7 @@ use crate::{provider::IterableDataProviderInternal, DatagenProvider};
 use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton};
 use icu_datetime::options::{components, preferences};
 use icu_datetime::pattern::runtime::PatternPlurals;
+use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
@@ -15,6 +16,7 @@ use icu_datetime::provider::{
 };
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
+use icu_datetime::pattern::CoarseHourCycle;
 
 use super::supported_cals;
 
@@ -88,6 +90,7 @@ impl DatagenProvider {
             .take_payload()?;
         let length_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             self.load(req)?.take_payload()?;
+        let time_lengths_v1: DataPayload<TimeLengthsV1Marker> = self.load(DataRequest { locale: req.locale, metadata: req.metadata })?.take_payload()?;
         let mut patterns = vec![];
         let mut indices = vec![];
         for (neo_components, is_supported) in values {
@@ -117,8 +120,10 @@ impl DatagenProvider {
                 bag.select_pattern(
                     skeletons_data.get(),
                     &length_patterns_data.get().length_combinations,
-                    // TODO(#594): Select the correct default hour cycle
-                    preferences::HourCycle::H23,
+                    match time_lengths_v1.get().preferred_hour_cycle {
+                        CoarseHourCycle::H11H12 => preferences::HourCycle::H12,
+                        CoarseHourCycle::H23H24 => preferences::HourCycle::H23,
+                    },
                 )
                 .unwrap()
             });

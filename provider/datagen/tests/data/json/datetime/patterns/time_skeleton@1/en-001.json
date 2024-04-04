@@ -74,9 +74,9 @@
     }
   ],
   "patterns": [
-    "HH",
-    "HH:mm",
-    "HH:mm:ss",
+    "h a",
+    "h:mm a",
+    "h:mm:ss a",
     "'unimplemented'",
     "'unimplemented'",
     "'unimplemented'",
