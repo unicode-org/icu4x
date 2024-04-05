@@ -266,10 +266,13 @@ fn compute_month_day(info: IslamicYearInfo, mut possible_month: u8, day_of_year:
         last_day_of_prev_month = last_day_of_month;
         last_day_of_month = info.packed_data.last_day_of_month(possible_month);
     }
-    (
-        possible_month,
-        u8::try_from(day_of_year - last_day_of_prev_month).unwrap_or(29),
-    )
+    let day = u8::try_from(day_of_year - last_day_of_prev_month);
+    debug_assert!(
+        day.is_ok(),
+        "Found day {} that doesn't fit in month!",
+        day_of_year - last_day_of_prev_month
+    );
+    (possible_month, day.unwrap_or(29))
 }
 impl<'b, IB: IslamicBasedMarker> IslamicPrecomputedData<'b, IB> {
     pub(crate) fn new(data: Option<&'b IslamicCacheV1<'b>>) -> Self {
