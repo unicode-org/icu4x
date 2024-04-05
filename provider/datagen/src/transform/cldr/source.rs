@@ -71,7 +71,7 @@ impl CldrCache {
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
-            if cal == "gregorian" {
+            if cal == "gregorian" || cal == "generic" {
                 "cldr-dates".to_owned()
             } else {
                 format!("cldr-cal-{cal}")
