@@ -5,6 +5,7 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_calendar_chinesecache_v1!($provider);
         impl_calendar_dangicache_v1!($provider);
+        impl_calendar_islamicobservationalcache_v1!($provider);
         impl_calendar_japanese_v1!($provider);
         impl_calendar_japanext_v1!($provider);
         impl_collator_data_v1!($provider);
@@ -296,6 +297,7 @@ macro_rules! impl_any_provider {
                 match key.hashed() {
                     h if h == <icu::calendar::provider::chinese_based::ChineseCacheV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::chinese_based::ChineseCacheV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::chinese_based::DangiCacheV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::chinese_based::DangiCacheV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::calendar::provider::islamic::IslamicObservationalCacheV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::islamic::IslamicObservationalCacheV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::JapaneseErasV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseErasV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::JapaneseExtendedErasV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseExtendedErasV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::collator::provider::CollationDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::collator::provider::CollationDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
