@@ -78,7 +78,7 @@ impl<'data> IslamicCacheV1<'data> {
             this_packed,
         ))
     }
-    /// Get the cached data for the Chinese Year corresponding to a given day.
+    /// Get the cached data for the Islamic Year corresponding to a given day.
     ///
     /// Also returns the corresponding extended year.
     pub(crate) fn get_for_fixed<IB: IslamicBasedMarker>(
