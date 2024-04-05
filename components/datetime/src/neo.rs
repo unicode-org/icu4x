@@ -10,7 +10,9 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoSkeletonLength, TypedNeoDateSkeletonComponents, TypedNeoTimeSkeletonComponents};
+use crate::neo_skeleton::{
+    NeoSkeletonLength, TypedNeoDateSkeletonComponents, TypedNeoTimeSkeletonComponents,
+};
 use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
@@ -664,7 +666,7 @@ impl<'a> FormattedNeoDate<'a> {
     }
 }
 
-size_test!(NeoTimeFormatter, neo_time_formatter_size, 448);
+size_test!(NeoTimeFormatter, neo_time_formatter_size, 472);
 
 /// [`NeoTimeFormatter`] can format times of day.
 /// It supports both 12-hour and 24-hour formats.
@@ -806,7 +808,7 @@ impl NeoTimeFormatter {
         crate::provider::Baked: Sized
             // Time formatting keys
             + DataProvider<S::TimeSkeletonPatternsV1Marker>
-            + DataProvider<S::DayPeriodNamesV1Marker>
+            + DataProvider<S::DayPeriodNamesV1Marker>,
     {
         Self::try_new_with_skeleton_internal::<S, _, _>(
             &crate::provider::Baked,
@@ -834,11 +836,11 @@ impl NeoTimeFormatter {
     where
         S: ?Sized + TypedNeoTimeSkeletonComponents,
         P: ?Sized
-        // Time formatting keys
-        + DataProvider<S::TimeSkeletonPatternsV1Marker>
-        + DataProvider<S::DayPeriodNamesV1Marker>
+            // Time formatting keys
+            + DataProvider<S::TimeSkeletonPatternsV1Marker>
+            + DataProvider<S::DayPeriodNamesV1Marker>
             // FixedDecimalFormatter keys
-            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>,
     {
         Self::try_new_with_skeleton_internal::<S, _, _>(
             provider,
@@ -858,8 +860,8 @@ impl NeoTimeFormatter {
         S: ?Sized + TypedNeoTimeSkeletonComponents,
         P: ?Sized
             // Date formatting keys
-        + DataProvider<S::TimeSkeletonPatternsV1Marker>
-        + DataProvider<S::DayPeriodNamesV1Marker>,
+            + DataProvider<S::TimeSkeletonPatternsV1Marker>
+            + DataProvider<S::DayPeriodNamesV1Marker>,
         L: FixedDecimalFormatterLoader,
     {
         let selection = TimePatternSelectionData::try_new_with_skeleton::<
@@ -876,10 +878,7 @@ impl NeoTimeFormatter {
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
-        Ok(Self {
-            selection,
-            names
-        })
+        Ok(Self { selection, names })
     }
 
     /// Formats a time of day.
@@ -937,7 +936,7 @@ impl<'a> FormattedNeoTime<'a> {
 size_test!(
     TypedNeoDateTimeFormatter<icu_calendar::Gregorian>,
     typed_neo_date_time_formatter_size,
-    568
+    592
 );
 
 /// [`TypedNeoDateTimeFormatter`] can format dates with times of day. The dates must be in
@@ -1354,7 +1353,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     }
 }
 
-size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 624);
+size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 648);
 
 /// [`NeoDateTimeFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the

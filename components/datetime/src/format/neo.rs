@@ -4,7 +4,8 @@
 
 use super::datetime::write_pattern;
 use crate::calendar::{
-    CldrCalendar, DayPeriodNamesV1Provider, MonthNamesV1Provider, WeekdayNamesV1Provider, YearNamesV1Provider
+    CldrCalendar, DayPeriodNamesV1Provider, MonthNamesV1Provider, WeekdayNamesV1Provider,
+    YearNamesV1Provider,
 };
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;

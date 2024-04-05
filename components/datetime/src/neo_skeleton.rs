@@ -4,10 +4,10 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
+use crate::calendar::NeverCalendar;
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
-use crate::calendar::NeverCalendar;
 use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
 
@@ -52,8 +52,7 @@ where
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoTimeSkeletonComponents: TypedNeoSkeletonData<NeverCalendar>
-{
+pub trait TypedNeoTimeSkeletonComponents: TypedNeoSkeletonData<NeverCalendar> {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoTimeComponents;
 }
@@ -162,8 +161,7 @@ where
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum HourMinuteMarker {}
 
-impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker
-{
+impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
     // Data to include
     type DayPeriodNamesV1Marker = DayPeriodNamesV1Marker;
     type TimeSkeletonPatternsV1Marker = TimeNeoSkeletonPatternsV1Marker;
@@ -177,8 +175,7 @@ impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker
     type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
-impl TypedNeoTimeSkeletonComponents for HourMinuteMarker
-{
+impl TypedNeoTimeSkeletonComponents for HourMinuteMarker {
     const COMPONENTS: NeoTimeComponents = NeoTimeComponents::HourMinute;
 }
 

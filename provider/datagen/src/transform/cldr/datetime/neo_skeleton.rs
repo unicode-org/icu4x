@@ -5,9 +5,12 @@
 use std::collections::HashSet;
 
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
-use icu_datetime::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton};
+use icu_datetime::neo_skeleton::{
+    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
+};
 use icu_datetime::options::{components, preferences};
 use icu_datetime::pattern::runtime::PatternPlurals;
+use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
@@ -16,7 +19,6 @@ use icu_datetime::provider::{
 };
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
-use icu_datetime::pattern::CoarseHourCycle;
 
 use super::supported_cals;
 
@@ -57,8 +59,8 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
                 (
                     neo_components,
                     matches!(neo_components, NeoTimeComponents::Hour)
-                    || matches!(neo_components, NeoTimeComponents::HourMinute)
-                    || matches!(neo_components, NeoTimeComponents::HourMinuteSecond),
+                        || matches!(neo_components, NeoTimeComponents::HourMinute)
+                        || matches!(neo_components, NeoTimeComponents::HourMinuteSecond),
                 )
             }),
             |length, neo_components| {
@@ -90,7 +92,12 @@ impl DatagenProvider {
             .take_payload()?;
         let length_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             self.load(req)?.take_payload()?;
-        let time_lengths_v1: DataPayload<TimeLengthsV1Marker> = self.load(DataRequest { locale: req.locale, metadata: req.metadata })?.take_payload()?;
+        let time_lengths_v1: DataPayload<TimeLengthsV1Marker> = self
+            .load(DataRequest {
+                locale: req.locale,
+                metadata: req.metadata,
+            })?
+            .take_payload()?;
         let mut patterns = vec![];
         let mut indices = vec![];
         for (neo_components, is_supported) in values {

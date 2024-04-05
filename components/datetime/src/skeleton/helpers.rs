@@ -8,7 +8,7 @@ use core::cmp::Ordering;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    options::{components, length, preferences},
+    options::{components, length},
     pattern::{
         hour_cycle,
         runtime::{self, PatternPlurals},
@@ -531,7 +531,7 @@ impl components::Bag {
         self,
         skeletons: &DateSkeletonPatternsV1<'data>,
         length_patterns: &GenericLengthPatternsV1<'data>,
-        default_hour_cycle: preferences::HourCycle,
+        default_hour_cycle: crate::options::preferences::HourCycle,
     ) -> Option<PatternPlurals<'data>> {
         let fields = self.to_vec_fields(default_hour_cycle);
         match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {

@@ -9,7 +9,9 @@ use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton};
+use crate::neo_skeleton::{
+    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
+};
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
@@ -146,7 +148,7 @@ impl DatePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
-            DatePatternSelectionData::SkeletonDate { skeleton, payload } => &payload
+            DatePatternSelectionData::SkeletonDate { skeleton, payload } => payload
                 .get()
                 .get_for_date_skeleton(*skeleton)
                 .map(|pattern_ule| &pattern_ule.items)
@@ -258,10 +260,6 @@ impl TimePatternSelectionData {
             })?
             .take_payload()?
             .cast();
-        std::println!("Locale: {:?}", locale);
-        std::println!("Length: {:?}", length);
-        std::println!("Components: {:?}", components);
-        std::println!("Payload: {:?}", payload);
         Ok(Self::SkeletonTime {
             skeleton: NeoTimeSkeleton { length, components },
             payload,
@@ -273,7 +271,7 @@ impl TimePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
-            TimePatternSelectionData::SkeletonTime { skeleton, payload } => &payload
+            TimePatternSelectionData::SkeletonTime { skeleton, payload } => payload
                 .get()
                 .get_for_time_skeleton(*skeleton)
                 .map(|pattern_ule| &pattern_ule.items)

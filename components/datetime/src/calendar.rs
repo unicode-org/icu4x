@@ -176,19 +176,17 @@ fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
 /// such as in a time formatter.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub enum NeverCalendar {}
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl CldrCalendar for NeverCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("never");
     type DateSymbolsV1Marker = NeverMarker<DateSymbolsV1<'static>>;
     type DateLengthsV1Marker = NeverMarker<DateLengthsV1<'static>>;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = NeverMarker<DatePatternV1<'static>>;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
 }
 
@@ -437,6 +435,7 @@ impl CldrCalendar for Roc {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
 }
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl InternalCldrCalendar for NeverCalendar {}
 impl InternalCldrCalendar for Buddhist {}
 impl InternalCldrCalendar for Chinese {}
