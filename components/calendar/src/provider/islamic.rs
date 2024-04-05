@@ -52,7 +52,7 @@ impl<'data> IslamicCacheV1<'data> {
             .collect();
         IslamicCacheV1 {
             first_extended_year: extended_years.start,
-            data: data,
+            data,
         }
     }
 
@@ -181,7 +181,7 @@ impl PackedIslamicYearInfo {
         if ny_offset < 0 {
             all |= 1 << 12;
         }
-        all |= u16::from(ny_offset.abs() as u8) << 13;
+        all |= u16::from(ny_offset.unsigned_abs()) << 13;
         let le = all.to_le_bytes();
         Self(le[0], le[1])
     }
@@ -236,7 +236,7 @@ impl PackedIslamicYearInfo {
     pub(crate) fn compute_with_ny<IB: IslamicBasedMarker>(extended_year: i32, ny: RataDie) -> Self {
         let month_lengths = IB::month_lengths_for_year(extended_year, ny);
         let ny_offset = ny - IB::mean_synodic_ny(extended_year);
-        let ny_offset = if ny_offset > 7 || ny_offset < -7 {
+        let ny_offset = if !(-7..=7).contains(&ny_offset) {
             0
         } else {
             ny_offset as i8
