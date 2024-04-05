@@ -97,6 +97,8 @@ const _: () = {
     icu_datetime_data::impl_datetime_patterns_datetime_v1!(Baked);
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_patterns_time_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_time_skeleton_v1!(Baked);
 
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_patterns_gregory_date_skeleton_v1!(Baked);
