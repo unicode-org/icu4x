@@ -52,7 +52,9 @@ pub trait IslamicBasedMarker {
                 month_idx + 1
             );
             if new_rd - prev_rd >= 30 {
-                lengths[usize::from(month_idx)] = true;
+                if let Some(l) = lengths.get_mut(usize::from(month_idx)) {
+                    *l = true;
+                }
             }
             prev_rd = new_rd
         }
@@ -71,18 +73,22 @@ pub trait IslamicBasedMarker {
 
 /// Marker type for observational islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // marker
 pub struct ObservationalIslamicMarker;
 
 /// Marker type for Saudi islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // marker
 pub struct SaudiIslamicMarker;
 
 /// Marker type for civil islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // marker
 pub struct CivilIslamicMarker;
 
 /// Marker type for observational islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // marker
 pub struct TabularIslamicMarker;
 
 impl IslamicBasedMarker for ObservationalIslamicMarker {
