@@ -79,17 +79,10 @@ impl CalendarArithmetic for Persian {
     fn months_for_every_year(_: i32, _data: ()) -> u8 {
         12
     }
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4789
+    // Modified to use the 33-year rule
     fn is_leap_year(p_year: i32, _data: ()) -> bool {
-        let mut p_year = p_year as i64;
-        if 0 < p_year {
-            p_year -= 474;
-        } else {
-            p_year -= 473;
-        };
-        let year = p_year.rem_euclid(2820) + 474;
-
-        ((year + 38) * 31).rem_euclid(128) < 31
+        let p_year = p_year as i64;
+        (25 * p_year + 11).rem_euclid(33) < 8
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
@@ -129,11 +122,11 @@ impl Calendar for Persian {
 
     fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
-        Self::arithmetic_persian_from_fixed(fixed_iso)
+        Self::fast_persian_from_fixed(fixed_iso)
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_persian = Persian::fixed_from_arithmetic_persian(*date);
+        let fixed_persian = Persian::fixed_from_fast_persian(*date);
         Iso::iso_from_fixed(fixed_persian)
     }
 
@@ -212,16 +205,16 @@ impl Persian {
         Self
     }
 
-    fn fixed_from_arithmetic_persian(p_date: PersianDateInner) -> RataDie {
-        calendrical_calculations::persian::fixed_from_arithmetic_persian(
+    fn fixed_from_fast_persian(p_date: PersianDateInner) -> RataDie {
+        calendrical_calculations::persian::fixed_from_fast_persian(
             p_date.0.year,
             p_date.0.month,
             p_date.0.day,
         )
     }
-    fn arithmetic_persian_from_fixed(date: RataDie) -> PersianDateInner {
+    fn fast_persian_from_fixed(date: RataDie) -> PersianDateInner {
         let (year, month, day) =
-            match calendrical_calculations::persian::arithmetic_persian_from_fixed(date) {
+            match calendrical_calculations::persian::fast_persian_from_fixed(date) {
                 Err(I32CastError::BelowMin) => return PersianDateInner(ArithmeticDate::min_date()),
                 Err(I32CastError::AboveMax) => return PersianDateInner(ArithmeticDate::max_date()),
                 Ok(ymd) => ymd,
@@ -308,122 +301,19 @@ mod tests {
         day: u8,
     }
 
-    static TEST_FIXED_DATE: [i64; 33] = [
-        -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
-        470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
-        664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
+    static TEST_FIXED_DATE: [i64; 18] = [
+        656786, 664224, 671401, 694799, 702806, 704424, 708842, 709409, 709580, 727274, 728714,
+        739330, 739331, 744313, 763436, 763437, 764652, 775123,
     ];
 
-    static CASES: [DateCase; 33] = [
+    // Test data are provided for the range 1178-1501 AP, for which
+    // we know the 33-year rule matches the astronomical calculations
+    // based on the 52.5 degrees east meridian.
+    static CASES: [DateCase; 18] = [
         DateCase {
-            year: -1208,
-            month: 5,
+            year: 1178,
+            month: 1,
             day: 1,
-        },
-        DateCase {
-            year: -790,
-            month: 9,
-            day: 14,
-        },
-        DateCase {
-            year: -552,
-            month: 7,
-            day: 2,
-        },
-        DateCase {
-            year: -487,
-            month: 7,
-            day: 9,
-        },
-        DateCase {
-            year: -153,
-            month: 10,
-            day: 18,
-        },
-        DateCase {
-            year: -46,
-            month: 2,
-            day: 30,
-        },
-        DateCase {
-            year: 73,
-            month: 8,
-            day: 19,
-        },
-        DateCase {
-            year: 392,
-            month: 2,
-            day: 5,
-        },
-        DateCase {
-            year: 475,
-            month: 3,
-            day: 3,
-        },
-        DateCase {
-            year: 569,
-            month: 1,
-            day: 3,
-        },
-        DateCase {
-            year: 618,
-            month: 12,
-            day: 20,
-        },
-        DateCase {
-            year: 667,
-            month: 1,
-            day: 14,
-        },
-        DateCase {
-            year: 677,
-            month: 2,
-            day: 8,
-        },
-        DateCase {
-            year: 770,
-            month: 3,
-            day: 22,
-        },
-        DateCase {
-            year: 814,
-            month: 11,
-            day: 13,
-        },
-        DateCase {
-            year: 871,
-            month: 1,
-            day: 21,
-        },
-        DateCase {
-            year: 932,
-            month: 6,
-            day: 28,
-        },
-        DateCase {
-            year: 938,
-            month: 12,
-            day: 14,
-        },
-        DateCase {
-            year: 1027,
-            month: 3,
-            day: 21,
-        },
-        DateCase {
-            year: 1059,
-            month: 4,
-            day: 10,
-        },
-        DateCase {
-            year: 1095,
-            month: 5,
-            day: 2,
-        },
-        DateCase {
-            year: 1147,
-            month: 3,
-            day: 30,
         },
         DateCase {
             year: 1198,
@@ -439,6 +329,11 @@ mod tests {
             year: 1282,
             month: 1,
             day: 29,
+        },
+        DateCase {
+            year: 1304,
+            month: 1,
+            day: 1,
         },
         DateCase {
             year: 1308,
@@ -471,23 +366,47 @@ mod tests {
             day: 6,
         },
         DateCase {
+            year: 1403,
+            month: 12,
+            day: 30,
+        },
+        DateCase {
+            year: 1404,
+            month: 1,
+            day: 1,
+        },
+        DateCase {
             year: 1417,
             month: 8,
             day: 19,
+        },
+        DateCase {
+            year: 1469,
+            month: 12,
+            day: 30,
+        },
+        DateCase {
+            year: 1470,
+            month: 1,
+            day: 1,
         },
         DateCase {
             year: 1473,
             month: 4,
             day: 28,
         },
+        DateCase {
+            year: 1501,
+            month: 12,
+            day: 29,
+        },
     ];
 
     fn days_in_provided_year_core(year: i32) -> u16 {
         let fixed_year =
-            calendrical_calculations::persian::fixed_from_arithmetic_persian(year, 1, 1)
-                .to_i64_date();
+            calendrical_calculations::persian::fixed_from_fast_persian(year, 1, 1).to_i64_date();
         let next_fixed_year =
-            calendrical_calculations::persian::fixed_from_arithmetic_persian(year + 1, 1, 1)
+            calendrical_calculations::persian::fixed_from_fast_persian(year + 1, 1, 1)
                 .to_i64_date();
 
         (next_fixed_year - fixed_year) as u16
@@ -495,25 +414,12 @@ mod tests {
 
     #[test]
     fn test_persian_leap_year() {
-        let mut leap_years: [i32; 33] = [0; 33];
+        let mut leap_years: [i32; 18] = [0; 18];
         // These values were computed from the "Calendrical Calculations" reference code output
         let expected_values = [
-            false, true, false, false, false, false, false, true, false, true, false, false, true,
-            false, false, true, false, false, false, false, false, false, false, true, false,
-            false, false, false, false, true, false, false, false,
+            false, false, true, false, true, false, false, false, false, true, false, true, false,
+            false, true, false, false, false,
         ];
-
-        let mut leap_year_results: Vec<bool> = Vec::new();
-        let canonical_leap_year_cycle_start = 474;
-        let canonical_leap_year_cycle_end = 3293;
-        for year in canonical_leap_year_cycle_start..=canonical_leap_year_cycle_end {
-            let r = Persian::is_leap_year(year, ());
-            if r {
-                leap_year_results.push(r);
-            }
-        }
-        // 683 is the amount of leap years in the 2820 Persian year cycle
-        assert_eq!(leap_year_results.len(), 683);
 
         for (index, case) in CASES.iter().enumerate() {
             leap_years[index] = case.year;
@@ -539,7 +445,7 @@ mod tests {
             let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
 
             assert_eq!(
-                Persian::fixed_from_arithmetic_persian(*date.inner()).to_i64_date(),
+                Persian::fixed_from_fast_persian(*date.inner()).to_i64_date(),
                 *f_date,
                 "{case:?}"
             );
@@ -550,7 +456,7 @@ mod tests {
         for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
-                Persian::arithmetic_persian_from_fixed(RataDie::new(*f_date)),
+                Persian::fast_persian_from_fixed(RataDie::new(*f_date)),
                 date.inner,
                 "{case:?}"
             );
