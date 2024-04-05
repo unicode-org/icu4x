@@ -278,7 +278,7 @@ impl<'b, IB: IslamicBasedMarker> IslamicPrecomputedData<'b, IB> {
             _ib: PhantomData,
         }
     }
-    /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the ChineseBasedYearInfo and extended year for that date, loading
+    /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the IslamicYearInfo and extended year for that date, loading
     /// from cache or computing.
     fn load_or_compute_info_for_iso(&self, fixed: RataDie) -> (IslamicYearInfo, i32, u8, u8) {
         let cached = self.data.and_then(|d| d.get_for_fixed::<IB>(fixed));
