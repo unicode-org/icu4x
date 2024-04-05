@@ -110,6 +110,7 @@ impl PatternULE {
 }
 
 impl<'data> PatternBorrowed<'data> {
+    #[cfg(feature = "experimental")]
     pub(crate) const DEFAULT: PatternBorrowed<'static> = PatternBorrowed {
         items: ZeroSlice::new_empty(),
         metadata: PatternMetadata::DEFAULT,

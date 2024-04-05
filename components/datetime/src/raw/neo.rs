@@ -9,7 +9,7 @@ use crate::format::datetime::write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeSkeleton};
+use crate::neo_skeleton::{NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton};
 use crate::options::length;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
@@ -240,6 +240,32 @@ impl TimePatternSelectionData {
             .take_payload()?
             .cast();
         Ok(Self::SingleTime(payload))
+    }
+
+    pub(crate) fn try_new_with_skeleton<M>(
+        provider: &(impl DataProvider<M> + ?Sized),
+        locale: &DataLocale,
+        length: NeoSkeletonLength,
+        components: NeoTimeComponents,
+    ) -> Result<Self, Error>
+    where
+        M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+    {
+        let payload = provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        std::println!("Locale: {:?}", locale);
+        std::println!("Length: {:?}", length);
+        std::println!("Components: {:?}", components);
+        std::println!("Payload: {:?}", payload);
+        Ok(Self::SkeletonTime {
+            skeleton: NeoTimeSkeleton { length, components },
+            payload,
+        })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.

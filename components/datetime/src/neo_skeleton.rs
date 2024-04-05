@@ -7,6 +7,7 @@
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
+use crate::calendar::NeverCalendar;
 use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
 
@@ -48,6 +49,13 @@ where
 {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoDateComponents;
+}
+
+/// Sealed trait implemented by neo skeleton marker types.
+pub trait TypedNeoTimeSkeletonComponents: TypedNeoSkeletonData<NeverCalendar>
+{
+    /// Components in the neo skeleton.
+    const COMPONENTS: NeoTimeComponents;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
@@ -118,7 +126,8 @@ impl NeoSkeletonLength {
     }
 }
 
-/// Marker for a skeleton with a year and a month, like "March 2024".
+/// Marker for a month and year, as in
+/// “January 2000”.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum YearMonthMarker {}
@@ -145,6 +154,32 @@ where
     C: CldrCalendar,
 {
     const COMPONENTS: NeoDateComponents = NeoDateComponents::YearMonth;
+}
+
+/// Marker for an hour and minute (12-hour or 24-hour chosen by locale), as in
+/// "4:03 pm" or "16:03"
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum HourMinuteMarker {}
+
+impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker
+{
+    // Data to include
+    type DayPeriodNamesV1Marker = DayPeriodNamesV1Marker;
+    type TimeSkeletonPatternsV1Marker = TimeNeoSkeletonPatternsV1Marker;
+
+    // Data to exclude
+    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
+}
+
+impl TypedNeoTimeSkeletonComponents for HourMinuteMarker
+{
+    const COMPONENTS: NeoTimeComponents = NeoTimeComponents::HourMinute;
 }
 
 // TODO: Add more of these TypedNeoSkeletonData marker types.
@@ -313,6 +348,7 @@ impl NeoDateComponents {
         Self::YearQuarter,
     ];
 
+    #[cfg(feature = "experimental")]
     pub(crate) fn discriminant(self) -> u8 {
         match self {
             Self::Day(NeoDayComponents::Day) => 0,
@@ -441,6 +477,7 @@ impl NeoTimeComponents {
         Self::Hour24MinuteSecond,
     ];
 
+    #[cfg(feature = "experimental")]
     pub(crate) fn discriminant(self) -> u8 {
         match self {
             Self::Hour => 0,

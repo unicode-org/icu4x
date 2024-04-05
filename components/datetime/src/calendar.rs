@@ -130,6 +130,22 @@ where
 }
 
 #[cfg(feature = "experimental")]
+pub(crate) trait DayPeriodNamesV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> DayPeriodNamesV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+#[cfg(feature = "experimental")]
 pub(crate) trait DatePatternV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
@@ -152,6 +168,28 @@ fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
     } else {
         false
     }
+}
+
+/// A calendar that can never exist.
+///
+/// Used as a substitute for calendar parameters when a calendar is not needed,
+/// such as in a time formatter.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NeverCalendar {}
+
+impl CldrCalendar for NeverCalendar {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("never");
+    type DateSymbolsV1Marker = NeverMarker<DateSymbolsV1<'static>>;
+    type DateLengthsV1Marker = NeverMarker<DateLengthsV1<'static>>;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type DatePatternV1Marker = NeverMarker<DatePatternV1<'static>>;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
 }
 
 impl CldrCalendar for Buddhist {
@@ -399,6 +437,7 @@ impl CldrCalendar for Roc {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
 }
 
+impl InternalCldrCalendar for NeverCalendar {}
 impl InternalCldrCalendar for Buddhist {}
 impl InternalCldrCalendar for Chinese {}
 impl InternalCldrCalendar for Coptic {}

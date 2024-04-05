@@ -4,7 +4,7 @@
 
 use super::datetime::write_pattern;
 use crate::calendar::{
-    CldrCalendar, MonthNamesV1Provider, WeekdayNamesV1Provider, YearNamesV1Provider,
+    CldrCalendar, DayPeriodNamesV1Provider, MonthNamesV1Provider, WeekdayNamesV1Provider, YearNamesV1Provider
 };
 use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;
@@ -589,7 +589,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     {
         let locale = &self.locale;
         self.inner
-            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
+            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker, DayPeriodNamesV1Marker>(
                 Some(provider),
                 Some(provider),
                 Some(provider),
@@ -652,7 +652,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     {
         let locale = &self.locale;
         self.inner
-            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
+            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker, DayPeriodNamesV1Marker>(
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
@@ -789,8 +789,8 @@ impl RawDateTimeNames {
         field_length: FieldLength,
     ) -> Result<(), Error>
     where
-        P: DataProvider<M> + ?Sized,
-        M: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
+        P: DayPeriodNamesV1Provider<M> + ?Sized,
+        M: DataMarker<Yokeable = LinearNamesV1<'static>>,
     {
         let field = fields::Field {
             // Names for 'a' and 'b' are stored in the same data key
@@ -916,12 +916,12 @@ impl RawDateTimeNames {
     /// This function has a lot of arguments because many of the arguments are generic,
     /// and pulling them out to an options struct would be cumbersome.
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn load_for_pattern<YearMarker, MonthMarker, WeekdayMarker>(
+    pub(crate) fn load_for_pattern<YearMarker, MonthMarker, WeekdayMarker, DayPeriodMarker>(
         &mut self,
         year_provider: Option<&(impl YearNamesV1Provider<YearMarker> + ?Sized)>,
         month_provider: Option<&(impl MonthNamesV1Provider<MonthMarker> + ?Sized)>,
         weekday_provider: Option<&(impl WeekdayNamesV1Provider<WeekdayMarker> + ?Sized)>,
-        dayperiod_provider: Option<&(impl DataProvider<DayPeriodNamesV1Marker> + ?Sized)>,
+        dayperiod_provider: Option<&(impl DayPeriodNamesV1Provider<DayPeriodMarker> + ?Sized)>,
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
@@ -931,6 +931,7 @@ impl RawDateTimeNames {
         YearMarker: DataMarker<Yokeable = YearNamesV1<'static>>,
         MonthMarker: DataMarker<Yokeable = MonthNamesV1<'static>>,
         WeekdayMarker: DataMarker<Yokeable = LinearNamesV1<'static>>,
+        DayPeriodMarker: DataMarker<Yokeable = LinearNamesV1<'static>>,
     {
         let fields = pattern_items.filter_map(|p| match p {
             PatternItem::Field(field) => Some(field),
