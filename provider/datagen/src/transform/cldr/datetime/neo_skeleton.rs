@@ -225,6 +225,13 @@ impl DatagenProvider {
                 patterns.extend(medium);
             }
             patterns.extend(short);
+            // Search for deduplication opportunity
+            let needed_patterns = &patterns[skeleton_data_index.index as usize..];
+            let first_start = patterns.windows(needed_patterns.len()).enumerate().find(|(_, window)| window == &needed_patterns).expect("should always find the last window").0;
+            if first_start != skeleton_data_index.index as usize {
+                patterns.splice(skeleton_data_index.index as usize.., []);
+                skeleton_data_index.index = first_start as u8;
+            }
             indices.push(skeleton_data_index);
         }
         Ok(PackedSkeletonDataV1 {

@@ -16,67 +16,67 @@
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 3
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
       "index": 6
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 9
+      "index": 0
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 12
+      "index": 0
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 15
+      "index": 0
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 18
+      "index": 0
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 21
+      "index": 0
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 24
+      "index": 0
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 27
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 30
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 33
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 36
+      "index": 0
     }
   ],
   "patterns": [
@@ -86,38 +86,8 @@
     "r(U) MMMM d",
     "d-M-r",
     "r-MM-dd",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "r(U) MMMM d",
-    "d-M-r",
-    "r-MM-dd",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
     "d 'de' MMMM 'de' y",
     "d 'de' MMM 'de' y",
-    "d/M/y",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG",
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG"
+    "d/M/y"
   ]
 }
