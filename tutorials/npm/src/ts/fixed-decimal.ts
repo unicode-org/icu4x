@@ -38,25 +38,24 @@ export class FixedDecimalDemo {
         this.#locale = result(() => ICU4XLocale.create_from_string(locid));
         if (this.#locale.ok === true) {
             const locales = this.#dataProviderManager.getLoadedLocales();
-            // The if case is making issue, try to fork with old.
             const localesFinal: string[] = [];
             locales.forEach((item: ICU4XLocale) => {
                 localesFinal.push(item.to_string());
             });
             const loadedLocales = new Set(localesFinal);
-            await this.updateProvider(this.#locale.value);
+            if(loadedLocales.has(locid)){
+            }
+            else{
+                await this.updateProvider(locid);
+            }
+            
         }
         this.#updateFormatter();
     }
 
-    async updateProvider(newLocale: ICU4XLocale): Promise<void> {
-        this.#dataProvider = await this.#dataProviderManager.loadLocale(newLocale.to_string());
-        const fallbackLocale = await this.#dataProviderManager.getFallbackLocale();
-        const fallbackLocaleResult = result(() => this.#dataProviderManager.getFallbackLocale());
-        this.#locale = fallbackLocaleResult;
-        if(newLocale.to_string() != fallbackLocale.to_string()) {
-            console.log(`Falling back to locale: ${fallbackLocale.to_string()}`);
-        }
+    async updateProvider(newLocale: string): Promise<void> {
+        await this.#dataProviderManager.loadLocale(newLocale);
+        
         this.#updateFormatter();
     }
 

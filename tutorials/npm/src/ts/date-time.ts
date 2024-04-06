@@ -70,14 +70,7 @@ export class DateTimeDemo {
     }
 
     async updateProvider(newLocale: ICU4XLocale) {
-        this.#dataProvider = await this.#dataProviderManager.loadLocale(newLocale.to_string());
-        const fallbackLocale = this.#dataProviderManager.getFallbackLocale();
-        const fallbackLocaleResult = result(() => this.#dataProviderManager.getFallbackLocale());
-        this.#locale = fallbackLocaleResult
-        // Logs if there is a fallback and prints the fallback locale
-        if(newLocale.to_string() != fallbackLocale.to_string()) {
-            console.log(`Falling back to locale: ${fallbackLocale.to_string()}`);
-        }
+        await this.#dataProviderManager.loadLocale(newLocale.to_string());
         this.#updateFormatter();
     }
 
