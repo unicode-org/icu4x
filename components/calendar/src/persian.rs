@@ -79,7 +79,8 @@ impl CalendarArithmetic for Persian {
     fn months_for_every_year(_: i32, _data: ()) -> u8 {
         12
     }
-    // Modified to use the 33-year rule
+
+    // Calculated using the 33-year rule
     fn is_leap_year(p_year: i32, _data: ()) -> bool {
         let p_year = p_year as i64;
         (25 * p_year + 11).rem_euclid(33) < 8
@@ -310,6 +311,7 @@ mod tests {
     // we know the 33-year rule matches the astronomical calculations
     // based on the 52.5 degrees east meridian.
     static CASES: [DateCase; 18] = [
+        // First year for which 33-year rule matches the astronomical calculation
         DateCase {
             year: 1178,
             month: 1,
@@ -330,6 +332,7 @@ mod tests {
             month: 1,
             day: 29,
         },
+        // The beginning of the year the calendar was adopted
         DateCase {
             year: 1304,
             month: 1,
@@ -365,11 +368,13 @@ mod tests {
             month: 12,
             day: 6,
         },
+        // First day that the 2820-year rule fails
         DateCase {
             year: 1403,
             month: 12,
             day: 30,
         },
+        // First Nowruz that the 2820-year rule fails
         DateCase {
             year: 1404,
             month: 1,
@@ -380,11 +385,13 @@ mod tests {
             month: 8,
             day: 19,
         },
+        // First day the unmodified astronomical algorithm fails
         DateCase {
             year: 1469,
             month: 12,
             day: 30,
         },
+        // First Nowruz the unmodified astronomical algorithm fails
         DateCase {
             year: 1470,
             month: 1,
@@ -395,6 +402,7 @@ mod tests {
             month: 4,
             day: 28,
         },
+        // Last year the 33-year rule matches the modified astronomical calculation
         DateCase {
             year: 1501,
             month: 12,
