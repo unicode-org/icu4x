@@ -239,6 +239,8 @@ pub const KEYS: &[DataKey] = &[
     #[cfg(feature = "experimental")]
     neo::GregorianDateNeoSkeletonPatternsV1Marker::KEY,
     #[cfg(feature = "experimental")]
+    calendar::XcalYearMonthDayNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
     neo::BuddhistYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::ChineseYearNamesV1Marker::KEY,

@@ -286,6 +286,11 @@ mod datetime_patterns_time_skeleton_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_time_skeleton_v1 as impl_datetime_patterns_time_skeleton_v1;
 #[macro_use]
+#[path = "macros/datetime_patterns_xcal_ymd_v1.rs.data"]
+mod datetime_patterns_xcal_ymd_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_xcal_ymd_v1 as impl_datetime_patterns_xcal_ymd_v1;
+#[macro_use]
 #[path = "macros/datetime_persian_datelengths_v1.rs.data"]
 mod datetime_persian_datelengths_v1;
 #[doc(inline)]

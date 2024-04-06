@@ -246,6 +246,8 @@ registry!(
         "datetime/patterns/japanext/date@1",
     icu_datetime::provider::neo::PersianDatePatternV1Marker = "datetime/patterns/persian/date@1",
     icu_datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
+    icu_datetime::provider::neo::XcalYearMonthDayNeoSkeletonPatternsV1Marker =
+        "datetime/patterns/xcal/yMd@1",
     icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker =
         "datetime/patterns/gregory/date_skeleton@1",
     icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker =

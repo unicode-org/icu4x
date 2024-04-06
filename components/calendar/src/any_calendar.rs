@@ -897,6 +897,28 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
+    /// All values of AnyCalendarKind.
+    pub const VALUES: &'static [AnyCalendarKind] = &[
+        Self::Buddhist,
+        Self::Chinese,
+        Self::Coptic,
+        Self::Dangi,
+        Self::Ethiopian,
+        Self::EthiopianAmeteAlem,
+        Self::Gregorian,
+        Self::Hebrew,
+        Self::Indian,
+        Self::IslamicCivil,
+        Self::IslamicObservational,
+        Self::IslamicTabular,
+        Self::IslamicUmmAlQura,
+        Self::Iso,
+        Self::Japanese,
+        Self::JapaneseExtended,
+        Self::Persian,
+        Self::Roc,
+    ];
+
     /// Construct from a BCP-47 string
     ///
     /// Returns `None` if the calendar is unknown. If you prefer an error, use
