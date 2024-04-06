@@ -1,0 +1,123 @@
+{
+  "indices": [
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 3
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 6
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 9
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 12
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 15
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 18
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 21
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 24
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 27
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 30
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 33
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 36
+    }
+  ],
+  "patterns": [
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "r(U) MMMM d",
+    "r MMM d",
+    "r-MM-dd",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "r(U) MMMM d",
+    "r MMM d",
+    "r-MM-dd",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y",
+    "d MMM y",
+    "d‏/M‏/y",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G",
+    "d MMMM y G",
+    "d MMM y G",
+    "d‏/M‏/y G"
+  ]
+}

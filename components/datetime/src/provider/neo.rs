@@ -612,7 +612,7 @@ impl AsULE for SkeletonDataIndex {
     marker(
         XcalYearMonthDayNeoSkeletonPatternsV1Marker,
         "datetime/patterns/xcal/yMd@1"
-    ),
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

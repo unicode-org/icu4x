@@ -7,7 +7,8 @@ use std::collections::HashSet;
 use crate::{provider::IterableDataProviderInternal, DatagenProvider};
 use icu_calendar::AnyCalendarKind;
 use icu_datetime::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton
+    NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+    NeoTimeSkeleton,
 };
 use icu_datetime::options::{components, preferences};
 use icu_datetime::pattern::runtime::PatternPlurals;
@@ -16,7 +17,10 @@ use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
-    neo::{XcalYearMonthDayNeoSkeletonPatternsV1Marker, GregorianDateNeoSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
+    neo::{
+        GregorianDateNeoSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex,
+        XcalYearMonthDayNeoSkeletonPatternsV1Marker,
+    },
 };
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
@@ -83,20 +87,31 @@ impl DataProvider<XcalYearMonthDayNeoSkeletonPatternsV1Marker> for DatagenProvid
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<XcalYearMonthDayNeoSkeletonPatternsV1Marker>, DataError> {
-        let packed_skeleton_data = self.make_packed_skeleton_data(
-            req,
-            AnyCalendarKind::VALUES.iter().map(|kind| {
-                (
-                    NeoDateComponents::Day(NeoDayComponents::YearMonthDay),
-                    kind.as_bcp47_value(),
-                    true
-                )
-            }),
-            |length, neo_components| {
-                NeoDateSkeleton::for_length_and_components(length, *neo_components)
-                    .to_components_bag()
-            },
-        )?;
+        let packed_skeleton_data = self
+            .make_packed_skeleton_data(
+                req,
+                AnyCalendarKind::VALUES.iter().filter_map(|kind| {
+                    if matches!(kind, AnyCalendarKind::EthiopianAmeteAlem)
+                        || matches!(kind, AnyCalendarKind::IslamicCivil)
+                        || matches!(kind, AnyCalendarKind::IslamicTabular)
+                        || matches!(kind, AnyCalendarKind::IslamicUmmAlQura)
+                        || matches!(kind, AnyCalendarKind::Iso)
+                    {
+                        None
+                    } else {
+                        Some((
+                            NeoDateComponents::Day(NeoDayComponents::YearMonthDay),
+                            kind.as_bcp47_value(),
+                            true,
+                        ))
+                    }
+                }),
+                |length, neo_components| {
+                    NeoDateSkeleton::for_length_and_components(length, *neo_components)
+                        .to_components_bag()
+                },
+            )
+            .unwrap();
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(packed_skeleton_data)),
@@ -105,7 +120,7 @@ impl DataProvider<XcalYearMonthDayNeoSkeletonPatternsV1Marker> for DatagenProvid
 }
 
 impl DatagenProvider {
-    fn make_packed_skeleton_data<C>(
+    fn make_packed_skeleton_data<C: core::fmt::Debug>(
         &self,
         req: DataRequest,
         values: impl Iterator<Item = (C, icu_locid::extensions::unicode::Value, bool)>,
