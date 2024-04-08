@@ -585,12 +585,14 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
+            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil::new()),
             AnyCalendarKind::IslamicObservational => {
                 AnyCalendar::IslamicObservational(IslamicObservational::new())
             }
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura),
+            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular::new()),
+            AnyCalendarKind::IslamicUmmAlQura => {
+                AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura::new())
+            }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::new()),
             AnyCalendarKind::JapaneseExtended => {
@@ -627,12 +629,18 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
+            AnyCalendarKind::IslamicCivil => {
+                AnyCalendar::IslamicCivil(IslamicCivil::try_new_with_any_provider(provider)?)
+            }
             AnyCalendarKind::IslamicObservational => AnyCalendar::IslamicObservational(
                 IslamicObservational::try_new_with_any_provider(provider)?,
             ),
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura),
+            AnyCalendarKind::IslamicTabular => {
+                AnyCalendar::IslamicTabular(IslamicTabular::try_new_with_any_provider(provider)?)
+            }
+            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(
+                IslamicUmmAlQura::try_new_with_any_provider(provider)?,
+            ),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_with_any_provider(provider)?)
@@ -672,12 +680,18 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
+            AnyCalendarKind::IslamicCivil => {
+                AnyCalendar::IslamicCivil(IslamicCivil::try_new_with_buffer_provider(provider)?)
+            }
             AnyCalendarKind::IslamicObservational => AnyCalendar::IslamicObservational(
                 IslamicObservational::try_new_with_buffer_provider(provider)?,
             ),
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura),
+            AnyCalendarKind::IslamicTabular => {
+                AnyCalendar::IslamicTabular(IslamicTabular::try_new_with_buffer_provider(provider)?)
+            }
+            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(
+                IslamicUmmAlQura::try_new_with_buffer_provider(provider)?,
+            ),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
@@ -697,7 +711,10 @@ impl AnyCalendar {
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
             + DataProvider<crate::provider::ChineseCacheV1Marker>
             + DataProvider<crate::provider::DangiCacheV1Marker>
+            + DataProvider<crate::provider::IslamicCivilCacheV1Marker>
             + DataProvider<crate::provider::IslamicObservationalCacheV1Marker>
+            + DataProvider<crate::provider::IslamicTabularCacheV1Marker>
+            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
             + ?Sized,
     {
         Ok(match kind {
@@ -714,12 +731,18 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
+            AnyCalendarKind::IslamicCivil => {
+                AnyCalendar::IslamicCivil(IslamicCivil::try_new_unstable(provider)?)
+            }
             AnyCalendarKind::IslamicObservational => {
                 AnyCalendar::IslamicObservational(IslamicObservational::try_new_unstable(provider)?)
             }
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura),
+            AnyCalendarKind::IslamicTabular => {
+                AnyCalendar::IslamicTabular(IslamicTabular::try_new_unstable(provider)?)
+            }
+            AnyCalendarKind::IslamicUmmAlQura => {
+                AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura::try_new_unstable(provider)?)
+            }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
@@ -770,7 +793,10 @@ impl AnyCalendar {
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
             + DataProvider<crate::provider::ChineseCacheV1Marker>
             + DataProvider<crate::provider::DangiCacheV1Marker>
+            + DataProvider<crate::provider::IslamicCivilCacheV1Marker>
             + DataProvider<crate::provider::IslamicObservationalCacheV1Marker>
+            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<crate::provider::IslamicTabularCacheV1Marker>
             + ?Sized,
     {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
@@ -1039,10 +1065,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
             AnyCalendarKind::Hebrew => Hebrew.debug_name(),
             AnyCalendarKind::Indian => Indian.debug_name(),
-            AnyCalendarKind::IslamicCivil => IslamicCivil.debug_name(),
+            AnyCalendarKind::IslamicCivil => IslamicCivil::DEBUG_NAME,
             AnyCalendarKind::IslamicObservational => IslamicObservational::DEBUG_NAME,
-            AnyCalendarKind::IslamicTabular => IslamicTabular.debug_name(),
-            AnyCalendarKind::IslamicUmmAlQura => IslamicUmmAlQura.debug_name(),
+            AnyCalendarKind::IslamicTabular => IslamicTabular::DEBUG_NAME,
+            AnyCalendarKind::IslamicUmmAlQura => IslamicUmmAlQura::DEBUG_NAME,
             AnyCalendarKind::Iso => Iso.debug_name(),
             AnyCalendarKind::Japanese => Japanese::DEBUG_NAME,
             AnyCalendarKind::JapaneseExtended => JapaneseExtended::DEBUG_NAME,
@@ -1221,10 +1247,10 @@ impl IntoAnyCalendar for Indian {
 
 impl IntoAnyCalendar for IslamicCivil {
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicCivil(IslamicCivil)
+        AnyCalendar::IslamicCivil(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicCivil(IslamicCivil)
+        AnyCalendar::IslamicCivil(self.clone())
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicCivil(*d)
@@ -1245,10 +1271,10 @@ impl IntoAnyCalendar for IslamicObservational {
 
 impl IntoAnyCalendar for IslamicTabular {
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicTabular(IslamicTabular)
+        AnyCalendar::IslamicTabular(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicTabular(IslamicTabular)
+        AnyCalendar::IslamicTabular(self.clone())
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicTabular(*d)
@@ -1257,10 +1283,10 @@ impl IntoAnyCalendar for IslamicTabular {
 
 impl IntoAnyCalendar for IslamicUmmAlQura {
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura)
+        AnyCalendar::IslamicUmmAlQura(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura)
+        AnyCalendar::IslamicUmmAlQura(self.clone())
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicUmmAlQura(*d)

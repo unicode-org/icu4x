@@ -22,11 +22,24 @@ use zerovec::ZeroVec;
 /// Cached/precompiled data for a certain range of years for a chinese-based
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
-#[icu_provider::data_struct(marker(
-    IslamicObservationalCacheV1Marker,
-    "calendar/islamicobservationalcache@1",
-    singleton
-))]
+#[icu_provider::data_struct(
+    marker(
+        IslamicObservationalCacheV1Marker,
+        "calendar/islamicobservationalcache@1",
+        singleton
+    ),
+    marker(IslamicCivilCacheV1Marker, "calendar/islamiccivilcache@1", singleton),
+    marker(
+        IslamicUmmAlQuraCacheV1Marker,
+        "calendar/islamicummalquracache@1",
+        singleton
+    ),
+    marker(
+        IslamicTabularCacheV1Marker,
+        "calendar/islamictabularcache@1",
+        singleton
+    )
+)]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",

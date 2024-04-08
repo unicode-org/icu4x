@@ -9,7 +9,8 @@ use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicCivilCacheV1Marker,
+    IslamicObservationalCacheV1Marker, IslamicTabularCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
     JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -241,7 +242,10 @@ impl DateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -389,7 +393,10 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<RocDateLengthsV1Marker>

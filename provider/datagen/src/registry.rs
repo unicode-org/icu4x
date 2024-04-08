@@ -141,8 +141,11 @@ registry!(
     icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
     icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
+    icu_calendar::provider::IslamicCivilCacheV1Marker = "calendar/islamiccivilcache@1",
     icu_calendar::provider::IslamicObservationalCacheV1Marker =
         "calendar/islamicobservationalcache@1",
+    icu_calendar::provider::IslamicUmmAlQuraCacheV1Marker = "calendar/islamicummalquracache@1",
+    icu_calendar::provider::IslamicTabularCacheV1Marker = "calendar/islamictabularcache@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
     icu_calendar::provider::WeekDataV2Marker = "datetime/week_data@2",

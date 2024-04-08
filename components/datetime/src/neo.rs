@@ -21,7 +21,8 @@ use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicCivilCacheV1Marker,
+    IslamicObservationalCacheV1Marker, IslamicTabularCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
     JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV2Marker,
 };
 use icu_calendar::AnyCalendar;
@@ -510,7 +511,10 @@ impl NeoDateFormatter {
             // AnyCalendar constructor keys
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
+            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             // FixedDecimalFormatter keys
@@ -1471,7 +1475,10 @@ impl NeoDateTimeFormatter {
             + DataProvider<IslamicDatePatternV1Marker>
             + DataProvider<IslamicYearNamesV1Marker>
             + DataProvider<IslamicMonthNamesV1Marker>
+            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseDatePatternV1Marker>
             + DataProvider<JapaneseYearNamesV1Marker>
             + DataProvider<JapaneseMonthNamesV1Marker>
@@ -1644,7 +1651,10 @@ impl NeoDateTimeFormatter {
             // AnyCalendar constructor keys
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
+            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             // FixedDecimalFormatter keys
@@ -1772,7 +1782,10 @@ impl NeoDateTimeFormatter {
             + DataProvider<IslamicDatePatternV1Marker>
             + DataProvider<IslamicYearNamesV1Marker>
             + DataProvider<IslamicMonthNamesV1Marker>
+            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
+            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseDatePatternV1Marker>
             + DataProvider<JapaneseYearNamesV1Marker>
             + DataProvider<JapaneseMonthNamesV1Marker>

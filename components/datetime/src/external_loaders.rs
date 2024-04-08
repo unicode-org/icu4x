@@ -207,7 +207,10 @@ where
         + DataProvider<icu_calendar::provider::JapaneseExtendedErasV1Marker>
         + DataProvider<icu_calendar::provider::ChineseCacheV1Marker>
         + DataProvider<icu_calendar::provider::DangiCacheV1Marker>
+        + DataProvider<icu_calendar::provider::IslamicCivilCacheV1Marker>
         + DataProvider<icu_calendar::provider::IslamicObservationalCacheV1Marker>
+        + DataProvider<icu_calendar::provider::IslamicUmmAlQuraCacheV1Marker>
+        + DataProvider<icu_calendar::provider::IslamicTabularCacheV1Marker>
         + ?Sized,
 {
     #[inline]
