@@ -3,7 +3,7 @@
     "en-ZA": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "en",
         "territory": "ZA"
@@ -287,7 +287,7 @@
                 },
                 "narrow": {
                   "midnight": "midnight",
-                  "am": "AM",
+                  "am": "am",
                   "am-alt-variant": "am",
                   "noon": "noon",
                   "pm": "pm",

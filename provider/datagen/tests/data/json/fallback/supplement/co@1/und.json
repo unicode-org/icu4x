@@ -1,19 +1,9 @@
 {
   "parents": {
-    "bs-Cyrl": [
-      "bs",
-      null,
-      null
-    ],
     "sr-Cyrl-ME": [
       "sr",
       null,
       "ME"
-    ],
-    "sr-Latn": [
-      "sr",
-      null,
-      null
     ],
     "yue": [
       "zh",
@@ -38,11 +28,6 @@
     "yue-Hant": [
       "zh",
       "Hant",
-      null
-    ],
-    "zh-Hant": [
-      "zh",
-      null,
       null
     ]
   },

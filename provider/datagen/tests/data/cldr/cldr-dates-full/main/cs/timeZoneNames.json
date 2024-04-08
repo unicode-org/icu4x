@@ -3,7 +3,7 @@
     "cs": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "cs"
       },
@@ -122,9 +122,6 @@
               },
               "Puerto_Rico": {
                 "exemplarCity": "Portoriko"
-              },
-              "Santa_Isabel": {
-                "exemplarCity": "Santa Isabel"
               },
               "Santarem": {
                 "exemplarCity": "Santarém"
@@ -261,9 +258,6 @@
               "Ulyanovsk": {
                 "exemplarCity": "Uljanovsk"
               },
-              "Uzhgorod": {
-                "exemplarCity": "Užhorod"
-              },
               "Vatican": {
                 "exemplarCity": "Vatikán"
               },
@@ -275,9 +269,6 @@
               },
               "Zagreb": {
                 "exemplarCity": "Záhřeb"
-              },
-              "Zaporozhye": {
-                "exemplarCity": "Záporoží"
               },
               "Zurich": {
                 "exemplarCity": "Curych"
@@ -515,11 +506,6 @@
               },
               "Reunion": {
                 "exemplarCity": "Réunion"
-              }
-            },
-            "Australia": {
-              "Currie": {
-                "exemplarCity": "Currie"
               }
             },
             "Pacific": {
@@ -1193,11 +1179,6 @@
                 "daylight": "Macajský letní čas"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "čas ostrova Macquarie"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "magadanský čas",
@@ -1235,13 +1216,6 @@
             "Mawson": {
               "long": {
                 "standard": "čas Mawsonovy stanice"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "severozápadní mexický čas",
-                "standard": "severozápadní mexický standardní čas",
-                "daylight": "severozápadní mexický letní čas"
               }
             },
             "Mexico_Pacific": {
