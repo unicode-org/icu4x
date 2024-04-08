@@ -16,22 +16,22 @@ void main() {
             priority: LocaleFallbackPriority.region,
             fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
-    expect(iterator.get.toString(), 'de-CH-u-ca-japanese');
-    iterator.step();
-    expect(iterator.get.toString(), 'de-CH');
-    iterator.step();
-    expect(iterator.get.toString(), 'und-CH-u-ca-japanese');
-    iterator.step();
-    expect(iterator.get.toString(), 'und-CH');
-    iterator.step();
-    expect(iterator.get.toString(), 'und');
+    expect(iterator.moveNext(), true);
+    expect(iterator.current.toString(), 'de-CH-u-ca-japanese');
+    expect(iterator.moveNext(), true);
+    expect(iterator.current.toString(), 'de-CH');
+    expect(iterator.moveNext(), true);
+    expect(iterator.current.toString(), 'und-CH-u-ca-japanese');
+    expect(iterator.moveNext(), true);
+    expect(iterator.current.toString(), 'und-CH');
+    expect(iterator.moveNext(), false);
   });
 
   test('Properties', () {
     Rune a = 'a'.runes.first;
     Rune emoji = '💡'.runes.first;
 
-    final emojiSet = CodePointSetData.loadEmoji(DataProvider.compiled());
+    final emojiSet = CodePointSetData.emoji(DataProvider.compiled());
     expect(emojiSet.contains(a), false);
     expect(emojiSet.contains(emoji), true);
 

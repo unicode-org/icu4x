@@ -43,6 +43,12 @@ class ICU4XLocaleFallbackIterator {
    * See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
    */
   void step();
+
+  /**
+   * A combination of `get` and `step`. Returns the value that `get` would return
+   * and advances the iterator until hitting `und`.
+   */
+  std::optional<ICU4XLocale> next();
   inline const capi::ICU4XLocaleFallbackIterator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleFallbackIterator* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XLocaleFallbackIterator(capi::ICU4XLocaleFallbackIterator* i) : inner(i) {}
@@ -60,5 +66,15 @@ inline ICU4XLocale ICU4XLocaleFallbackIterator::get() const {
 }
 inline void ICU4XLocaleFallbackIterator::step() {
   capi::ICU4XLocaleFallbackIterator_step(this->inner.get());
+}
+inline std::optional<ICU4XLocale> ICU4XLocaleFallbackIterator::next() {
+  auto diplomat_optional_raw_out_value = capi::ICU4XLocaleFallbackIterator_next(this->inner.get());
+  std::optional<ICU4XLocale> diplomat_optional_out_value;
+  if (diplomat_optional_raw_out_value != nullptr) {
+    diplomat_optional_out_value = ICU4XLocale(diplomat_optional_raw_out_value);
+  } else {
+    diplomat_optional_out_value = std::nullopt;
+  }
+  return diplomat_optional_out_value;
 }
 #endif
