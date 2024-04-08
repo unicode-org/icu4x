@@ -43,6 +43,11 @@ class ICU4XLocaleFallbackIterator {
    * See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
    */
   void step();
+
+  /**
+   * A combination of `get` and `step`. Returns the value that `get` would return
+   * and advances the iterator until hitting `und`.
+   */
   std::optional<ICU4XLocale> next();
   inline const capi::ICU4XLocaleFallbackIterator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleFallbackIterator* AsFFIMut() { return this->inner.get(); }

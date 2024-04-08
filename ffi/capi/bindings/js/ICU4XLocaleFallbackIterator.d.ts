@@ -25,6 +25,8 @@ export class ICU4XLocaleFallbackIterator {
   step(): void;
 
   /**
+
+   * A combination of `get` and `step`. Returns the value that `get` would return and advances the iterator until hitting `und`.
    */
   next(): ICU4XLocale | undefined;
 }

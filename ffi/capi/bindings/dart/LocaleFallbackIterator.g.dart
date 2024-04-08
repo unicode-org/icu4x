@@ -35,6 +35,8 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
     return _current != null;
   }
 
+  /// A combination of `get` and `step`. Returns the value that `get` would return
+  /// and advances the iterator until hitting `und`.
   Locale? _iteratorNext() {
     final result = _ICU4XLocaleFallbackIterator_next(_ffi);
     return result.address == 0 ? null : Locale._fromFfi(result, []);
