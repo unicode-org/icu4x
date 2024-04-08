@@ -160,7 +160,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = accessors, getter = "current")]
+        #[diplomat::attr(*, disable)]
         pub fn get(&self) -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(self.0.get().clone().into_locale()))
         }
@@ -170,8 +170,20 @@ pub mod ffi {
             icu::locid_transform::fallback::LocaleFallbackIterator::step,
             FnInStruct
         )]
+        #[diplomat::attr(*, disable)]
         pub fn step(&mut self) {
             self.0.step();
+        }
+
+        #[diplomat::attr(supports = iterators, iterator)]
+        pub fn next(&mut self) -> Option<Box<ICU4XLocale>> {
+            let current = self.get();
+            if current.0 == icu_locid::Locale::UND {
+                None
+            } else {
+                self.step();
+                Some(current)
+            }
         }
     }
 }

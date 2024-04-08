@@ -212,7 +212,7 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "9c42faf9d4f6cc8be418f120dc1d7b9a010161f7" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "9c42faf9d4f6cc8be418f120dc1d7b9a010161f7" }
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "9c42faf9d4f6cc8be418f120dc1d7b9a010161f7" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "9c42faf9d4f6cc8be418f120dc1d7b9a010161f7" }
+diplomat-tool = { path = "../diplomat/tool" }
 
 # Size optimized builds
 [profile.release-opt-size]

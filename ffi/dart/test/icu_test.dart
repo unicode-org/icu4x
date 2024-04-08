@@ -16,15 +16,15 @@ void main() {
             priority: LocaleFallbackPriority.region,
             fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
+    expect(iterator.moveNext(), true);
     expect(iterator.current.toString(), 'de-CH-u-ca-japanese');
-    iterator.step();
+    expect(iterator.moveNext(), true);
     expect(iterator.current.toString(), 'de-CH');
-    iterator.step();
+    expect(iterator.moveNext(), true);
     expect(iterator.current.toString(), 'und-CH-u-ca-japanese');
-    iterator.step();
+    expect(iterator.moveNext(), true);
     expect(iterator.current.toString(), 'und-CH');
-    iterator.step();
-    expect(iterator.current.toString(), 'und');
+    expect(iterator.moveNext(), false);
   });
 
   test('Properties', () {
