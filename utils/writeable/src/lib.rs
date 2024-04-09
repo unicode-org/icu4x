@@ -82,8 +82,8 @@ pub use try_writeable::TryWriteable;
 
 #[doc(hidden)]
 pub mod _internal {
-    pub use super::helpers::writeable_to_parts_for_test;
     pub use super::helpers::try_writeable_to_parts_for_test;
+    pub use super::helpers::writeable_to_parts_for_test;
 }
 
 /// A hint to help consumers of `Writeable` pre-allocate bytes before they call
@@ -421,6 +421,8 @@ macro_rules! assert_writeable_eq {
             );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
+        let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
+        assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
     }};
 }
 
@@ -442,5 +444,7 @@ macro_rules! assert_writeable_parts_eq {
             assert!(actual_str.len() <= upper, $($arg)+);
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
+        let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
+        assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
     }};
 }

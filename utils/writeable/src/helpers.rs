@@ -14,8 +14,7 @@ pub(crate) struct TestWriter {
 impl TestWriter {
     pub(crate) fn finish(mut self) -> (String, Vec<(usize, usize, Part)>) {
         // Sort by first open and last closed
-        self
-            .parts
+        self.parts
             .sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
         (self.string, self.parts)
     }
@@ -55,7 +54,9 @@ pub fn writeable_to_parts_for_test<W: Writeable>(
         string: alloc::string::String::new(),
         parts: Vec::new(),
     };
-    writeable.write_to_parts(&mut writer).expect("String writer infallible");
+    writeable
+        .write_to_parts(&mut writer)
+        .expect("String writer infallible");
     writer.finish()
 }
 
@@ -68,7 +69,9 @@ pub fn try_writeable_to_parts_for_test<W: TryWriteable>(
         string: alloc::string::String::new(),
         parts: Vec::new(),
     };
-    let result = writeable.try_write_to_parts(&mut writer).expect("String writer infallible");
+    let result = writeable
+        .try_write_to_parts(&mut writer)
+        .expect("String writer infallible");
     let (actual_str, actual_parts) = writer.finish();
     (actual_str, actual_parts, result.err())
 }
