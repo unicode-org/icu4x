@@ -1,18 +1,16 @@
 import {
     ICU4XDataProvider,
     ICU4XLocale,
-    ICU4XLocaleFallbacker
+    ICU4XLocaleFallbacker,
 } from 'icu4x';
-import * as localeDefault from '../../dist/locales';
 
 export class DataProviderManager {
 
     private dataProvider: ICU4XDataProvider;
-    private fallbacker: ICU4XLocaleFallbacker;
-    private loadedLocales: Set<ICU4XLocale> ;
+    private loadedLocales: Set <ICU4XLocale> ;
 
     private constructor() {
-        this.loadedLocales = new Set <ICU4XLocale> ();
+        this.loadedLocales = new Set < ICU4XLocale > ();
     }
 
     public static async create(): Promise <DataProviderManager> {
@@ -26,14 +24,10 @@ export class DataProviderManager {
         const enFilePath = 'dist/en.postcard';
         let enProvider = await this.createDataProviderFromBlob(enFilePath);
         this.loadedLocales.add(ICU4XLocale.create_from_string("en"));
-
-        const unFilePath = 'dist/und.postcard';
+        const unFilePath = 'dist/en.postcard';
         let unProvider = await this.createDataProviderFromBlob(unFilePath);
-
-        let fallbacker: ICU4XLocaleFallbacker = ICU4XLocaleFallbacker.create(unProvider);
+        let fallbacker = ICU4XLocaleFallbacker.create(unProvider);
         enProvider.enable_locale_fallback_with(fallbacker);
-
-        this.fallbacker = fallbacker;
         this.dataProvider = enProvider;
     }
 
@@ -54,14 +48,15 @@ export class DataProviderManager {
         return blob;
     }
 
+
+
     public async loadLocale(newLocale: string): Promise < ICU4XDataProvider > {
         const icu4xLocale = ICU4XLocale.create_from_string(newLocale);
         const newFilePath = `dist/${newLocale}.postcard`;
         let newProvider = await this.createDataProviderFromBlob(newFilePath);
         await this.dataProvider.fork_by_locale(newProvider);
-        this.dataProvider = newProvider;
-        this.loadedLocales.add(ICU4XLocale.create_from_string(icu4xLocale));
-        return newProvider;
+        this.loadedLocales.add(ICU4XLocale.create_from_string(newLocale));
+        return this.dataProvider;
     }
 
     public async getSegmenterProviderLocale () : Promise <ICU4XDataProvider> {
@@ -87,8 +82,5 @@ export class DataProviderManager {
         return this.dataProvider;
     }
 
-    public getFallbacker(): ICU4XLocaleFallbacker {
-        return this.fallbacker;
-    }
 
 }
