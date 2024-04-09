@@ -69,13 +69,22 @@ extern crate alloc;
 mod cmp;
 #[cfg(feature = "either")]
 mod either;
+mod helpers;
 mod impls;
 mod ops;
+mod try_writeable;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
-use alloc::vec::Vec;
 use core::fmt;
+
+pub use try_writeable::TryWriteable;
+
+#[doc(hidden)]
+pub mod _internal {
+    pub use super::helpers::writeable_to_parts_for_test;
+    pub use super::helpers::try_writeable_to_parts_for_test;
+}
 
 /// A hint to help consumers of `Writeable` pre-allocate bytes before they call
 /// [`write_to`](Writeable::write_to).
@@ -315,8 +324,7 @@ pub trait Writeable {
     /// ```
     fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         let mut wc = cmp::WriteComparator::new(other);
-        #[allow(clippy::unwrap_used)] // infallible impl
-        self.write_to(&mut wc).unwrap();
+        let _ = self.write_to(&mut wc);
         wc.finish().reverse()
     }
 }
@@ -396,7 +404,7 @@ macro_rules! assert_writeable_eq {
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
-        let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        let (actual_str, _) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
@@ -424,7 +432,7 @@ macro_rules! assert_writeable_parts_eq {
     };
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
-        let (actual_str, actual_parts) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)+);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
@@ -435,53 +443,4 @@ macro_rules! assert_writeable_parts_eq {
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
-}
-
-#[doc(hidden)]
-#[allow(clippy::type_complexity)]
-pub fn writeable_to_parts_for_test<W: Writeable>(
-    writeable: &W,
-) -> Result<(String, Vec<(usize, usize, Part)>), fmt::Error> {
-    struct State {
-        string: alloc::string::String,
-        parts: Vec<(usize, usize, Part)>,
-    }
-
-    impl fmt::Write for State {
-        fn write_str(&mut self, s: &str) -> fmt::Result {
-            self.string.write_str(s)
-        }
-        fn write_char(&mut self, c: char) -> fmt::Result {
-            self.string.write_char(c)
-        }
-    }
-
-    impl PartsWrite for State {
-        type SubPartsWrite = Self;
-        fn with_part(
-            &mut self,
-            part: Part,
-            mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
-        ) -> fmt::Result {
-            let start = self.string.len();
-            f(self)?;
-            let end = self.string.len();
-            if start < end {
-                self.parts.push((start, end, part));
-            }
-            Ok(())
-        }
-    }
-
-    let mut state = State {
-        string: alloc::string::String::new(),
-        parts: Vec::new(),
-    };
-    writeable.write_to_parts(&mut state)?;
-
-    // Sort by first open and last closed
-    state
-        .parts
-        .sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
-    Ok((state.string, state.parts))
 }
