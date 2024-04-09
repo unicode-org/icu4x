@@ -46,4 +46,18 @@ void main() {
 
     expect(formatter.format(list), 'España, Francia, Suiza e Italia');
   });
+
+  test('Locale ordering', () {
+    expect(
+        [
+          Locale.fromString('en-GB'),
+          Locale.fromString('de'),
+          Locale.fromString('az'),
+        ]..sort(),
+        [
+          Locale.fromString('az'),
+          Locale.fromString('de'),
+          Locale.fromString('en-GB'),
+        ]);
+  });
 }

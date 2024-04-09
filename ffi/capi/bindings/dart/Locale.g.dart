@@ -239,6 +239,11 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     final result = _ICU4XLocale_total_cmp_(_ffi, other._ffi);
     return result;
   }
+
+  @override
+  bool operator ==(Object other) => other is Locale && compareTo(other) == 0;
+  @override
+  int get hashCode => 42; // Cannot get hash from Rust, so a constant is the only correct impl
 }
 
 @meta.ResourceIdentifier('ICU4XLocale_destroy')
