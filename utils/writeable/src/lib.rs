@@ -71,6 +71,7 @@ mod cmp;
 mod either;
 mod impls;
 mod ops;
+pub mod utf;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
@@ -397,19 +398,21 @@ macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
         let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        let actual_len = actual_str.len();
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
+        let lower = length_hint.0;
         assert!(
-            length_hint.0 <= actual_str.len(),
-            "hint lower bound {} larger than actual length {}: {}",
-            length_hint.0, actual_str.len(), format!($($arg)*),
+            lower <= actual_len,
+            "hint lower bound {lower} larger than actual length {actual_len}: {}",
+            format!($($arg)*),
         );
         if let Some(upper) = length_hint.1 {
             assert!(
-                actual_str.len() <= upper,
-                "hint upper bound {} smaller than actual length {}: {}",
-                length_hint.0, actual_str.len(), format!($($arg)*),
+                actual_len <= upper,
+                "hint upper bound {upper} smaller than actual length {actual_len}: {}",
+                format!($($arg)*),
             );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
@@ -425,13 +428,23 @@ macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
         let (actual_str, actual_parts) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        let actual_len = actual_str.len();
         assert_eq!(actual_str, $expected_str, $($arg)+);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
-        assert!(length_hint.0 <= actual_str.len(), $($arg)+);
+        let lower = length_hint.0;
+        assert!(
+            lower <= actual_len,
+            "hint lower bound {lower} larger than actual length {actual_len}: {}",
+            format!($($arg)*),
+        );
         if let Some(upper) = length_hint.1 {
-            assert!(actual_str.len() <= upper, $($arg)+);
+            assert!(
+                actual_len <= upper,
+                "hint upper bound {upper} smaller than actual length {actual_len}: {}",
+                format!($($arg)*),
+            );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
