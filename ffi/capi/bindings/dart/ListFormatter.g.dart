@@ -64,9 +64,12 @@ final class ListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
   ///
   /// Throws [Error] on failure.
-  String format(List list) {
+  String format(core.List<core.String> list) {
+    final temp = ffi2.Arena();
+    final listView = list.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XListFormatter_format(_ffi, list._ffi, writeable._ffi);
+    final result = _ICU4XListFormatter_format2(_ffi, listView.allocIn(temp), listView.length, writeable._ffi);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -94,7 +97,7 @@ external _ResultOpaqueInt32 _ICU4XListFormatter_create_or_with_length(ffi.Pointe
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XListFormatter_create_unit_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@meta.ResourceIdentifier('ICU4XListFormatter_format')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XListFormatter_format')
+@meta.ResourceIdentifier('ICU4XListFormatter_format2')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<_SliceUtf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XListFormatter_format2')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XListFormatter_format(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> list, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XListFormatter_format2(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<_SliceUtf8> listData, int listLength, ffi.Pointer<ffi.Opaque> writeable);

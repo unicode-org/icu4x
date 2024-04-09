@@ -42,11 +42,7 @@ void main() {
   test('ListFormatter', () {
     final formatter = ListFormatter.andWithLength(
         DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
-    final list = List()
-      ..push('España')
-      ..push('Francia')
-      ..push('Suiza')
-      ..push('Italia');
+    final list = ['España', 'Francia', 'Suiza', 'Italia'];
 
     expect(formatter.format(list), 'España, Francia, Suiza e Italia');
   });

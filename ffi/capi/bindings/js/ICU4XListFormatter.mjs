@@ -86,4 +86,5 @@ export class ICU4XListFormatter {
       })();
     });
   }
+
 }

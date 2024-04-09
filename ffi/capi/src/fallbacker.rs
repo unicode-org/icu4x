@@ -178,6 +178,7 @@ pub mod ffi {
         /// A combination of `get` and `step`. Returns the value that `get` would return
         /// and advances the iterator until hitting `und`.
         #[diplomat::attr(supports = iterators, iterator)]
+        #[diplomat::skip_if_ast]
         pub fn next(&mut self) -> Option<Box<ICU4XLocale>> {
             let current = self.get();
             if current.0 == icu_locid::Locale::UND {

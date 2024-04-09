@@ -44,4 +44,5 @@ export class ICU4XListFormatter {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format(list: ICU4XList): string | never;
+
 }
