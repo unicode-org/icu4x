@@ -37,6 +37,7 @@ serde = { version = "1.0", default-features = false, features = ["alloc"], optio
 # and all 0.7 versions, but not further.
 yoke = { version = ">=0.6.0, <0.8.0", path = "../yoke", optional = true }
 twox-hash = { version = "1.6", default-features = false, optional = true }
+schemars = "0.8.16"
 
 [dev-dependencies]
 bincode = "1.3"

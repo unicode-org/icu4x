@@ -523,6 +523,25 @@ pub use zerovec_derive::make_varule;
 mod tests {
     use super::*;
     use core::mem::size_of;
+    use serde::{Serialize, Deserialize};
+    use schemars::{gen::SchemaGenerator, JsonSchema};
+
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(JsonSchema)]
+    pub struct DataStruct<'data> {
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        nums: ZeroVec<'data, u32>,
+
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        chars: ZeroVec<'data, char>,
+    }
+
+    #[test]
+    fn check_schema(){
+        let gen = SchemaGenerator::default();
+        let schema = gen.into_root_schema_for::<DataStruct>();
+        let schema_json = serde_json::to_string_pretty(&schema).expect("Failed to serialize schema");
+    }
 
     /// Checks that the size of the type is one of the given sizes.
     /// The size might differ across Rust versions or channels.
