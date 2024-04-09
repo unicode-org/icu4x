@@ -9,23 +9,25 @@ use core::fmt;
 /// Implements [`Writeable`] for [`&[u8]`] according to the [WHATWG Encoding Standard](
 /// https://encoding.spec.whatwg.org/#utf-8-decoder).
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct PotentiallyInvalidUtf8<'a>(pub &'a [u8]);
 
 impl Writeable for PotentiallyInvalidUtf8<'_> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let mut remaining = self.0;
-        while remaining.len() > 0 {
+        while !remaining.is_empty() {
             match core::str::from_utf8(remaining) {
                 Ok(str) => {
                     return sink.write_str(str);
                 }
                 Err(e) => {
-                    let (str, r) = remaining.split_at(e.valid_up_to());
+                    let (str, rest) = remaining.split_at(e.valid_up_to());
                     sink.write_str(unsafe { core::str::from_utf8_unchecked(str) })?;
                     sink.write_char(char::REPLACEMENT_CHARACTER)?;
                     match e.error_len() {
                         None => remaining = &[],
-                        Some(l) => remaining = &r[l..],
+                        #[allow(clippy::indexing_slicing)] // l guaranteed to be in rest
+                        Some(l) => remaining = &rest[l..],
                     }
                 }
             }
@@ -45,6 +47,7 @@ impl_display_with_writeable!(PotentiallyInvalidUtf8<'_>);
 /// Implements [`Writeable`] for [`&[u16]`] according to the [WHATWG Encoding Standard](
 /// https://encoding.spec.whatwg.org/#shared-utf-16-decoder).
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct PotentiallyInvalidUtf16<'a>(pub &'a [u16]);
 
 impl Writeable for PotentiallyInvalidUtf16<'_> {
