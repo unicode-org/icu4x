@@ -151,9 +151,24 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::attr(dart, rename = "compare")]
+        #[diplomat::attr(dart, disable)]
         pub fn compare_utf16(&self, left: &DiplomatStr16, right: &DiplomatStr16) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()
+        }
+
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
+        #[diplomat::skip_if_ast]
+        #[diplomat::attr(dart, rename = "compare")]
+        pub fn compare_utf16_(
+            &self,
+            left: &DiplomatStr16,
+            right: &DiplomatStr16,
+        ) -> core::cmp::Ordering {
+            self.0.compare_utf16(left, right)
         }
 
         /// The resolved options showing how the default options, the requested options,

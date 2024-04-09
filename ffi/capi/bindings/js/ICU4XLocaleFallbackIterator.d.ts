@@ -23,5 +23,4 @@ export class ICU4XLocaleFallbackIterator {
    * See the {@link https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.step Rust documentation for `step`} for more information.
    */
   step(): void;
-
 }

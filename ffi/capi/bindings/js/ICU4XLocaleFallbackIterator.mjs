@@ -23,5 +23,4 @@ export class ICU4XLocaleFallbackIterator {
   step() {
     wasm.ICU4XLocaleFallbackIterator_step(this.underlying);
   }
-
 }
