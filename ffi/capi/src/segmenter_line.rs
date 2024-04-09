@@ -69,6 +69,7 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto")]
         pub fn create_auto(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
@@ -83,6 +84,7 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with default options and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm")]
         pub fn create_lstm(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
@@ -97,6 +99,7 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with default options and dictionary payload data for
         /// Burmese, Khmer, Lao, and Thai..
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary")]
         pub fn create_dictionary(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
@@ -111,7 +114,8 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]
-        #[diplomat::attr(dart, rename = "create_auto_with_options")]
+        #[diplomat::attr(dart, rename = "auto_with_options")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_v1")]
         pub fn create_auto_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
@@ -128,7 +132,8 @@ pub mod ffi {
         /// Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm_with_options, FnInStruct)]
-        #[diplomat::attr(dart, rename = "create_lstm_with_options")]
+        #[diplomat::attr(dart, rename = "lstm_with_options")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_v1")]
         pub fn create_lstm_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
@@ -148,7 +153,8 @@ pub mod ffi {
             icu::segmenter::LineSegmenter::new_dictionary_with_options,
             FnInStruct
         )]
-        #[diplomat::attr(dart, rename = "create_dictionary_with_options")]
+        #[diplomat::attr(dart, rename = "dictionary_with_options")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_v1")]
         pub fn create_dictionary_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,

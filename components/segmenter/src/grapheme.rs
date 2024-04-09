@@ -268,3 +268,11 @@ fn empty_string() {
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }
+
+#[test]
+fn emoji_flags() {
+    // https://github.com/unicode-org/icu4x/issues/4780
+    let segmenter = GraphemeClusterSegmenter::new();
+    let breaks: Vec<usize> = segmenter.segment_str("🇺🇸🏴󠁧󠁢󠁥󠁮󠁧󠁿").collect();
+    assert_eq!(breaks, [0, 8, 36]);
+}

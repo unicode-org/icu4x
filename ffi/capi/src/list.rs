@@ -19,12 +19,14 @@ pub mod ffi {
 
     impl ICU4XList {
         /// Create a new list of strings
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create() -> Box<ICU4XList> {
             Box::new(ICU4XList(Vec::new()))
         }
 
         /// Create a new list of strings with preallocated space to hold
         /// at least `capacity` elements
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_capacity")]
         pub fn create_with_capacity(capacity: usize) -> Box<ICU4XList> {
             Box::new(ICU4XList(Vec::with_capacity(capacity)))
         }
@@ -38,12 +40,13 @@ pub mod ffi {
         }
 
         /// The number of elements in this list
-        #[diplomat::attr(dart, rename = "length")]
+        #[diplomat::attr(supports = accessors, getter = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
         }
 
         /// Whether this list is empty
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_empty(&self) -> bool {
             self.0.is_empty()
         }
@@ -63,6 +66,7 @@ pub mod ffi {
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
         pub fn create_and_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -80,6 +84,7 @@ pub mod ffi {
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
         pub fn create_or_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -97,6 +102,7 @@ pub mod ffi {
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
         pub fn create_unit_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

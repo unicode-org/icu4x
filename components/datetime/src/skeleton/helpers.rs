@@ -523,3 +523,20 @@ pub fn get_best_available_format_pattern<'data>(
 
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
 }
+
+impl components::Bag {
+    #[doc(hidden)] // TODO(#4467): Internal
+    #[cfg(feature = "datagen")]
+    pub fn select_pattern<'data>(
+        self,
+        skeletons: &DateSkeletonPatternsV1<'data>,
+        length_patterns: &GenericLengthPatternsV1<'data>,
+        default_hour_cycle: crate::options::preferences::HourCycle,
+    ) -> Option<PatternPlurals<'data>> {
+        let fields = self.to_vec_fields(default_hour_cycle);
+        match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
+            BestSkeleton::AllFieldsMatch(p) => Some(p),
+            _ => None,
+        }
+    }
+}

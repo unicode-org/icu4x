@@ -59,6 +59,12 @@ final class WeekCalculator implements ffi.Finalizable {
     final result = _ICU4XWeekCalculator_min_week_days(_ffi);
     return result;
   }
+
+  /// See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+  WeekendContainsDay get weekend {
+    final result = _ICU4XWeekCalculator_weekend(_ffi);
+    return WeekendContainsDay._fromFfi(result);
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XWeekCalculator_destroy')
@@ -85,3 +91,8 @@ external int _ICU4XWeekCalculator_first_weekday(ffi.Pointer<ffi.Opaque> self);
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_min_week_days')
 // ignore: non_constant_identifier_names
 external int _ICU4XWeekCalculator_min_week_days(ffi.Pointer<ffi.Opaque> self);
+
+@meta.ResourceIdentifier('ICU4XWeekCalculator_weekend')
+@ffi.Native<_WeekendContainsDayFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_weekend')
+// ignore: non_constant_identifier_names
+external _WeekendContainsDayFfi _ICU4XWeekCalculator_weekend(ffi.Pointer<ffi.Opaque> self);

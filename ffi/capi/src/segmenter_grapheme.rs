@@ -48,6 +48,7 @@ pub mod ffi {
     impl ICU4XGraphemeClusterSegmenter {
         /// Construct an [`ICU4XGraphemeClusterSegmenter`].
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError> {

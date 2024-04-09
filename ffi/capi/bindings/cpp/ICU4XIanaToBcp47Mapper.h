@@ -16,12 +16,15 @@ typedef struct ICU4XIanaToBcp47Mapper ICU4XIanaToBcp47Mapper;
 #endif
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XIanaToBcp47Mapper_ICU4XError.h"
+#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
 diplomat_result_box_ICU4XIanaToBcp47Mapper_ICU4XError ICU4XIanaToBcp47Mapper_create(const ICU4XDataProvider* provider);
+
+diplomat_result_void_ICU4XError ICU4XIanaToBcp47Mapper_get(const ICU4XIanaToBcp47Mapper* self, const char* value_data, size_t value_len, DiplomatWriteable* write);
 void ICU4XIanaToBcp47Mapper_destroy(ICU4XIanaToBcp47Mapper* self);
 
 #ifdef __cplusplus

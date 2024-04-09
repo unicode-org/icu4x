@@ -81,6 +81,7 @@ pub mod ffi {
     impl ICU4XLocaleFallbacker {
         /// Creates a new `ICU4XLocaleFallbacker` from a data provider.
         #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleFallbacker>, ICU4XError> {
@@ -97,6 +98,7 @@ pub mod ffi {
             icu::locid_transform::fallback::LocaleFallbacker::new_without_data,
             FnInStruct
         )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "without_data")]
         pub fn create_without_data() -> Box<ICU4XLocaleFallbacker> {
             Box::new(ICU4XLocaleFallbacker(LocaleFallbacker::new_without_data()))
         }
@@ -158,6 +160,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(*, disable)]
         pub fn get(&self) -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(self.0.get().clone().into_locale()))
         }
@@ -167,8 +170,22 @@ pub mod ffi {
             icu::locid_transform::fallback::LocaleFallbackIterator::step,
             FnInStruct
         )]
+        #[diplomat::attr(*, disable)]
         pub fn step(&mut self) {
             self.0.step();
+        }
+
+        /// A combination of `get` and `step`. Returns the value that `get` would return
+        /// and advances the iterator until hitting `und`.
+        #[diplomat::attr(supports = iterators, iterator)]
+        pub fn next(&mut self) -> Option<Box<ICU4XLocale>> {
+            let current = self.get();
+            if current.0 == icu_locid::Locale::UND {
+                None
+            } else {
+                self.step();
+                Some(current)
+            }
         }
     }
 }

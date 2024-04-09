@@ -4,8 +4,6 @@
 
 //! Parsing of Time Values
 
-use alloc::vec::Vec;
-
 use crate::{
     assert_syntax,
     parsers::{
@@ -13,7 +11,7 @@ use crate::{
             is_annotation_open, is_decimal_separator, is_sign, is_time_designator,
             is_time_separator, is_utc_designator,
         },
-        records::TimeRecord,
+        records::{Annotation, TimeRecord},
         timezone::parse_date_time_utc,
         Cursor,
     },
@@ -26,6 +24,7 @@ use super::{annotations, records::IxdtfParseRecord};
 /// value does not align
 pub(crate) fn parse_annotated_time_record<'a>(
     cursor: &mut Cursor<'a>,
+    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
 ) -> ParserResult<IxdtfParseRecord<'a>> {
     let designator = cursor.check_or(false, is_time_designator);
     cursor.advance_if(designator);
@@ -51,11 +50,10 @@ pub(crate) fn parse_annotated_time_record<'a>(
             offset,
             tz: None,
             calendar: None,
-            annotations: Vec::default(),
         });
     }
 
-    let annotations = annotations::parse_annotation_set(cursor)?;
+    let annotations = annotations::parse_annotation_set(cursor, handler)?;
 
     cursor.close()?;
 
@@ -65,7 +63,6 @@ pub(crate) fn parse_annotated_time_record<'a>(
         offset,
         tz: annotations.tz,
         calendar: annotations.calendar,
-        annotations: annotations.annotations,
     })
 }
 

@@ -33,6 +33,7 @@ pub mod ffi {
     impl ICU4XBidi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XError> {
             Ok(Box::new(ICU4XBidi(call_constructor_unstable!(
                 maps::bidi_class [m => Ok(m.static_to_owned())],
@@ -119,17 +120,19 @@ pub mod ffi {
 
     impl ICU4XReorderedIndexMap {
         /// Get this as a slice/array of indices
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn as_slice<'a>(&'a self) -> &'a [usize] {
             &self.0
         }
 
         /// The length of this map
-        #[diplomat::attr(dart, rename = "length")]
+        #[diplomat::attr(supports = accessors, getter = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
         }
 
         /// Whether this map is empty
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_empty(&self) -> bool {
             self.0.is_empty()
         }
@@ -137,6 +140,7 @@ pub mod ffi {
         /// Get element at `index`. Returns 0 when out of bounds
         /// (note that 0 is also a valid in-bounds value, please use `len()`
         /// to avoid out-of-bounds)
+        #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, index: usize) -> usize {
             self.0.get(index).copied().unwrap_or(0)
         }
@@ -149,6 +153,7 @@ pub mod ffi {
 
     impl<'text> ICU4XBidiInfo<'text> {
         /// The number of paragraphs contained here
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn paragraph_count(&self) -> usize {
             self.0.paragraphs.len()
         }
@@ -162,6 +167,7 @@ pub mod ffi {
         }
 
         /// The number of bytes in this full text
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn size(&self) -> usize {
             self.0.levels.len()
         }
@@ -201,6 +207,7 @@ pub mod ffi {
             Ok(())
         }
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         /// The primary direction of this paragraph
         pub fn direction(&self) -> ICU4XBidiDirection {
             self.0.direction().into()
@@ -208,16 +215,19 @@ pub mod ffi {
 
         /// The number of bytes in this paragraph
         #[diplomat::rust_link(unicode_bidi::ParagraphInfo::len, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn size(&self) -> usize {
             self.0.para.len()
         }
 
         /// The start index of this paragraph within the source text
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn range_start(&self) -> usize {
             self.0.para.range.start
         }
 
         /// The end index of this paragraph within the source text
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn range_end(&self) -> usize {
             self.0.para.range.end
         }
