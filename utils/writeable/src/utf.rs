@@ -15,25 +15,25 @@ pub struct PotentiallyInvalidUtf8<'a>(pub &'a [u8]);
 impl Writeable for PotentiallyInvalidUtf8<'_> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let mut remaining = self.0;
-        while !remaining.is_empty() {
+        loop {
             match core::str::from_utf8(remaining) {
-                Ok(str) => {
-                    return sink.write_str(str);
+                Ok(valid) => {
+                    return sink.write_str(valid);
                 }
                 Err(e) => {
-                    let (str, rest) = remaining.split_at(e.valid_up_to());
-                    sink.write_str(unsafe { core::str::from_utf8_unchecked(str) })?;
+                    // SAFETY: valid by construction
+                    let valid = unsafe {
+                        core::str::from_utf8_unchecked(remaining.get_unchecked(..e.valid_up_to()))
+                    };
+                    sink.write_str(valid)?;
                     sink.write_char(char::REPLACEMENT_CHARACTER)?;
-                    match e.error_len() {
-                        None => remaining = &[],
-                        #[allow(clippy::indexing_slicing)] // l guaranteed to be in rest
-                        Some(l) => remaining = &rest[l..],
-                    }
+                    let Some(error_len) = e.error_len() else {
+                        return Ok(()); // end of string
+                    };
+                    remaining = unsafe { remaining.get_unchecked(e.valid_up_to() + error_len..) }
                 }
             }
         }
-
-        Ok(())
     }
 
     fn writeable_length_hint(&self) -> crate::LengthHint {
