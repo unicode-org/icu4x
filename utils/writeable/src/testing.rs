@@ -61,7 +61,6 @@ pub fn writeable_to_parts_for_test<W: Writeable>(
     writer.finish()
 }
 
-#[doc(hidden)]
 #[allow(clippy::type_complexity)]
 pub fn try_writeable_to_parts_for_test<W: TryWriteable>(
     writeable: &W,

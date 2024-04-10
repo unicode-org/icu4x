@@ -184,10 +184,10 @@ pub trait TryWriteable {
             return Ok(Cow::Borrowed(""));
         }
         let mut output = String::with_capacity(hint.capacity());
-        let result = self
+        self
             .try_write_to(&mut output)
-            .unwrap_or_else(|fmt::Error| Ok(()));
-        result.map(|_| Cow::Owned(output))
+            .unwrap_or_else(|fmt::Error| Ok(()))
+            .map(|()| Cow::Owned(output))
     }
 
     /// Compares the content of this writeable to a byte slice.
@@ -286,7 +286,7 @@ where
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         match self {
             Ok(t) => t.write_to(sink).map(Ok),
-            Err(e) => e.write_to(sink).map(|_| Err(e.clone())),
+            Err(e) => e.write_to(sink).map(|()| Err(e.clone())),
         }
     }
 
