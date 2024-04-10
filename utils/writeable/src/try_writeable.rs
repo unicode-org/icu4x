@@ -298,7 +298,7 @@ where
             Ok(t) => t.write_to_parts(sink).map(Ok),
             Err(e) => sink
                 .with_part(Part::ERROR, |sink| e.write_to_parts(sink))
-                .map(|_| Err(e.clone())),
+                .map(|()| Err(e.clone())),
         }
     }
 
