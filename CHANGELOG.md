@@ -49,6 +49,8 @@
         - Add `impl Bake for PhantomData<T>` (https://github.com/unicode-org/icu4x/pull/4663)
     - `litemap`
         - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
+    - `writeable`
+        - Add `PotentiallyInvalidUtf8`, `PotentiallyInvalidUtf16` implementations (https://github.com/unicode-org/icu4x/pull/4786)
     - `yoke`
         - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
         - Added `CartableOptionPointer` and function to convert from `Yoke<Y, Option<C>>` (https://github.com/unicode-org/icu4x/pull/4449)\
