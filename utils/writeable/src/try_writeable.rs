@@ -184,7 +184,9 @@ pub trait TryWriteable {
             return Ok(Cow::Borrowed(""));
         }
         let mut output = String::with_capacity(hint.capacity());
-        let result = self.try_write_to(&mut output).unwrap_or_else(|core::fmt::Error| Ok(()));
+        let result = self
+            .try_write_to(&mut output)
+            .unwrap_or_else(|fmt::Error| Ok(()));
         result.map(|_| Cow::Owned(output))
     }
 
@@ -263,13 +265,9 @@ pub trait TryWriteable {
     /// ```
     fn write_cmp_bytes(&self, other: &[u8]) -> Ordering {
         let mut wc = cmp::WriteComparator::new(other);
-        let _ = match self.try_write_to(&mut wc) {
-            Ok(result) => result,
-            Err(core::fmt::Error) => {
-                debug_assert!(false, "WriteComparator infallible");
-                Ok(())
-            }
-        };
+        let _ = self
+            .try_write_to(&mut wc)
+            .unwrap_or_else(|fmt::Error| Ok(()));
         wc.finish().reverse()
     }
 }
