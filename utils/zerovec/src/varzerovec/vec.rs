@@ -9,12 +9,12 @@ use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
-use schemars::gen::SchemaGenerator;
-use schemars::schema::{ArrayValidation, InstanceType, Schema, SchemaObject};
-use schemars::JsonSchema;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::ops::Deref;
+use schemars::gen::SchemaGenerator;
+use schemars::schema::{ArrayValidation, InstanceType, Schema, SchemaObject};
+use schemars::JsonSchema;
 
 use super::*;
 
@@ -239,7 +239,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Deref for VarZeroVec<'_, T, F> {
     }
 }
 
-impl<'a, T, F> JsonSchema for VarZeroVec<'a, T, F> 
+impl<'a, T, F> JsonSchema for VarZeroVec<'a, T, F>
 where
     T: VarULE + ?Sized + JsonSchema,
     F: VarZeroVecFormat,
@@ -256,13 +256,14 @@ where
         let items_schema = gen.subschema_for::<T>();
 
         SchemaObject {
-            instance_type: Some(InstanceType::Array.into()), 
+            instance_type: Some(InstanceType::Array.into()),
             array: Some(Box::new(ArrayValidation {
                 items: Some(items_schema.into()),
                 ..Default::default()
             })),
             ..Default::default()
-        }.into()
+        }
+        .into()
     }
 }
 

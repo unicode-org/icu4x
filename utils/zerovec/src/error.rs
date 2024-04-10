@@ -5,6 +5,16 @@
 use core::any;
 use core::fmt;
 
+use crate::__zerovec_internal_reexport::boxed::Box;
+use alloc::format;
+use alloc::string::String;
+use schemars::gen::SchemaGenerator;
+
+use schemars::schema::InstanceType;
+use schemars::schema::Schema;
+use schemars::schema::SchemaObject;
+use schemars::JsonSchema;
+
 /// A generic error type to be used for decoding slices of ULE types
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
@@ -31,6 +41,24 @@ impl fmt::Display for ZeroVecError {
                 write!(f, "Invalid format for VarZeroVec buffer")
             }
         }
+    }
+}
+impl JsonSchema for ZeroVecError {
+    fn schema_name() -> String {
+        format!("ZeroVecError")
+    }
+
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
+        Schema::Object(SchemaObject {
+            instance_type: Some(InstanceType::String.into()),
+            metadata: Some(Box::new(schemars::schema::Metadata {
+                description: Some(
+                    "Represents variants: InvalidLength, ParseError, VarZeroVecFormatError.".into(),
+                ),
+                ..Default::default()
+            })),
+            ..Default::default()
+        })
     }
 }
 

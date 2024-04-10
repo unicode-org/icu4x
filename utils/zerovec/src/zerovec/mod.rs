@@ -17,9 +17,9 @@ pub use slice::ZeroSlice;
 use crate::ule::*;
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
+use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
-use alloc::format;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::iter::FromIterator;
@@ -28,7 +28,7 @@ use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
 use core::ptr::{self, NonNull};
-use schemars::{JsonSchema, schema::SchemaObject};
+use schemars::{schema::SchemaObject, JsonSchema};
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -120,11 +120,10 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     }
 }
 
-impl<'a, T> JsonSchema for ZeroVec<'a, T> 
+impl<'a, T> JsonSchema for ZeroVec<'a, T>
 where
     T: AsULE + JsonSchema,
 {
-
     fn schema_name() -> String {
         format!("ZeroVec<{}>", T::schema_name())
     }
@@ -261,8 +260,6 @@ where
         self.iter().eq(other.iter().copied())
     }
 }
-
-
 
 impl<T, const N: usize> PartialEq<[T; N]> for ZeroVec<'_, T>
 where
