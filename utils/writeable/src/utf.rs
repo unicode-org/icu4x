@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
+
 use crate::{impl_display_with_writeable, LengthHint, Writeable};
 
 use core::fmt;
@@ -21,7 +23,7 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
                     return sink.write_str(valid);
                 }
                 Err(e) => {
-                    // SAFETY: valid by construction
+                    // SAFETY: By Utf8Error invariants
                     let valid = unsafe {
                         core::str::from_utf8_unchecked(remaining.get_unchecked(..e.valid_up_to()))
                     };
@@ -30,6 +32,7 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
                     let Some(error_len) = e.error_len() else {
                         return Ok(()); // end of string
                     };
+                    // SAFETY: By Utf8Error invariants
                     remaining = unsafe { remaining.get_unchecked(e.valid_up_to() + error_len..) }
                 }
             }
@@ -37,8 +40,37 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
     }
 
     fn writeable_length_hint(&self) -> crate::LengthHint {
-        // Lower bound is all ASCII, upper bound is all replacement character
+        // Lower bound is all valid UTF-8, upper bound is all bytes with the high bit, which become replacement characters.
         LengthHint::between(self.0.len(), self.0.len() * 3)
+    }
+
+    fn write_to_string(&self) -> Cow<str> {
+        match core::str::from_utf8(self.0) {
+            Ok(valid) => Cow::Borrowed(valid),
+            Err(e) => {
+                // SAFETY: By Utf8Error invariants
+                let valid = unsafe {
+                    core::str::from_utf8_unchecked(self.0.get_unchecked(..e.valid_up_to()))
+                };
+
+                // Let's assume this is the only error
+                let mut out = alloc::string::String::with_capacity(
+                    self.0.len() + 3 - e.error_len().unwrap_or(0),
+                );
+
+                out.push_str(valid);
+                out.push_str(char::REPLACEMENT_CHARACTER.encode_utf8(&mut [0; 3]));
+
+                // If there's more, we can use `write_to`
+                if let Some(error_len) = e.error_len() {
+                    // SAFETY: By Utf8Error invariants
+                    let _infallible =
+                        Self(unsafe { self.0.get_unchecked(e.valid_up_to() + error_len..) })
+                            .write_to(&mut out);
+                }
+                out.into()
+            }
+        }
     }
 }
 
@@ -79,6 +111,7 @@ mod test {
     fn test_utf8() {
         assert_writeable_eq!(PotentiallyInvalidUtf8(b"Foo Bar"), "Foo Bar");
         assert_writeable_eq!(PotentiallyInvalidUtf8(b"Foo\xFDBar"), "Foo�Bar");
+        assert_writeable_eq!(PotentiallyInvalidUtf8(b"Foo\xFDBar\xff"), "Foo�Bar�");
     }
 
     #[test]
