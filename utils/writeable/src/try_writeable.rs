@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::parts_write_adapter::CoreWriteAsPartsWrite;
 use core::cmp::Ordering;
 
 /// A writeable object that can fail while writing.
@@ -150,7 +151,7 @@ pub trait TryWriteable {
         &self,
         sink: &mut W,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        self.try_write_to_parts(&mut helpers::CoreWriteAsPartsWrite(sink))
+        self.try_write_to_parts(&mut CoreWriteAsPartsWrite(sink))
     }
 
     /// Writes the content of this writeable to a sink with parts (annotations).

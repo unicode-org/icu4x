@@ -69,9 +69,10 @@ extern crate alloc;
 mod cmp;
 #[cfg(feature = "either")]
 mod either;
-mod helpers;
 mod impls;
 mod ops;
+mod parts_write_adapter;
+mod testing;
 mod try_writeable;
 
 use alloc::borrow::Cow;
@@ -82,8 +83,8 @@ pub use try_writeable::TryWriteable;
 
 #[doc(hidden)]
 pub mod _internal {
-    pub use super::helpers::try_writeable_to_parts_for_test;
-    pub use super::helpers::writeable_to_parts_for_test;
+    pub use super::testing::try_writeable_to_parts_for_test;
+    pub use super::testing::writeable_to_parts_for_test;
 }
 
 /// A hint to help consumers of `Writeable` pre-allocate bytes before they call
@@ -204,7 +205,7 @@ pub trait Writeable {
     /// The default implementation delegates to `write_to_parts`, and discards any
     /// `Part` annotations.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        self.write_to_parts(&mut helpers::CoreWriteAsPartsWrite(sink))
+        self.write_to_parts(&mut parts_write_adapter::CoreWriteAsPartsWrite(sink))
     }
 
     /// Write bytes and `Part` annotations to the given sink. Errors from the
