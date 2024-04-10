@@ -158,11 +158,7 @@ pub mod ffi {
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
-                .format(
-                    list.iter()
-                        .copied()
-                        .map(crate::utf::PotentiallyInvalidUtf8),
-                )
+                .format(list.iter().copied().map(crate::utf::PotentiallyInvalidUtf8))
                 .write_to(write)?;
             Ok(())
         }
