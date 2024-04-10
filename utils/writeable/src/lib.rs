@@ -177,6 +177,22 @@ pub struct Part {
     pub value: &'static str,
 }
 
+impl Part {
+    /// A part that should annotate error segments in [`TryWriteable`] output.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use writeable::TryWriteable;
+    ///
+    /// let try_writeable =
+    /// ```
+    pub const ERROR: Part = Part {
+        category: "writeable",
+        value: "error",
+    };
+}
+
 /// A sink that supports annotating parts of the string with `Part`s.
 pub trait PartsWrite: fmt::Write {
     type SubPartsWrite: PartsWrite + ?Sized;
@@ -194,30 +210,7 @@ pub trait Writeable {
     /// The default implementation delegates to `write_to_parts`, and discards any
     /// `Part` annotations.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        struct CoreWriteAsPartsWrite<W: fmt::Write + ?Sized>(W);
-        impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<W> {
-            fn write_str(&mut self, s: &str) -> fmt::Result {
-                self.0.write_str(s)
-            }
-
-            fn write_char(&mut self, c: char) -> fmt::Result {
-                self.0.write_char(c)
-            }
-        }
-
-        impl<W: fmt::Write + ?Sized> PartsWrite for CoreWriteAsPartsWrite<W> {
-            type SubPartsWrite = CoreWriteAsPartsWrite<W>;
-
-            fn with_part(
-                &mut self,
-                _part: Part,
-                mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
-            ) -> fmt::Result {
-                f(self)
-            }
-        }
-
-        self.write_to_parts(&mut CoreWriteAsPartsWrite(sink))
+        self.write_to_parts(&mut helpers::CoreWriteAsPartsWrite(sink))
     }
 
     /// Write bytes and `Part` annotations to the given sink. Errors from the
