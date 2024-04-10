@@ -399,78 +399,79 @@ fn main() -> eyre::Result<()> {
         eyre::bail!("--keys or --keys-for-bin are required.")
     });
 
-    enum LanguageIdentifiersOrLocaleFamilies {
+    enum PreprocessedLocales {
         LanguageIdentifiers(Vec<LanguageIdentifier>),
-        LocaleFamilies(Vec<LocaleFamily>),
-        AllLocales,
+        All,
     }
-    use LanguageIdentifiersOrLocaleFamilies::*;
 
-    let locales_intermediate: LanguageIdentifiersOrLocaleFamilies =
-        if cli.locales.as_slice() == ["none"] {
-            LanguageIdentifiers(vec![])
-        } else if cli.locales.as_slice() == ["recommended"] {
-            LanguageIdentifiers(
-                provider
-                    .locales_for_coverage_levels([
-                        CoverageLevel::Modern,
-                        CoverageLevel::Moderate,
-                        CoverageLevel::Basic,
-                    ])?
-                    .into_iter()
-                    .collect(),
-            )
-        } else if cli.locales.as_slice() == ["full"] || cli.all_locales {
-            AllLocales
-        } else if let Some(locale_subsets) = cli
-            .locales
-            .iter()
-            .map(|s| match &**s {
-                "basic" => Some(CoverageLevel::Basic),
-                "moderate" => Some(CoverageLevel::Moderate),
-                "modern" => Some(CoverageLevel::Modern),
-                _ => None,
-            })
-            .collect::<Option<Vec<_>>>()
-        {
-            LanguageIdentifiers(
-                provider
-                    .locales_for_coverage_levels(locale_subsets.into_iter())?
-                    .into_iter()
-                    .collect(),
-            )
-        } else {
-            if cli.locales.as_slice() == ["all"] {
-                log::warn!(
+    let preprocessed_locales = if cli.locales.as_slice() == ["none"] {
+        Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
+    } else if cli.locales.as_slice() == ["recommended"] {
+        Some(PreprocessedLocales::LanguageIdentifiers(
+            provider
+                .locales_for_coverage_levels([
+                    CoverageLevel::Modern,
+                    CoverageLevel::Moderate,
+                    CoverageLevel::Basic,
+                ])?
+                .into_iter()
+                .collect(),
+        ))
+    } else if cli.locales.as_slice() == ["full"] || cli.all_locales {
+        Some(PreprocessedLocales::All)
+    } else if let Some(locale_subsets) = cli
+        .locales
+        .iter()
+        .map(|s| match &**s {
+            "basic" => Some(CoverageLevel::Basic),
+            "moderate" => Some(CoverageLevel::Moderate),
+            "modern" => Some(CoverageLevel::Modern),
+            _ => None,
+        })
+        .collect::<Option<Vec<_>>>()
+    {
+        Some(PreprocessedLocales::LanguageIdentifiers(
+            provider
+                .locales_for_coverage_levels(locale_subsets.into_iter())?
+                .into_iter()
+                .collect(),
+        ))
+    } else {
+        if cli.locales.as_slice() == ["all"] {
+            log::warn!(
                 "`--locales all` selects the Allar language. Use `--locales full` for all locales"
             );
-            }
-            LocaleFamilies(
-                cli.locales
-                    .iter()
-                    .map(|s| s.parse::<LocaleFamily>().with_context(|| s.to_string()))
-                    .collect::<Result<_, eyre::Error>>()?,
-            )
-        };
+        }
+        None
+    };
 
     if cli.without_fallback || matches!(cli.fallback, Fallback::Preresolved) {
-        let locale_families = match locales_intermediate {
-            AllLocales => eyre::bail!("--without-fallback needs an explicit locale list"),
-            LanguageIdentifiers(lids) => lids,
-            LocaleFamilies(lfs) => lfs
-                .into_iter()
-                .map(|family| family.write_to_string().parse().wrap_err(family))
-                .collect::<eyre::Result<Vec<LanguageIdentifier>>>()?,
-        };
-        driver = driver.with_locales_no_fallback(locale_families, Default::default());
+        driver = driver.with_locales_no_fallback(
+            match preprocessed_locales {
+                Some(PreprocessedLocales::All) => {
+                    eyre::bail!("--without-fallback needs an explicit locale list")
+                }
+                Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids,
+                None => cli
+                    .locales
+                    .into_iter()
+                    .map(|family| family.parse().wrap_err(family))
+                    .collect::<eyre::Result<Vec<_>>>()?,
+            },
+            Default::default(),
+        );
     } else {
-        let locale_families = match locales_intermediate {
-            AllLocales => vec![LocaleFamily::full()],
-            LanguageIdentifiers(lids) => lids
+        let locale_families = match preprocessed_locales {
+            Some(PreprocessedLocales::All) => vec![LocaleFamily::full()],
+            Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
                 .into_iter()
                 .map(LocaleFamily::with_descendants)
                 .collect(),
-            LocaleFamilies(lfs) => lfs,
+            None => cli
+                .locales
+                .into_iter()
+                .map(|family| family.parse().wrap_err(family))
+                .collect::<eyre::Result<Vec<_>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
         options.deduplication_strategy = match (
