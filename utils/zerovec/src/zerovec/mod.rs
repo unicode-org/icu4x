@@ -18,8 +18,8 @@ use crate::ule::*;
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::String;
-use core::fmt::Write;
 use alloc::vec::Vec;
+use alloc::format;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::iter::FromIterator;
@@ -126,16 +126,11 @@ where
 {
 
     fn schema_name() -> String {
-        let mut name = String::from("ZeroVec<");
-        let type_name = T::schema_name();
-        write!(name, "{}", type_name).expect("Failed to write to string");
-        name.push('>');
-
-        name
+        format!("ZeroVec<{}>", T::schema_name())
     }
 
     fn schema_id() -> Cow<'static, str> {
-        Cow::Borrowed("zerovec::ZeroVec")
+        Cow::Owned(format!("zerovec::ZeroVec<{}>", T::schema_id()))
     }
 
     fn json_schema(gen: &mut SchemaGenerator) -> Schema {
