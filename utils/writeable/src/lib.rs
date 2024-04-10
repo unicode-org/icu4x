@@ -71,7 +71,6 @@ mod cmp;
 mod either;
 mod impls;
 mod ops;
-pub mod utf;
 
 use alloc::borrow::Cow;
 use alloc::string::String;

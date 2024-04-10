@@ -161,7 +161,7 @@ pub mod ffi {
                 .format(
                     list.iter()
                         .copied()
-                        .map(writeable::utf::PotentiallyInvalidUtf8),
+                        .map(crate::utf::PotentiallyInvalidUtf8),
                 )
                 .write_to(write)?;
             Ok(())
@@ -181,7 +181,7 @@ pub mod ffi {
                 .format(
                     list.iter()
                         .copied()
-                        .map(writeable::utf::PotentiallyInvalidUtf16),
+                        .map(crate::utf::PotentiallyInvalidUtf16),
                 )
                 .write_to(write)?;
             Ok(())

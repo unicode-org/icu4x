@@ -4,7 +4,7 @@
 
 use alloc::borrow::Cow;
 
-use crate::{impl_display_with_writeable, LengthHint, Writeable};
+use writeable::{impl_display_with_writeable, LengthHint, Writeable};
 
 use core::fmt;
 
@@ -39,7 +39,7 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
         }
     }
 
-    fn writeable_length_hint(&self) -> crate::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         // Lower bound is all valid UTF-8, upper bound is all bytes with the high bit, which become replacement characters.
         LengthHint::between(self.0.len(), self.0.len() * 3)
     }
@@ -108,7 +108,7 @@ impl_display_with_writeable!(PotentiallyInvalidUtf16<'_>);
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::assert_writeable_eq;
+    use writeable::assert_writeable_eq;
 
     #[test]
     fn test_utf8() {
