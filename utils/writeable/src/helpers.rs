@@ -54,6 +54,7 @@ pub fn writeable_to_parts_for_test<W: Writeable>(
         string: alloc::string::String::new(),
         parts: Vec::new(),
     };
+    #[allow(clippy::expect_used)] // for test code
     writeable
         .write_to_parts(&mut writer)
         .expect("String writer infallible");
@@ -69,6 +70,7 @@ pub fn try_writeable_to_parts_for_test<W: TryWriteable>(
         string: alloc::string::String::new(),
         parts: Vec::new(),
     };
+    #[allow(clippy::expect_used)] // for test code
     let result = writeable
         .try_write_to_parts(&mut writer)
         .expect("String writer infallible");
