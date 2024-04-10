@@ -60,8 +60,7 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
                 );
 
                 out.push_str(valid);
-                #[allow(clippy::single_char_add_str)] // this is more performant
-                out.push_str("�");
+                out.push('�');
 
                 // If there's more, we can use `write_to`
                 if let Some(error_len) = e.error_len() {
