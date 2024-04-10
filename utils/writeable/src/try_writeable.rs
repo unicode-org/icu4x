@@ -183,13 +183,7 @@ pub trait TryWriteable {
             return Ok(Cow::Borrowed(""));
         }
         let mut output = String::with_capacity(hint.capacity());
-        let result = match self.try_write_to(&mut output) {
-            Ok(result) => result,
-            Err(core::fmt::Error) => {
-                debug_assert!(false, "String infallible");
-                Ok(())
-            }
-        };
+        let result = self.try_write_to(&mut output).unwrap_or_else(|core::fmt::Error| Ok(()));
         result.map(|_| Cow::Owned(output))
     }
 
