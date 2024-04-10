@@ -37,8 +37,8 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
     }
 
     fn writeable_length_hint(&self) -> crate::LengthHint {
-        // In the worst case, every byte becomes a replacement character
-        LengthHint::at_most(self.0.len() * 3)
+        // Lower bound is all ASCII, upper bound is all replacement character
+        LengthHint::between(self.0.len(), self.0.len() * 3)
     }
 }
 
@@ -63,7 +63,8 @@ impl Writeable for PotentiallyInvalidUtf16<'_> {
     }
 
     fn writeable_length_hint(&self) -> LengthHint {
-        LengthHint::undefined() // todo
+        // Lower bound is all ASCII, upper bound is all 3-byte code points (including replacement character)
+        LengthHint::between(self.0.len(), self.0.len() * 3)
     }
 }
 
