@@ -89,13 +89,13 @@ fn main() -> eyre::Result<()> {
         config::KeyInclude::Explicit(set) => driver.with_keys(set),
         config::KeyInclude::ForBinary(path) => driver.with_keys(icu_datagen::keys_from_bin(path)?),
     };
-    enum LanguageIdentifiersOrLocaleFamilies<'a> {
+    enum LanguageIdentifiersOrStrings<'a> {
         LanguageIdentifiers(Vec<LanguageIdentifier>),
         Strings(HashSet<&'a str>),
         AllLocales,
     }
-    use LanguageIdentifiersOrLocaleFamilies::*;
-    let locales_intermediate: LanguageIdentifiersOrLocaleFamilies = match config.locales {
+    use LanguageIdentifiersOrStrings::*;
+    let locales_intermediate: LanguageIdentifiersOrStrings = match config.locales {
         config::LocaleInclude::All => AllLocales,
         config::LocaleInclude::None => LanguageIdentifiers(vec![]),
         config::LocaleInclude::Explicit(set) => Strings(set),
