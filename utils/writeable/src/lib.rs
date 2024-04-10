@@ -403,7 +403,7 @@ macro_rules! assert_writeable_eq {
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
-        let (actual_str, _) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
+        let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
@@ -422,6 +422,7 @@ macro_rules! assert_writeable_eq {
         assert_eq!(actual_writeable.to_string(), $expected_str);
         let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
+        actual_parts // return for assert_writeable_parts_eq
     }};
 }
 
@@ -432,18 +433,7 @@ macro_rules! assert_writeable_parts_eq {
         $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
-        let actual_writeable = &$actual_writeable;
-        let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
-        assert_eq!(actual_str, $expected_str, $($arg)+);
-        assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
+        let actual_parts = $crate::assert_writeable_eq!($actual_writeable, $expected_str, $($arg)*);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
-        let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
-        assert!(length_hint.0 <= actual_str.len(), $($arg)+);
-        if let Some(upper) = length_hint.1 {
-            assert!(actual_str.len() <= upper, $($arg)+);
-        }
-        assert_eq!(actual_writeable.to_string(), $expected_str);
-        let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
-        assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
     }};
 }
