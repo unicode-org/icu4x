@@ -184,8 +184,7 @@ pub trait TryWriteable {
             return Ok(Cow::Borrowed(""));
         }
         let mut output = String::with_capacity(hint.capacity());
-        self
-            .try_write_to(&mut output)
+        self.try_write_to(&mut output)
             .unwrap_or_else(|fmt::Error| Ok(()))
             .map(|()| Cow::Owned(output))
     }
