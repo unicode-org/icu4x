@@ -5137,7 +5137,7 @@ propnames/from/gc@1, und, 747B, 2f7ece7581036df2
 propnames/from/gcm@1, und, 907B, 43b812154d2d3914
 propnames/from/jt@1, und, 131B, b45c742d4b17ceb
 propnames/from/lb@1, und, 963B, bb6e2daf75e2057f
-propnames/from/sc@1, und, 3632B, 536093cd88973193
+propnames/from/sc@1, und, 3640B, d1ed7fca398b05b8
 propnames/to/long/linear/GCB@1, und, 151B, 9feae38a09898348
 propnames/to/long/linear/InSC@1, und, 585B, 36e854e09df6ac36
 propnames/to/long/linear/SB@1, und, 109B, 1bddbfc00ea789cb
@@ -5147,7 +5147,7 @@ propnames/to/long/linear/ea@1, und, 61B, b4df37d762a5c879
 propnames/to/long/linear/gc@1, und, 488B, 4786f3c0d2d639d
 propnames/to/long/linear/jt@1, und, 88B, d9b49c75470a1afa
 propnames/to/long/linear/lb@1, und, 598B, 6ee04a546e351ffb
-propnames/to/long/linear/sc@1, und, 1958B, 8397d5c5b16356aa
+propnames/to/long/linear/sc@1, und, 1964B, 9b97b7f85684632c
 propnames/to/long/sparse/ccc@1, und, 652B, 440a07537c221a20
 propnames/to/short/linear/GCB@1, und, 78B, 3f593af98eec2820
 propnames/to/short/linear/InSC@1, und, 585B, 36e854e09df6ac36
@@ -5158,7 +5158,7 @@ propnames/to/short/linear/ea@1, und, 24B, 9dcf5f0ed5697f5b
 propnames/to/short/linear/gc@1, und, 125B, a6da6a4499b7361b
 propnames/to/short/linear/jt@1, und, 23B, 4f7c0d697e2b792f
 propnames/to/short/linear/lb@1, und, 199B, 808bb5403b659e4
-propnames/to/short/linear4/sc@1, und, 802B, 55c3455e15d1d2ae
+propnames/to/short/linear4/sc@1, und, 806B, d488da3356b27392
 propnames/to/short/sparse/ccc@1, und, 478B, aa23b3caa16eae5e
 props/AHex@1, und, 26B, 779017d199091bbe
 props/Alpha@1, und, 5867B, 6d7b02a5e1d18551
@@ -5763,7 +5763,7 @@ relativetime/short/year@1, sr-Latn, 121B, ec453c97466f78e1
 relativetime/short/year@1, th, 131B, 956e97879a6bd7ad
 relativetime/short/year@1, tr, 107B, a182ac8d5087b3cb
 relativetime/short/year@1, und, 62B, 45e258268a1e1f9
-segmenter/dictionary/wl_ext@1, th, 224981B, f2d574736bb1a754
+segmenter/dictionary/wl_ext@1, th, 449959B, 8740f1d01949472a
 segmenter/grapheme@1, und, 9730B, 922c04bad19f0d2e
 segmenter/line@1, und, 24183B, 817be8a85b29478d
 segmenter/lstm/wl_auto@1, th, 72034B, c46e2e0c098c1fc1
