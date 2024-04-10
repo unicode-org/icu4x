@@ -557,32 +557,30 @@ fn main() -> eyre::Result<()> {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
         }
         #[cfg(feature = "fs_exporter")]
-        Format::Dir | Format::DeprecatedDefault => {
-            driver.export(&provider, {
-                use icu_provider_fs::export::*;
+        Format::Dir | Format::DeprecatedDefault => driver.export(&provider, {
+            use icu_provider_fs::export::*;
 
-                FilesystemExporter::try_new(
-                    match cli.syntax {
-                        Syntax::Bincode => Box::<serializers::Bincode>::default(),
-                        Syntax::Postcard => Box::<serializers::Postcard>::default(),
-                        Syntax::Json if cli.pretty => Box::new(serializers::Json::pretty()),
-                        Syntax::Json => Box::<serializers::Json>::default(),
-                    },
+            FilesystemExporter::try_new(
+                match cli.syntax {
+                    Syntax::Bincode => Box::<serializers::Bincode>::default(),
+                    Syntax::Postcard => Box::<serializers::Postcard>::default(),
+                    Syntax::Json if cli.pretty => Box::new(serializers::Json::pretty()),
+                    Syntax::Json => Box::<serializers::Json>::default(),
+                },
+                {
+                    let mut options = ExporterOptions::default();
+                    options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
+                    if cli.overwrite {
+                        options.overwrite = OverwriteOption::RemoveAndReplace
+                    }
+                    #[allow(deprecated)] // obviously
                     {
-                        let mut options = ExporterOptions::default();
-                        options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
-                        if cli.overwrite {
-                            options.overwrite = OverwriteOption::RemoveAndReplace
-                        }
-                        #[allow(deprecated)] // obviously
-                        {
-                            options.fingerprint = cli.fingerprint;
-                        }
-                        options
-                    },
-                )?
-            })
-        }
+                        options.fingerprint = cli.fingerprint;
+                    }
+                    options
+                },
+            )?
+        })?,
         #[cfg(not(feature = "blob_exporter"))]
         Format::Blob | Format::Blob2 => {
             eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature")
@@ -592,21 +590,20 @@ fn main() -> eyre::Result<()> {
             let sink: Box<dyn std::io::Write + Sync> = if let Some(path) = cli.output {
                 if !cli.overwrite && path.exists() {
                     eyre::bail!("Output path is present: {:?}", path);
-                } else {
-                    Box::new(
-                        std::fs::File::create(&path)
-                            .with_context(|| path.to_string_lossy().to_string())?,
-                    )
                 }
+                Box::new(
+                    std::fs::File::create(&path)
+                        .with_context(|| path.to_string_lossy().to_string())?,
+                )
             } else {
                 Box::new(std::io::stdout())
             };
-            if cli.format == Format::Blob2 {
+            if cli.format == Format::Blob {
                 icu_provider_blob::export::BlobExporter::new_with_sink(sink)
             } else {
                 icu_provider_blob::export::BlobExporter::new_v2_with_sink(sink)
             }
-        }),
+        })?,
         #[cfg(not(feature = "baked_exporter"))]
         Format::Mod => {
             eyre::bail!("Exporting to a baked provider requires the `baked_exporter` Cargo feature")
@@ -624,8 +621,8 @@ fn main() -> eyre::Result<()> {
                     options
                 },
             )?
-        }),
-    }?;
+        })?,
+    }
 
     Ok(())
 }
