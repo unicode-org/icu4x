@@ -23,8 +23,6 @@ extern "C" {
 ICU4XLocale* ICU4XLocaleFallbackIterator_get(const ICU4XLocaleFallbackIterator* self);
 
 void ICU4XLocaleFallbackIterator_step(ICU4XLocaleFallbackIterator* self);
-
-ICU4XLocale* ICU4XLocaleFallbackIterator_next(ICU4XLocaleFallbackIterator* self);
 void ICU4XLocaleFallbackIterator_destroy(ICU4XLocaleFallbackIterator* self);
 
 #ifdef __cplusplus

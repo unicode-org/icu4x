@@ -407,19 +407,21 @@ macro_rules! assert_writeable_eq {
     (@internal, $actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
         let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
+        let actual_len = actual_str.len();
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
+        let lower = length_hint.0;
         assert!(
-            length_hint.0 <= actual_str.len(),
-            "hint lower bound {} larger than actual length {}: {}",
-            length_hint.0, actual_str.len(), format!($($arg)*),
+            lower <= actual_len,
+            "hint lower bound {lower} larger than actual length {actual_len}: {}",
+            format!($($arg)*),
         );
         if let Some(upper) = length_hint.1 {
             assert!(
-                actual_str.len() <= upper,
-                "hint upper bound {} smaller than actual length {}: {}",
-                length_hint.0, actual_str.len(), format!($($arg)*),
+                actual_len <= upper,
+                "hint upper bound {upper} smaller than actual length {actual_len}: {}",
+                format!($($arg)*),
             );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
