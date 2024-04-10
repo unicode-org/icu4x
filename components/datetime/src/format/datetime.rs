@@ -618,7 +618,7 @@ mod tests {
             .into_japanese_date()
             .to_any();
 
-        writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
+        writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789");
     }
 
     #[test]
