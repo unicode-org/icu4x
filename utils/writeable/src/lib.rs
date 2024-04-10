@@ -336,17 +336,17 @@ macro_rules! impl_display_with_writeable {
 }
 
 /// Testing macros for types implementing [`Writeable`].
-/// 
+///
 /// Arguments, in order:
-/// 
+///
 /// 1. The [`Writeable`] under test
 /// 2. The expected string value
 /// 3. [`*_parts_eq`] only: a list of parts (`[(start, end, Part)]`)
-/// 
+///
 /// Any remaining arguments get passed to `format!`
 ///
 /// The macros tests the following:
-/// 
+///
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
@@ -394,7 +394,7 @@ macro_rules! impl_display_with_writeable {
 ///     "Hello World"
 /// );
 /// ```
-/// 
+///
 /// [`*_parts_eq`]: assert_writeable_parts_eq
 #[macro_export]
 macro_rules! assert_writeable_eq {

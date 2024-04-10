@@ -9,22 +9,22 @@ use core::cmp::Ordering;
 ///
 /// The default [`Writeable`] trait returns a [`fmt::Error`], which originates from the sink.
 /// In contrast, this trait allows the _writeable itself_ to trigger an error.
-/// 
+///
 /// Implementations are expected to always make a _best attempt_ at writing to the sink
 /// and should write replacement values in the error state. Therefore, [`TryWriteable::Error`]
 /// can be safely ignored to emulate a "lossy" mode.
-/// 
+///
 /// Any error substrings should be annotated with [`Part::ERROR`].
-/// 
+///
 /// # Implementer Notes
 ///
 /// This trait requires that implementers make a _best attempt_ at writing to the sink,
 /// _even in the error state_, such as with a placeholder or fallback string.
-/// 
+///
 /// In [`TryWriteable::try_write_to_parts()`], error substrings should be annotated with
 /// [`Part::ERROR`]. Becuause of this, writing to parts is not default-implemented like
 /// it is on [`Writeable`].
-/// 
+///
 /// Furthermore, [`TryWriteable::try_writeable_length_hint()`] is not default-implemented because
 /// it has an invariant that the error state should be correctly propagated.
 ///
@@ -38,18 +38,18 @@ use core::cmp::Ordering;
 ///
 /// ```
 /// use core::fmt;
-/// use writeable::TryWriteable;
-/// use writeable::PartsWrite;
 /// use writeable::LengthHint;
+/// use writeable::PartsWrite;
+/// use writeable::TryWriteable;
 ///
 /// #[derive(Debug, PartialEq, Eq)]
 /// enum MyWriteableError {
-///     MissingName
+///     MissingName,
 /// }
 ///
 /// #[derive(Debug, PartialEq, Eq)]
 /// struct HelloWorldWriteable {
-///     pub name: Option<&'static str>
+///     pub name: Option<&'static str>,
 /// }
 ///
 /// impl TryWriteable for HelloWorldWriteable {
@@ -73,8 +73,11 @@ use core::cmp::Ordering;
 ///         }
 ///     }
 ///
-///     fn try_writeable_length_hint(&self) -> (LengthHint, Option<Self::Error>) {
-///         let (hint, e) = self.name.ok_or("nobody").try_writeable_length_hint();
+///     fn try_writeable_length_hint(
+///         &self,
+///     ) -> (LengthHint, Option<Self::Error>) {
+///         let (hint, e) =
+///             self.name.ok_or("nobody").try_writeable_length_hint();
 ///         (hint + 8, e.map(|_| MyWriteableError::MissingName))
 ///     }
 /// }
@@ -89,9 +92,7 @@ use core::cmp::Ordering;
 ///
 /// // Failure case, including the ERROR part:
 /// writeable::assert_try_writeable_parts_eq!(
-///     HelloWorldWriteable {
-///         name: None
-///     },
+///     HelloWorldWriteable { name: None },
 ///     "Hello, nobody!",
 ///     Err(MyWriteableError::MissingName),
 ///     [(7, 13, writeable::Part::ERROR)]
@@ -101,20 +102,20 @@ pub trait TryWriteable {
     type Error;
 
     /// Writes the content of this writeable to a sink.
-    /// 
+    ///
     /// If the sink hits an error, writing is abruptly ended and
     /// `Err(`[`fmt::Error`]`)` is returned.
-    /// 
+    ///
     /// If the writeable hits an error, writing is continued with a replacement value and then
     /// `Ok(Err(`[`TryWriteable::Error`]`))` is returned.
-    /// 
+    ///
     /// # Lossy Mode
-    /// 
+    ///
     /// The [`fmt::Error`] should always be handled, but the [`TryWriteable::Error`] can be
     /// ignored if a fallback string is desired instead of an error.
-    /// 
+    ///
     /// To handle outer error but not the inner error, write:
-    /// 
+    ///
     /// ```
     /// # use writeable::TryWriteable;
     /// # let my_writeable: Result<&str, &str> = Ok("");
@@ -122,33 +123,33 @@ pub trait TryWriteable {
     /// let _ = my_writeable.try_write_to(&mut sink)?;
     /// # Ok::<(), core::fmt::Error>(())
     /// ```
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// The following examples use `Result<&str, usize>`, which implements [`TryWriteable`].
-    /// 
+    ///
     /// Success case:
-    /// 
+    ///
     /// ```
     /// use writeable::TryWriteable;
-    /// 
+    ///
     /// let w: Result<&str, usize> = Ok("success");
     /// let mut sink = String::new();
     /// let result = w.try_write_to(&mut sink);
-    /// 
+    ///
     /// assert_eq!(result, Ok(Ok(())));
     /// assert_eq!(sink, "success");
     /// ```
-    /// 
+    ///
     /// Failure case:
-    /// 
+    ///
     /// ```
     /// use writeable::TryWriteable;
-    /// 
+    ///
     /// let w: Result<&str, usize> = Err(44);
     /// let mut sink = String::new();
     /// let result = w.try_write_to(&mut sink);
-    /// 
+    ///
     /// assert_eq!(result, Ok(Err(44)));
     /// assert_eq!(sink, "44");
     /// ```
@@ -160,9 +161,9 @@ pub trait TryWriteable {
     }
 
     /// Writes the content of this writeable to a sink with parts (annotations).
-    /// 
+    ///
     /// For more information, see:
-    /// 
+    ///
     /// - [`TryWriteable::try_write_to()`] for the general behavior.
     /// - [`TryWriteable`] for an example with parts.
     /// - [`Part`] for more about parts.
@@ -172,7 +173,7 @@ pub trait TryWriteable {
     ) -> Result<Result<(), Self::Error>, fmt::Error>;
 
     /// Returns a hint for the number of UTF-8 bytes that will be written to the sink.
-    /// 
+    ///
     /// This function returns `Some(error)` _if and only if_ [`TryWriteable::try_write_to()`]
     /// returns `Err`.
     fn try_writeable_length_hint(&self) -> (LengthHint, Option<Self::Error>) {
@@ -181,7 +182,7 @@ pub trait TryWriteable {
     }
 
     /// Writes the content of this writeable to a string.
-    /// 
+    ///
     /// This function does not return a string in the failure case. If you need a replacement
     /// string ("lossy mode"), use [`TryWriteable::try_write_to()`] instead.
     fn try_write_to_string(&self) -> Result<Cow<str>, Self::Error> {
@@ -206,10 +207,10 @@ pub trait TryWriteable {
     }
 
     /// Compares the content of this writeable to a byte slice.
-    /// 
+    ///
     /// This function returns `Some(error)` _if and only if_ [`TryWriteable::try_write_to()`]
     /// returns `Err`.
-    /// 
+    ///
     /// For more information, see [`Writeable::write_cmp_bytes()`].
     ///
     /// # Examples
@@ -268,7 +269,7 @@ pub trait TryWriteable {
     ///
     /// assert_eq!((Ordering::Less, None), writeable.try_write_cmp_bytes(b"Hello, Bob!"));
     /// assert_eq!(Ordering::Less, (*writeable_str).cmp("Hello, Bob!"));
-    /// 
+    ///
     /// // Failure case:
     /// let writeable = HelloWorldWriteable { name: None };
     /// let mut writeable_str = String::new();
@@ -353,25 +354,25 @@ where
 }
 
 /// Testing macros for types implementing [`TryWriteable`].
-/// 
+///
 /// Arguments, in order:
-/// 
+///
 /// 1. The [`TryWriteable`] under test
 /// 2. The expected string value
 /// 3. The expected result value, or `Ok(())` if omitted
 /// 3. [`*_parts_eq`] only: a list of parts (`[(start, end, Part)]`)
-/// 
+///
 /// Any remaining arguments get passed to `format!`
 ///
 /// The macros tests the following:
-/// 
+///
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
 /// - Basic validity of `cmp_bytes`
-/// 
+///
 /// For a usage example, see [`TryWriteable`].
-/// 
+///
 /// [`*_parts_eq`]: assert_try_writeable_parts_eq
 #[macro_export]
 macro_rules! assert_try_writeable_eq {
@@ -434,20 +435,8 @@ macro_rules! assert_try_writeable_parts_eq {
 #[test]
 fn test_result_try_writeable() {
     let mut result: Result<&str, usize> = Ok("success");
-    assert_try_writeable_eq!(
-        result,
-        "success"
-    );
+    assert_try_writeable_eq!(result, "success");
     result = Err(44);
-    assert_try_writeable_eq!(
-        result,
-        "44",
-        Err(44)
-    );
-    assert_try_writeable_parts_eq!(
-        result,
-        "44",
-        Err(44),
-        [(0, 2, Part::ERROR)]
-    )
+    assert_try_writeable_eq!(result, "44", Err(44));
+    assert_try_writeable_parts_eq!(result, "44", Err(44), [(0, 2, Part::ERROR)])
 }
