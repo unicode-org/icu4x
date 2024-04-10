@@ -53,7 +53,7 @@ use core::cmp::Ordering;
 /// }
 ///
 /// impl TryWriteable for HelloWorldWriteable {
-///     type Error = MyWriteableError;
+///     type Error = HelloWorldWriteableError;
 ///
 ///     fn try_write_to_parts<S: PartsWrite + ?Sized>(
 ///         &self,
@@ -69,7 +69,7 @@ use core::cmp::Ordering;
 ///         if self.name.is_some() {
 ///             Ok(Ok(()))
 ///         } else {
-///             Ok(Err(MyWriteableError::MissingName))
+///             Ok(Err(HelloWorldWriteableError::MissingName))
 ///         }
 ///     }
 ///
@@ -78,7 +78,7 @@ use core::cmp::Ordering;
 ///     ) -> (LengthHint, Option<Self::Error>) {
 ///         let (hint, e) =
 ///             self.name.ok_or("nobody").try_writeable_length_hint();
-///         (hint + 8, e.map(|_| MyWriteableError::MissingName))
+///         (hint + 8, e.map(|_| HelloWorldWriteableError::MissingName))
 ///     }
 /// }
 ///
@@ -94,7 +94,7 @@ use core::cmp::Ordering;
 /// writeable::assert_try_writeable_parts_eq!(
 ///     HelloWorldWriteable { name: None },
 ///     "Hello, nobody!",
-///     Err(MyWriteableError::MissingName),
+///     Err(HelloWorldWriteableError::MissingName),
 ///     [(7, 13, writeable::Part::ERROR)]
 /// );
 /// ```
@@ -223,7 +223,7 @@ pub trait TryWriteable {
     /// # use writeable::LengthHint;
     ///
     /// #[derive(Debug, PartialEq, Eq)]
-    /// enum MyWriteableError {
+    /// enum HelloWorldWriteableError {
     ///     MissingName
     /// }
     ///
@@ -233,7 +233,7 @@ pub trait TryWriteable {
     /// }
     ///
     /// impl TryWriteable for HelloWorldWriteable {
-    ///     type Error = MyWriteableError;
+    ///     type Error = HelloWorldWriteableError;
     ///     // see impl in TryWriteable docs
     /// #    fn try_write_to_parts<S: PartsWrite + ?Sized>(
     /// #        &self,
@@ -249,12 +249,12 @@ pub trait TryWriteable {
     /// #        if self.name.is_some() {
     /// #            Ok(Ok(()))
     /// #        } else {
-    /// #            Ok(Err(MyWriteableError::MissingName))
+    /// #            Ok(Err(HelloWorldWriteableError::MissingName))
     /// #        }
     /// #    }
     /// #    fn try_writeable_length_hint(&self) -> (LengthHint, Option<Self::Error>) {
     /// #        let (hint, e) = self.name.ok_or("nobody").try_writeable_length_hint();
-    /// #        (hint + 8, e.map(|_| MyWriteableError::MissingName))
+    /// #        (hint + 8, e.map(|_| HelloWorldWriteableError::MissingName))
     /// #    }
     /// }
     ///
@@ -275,12 +275,12 @@ pub trait TryWriteable {
     /// let mut writeable_str = String::new();
     /// let _ = writeable.try_write_to(&mut writeable_str).expect("write to String is infallible");
     ///
-    /// assert_eq!((Ordering::Equal, Some(MyWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, nobody!"));
+    /// assert_eq!((Ordering::Equal, Some(HelloWorldWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, nobody!"));
     ///
-    /// assert_eq!((Ordering::Greater, Some(MyWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, alice!"));
+    /// assert_eq!((Ordering::Greater, Some(HelloWorldWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, alice!"));
     /// assert_eq!(Ordering::Greater, (*writeable_str).cmp("Hello, alice!"));
     ///
-    /// assert_eq!((Ordering::Less, Some(MyWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, zero!"));
+    /// assert_eq!((Ordering::Less, Some(HelloWorldWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, zero!"));
     /// assert_eq!(Ordering::Less, (*writeable_str).cmp("Hello, zero!"));
     /// ```
     fn try_write_cmp_bytes(&self, other: &[u8]) -> (Ordering, Option<Self::Error>) {
@@ -369,7 +369,7 @@ where
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Basic validity of `cmp_bytes`
+/// - Reflexivity of `cmp_bytes`
 ///
 /// For a usage example, see [`TryWriteable`].
 ///
