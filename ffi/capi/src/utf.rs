@@ -60,10 +60,7 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
                 );
 
                 out.push_str(valid);
-                out.push_str(
-                    char::REPLACEMENT_CHARACTER
-                        .encode_utf8(&mut [0; char::REPLACEMENT_CHARACTER.len_utf8()]),
-                );
+                out.push_str("�");
 
                 // If there's more, we can use `write_to`
                 if let Some(error_len) = e.error_len() {
