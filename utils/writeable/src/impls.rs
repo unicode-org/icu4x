@@ -231,6 +231,46 @@ impl_write_smart_pointer!(alloc::boxed::Box<T>);
 impl_write_smart_pointer!(alloc::rc::Rc<T>);
 impl_write_smart_pointer!(alloc::sync::Arc<T>);
 
+/// Concatenates the elements of a slice.
+///
+/// # Examples
+///
+/// ```
+/// use writeable::Writeable;
+/// use writeable::assert_writeable_eq;
+///
+/// assert_writeable_eq!(
+///     @skip display,
+///     &["Hello", ", ", "world", "!"][..],
+///     "Hello, world!"
+/// );
+/// ```
+impl<T> Writeable for [T]
+where
+    T: Writeable,
+{
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.iter().try_for_each(|t| t.write_to(sink))
+    }
+
+    #[inline]
+    fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.iter().try_for_each(|t| t.write_to_parts(sink))
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.iter().map(Writeable::writeable_length_hint).sum()
+    }
+
+    // Use default write_to_string impl since it doesn't make sense to forward the inner impls.
+    // Note: We could optimize in the case of 1 element in the list.
+
+    // Also use default write_cmp_bytes impl. Forwarding would require knowing how many bytes
+    // each writeable could consume, information we don't necesarily have.
+}
+
 #[test]
 fn test_string_impls() {
     fn check_writeable_slice<W: Writeable + core::fmt::Display>(writeables: &[W]) {
