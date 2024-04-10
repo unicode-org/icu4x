@@ -24,17 +24,13 @@
 //! # Examples
 //!
 //! ```
-//! use harfbuzz::{Buffer, Direction, sys};
+//! use harfbuzz::{Buffer, Direction, UnicodeFuncsBuilder, sys};
 //!
 //! let mut b = Buffer::with("مساء الخير");
 //!
 //! let unicode_funcs = icu_harfbuzz::UnicodeFuncs::new().unwrap();
 //!
-//! // NOTE: This currently requires `unsafe` code. For progress toward a safe abstraction, see:
-//! // <https://github.com/servo/rust-harfbuzz/pull/197>
-//! unsafe {
-//!     harfbuzz::sys::hb_buffer_set_unicode_funcs(b.as_ptr(), unicode_funcs.as_ptr());
-//! }
+//! b.set_unicode_funcs(&unicode_funcs);
 //!
 //! b.guess_segment_properties();
 //! assert_eq!(b.get_direction(), Direction::RTL);
@@ -45,9 +41,6 @@ extern crate alloc;
 mod error;
 
 use crate::error::HarfBuzzError;
-use alloc::boxed::Box;
-use core::ffi::{c_char, c_void};
-use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
 use icu_normalizer::properties::CanonicalDecomposition;
@@ -69,324 +62,45 @@ use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-/// The total number of General Category values is fixed per
-/// https://www.unicode.org/policies/stability_policy.html :
-/// "The enumeration of General_Category property values is fixed. No new values will be added."
-///
-/// Despite General Category logically being a fixed enumeration, the Unicode
-/// Standard does not assign numeric identifiers to the possible General Category
-/// values. Both ICU4X and HarfBuzz do, but in different order. This table provides
-/// the permutation to go from the ICU4X number assignment in a Rust `enum` to
-/// the HarfBuzz number assignment in a C `enum`.
-///
-/// The C `enum` used by HarfBuzz is wider than `u8` but only uses implied
-/// values, so the values stay in the `u8` range. Let's use that to pack this.
-/// Note: ICU4X does not declare the enum items in their numeric order!
-static ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ: [u8; 30] = [
-    HB_UNICODE_GENERAL_CATEGORY_UNASSIGNED as u8, // Unassigned = 0,
-    HB_UNICODE_GENERAL_CATEGORY_UPPERCASE_LETTER as u8, // UppercaseLetter = 1,
-    HB_UNICODE_GENERAL_CATEGORY_LOWERCASE_LETTER as u8, // LowercaseLetter = 2,
-    HB_UNICODE_GENERAL_CATEGORY_TITLECASE_LETTER as u8, // TitlecaseLetter = 3,
-    HB_UNICODE_GENERAL_CATEGORY_MODIFIER_LETTER as u8, // ModifierLetter = 4,
-    HB_UNICODE_GENERAL_CATEGORY_OTHER_LETTER as u8, // OtherLetter = 5,
-    HB_UNICODE_GENERAL_CATEGORY_NON_SPACING_MARK as u8, // NonspacingMark = 6,
-    HB_UNICODE_GENERAL_CATEGORY_ENCLOSING_MARK as u8, // EnclosingMark = 7
-    HB_UNICODE_GENERAL_CATEGORY_SPACING_MARK as u8, // SpacingMark = 8,
-    HB_UNICODE_GENERAL_CATEGORY_DECIMAL_NUMBER as u8, // DecimalNumber = 9,
-    HB_UNICODE_GENERAL_CATEGORY_LETTER_NUMBER as u8, // LetterNumber = 10,
-    HB_UNICODE_GENERAL_CATEGORY_OTHER_NUMBER as u8, // OtherNumber = 11,
-    HB_UNICODE_GENERAL_CATEGORY_SPACE_SEPARATOR as u8, // SpaceSeparator = 12,
-    HB_UNICODE_GENERAL_CATEGORY_LINE_SEPARATOR as u8, // LineSeparator = 13,
-    HB_UNICODE_GENERAL_CATEGORY_PARAGRAPH_SEPARATOR as u8, // ParagraphSeparator = 14,
-    HB_UNICODE_GENERAL_CATEGORY_CONTROL as u8,    // Control = 15,
-    HB_UNICODE_GENERAL_CATEGORY_FORMAT as u8,     // Format = 16,
-    HB_UNICODE_GENERAL_CATEGORY_PRIVATE_USE as u8, // PrivateUse = 17,
-    HB_UNICODE_GENERAL_CATEGORY_SURROGATE as u8,  // Surrogate = 18,
-    HB_UNICODE_GENERAL_CATEGORY_DASH_PUNCTUATION as u8, // DashPunctuation = 19,
-    HB_UNICODE_GENERAL_CATEGORY_OPEN_PUNCTUATION as u8, // OpenPunctuation = 20,
-    HB_UNICODE_GENERAL_CATEGORY_CLOSE_PUNCTUATION as u8, // ClosePunctuation = 21,
-    HB_UNICODE_GENERAL_CATEGORY_CONNECT_PUNCTUATION as u8, // ConnectorPunctuation = 22,
-    HB_UNICODE_GENERAL_CATEGORY_OTHER_PUNCTUATION as u8, // OtherPunctuation = 23,
-    HB_UNICODE_GENERAL_CATEGORY_MATH_SYMBOL as u8, // MathSymbol = 24,
-    HB_UNICODE_GENERAL_CATEGORY_CURRENCY_SYMBOL as u8, // CurrencySymbol = 25,
-    HB_UNICODE_GENERAL_CATEGORY_MODIFIER_SYMBOL as u8, // ModifierSymbol = 26,
-    HB_UNICODE_GENERAL_CATEGORY_OTHER_SYMBOL as u8, // OtherSymbol = 27,
-    HB_UNICODE_GENERAL_CATEGORY_INITIAL_PUNCTUATION as u8, // InitialPunctuation = 28,
-    HB_UNICODE_GENERAL_CATEGORY_FINAL_PUNCTUATION as u8, // FinalPunctuation = 29,
-];
+use harfbuzz_traits::{
+    CombiningClassFunc, ComposeFunc, DecomposeFunc, GeneralCategoryFunc, MirroringFunc, ScriptFunc,
+};
 
-/// RAII holder for `*mut hb_unicode_funcs_t`.
-// TODO(#2838): Document the conditions under which multithreaded lookups via the
-// `*mut hb_unicode_funcs_t` are OK. HarfBuzz itself takes care of atomic
-// refcounting of the `hb_unicode_funcs_t`, but if `DataPayload` is built
-// without the `sync` feature, do bad things still happen if the freeing
-// thread doesn't match the allocation thread? At least the trait bounds
-// are violated in principle.
+/// Implementor of various Harbfuzz traits using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `Buffer::set_unicode_funcs()`.
 #[derive(Debug)]
 pub struct UnicodeFuncs {
-    raw: *mut hb_unicode_funcs_t,
+    gc: CodePointMapData<GeneralCategory>,
+    script: CodePointMapData<Script>,
+    script_name: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
+    bidi: BidiAuxiliaryProperties,
+    comp: CanonicalComposition,
+    decomp: CanonicalDecomposition,
+    ccc: CanonicalCombiningClassMap,
 }
 
 impl UnicodeFuncs {
-    /// Takes ownership of a `*mut hb_unicode_funcs_t` without incrementing
-    /// the refcount.
-    ///
-    /// # Safety
-    ///
-    /// After the call, the previous owner must not call
-    /// `hb_unicode_funcs_destroy()`, since `UnicodeFuncs` will now
-    /// take care of it.
-    pub unsafe fn from_raw(raw: *mut hb_unicode_funcs_t) -> Self {
-        Self { raw }
-    }
-
-    /// Transfers the ownership of the wrapped pointer to the caller.
-    /// The caller is responsible for calling `hb_unicode_funcs_destroy()`;
-    /// `UnicodeFuncs` will no longer take care of it.
-    pub fn into_raw(funcs: Self) -> *mut hb_unicode_funcs_t {
-        let ret = funcs.raw;
-        core::mem::forget(funcs);
-        ret
-    }
-
-    /// Borrows the wrapped raw pointer without transferring ownership
-    /// and without affecting the refcount.
-    pub fn as_ptr(&self) -> *mut hb_unicode_funcs_t {
-        self.raw
-    }
-
-    fn empty() -> Result<Self, HarfBuzzError> {
-        let empty = unsafe { hb_unicode_funcs_get_empty() };
-        // The HarfBuzz refcounting convention is that "create"
-        // sets refcount to one, not zero.
-        // https://harfbuzz.github.io/object-model-lifecycle.html
-        let raw = unsafe { hb_unicode_funcs_create(empty) };
-        if raw == empty {
-            Err(HarfBuzzError::Alloc)
-        } else {
-            Ok(Self { raw })
-        }
-    }
-
-    /// Sets up a `hb_unicode_funcs_t` with ICU4X compiled data as the back end as the Unicode
-    /// Database operations that HarfBuzz needs. The `hb_unicode_funcs_t` held
-    /// by the returned `UnicodeFuncs` is marked immutable.
+    /// Sets up a `UnicodeFuncs` with ICU4X compiled data as the back end as the Unicode
+    /// Database operations that HarfBuzz needs.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Result<Self, HarfBuzzError> {
-        let ufuncs = Self::empty()?;
-
-        unsafe {
-            hb_unicode_funcs_set_combining_class_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        _: *mut c_void,
-                    ) -> hb_unicode_combining_class_t {
-                        CanonicalCombiningClassMap::new().get32(unicode).0
-                            as hb_unicode_combining_class_t
-                    }
-                    cb
-                }),
-                core::ptr::null_mut(),
-                None,
-            );
+    pub fn new() -> Self {
+        Self {
+            gc: maps::general_category().static_to_owned(),
+            script: maps::script().static_to_owned(),
+            script_name: Script::enum_to_short_name_mapper().static_to_owned(),
+            bidi: bidi_data::bidi_auxiliary_properties().static_to_owned(),
+            ccc: CanonicalCombiningClassMap::new(),
+            comp: CanonicalComposition::new(),
+            decomp: CanonicalDecomposition::new(),
         }
-
-        unsafe {
-            hb_unicode_funcs_set_general_category_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        _: *mut c_void,
-                    ) -> hb_unicode_general_category_t {
-                        // Indexing is OK, because `GeneralCategory` data is validated upon
-                        // deserialization so that there can be no out-of-range `GeneralCategory`
-                        // values (which would be UB to materialize). `GeneralCategory` is a
-                        // stable exhaustive enum, and the length of `ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ`
-                        // matches the number of enum items, so the index will always be in range here.
-                        #![allow(clippy::indexing_slicing)]
-                        ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ
-                            [maps::general_category().get32(unicode) as usize]
-                            as hb_unicode_general_category_t
-                    }
-                    cb
-                }),
-                core::ptr::null_mut(),
-                None,
-            );
-        }
-
-        // Returns the Bidi_Mirroring_Glyph, but adjusting the return value
-        // to fix HarfBuzz expected behavior for code points whose property value
-        // for Bidi_Mirroring_Glyph is the undefined value.
-        //
-        // From HarfBuzz docs on `hb_unicode_mirroring_func_t`:
-        // <note>Note: If a code point does not have a specified
-        // Bi-Directional Mirroring Glyph defined, the method should
-        // return the original code point.</note>
-        unsafe {
-            hb_unicode_funcs_set_mirroring_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        _: *mut c_void,
-                    ) -> hb_codepoint_t {
-                        bidi_data::bidi_auxiliary_properties()
-                            .get32_mirroring_props(unicode)
-                            .mirroring_glyph
-                            .map(u32::from)
-                            .unwrap_or(unicode) as hb_codepoint_t
-                    }
-                    cb
-                }),
-                core::ptr::null_mut(),
-                None,
-            );
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_script_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        _: *mut c_void,
-                    ) -> hb_script_t {
-                        let script = maps::script().get32(unicode);
-                        let name = Script::enum_to_short_name_mapper()
-                            .get(script)
-                            .unwrap_or(tinystr!(4, "Zzzz"));
-
-                        unsafe {
-                            hb_script_from_string(
-                                name.as_ptr() as *const c_char,
-                                name.len().try_into().unwrap_or(0),
-                            )
-                        }
-                    }
-                    cb
-                }),
-                core::ptr::null_mut(),
-                None,
-            );
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_compose_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        a: hb_codepoint_t,
-                        b: hb_codepoint_t,
-                        ab: *mut hb_codepoint_t,
-                        _: *mut c_void,
-                    ) -> hb_bool_t {
-                        // It appears that HarfBuzz will pass valid scalar values
-                        // unless the application violated the contract of
-                        // `hb_buffer_add_codepoints` and passed in non-scalar values.
-                        // If we treated `hb_buffer_add_codepoints` as conceptually
-                        // `unsafe`, it would be appropriate not to do scalar value
-                        // validation here.
-                        let Some(first) = char::from_u32(a) else {
-                            // GIGO case
-                            debug_assert!(false);
-                            return false as hb_bool_t;
-                        };
-                        let Some(second) = char::from_u32(b) else {
-                            // GIGO case
-                            debug_assert!(false);
-                            return false as hb_bool_t;
-                        };
-                        let Some(c) = CanonicalComposition::new().compose(first, second) else {
-                            return false as hb_bool_t;
-                        };
-                        unsafe {
-                            core::ptr::write(ab, c as hb_codepoint_t);
-                        }
-                        true as hb_bool_t
-                    }
-                    cb
-                }),
-                core::ptr::null_mut(),
-                None,
-            );
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_decompose_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        ab: hb_codepoint_t,
-                        a: *mut hb_codepoint_t,
-                        b: *mut hb_codepoint_t,
-                        _: *mut c_void,
-                    ) -> hb_bool_t {
-                        // It appears that HarfBuzz will pass valid scalar values
-                        // unless the application violated the contract of
-                        // `hb_buffer_add_codepoints` and passed in non-scalar values.
-                        // If we treated `hb_buffer_add_codepoints` as conceptually
-                        // `unsafe`, it would be appropriate not to do scalar value
-                        // validation here.
-                        let Some(composed) = char::from_u32(ab) else {
-                            // GIGO case
-                            debug_assert!(false);
-                            return false as hb_bool_t;
-                        };
-                        match CanonicalDecomposition::new().decompose(composed) {
-                            Decomposed::Default => false as hb_bool_t,
-                            Decomposed::Expansion(first, second) => {
-                                unsafe {
-                                    core::ptr::write(a, first as hb_codepoint_t);
-                                }
-                                unsafe {
-                                    core::ptr::write(b, second as hb_codepoint_t);
-                                }
-                                true as hb_bool_t
-                            }
-                            Decomposed::Singleton(single) => {
-                                unsafe {
-                                    core::ptr::write(a, single as hb_codepoint_t);
-                                }
-                                unsafe {
-                                    core::ptr::write(b, 0);
-                                }
-                                true as hb_bool_t
-                            }
-                        }
-                    }
-                    cb
-                }),
-                core::ptr::null_mut(),
-                None,
-            );
-        }
-
-        // Compatibility decomposition and East Asian Width lookups
-        // are deprecated, and there's no need to set up the callbacks
-        // for those.
-
-        unsafe {
-            hb_unicode_funcs_make_immutable(ufuncs.raw);
-        }
-        Ok(ufuncs)
     }
-
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn new_unstable<D>(provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
+    pub fn new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
     where
         D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
@@ -398,277 +112,109 @@ impl UnicodeFuncs {
             + DataProvider<ScriptV1Marker>
             + ?Sized,
     {
-        let canonical_combining_class_map = CanonicalCombiningClassMap::try_new_unstable(provider)?;
-        let general_category_map = maps::load_general_category(provider)?;
-        let bidi_auxiliary_props_map =
-            bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
-        let script_map = maps::load_script(provider)?;
-        let script_enum_to_short_name_lookup = Script::get_enum_to_short_name_mapper(provider)?;
-        let canonical_composition = CanonicalComposition::try_new_unstable(provider)?;
-        let canonical_decomposition = CanonicalDecomposition::try_new_unstable(provider)?;
+        let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
+        let gc = maps::load_general_category(provider)?;
+        let bidi = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
+        let script = maps::load_script(provider)?;
+        let script_name = Script::get_enum_to_short_name_mapper(provider)?;
+        let comp = CanonicalComposition::try_new_unstable(provider)?;
+        let decomp = CanonicalDecomposition::try_new_unstable(provider)?;
 
-        let ufuncs = Self::empty()?;
-
-        unsafe {
-            hb_unicode_funcs_set_combining_class_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        user_data: *mut c_void,
-                    ) -> hb_unicode_combining_class_t {
-                        unsafe { &*(user_data as *const CanonicalCombiningClassMap) }
-                            .get32(unicode)
-                            .0 as hb_unicode_combining_class_t
-                    }
-                    cb
-                }),
-                Box::into_raw(Box::new(canonical_combining_class_map)) as *mut c_void,
-                Some({
-                    extern "C" fn cb(user_data: *mut c_void) {
-                        drop(unsafe {
-                            Box::from_raw(user_data as *mut CanonicalCombiningClassMap)
-                        });
-                    }
-                    cb
-                }),
-            );
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_general_category_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        user_data: *mut c_void,
-                    ) -> hb_unicode_general_category_t {
-                        // Indexing is OK, because `GeneralCategory` data is validated upon
-                        // deserialization so that there can be no out-of-range `GeneralCategory`
-                        // values (which would be UB to materialize). `GeneralCategory` is a
-                        // stable exhaustive enum, and the length of `ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ`
-                        // matches the number of enum items, so the index will always be in range here.
-                        #![allow(clippy::indexing_slicing)]
-                        ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ[unsafe {
-                            &*(user_data as *const CodePointMapData<GeneralCategory>)
-                        }
-                        .as_borrowed()
-                        .get32(unicode)
-                            as usize] as hb_unicode_general_category_t
-                    }
-                    cb
-                }),
-                Box::into_raw(Box::new(general_category_map)) as *mut c_void,
-                Some({
-                    extern "C" fn cb(user_data: *mut c_void) {
-                        drop(unsafe {
-                            Box::from_raw(user_data as *mut CodePointMapData<GeneralCategory>)
-                        });
-                    }
-                    cb
-                }),
-            );
-        }
-
-        // Returns the Bidi_Mirroring_Glyph, but adjusting the return value
-        // to fix HarfBuzz expected behavior for code points whose property value
-        // for Bidi_Mirroring_Glyph is the undefined value.
-        //
-        // From HarfBuzz docs on `hb_unicode_mirroring_func_t`:
-        // <note>Note: If a code point does not have a specified
-        // Bi-Directional Mirroring Glyph defined, the method should
-        // return the original code point.</note>
-        unsafe {
-            hb_unicode_funcs_set_mirroring_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        user_data: *mut c_void,
-                    ) -> hb_codepoint_t {
-                        unsafe { &*(user_data as *const BidiAuxiliaryProperties) }
-                            .as_borrowed()
-                            .get32_mirroring_props(unicode)
-                            .mirroring_glyph
-                            .map(u32::from)
-                            .unwrap_or(unicode) as hb_codepoint_t
-                    }
-                    cb
-                }),
-                Box::into_raw(Box::new(bidi_auxiliary_props_map)) as *mut c_void,
-                Some({
-                    extern "C" fn cb(user_data: *mut c_void) {
-                        drop(unsafe { Box::from_raw(user_data as *mut BidiAuxiliaryProperties) });
-                    }
-                    cb
-                }),
-            );
-        }
-
-        struct ScriptDataForHarfBuzz {
-            script_map: CodePointMapData<Script>,
-            enum_to_name_mapper: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_script_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        unicode: hb_codepoint_t,
-                        user_data: *mut c_void,
-                    ) -> hb_script_t {
-                        let script = unsafe { &*(user_data as *const ScriptDataForHarfBuzz) }
-                            .script_map
-                            .as_borrowed()
-                            .get32(unicode);
-                        let name = unsafe { &*(user_data as *const ScriptDataForHarfBuzz) }
-                            .enum_to_name_mapper
-                            .as_borrowed()
-                            .get(script)
-                            .unwrap_or(tinystr!(4, "Zzzz"));
-
-                        unsafe {
-                            hb_script_from_string(
-                                name.as_ptr() as *const c_char,
-                                name.len().try_into().unwrap_or(0),
-                            )
-                        }
-                    }
-                    cb
-                }),
-                Box::into_raw(Box::new(ScriptDataForHarfBuzz {
-                    script_map,
-                    enum_to_name_mapper: script_enum_to_short_name_lookup,
-                })) as *mut c_void,
-                Some({
-                    extern "C" fn cb(user_data: *mut c_void) {
-                        drop(unsafe { Box::from_raw(user_data as *mut ScriptDataForHarfBuzz) });
-                    }
-                    cb
-                }),
-            );
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_compose_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        a: hb_codepoint_t,
-                        b: hb_codepoint_t,
-                        ab: *mut hb_codepoint_t,
-                        user_data: *mut c_void,
-                    ) -> hb_bool_t {
-                        // It appears that HarfBuzz will pass valid scalar values
-                        // unless the application violated the contract of
-                        // `hb_buffer_add_codepoints` and passed in non-scalar values.
-                        // If we treated `hb_buffer_add_codepoints` as conceptually
-                        // `unsafe`, it would be appropriate not to do scalar value
-                        // validation here.
-                        let Some(first) = char::from_u32(a) else {
-                            // GIGO case
-                            debug_assert!(false);
-                            return false as hb_bool_t;
-                        };
-                        let Some(second) = char::from_u32(b) else {
-                            // GIGO case
-                            debug_assert!(false);
-                            return false as hb_bool_t;
-                        };
-                        let Some(c) = unsafe { &*(user_data as *const CanonicalComposition) }
-                            .compose(first, second)
-                        else {
-                            return false as hb_bool_t;
-                        };
-                        unsafe {
-                            core::ptr::write(ab, c as hb_codepoint_t);
-                        }
-                        true as hb_bool_t
-                    }
-                    cb
-                }),
-                Box::into_raw(Box::new(canonical_composition)) as *mut c_void,
-                Some({
-                    extern "C" fn cb(user_data: *mut c_void) {
-                        drop(unsafe { Box::from_raw(user_data as *mut CanonicalComposition) });
-                    }
-                    cb
-                }),
-            );
-        }
-
-        unsafe {
-            hb_unicode_funcs_set_decompose_func(
-                ufuncs.raw,
-                Some({
-                    extern "C" fn cb(
-                        _: *mut hb_unicode_funcs_t,
-                        ab: hb_codepoint_t,
-                        a: *mut hb_codepoint_t,
-                        b: *mut hb_codepoint_t,
-                        user_data: *mut c_void,
-                    ) -> hb_bool_t {
-                        // It appears that HarfBuzz will pass valid scalar values
-                        // unless the application violated the contract of
-                        // `hb_buffer_add_codepoints` and passed in non-scalar values.
-                        // If we treated `hb_buffer_add_codepoints` as conceptually
-                        // `unsafe`, it would be appropriate not to do scalar value
-                        // validation here.
-                        let Some(composed) = char::from_u32(ab) else {
-                            // GIGO case
-                            debug_assert!(false);
-                            return false as hb_bool_t;
-                        };
-                        match unsafe { &*(user_data as *const CanonicalDecomposition) }
-                            .decompose(composed)
-                        {
-                            Decomposed::Default => false as hb_bool_t,
-                            Decomposed::Expansion(first, second) => {
-                                unsafe { core::ptr::write(a, first as hb_codepoint_t) };
-                                unsafe { core::ptr::write(b, second as hb_codepoint_t) };
-                                true as hb_bool_t
-                            }
-                            Decomposed::Singleton(single) => {
-                                unsafe { core::ptr::write(a, single as hb_codepoint_t) };
-                                unsafe { core::ptr::write(b, 0) };
-                                true as hb_bool_t
-                            }
-                        }
-                    }
-                    cb
-                }),
-                Box::into_raw(Box::new(canonical_decomposition)) as *mut c_void,
-                Some({
-                    extern "C" fn cb(user_data: *mut c_void) {
-                        drop(unsafe { Box::from_raw(user_data as *mut CanonicalDecomposition) });
-                    }
-                    cb
-                }),
-            );
-        }
-
-        // Compatibility decomposition and East Asian Width lookups
-        // are deprecated, and there's no need to set up the callbacks
-        // for those.
-
-        unsafe {
-            hb_unicode_funcs_make_immutable(ufuncs.raw);
-        }
-
-        Ok(ufuncs)
+        Ok(Self {
+            gc,
+            script,
+            script_name,
+            bidi,
+            comp,
+            decomp,
+            ccc,
+        })
     }
 }
 
-impl Drop for UnicodeFuncs {
-    fn drop(&mut self) {
-        unsafe {
-            hb_unicode_funcs_destroy(self.raw);
+impl GeneralCategoryFunc for UnicodeFuncs {
+    fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
+        match self.gc.as_borrowed().get(ch) {
+            GeneralCategory::Unassigned => harfbuzz_traits::GeneralCategory::Unassigned,
+            GeneralCategory::UppercaseLetter => harfbuzz_traits::GeneralCategory::UppercaseLetter,
+            GeneralCategory::LowercaseLetter => harfbuzz_traits::GeneralCategory::LowercaseLetter,
+            GeneralCategory::TitlecaseLetter => harfbuzz_traits::GeneralCategory::TitlecaseLetter,
+            GeneralCategory::ModifierLetter => harfbuzz_traits::GeneralCategory::ModifierLetter,
+            GeneralCategory::OtherLetter => harfbuzz_traits::GeneralCategory::OtherLetter,
+            GeneralCategory::NonspacingMark => harfbuzz_traits::GeneralCategory::NonSpacingMark,
+            GeneralCategory::SpacingMark => harfbuzz_traits::GeneralCategory::SpacingMark,
+            GeneralCategory::EnclosingMark => harfbuzz_traits::GeneralCategory::EnclosingMark,
+            GeneralCategory::DecimalNumber => harfbuzz_traits::GeneralCategory::DecimalNumber,
+            GeneralCategory::LetterNumber => harfbuzz_traits::GeneralCategory::LetterNumber,
+            GeneralCategory::OtherNumber => harfbuzz_traits::GeneralCategory::OtherNumber,
+            GeneralCategory::SpaceSeparator => harfbuzz_traits::GeneralCategory::SpaceSeparator,
+            GeneralCategory::LineSeparator => harfbuzz_traits::GeneralCategory::LineSeparator,
+            GeneralCategory::ParagraphSeparator => {
+                harfbuzz_traits::GeneralCategory::ParagraphSeparator
+            }
+            GeneralCategory::Control => harfbuzz_traits::GeneralCategory::Control,
+            GeneralCategory::Format => harfbuzz_traits::GeneralCategory::Format,
+            GeneralCategory::PrivateUse => harfbuzz_traits::GeneralCategory::PrivateUse,
+            GeneralCategory::Surrogate => harfbuzz_traits::GeneralCategory::Surrogate,
+            GeneralCategory::DashPunctuation => harfbuzz_traits::GeneralCategory::DashPunctuation,
+            GeneralCategory::OpenPunctuation => harfbuzz_traits::GeneralCategory::OpenPunctuation,
+            GeneralCategory::ClosePunctuation => harfbuzz_traits::GeneralCategory::ClosePunctuation,
+            GeneralCategory::ConnectorPunctuation => {
+                harfbuzz_traits::GeneralCategory::ConnectPunctuation
+            }
+            GeneralCategory::InitialPunctuation => {
+                harfbuzz_traits::GeneralCategory::InitialPunctuation
+            }
+            GeneralCategory::FinalPunctuation => harfbuzz_traits::GeneralCategory::FinalPunctuation,
+            GeneralCategory::OtherPunctuation => harfbuzz_traits::GeneralCategory::OtherPunctuation,
+            GeneralCategory::MathSymbol => harfbuzz_traits::GeneralCategory::MathSymbol,
+            GeneralCategory::CurrencySymbol => harfbuzz_traits::GeneralCategory::CurrencySymbol,
+            GeneralCategory::ModifierSymbol => harfbuzz_traits::GeneralCategory::ModifierSymbol,
+            GeneralCategory::OtherSymbol => harfbuzz_traits::GeneralCategory::OtherSymbol,
+        }
+    }
+}
+
+impl CombiningClassFunc for UnicodeFuncs {
+    fn combining_class(&self, ch: char) -> u8 {
+        self.ccc.get(ch).0
+    }
+}
+
+impl MirroringFunc for UnicodeFuncs {
+    fn mirroring(&self, ch: char) -> char {
+        self.bidi
+            .as_borrowed()
+            .get32_mirroring_props(ch.into())
+            .mirroring_glyph
+            .unwrap_or(ch)
+    }
+}
+
+impl ScriptFunc for UnicodeFuncs {
+    fn script(&self, ch: char) -> [u8; 4] {
+        let script = self.script.as_borrowed().get(ch);
+        let name = self
+            .script_name
+            .as_borrowed()
+            .get(script)
+            .unwrap_or(tinystr!(4, "Zzzz"));
+        *name.all_bytes()
+    }
+}
+
+impl ComposeFunc for UnicodeFuncs {
+    fn compose(&self, a: char, b: char) -> Option<char> {
+        self.comp.compose(a, b)
+    }
+}
+
+impl DecomposeFunc for UnicodeFuncs {
+    fn decompose(&self, ab: char) -> Option<(char, char)> {
+        match self.decomp.decompose(ab) {
+            Decomposed::Default => None,
+            Decomposed::Expansion(first, second) => Some((first, second)),
+            Decomposed::Singleton(single) => Some((single, '\0')),
         }
     }
 }
