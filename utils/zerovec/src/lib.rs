@@ -535,6 +535,9 @@ mod tests {
 
         #[cfg_attr(feature = "serde", serde(borrow))]
         chars: ZeroVec<'data, char>,
+
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        strs: VarZeroVec<'data, str>,
     }
 
     #[test]
@@ -544,10 +547,11 @@ mod tests {
         let schema_json = serde_json::to_string_pretty(&schema).expect("Failed to serialize schema");
         let parsed_schema: Value = serde_json::from_str(&schema_json).expect("Failed to parse schema JSON");
 
-        // Check for the existence of "ZeroVec<Character>" and "ZeroVec<uint32>" in `definitions``
+        // Check for the existence of "ZeroVec<Character>" and "ZeroVec<uint32>" in `definitions`
         let definitions = parsed_schema.get("definitions").expect("No definitions found in schema");
         assert!(definitions.get("ZeroVec<Character>").is_some(), "Definition for ZeroVec<Character> not found");
         assert!(definitions.get("ZeroVec<uint32>").is_some(), "Definition for ZeroVec<uint32> not found");
+        assert!(definitions.get("VarZeroVec<String>").is_some(), "Definition for VarZeroVec<String> not found");
     }
 
     /// Checks that the size of the type is one of the given sizes.

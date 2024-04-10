@@ -4,7 +4,14 @@
 
 use crate::ule::*;
 
+use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
 use alloc::vec::Vec;
+use schemars::gen::SchemaGenerator;
+use schemars::schema::{ArrayValidation, InstanceType, Schema, SchemaObject};
+use schemars::JsonSchema;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::ops::Deref;
@@ -229,6 +236,33 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Deref for VarZeroVec<'_, T, F> {
     type Target = VarZeroSlice<T, F>;
     fn deref(&self) -> &VarZeroSlice<T, F> {
         self.as_slice()
+    }
+}
+
+impl<'a, T, F> JsonSchema for VarZeroVec<'a, T, F> 
+where
+    T: VarULE + ?Sized + JsonSchema,
+    F: VarZeroVecFormat,
+{
+    fn schema_name() -> String {
+        format!("VarZeroVec<{}>", T::schema_name())
+    }
+
+    fn schema_id() -> Cow<'static, str> {
+        Cow::Owned(format!("zerovec::VarZeroVec<{}>", T::schema_id()))
+    }
+
+    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+        let items_schema = gen.subschema_for::<T>();
+
+        SchemaObject {
+            instance_type: Some(InstanceType::Array.into()), 
+            array: Some(Box::new(ArrayValidation {
+                items: Some(items_schema.into()),
+                ..Default::default()
+            })),
+            ..Default::default()
+        }.into()
     }
 }
 
