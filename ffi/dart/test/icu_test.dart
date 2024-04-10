@@ -17,13 +17,13 @@ void main() {
             fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'de-CH-u-ca-japanese');
+    expect(iterator.current, Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'de-CH');
+    expect(iterator.current, Locale.fromString('de-CH'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'und-CH-u-ca-japanese');
+    expect(iterator.current, Locale.fromString('und-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'und-CH');
+    expect(iterator.current, Locale.fromString('und-CH'));
     expect(iterator.moveNext(), false);
   });
 
