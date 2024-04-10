@@ -399,9 +399,12 @@ macro_rules! impl_display_with_writeable {
 #[macro_export]
 macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr $(,)?) => {
-        $crate::assert_writeable_eq!($actual_writeable, $expected_str, "");
+        $crate::assert_writeable_eq!($actual_writeable, $expected_str, "")
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
+        $crate::assert_writeable_eq!(@internal, $actual_writeable, $expected_str, $($arg)*);
+    }};
+    (@internal, $actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
         let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)*);
@@ -430,10 +433,10 @@ macro_rules! assert_writeable_eq {
 #[macro_export]
 macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
-        $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "");
+        $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "")
     };
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
-        let actual_parts = $crate::assert_writeable_eq!($actual_writeable, $expected_str, $($arg)*);
+        let actual_parts = $crate::assert_writeable_eq!(@internal, $actual_writeable, $expected_str, $($arg)*);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
     }};
 }
