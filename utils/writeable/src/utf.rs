@@ -68,9 +68,8 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
                 // If there's more, we can use `write_to`
                 if let Some(error_len) = e.error_len() {
                     // SAFETY: By Utf8Error invariants
-                    let _infallible =
-                        Self(unsafe { self.0.get_unchecked(e.valid_up_to() + error_len..) })
-                            .write_to(&mut out);
+                    let remaining = unsafe { self.0.get_unchecked(e.valid_up_to() + error_len..) };
+                    let _infallible = Self(remaining).write_to(&mut out);
                 }
                 out.into()
             }
