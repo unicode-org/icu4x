@@ -61,12 +61,12 @@ use core::cmp::Ordering;
 ///     ) -> Result<Result<(), Self::Error>, fmt::Error> {
 ///         sink.write_str("Hello, ")?;
 ///         // Use `impl TryWriteable for Result` to generate the error part:
-///         let _ = self.name.ok_or("nobody").try_write_to_parts(sink)?;
+///         let err = self.name.ok_or("nobody").try_write_to_parts(sink)?.err();
 ///         sink.write_char('!')?;
 ///         // Return a doubly-wrapped Result.
 ///         // The outer Result is for fmt::Error, handled by the `?`s above.
 ///         // The inner Result is for our own Self::Error.
-///         if self.name.is_some() {
+///         if err.is_none() {
 ///             Ok(Ok(()))
 ///         } else {
 ///             Ok(Err(HelloWorldWriteableError::MissingName))
