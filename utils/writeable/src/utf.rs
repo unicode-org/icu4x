@@ -55,11 +55,15 @@ impl Writeable for PotentiallyInvalidUtf8<'_> {
 
                 // Let's assume this is the only error
                 let mut out = alloc::string::String::with_capacity(
-                    self.0.len() + 3 - e.error_len().unwrap_or(0),
+                    self.0.len() + char::REPLACEMENT_CHARACTER.len_utf8()
+                        - e.error_len().unwrap_or(0),
                 );
 
                 out.push_str(valid);
-                out.push_str(char::REPLACEMENT_CHARACTER.encode_utf8(&mut [0; 3]));
+                out.push_str(
+                    char::REPLACEMENT_CHARACTER
+                        .encode_utf8(&mut [0; char::REPLACEMENT_CHARACTER.len_utf8()]),
+                );
 
                 // If there's more, we can use `write_to`
                 if let Some(error_len) = e.error_len() {
