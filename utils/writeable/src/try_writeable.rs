@@ -25,9 +25,6 @@ use core::cmp::Ordering;
 /// [`Part::ERROR`]. Because of this, writing to parts is not default-implemented like
 /// it is on [`Writeable`].
 ///
-/// Furthermore, [`TryWriteable::try_writeable_length_hint()`] is not default-implemented because
-/// it has an invariant that the error state should be correctly propagated.
-///
 /// The trait is implemented on [`Result<T, E>`] where `T` and `E` both implement [`Writeable`];
 /// In the `Ok` case, `T` is written, and in the `Err` case, `E` is written as a fallback value.
 /// This impl, which writes [`Part::ERROR`], can be used as a basis for more advanced impls.
@@ -73,12 +70,8 @@ use core::cmp::Ordering;
 ///         }
 ///     }
 ///
-///     fn try_writeable_length_hint(
-///         &self,
-///     ) -> (LengthHint, Option<Self::Error>) {
-///         let (hint, e) =
-///             self.name.ok_or("nobody").try_writeable_length_hint();
-///         (hint + 8, e.map(|_| HelloWorldWriteableError::MissingName))
+///     fn writeable_length_hint(&self) -> LengthHint {
+///         self.name.ok_or("nobody").writeable_length_hint() + 8
 ///     }
 /// }
 ///
@@ -174,11 +167,10 @@ pub trait TryWriteable {
 
     /// Returns a hint for the number of UTF-8 bytes that will be written to the sink.
     ///
-    /// This function returns `Some(error)` _if and only if_ [`TryWriteable::try_write_to()`]
-    /// returns `Err`.
-    fn try_writeable_length_hint(&self) -> (LengthHint, Option<Self::Error>) {
-        // TODO: Discuss this function, its signature, and its behavior
-        (LengthHint::undefined(), None)
+    /// This function returns the length of the "lossy mode" string; for more information,
+    /// see [`TryWriteable::try_write_to()`].
+    fn writeable_length_hint(&self) -> LengthHint {
+        LengthHint::undefined()
     }
 
     /// Writes the content of this writeable to a string.
@@ -186,7 +178,7 @@ pub trait TryWriteable {
     /// This function does not return a string in the failure case. If you need a replacement
     /// string ("lossy mode"), use [`TryWriteable::try_write_to()`] instead.
     fn try_write_to_string(&self) -> Result<Cow<str>, Self::Error> {
-        let (hint, hint_error) = self.try_writeable_length_hint();
+        let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
         }
@@ -198,18 +190,13 @@ pub trait TryWriteable {
                 Ok(())
             }
         };
-        debug_assert_eq!(
-            hint_error.is_some(),
-            result.is_err(),
-            "try_writeable_length_hint and try_write_to_string should have same error state"
-        );
         result.map(|_| Cow::Owned(output))
     }
 
     /// Compares the content of this writeable to a byte slice.
     ///
-    /// This function returns `Some(error)` _if and only if_ [`TryWriteable::try_write_to()`]
-    /// returns `Err`.
+    /// This function compares the "lossy mode" string; for more information,
+    /// see [`TryWriteable::try_write_to()`].
     ///
     /// For more information, see [`Writeable::write_cmp_bytes()`].
     ///
@@ -252,22 +239,18 @@ pub trait TryWriteable {
     /// #            Ok(Err(HelloWorldWriteableError::MissingName))
     /// #        }
     /// #    }
-    /// #    fn try_writeable_length_hint(&self) -> (LengthHint, Option<Self::Error>) {
-    /// #        let (hint, e) = self.name.ok_or("nobody").try_writeable_length_hint();
-    /// #        (hint + 8, e.map(|_| HelloWorldWriteableError::MissingName))
-    /// #    }
     /// }
     ///
     /// // Success case:
     /// let writeable = HelloWorldWriteable { name: Some("Alice") };
     /// let writeable_str = writeable.try_write_to_string().expect("name is Some");
     ///
-    /// assert_eq!((Ordering::Equal, None), writeable.try_write_cmp_bytes(b"Hello, Alice!"));
+    /// assert_eq!(Ordering::Equal, writeable.write_cmp_bytes(b"Hello, Alice!"));
     ///
-    /// assert_eq!((Ordering::Greater, None), writeable.try_write_cmp_bytes(b"Alice!"));
+    /// assert_eq!(Ordering::Greater, writeable.write_cmp_bytes(b"Alice!"));
     /// assert_eq!(Ordering::Greater, (*writeable_str).cmp("Alice!"));
     ///
-    /// assert_eq!((Ordering::Less, None), writeable.try_write_cmp_bytes(b"Hello, Bob!"));
+    /// assert_eq!(Ordering::Less, writeable.write_cmp_bytes(b"Hello, Bob!"));
     /// assert_eq!(Ordering::Less, (*writeable_str).cmp("Hello, Bob!"));
     ///
     /// // Failure case:
@@ -275,25 +258,24 @@ pub trait TryWriteable {
     /// let mut writeable_str = String::new();
     /// let _ = writeable.try_write_to(&mut writeable_str).expect("write to String is infallible");
     ///
-    /// assert_eq!((Ordering::Equal, Some(HelloWorldWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, nobody!"));
+    /// assert_eq!(Ordering::Equal, writeable.write_cmp_bytes(b"Hello, nobody!"));
     ///
-    /// assert_eq!((Ordering::Greater, Some(HelloWorldWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, alice!"));
+    /// assert_eq!(Ordering::Greater, writeable.write_cmp_bytes(b"Hello, alice!"));
     /// assert_eq!(Ordering::Greater, (*writeable_str).cmp("Hello, alice!"));
     ///
-    /// assert_eq!((Ordering::Less, Some(HelloWorldWriteableError::MissingName)), writeable.try_write_cmp_bytes(b"Hello, zero!"));
+    /// assert_eq!(Ordering::Less, writeable.write_cmp_bytes(b"Hello, zero!"));
     /// assert_eq!(Ordering::Less, (*writeable_str).cmp("Hello, zero!"));
     /// ```
-    fn try_write_cmp_bytes(&self, other: &[u8]) -> (Ordering, Option<Self::Error>) {
+    fn write_cmp_bytes(&self, other: &[u8]) -> Ordering {
         let mut wc = cmp::WriteComparator::new(other);
-        let result = match self.try_write_to(&mut wc) {
+        let _ = match self.try_write_to(&mut wc) {
             Ok(result) => result,
             Err(core::fmt::Error) => {
                 debug_assert!(false, "WriteComparator infallible");
                 Ok(())
             }
         };
-        let ordering = wc.finish().reverse();
-        (ordering, result.err())
+        wc.finish().reverse()
     }
 }
 
@@ -329,10 +311,10 @@ where
     }
 
     #[inline]
-    fn try_writeable_length_hint(&self) -> (LengthHint, Option<Self::Error>) {
+    fn writeable_length_hint(&self) -> LengthHint {
         match self {
-            Ok(t) => (t.writeable_length_hint(), None),
-            Err(e) => (e.writeable_length_hint(), Some(e.clone())),
+            Ok(t) => t.writeable_length_hint(),
+            Err(e) => e.writeable_length_hint(),
         }
     }
 
@@ -345,10 +327,10 @@ where
     }
 
     #[inline]
-    fn try_write_cmp_bytes(&self, other: &[u8]) -> (Ordering, Option<Self::Error>) {
+    fn write_cmp_bytes(&self, other: &[u8]) -> Ordering {
         match self {
-            Ok(t) => (t.write_cmp_bytes(other), None),
-            Err(e) => (e.write_cmp_bytes(other), Some(e.clone())),
+            Ok(t) => t.write_cmp_bytes(other),
+            Err(e) => e.write_cmp_bytes(other),
         }
     }
 }
@@ -399,7 +381,7 @@ macro_rules! assert_try_writeable_eq {
             Err(e) => Err(e)
         };
         assert_eq!(actual_result, Result::<(), _>::from($expected_result), $($arg)*);
-        let (length_hint, hint_error) = actual_writeable.try_writeable_length_hint();
+        let length_hint = actual_writeable.writeable_length_hint();
         assert!(
             length_hint.0 <= actual_str.len(),
             "hint lower bound {} larger than actual length {}: {}",
@@ -412,10 +394,8 @@ macro_rules! assert_try_writeable_eq {
                 length_hint.0, actual_str.len(), format!($($arg)*),
             );
         }
-        assert_eq!(hint_error, Result::<(), _>::from($expected_result).err(), $($arg)*);
-        let (ordering, ordering_error) = actual_writeable.try_write_cmp_bytes($expected_str.as_bytes());
+        let ordering = actual_writeable.write_cmp_bytes($expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
-        assert_eq!(ordering_error, Result::<(), _>::from($expected_result).err(), $($arg)*);
         actual_parts // return for assert_try_writeable_parts_eq
     }};
 }
