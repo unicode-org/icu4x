@@ -180,13 +180,7 @@ pub struct Part {
 impl Part {
     /// A part that should annotate error segments in [`TryWriteable`] output.
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use writeable::TryWriteable;
-    ///
-    /// let try_writeable =
-    /// ```
+    /// For an example, see [`TryWriteable`].
     pub const ERROR: Part = Part {
         category: "writeable",
         value: "error",
@@ -341,12 +335,22 @@ macro_rules! impl_display_with_writeable {
     };
 }
 
-/// Testing macros for types implementing Writeable. The first argument should be a
-/// `Writeable`, the second argument a string, and the third argument (*_parts_eq only)
-/// a list of parts (`[(usize, usize, Part)]`).
+/// Testing macros for types implementing [`Writeable`].
+/// 
+/// Arguments, in order:
+/// 
+/// 1. The [`Writeable`] under test
+/// 2. The expected string value
+/// 3. [`*_parts_eq`] only: a list of parts (`[(start, end, Part)]`)
+/// 
+/// Any remaining arguments get passed to `format!`
 ///
-/// The macros tests for equality of string content, parts (*_parts_eq only), and
-/// verify the size hint.
+/// The macros tests the following:
+/// 
+/// - Equality of string content
+/// - Equality of parts ([`*_parts_eq`] only)
+/// - Validity of size hint
+/// - Basic validity of `cmp_bytes`
 ///
 /// # Examples
 ///
@@ -390,6 +394,8 @@ macro_rules! impl_display_with_writeable {
 ///     "Hello World"
 /// );
 /// ```
+/// 
+/// [`*_parts_eq`]: assert_writeable_parts_eq
 #[macro_export]
 macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr $(,)?) => {
