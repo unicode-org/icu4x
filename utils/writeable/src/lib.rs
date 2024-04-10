@@ -403,14 +403,6 @@ macro_rules! assert_writeable_eq {
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         let actual_writeable = &$actual_writeable;
-        $crate::assert_writeable_eq!(@skip display, $actual_writeable, $expected_str, $($arg)+);
-        assert_eq!(actual_writeable.to_string(), $expected_str);
-    }};
-    (@skip display, $actual_writeable:expr, $expected_str:expr $(,)?) => {
-        $crate::assert_writeable_eq!(@skip display, $actual_writeable, $expected_str, "");
-    };
-    (@skip display, $actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
-        let actual_writeable = &$actual_writeable;
         let (actual_str, _) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
@@ -427,6 +419,7 @@ macro_rules! assert_writeable_eq {
                 length_hint.0, actual_str.len(), format!($($arg)*),
             );
         }
+        assert_eq!(actual_writeable.to_string(), $expected_str);
         let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
     }};
