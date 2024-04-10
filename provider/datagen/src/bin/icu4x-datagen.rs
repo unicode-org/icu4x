@@ -455,7 +455,7 @@ fn main() -> eyre::Result<()> {
                 None => cli
                     .locales
                     .into_iter()
-                    .map(|family| family.parse().wrap_err(family))
+                    .map(|langid_str| langid_str.parse().wrap_err(langid_str))
                     .collect::<eyre::Result<Vec<_>>>()?,
             },
             Default::default(),
@@ -470,7 +470,7 @@ fn main() -> eyre::Result<()> {
             None => cli
                 .locales
                 .into_iter()
-                .map(|family| family.parse().wrap_err(family))
+                .map(|family_str| family_str.parse().wrap_err(family_str))
                 .collect::<eyre::Result<Vec<_>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
@@ -490,8 +490,8 @@ fn main() -> eyre::Result<()> {
             (None, fallback_mode, false) => match fallback_mode {
                 Fallback::Auto => None,
                 Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
-                Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::None),
-                Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::None),
+                Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
                 Fallback::Preresolved => None,
             },
         };
