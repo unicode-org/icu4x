@@ -350,7 +350,7 @@ macro_rules! impl_display_with_writeable {
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Basic validity of `cmp_bytes`
+/// - Reflexivity of `cmp_bytes`
 ///
 /// # Examples
 ///

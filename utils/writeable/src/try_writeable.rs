@@ -8,10 +8,10 @@ use core::cmp::Ordering;
 /// A writeable object that can fail while writing.
 ///
 /// The default [`Writeable`] trait returns a [`fmt::Error`], which originates from the sink.
-/// In contrast, this trait allows the _writeable itself_ to trigger an error.
+/// In contrast, this trait allows the _writeable itself_ to trigger an error as well.
 ///
 /// Implementations are expected to always make a _best attempt_ at writing to the sink
-/// and should write replacement values in the error state. Therefore, [`TryWriteable::Error`]
+/// and should write replacement values in the error state. Therefore, the returned `Result`
 /// can be safely ignored to emulate a "lossy" mode.
 ///
 /// Any error substrings should be annotated with [`Part::ERROR`].
@@ -22,7 +22,7 @@ use core::cmp::Ordering;
 /// _even in the error state_, such as with a placeholder or fallback string.
 ///
 /// In [`TryWriteable::try_write_to_parts()`], error substrings should be annotated with
-/// [`Part::ERROR`]. Becuause of this, writing to parts is not default-implemented like
+/// [`Part::ERROR`]. Because of this, writing to parts is not default-implemented like
 /// it is on [`Writeable`].
 ///
 /// Furthermore, [`TryWriteable::try_writeable_length_hint()`] is not default-implemented because
@@ -43,7 +43,7 @@ use core::cmp::Ordering;
 /// use writeable::TryWriteable;
 ///
 /// #[derive(Debug, PartialEq, Eq)]
-/// enum MyWriteableError {
+/// enum HelloWorldWriteableError {
 ///     MissingName,
 /// }
 ///
@@ -103,18 +103,18 @@ pub trait TryWriteable {
 
     /// Writes the content of this writeable to a sink.
     ///
-    /// If the sink hits an error, writing is abruptly ended and
-    /// `Err(`[`fmt::Error`]`)` is returned.
+    /// If the sink hits an error, writing immediately ends,
+    /// `Err(`[`fmt::Error`]`)` is returned, and the sink does not contain valid output.
     ///
-    /// If the writeable hits an error, writing is continued with a replacement value and then
-    /// `Ok(Err(`[`TryWriteable::Error`]`))` is returned.
+    /// If the writeable hits an error, writing is continued with a replacement value,
+    /// `Ok(Err(`[`TryWriteable::Error`]`))` is returned, and the caller may continue using the sink.
     ///
     /// # Lossy Mode
     ///
     /// The [`fmt::Error`] should always be handled, but the [`TryWriteable::Error`] can be
     /// ignored if a fallback string is desired instead of an error.
     ///
-    /// To handle outer error but not the inner error, write:
+    /// To handle the sink error, but not the writeable error, write:
     ///
     /// ```
     /// # use writeable::TryWriteable;
@@ -126,7 +126,7 @@ pub trait TryWriteable {
     ///
     /// # Examples
     ///
-    /// The following examples use `Result<&str, usize>`, which implements [`TryWriteable`].
+    /// The following examples use `Result<&str, usize>`, which implements [`TryWriteable`] because both `&str` and `usize` do.
     ///
     /// Success case:
     ///
