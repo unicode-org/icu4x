@@ -259,7 +259,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 }
 
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
-    /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
+    /// Cheaply converts a [`CodePointMapDataBorrowed<'static>`] into a [`CodePointMapData`].
+    /// 
+    /// Note that while the conversion is cheap, [`CodePointMapData`] is more expensive to use
+    /// than [`CodePointMapDataBorrowed`].
     pub const fn static_to_owned(self) -> CodePointMapData<T> {
         CodePointMapData {
             data: DataPayload::from_static_ref(self.map),

@@ -550,7 +550,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 }
 
 impl ScriptWithExtensionsBorrowed<'static> {
-    /// Cheaply converts a `ScriptWithExtensionsBorrowed<'static>` into a `ScriptWithExtensions`.
+    /// Cheaply converts a [`ScriptWithExtensionsBorrowed<'static>`] into a [`ScriptWithExtensions`].
+    /// 
+    /// Note that while the conversion is cheap, [`ScriptWithExtensions`] is more expensive to use
+    /// than [`ScriptWithExtensionsBorrowed`].
     pub const fn static_to_owned(self) -> ScriptWithExtensions {
         ScriptWithExtensions {
             data: DataPayload::from_static_ref(self.data),
