@@ -108,7 +108,7 @@ pub struct CodePointSetDataBorrowed<'a> {
 
 impl CodePointSetDataBorrowed<'static> {
     /// Cheaply converts a [`CodePointSetDataBorrowed<'static>`] into a [`CodePointSetData`].
-    /// 
+    ///
     /// Note that while the conversion is cheap, [`CodePointSetData`] is more expensive to use
     /// than [`CodePointSetDataBorrowed`].
     pub const fn static_to_owned(self) -> CodePointSetData {
@@ -308,7 +308,7 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
 
 impl UnicodeSetDataBorrowed<'static> {
     /// Cheaply converts a [`UnicodeSetDataBorrowed<'static>`] into a [`UnicodeSetData`].
-    /// 
+    ///
     /// Note that while the conversion is cheap, [`UnicodeSetData`] is more expensive to use
     /// than [`UnicodeSetDataBorrowed`].
     pub const fn static_to_owned(self) -> UnicodeSetData {

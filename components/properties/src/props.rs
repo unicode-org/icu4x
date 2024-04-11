@@ -230,7 +230,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'static, T> {
     /// Cheaply converts a [`PropertyValueNameToEnumMapperBorrowed<'static>`] into a [`PropertyValueNameToEnumMapper`].
-    /// 
+    ///
     /// Note that while the conversion is cheap, [`PropertyValueNameToEnumMapper`] is more expensive to use
     /// than [`PropertyValueNameToEnumMapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
@@ -359,7 +359,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
     /// Cheaply converts a [`PropertyEnumToValueNameSparseMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameSparseMapper`].
-    /// 
+    ///
     /// Note that while the conversion is cheap, [`PropertyEnumToValueNameSparseMapper`] is more expensive to use
     /// than [`PropertyEnumToValueNameSparseMapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
@@ -466,7 +466,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
     /// Cheaply converts a [`PropertyEnumToValueNameLinearMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearMapper`].
-    /// 
+    ///
     /// Note that while the conversion is cheap, [`PropertyEnumToValueNameLinearMapper`] is more expensive to use
     /// than [`PropertyEnumToValueNameLinearMapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
@@ -567,7 +567,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
     /// Cheaply converts a [`PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearTiny4Mapper`].
-    /// 
+    ///
     /// Note that while the conversion is cheap, [`PropertyEnumToValueNameLinearTiny4Mapper`] is more expensive to use
     /// than [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
