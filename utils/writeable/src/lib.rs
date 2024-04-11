@@ -351,7 +351,7 @@ macro_rules! impl_display_with_writeable {
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Reflexivity of `cmp_bytes`
+/// - Reflexivity of `cmp_bytes` and order against largest and smallest strings
 ///
 /// # Examples
 ///
@@ -428,6 +428,12 @@ macro_rules! assert_writeable_eq {
         assert_eq!(actual_writeable.to_string(), $expected_str);
         let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, $expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
+        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "\u{1FFFF}".as_bytes());
+        assert_eq!(ordering, core::cmp::Ordering::Less, $($arg)*);
+        if $expected_str != "" {
+            let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "".as_bytes());
+            assert_eq!(ordering, core::cmp::Ordering::Greater, $($arg)*);
+        }
         actual_parts // return for assert_writeable_parts_eq
     }};
 }
