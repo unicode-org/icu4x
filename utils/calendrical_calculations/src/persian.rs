@@ -81,7 +81,6 @@ pub fn arithmetic_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32
 pub fn fast_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = fast_persian_year_from_fixed(date);
     let year = i64_to_i32(year)?;
-    #[allow(clippy::unwrap_used)] // valid month,day
     let day_of_year = 1_i64 + (date - fixed_from_fast_persian(year, 1, 1));
     #[allow(unstable_name_collisions)] // div_ceil is unstable and polyfilled
     let month = if day_of_year <= 186 {
@@ -114,7 +113,7 @@ fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
 
 /// arithmetic_persian_year_from_fixed modified for the 33-year rule
 fn fast_persian_year_from_fixed(date: RataDie) -> i64 {
-    let days_since_epoch = date - fixed_from_fast_persian(1, 1, 1);
+    let days_since_epoch = date - FIXED_PERSIAN_EPOCH + 1;
     1 + (33 * days_since_epoch + 3).div_euclid(12053)
 }
 
