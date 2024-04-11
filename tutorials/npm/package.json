@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "clean": "rm dist/*",
-    "build": "sh gen.sh && webpack ",
+    "build": "node gen_helper.js && webpack",
     "start": "webpack serve --mode development --port 12349",
     "tsc": "tsc -p ."
   },
