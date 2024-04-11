@@ -4,14 +4,23 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
+    use core::str;
+    use icu_experimental::units::converter::UnitsConverter;
+    use icu_experimental::units::converter_factory::ConverterFactory;
+    use icu_experimental::units::measureunit::MeasureUnit;
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`ICU4XUnitsConverter`]
     /// from [`ICU4XMeasureUnit`]s.
     /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
-    #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct, hidden)]
+    #[diplomat::rust_link(
+        icu::experimental::units::converter_factory::ConverterFactory,
+        Struct,
+        hidden
+    )]
     pub struct ICU4XUnitsConverterFactory(pub ConverterFactory);
 
     impl ICU4XUnitsConverterFactory {
