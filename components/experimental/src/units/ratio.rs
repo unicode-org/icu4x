@@ -2,14 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
+use core::{
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
+    str::FromStr,
+};
 
 use num_bigint::BigInt;
 use num_rational::Ratio;
+use num_traits::Signed;
 use num_traits::{One, Pow, Zero};
 
+// TODO: implement AsULE for IcuRatio and use it in Data module.
+/// A ratio type that uses `BigInt` as the underlying type.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IcuRatio(Ratio<BigInt>);
+
+#[derive(Debug)]
+pub enum IcuRatioError {
+    BigIntParseError(num_bigint::ParseBigIntError),
+    InvalidRatioString,
+}
 
 impl IcuRatio {
     pub fn new(numerator: BigInt, denominator: BigInt) -> Self {
@@ -26,6 +38,11 @@ impl IcuRatio {
 
     pub fn recip(&self) -> Self {
         Self(self.0.recip())
+    }
+
+    /// Returns the absolute value of the ratio.
+    pub fn abs(&self) -> Self {
+        Self(self.0.abs())
     }
 
     pub fn ten() -> Self {
@@ -48,6 +65,20 @@ impl Mul for IcuRatio {
 impl MulAssign for IcuRatio {
     fn mul_assign(&mut self, rhs: Self) {
         self.0 *= rhs.0;
+    }
+}
+
+impl Div for IcuRatio {
+    type Output = Self;
+
+    fn div(self, rhs: Self) -> Self {
+        Self(self.0 / rhs.0)
+    }
+}
+
+impl DivAssign for IcuRatio {
+    fn div_assign(&mut self, rhs: Self) {
+        self.0 /= rhs.0;
     }
 }
 
@@ -106,5 +137,28 @@ impl One for IcuRatio {
 impl From<Ratio<BigInt>> for IcuRatio {
     fn from(ratio: Ratio<BigInt>) -> Self {
         Self(ratio)
+    }
+}
+
+impl From<u32> for IcuRatio {
+    fn from(value: u32) -> Self {
+        Self(Ratio::from_integer(value.into()))
+    }
+}
+
+impl FromStr for IcuRatio {
+    type Err = IcuRatioError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split('/');
+        let num_str = parts.next().unwrap_or("0");
+        let den_str = parts.next().unwrap_or("1");
+        if parts.next().is_some() {
+            return Err(IcuRatioError::InvalidRatioString);
+        }
+
+        let numerator = BigInt::from_str(num_str).map_err(IcuRatioError::BigIntParseError)?;
+        let denominator = BigInt::from_str(den_str).map_err(IcuRatioError::BigIntParseError)?;
+        Ok(Self::new(numerator, denominator))
     }
 }
