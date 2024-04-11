@@ -65,4 +65,13 @@ pub mod ffi {
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct, hidden)]
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
+
+    impl ICU4XUnitsConverterFactory {
+        /// Converts the input value from the input unit to the output unit.
+        // TODO: do we need to wrap the input value in a `Ratio<BigInt>`?
+        // TODO: do we need to return a `Ratio<BigInt>`?
+        pub fn convert(&self, input: f64) -> Result<f64, ICU4XError> {
+            Ok(call_method!(self.0, convert, input)?)
+        }
+    }
 }
