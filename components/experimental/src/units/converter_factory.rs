@@ -7,6 +7,7 @@ use icu_provider::DataError;
 use litemap::LiteMap;
 use num_bigint::BigInt;
 use num_rational::Ratio;
+use num_traits::Pow;
 use num_traits::{One, Zero};
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
@@ -14,6 +15,7 @@ use zerovec::ZeroSlice;
 use crate::units::provider::{MeasureUnitItem, SignULE};
 
 use super::provider;
+use super::ratio::IcuRatio;
 use super::{
     converter::{
         OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
@@ -106,7 +108,7 @@ impl ConverterFactory {
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Option<Ratio<BigInt>> {
+    ) -> Option<IcuRatio> {
         if !(input_unit.contained_units.len() == 1
             && output_unit.contained_units.len() == 1
             && input_unit.contained_units[0].power == 1
@@ -114,7 +116,7 @@ impl ConverterFactory {
             && input_unit.contained_units[0].si_prefix.power == 0
             && output_unit.contained_units[0].si_prefix.power == 0)
         {
-            return Some(Ratio::<BigInt>::from_integer(0.into()));
+            return Some(IcuRatio::zero());
         }
 
         let input_conversion_info = self
@@ -152,7 +154,7 @@ impl ConverterFactory {
         );
 
         if input_offset.is_zero() && output_offset.is_zero() {
-            return Some(Ratio::<BigInt>::from_integer(0.into()));
+            return Some(IcuRatio::zero());
         }
 
         let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
@@ -265,22 +267,18 @@ impl ConverterFactory {
         }
     }
 
-    fn apply_si_prefix(si_prefix: &SiPrefix, ratio: &mut Ratio<BigInt>) {
+    fn apply_si_prefix(si_prefix: &SiPrefix, ratio: &mut IcuRatio) {
         match si_prefix.base {
             Base::Decimal => {
-                *ratio *= Ratio::<BigInt>::from_integer(10.into()).pow(si_prefix.power as i32);
+                *ratio *= IcuRatio::ten().pow(si_prefix.power as i32);
             }
             Base::Binary => {
-                *ratio *= Ratio::<BigInt>::from_integer(2.into()).pow(si_prefix.power as i32);
+                *ratio *= IcuRatio::two().pow(si_prefix.power as i32);
             }
         }
     }
 
-    fn compute_conversion_term(
-        &self,
-        unit_item: &MeasureUnitItem,
-        sign: i8,
-    ) -> Option<Ratio<BigInt>> {
+    fn compute_conversion_term(&self, unit_item: &MeasureUnitItem, sign: i8) -> Option<IcuRatio> {
         let conversion_info = self
             .payload
             .get()
@@ -304,12 +302,13 @@ impl ConverterFactory {
         sign_ule: &SignULE,
         num_ule: &ZeroSlice<u8>,
         den_ule: &ZeroSlice<u8>,
-    ) -> Ratio<BigInt> {
+    ) -> IcuRatio {
+        // TODO: implement `From` in IcuRatio that takes `Sign` and unaligned slices.
         let sign = Sign::from_unaligned(*sign_ule).into();
-        Ratio::<BigInt>::new(
+        IcuRatio::from(Ratio::<BigInt>::new(
             BigInt::from_bytes_le(sign, num_ule.as_ule_slice()),
             BigInt::from_bytes_le(num_bigint::Sign::Plus, den_ule.as_ule_slice()),
-        )
+        ))
     }
 
     /// Creates a converter for converting between two single or compound units.
@@ -332,7 +331,7 @@ impl ConverterFactory {
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
-        let mut conversion_rate = Ratio::one();
+        let mut conversion_rate = IcuRatio::one();
         for input_item in input_unit.contained_units.iter() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
