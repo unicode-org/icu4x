@@ -111,7 +111,7 @@ pub struct IslamicUmmAlQura {
 pub struct IslamicTabular;
 
 impl IslamicObservational {
-    /// Creates a new [`IslamicObservational`] with some precomputed calendrical calculations.
+    /// Creates a new [`IslamicObservational`] with some compiled data containing precomputed calendrical calculations.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -164,7 +164,7 @@ impl IslamicCivil {
 }
 
 impl IslamicUmmAlQura {
-    /// Creates a new [`IslamicUmmAlQura`] with some precomputed calendrical calculations.
+    /// Creates a new [`IslamicUmmAlQura`] with some compiled data containing precomputed calendrical calculations.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -373,8 +373,8 @@ impl CalendarArithmetic for IslamicObservational {
     }
 
     // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, _year_info: IslamicYearInfo) -> bool {
-        false
+    fn is_leap_year(_year: i32, year_info: IslamicYearInfo) -> bool {
+        year_info.packed_data.days_in_year() != IslamicYearInfo::SHORT_YEAR_LEN
     }
 
     fn last_month_day_in_year(year: i32, year_info: IslamicYearInfo) -> (u8, u8) {
@@ -609,8 +609,8 @@ impl CalendarArithmetic for IslamicUmmAlQura {
     }
 
     // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, _year_info: IslamicYearInfo) -> bool {
-        false
+    fn is_leap_year(_year: i32, year_info: IslamicYearInfo) -> bool {
+        year_info.packed_data.days_in_year() != IslamicYearInfo::SHORT_YEAR_LEN
     }
 
     fn last_month_day_in_year(year: i32, year_info: IslamicYearInfo) -> (u8, u8) {
