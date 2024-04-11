@@ -197,6 +197,7 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::neo",
         "icu::datetime::neo_pattern",
+        "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeFormatter::try_new_experimental",
@@ -343,6 +344,8 @@ lazy_static::lazy_static! {
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
+        "icu::calendar::types::Time::midnight",
+
 
         // TODO-2.0 these errors will have changed
         "fixed_decimal::Error",
@@ -388,6 +391,7 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::Gregorian",
         "icu::calendar::gregorian::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
+        "icu::datetime::NeverCalendar",
 
         // Options bags which are expanded in FFI to regular functions
         // TODO-2.0: investigate flattening on the rust side too

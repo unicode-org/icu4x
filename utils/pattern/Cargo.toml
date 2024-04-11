@@ -21,8 +21,9 @@ independent = true
 all-features = true
 
 [dependencies]
+either = { workspace = true }
 displaydoc = { version = "0.2.3", default-features = false }
-writeable = { workspace = true }
+writeable = { workspace = true, features = ["either"] }
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }

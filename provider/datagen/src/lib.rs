@@ -46,39 +46,6 @@
 //! $ icu4x-datagen --keys all --locales de en-AU --format blob --out data.postcard
 //! ```
 //!
-//! For complex invocations, the CLI also supports configuration files:
-//!
-//! ```bash
-//! $ icu4x-datagen config.json
-//! ```
-//!
-//! <details><summary><code>config.json</code></summary>
-//! <pre><code>{
-//!   "keys": {
-//!     "explicit": [
-//!       "core/helloworld@1",
-//!       "fallback/likelysubtags@1",
-//!       "fallback/parents@1",
-//!       "fallback/supplement/co@1"
-//!     ]
-//!   },
-//!   "fallback": "runtimeManual",
-//!   "locales": "all",
-//!   "segmenterModels": ["burmesedict"],
-//!   "additionalCollations": ["big5han"],<br/>
-//!   "cldr": "latest",
-//!   "icuExport": "73.1",
-//!   "segmenterLstm": "none",<br/>
-//!   "export": {
-//!     "blob": {
-//!       "path": "blob.postcard"
-//!     }
-//!   },
-//!   "overwrite": true
-//! }
-//! </code></pre>
-//! </details>
-//!
 //! More details can be found by running `--help`.
 //!
 //! # Cargo features
@@ -138,6 +105,11 @@ mod transform;
 mod tests;
 
 pub use driver::DatagenDriver;
+pub use driver::DeduplicationStrategy;
+pub use driver::FallbackOptions;
+pub use driver::LocaleFamily;
+pub use driver::NoFallbackOptions;
+pub use driver::RuntimeFallbackLocation;
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde
 pub use provider::TrieType;
@@ -155,7 +127,8 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
+        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, DeduplicationStrategy,
+        FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};

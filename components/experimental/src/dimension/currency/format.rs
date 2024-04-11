@@ -6,15 +6,11 @@ use fixed_decimal::FixedDecimal;
 
 use writeable::Writeable;
 
-use super::options::Width;
-use crate::dimension::{
-    options::CurrencyFormatterOptions, provider::currency::CurrencyEssentialsV1,
-};
-
-use super::{
-    provider::currency::{self},
-    CurrencyCode,
-};
+use crate::dimension::currency::formatter::CurrencyCode;
+use crate::dimension::currency::options::CurrencyFormatterOptions;
+use crate::dimension::currency::options::Width;
+use crate::dimension::provider::currency;
+use crate::dimension::provider::currency::CurrencyEssentialsV1;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
@@ -60,17 +56,9 @@ impl<'l> Writeable for FormattedCurrency<'l> {
         }
         .ok_or(core::fmt::Error)?;
 
-        // TODO: rewrite this so it does not allocate
-        sink.write_str(
-            pattern
-                .interpolate([
-                    &self.value.write_to_string(), // placeholder 0 (currency value)
-                    currency_sign_value,           // placeholder 1 (currency sign value)
-                ])
-                .write_to_string()
-                .into_owned()
-                .as_str(),
-        )?;
+        pattern
+            .interpolate((self.value, currency_sign_value))
+            .write_to(sink)?;
 
         Ok(())
     }
@@ -83,7 +71,7 @@ mod tests {
     use tinystr::*;
     use writeable::Writeable;
 
-    use crate::dimension::{CurrencyCode, CurrencyFormatter};
+    use crate::dimension::currency::formatter::{CurrencyCode, CurrencyFormatter};
 
     #[test]
     pub fn test_en_us() {

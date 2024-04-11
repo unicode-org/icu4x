@@ -86,6 +86,15 @@ fn maximize_bench(c: &mut Criterion) {
         })
     });
 
+    group.bench_function("minimize", |b| {
+        b.iter(|| {
+            for locale in &locales {
+                let mut locale = locale.clone();
+                lc.minimize(black_box(&mut locale));
+            }
+        })
+    });
+
     group.finish();
 }
 

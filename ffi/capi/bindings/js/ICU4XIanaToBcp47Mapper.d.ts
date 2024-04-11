@@ -18,4 +18,13 @@ export class ICU4XIanaToBcp47Mapper {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XIanaToBcp47Mapper | never;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get Rust documentation for `get`} for more information.
+
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.iana_to_bcp47 Rust documentation for `iana_to_bcp47`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  get(value: string): string | never;
 }

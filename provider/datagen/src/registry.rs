@@ -141,6 +141,8 @@ registry!(
     icu_calendar::provider::ChineseCacheV1Marker = "calendar/chinesecache@1",
     icu_calendar::provider::DangiCacheV1Marker = "calendar/dangicache@1",
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
+    icu_calendar::provider::IslamicObservationalCacheV1Marker =
+        "calendar/islamicobservationalcache@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
     icu_calendar::provider::WeekDataV2Marker = "datetime/week_data@2",
@@ -246,6 +248,10 @@ registry!(
         "datetime/patterns/japanext/date@1",
     icu_datetime::provider::neo::PersianDatePatternV1Marker = "datetime/patterns/persian/date@1",
     icu_datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
+    icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker =
+        "datetime/patterns/gregory/date_skeleton@1",
+    icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker =
+        "datetime/patterns/time_skeleton@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
         "time_zone/generic_long@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker =

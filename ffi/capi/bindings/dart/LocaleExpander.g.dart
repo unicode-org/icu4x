@@ -61,6 +61,12 @@ final class LocaleExpander implements ffi.Finalizable {
     final result = _ICU4XLocaleExpander_minimize(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
+
+  /// See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+  TransformResult minimizeFavorScript(Locale locale) {
+    final result = _ICU4XLocaleExpander_minimize_favor_script(_ffi, locale._ffi);
+    return TransformResult.values[result];
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XLocaleExpander_destroy')
@@ -87,3 +93,8 @@ external int _ICU4XLocaleExpander_maximize(ffi.Pointer<ffi.Opaque> self, ffi.Poi
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_minimize')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocaleExpander_minimize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@meta.ResourceIdentifier('ICU4XLocaleExpander_minimize_favor_script')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_minimize_favor_script')
+// ignore: non_constant_identifier_names
+external int _ICU4XLocaleExpander_minimize_favor_script(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

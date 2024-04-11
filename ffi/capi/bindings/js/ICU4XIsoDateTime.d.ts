@@ -94,7 +94,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the hour in this time
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour Rust documentation for `hour`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour Rust documentation for `hour`} for more information.
    */
   hour(): u8;
 
@@ -102,7 +102,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the minute in this time
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute Rust documentation for `minute`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute Rust documentation for `minute`} for more information.
    */
   minute(): u8;
 
@@ -110,7 +110,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the second in this time
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second Rust documentation for `second`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second Rust documentation for `second`} for more information.
    */
   second(): u8;
 
@@ -118,7 +118,7 @@ export class ICU4XIsoDateTime {
 
    * Returns the nanosecond in this time
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond Rust documentation for `nanosecond`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond Rust documentation for `nanosecond`} for more information.
    */
   nanosecond(): u32;
 
