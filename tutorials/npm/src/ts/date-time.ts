@@ -56,15 +56,9 @@ export class DateTimeDemo {
     async setLocale(locid: string): Promise <void> {
         this.#locale = result(() => ICU4XLocale.create_from_string(locid));
         if (this.#locale.ok == true) {
-            const locales = this.#dataProviderManager.getLoadedLocales();
-            const localesFinal: string[] = [];
-            locales.forEach((item: ICU4XLocale) => {
-                localesFinal.push(item.to_string)
-            })
-            const loadedLocales = new Set(localesFinal);
-            if (!loadedLocales.has(this.#locale.value.to_string())) {
+            if(!this.#dataProviderManager.supportsLocale(locid)){
                 await this.updateProvider(this.#locale.value);
-            }
+            }            
         }
         this.#updateFormatter()
     }

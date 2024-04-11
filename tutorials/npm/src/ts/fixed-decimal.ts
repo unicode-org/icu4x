@@ -34,19 +34,14 @@ export class FixedDecimalDemo {
         this.#updateFormatter();
     }
 
-    async setLocale(locid: string): Promise<void> {
+    async setLocale(locid: string): Promise <void> {
         this.#locale = result(() => ICU4XLocale.create_from_string(locid));
-        if (this.#locale.ok === true) {
-            const locales = this.#dataProviderManager.getLoadedLocales();
-            // The if case is making issue, try to fork with old.
-            const localesFinal: string[] = [];
-            locales.forEach((item: ICU4XLocale) => {
-                localesFinal.push(item.to_string());
-            });
-            const loadedLocales = new Set(localesFinal);
-            await this.updateProvider(this.#locale.value);
+        if (this.#locale.ok == true) {
+            if(!this.#dataProviderManager.supportsLocale(locid)){
+                await this.updateProvider(this.#locale.value);
+            }            
         }
-        this.#updateFormatter();
+        this.#updateFormatter()
     }
 
     async updateProvider(newLocale: ICU4XLocale): Promise<void> {

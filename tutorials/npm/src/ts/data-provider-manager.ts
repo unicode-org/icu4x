@@ -7,13 +7,13 @@ import {
 export class DataProviderManager {
 
     private dataProvider: ICU4XDataProvider;
-    private loadedLocales: Set <ICU4XLocale> ;
+    private loadedLocales: Set<ICU4XLocale>;
 
     private constructor() {
-        this.loadedLocales = new Set < ICU4XLocale > ();
+        this.loadedLocales = new Set<ICU4XLocale>();
     }
 
-    public static async create(): Promise <DataProviderManager> {
+    public static async create(): Promise<DataProviderManager> {
         const manager = new DataProviderManager();
         await manager.init();
         return manager;
@@ -31,7 +31,7 @@ export class DataProviderManager {
         this.dataProvider = enProvider;
     }
 
-    private async createDataProviderFromBlob(filePath: string): Promise < ICU4XDataProvider > {
+    private async createDataProviderFromBlob(filePath: string): Promise<ICU4XDataProvider> {
         const blob = await this.readBlobFromFile(filePath);
         const arrayBuffer = await blob.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
@@ -39,18 +39,26 @@ export class DataProviderManager {
         return newDataProvider;
     }
 
-    private async readBlobFromFile(path: string): Promise < Blob > {
+    private async readBlobFromFile(path: string): Promise<Blob> {
         const response = await fetch(path);
-        if(!response.ok) {
+        if (!response.ok) {
             throw new Error(`Failed to fetch file: ${response.statusText}`);
         }
         const blob = await response.blob();
         return blob;
     }
 
+    public supportsLocale(locid: string): boolean {
+        const locales = this.getLoadedLocales();
+        const localesFinal: string[] = [];
+        locales.forEach((item: ICU4XLocale) => {
+            localesFinal.push(item.to_string)
+        })
+        const loadedLocales = new Set(localesFinal);
+        return loadedLocales.has(locid);
+    }
 
-
-    public async loadLocale(newLocale: string): Promise < ICU4XDataProvider > {
+    public async loadLocale(newLocale: string): Promise<ICU4XDataProvider> {
         const icu4xLocale = ICU4XLocale.create_from_string(newLocale);
         const newFilePath = `dist/${newLocale}.postcard`;
         let newProvider = await this.createDataProviderFromBlob(newFilePath);
@@ -59,19 +67,13 @@ export class DataProviderManager {
         return this.dataProvider;
     }
 
-    public async getSegmenterProviderLocale () : Promise <ICU4XDataProvider> {
+    public async getSegmenterProviderLocale(): Promise<ICU4XDataProvider> {
         const segmenterLocale = ['ja', 'zh', 'th'];
         let segmenterProvider: ICU4XDataProvider;
-        for(let i = 0 ; i < segmenterLocale.length ; i++){
+        for (let i = 0; i < segmenterLocale.length; i++) {
             segmenterProvider = await this.loadLocale(segmenterLocale[i]);
         }
         return segmenterProvider;
-    }
-
-    public async getDeDataProvider() {
-        const newFilePath = `dist/de.postcard`;
-        let newProvider = await this.createDataProviderFromBlob(newFilePath);
-        return newProvider;
     }
 
     public getLoadedLocales() {
@@ -81,6 +83,5 @@ export class DataProviderManager {
     public getDataProvider(): ICU4XDataProvider {
         return this.dataProvider;
     }
-
 
 }

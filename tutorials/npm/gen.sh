@@ -2,6 +2,11 @@
 
 locales=("ja" "th" "zh" "bn" "und" "de" "en")
 
+if [ ! -d "dist" ]; then
+  mkdir dist
+  echo "dist folder created."
+fi
+
 for locale in "${locales[@]}"; do
   cargo run --package icu_datagen -- --keys \
     "calendar/japanese@1" \
@@ -111,7 +116,7 @@ for locale in "${locales[@]}"; do
     "time_zone/metazone_period@1" \
     "time_zone/specific_long@1" \
     "time_zone/specific_short@1" \
-    --locales $locale --format blob2 --out dist/$locale.postcard --overwrite
+    --fallback preresolved --locales $locale --format blob2 --out dist/$locale.postcard --overwrite
 done
 
 ts_content="const locales: string[] = ["
