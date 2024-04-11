@@ -23,11 +23,4 @@ export class ICU4XLocaleFallbackIterator {
   step() {
     wasm.ICU4XLocaleFallbackIterator_step(this.underlying);
   }
-
-  next() {
-    return (() => {
-      const option_ptr = wasm.ICU4XLocaleFallbackIterator_next(this.underlying);
-      return (option_ptr == 0) ? undefined : new ICU4XLocale(option_ptr, true, []);
-    })();
-  }
 }

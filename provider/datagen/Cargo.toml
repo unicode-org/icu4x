@@ -121,7 +121,7 @@ experimental_components = ["dep:icu_experimental", "dep:num-bigint", "dep:num-ra
 
 [[bin]]
 name = "icu4x-datagen"
-path = "src/bin/datagen/mod.rs"
+path = "src/bin/icu4x-datagen.rs"
 required-features = ["bin"]
 
 [package.metadata.cargo-all-features]
