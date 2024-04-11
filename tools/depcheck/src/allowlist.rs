@@ -27,6 +27,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "calendrical_calculations",
     "fixed_decimal",
     "icu_provider",
+    "lazy_static",
     "litemap",
     "tinystr",
     "writeable",
