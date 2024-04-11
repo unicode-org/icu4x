@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use calendrical_calculations::islamic::{
-    CivilIslamicMarker, IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
-    TabularIslamicMarker,
+    IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
 };
 use calendrical_calculations::iso;
 use icu_calendar::provider::islamic::*;
@@ -40,23 +39,6 @@ impl IterableDataProvider<IslamicObservationalCacheV1Marker> for crate::DatagenP
     }
 }
 
-impl DataProvider<IslamicCivilCacheV1Marker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<IslamicCivilCacheV1Marker>, DataError> {
-        self.check_req::<IslamicCivilCacheV1Marker>(req)?;
-        let cache = load::<CivilIslamicMarker>();
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(cache)),
-        })
-    }
-}
-
-impl IterableDataProvider<IslamicCivilCacheV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
 impl DataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
@@ -72,26 +54,6 @@ impl DataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
-impl DataProvider<IslamicTabularCacheV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<IslamicTabularCacheV1Marker>, DataError> {
-        self.check_req::<IslamicTabularCacheV1Marker>(req)?;
-        let cache = load::<TabularIslamicMarker>();
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(cache)),
-        })
-    }
-}
-
-impl IterableDataProvider<IslamicTabularCacheV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

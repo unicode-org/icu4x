@@ -39,16 +39,15 @@
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::provider::islamic::{
-    IslamicCacheV1, IslamicCivilCacheV1Marker, IslamicObservationalCacheV1Marker,
-    IslamicTabularCacheV1Marker, IslamicUmmAlQuraCacheV1Marker, PackedIslamicYearInfo,
+    IslamicCacheV1, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
+    PackedIslamicYearInfo,
 };
 use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use calendrical_calculations::islamic::{
-    CivilIslamicMarker, IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
-    TabularIslamicMarker,
+    IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
 };
 use calendrical_calculations::rata_die::RataDie;
 use core::marker::PhantomData;
@@ -81,9 +80,7 @@ pub struct IslamicObservational {
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
-pub struct IslamicCivil {
-    data: Option<DataPayload<IslamicCivilCacheV1Marker>>,
-}
+pub struct IslamicCivil;
 
 /// Umm al-Qura Hijri Calendar (Used in Saudi Arabia)
 ///
@@ -111,9 +108,7 @@ pub struct IslamicUmmAlQura {
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
-pub struct IslamicTabular {
-    data: Option<DataPayload<IslamicTabularCacheV1Marker>>,
-}
+pub struct IslamicTabular;
 
 impl IslamicObservational {
     /// Creates a new [`IslamicObservational`] with some precomputed calendrical calculations.
@@ -156,42 +151,15 @@ impl IslamicObservational {
 }
 
 impl IslamicCivil {
-    /// Creates a new [`IslamicCivil`] with some precomputed calendrical calculations.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
-            data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICCIVILCACHE_V1,
-            )),
-        }
+    /// Construct a new [`IslamicCivil`]
+    pub fn new() -> Self {
+        Self
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
-        #[cfg(skip)]
-        functions: [
-            new,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-    ]);
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<IslamicCivilCacheV1Marker> + ?Sized>(
-        provider: &D,
-    ) -> Result<Self, CalendarError> {
-        Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
-        })
-    }
-
-    /// Construct a new [`IslamicCivil`] without any precomputed calendrical calculations.
+    /// Construct a new [`IslamicCivil`] (deprecated: we will not add precomputation to this calendar)
+    #[deprecated = "Precomputation not needed for this calendar"]
     pub fn new_always_calculating() -> Self {
-        Self { data: None }
+        Self
     }
 }
 
@@ -236,42 +204,15 @@ impl IslamicUmmAlQura {
 }
 
 impl IslamicTabular {
-    /// Creates a new [`IslamicTabular`] with some precomputed calendrical calculations.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
-            data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMICTABULARCACHE_V1,
-            )),
-        }
+    /// Construct a new [`IslamicTabular`]
+    pub fn new() -> Self {
+        Self
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
-        #[cfg(skip)]
-        functions: [
-            new,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-    ]);
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<IslamicTabularCacheV1Marker> + ?Sized>(
-        provider: &D,
-    ) -> Result<Self, CalendarError> {
-        Ok(Self {
-            data: Some(provider.load(Default::default())?.take_payload()?),
-        })
-    }
-
-    /// Construct a new [`IslamicTabular`] without any precomputed calendrical calculations.
+    /// Construct a new [`IslamicTabular`] (deprecated: we will not add precomputation to this calendar)
+    #[deprecated = "Precomputation not needed for this calendar"]
     pub fn new_always_calculating() -> Self {
-        Self { data: None }
+        Self
     }
 }
 
@@ -887,29 +828,40 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
 pub struct IslamicCivilDateInner(ArithmeticDate<IslamicCivil>);
 
 impl CalendarArithmetic for IslamicCivil {
-    type YearInfo = IslamicYearInfo;
+    type YearInfo = ();
 
-    fn month_days(_year: i32, month: u8, year_info: IslamicYearInfo) -> u8 {
-        year_info.packed_data.days_in_month(month)
+    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+        match month {
+            1 | 3 | 5 | 7 | 9 | 11 => 30,
+            2 | 4 | 6 | 8 | 10 => 29,
+            12 if Self::is_leap_year(year, ()) => 30,
+            12 => 29,
+            _ => 0,
+        }
     }
 
-    fn months_for_every_year(_year: i32, _year_info: IslamicYearInfo) -> u8 {
+    fn months_for_every_year(_year: i32, _data: ()) -> u8 {
         12
     }
 
-    fn days_in_provided_year(_year: i32, year_info: IslamicYearInfo) -> u16 {
-        year_info.packed_data.days_in_year()
+    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
+        if Self::is_leap_year(year, ()) {
+            355
+        } else {
+            354
+        }
     }
 
-    // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, _year_info: IslamicYearInfo) -> bool {
-        false
+    fn is_leap_year(year: i32, _data: ()) -> bool {
+        (14 + 11 * year).rem_euclid(30) < 11
     }
 
-    fn last_month_day_in_year(year: i32, year_info: IslamicYearInfo) -> (u8, u8) {
-        let days = Self::month_days(year, 12, year_info);
-
-        (12, days)
+    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::is_leap_year(year, ()) {
+            (12, 30)
+        } else {
+            (12, 29)
+        }
     }
 }
 
@@ -934,38 +886,17 @@ impl Calendar for IslamicCivil {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        };
-        ArithmeticDate::new_from_ordinals_with_info(
-            year,
-            month,
-            day,
-            self.precomputed_data().load_or_compute_info(year),
-        )
-        .map(IslamicCivilDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicCivilDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
-
-        let (year_info, y, m, d) = self
-            .precomputed_data()
-            .load_or_compute_info_for_iso(fixed_iso);
-        IslamicCivilDateInner(ArithmeticDate::new_unchecked_with_info(y, m, d, year_info))
+        Self::islamic_from_fixed(fixed_iso).inner
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed =
-            date.0
-                .year_info
-                .rd_for::<CivilIslamicMarker>(date.0.year, date.0.month, date.0.day);
-        Iso::iso_from_fixed(fixed)
+        let fixed_islamic = Self::fixed_from_islamic(*date);
+        Iso::iso_from_fixed(fixed_islamic)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -985,7 +916,7 @@ impl Calendar for IslamicCivil {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset, &self.precomputed_data())
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -1000,7 +931,7 @@ impl Calendar for IslamicCivil {
     }
 
     fn debug_name(&self) -> &'static str {
-        Self::DEBUG_NAME
+        "Islamic (civil)"
     }
 
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
@@ -1008,7 +939,7 @@ impl Calendar for IslamicCivil {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, date.0.year_info)
+        Self::is_leap_year(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -1026,7 +957,7 @@ impl Calendar for IslamicCivil {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_islamic(prev_year),
-            days_in_prev_year: date.0.year_info.days_in_prev_year(),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
             next_year: Self::year_as_islamic(next_year),
         }
     }
@@ -1036,8 +967,24 @@ impl Calendar for IslamicCivil {
 }
 
 impl IslamicCivil {
-    fn precomputed_data(&self) -> IslamicPrecomputedData<CivilIslamicMarker> {
-        IslamicPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
+    fn fixed_from_islamic(i_date: IslamicCivilDateInner) -> RataDie {
+        calendrical_calculations::islamic::fixed_from_islamic_civil(
+            i_date.0.year,
+            i_date.0.month,
+            i_date.0.day,
+        )
+    }
+
+    fn islamic_from_fixed(date: RataDie) -> Date<IslamicCivil> {
+        let (y, m, d) = calendrical_calculations::islamic::islamic_civil_from_fixed(date);
+
+        debug_assert!(
+            Date::try_new_islamic_civil_date_with_calendar(y, m, d, IslamicCivil).is_ok()
+        );
+        Date::from_raw(
+            IslamicCivilDateInner(ArithmeticDate::new_unchecked(y, m, d)),
+            IslamicCivil,
+        )
     }
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
@@ -1048,7 +995,6 @@ impl IslamicCivil {
             related_iso: None,
         }
     }
-    pub(crate) const DEBUG_NAME: &'static str = "Islamic (civil)";
 }
 
 impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
@@ -1076,11 +1022,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        let year_info = calendar
-            .as_calendar()
-            .precomputed_data()
-            .load_or_compute_info(year);
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicCivilDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -1130,29 +1072,40 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
 pub struct IslamicTabularDateInner(ArithmeticDate<IslamicTabular>);
 
 impl CalendarArithmetic for IslamicTabular {
-    type YearInfo = IslamicYearInfo;
+    type YearInfo = ();
 
-    fn month_days(_year: i32, month: u8, year_info: IslamicYearInfo) -> u8 {
-        year_info.packed_data.days_in_month(month)
+    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+        match month {
+            1 | 3 | 5 | 7 | 9 | 11 => 30,
+            2 | 4 | 6 | 8 | 10 => 29,
+            12 if Self::is_leap_year(year, ()) => 30,
+            12 => 29,
+            _ => 0,
+        }
     }
 
-    fn months_for_every_year(_year: i32, _year_info: IslamicYearInfo) -> u8 {
+    fn months_for_every_year(_year: i32, _data: ()) -> u8 {
         12
     }
 
-    fn days_in_provided_year(_year: i32, year_info: IslamicYearInfo) -> u16 {
-        year_info.packed_data.days_in_year()
+    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
+        if Self::is_leap_year(year, ()) {
+            355
+        } else {
+            354
+        }
     }
 
-    // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, _year_info: IslamicYearInfo) -> bool {
-        false
+    fn is_leap_year(year: i32, _data: ()) -> bool {
+        (14 + 11 * year).rem_euclid(30) < 11
     }
 
-    fn last_month_day_in_year(year: i32, year_info: IslamicYearInfo) -> (u8, u8) {
-        let days = Self::month_days(year, 12, year_info);
-
-        (12, days)
+    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::is_leap_year(year, ()) {
+            (12, 30)
+        } else {
+            (12, 29)
+        }
     }
 }
 
@@ -1175,38 +1128,17 @@ impl Calendar for IslamicTabular {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        };
-        ArithmeticDate::new_from_ordinals_with_info(
-            year,
-            month,
-            day,
-            self.precomputed_data().load_or_compute_info(year),
-        )
-        .map(IslamicTabularDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicTabularDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
-
-        let (year_info, y, m, d) = self
-            .precomputed_data()
-            .load_or_compute_info_for_iso(fixed_iso);
-        IslamicTabularDateInner(ArithmeticDate::new_unchecked_with_info(y, m, d, year_info))
+        Self::islamic_from_fixed(fixed_iso).inner
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed =
-            date.0
-                .year_info
-                .rd_for::<TabularIslamicMarker>(date.0.year, date.0.month, date.0.day);
-        Iso::iso_from_fixed(fixed)
+        let fixed_islamic = Self::fixed_from_islamic(*date);
+        Iso::iso_from_fixed(fixed_islamic)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -1226,7 +1158,7 @@ impl Calendar for IslamicTabular {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset, &self.precomputed_data())
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -1241,7 +1173,7 @@ impl Calendar for IslamicTabular {
     }
 
     fn debug_name(&self) -> &'static str {
-        Self::DEBUG_NAME
+        "Islamic (tabular)"
     }
 
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
@@ -1249,7 +1181,7 @@ impl Calendar for IslamicTabular {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, date.0.year_info)
+        Self::is_leap_year(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -1267,7 +1199,7 @@ impl Calendar for IslamicTabular {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_islamic(prev_year),
-            days_in_prev_year: date.0.year_info.days_in_prev_year(),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
             next_year: Self::year_as_islamic(next_year),
         }
     }
@@ -1277,8 +1209,24 @@ impl Calendar for IslamicTabular {
 }
 
 impl IslamicTabular {
-    fn precomputed_data(&self) -> IslamicPrecomputedData<TabularIslamicMarker> {
-        IslamicPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
+    fn fixed_from_islamic(i_date: IslamicTabularDateInner) -> RataDie {
+        calendrical_calculations::islamic::fixed_from_islamic_tabular(
+            i_date.0.year,
+            i_date.0.month,
+            i_date.0.day,
+        )
+    }
+
+    fn islamic_from_fixed(date: RataDie) -> Date<IslamicTabular> {
+        let (y, m, d) = calendrical_calculations::islamic::islamic_tabular_from_fixed(date);
+
+        debug_assert!(
+            Date::try_new_islamic_civil_date_with_calendar(y, m, d, IslamicCivil).is_ok()
+        );
+        Date::from_raw(
+            IslamicTabularDateInner(ArithmeticDate::new_unchecked(y, m, d)),
+            IslamicTabular,
+        )
     }
 
     fn year_as_islamic(year: i32) -> types::FormattableYear {
@@ -1289,7 +1237,6 @@ impl IslamicTabular {
             related_iso: None,
         }
     }
-    pub(crate) const DEBUG_NAME: &'static str = "Islamic (tabular)";
 }
 
 impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
@@ -1317,11 +1264,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        let year_info = calendar
-            .as_calendar()
-            .precomputed_data()
-            .load_or_compute_info(year);
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }

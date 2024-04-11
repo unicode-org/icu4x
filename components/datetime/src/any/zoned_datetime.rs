@@ -14,9 +14,9 @@ use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicCivilCacheV1Marker,
-    IslamicObservationalCacheV1Marker, IslamicTabularCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    WeekDataV1Marker,
 };
 use icu_calendar::{DateTime, Time};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -258,10 +258,8 @@ impl ZonedDateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
-            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
-            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -416,10 +414,8 @@ impl ZonedDateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
-            + DataProvider<IslamicCivilCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
-            + DataProvider<IslamicTabularCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>

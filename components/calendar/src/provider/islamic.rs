@@ -28,15 +28,9 @@ use zerovec::ZeroVec;
         "calendar/islamicobservationalcache@1",
         singleton
     ),
-    marker(IslamicCivilCacheV1Marker, "calendar/islamiccivilcache@1", singleton),
     marker(
         IslamicUmmAlQuraCacheV1Marker,
         "calendar/islamicummalquracache@1",
-        singleton
-    ),
-    marker(
-        IslamicTabularCacheV1Marker,
-        "calendar/islamictabularcache@1",
         singleton
     )
 )]
