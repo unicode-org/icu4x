@@ -302,15 +302,15 @@ pub trait Writeable {
     /// let message = WelcomeMessage { name: "Alice" };
     /// let message_str = message.write_to_string();
     ///
-    /// assert_eq!(Ordering::Equal, message.write_cmp_bytes(b"Hello, Alice!"));
+    /// assert_eq!(Ordering::Equal, message.writeable_cmp_bytes(b"Hello, Alice!"));
     ///
-    /// assert_eq!(Ordering::Greater, message.write_cmp_bytes(b"Alice!"));
+    /// assert_eq!(Ordering::Greater, message.writeable_cmp_bytes(b"Alice!"));
     /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
     ///
-    /// assert_eq!(Ordering::Less, message.write_cmp_bytes(b"Hello, Bob!"));
+    /// assert_eq!(Ordering::Less, message.writeable_cmp_bytes(b"Hello, Bob!"));
     /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
     /// ```
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         let mut wc = cmp::WriteComparator::new(other);
         let _ = self.write_to(&mut wc);
         wc.finish().reverse()
@@ -426,7 +426,7 @@ macro_rules! assert_writeable_eq {
             );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
-        let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
+        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, $expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
         actual_parts // return for assert_writeable_parts_eq
     }};
