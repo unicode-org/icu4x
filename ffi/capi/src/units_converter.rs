@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_experimental::units::converter::UnitsConverter;
+use icu_experimental::units::converter_factory::ConverterFactory;
+use icu_experimental::units::measureunit::MeasureUnit;
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
     use core::str;
-    use icu_experimental::units::converter::UnitsConverter;
-    use icu_experimental::units::converter_factory::ConverterFactory;
-    use icu_experimental::units::measureunit::MeasureUnit;
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`ICU4XUnitsConverter`]
