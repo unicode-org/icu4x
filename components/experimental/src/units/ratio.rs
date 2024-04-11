@@ -8,8 +8,8 @@ use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::{One, Pow, Zero};
 
-#[derive(Debug)]
-pub(crate) struct IcuRatio(Ratio<BigInt>);
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct IcuRatio(Ratio<BigInt>);
 
 impl IcuRatio {
     pub fn new(numerator: BigInt, denominator: BigInt) -> Self {

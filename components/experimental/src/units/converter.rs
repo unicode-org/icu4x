@@ -2,11 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::Deref;
-
-use num_bigint::BigInt;
-use num_rational::Ratio;
-
 use crate::units::ratio::IcuRatio;
 
 /// A converter for converting between two single or compound units.
@@ -79,7 +74,7 @@ impl OffsetConverter {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
         let result = self.proportional.convert(value);
-        result + self.offset
+        result + self.offset.clone()
     }
 }
 
@@ -100,6 +95,6 @@ pub(crate) struct ProportionalConverter {
 impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
-        *value * self.conversion_rate
+        value.clone() * self.conversion_rate.clone()
     }
 }
