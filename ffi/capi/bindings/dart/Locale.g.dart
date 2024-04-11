@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 /// An ICU4X Locale, capable of representing strings like `"en-US"`.
 ///
 /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
-final class Locale implements ffi.Finalizable {
+final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -226,19 +226,24 @@ final class Locale implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
-  Ordering strictCmp(String other) {
+  int compareToString(String other) {
     final temp = ffi2.Arena();
     final otherView = other.utf8View;
-    final result = _ICU4XLocale_strict_cmp(_ffi, otherView.allocIn(temp), otherView.length);
+    final result = _ICU4XLocale_strict_cmp_(_ffi, otherView.allocIn(temp), otherView.length);
     temp.releaseAll();
-    return Ordering.values.firstWhere((v) => v._ffi == result);
+    return result;
   }
 
   /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.total_cmp) for more information.
-  Ordering totalCmp(Locale other) {
-    final result = _ICU4XLocale_total_cmp(_ffi, other._ffi);
-    return Ordering.values.firstWhere((v) => v._ffi == result);
+  int compareTo(Locale other) {
+    final result = _ICU4XLocale_total_cmp_(_ffi, other._ffi);
+    return result;
   }
+
+  @override
+  bool operator ==(Object other) => other is Locale && compareTo(other) == 0;
+  @override
+  int get hashCode => 42; // Cannot get hash from Rust, so a constant is the only correct impl
 }
 
 @meta.ResourceIdentifier('ICU4XLocale_destroy')
@@ -316,12 +321,12 @@ external _ResultVoidInt32 _ICU4XLocale_to_string(ffi.Pointer<ffi.Opaque> self, f
 // ignore: non_constant_identifier_names
 external bool _ICU4XLocale_normalizing_eq(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
 
-@meta.ResourceIdentifier('ICU4XLocale_strict_cmp')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_strict_cmp')
+@meta.ResourceIdentifier('ICU4XLocale_strict_cmp_')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_strict_cmp_')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocale_strict_cmp(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
+external int _ICU4XLocale_strict_cmp_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
 
-@meta.ResourceIdentifier('ICU4XLocale_total_cmp')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_total_cmp')
+@meta.ResourceIdentifier('ICU4XLocale_total_cmp_')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_total_cmp_')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocale_total_cmp(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
+external int _ICU4XLocale_total_cmp_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);

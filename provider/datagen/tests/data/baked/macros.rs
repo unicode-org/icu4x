@@ -36,6 +36,11 @@ mod calendar_dangicache_v1;
 #[doc(inline)]
 pub use __impl_calendar_dangicache_v1 as impl_calendar_dangicache_v1;
 #[macro_use]
+#[path = "macros/calendar_islamicobservationalcache_v1.rs.data"]
+mod calendar_islamicobservationalcache_v1;
+#[doc(inline)]
+pub use __impl_calendar_islamicobservationalcache_v1 as impl_calendar_islamicobservationalcache_v1;
+#[macro_use]
 #[path = "macros/calendar_japanese_v1.rs.data"]
 mod calendar_japanese_v1;
 #[doc(inline)]
@@ -236,6 +241,11 @@ mod datetime_patterns_gregory_date_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_gregory_date_v1 as impl_datetime_patterns_gregory_date_v1;
 #[macro_use]
+#[path = "macros/datetime_patterns_gregory_date_skeleton_v1.rs.data"]
+mod datetime_patterns_gregory_date_skeleton_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_gregory_date_skeleton_v1 as impl_datetime_patterns_gregory_date_skeleton_v1;
+#[macro_use]
 #[path = "macros/datetime_patterns_hebrew_date_v1.rs.data"]
 mod datetime_patterns_hebrew_date_v1;
 #[doc(inline)]
@@ -275,6 +285,11 @@ pub use __impl_datetime_patterns_roc_date_v1 as impl_datetime_patterns_roc_date_
 mod datetime_patterns_time_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_time_v1 as impl_datetime_patterns_time_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_time_skeleton_v1.rs.data"]
+mod datetime_patterns_time_skeleton_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_time_skeleton_v1 as impl_datetime_patterns_time_skeleton_v1;
 #[macro_use]
 #[path = "macros/datetime_persian_datelengths_v1.rs.data"]
 mod datetime_persian_datelengths_v1;
@@ -1395,6 +1410,11 @@ pub use __impl_time_zone_generic_short_v1 as impl_time_zone_generic_short_v1;
 mod time_zone_iana_to_bcp47_v1;
 #[doc(inline)]
 pub use __impl_time_zone_iana_to_bcp47_v1 as impl_time_zone_iana_to_bcp47_v1;
+#[macro_use]
+#[path = "macros/time_zone_iana_to_bcp47_v2.rs.data"]
+mod time_zone_iana_to_bcp47_v2;
+#[doc(inline)]
+pub use __impl_time_zone_iana_to_bcp47_v2 as impl_time_zone_iana_to_bcp47_v2;
 #[macro_use]
 #[path = "macros/time_zone_metazone_period_v1.rs.data"]
 mod time_zone_metazone_period_v1;

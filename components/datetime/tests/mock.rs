@@ -64,7 +64,7 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Cale
         let fraction_str = &input[20..29.min(input.len())];
         let fraction = fraction_str.parse::<u32>()?;
         let nanoseconds = fraction * (10u32.pow(9 - fraction_str.len() as u32));
-        datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, nanoseconds)?;
+        datetime.time = icu_calendar::Time::try_new(hour, minute, second, nanoseconds)?;
     };
 
     Ok(datetime)

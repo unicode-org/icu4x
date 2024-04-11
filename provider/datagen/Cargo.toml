@@ -72,6 +72,7 @@ proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
+either = { workspace = true }
 elsa = "1.10"
 itertools = "0.10"
 log = "0.4"
@@ -93,7 +94,6 @@ ureq = { version = "2", optional = true }
 clap = { version = "4", optional = true, features = ["derive"] }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
-either = "1.9.0"
 
 [dev-dependencies]
 crlify = { path = "../../utils/crlify" }
@@ -121,7 +121,7 @@ experimental_components = ["dep:icu_experimental", "dep:num-bigint", "dep:num-ra
 
 [[bin]]
 name = "icu4x-datagen"
-path = "src/bin/datagen/mod.rs"
+path = "src/bin/icu4x-datagen.rs"
 required-features = ["bin"]
 
 [package.metadata.cargo-all-features]

@@ -43,7 +43,7 @@ itertools = "0.10"
 icu_properties = { workspace = true, features = ["compiled_data"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [features]
 default = ["compiled_data", "auto"]

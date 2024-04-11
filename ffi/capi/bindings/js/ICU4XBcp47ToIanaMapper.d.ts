@@ -21,7 +21,7 @@ export class ICU4XBcp47ToIanaMapper {
 
    * Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.IanaBcp47RoundTripMapper.html#method.bcp47_to_iana Rust documentation for `bcp47_to_iana`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.bcp47_to_iana Rust documentation for `bcp47_to_iana`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   get(value: string): string | never;

@@ -46,7 +46,7 @@ icu_locid = { path = "../../components/locid" }
 writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }
 
 [lib]
 bench = false  # This option is required for Benchmark CI

@@ -9,8 +9,8 @@ use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
-    WeekDataV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -67,7 +67,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, types::Time};
+/// use icu::calendar::{AnyCalendar, DateTime, Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
@@ -241,6 +241,7 @@ impl DateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -388,6 +389,7 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<RocDateLengthsV1Marker>

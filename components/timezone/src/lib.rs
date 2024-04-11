@@ -107,7 +107,7 @@
 //! assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
 //! ```
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
@@ -133,7 +133,10 @@ mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
-pub use iana_ids::{IanaBcp47RoundTripMapper, IanaToBcp47Mapper};
+pub use iana_ids::{
+    IanaBcp47RoundTripMapper, IanaBcp47RoundTripMapperBorrowed, IanaToBcp47Mapper,
+    IanaToBcp47MapperBorrowed,
+};
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;

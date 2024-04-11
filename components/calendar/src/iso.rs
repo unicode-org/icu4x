@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -282,7 +282,7 @@ impl DateTime<Iso> {
     ) -> Result<DateTime<Iso>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_iso_date(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 
@@ -291,7 +291,7 @@ impl DateTime<Iso> {
     pub fn local_unix_epoch() -> Self {
         DateTime {
             date: Date::unix_epoch(),
-            time: types::Time::midnight(),
+            time: Time::midnight(),
         }
     }
 
@@ -356,7 +356,7 @@ impl DateTime<Iso> {
     /// );
     /// ```
     pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
-        let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
+        let (time, extra_days) = Time::from_minute_with_remainder_days(minute);
         let unix_epoch = Date::unix_epoch();
         let unix_epoch_days = Iso::fixed_from_iso(unix_epoch.inner);
         let date = Iso::iso_from_fixed(unix_epoch_days + extra_days as i64);

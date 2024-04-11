@@ -1,0 +1,143 @@
+{
+  "indices": [
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 1
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 4
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 7
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 10
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 12
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 15
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 18
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 20
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 21
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 24
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 27
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 29
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 30
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 32
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 33
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 34
+    }
+  ],
+  "patterns": [
+    "d",
+    "d MMMM",
+    "d MMM",
+    "dd/MM",
+    "d MMMM y",
+    "d MMM y",
+    "dd/MM/y",
+    "d MMMM y GGGG",
+    "d MMM y GGG",
+    "d/M/y GGG",
+    "EEEE d",
+    "E d",
+    "EEEE, d MMMM",
+    "E, d MMM",
+    "E, dd/MM",
+    "EEEE, d MMMM y",
+    "E, d MMM y",
+    "E, dd/MM/y",
+    "EEEE, d MMMM y GGGG",
+    "E, d MMM y GGG",
+    "ccc",
+    "MMMM",
+    "LLL",
+    "L",
+    "MMMM y",
+    "MMM y",
+    "MM/y",
+    "MMMM y GGGG",
+    "MMM y GGG",
+    "y",
+    "y GGGG",
+    "y GGG",
+    "'week' w 'of' Y",
+    "'unimplemented'",
+    "'unimplemented'"
+  ]
+}

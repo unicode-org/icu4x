@@ -16,7 +16,7 @@ The design goals of `ICU4X` are:
 
 ## Documentation
 
-For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](docs/tutorials/intro.md) tutorial. Further tutorials can be found in the [tutorial index](docs/tutorials/index.md).
+For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](tutorials/intro.md) tutorial. Further tutorials can be found in the [tutorial index](tutorials/index.md).
 
 For technical information on how to use ICU4X, visit our [API docs (latest stable)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
 
@@ -59,6 +59,8 @@ assert_eq!(
 ## Development
 
 ICU4X is developed by the ICU4X Technical Committee (ICU4X-TC) in the Unicode Consortium. The ICU4X-TC leads strategy and development of internationalization solutions for modern platforms and ecosystems, including client-side and resource-constrained environments. See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
+
+ICU4X-TC convenes approximately once per quarter in advance of ICU4X releases. Most work in the interim takes place in the ICU4X Working Group (ICU4X WG), which makes technical recommendations, lands them in the repository, and records them in CHANGELOG.md. The recommendations of ICU4X WG are subject to approval by the ICU4X-TC.
 
 Please subscribe to this repository to participate in discussions.  If you want to contribute, see our [contributing.md](CONTRIBUTING.md).
 

@@ -4,6 +4,7 @@ import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoWeekday } from "./ICU4XIsoWeekday";
 import { ICU4XLocale } from "./ICU4XLocale";
+import { ICU4XWeekendContainsDay } from "./ICU4XWeekendContainsDay";
 
 /**
 
@@ -43,4 +44,10 @@ export class ICU4XWeekCalculator {
    * See the {@link https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days Rust documentation for `min_week_days`} for more information.
    */
   min_week_days(): u8;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend Rust documentation for `weekend`} for more information.
+   */
+  weekend(): ICU4XWeekendContainsDay;
 }

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(
     not(test),
@@ -38,7 +38,7 @@
 //!
 //! More information on using ICU4X from C++ can be found in [our tutorial].
 //!
-//! [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md
+//! [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/cpp.md
 //! [TypeScript]: https://unicode-org.github.io/icu4x/tsdoc
 //! [C++]: https://unicode-org.github.io/icu4x/cppdoc
 
@@ -66,6 +66,7 @@ pub mod locale;
 pub mod logging;
 #[macro_use]
 pub mod provider;
+mod utf;
 
 // Components
 
@@ -151,6 +152,9 @@ pub mod time;
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
+
+#[cfg(feature = "icu_experimental")]
+pub mod units_converter;
 #[cfg(feature = "icu_calendar")]
 pub mod week;
 #[cfg(feature = "icu_datetime")]

@@ -33,4 +33,4 @@ rand_distr = "0.4"
 rand_pcg = "0.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
+criterion = { workspace = true }

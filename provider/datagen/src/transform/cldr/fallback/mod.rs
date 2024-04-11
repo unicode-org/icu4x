@@ -6,8 +6,6 @@ use crate::transform::cldr::cldr_serde;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use icu_locid::{
-    extensions::unicode::{key, Key},
-    langid,
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
@@ -53,35 +51,6 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
-        self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
-        // TODO(#1964): Load this data from its proper sources. For now, it is copied from:
-        // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml
-        // as well as from CLDR XML.
-        #[allow(clippy::type_complexity)]
-        let parents_list: [(&UnvalidatedStr, (Language, Option<Script>, Option<Region>));
-            1] = [
-            ("yue".into(), (&langid!("zh-Hant")).into()), //
-        ];
-        let unicode_extension_defaults_list: [(Key, &UnvalidatedStr, &UnvalidatedStr); 2] = [
-            (key!("co"), "zh".into(), "pinyin".into()),
-            (key!("co"), "zh-Hant".into(), "stroke".into()),
-        ];
-        let data = LocaleFallbackSupplementV1 {
-            parents: parents_list.into_iter().collect(),
-            unicode_extension_defaults: unicode_extension_defaults_list.into_iter().collect(),
-        };
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
-        })
-    }
-}
-
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
@@ -89,12 +58,6 @@ impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::Datage
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
-impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

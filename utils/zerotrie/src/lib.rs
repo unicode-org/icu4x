@@ -34,7 +34,7 @@
 //! [`LiteMap`]: litemap::LiteMap
 //! [`BTreeMap`]: alloc::collections::BTreeMap
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(
     not(test),
@@ -56,7 +56,7 @@ extern crate alloc;
 
 mod builder;
 mod byte_phf;
-mod cursor;
+pub mod cursor;
 mod error;
 #[macro_use]
 mod helpers;
@@ -67,7 +67,6 @@ mod serde;
 mod varint;
 mod zerotrie;
 
-pub use crate::cursor::ZeroTrieSimpleAsciiCursor;
 pub use crate::zerotrie::ZeroAsciiIgnoreCaseTrie;
 pub use crate::zerotrie::ZeroTrie;
 pub use crate::zerotrie::ZeroTrieExtendedCapacity;

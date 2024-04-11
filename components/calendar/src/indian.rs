@@ -34,7 +34,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use tinystr::tinystr;
 
 /// The Indian National Calendar (aka the Saka calendar)
@@ -311,7 +311,7 @@ impl DateTime<Indian> {
     ) -> Result<DateTime<Indian>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_indian_date(year, month, day)?,
-            time: types::Time::try_new(hour, minute, second, 0)?,
+            time: Time::try_new(hour, minute, second, 0)?,
         })
     }
 }

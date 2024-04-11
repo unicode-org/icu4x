@@ -21,6 +21,7 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
         )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
@@ -43,6 +44,7 @@ pub mod ffi {
             Struct,
             compact
         )]
+        #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.get32(ch).0
         }
@@ -71,6 +73,7 @@ pub mod ffi {
     impl ICU4XCanonicalComposition {
         /// Construct a new ICU4XCanonicalComposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCanonicalComposition>, ICU4XError> {
@@ -117,6 +120,7 @@ pub mod ffi {
     impl ICU4XCanonicalDecomposition {
         /// Construct a new ICU4XCanonicalDecomposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
