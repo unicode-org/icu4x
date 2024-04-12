@@ -51,6 +51,9 @@ const windowsTargets = [
 
 Future<void> main(List<String> args) async {
   final binDir = args[0];
+  final excludedTargets = args.length > 1
+      ? args[1].split(',').map((s) => Target.fromString(s))
+      : <Target>[];
 
   final List<Target> targets;
   if (Platform.isLinux) {
@@ -65,7 +68,8 @@ Future<void> main(List<String> args) async {
 
   await Directory(binDir).create();
 
-  for (var target in targets) {
+  for (var target
+      in targets.where((target) => !excludedTargets.contains(target))) {
     print('Building $target...');
     for (final linkMode in LinkMode.values) {
       try {
