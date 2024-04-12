@@ -52,7 +52,7 @@ const windowsTargets = [
 Future<void> main(List<String> args) async {
   final binDir = args[0];
   final excludedTargets = args.length > 1
-      ? args[1].split(',').map((s) => Target.fromString(s))
+      ? args[1].split(',').map((s) => TargetExtension.fromString(s))
       : <Target>[];
 
   final List<Target> targets;
@@ -154,4 +154,10 @@ Future<String> buildLib(Target target, LinkMode linkMode, String outDir) async {
       .copy(outName);
 
   return outName;
+}
+
+extension TargetExtension on Target {
+  static Target fromString(String s) {
+    return Target.values.firstWhere((target) => target.toString() == s);
+  }
 }
