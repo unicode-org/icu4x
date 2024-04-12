@@ -22,7 +22,7 @@ use super::{
         UnitsConverterInner,
     },
     measureunit::{MeasureUnit, MeasureUnitParser},
-    provider::{Base, SiPrefix, Sign},
+    provider::Sign,
 };
 
 /// ConverterFactory is a factory for creating a converter.
@@ -267,17 +267,6 @@ impl ConverterFactory {
         }
     }
 
-    fn apply_si_prefix(si_prefix: &SiPrefix, ratio: &mut IcuRatio) {
-        match si_prefix.base {
-            Base::Decimal => {
-                *ratio *= IcuRatio::ten().pow(si_prefix.power as i32);
-            }
-            Base::Binary => {
-                *ratio *= IcuRatio::two().pow(si_prefix.power as i32);
-            }
-        }
-    }
-
     fn compute_conversion_term(&self, unit_item: &MeasureUnitItem, sign: i8) -> Option<IcuRatio> {
         let conversion_info = self
             .payload
@@ -293,7 +282,7 @@ impl ConverterFactory {
             conversion_info.factor_den(),
         );
 
-        Self::apply_si_prefix(&unit_item.si_prefix, &mut conversion_info_factor);
+        conversion_info_factor.apply_si_prefix(&unit_item.si_prefix);
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
         Some(conversion_info_factor)
     }

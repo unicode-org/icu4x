@@ -13,6 +13,8 @@ use num_traits::Signed;
 use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
+use super::provider::{Base, SiPrefix};
+
 // TODO: implement AsULE for IcuRatio and use it in Data module.
 // TODO: add test cases for IcuRatio.
 /// A ratio type that uses `BigInt` as the underlying type.
@@ -21,7 +23,13 @@ pub struct IcuRatio(Ratio<BigInt>);
 
 #[derive(Debug)]
 pub enum IcuRatioError {
+    /// Represents an error when parsing a `BigInt` from a string.
+    /// For example, the string "1/23" is invalid because it contains a '/' character.
+    ///              the string "3A" is invalid because it contains a non-numeric character.
     BigIntParseError(num_bigint::ParseBigIntError),
+
+    /// Represents an error when parsing a ratio from a string.
+    /// For example, the string "1/0/2" is invalid because it contains more than one '/' character.
     InvalidRatioString,
 }
 
@@ -30,8 +38,15 @@ impl IcuRatio {
         Self(Ratio::new(numerator, denominator))
     }
 
-    pub fn numerator(&self) -> &BigInt {
-        self.0.numer()
+    pub fn apply_si_prefix(&mut self, si_prefix: &SiPrefix) {
+        match si_prefix.base {
+            Base::Decimal => {
+                *self *= IcuRatio::ten().pow(si_prefix.power as i32);
+            }
+            Base::Binary => {
+                *self *= IcuRatio::two().pow(si_prefix.power as i32);
+            }
+        }
     }
 
     pub fn numerator_str(&self) -> String {
@@ -40,10 +55,6 @@ impl IcuRatio {
 
     pub fn denominator(&self) -> &BigInt {
         self.0.denom()
-    }
-
-    pub fn denominator_str(&self) -> String {
-        self.0.denom().to_string()
     }
 
     /// Returns the reciprocal of the ratio.
