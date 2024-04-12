@@ -4,7 +4,8 @@
 
 use std::collections::HashSet;
 
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use icu_locid::extensions::unicode::key;
 use icu_locid::extensions::unicode::Value;
 use icu_locid::LanguageIdentifier;
@@ -15,10 +16,10 @@ use tinystr::TinyAsciiStr;
 mod compact;
 #[cfg(feature = "experimental_components")]
 mod compact_decimal_pattern;
-pub(crate) mod decimal_pattern;
+pub(super) mod decimal_pattern;
 mod symbols;
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     /// Returns the digits for the given numbering system name.
     fn get_digits_for_numbering_system(
         &self,

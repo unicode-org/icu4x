@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde::{self, ca};
+use crate::provider::transform::cldr::cldr_serde::{self, ca};
 use icu_calendar::types::MonthCode;
 use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
@@ -101,7 +101,7 @@ pub(super) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
         "buddhist" => &[("0", tinystr!(16, "be"))],
         "japanese" | "japanext" => {
             return Either::Right(
-                crate::transform::cldr::calendar::japanese::get_era_code_map()
+                crate::provider::transform::cldr::calendar::japanese::get_era_code_map()
                     .iter()
                     .map(|(k, v)| (&**k, *v)),
             )

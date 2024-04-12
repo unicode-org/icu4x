@@ -160,7 +160,7 @@ impl Eras {
     /// Load the era corresponding to a [`Length`] value
     ///
     /// Panics on Length::Short
-    pub(crate) fn load(&self, length: Length) -> &HashMap<String, String> {
+    pub(in super::super) fn load(&self, length: Length) -> &HashMap<String, String> {
         match length {
             Length::Abbr => &self.abbr,
             Length::Narrow => &self.narrow,
@@ -202,7 +202,7 @@ impl LengthPatterns {
 }
 
 impl DateTimeFormats {
-    pub(crate) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
+    pub(in super::super) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {
             PatternLength::Full => &self.full,
             PatternLength::Long => &self.long,

@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
@@ -29,7 +30,7 @@ struct CldrTimeZonesData<'a> {
 macro_rules! impl_data_provider {
     ($($marker:ident),+) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider {
+            impl DataProvider<$marker> for DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
@@ -70,7 +71,7 @@ macro_rules! impl_data_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            impl IterableDataProviderInternal<$marker> for DatagenProvider {
                 fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     if <$marker>::KEY == MetazonePeriodV1Marker::KEY {
                         // MetazonePeriodV1 does not require localized time zone data
@@ -110,7 +111,7 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {

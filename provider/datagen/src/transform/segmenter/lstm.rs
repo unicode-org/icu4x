@@ -4,6 +4,7 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
+use crate::provider::DatagenProvider;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -201,7 +202,7 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
     }
 }
 
-impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
+impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -225,7 +226,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
@@ -248,7 +249,7 @@ mod tests {
 
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
         let raw_data = provider
             .segmenter_lstm()
             .unwrap()

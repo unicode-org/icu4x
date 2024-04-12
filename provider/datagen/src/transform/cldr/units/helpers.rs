@@ -13,7 +13,7 @@ use num_bigint::BigInt;
 use num_rational::Ratio;
 use zerovec::ZeroVec;
 
-use crate::transform::cldr::cldr_serde::units::info::Constant;
+use crate::provider::transform::cldr::cldr_serde::units::info::Constant;
 
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:

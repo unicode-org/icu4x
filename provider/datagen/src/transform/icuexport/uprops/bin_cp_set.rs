@@ -2,14 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     // get the source data for a Unicode binary property that only defines values for code points
-    pub(crate) fn get_binary_prop_for_code_point_set<'a>(
+    pub(super) fn get_binary_prop_for_code_point_set<'a>(
         &'a self,
         key: &str,
     ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
@@ -28,7 +29,7 @@ impl crate::DatagenProvider {
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider {
+            impl DataProvider<$marker> for DatagenProvider {
                 fn load(
                     &self,
                     req: DataRequest,
@@ -51,7 +52,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
+            impl IterableDataProvider<$marker> for DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -138,7 +139,7 @@ fn test_basic() {
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load(Default::default())

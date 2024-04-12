@@ -6,7 +6,7 @@ pub mod cldr;
 pub mod icuexport;
 pub mod segmenter;
 
-use crate::DatagenProvider;
+use crate::provider::DatagenProvider;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;

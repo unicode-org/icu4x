@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use icu_experimental::compactdecimal::provider::*;
 use icu_locid::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 
-impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
+impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -58,7 +59,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
     }
 }
 
-impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
+impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -106,15 +107,13 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
     }
 }
 
-impl IterableDataProviderInternal<ShortCompactDecimalFormatDataV1Marker>
-    for crate::DatagenProvider
-{
+impl IterableDataProviderInternal<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
 
-impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         self.supported_locales_for_numbers()
     }
@@ -132,7 +131,7 @@ mod tests {
     #[test]
 
     fn test_compact_long() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
@@ -198,7 +197,7 @@ mod tests {
 
     #[test]
     fn test_compact_short() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {

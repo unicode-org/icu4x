@@ -98,11 +98,6 @@
 mod driver;
 mod provider;
 mod registry;
-mod source;
-mod transform;
-
-#[cfg(test)]
-mod tests;
 
 pub use driver::DatagenDriver;
 pub use driver::DeduplicationStrategy;
@@ -110,9 +105,10 @@ pub use driver::FallbackOptions;
 pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
 pub use driver::RuntimeFallbackLocation;
+
+pub use provider::CollationHanDatabase;
+pub use provider::CoverageLevel;
 pub use provider::DatagenProvider;
-#[doc(hidden)] // for CLI serde
-pub use provider::TrieType;
 #[allow(deprecated)] // ugh
 pub use registry::*;
 
@@ -127,8 +123,9 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, DeduplicationStrategy,
-        FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions, RuntimeFallbackLocation,
+        provider::CollationHanDatabase, provider::CoverageLevel, DatagenDriver, DatagenProvider,
+        DeduplicationStrategy, FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions,
+        RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
@@ -139,7 +136,7 @@ pub mod prelude {
     #[cfg(feature = "legacy_api")]
     #[allow(deprecated)]
     #[doc(hidden)]
-    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out, SourceData};
+    pub use crate::{provider::CldrLocaleSubset, syntax, BakedOptions, Out, SourceData};
 }
 
 use icu_provider::prelude::*;
@@ -247,58 +244,6 @@ pub enum FallbackMode {
     ///
     /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
     Hybrid,
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    #[serde(rename = "implicit")]
-    #[default]
-    Implicit,
-    /// Unihan
-    #[serde(rename = "unihan")]
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
-
-/// A language's CLDR coverage level.
-///
-/// In ICU4X, these are disjoint sets: a language belongs to a single coverage level. This
-/// contrasts with CLDR usage, where these levels are understood to be additive (i.e., "basic"
-/// includes all language with "basic", or better coverage). The ICU4X semantics allow
-/// generating different data files for different coverage levels without duplicating data.
-/// However, the data itself is still additive (e.g. for fallback to work correctly), so data
-/// for moderate (basic) languages should only be loaded if modern (modern and moderate) data
-/// is already present.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
-#[non_exhaustive]
-#[serde(rename_all = "camelCase")]
-pub enum CoverageLevel {
-    /// Locales listed as modern coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the highest level of coverage.
-    Modern,
-    /// Locales listed as moderate, but not modern, coverage targets by the CLDR subcomittee.
-    ///
-    /// This is a medium level of coverage.
-    Moderate,
-    /// Locales listed as basic, but not moderate or modern, coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the lowest level of coverage.
-    Basic,
 }
 
 /// Parses a list of human-readable key identifiers and returns a
@@ -550,12 +495,14 @@ pub fn datagen(
                 for locale in locales {
                     let locale = locale.into();
                     if let Some(model) =
-                        transform::segmenter::lstm::data_locale_to_model_name(&locale)
+                        provider::transform::segmenter::lstm::data_locale_to_model_name(&locale)
                     {
                         models.push(model.into());
                     }
                     if let Some(model) =
-                        transform::segmenter::dictionary::data_locale_to_model_name(&locale)
+                        provider::transform::segmenter::dictionary::data_locale_to_model_name(
+                            &locale,
+                        )
                     {
                         models.push(model.into());
                     }
@@ -717,33 +664,6 @@ pub mod syntax {
 #[doc(hidden)]
 pub use baked_exporter::Options as BakedOptions;
 
-#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[cfg(feature = "legacy_api")]
 #[doc(hidden)]
-#[derive(Debug)]
-#[cfg(feature = "legacy_api")]
-pub enum CldrLocaleSubset {
-    Ignored,
-}
-
-#[cfg(feature = "legacy_api")]
-impl Default for CldrLocaleSubset {
-    fn default() -> Self {
-        Self::Ignored
-    }
-}
-
-#[cfg(feature = "legacy_api")]
-impl CldrLocaleSubset {
-    #[allow(non_upper_case_globals)]
-    pub const Full: Self = Self::Ignored;
-    #[allow(non_upper_case_globals)]
-    pub const Modern: Self = Self::Ignored;
-}
-
-#[cfg(feature = "legacy_api")]
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-impl AnyProvider for DatagenProvider {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.as_any_provider().load_any(key, req)
-    }
-}
+pub use provider::CldrLocaleSubset;

@@ -4,8 +4,8 @@
 
 #![allow(dead_code)] // features
 
-use crate::source::SerdeCache;
-use crate::CoverageLevel;
+use crate::provider::source::SerdeCache;
+use crate::provider::CoverageLevel;
 use icu_calendar::provider::EraStartDate;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::{
@@ -25,7 +25,7 @@ use std::fmt::Debug;
 use std::str::FromStr;
 
 #[derive(Debug)]
-pub(crate) struct CldrCache {
+pub(in crate::provider) struct CldrCache {
     pub(super) serde_cache: SerdeCache,
     dir_suffix: OnceCell<&'static str>,
     extended_locale_expander: OnceCell<LocaleExpander>,
@@ -37,7 +37,7 @@ pub(crate) struct CldrCache {
 }
 
 impl CldrCache {
-    pub fn from_serde_cache(serde_cache: SerdeCache) -> Self {
+    pub(in crate::provider) fn from_serde_cache(serde_cache: SerdeCache) -> Self {
         CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
@@ -48,27 +48,27 @@ impl CldrCache {
         }
     }
 
-    pub fn core(&self) -> CldrDirNoLang<'_> {
+    pub(in crate::provider) fn core(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self, "cldr-core".to_owned())
     }
 
-    pub fn numbers(&self) -> CldrDirLang<'_> {
+    pub(in crate::provider) fn numbers(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-numbers".to_owned())
     }
 
-    pub fn misc(&self) -> CldrDirLang<'_> {
+    pub(in crate::provider) fn misc(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-misc".to_owned())
     }
 
-    pub fn bcp47(&self) -> CldrDirNoLang<'_> {
+    pub(in crate::provider) fn bcp47(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
-    pub fn displaynames(&self) -> CldrDirLang<'_> {
+    pub(in crate::provider) fn displaynames(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
-    pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
+    pub(in crate::provider) fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
             if cal == "gregorian" || cal == "generic" {
@@ -79,14 +79,14 @@ impl CldrCache {
         )
     }
 
-    pub fn locales(
+    pub(in crate::provider) fn locales(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache
-            .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
+            .read_and_parse_json::<crate::provider::transform::cldr::cldr_serde::coverage_levels::Resource>(
                 "cldr-core/coverageLevels.json",
             )?
             .coverage_levels
@@ -212,10 +212,10 @@ impl CldrCache {
     }
 }
 
-pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, String);
+pub(in crate::provider) struct CldrDirNoLang<'a>(&'a CldrCache, String);
 
 impl<'a> CldrDirNoLang<'a> {
-    pub fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DataError>
+    pub(in crate::provider) fn read_and_parse<S>(&self, file_name: &str) -> Result<&'a S, DataError>
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
@@ -225,10 +225,10 @@ impl<'a> CldrDirNoLang<'a> {
     }
 }
 
-pub(crate) struct CldrDirLang<'a>(&'a CldrCache, String);
+pub(in crate::provider) struct CldrDirLang<'a>(&'a CldrCache, String);
 
 impl<'a> CldrDirLang<'a> {
-    pub fn read_and_parse<S>(
+    pub(in crate::provider) fn read_and_parse<S>(
         &self,
         lang: &LanguageIdentifier,
         file_name: &str,
@@ -249,7 +249,9 @@ impl<'a> CldrDirLang<'a> {
         }
     }
 
-    pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier> + '_, DataError> {
+    pub(in crate::provider) fn list_langs(
+        &self,
+    ) -> Result<impl Iterator<Item = LanguageIdentifier> + '_, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
         let path = format!("{}-{dir_suffix}/main", self.1);
         Ok(self
@@ -264,7 +266,7 @@ impl<'a> CldrDirLang<'a> {
             .into_iter())
     }
 
-    pub fn file_exists(
+    pub(in crate::provider) fn file_exists(
         &self,
         lang: &LanguageIdentifier,
         file_name: &str,

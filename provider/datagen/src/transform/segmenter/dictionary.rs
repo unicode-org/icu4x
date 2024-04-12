@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
@@ -38,7 +39,7 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
     }
 }
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
@@ -70,7 +71,7 @@ impl crate::DatagenProvider {
 
 macro_rules! implement {
     ($marker:ident, $supported:expr) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
                 let data = self.load_dictionary_data(req)?;
@@ -81,7 +82,7 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok($supported
                     .into_iter()

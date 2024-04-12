@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::CldrTimeZonesData;
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
@@ -44,7 +44,7 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
 /// Returns a map from time zone long identifier to time zone BCP-47 ID.
 ///
 /// For example: "America/Chicago" to "uschi"
-pub(crate) fn compute_bcp47_tzids_btreemap(
+pub(super) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<String, TimeZoneBcp47Id> {
     let mut bcp47_tzids = BTreeMap::new();
@@ -61,7 +61,7 @@ pub(crate) fn compute_bcp47_tzids_btreemap(
 /// Returns a map from BCP-47 ID to a single canonical long identifier.
 ///
 /// For example: "inccu" to "Asia/Kolkata"
-pub(crate) fn compute_canonical_tzids_btreemap(
+pub(super) fn compute_canonical_tzids_btreemap(
     bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<TimeZoneBcp47Id, String> {
     let mut canonical_tzids = BTreeMap::new();
