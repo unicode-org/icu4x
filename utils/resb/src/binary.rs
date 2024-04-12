@@ -7,6 +7,7 @@
 //! file format.
 
 mod deserializer;
+mod header;
 pub use self::deserializer::from_bytes;
 
 #[cfg(feature = "serialize")]
@@ -14,56 +15,15 @@ mod serializer;
 #[cfg(feature = "serialize")]
 pub use self::serializer::Serializer;
 
-use core::fmt;
+use core::{fmt, slice::SliceIndex};
 
-/// The `BinHeader` struct represents the in-memory layout of a binary resource
-/// bundle header.
-#[repr(C)]
-struct BinHeader {
-    /// The size of the header in bytes, padded such that it is divisible by 16.
-    size: u16,
+use self::header::BinHeader;
 
-    /// A magic word. See [`MAGIC_WORD`].
-    magic: [u8; 2],
+/// Gets the endianness of a binary resource bundle's data.
+pub fn determine_endianness(resb: &[u8]) -> Result<Endianness, BinaryDeserializerError> {
+    let header = BinHeader::try_from(resb)?;
 
-    /// Information on the representation of data in the binary bundle.
-    repr_info: BinReprInfo,
-}
-
-/// The `BinReprInfo` struct represents the in-memory layout of a binary
-/// resource bundle's representation specifiers. These data describe the
-/// parameters necessary for correctly reading a bundle file.
-#[repr(C)]
-struct BinReprInfo {
-    /// The size of the representation info in bytes.
-    size: u16,
-
-    /// Reserved. Always 0.
-    reserved_word: u16,
-
-    /// The endianness of values in the file. `0` for little endian and `1` for
-    /// big endian.
-    endianness: Endianness,
-
-    /// The character set family in which key strings are represented.
-    charset_family: CharsetFamily,
-
-    /// The size of a character in a string resource in bytes. May be 1, 2, or
-    /// 4.
-    size_of_char: u8,
-
-    /// Reserved. Always 0.
-    reserved_byte: u8,
-
-    /// The data format identifier. Always `b"ResB"`.
-    data_format: [u8; 4],
-
-    /// The format version used for laying out the bundle.
-    format_version: FormatVersion,
-
-    /// The version of the data in the file. This is `[1, 4, 0, 0]` in all known
-    /// versions of ICU4C's `genrb`.
-    data_version: [u8; 4],
+    Ok(header.repr_info.endianness)
 }
 
 /// The `BinIndex` struct represents details of the written bundle.
@@ -152,7 +112,8 @@ primitive_enum!(
     u8,
     /// The endianness used to write a resource bundle.
     #[derive(Clone, Copy, Debug, PartialEq)]
-    enum Endianness {
+    #[allow(clippy::exhaustive_enums, missing_docs)]
+    pub enum Endianness {
         Little = 0,
         Big = 1,
     }
@@ -448,4 +409,43 @@ enum ErrorKind {
     UnsupportedFormat,
 
     Unknown,
+}
+
+/// Gets a subset of the given `u8` slice based on the specified index with
+/// bounds checking.
+///
+/// Returns the subslice. Returns an error if the index is not valid for the
+/// input.
+fn get_subslice<I>(input: &[u8], index: I) -> Result<&[u8], BinaryDeserializerError>
+where
+    I: SliceIndex<[u8], Output = [u8]>,
+{
+    input
+        .get(index)
+        .ok_or(BinaryDeserializerError::invalid_data(
+            "unexpected end of input",
+        ))
+}
+
+/// Reads the first two bytes of the input and interprets them as a `u16` with
+/// native endianness.
+///
+/// Returns the `u16` and a slice containing all input after the interpreted
+/// bytes. Returns an error if the input is of insufficient length.
+fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), BinaryDeserializerError> {
+    // Safe to unwrap at the end of this because `try_into()` for arrays will
+    // only fail if the slice is the wrong size.
+    #[allow(clippy::unwrap_used)]
+    let bytes = get_subslice(input, ..core::mem::size_of::<u16>())?
+        .try_into()
+        .unwrap();
+    let value = u16::from_le_bytes(bytes);
+
+    let rest =
+        input
+            .get(core::mem::size_of::<u16>()..)
+            .ok_or(BinaryDeserializerError::invalid_data(
+                "unexpected end of input",
+            ))?;
+    Ok((value, rest))
 }
