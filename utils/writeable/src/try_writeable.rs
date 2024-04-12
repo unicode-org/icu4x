@@ -388,7 +388,7 @@ macro_rules! assert_try_writeable_eq {
         }
         let ordering = actual_writeable.writeable_cmp_bytes($expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
-        let ordering = actual_writeable.writeable_cmp_bytes("\u{1FFFF}".as_bytes());
+        let ordering = actual_writeable.writeable_cmp_bytes("\u{10FFFF}".as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Less, $($arg)*);
         if $expected_str != "" {
             let ordering = actual_writeable.writeable_cmp_bytes("".as_bytes());

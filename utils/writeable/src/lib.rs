@@ -428,7 +428,7 @@ macro_rules! assert_writeable_eq {
         assert_eq!(actual_writeable.to_string(), $expected_str);
         let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, $expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
-        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "\u{1FFFF}".as_bytes());
+        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "\u{10FFFF}".as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Less, $($arg)*);
         if $expected_str != "" {
             let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "".as_bytes());
