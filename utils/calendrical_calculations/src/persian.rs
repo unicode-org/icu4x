@@ -65,7 +65,7 @@ pub fn fixed_from_fast_persian(year: i32, month: u8, day: u8) -> RataDie {
     let mut new_year = FIXED_PERSIAN_EPOCH.to_i64_date() - 1
         + 365 * (p_year - 1)
         + (8 * p_year + 21).div_euclid(33);
-    if year > MIN_NON_LEAP_CORRECTION && NON_LEAP_CORRECTION.binary_search(&year).is_ok() {
+    if year > MIN_NON_LEAP_CORRECTION && NON_LEAP_CORRECTION.binary_search(&(year - 1)).is_ok() {
         new_year -= 1;
     }
     RataDie::new(
