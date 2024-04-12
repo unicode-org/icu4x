@@ -12,6 +12,6 @@ edition = "2021"
 icu = { workspace = true, features = ["experimental"] }
 icu_experimental = { workspace = true, default-features = false, features = ["datagen"] }
 
-icu_datagen = { workspace = true, default-features = false, features = ["baked_exporter", "networking", "experimental_components", "rayon", "use_wasm"] }
+icu_datagen = { workspace = true, default-features = false, features = ["baked_exporter", "networking", "experimental_components", "rayon", "use_wasm", "provider"] }
 log = "0.4"
 simple_logger = "4"
