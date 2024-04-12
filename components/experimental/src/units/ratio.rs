@@ -10,8 +10,7 @@ use core::{
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
-use num_traits::ToPrimitive;
-use num_traits::{One, Pow, Zero};
+use num_traits::{One, Pow, ToPrimitive, Zero};
 
 use super::provider::{Base, SiPrefix};
 
@@ -49,8 +48,8 @@ impl IcuRatio {
         }
     }
 
-    pub fn numerator_str(&self) -> String {
-        self.0.numer().to_string()
+    pub fn numerator(&self) -> &BigInt {
+        self.0.numer()
     }
 
     pub fn denominator(&self) -> &BigInt {
