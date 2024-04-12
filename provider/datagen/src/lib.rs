@@ -96,6 +96,7 @@
 #![warn(missing_docs)]
 
 mod driver;
+#[cfg(feature = "provider")]
 mod provider;
 mod registry;
 
@@ -106,8 +107,11 @@ pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
 pub use driver::RuntimeFallbackLocation;
 
+#[cfg(feature = "provider")]
 pub use provider::CollationHanDatabase;
+#[cfg(feature = "provider")]
 pub use provider::CoverageLevel;
+#[cfg(feature = "provider")]
 pub use provider::DatagenProvider;
 #[allow(deprecated)] // ugh
 pub use registry::*;
@@ -122,10 +126,12 @@ pub use icu_provider_fs::export as fs_exporter;
 /// A prelude for using the datagen API
 pub mod prelude {
     #[doc(no_inline)]
+    #[cfg(feature = "provider")]
+    pub use crate::provider::{CollationHanDatabase, CoverageLevel, DatagenProvider};
+    #[doc(no_inline)]
     pub use crate::{
-        provider::CollationHanDatabase, provider::CoverageLevel, DatagenDriver, DatagenProvider,
-        DeduplicationStrategy, FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions,
-        RuntimeFallbackLocation,
+        DatagenDriver, DeduplicationStrategy, FallbackMode, FallbackOptions, LocaleFamily,
+        NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
@@ -178,9 +184,8 @@ pub(crate) mod rayon_prelude {
 /// [`RuntimeManual`]: FallbackMode::RuntimeManual
 /// [`Preresolved`]: FallbackMode::Preresolved
 /// [`Hybrid`]: FallbackMode::Hybrid
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
-#[serde(rename_all = "camelCase")]
 pub enum FallbackMode {
     /// Selects the fallback mode based on [`DataExporter::supports_built_in_fallback()`](
     /// icu_provider::datagen::DataExporter::supports_built_in_fallback()), resolving to either
@@ -494,16 +499,10 @@ pub fn datagen(
                 let mut models = vec![];
                 for locale in locales {
                     let locale = locale.into();
-                    if let Some(model) =
-                        provider::transform::segmenter::lstm::data_locale_to_model_name(&locale)
-                    {
+                    if let Some(model) = crate::lstm_data_locale_to_model_name(&locale) {
                         models.push(model.into());
                     }
-                    if let Some(model) =
-                        provider::transform::segmenter::dictionary::data_locale_to_model_name(
-                            &locale,
-                        )
-                    {
+                    if let Some(model) = crate::dictionary_data_locale_to_model_name(&locale) {
                         models.push(model.into());
                     }
                 }
@@ -571,6 +570,52 @@ pub fn datagen(
                 .collect::<Result<_, _>>()?,
         ),
     )
+}
+
+use icu_locid::langid;
+
+#[cfg(feature = "provider")]
+fn lstm_model_name_to_data_locale(name: &str) -> Option<DataLocale> {
+    match name {
+        "Burmese_codepoints_exclusive_model4_heavy" => Some(langid!("my").into()),
+        "Khmer_codepoints_exclusive_model4_heavy" => Some(langid!("km").into()),
+        "Lao_codepoints_exclusive_model4_heavy" => Some(langid!("lo").into()),
+        "Thai_codepoints_exclusive_model4_heavy" => Some(langid!("th").into()),
+        _ => None,
+    }
+}
+
+fn lstm_data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+    match locale.get_langid() {
+        id if id == langid!("my") => Some("Burmese_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("km") => Some("Khmer_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("lo") => Some("Lao_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("th") => Some("Thai_codepoints_exclusive_model4_heavy"),
+        _ => None,
+    }
+}
+
+#[cfg(feature = "provider")]
+fn dictionary_model_name_to_data_locale(name: &str) -> Option<DataLocale> {
+    match name {
+        "khmerdict" => Some(langid!("km").into()),
+        "cjdict" => Some(langid!("ja").into()),
+        "laodict" => Some(langid!("lo").into()),
+        "burmesedict" => Some(langid!("my").into()),
+        "thaidict" => Some(langid!("th").into()),
+        _ => None,
+    }
+}
+
+fn dictionary_data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+    match locale.get_langid() {
+        id if id == langid!("km") => Some("khmerdict"),
+        id if id == langid!("ja") => Some("cjdict"),
+        id if id == langid!("lo") => Some("laodict"),
+        id if id == langid!("my") => Some("burmesedict"),
+        id if id == langid!("th") => Some("thaidict"),
+        _ => None,
+    }
 }
 
 #[test]

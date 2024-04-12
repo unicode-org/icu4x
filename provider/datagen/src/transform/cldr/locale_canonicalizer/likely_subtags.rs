@@ -93,13 +93,13 @@ impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvi
     }
 }
 
-pub(in super::super) struct LikelySubtagsResources<'a> {
+pub struct LikelySubtagsResources<'a> {
     likely_subtags: &'a cldr_serde::likely_subtags::Resource,
     basic_plus_languages: HashSet<Language>,
 }
 
 impl<'a> LikelySubtagsResources<'a> {
-    pub(in super::super) fn try_from_cldr_cache(
+    pub fn try_from_cldr_cache(
         cache: &'a super::super::source::CldrCache,
     ) -> Result<LikelySubtagsResources, DataError> {
         let likely_subtags: &cldr_serde::likely_subtags::Resource = cache
@@ -159,7 +159,7 @@ impl<'a> LikelySubtagsResources<'a> {
     }
 }
 
-pub(in super::super) fn transform<'x>(
+pub fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LikelySubtagsV1<'static> {
     let mut language_script = BTreeMap::new();

@@ -16,7 +16,7 @@ use tinystr::TinyAsciiStr;
 mod compact;
 #[cfg(feature = "experimental_components")]
 mod compact_decimal_pattern;
-pub(super) mod decimal_pattern;
+pub mod decimal_pattern;
 mod symbols;
 
 impl DatagenProvider {

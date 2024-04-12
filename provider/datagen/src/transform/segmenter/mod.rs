@@ -21,8 +21,8 @@ use icu_segmenter::WordType;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
-pub(crate) mod dictionary;
-pub(crate) mod lstm;
+mod dictionary;
+mod lstm;
 
 // state machine name define by builtin name
 // [[tables]]

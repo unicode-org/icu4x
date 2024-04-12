@@ -46,7 +46,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 /// Returns a month code map and whether the map has leap months
-pub(super) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+pub fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066
     static SOLAR_MONTH_CODES: &[TinyStr4] = &[
@@ -93,7 +93,7 @@ pub(super) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     }
 }
 
-pub(super) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
+pub fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
     use either::Either;
 
     let array: &[_] = match calendar {

@@ -15,7 +15,7 @@ use std::sync::Arc;
 use transform::cldr::source::CldrCache;
 
 #[path = "transform/mod.rs"]
-pub(crate) mod transform;
+mod transform;
 
 mod source;
 

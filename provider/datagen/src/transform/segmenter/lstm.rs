@@ -182,26 +182,6 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
-fn model_name_to_data_locale(name: &str) -> Option<DataLocale> {
-    match name {
-        "Burmese_codepoints_exclusive_model4_heavy" => Some(langid!("my").into()),
-        "Khmer_codepoints_exclusive_model4_heavy" => Some(langid!("km").into()),
-        "Lao_codepoints_exclusive_model4_heavy" => Some(langid!("lo").into()),
-        "Thai_codepoints_exclusive_model4_heavy" => Some(langid!("th").into()),
-        _ => None,
-    }
-}
-
-pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
-    match locale.get_langid() {
-        id if id == langid!("my") => Some("Burmese_codepoints_exclusive_model4_heavy"),
-        id if id == langid!("km") => Some("Khmer_codepoints_exclusive_model4_heavy"),
-        id if id == langid!("lo") => Some("Lao_codepoints_exclusive_model4_heavy"),
-        id if id == langid!("th") => Some("Thai_codepoints_exclusive_model4_heavy"),
-        _ => None,
-    }
-}
-
 impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     fn load(
         &self,
@@ -209,7 +189,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
     ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
         self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
 
-        let model = data_locale_to_model_name(req.locale)
+        let model = crate::lstm_data_locale_to_model_name(req.locale)
             .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
 
         let lstm_data = self
@@ -235,7 +215,7 @@ impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
             "Thai_codepoints_exclusive_model4_heavy",
         ]
         .into_iter()
-        .filter_map(model_name_to_data_locale)
+        .filter_map(crate::lstm_model_name_to_data_locale)
         .collect())
     }
 }
