@@ -50,7 +50,7 @@ pub mod ffi {
 
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         pub fn parse(&self, unit_id: &str) -> Result<ICU4XMeasureUnit, ICU4XError> {
-            Ok(ICU4XMeasureUnit(call_method!(self.0, parse, unit_id)?))
+            self.0.parse(unit_id)
         }
     }
 
@@ -58,7 +58,7 @@ pub mod ffi {
     /// An ICU4X Measurement Unit object which represents a single unit of measurement such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct)]
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct, hidden)]
-    pub struct ICU4XMeasureUnit(pub ConverterFactory);
+    pub struct ICU4XMeasureUnit(pub MeasureUnit);
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter object, capable of converting between two [`ICU4XMeasureUnit`]s.
@@ -71,7 +71,7 @@ pub mod ffi {
         // TODO: do we need to wrap the input value in a `Ratio<BigInt>`?
         // TODO: do we need to return a `Ratio<BigInt>`?
         pub fn convert(&self, input: f64) -> Result<f64, ICU4XError> {
-            Ok(call_method!(self.0, convert, input)?)
+            self.0.convert(input)
         }
     }
 }
