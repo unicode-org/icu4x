@@ -10,9 +10,11 @@ use core::{
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
+use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
 // TODO: implement AsULE for IcuRatio and use it in Data module.
+// TODO: add test cases for IcuRatio.
 /// A ratio type that uses `BigInt` as the underlying type.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IcuRatio(Ratio<BigInt>);
@@ -32,10 +34,20 @@ impl IcuRatio {
         self.0.numer()
     }
 
+    pub fn numerator_str(&self) -> String {
+        self.0.numer().to_string()
+    }
+
     pub fn denominator(&self) -> &BigInt {
         self.0.denom()
     }
 
+    pub fn denominator_str(&self) -> String {
+        self.0.denom().to_string()
+    }
+
+    /// Returns the reciprocal of the ratio.
+    /// For example, the reciprocal of 2/3 is 3/2.
     pub fn recip(&self) -> Self {
         Self(self.0.recip())
     }
@@ -51,6 +63,10 @@ impl IcuRatio {
 
     pub fn two() -> Self {
         Self(Ratio::from_integer(2.into()))
+    }
+
+    pub fn to_f64(&self) -> Option<f64> {
+        self.0.to_f64()
     }
 }
 
