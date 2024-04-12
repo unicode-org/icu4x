@@ -197,7 +197,7 @@ fn main() -> eyre::Result<()> {
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/cldr/{path}").as_slice())"#)
+            format!(r#"("{path}", include_bytes!("../../../tests/data/cldr/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
         .join(",\n                            ");
@@ -205,7 +205,7 @@ fn main() -> eyre::Result<()> {
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/icuexport/{path}").as_slice())"#)
+            format!(r#"("{path}", include_bytes!("../../../tests/data/icuexport/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
         .join(",\n                            ");
@@ -213,12 +213,12 @@ fn main() -> eyre::Result<()> {
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../tests/data/lstm/{path}").as_slice())"#)
+            format!(r#"("{path}", include_bytes!("../../../tests/data/lstm/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
         .join(",\n                            ");
 
-    write!(&mut crlify::BufWriterWithLineEndingFix::new(File::create(out_root.join("src/tests/data.rs")).unwrap()), "\
+    write!(&mut crlify::BufWriterWithLineEndingFix::new(File::create(out_root.join("src/provider/tests/data.rs")).unwrap()), "\
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
@@ -227,9 +227,9 @@ fn main() -> eyre::Result<()> {
 
 #![allow(deprecated)]
 
+use crate::provider::source::{{AbstractFs, SerdeCache}};
+use crate::provider::transform::cldr::source::CldrCache;
 use crate::provider::{{DatagenProvider, SourceData}};
-use crate::source::{{AbstractFs, SerdeCache}};
-use crate::transform::cldr::source::CldrCache;
 use std::sync::Arc;
 
 impl DatagenProvider {{

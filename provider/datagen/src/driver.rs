@@ -247,9 +247,6 @@ fn test_locale_family_parsing() {
         let family = family_str.parse::<LocaleFamily>().unwrap();
         let family_to_str = family.to_string();
         assert_eq!(family_str, family_to_str);
-        let family_json = serde_json::to_string(&family).unwrap();
-        let family_from_json = serde_json::from_str(&family_json).unwrap();
-        assert_eq!(family, family_from_json);
     }
     for family_str in invalid_families {
         assert!(family_str.parse::<LocaleFamily>().is_err());
@@ -1166,7 +1163,7 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let resolved_locales = select_locales_for_key(
-            &crate::DatagenProvider::new_testing(),
+            &crate::provider::DatagenProvider::new_testing(),
             icu_collator::provider::CollationDataV1Marker::KEY,
             &LocalesWithOrWithoutFallback::WithoutFallback {
                 locales: [cas.language.clone()].into_iter().collect(),

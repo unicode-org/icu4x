@@ -99,6 +99,7 @@ simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 crlify = { path = "../../utils/crlify" }
+elsa = { version = "1.10" }
 icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
