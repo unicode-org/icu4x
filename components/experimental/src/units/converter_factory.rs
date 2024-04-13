@@ -2,21 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::prelude::*;
-use icu_provider::DataError;
-use litemap::LiteMap;
-use num_bigint::BigInt;
-use num_rational::Ratio;
-use num_traits::Pow;
-use num_traits::{One, Zero};
-use zerovec::ule::AsULE;
-use zerovec::ZeroSlice;
-
-use crate::units::provider::{MeasureUnitItem, SignULE};
-
-use super::provider;
-use super::ratio::IcuRatio;
-use super::{
+use crate::units::provider;
+use crate::units::provider::MeasureUnitItem;
+use crate::units::ratio::IcuRatio;
+use crate::units::{
     converter::{
         OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
         UnitsConverterInner,
@@ -25,6 +14,12 @@ use super::{
     provider::Sign,
 };
 
+use icu_provider::prelude::*;
+use icu_provider::DataError;
+use litemap::LiteMap;
+use num_traits::Pow;
+use num_traits::{One, Zero};
+use zerovec::ZeroSlice;
 /// ConverterFactory is a factory for creating a converter.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
@@ -141,28 +136,15 @@ impl ConverterFactory {
         );
         let output_conversion_info = output_conversion_info?;
 
-        let input_offset = Self::extract_ratio_from_unaligned(
-            &input_conversion_info.offset_sign,
-            input_conversion_info.offset_num(),
-            input_conversion_info.offset_den(),
-        );
-
-        let output_offset = Self::extract_ratio_from_unaligned(
-            &output_conversion_info.offset_sign,
-            output_conversion_info.offset_num(),
-            output_conversion_info.offset_den(),
-        );
+        let input_offset = IcuRatio::offset_from_conversion_info(input_conversion_info);
+        let output_offset = IcuRatio::offset_from_conversion_info(output_conversion_info);
 
         if input_offset.is_zero() && output_offset.is_zero() {
             return Some(IcuRatio::zero());
         }
 
-        let output_conversion_rate_recip = Self::extract_ratio_from_unaligned(
-            &output_conversion_info.factor_sign,
-            // Because we are computing the reciprocal, the numerator and denominator are swapped.
-            output_conversion_info.factor_den(),
-            output_conversion_info.factor_num(),
-        );
+        let output_conversion_rate_recip =
+            IcuRatio::factor_from_conversion_info(output_conversion_info).recip();
 
         Some((input_offset - output_offset) * output_conversion_rate_recip)
     }
@@ -276,28 +258,10 @@ impl ConverterFactory {
         debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
         let conversion_info = conversion_info?;
 
-        let mut conversion_info_factor = Self::extract_ratio_from_unaligned(
-            &conversion_info.factor_sign,
-            conversion_info.factor_num(),
-            conversion_info.factor_den(),
-        );
-
+        let mut conversion_info_factor = IcuRatio::factor_from_conversion_info(conversion_info);
         conversion_info_factor.apply_si_prefix(&unit_item.si_prefix);
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
         Some(conversion_info_factor)
-    }
-
-    fn extract_ratio_from_unaligned(
-        sign_ule: &SignULE,
-        num_ule: &ZeroSlice<u8>,
-        den_ule: &ZeroSlice<u8>,
-    ) -> IcuRatio {
-        // TODO: implement `From` in IcuRatio that takes `Sign` and unaligned slices.
-        let sign = Sign::from_unaligned(*sign_ule).into();
-        IcuRatio::from(Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(sign, num_ule.as_ule_slice()),
-            BigInt::from_bytes_le(num_bigint::Sign::Plus, den_ule.as_ule_slice()),
-        ))
     }
 
     /// Creates a converter for converting between two single or compound units.
