@@ -33,6 +33,7 @@ pub enum IcuRatioError {
 }
 
 impl IcuRatio {
+    /// Creates a new `IcuRatio` from the given numerator and denominator.
     pub fn new(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
     }
@@ -53,10 +54,12 @@ impl IcuRatio {
         }
     }
 
+    /// Returns the numerator of the ratio.
     pub fn numerator(&self) -> &BigInt {
         self.0.numer()
     }
 
+    /// Returns the denominator of the ratio.
     pub fn denominator(&self) -> &BigInt {
         self.0.denom()
     }
@@ -72,10 +75,12 @@ impl IcuRatio {
         Self(self.0.abs())
     }
 
+    /// Returns a Ratio with value of 10.
     pub fn ten() -> Self {
         Self(Ratio::from_integer(10.into()))
     }
 
+    /// Returns a Ratio with value of 2.
     pub fn two() -> Self {
         Self(Ratio::from_integer(2.into()))
     }
