@@ -9,9 +9,26 @@
 
 use crate::helpers::{i64_to_i32, I32CastError, IntegerRoundings};
 use crate::rata_die::RataDie;
+
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4720>
 // Book states that the Persian epoch is the date: 3/19/622 and since the Persian Calendar has no year 0, the best choice was to use the Julian function.
 const FIXED_PERSIAN_EPOCH: RataDie = crate::julian::fixed_from_julian(622, 3, 19);
+
+// All these years are not leap, while they are considered leap by the 33-year
+// rule. The year following each of them is leap, but it's considered non-leap
+// by the 33-year rule. This table has been tested to match the modified
+// astronomical algorithm based on the 52.5 degrees east meridian from 1178 AP
+// (an arbitrary date before the Persian calendar was adopted in 1304 AP) to
+// 3000 AP (an arbitrary date far into the future).
+const NON_LEAP_CORRECTION: [i32; 78] = [
+    1502, 1601, 1634, 1667, 1700, 1733, 1766, 1799, 1832, 1865, 1898, 1931, 1964, 1997, 2030, 2059,
+    2063, 2096, 2129, 2158, 2162, 2191, 2195, 2224, 2228, 2257, 2261, 2290, 2294, 2323, 2327, 2356,
+    2360, 2389, 2393, 2422, 2426, 2455, 2459, 2488, 2492, 2521, 2525, 2554, 2558, 2587, 2591, 2620,
+    2624, 2653, 2657, 2686, 2690, 2719, 2723, 2748, 2752, 2756, 2781, 2785, 2789, 2818, 2822, 2847,
+    2851, 2855, 2880, 2884, 2888, 2913, 2917, 2921, 2946, 2950, 2954, 2979, 2983, 2987,
+];
+
+const MIN_NON_LEAP_CORRECTION: i32 = NON_LEAP_CORRECTION[0];
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4803>
 /// Not used, but kept for comparative purposes
@@ -45,10 +62,12 @@ pub fn fixed_from_fast_persian(year: i32, month: u8, day: u8) -> RataDie {
     let p_year = i64::from(year);
     let month = i64::from(month);
     let day = i64::from(day);
-    let new_year = FIXED_PERSIAN_EPOCH.to_i64_date() - 1
+    let mut new_year = FIXED_PERSIAN_EPOCH.to_i64_date() - 1
         + 365 * (p_year - 1)
         + (8 * p_year + 21).div_euclid(33);
-
+    if year > MIN_NON_LEAP_CORRECTION && NON_LEAP_CORRECTION.binary_search(&(year - 1)).is_ok() {
+        new_year -= 1;
+    }
     RataDie::new(
         new_year - 1
             + if month <= 7 {
@@ -80,8 +99,15 @@ pub fn arithmetic_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32
 /// arithmetic_persian_from_fixed, modified to use the 33-year rule method
 pub fn fast_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = fast_persian_year_from_fixed(date);
-    let year = i64_to_i32(year)?;
-    let day_of_year = 1_i64 + (date - fixed_from_fast_persian(year, 1, 1));
+    let mut year = i64_to_i32(year)?;
+    let mut day_of_year = 1_i64 + (date - fixed_from_fast_persian(year, 1, 1));
+    if day_of_year == 366
+        && year >= MIN_NON_LEAP_CORRECTION
+        && NON_LEAP_CORRECTION.binary_search(&year).is_ok()
+    {
+        year += 1;
+        day_of_year = 1;
+    }
     #[allow(unstable_name_collisions)] // div_ceil is unstable and polyfilled
     let month = if day_of_year <= 186 {
         day_of_year.div_ceil(31) as u8
@@ -130,6 +156,20 @@ fn is_arithmetic_leap_year(p_year: i32, _data: ()) -> bool {
     let year = p_year.rem_euclid(2820) + 474;
 
     ((year + 38) * 31).rem_euclid(128) < 31
+}
+
+/// Calculated using the 33-year rule
+pub fn is_leap_year(p_year: i32, _data: ()) -> bool {
+    if p_year >= MIN_NON_LEAP_CORRECTION && NON_LEAP_CORRECTION.binary_search(&p_year).is_ok() {
+        false
+    } else if p_year > MIN_NON_LEAP_CORRECTION
+        && NON_LEAP_CORRECTION.binary_search(&(p_year - 1)).is_ok()
+    {
+        true
+    } else {
+        let p_year = p_year as i64;
+        (25 * p_year + 11).rem_euclid(33) < 8
+    }
 }
 
 #[cfg(test)]
