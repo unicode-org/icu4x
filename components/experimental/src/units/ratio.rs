@@ -15,7 +15,6 @@ use zerovec::ule::AsULE;
 
 use super::provider::{Base, ConversionInfoULE, SiPrefix, Sign};
 
-// TODO: implement AsULE for IcuRatio and use it in Data module.
 // TODO: add test cases for IcuRatio.
 /// A ratio type that uses `BigInt` as the underlying type.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -35,12 +34,12 @@ pub enum IcuRatioError {
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
-    pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
+    pub(crate) fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
     }
 
     /// Extracts the factor ratio from `ConversionInfoULE`.
-    pub fn factor_from_conversion_info(conversion_info: &ConversionInfoULE) -> Self {
+    pub(crate) fn factor_from_conversion_info(conversion_info: &ConversionInfoULE) -> Self {
         let sign: num_bigint::Sign = Sign::from_unaligned(conversion_info.factor_sign).into();
         Self::from(Ratio::<BigInt>::new(
             BigInt::from_bytes_le(sign, conversion_info.factor_num().as_ule_slice()),
@@ -52,7 +51,7 @@ impl IcuRatio {
     }
 
     /// Extracts the offset ratio from `ConversionInfoULE`.
-    pub fn offset_from_conversion_info(conversion_info: &ConversionInfoULE) -> Self {
+    pub(crate) fn offset_from_conversion_info(conversion_info: &ConversionInfoULE) -> Self {
         let sign: num_bigint::Sign = Sign::from_unaligned(conversion_info.offset_sign).into();
         Self::from(Ratio::<BigInt>::new(
             BigInt::from_bytes_le(sign, conversion_info.offset_num().as_ule_slice()),
@@ -68,7 +67,7 @@ impl IcuRatio {
     ///              the result will be 1000/3.
     /// Another example: if the ratio is 1/3 and the SI prefix is "kibi" ("2^10"),
     ///                  the result will be 1024/3.
-    pub fn apply_si_prefix(&mut self, si_prefix: &SiPrefix) {
+    pub(crate) fn apply_si_prefix(&mut self, si_prefix: &SiPrefix) {
         match si_prefix.base {
             Base::Decimal => {
                 *self *= IcuRatio::ten().pow(si_prefix.power as i32);
@@ -79,19 +78,9 @@ impl IcuRatio {
         }
     }
 
-    /// Returns the numerator of the ratio.
-    pub fn numerator(&self) -> &BigInt {
-        self.0.numer()
-    }
-
-    /// Returns the denominator of the ratio.
-    pub fn denominator(&self) -> &BigInt {
-        self.0.denom()
-    }
-
     /// Returns the reciprocal of the ratio.
     /// For example, the reciprocal of 2/3 is 3/2.
-    pub fn recip(&self) -> Self {
+    pub(crate) fn recip(&self) -> Self {
         Self(self.0.recip())
     }
 
@@ -223,6 +212,6 @@ impl FromStr for IcuRatio {
             return Err(IcuRatioError::InvalidRatioString);
         }
 
-        Ok(Self::new(numerator, denominator))
+        Ok(Self::from_big_ints(numerator, denominator))
     }
 }
