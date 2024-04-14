@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::Error;
-use writeable::Writeable;
+use writeable::{Part, TryWriteable};
 
 #[cfg(feature = "alloc")]
 use alloc::{borrow::Cow, borrow::ToOwned};
@@ -64,6 +64,9 @@ pub trait PatternBackend: crate::private::Sealed {
     /// The type to be used as the placeholder key in code.
     type PlaceholderKey;
 
+    /// The type of error that the [`TryWriteable`] for this backend can return.
+    type Error<'a>;
+
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
     type Store: ?Sized;
 
@@ -97,21 +100,52 @@ pub trait PatternBackend: crate::private::Sealed {
     fn iter_items(store: &Self::Store) -> Self::Iter<'_>;
 }
 
+/// Default annotation for the literal portion of a pattern.
+///
+/// For more information, see [`PlaceholderValueProvider`]. For an example, see [`Pattern`].
+///
+/// [`Pattern`]: crate::Pattern
+pub const PATTERN_LITERAL_PART: Part = Part {
+    category: "pattern",
+    value: "literal",
+};
+
+/// Default annotation for the placeholder portion of a pattern.
+///
+/// For more information, see [`PlaceholderValueProvider`]. For an example, see [`Pattern`].
+///
+/// [`Pattern`]: crate::Pattern
+pub const PATTERN_PLACEHOLDER_PART: Part = Part {
+    category: "pattern",
+    value: "placeholder",
+};
+
+/// Trait implemented on collections that can produce [`TryWriteable`]s for interpolation.
+///
+/// This trait determines the [`Part`]s produced by the writeable. In this crate, implementations
+/// of this trait default to using [`PATTERN_LITERAL_PART`] and [`PATTERN_PLACEHOLDER_PART`].
 pub trait PlaceholderValueProvider<K> {
-    type W<'a>: Writeable
+    type Error;
+
+    type W<'a>: TryWriteable<Error = Self::Error>
     where
         Self: 'a;
 
-    /// Returns the [`Writeable`] to substitute for the given placeholder.
-    fn value_for(&self, key: K) -> Self::W<'_>;
+    const LITERAL_PART: Part;
+
+    /// Returns the [`TryWriteable`] to substitute for the given placeholder
+    /// and the [`Part`] representing it.
+    fn value_for(&self, key: K) -> (Self::W<'_>, Part);
 }
 
 impl<'b, K, T> PlaceholderValueProvider<K> for &'b T
 where
     T: PlaceholderValueProvider<K> + ?Sized,
 {
+    type Error = T::Error;
     type W<'a> = T::W<'a> where T: 'a, 'b: 'a;
-    fn value_for(&self, key: K) -> Self::W<'_> {
+    const LITERAL_PART: Part = T::LITERAL_PART;
+    fn value_for(&self, key: K) -> (Self::W<'_>, Part) {
         (*self).value_for(key)
     }
 }

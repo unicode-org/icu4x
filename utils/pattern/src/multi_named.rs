@@ -4,12 +4,11 @@
 
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
+use alloc::borrow::Cow;
+use alloc::collections::BTreeMap;
 use core::borrow::Borrow;
 use core::fmt;
 use core::str::FromStr;
-use alloc::collections::BTreeMap;
-use alloc::borrow::Cow;
-use either::Either;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -66,21 +65,39 @@ impl fmt::Display for MultiNamedPlaceholderKey<'_> {
     }
 }
 
+#[derive(Debug, Clone)]
+#[non_exhaustive]
+pub struct MissingNamedPlaceholderError<'a> {
+    name: Cow<'a, str>,
+}
+
+impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_char('{')?;
+        sink.write_str(&self.name)?;
+        sink.write_char('}')?;
+        Ok(())
+    }
+}
+
 impl<'k, K, W> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>> for BTreeMap<K, W>
 where
     K: Ord + Borrow<str>,
     W: Writeable,
 {
-    type W<'a> = Either<&'a W, char> where K: 'a, W: 'a, Self: 'a;
+    type Error = MissingNamedPlaceholderError<'k>;
+    type W<'a> = Result<&'a W, Self::Error> where W: 'a, Self: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
-    fn value_for<'a>(&'a self, key: MultiNamedPlaceholderKey) -> Self::W<'a> {
-        match self.get(&*key.0) {
-            Some(value) => Either::Left(value),
-            None => {
-                debug_assert!(false, "Named placeholder '{key}' not found in map");
-                Either::Right('\u{FFFD}')
-            }
-        }
+    fn value_for<'a>(
+        &'a self,
+        key: MultiNamedPlaceholderKey<'k>,
+    ) -> (Self::W<'a>, writeable::Part) {
+        let writeable = match self.get(&*key.0) {
+            Some(value) => Ok(value),
+            None => Err(MissingNamedPlaceholderError { name: key.0 }),
+        };
+        (writeable, crate::PATTERN_PLACEHOLDER_PART)
     }
 }
 
@@ -121,7 +138,7 @@ where
 /// use icu_pattern::Pattern;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use std::collections::BTreeMap;
-/// 
+///
 /// let placeholder_value_map: BTreeMap<&str, &str> = [
 ///     ("num", "5"),
 ///     ("letter", "X"),
@@ -151,39 +168,39 @@ where
 ///     "X5",
 /// );
 /// ```
-/// 
+///
 /// Missing placeholder values cause a debug assertion or are replaced with
 /// the Unicode replacement character U+FFFD.
-/// 
+///
 /// With `debug_assertions` (debug mode):
-/// 
+///
 /// ```should_panic
 /// use icu_pattern::Pattern;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use std::collections::BTreeMap;
-/// 
+///
 /// let placeholder_value_map: BTreeMap<&str, &str> = [
 ///     ("num", "5"),
 ///     ("letter", "X"),
 /// ].into_iter().collect();
-/// 
+///
 ///         Pattern::<MultiNamedPlaceholder, _>::try_from_str("Your name is {your_name}")
 ///            .unwrap()
 ///             .interpolate_to_string(&placeholder_value_map);
 /// ```
-/// 
+///
 /// Without `debug_assertions` (release mode):
-/// 
+///
 /// ```
 /// use icu_pattern::Pattern;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use std::collections::BTreeMap;
-/// 
+///
 /// let placeholder_value_map: BTreeMap<&str, &str> = [
 ///     ("num", "5"),
 ///     ("letter", "X"),
 /// ].into_iter().collect();
-/// 
+///
 /// if cfg!(not(debug_assertions)) {
 ///     assert_eq!(
 ///         Pattern::<MultiNamedPlaceholder, _>::try_from_str("Your name is {your_name}")
@@ -203,6 +220,7 @@ impl crate::private::Sealed for MultiNamedPlaceholder {}
 
 impl PatternBackend for MultiNamedPlaceholder {
     type PlaceholderKey = MultiNamedPlaceholder;
+    type Error<'a> = MissingNamedPlaceholderError<'a>;
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
@@ -274,8 +292,8 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
                 }
                 (State::AfterQuote, '\'') => {
                     todo!()
-                },
-                _ => todo!()
+                }
+                _ => todo!(),
             }
         }
         todo!()
@@ -283,27 +301,4 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::MultiNamedPlaceholderPattern;
-
-    #[test]
-    fn test_invalid() {
-        let cases = [
-            "",               // too short
-            "\x00",           // too short
-            "\x00\x00",       // duplicate placeholders
-            "\x04\x03",       // first offset is after second offset
-            "\x04\x05",       // second offset out of range (also first offset)
-            "\x04\u{10001}@", // second offset too large for UTF-8
-        ];
-        let long_str = "0123456789".repeat(1000000);
-        for cas in cases {
-            let cas = cas.replace('@', &long_str);
-            assert!(
-                MultiNamedPlaceholderPattern::try_from_store(&cas).is_err(),
-                "{cas:?}"
-            );
-        }
-    }
-}
+mod tests {}

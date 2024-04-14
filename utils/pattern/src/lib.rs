@@ -65,12 +65,14 @@ pub use common::PatternItem;
 #[cfg(feature = "alloc")]
 pub use common::PatternItemCow;
 pub use common::PlaceholderValueProvider;
+pub use common::PATTERN_LITERAL_PART;
+pub use common::PATTERN_PLACEHOLDER_PART;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
-pub use multi_named::MultiNamedPlaceholder;
-pub use multi_named::MultiNamedPlaceholderKey;
 pub use error::PatternError;
 pub use frontend::Pattern;
+pub use multi_named::MultiNamedPlaceholder;
+pub use multi_named::MultiNamedPlaceholderKey;
 #[cfg(feature = "alloc")]
 pub use parser::ParsedPatternItem;
 #[cfg(feature = "alloc")]

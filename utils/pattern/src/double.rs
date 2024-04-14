@@ -4,8 +4,10 @@
 
 //! Code for the [`DoublePlaceholder`] pattern backend.
 
+use core::convert::Infallible;
 use core::{cmp::Ordering, str::FromStr};
 use either::Either;
+use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -68,13 +70,19 @@ where
     W0: Writeable,
     W1: Writeable,
 {
-    type W<'a> = Either<&'a W0, &'a W1> where W0: 'a, W1: 'a;
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<Either<&'a W0, &'a W1>> where W0: 'a, W1: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
-    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
-        match key {
+    fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+        let writeable = match key {
             DoublePlaceholderKey::Place0 => Either::Left(&self.0),
             DoublePlaceholderKey::Place1 => Either::Right(&self.1),
-        }
+        };
+        (
+            WriteableAsTryWriteableInfallible(writeable),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -82,14 +90,20 @@ impl<W> PlaceholderValueProvider<DoublePlaceholderKey> for [W; 2]
 where
     W: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
-    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
+    fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
         let [item0, item1] = self;
-        match key {
+        let writeable = match key {
             DoublePlaceholderKey::Place0 => item0,
             DoublePlaceholderKey::Place1 => item1,
-        }
+        };
+        (
+            WriteableAsTryWriteableInfallible(writeable),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -249,6 +263,7 @@ impl crate::private::Sealed for DoublePlaceholder {}
 
 impl PatternBackend for DoublePlaceholder {
     type PlaceholderKey = DoublePlaceholderKey;
+    type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
 

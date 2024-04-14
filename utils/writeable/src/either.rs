@@ -46,3 +46,49 @@ where
         }
     }
 }
+
+/*
+/// A [`TryWriteable`] impl that delegates to one type or another type.
+impl<W0, W1> TryWriteable for Either<W0, W1>
+where
+    W0: TryWriteable,
+    W1: TryWriteable,
+{
+    type Error = Either<W0::Error, W1::Error>;
+
+    fn try_write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> Result<Result<(), Self::Error>, fmt::Error> {
+        match self {
+            Either::Left(w) => w.try_write_to(sink),
+            Either::Right(w) => w.try_write_to(sink),
+        }
+    }
+
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<Result<(), Self::Error>, fmt::Error> {
+        match self {
+            Either::Left(w) => w.try_write_to_parts(sink),
+            Either::Right(w) => w.try_write_to_parts(sink),
+        }
+    }
+
+    fn writeable_length_hint(&self) -> LengthHint {
+        match self {
+            Either::Left(w) => w.writeable_length_hint(),
+            Either::Right(w) => w.writeable_length_hint(),
+        }
+    }
+
+    fn try_write_to_string(&self) -> Result<Cow<str>, Self::Error> {
+        match self {
+            Either::Left(w) => w.try_write_to_string(),
+            Either::Right(w) => w.try_write_to_string(),
+        }
+    }
+
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        match self {
+            Either::Left(w) => w.write_cmp_bytes(other),
+            Either::Right(w) => w.write_cmp_bytes(other),
+        }
+    }
+}
+*/

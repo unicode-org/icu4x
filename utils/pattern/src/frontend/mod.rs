@@ -8,11 +8,12 @@ mod databake;
 mod serde;
 
 use core::{
+    convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
 };
 
-use writeable::{PartsWrite, Writeable};
+use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
 use crate::common::*;
 use crate::Error;
@@ -44,6 +45,37 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// - `&str` for a fully borrowed pattern
 /// - `String` for a fully owned pattern
 /// - `Cow<str>` for an owned-or-borrowed pattern
+///
+/// # Format to Parts
+///
+/// [`Pattern`] supports interpolating with [writeable::Part]s, annotations for whether the
+/// substring was a placeholder or a literal.
+///
+/// By default, the substrings are annotated with [`PATTERN_LITERAL_PART`] and
+/// [`PATTERN_PLACEHOLDER_PART`]. This can be customized with [`PlaceholderValueProvider`].
+///
+/// # Examples
+///
+/// Interpolating a [`SinglePlaceholder`] pattern with parts:
+///
+/// ```
+/// use icu_pattern::Pattern;
+/// use icu_pattern::SinglePlaceholder;
+/// use writeable::assert_writeable_parts_eq;
+///
+/// let pattern =
+///     Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap();
+///
+/// assert_writeable_parts_eq!(
+///     pattern.interpolate(["Alice"]),
+///     "Hello, Alice!",
+///     [
+///         (0, 7, icu_pattern::PATTERN_LITERAL_PART),
+///         (7, 12, icu_pattern::PATTERN_PLACEHOLDER_PART),
+///         (12, 13, icu_pattern::PATTERN_LITERAL_PART),
+///     ]
+/// );
+/// ```
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
 #[derive(Debug, Clone, PartialEq)]
@@ -253,83 +285,36 @@ where
     pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey>> + '_ {
         B::iter_items(self.store.as_ref())
     }
+}
 
+impl<B, Store> Pattern<B, Store>
+where
+    for<'b> B: PatternBackend<Error<'b> = Infallible>,
+    Store: AsRef<B::Store> + ?Sized,
+{
     /// Returns a [`Writeable`] that interpolates items from the given replacement provider
     /// into this pattern string.
     pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'a>> + 'a,
     {
-        WriteablePattern::<B, P> {
+        TryWriteableInfallibleAsWriteable(WriteablePattern::<B, P> {
             store: self.store.as_ref(),
             value_provider,
-        }
+        })
     }
 
     #[cfg(feature = "alloc")]
     /// Interpolates the pattern directly to a string.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
-    pub fn interpolate_to_string<P>(&self, value_provider: P) -> String
+    pub fn interpolate_to_string<'a, P>(&'a self, value_provider: P) -> String
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey>,
+        P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'a>>,
     {
         self.interpolate(value_provider)
             .write_to_string()
             .into_owned()
-    }
-
-    /// Interpolates items with [writeable::Part]s.
-    ///
-    /// Two parts are used:
-    ///
-    /// 1. `literal_part` for [`PatternItem::Literal`]
-    /// 2. `element_part` for [`PatternItem::Placeholder`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_pattern::Pattern;
-    /// use icu_pattern::SinglePlaceholder;
-    /// use writeable::assert_writeable_parts_eq;
-    ///
-    /// let pattern =
-    ///     Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!").unwrap();
-    ///
-    /// const LITERAL_PART: writeable::Part = writeable::Part {
-    ///     category: "demo",
-    ///     value: "literal",
-    /// };
-    /// const ELEMENT_PART: writeable::Part = writeable::Part {
-    ///     category: "demo",
-    ///     value: "element",
-    /// };
-    ///
-    /// assert_writeable_parts_eq!(
-    ///     pattern.interpolate_with_parts(["Alice"], LITERAL_PART, ELEMENT_PART),
-    ///     "Hello, Alice!",
-    ///     [
-    ///         (0, 7, LITERAL_PART),
-    ///         (7, 12, ELEMENT_PART),
-    ///         (12, 13, LITERAL_PART),
-    ///     ]
-    /// );
-    /// ```
-    pub fn interpolate_with_parts<'a, P>(
-        &'a self,
-        value_provider: P,
-        literal_part: writeable::Part,
-        placeholder_value_part: writeable::Part,
-    ) -> impl Writeable + fmt::Display + 'a
-    where
-        P: PlaceholderValueProvider<B::PlaceholderKey> + 'a,
-    {
-        WriteablePatternWithParts::<B, P> {
-            store: self.store.as_ref(),
-            value_provider,
-            literal_part,
-            element_part: placeholder_value_part,
-        }
     }
 }
 
@@ -338,23 +323,35 @@ struct WriteablePattern<'a, B: PatternBackend, P> {
     value_provider: P,
 }
 
-impl<B, P> Writeable for WriteablePattern<'_, B, P>
+impl<'a, B, P> TryWriteable for WriteablePattern<'a, B, P>
 where
     B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
+    P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'a>>,
 {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+    type Error = B::Error<'a>;
+
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        let mut error = None;
         let it = B::iter_items(self.store);
         #[cfg(debug_assertions)]
         let (size_hint, mut actual_len) = (it.size_hint(), 0);
         for item in it {
             match item {
                 PatternItem::Literal(s) => {
-                    sink.write_str(s)?;
+                    sink.with_part(P::LITERAL_PART, |sink| sink.write_str(s))?;
                 }
                 PatternItem::Placeholder(key) => {
-                    let element_writeable = self.value_provider.value_for(key);
-                    element_writeable.write_to(sink)?;
+                    let (element_writeable, part) = self.value_provider.value_for(key);
+                    sink.with_part(part, |sink| {
+                        if let Err(e) = element_writeable.try_write_to_parts(sink)? {
+                            // Keep the first error if there was one
+                            error.get_or_insert(e);
+                        }
+                        Ok(())
+                    })?;
                 }
             }
             #[cfg(debug_assertions)]
@@ -369,56 +366,22 @@ where
                 debug_assert!(actual_len <= max_len);
             }
         }
-        Ok(())
-    }
-}
-
-impl<B, P> fmt::Display for WriteablePattern<'_, B, P>
-where
-    B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
-{
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
-
-struct WriteablePatternWithParts<'a, B: PatternBackend, P> {
-    store: &'a B::Store,
-    value_provider: P,
-    literal_part: writeable::Part,
-    element_part: writeable::Part,
-}
-
-impl<B, P> Writeable for WriteablePatternWithParts<'_, B, P>
-where
-    B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
-{
-    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-        for item in B::iter_items(self.store) {
-            match item {
-                PatternItem::Literal(s) => {
-                    sink.with_part(self.literal_part, |w| w.write_str(s))?;
-                }
-                PatternItem::Placeholder(key) => {
-                    let element_writeable = self.value_provider.value_for(key);
-                    sink.with_part(self.element_part, |w| element_writeable.write_to_parts(w))?;
-                }
-            }
+        if let Some(e) = error {
+            Ok(Err(e))
+        } else {
+            Ok(Ok(()))
         }
-        Ok(())
     }
 }
 
-impl<B, P> fmt::Display for WriteablePatternWithParts<'_, B, P>
+impl<'b, B, P> fmt::Display for WriteablePattern<'b, B, P>
 where
-    B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey>,
+    B: PatternBackend + 'b,
+    P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'b>>,
 {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
+        // Discard the TryWriteable error (lossy mode)
+        self.try_write_to(f).map(|_| ())
     }
 }
