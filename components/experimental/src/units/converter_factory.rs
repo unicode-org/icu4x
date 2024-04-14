@@ -38,6 +38,21 @@ impl From<Sign> for num_bigint::Sign {
     }
 }
 
+/// A struct that contains the sum and difference of base unit powers.
+/// For example:
+///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
+///     For the output unit `foot-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
+///     The differences are: meter: 1 - 1 = 0, second: -1 - (-1) = 0.
+///     The sums are: meter: 1 + 1 = 2, second: -1 + (-1) = -2.
+///     If all the sums are zeros, then the units are reciprocal.
+///     If all the diffs are zeros, then the units are convertible.
+///     If none of the above, then the units are not convertible.
+#[derive(Debug)]
+struct PowersInfo {
+    diffs: i16,
+    sums: i16,
+}
+
 impl ConverterFactory {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: skip,
@@ -77,6 +92,54 @@ impl ConverterFactory {
 
     pub fn parser(&self) -> MeasureUnitParser<'_> {
         MeasureUnitParser::from_payload(self.payload.get().units_conversion_trie.as_borrowed())
+    }
+
+    /// Inserting the units items into the map.
+    /// NOTE:
+    ///     This will require to go through the basic units of the given unit items.
+    ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
+    fn insert_non_basic_units(
+        &self,
+        units: &[MeasureUnitItem],
+        sign: i16,
+        map: &mut LiteMap<u16, PowersInfo>,
+    ) -> Option<()> {
+        /// Inserting the basic units into the map.
+        /// NOTE:   
+        ///     The base units should be multiplied by the original power.
+        ///     For example, `square-foot` , the base unit is `meter` with power 1.
+        ///     Thus, the inserted power should be `1 * 2 = 2`.
+        fn insert_base_units(
+            basic_units: &ZeroSlice<MeasureUnitItem>,
+            original_power: i16,
+            sign: i16,
+            map: &mut LiteMap<u16, PowersInfo>,
+        ) {
+            for item in basic_units.iter() {
+                let item_power = (item.power as i16) * original_power;
+                let signed_item_power = item_power * sign;
+                if let Some(powers) = map.get_mut(&item.unit_id) {
+                    powers.diffs += signed_item_power;
+                    powers.sums += item_power;
+                } else {
+                    map.insert(
+                        item.unit_id,
+                        PowersInfo {
+                            diffs: (signed_item_power),
+                            sums: (item_power),
+                        },
+                    );
+                }
+            }
+        }
+
+        for item in units {
+            let items_from_item = self.payload.get().convert_infos.get(item.unit_id as usize);
+            debug_assert!(items_from_item.is_some(), "Failed to get convert info");
+            insert_base_units(items_from_item?.basic_units(), item.power as i16, sign, map);
+        }
+
+        Some(())
     }
 
     /// Calculates the offset between two units by performing the following steps:
@@ -171,81 +234,12 @@ impl ConverterFactory {
     ///   If the units are neither proportional nor reciprocal, the function will return `None`,
     ///   indicating that the units are incompatible.
     fn is_reciprocal(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Option<bool> {
-        /// A struct that contains the sum and difference of base unit powers.
-        /// For example:
-        ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
-        ///     For the output unit `foot-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
-        ///     The differences are: meter: 1 - 1 = 0, second: -1 - (-1) = 0.
-        ///     The sums are: meter: 1 + 1 = 2, second: -1 + (-1) = -2.
-        ///     If all the sums are zeros, then the units are reciprocal.
-        ///     If all the diffs are zeros, then the units are convertible.
-        ///     If none of the above, then the units are not convertible.
-        #[derive(Debug)]
-        struct PowersInfo {
-            diffs: i16,
-            sums: i16,
-        }
-
-        /// Inserting the units item into the map.
-        /// NOTE:
-        ///     This will require to go through the basic units of the given unit items.
-        ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
-        fn insert_non_basic_units(
-            factory: &ConverterFactory,
-            units: &[MeasureUnitItem],
-            sign: i16,
-            map: &mut LiteMap<u16, PowersInfo>,
-        ) -> Option<()> {
-            for item in units {
-                let items_from_item = factory
-                    .payload
-                    .get()
-                    .convert_infos
-                    .get(item.unit_id as usize);
-
-                debug_assert!(items_from_item.is_some(), "Failed to get convert info");
-
-                insert_base_units(items_from_item?.basic_units(), item.power as i16, sign, map);
-            }
-
-            Some(())
-        }
-
-        /// Inserting the basic units into the map.
-        /// NOTE:   
-        ///     The base units should be multiplied by the original power.
-        ///     For example, `square-foot` , the base unit is `meter` with power 1.
-        ///     Thus, the inserted power should be `1 * 2 = 2`.
-        fn insert_base_units(
-            basic_units: &ZeroSlice<MeasureUnitItem>,
-            original_power: i16,
-            sign: i16,
-            map: &mut LiteMap<u16, PowersInfo>,
-        ) {
-            for item in basic_units.iter() {
-                let item_power = (item.power as i16) * original_power;
-                let signed_item_power = item_power * sign;
-                if let Some(powers) = map.get_mut(&item.unit_id) {
-                    powers.diffs += signed_item_power;
-                    powers.sums += item_power;
-                } else {
-                    map.insert(
-                        item.unit_id,
-                        PowersInfo {
-                            diffs: (signed_item_power),
-                            sums: (item_power),
-                        },
-                    );
-                }
-            }
-        }
-
         let unit1 = &unit1.contained_units;
         let unit2 = &unit2.contained_units;
 
         let mut map = LiteMap::new();
-        insert_non_basic_units(self, unit1, 1, &mut map)?;
-        insert_non_basic_units(self, unit2, -1, &mut map)?;
+        self.insert_non_basic_units(unit1, 1, &mut map)?;
+        self.insert_non_basic_units(unit2, -1, &mut map)?;
 
         let (power_sums_are_zero, power_diffs_are_zero) =
             map.iter_values()
