@@ -9,7 +9,7 @@ use core::{
 
 use num_bigint::BigInt;
 use num_rational::Ratio;
-use num_traits::Signed;
+use num_traits::{FromPrimitive, Signed, ToPrimitive};
 use num_traits::{One, Pow, Zero};
 use zerovec::ule::AsULE;
 
@@ -97,6 +97,16 @@ impl IcuRatio {
     /// Returns a Ratio with value of 10.
     pub fn ten() -> Self {
         Self(Ratio::from_integer(10.into()))
+    }
+
+    /// Creates [`IcuRatio`] from `f64`.
+    pub fn from_f64(value: f64) -> Option<Self> {
+        Some(Self(Ratio::from_f64(value)?))
+    }
+
+    /// Extracts the equivalent `f64` value of the ratio.
+    pub fn to_f64(&self) -> Option<f64> {
+        self.0.to_f64()
     }
 }
 
