@@ -67,7 +67,7 @@ fn overview_bench(c: &mut Criterion) {
             black_box(&s)
                 .chars()
                 .map(|c| black_box(&cpt_small).get_range(c as u32).unwrap())
-                .fold(0u32, |acc, ele| acc.wrapping_add(ele.range.end() - ele.range.start()))
+                .fold(0u32, |acc, ele| acc.wrapping_add(ele.range.end() - ele.range.start() + ele.value as u32))
         });
     });
 
