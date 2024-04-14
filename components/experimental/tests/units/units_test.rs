@@ -6,8 +6,6 @@ use core::str::FromStr;
 
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
-use num_bigint::BigInt;
-use num_rational::Ratio;
 use num_traits::Pow;
 
 // TODO: add this function to IcuRatio.
@@ -80,7 +78,7 @@ fn test_cldr_unit_tests() {
 
     let converter_factory = ConverterFactory::new();
     let parser = converter_factory.parser();
-
+    let precision_diff_limit = IcuRatio::from_f64(0.000001).unwrap();
     for test in tests {
         let input_unit = parser
             .try_from_identifier(test.input_unit.as_str())
@@ -95,7 +93,7 @@ fn test_cldr_unit_tests() {
         let result = converter.convert(&IcuRatio::from(1000));
         let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
 
-        if diff_ratio > IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(1000000))) {
+        if diff_ratio > precision_diff_limit {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
                 test.category, test.input_unit, test.output_unit, result, test.result
