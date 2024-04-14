@@ -92,7 +92,7 @@ fn test_cldr_unit_tests() {
         let converter = converter_factory
             .converter(&input_unit, &output_unit)
             .unwrap();
-        let result = converter.convert(IcuRatio::from(1000));
+        let result = converter.convert(&IcuRatio::from(1000));
         let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
 
         if diff_ratio > IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(1000000))) {

@@ -17,7 +17,7 @@ pub struct UnitsConverter(pub(crate) UnitsConverterInner);
 
 impl UnitsConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(self, value: IcuRatio) -> IcuRatio {
+    pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
         self.0.convert(value)
     }
 }
@@ -35,7 +35,7 @@ pub(crate) enum UnitsConverterInner {
 
 impl UnitsConverterInner {
     /// Converts the given value from the input unit to the output unit based on the inner converter type.
-    fn convert(self, value: IcuRatio) -> IcuRatio {
+    fn convert(&self, value: &IcuRatio) -> IcuRatio {
         match self {
             UnitsConverterInner::Proportional(converter) => converter.convert(value),
             UnitsConverterInner::Reciprocal(converter) => converter.convert(value),
@@ -55,7 +55,7 @@ pub(crate) struct ReciprocalConverter {
 
 impl ReciprocalConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(self, value: IcuRatio) -> IcuRatio {
+    pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
         self.proportional.convert(value).recip()
     }
 }
@@ -72,7 +72,7 @@ pub(crate) struct OffsetConverter {
 
 impl OffsetConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(self, value: IcuRatio) -> IcuRatio {
+    pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
         let result = self.proportional.convert(value);
         result + self.offset.clone()
     }
@@ -94,7 +94,7 @@ pub(crate) struct ProportionalConverter {
 
 impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(self, value: IcuRatio) -> IcuRatio {
-        value * self.conversion_rate
+    pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
+        value.clone() * self.conversion_rate.clone()
     }
 }
