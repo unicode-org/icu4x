@@ -35,7 +35,7 @@ pub enum IcuRatioError {
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
-    pub fn new(numerator: BigInt, denominator: BigInt) -> Self {
+    pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
     }
 
