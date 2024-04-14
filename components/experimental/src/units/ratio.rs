@@ -98,16 +98,6 @@ impl IcuRatio {
     pub fn ten() -> Self {
         Self(Ratio::from_integer(10.into()))
     }
-
-    /// Creates [`IcuRatio`] from `f64`.
-    pub fn from_f64(value: f64) -> Option<Self> {
-        Some(Self(Ratio::from_f64(value)?))
-    }
-
-    /// Extracts the equivalent `f64` value of the ratio.
-    pub fn to_f64(&self) -> Option<f64> {
-        self.0.to_f64()
-    }
 }
 
 impl Mul for IcuRatio {
@@ -235,5 +225,57 @@ impl FromStr for IcuRatio {
         }
 
         Ok(Self::from_big_ints(numerator, denominator))
+    }
+}
+
+impl FromPrimitive for IcuRatio {
+    fn from_i32(n: i32) -> Option<Self> {
+        Some(Self(Ratio::from_integer(n.into())))
+    }
+
+    fn from_u32(n: u32) -> Option<Self> {
+        Some(Self(Ratio::from_integer(n.into())))
+    }
+
+    fn from_i64(n: i64) -> Option<Self> {
+        Some(Self(Ratio::from_integer(n.into())))
+    }
+
+    fn from_u64(n: u64) -> Option<Self> {
+        Some(Self(Ratio::from_integer(n.into())))
+    }
+
+    fn from_f32(n: f32) -> Option<Self> {
+        Some(Self(Ratio::from_f32(n)?))
+    }
+
+    fn from_f64(n: f64) -> Option<Self> {
+        Some(Self(Ratio::from_f64(n)?))
+    }
+}
+
+impl ToPrimitive for IcuRatio {
+    fn to_i32(&self) -> Option<i32> {
+        self.0.to_i32()
+    }
+
+    fn to_u32(&self) -> Option<u32> {
+        self.0.to_u32()
+    }
+
+    fn to_i64(&self) -> Option<i64> {
+        self.0.to_i64()
+    }
+
+    fn to_u64(&self) -> Option<u64> {
+        self.0.to_u64()
+    }
+
+    fn to_f32(&self) -> Option<f32> {
+        self.0.to_f32()
+    }
+
+    fn to_f64(&self) -> Option<f64> {
+        self.0.to_f64()
     }
 }

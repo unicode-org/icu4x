@@ -6,7 +6,7 @@ use core::str::FromStr;
 
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
-use num_traits::Pow;
+use num_traits::{FromPrimitive, Pow};
 
 // TODO: add this function to IcuRatio.
 /// Convert a decimal number to a BigRational.
