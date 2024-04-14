@@ -80,10 +80,8 @@ impl CalendarArithmetic for Persian {
         12
     }
 
-    // Calculated using the 33-year rule
     fn is_leap_year(p_year: i32, _data: ()) -> bool {
-        let p_year = p_year as i64;
-        (25 * p_year + 11).rem_euclid(33) < 8
+        calendrical_calculations::persian::is_leap_year(p_year, _data)
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
@@ -302,15 +300,15 @@ mod tests {
         day: u8,
     }
 
-    static TEST_FIXED_DATE: [i64; 18] = [
+    static TEST_FIXED_DATE: [i64; 21] = [
         656786, 664224, 671401, 694799, 702806, 704424, 708842, 709409, 709580, 727274, 728714,
-        739330, 739331, 744313, 763436, 763437, 764652, 775123,
+        739330, 739331, 744313, 763436, 763437, 764652, 775123, 775488, 775489, 1317874,
     ];
 
-    // Test data are provided for the range 1178-1501 AP, for which
-    // we know the 33-year rule matches the astronomical calculations
-    // based on the 52.5 degrees east meridian.
-    static CASES: [DateCase; 18] = [
+    // Test data are provided for the range 1178-3000 AP, for which
+    // we know the 33-year rule, with the override table, matches the
+    // astronomical calculations based on the 52.5 degrees east meridian.
+    static CASES: [DateCase; 21] = [
         // First year for which 33-year rule matches the astronomical calculation
         DateCase {
             year: 1178,
@@ -408,6 +406,21 @@ mod tests {
             month: 12,
             day: 29,
         },
+        DateCase {
+            year: 1502,
+            month: 12,
+            day: 29,
+        },
+        DateCase {
+            year: 1503,
+            month: 1,
+            day: 1,
+        },
+        DateCase {
+            year: 2988,
+            month: 1,
+            day: 1,
+        },
     ];
 
     fn days_in_provided_year_core(year: i32) -> u16 {
@@ -422,11 +435,11 @@ mod tests {
 
     #[test]
     fn test_persian_leap_year() {
-        let mut leap_years: [i32; 18] = [0; 18];
+        let mut leap_years: [i32; 21] = [0; 21];
         // These values were computed from the "Calendrical Calculations" reference code output
         let expected_values = [
             false, false, true, false, true, false, false, false, false, true, false, true, false,
-            false, true, false, false, false,
+            false, true, false, false, false, false, true, true,
         ];
 
         for (index, case) in CASES.iter().enumerate() {
