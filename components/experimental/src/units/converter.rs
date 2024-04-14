@@ -95,6 +95,6 @@ pub(crate) struct ProportionalConverter {
 impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
-        value.clone() * self.conversion_rate.clone()
+        &self.conversion_rate * value
     }
 }

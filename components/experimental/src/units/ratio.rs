@@ -89,14 +89,14 @@ impl IcuRatio {
         Self(self.0.abs())
     }
 
-    /// Returns a Ratio with value of 10.
-    pub fn ten() -> Self {
-        Self(Ratio::from_integer(10.into()))
-    }
-
     /// Returns a Ratio with value of 2.
     pub fn two() -> Self {
         Self(Ratio::from_integer(2.into()))
+    }
+
+    /// Returns a Ratio with value of 10.
+    pub fn ten() -> Self {
+        Self(Ratio::from_integer(10.into()))
     }
 }
 
@@ -105,6 +105,14 @@ impl Mul for IcuRatio {
 
     fn mul(self, rhs: Self) -> Self {
         Self(self.0 * rhs.0)
+    }
+}
+
+impl Mul<&IcuRatio> for &IcuRatio {
+    type Output = IcuRatio;
+
+    fn mul(self, rhs: &IcuRatio) -> IcuRatio {
+        IcuRatio(&self.0 * &rhs.0)
     }
 }
 
@@ -177,6 +185,10 @@ impl Zero for IcuRatio {
 impl One for IcuRatio {
     fn one() -> Self {
         Self(Ratio::one())
+    }
+
+    fn is_one(&self) -> bool {
+        self.0.is_one()
     }
 }
 
