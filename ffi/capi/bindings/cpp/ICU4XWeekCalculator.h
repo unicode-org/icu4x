@@ -18,6 +18,7 @@ typedef struct ICU4XWeekCalculator ICU4XWeekCalculator;
 #include "ICU4XLocale.h"
 #include "diplomat_result_box_ICU4XWeekCalculator_ICU4XError.h"
 #include "ICU4XIsoWeekday.h"
+#include "ICU4XWeekendContainsDay.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -30,6 +31,8 @@ ICU4XWeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_w
 ICU4XIsoWeekday ICU4XWeekCalculator_first_weekday(const ICU4XWeekCalculator* self);
 
 uint8_t ICU4XWeekCalculator_min_week_days(const ICU4XWeekCalculator* self);
+
+ICU4XWeekendContainsDay ICU4XWeekCalculator_weekend(const ICU4XWeekCalculator* self);
 void ICU4XWeekCalculator_destroy(ICU4XWeekCalculator* self);
 
 #ifdef __cplusplus

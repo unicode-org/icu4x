@@ -14,7 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::calendar::week::WeekCalculator::weekend#FnInStruct
 icu::properties::BidiClass#Struct
 icu::properties::BidiClass::ArabicLetter#AssociatedConstantInStruct
 icu::properties::BidiClass::ArabicNumber#AssociatedConstantInStruct

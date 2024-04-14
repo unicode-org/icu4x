@@ -37,7 +37,7 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
 
   /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
   ///
-  /// See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.IanaBcp47RoundTripMapper.html#method.bcp47_to_iana) for more information.
+  /// See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.bcp47_to_iana) for more information.
   ///
   /// Throws [Error] on failure.
   String operator [](String value) {

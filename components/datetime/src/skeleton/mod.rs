@@ -23,7 +23,7 @@ mod test {
 
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
-        options::components,
+        options::{components, preferences},
         pattern::runtime,
         provider::calendar::{
             DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
@@ -76,7 +76,7 @@ mod test {
 
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
@@ -103,7 +103,7 @@ mod test {
             weekday: Some(components::Text::Short),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
@@ -134,7 +134,7 @@ mod test {
             time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (patterns, skeletons) = get_data_payload();
 
         match create_best_pattern_for_fields(
@@ -161,7 +161,7 @@ mod test {
     #[test]
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         assert_eq!(
@@ -178,7 +178,7 @@ mod test {
             time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
