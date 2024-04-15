@@ -11,9 +11,8 @@ use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
 use num_traits::{One, Pow, Zero};
-use zerovec::ule::AsULE;
 
-use super::provider::{Base, ConversionInfoULE, SiPrefix, Sign};
+use super::provider::{Base, SiPrefix};
 
 // TODO: add test cases for IcuRatio.
 /// A ratio type that uses `BigInt` as the underlying type.
@@ -36,30 +35,6 @@ impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
     pub(crate) fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
-    }
-
-    /// Extracts the factor ratio from `ConversionInfoULE`.
-    pub(crate) fn factor_from_conversion_info(conversion_info: &ConversionInfoULE) -> Self {
-        let sign: num_bigint::Sign = Sign::from_unaligned(conversion_info.factor_sign).into();
-        Self::from(Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(sign, conversion_info.factor_num().as_ule_slice()),
-            BigInt::from_bytes_le(
-                num_bigint::Sign::Plus,
-                conversion_info.factor_den().as_ule_slice(),
-            ),
-        ))
-    }
-
-    /// Extracts the offset ratio from `ConversionInfoULE`.
-    pub(crate) fn offset_from_conversion_info(conversion_info: &ConversionInfoULE) -> Self {
-        let sign: num_bigint::Sign = Sign::from_unaligned(conversion_info.offset_sign).into();
-        Self::from(Ratio::<BigInt>::new(
-            BigInt::from_bytes_le(sign, conversion_info.offset_num().as_ule_slice()),
-            BigInt::from_bytes_le(
-                num_bigint::Sign::Plus,
-                conversion_info.offset_den().as_ule_slice(),
-            ),
-        ))
     }
 
     /// Applys the given SI prefix to the ratio.

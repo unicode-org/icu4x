@@ -136,16 +136,14 @@ impl ConverterFactory {
         );
         let output_conversion_info = output_conversion_info?;
 
-        let input_offset = IcuRatio::offset_from_conversion_info(input_conversion_info);
-        let output_offset = IcuRatio::offset_from_conversion_info(output_conversion_info);
+        let input_offset = input_conversion_info.offset_as_ratio();
+        let output_offset = output_conversion_info.offset_as_ratio();
 
         if input_offset.is_zero() && output_offset.is_zero() {
             return Some(IcuRatio::zero());
         }
 
-        let output_conversion_rate_recip =
-            IcuRatio::factor_from_conversion_info(output_conversion_info).recip();
-
+        let output_conversion_rate_recip = output_conversion_info.factor_as_ratio().recip();
         Some((input_offset - output_offset) * output_conversion_rate_recip)
     }
 
@@ -258,7 +256,7 @@ impl ConverterFactory {
         debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
         let conversion_info = conversion_info?;
 
-        let mut conversion_info_factor = IcuRatio::factor_from_conversion_info(conversion_info);
+        let mut conversion_info_factor = conversion_info.factor_as_ratio();
         conversion_info_factor.apply_si_prefix(&unit_item.si_prefix);
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
         Some(conversion_info_factor)
