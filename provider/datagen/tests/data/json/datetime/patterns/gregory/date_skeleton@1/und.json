@@ -49,7 +49,7 @@
       "index": 18
     },
     {
-      "has_long": false,
+      "has_long": true,
       "has_medium": false,
       "has_plurals": false,
       "index": 20
@@ -58,37 +58,31 @@
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 21
+      "index": 22
     },
     {
       "has_long": true,
       "has_medium": true,
       "has_plurals": false,
-      "index": 24
+      "index": 25
     },
     {
       "has_long": true,
       "has_medium": false,
       "has_plurals": false,
-      "index": 27
+      "index": 28
     },
     {
       "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 29
-    },
-    {
-      "has_long": true,
       "has_medium": false,
       "has_plurals": false,
       "index": 30
     },
     {
-      "has_long": false,
+      "has_long": true,
       "has_medium": false,
       "has_plurals": false,
-      "index": 32
+      "index": 31
     },
     {
       "has_long": false,
@@ -101,6 +95,12 @@
       "has_medium": false,
       "has_plurals": false,
       "index": 34
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 35
     }
   ],
   "patterns": [
@@ -124,8 +124,9 @@
     "y-MM-dd, E",
     "GGGG y MMMM d, EEEE",
     "GGG y MMM d, E",
+    "cccc",
     "ccc",
-    "MMMM",
+    "LLLL",
     "LLL",
     "L",
     "y MMMM",
