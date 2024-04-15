@@ -194,11 +194,9 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         // nearby the input IANA name. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
         let mut stack = Vec::with_capacity(iana_id.len());
-        let Some((trie_value, mut string)) =
-            self.iana_lookup_with_normalization(iana_id, |cursor| {
-                stack.push((cursor.clone(), 0, 1));
-            })
-        else {
+        let Some((trie_value, string)) = self.iana_lookup_with_normalization(iana_id, |cursor| {
+            stack.push((cursor.clone(), 0, 1));
+        }) else {
             return None;
         };
         let Some(bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
@@ -209,55 +207,15 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
             return Some(NormalizedIana { string, bcp47_id });
         }
         // If we get here, we need to walk the trie to find the canonical IANA ID.
-        loop {
-            let Some((mut cursor, index, suffix_len)) = stack.pop() else {
-                // Nothing left in the trie.
-                debug_assert!(false, "every time zone should have a canonical IANA ID");
-                return None;
-            };
-            // Check to see if there is a value at the current node.
-            if let Some(candidate) = cursor.take_value().map(IanaTrieValue) {
-                if candidate.index() == trie_value.index() && candidate.is_canonical() {
-                    // Success! Found what we were looking for.
-                    break;
-                }
-            }
-            // Now check for children of the current node.
-            let mut sub_cursor = cursor.clone();
-            if let Some(probe_result) = sub_cursor.probe(index) {
-                // Found a child. Add the current byte edge to the string.
-                if !probe_result.byte.is_ascii() {
-                    debug_assert!(false, "non-ASCII probe byte: {}", probe_result.byte);
-                    return None;
-                }
-                // Safety: the byte being added is ASCII as guarded above
-                unsafe { string.to_mut().as_mut_vec().push(probe_result.byte) };
-                // Add the child to the stack, and also add back the current
-                // node if there are more siblings to visit.
-                if index + 1 < probe_result.total_siblings as usize {
-                    stack.push((cursor, index + 1, suffix_len));
-                    stack.push((sub_cursor, 0, 1));
-                } else {
-                    stack.push((sub_cursor, 0, suffix_len + 1));
-                }
-            } else {
-                // No more children. Pop this node's bytes from the string.
-                for _ in 0..suffix_len {
-                    // Safety: we check that the bytes being removed are ASCII
-                    let removed_byte = unsafe { string.to_mut().as_mut_vec().pop() };
-                    if let Some(removed_byte) = removed_byte {
-                        if !removed_byte.is_ascii() {
-                            debug_assert!(false, "non-ASCII removed byte: {removed_byte}");
-                            return None;
-                        }
-                    } else {
-                        debug_assert!(false, "could not remove another byte");
-                        return None;
-                    }
-                }
-            }
-        }
-        Some(NormalizedIana { string, bcp47_id })
+        let needle = trie_value.to_canonical();
+        let Some(string) = self.iana_search(needle, string.into_owned(), stack) else {
+            debug_assert!(false, "every time zone should have a canonical IANA ID");
+            return None;
+        };
+        Some(NormalizedIana {
+            string: Cow::Owned(string),
+            bcp47_id,
+        })
     }
 
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
@@ -284,27 +242,21 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// );
     /// ```
     pub fn bcp47_to_iana_search(&self, bcp47_id: TimeZoneBcp47Id) -> Option<String> {
-        // TODO: This is not as efficient as .probe() since it allocates a string each time.
-        for (string, raw_value) in self.data.map.iter() {
-            let trie_value = IanaTrieValue(raw_value);
-            if !trie_value.is_canonical() {
-                continue;
-            }
-            let Some(candidate_bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
-                debug_assert!(false, "index should be in range");
-                return None;
-            };
-            if candidate_bcp47_id == bcp47_id {
-                return Some(string);
-            }
-        }
-        None
+        let index = self.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
+        let stack = alloc::vec![(self.data.map.cursor(), 0, 0)];
+        let needle = IanaTrieValue::canonical_for_index(index);
+        let string = self.iana_search(needle, String::new(), stack)?;
+        Some(string)
     }
 
+    /// Queries the data for `iana_id` without recording the normalized string.
+    /// This is a fast, no-alloc lookup.
     fn iana_lookup_quick(&self, iana_id: &str) -> Option<IanaTrieValue> {
         self.data.map.get(iana_id).map(IanaTrieValue)
     }
 
+    /// Queries the data for `iana_id` while keeping track of the normalized string.
+    /// This is a fast lookup, but it may require allocating memory.
     fn iana_lookup_with_normalization<'l, 's>(
         &'l self,
         iana_id: &'s str,
@@ -343,6 +295,63 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         }?;
         Some((trie_value, string))
     }
+
+    /// Performs a reverse lookup by walking the trie with an optional start position.
+    /// This is not a fast operation since it requires a linear search.
+    fn iana_search(
+        &self,
+        needle: IanaTrieValue,
+        mut string: String,
+        mut stack: Vec<(ZeroAsciiIgnoreCaseTrieCursor, usize, usize)>,
+    ) -> Option<String> {
+        loop {
+            let Some((mut cursor, index, suffix_len)) = stack.pop() else {
+                // Nothing left in the trie.
+                return None;
+            };
+            // Check to see if there is a value at the current node.
+            if let Some(candidate) = cursor.take_value().map(IanaTrieValue) {
+                if candidate == needle {
+                    // Success! Found what we were looking for.
+                    return Some(string);
+                }
+            }
+            // Now check for children of the current node.
+            let mut sub_cursor = cursor.clone();
+            if let Some(probe_result) = sub_cursor.probe(index) {
+                // Found a child. Add the current byte edge to the string.
+                if !probe_result.byte.is_ascii() {
+                    debug_assert!(false, "non-ASCII probe byte: {}", probe_result.byte);
+                    return None;
+                }
+                // Safety: the byte being added is ASCII as guarded above
+                unsafe { string.as_mut_vec().push(probe_result.byte) };
+                // Add the child to the stack, and also add back the current
+                // node if there are more siblings to visit.
+                if index + 1 < probe_result.total_siblings as usize {
+                    stack.push((cursor, index + 1, suffix_len));
+                    stack.push((sub_cursor, 0, 1));
+                } else {
+                    stack.push((sub_cursor, 0, suffix_len + 1));
+                }
+            } else {
+                // No more children. Pop this node's bytes from the string.
+                for _ in 0..suffix_len {
+                    // Safety: we check that the bytes being removed are ASCII
+                    let removed_byte = unsafe { string.as_mut_vec().pop() };
+                    if let Some(removed_byte) = removed_byte {
+                        if !removed_byte.is_ascii() {
+                            debug_assert!(false, "non-ASCII removed byte: {removed_byte}");
+                            return None;
+                        }
+                    } else {
+                        debug_assert!(false, "could not remove another byte");
+                        return None;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /// A wrapper around a syntax-normalized IANA time zone identifier string
@@ -355,17 +364,25 @@ pub struct NormalizedIana<'s> {
     pub bcp47_id: TimeZoneBcp47Id,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 #[repr(transparent)]
 struct IanaTrieValue(usize);
 
 impl IanaTrieValue {
     #[inline]
-    pub fn index(self) -> usize {
+    pub(crate) fn to_canonical(self) -> Self {
+        Self(self.0 | 1)
+    }
+    #[inline]
+    pub(crate) fn canonical_for_index(index: usize) -> Self {
+        Self(index << 1).to_canonical()
+    }
+    #[inline]
+    pub(crate) fn index(self) -> usize {
         self.0 >> 1
     }
     #[inline]
-    pub fn is_canonical(self) -> bool {
+    pub(crate) fn is_canonical(self) -> bool {
         (self.0 & 0x1) != 0
     }
 }
