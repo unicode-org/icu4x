@@ -353,6 +353,9 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
                     if let Some(removed_byte) = removed_byte {
                         if !removed_byte.is_ascii() {
                             debug_assert!(false, "non-ASCII removed byte: {removed_byte}");
+                            // If we get here for some reason, `string` is not in a valid state,
+                            // so to be extra safe, we can clear it.
+                            string.clear();
                             return None;
                         }
                     } else {
