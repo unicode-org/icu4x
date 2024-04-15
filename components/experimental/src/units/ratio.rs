@@ -181,20 +181,21 @@ impl FromStr for IcuRatio {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split('/');
-
-        let numerator = match parts.next() {
-            Some(num_str) => BigInt::from_str(num_str).map_err(IcuRatioError::BigIntParseError)?,
-            None => BigInt::from(0),
-        };
-
-        let denominator = match parts.next() {
-            Some(den_str) => BigInt::from_str(den_str).map_err(IcuRatioError::BigIntParseError)?,
-            None => BigInt::from(1),
-        };
-
+        let numerator = parts.next();
+        let denominator = parts.next();
         if parts.next().is_some() {
             return Err(IcuRatioError::InvalidRatioString);
         }
+
+        let numerator = match numerator {
+            Some(num_str) => BigInt::from_str(num_str).map_err(IcuRatioError::BigIntParseError)?,
+            None => BigInt::zero(),
+        };
+
+        let denominator = match denominator {
+            Some(den_str) => BigInt::from_str(den_str).map_err(IcuRatioError::BigIntParseError)?,
+            None => BigInt::one(),
+        };
 
         Ok(Self::from_big_ints(numerator, denominator))
     }
