@@ -246,18 +246,22 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "inccu"));
     /// let result = mapper.find_canonical_iana_from_bcp47(bcp47_id).unwrap();
     ///
-    /// assert_eq!(result, "Asia/Kolkata");
+    /// assert_eq!(result.string, "Asia/Kolkata");
+    /// assert_eq!(*result.bcp47_id, "inccu");
     ///
     /// // Unknown BCP-47 time zone ID:
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
     /// assert_eq!(mapper.find_canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
-    pub fn find_canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<String> {
+    pub fn find_canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<NormalizedIana<'static>> {
         let index = self.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
         let stack = alloc::vec![(self.data.map.cursor(), 0, 0)];
         let needle = IanaTrieValue::canonical_for_index(index);
         let string = self.iana_search(needle, String::new(), stack)?;
-        Some(string)
+        Some(NormalizedIana {
+            string: Cow::Owned(string),
+            bcp47_id,
+        })
     }
 
     /// Queries the data for `iana_id` without recording the normalized string.
