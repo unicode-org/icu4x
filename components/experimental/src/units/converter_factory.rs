@@ -257,7 +257,7 @@ impl ConverterFactory {
         let conversion_info = conversion_info?;
 
         let mut conversion_info_factor = conversion_info.factor_as_ratio();
-        conversion_info_factor.apply_si_prefix(&unit_item.si_prefix);
+        conversion_info_factor *= &unit_item.si_prefix;
         conversion_info_factor = conversion_info_factor.pow((unit_item.power * sign) as i32);
         Some(conversion_info_factor)
     }

@@ -37,22 +37,6 @@ impl IcuRatio {
         Self(Ratio::new(numerator, denominator))
     }
 
-    /// Applys the given SI prefix to the ratio.
-    /// For example: if the ratio is 1/3 and the SI prefix is "kilo" (10^3),
-    ///              the result will be 1000/3.
-    /// Another example: if the ratio is 1/3 and the SI prefix is "kibi" ("2^10"),
-    ///                  the result will be 1024/3.
-    pub(crate) fn apply_si_prefix(&mut self, si_prefix: &SiPrefix) {
-        match si_prefix.base {
-            Base::Decimal => {
-                *self *= IcuRatio::ten().pow(si_prefix.power as i32);
-            }
-            Base::Binary => {
-                *self *= IcuRatio::two().pow(si_prefix.power as i32);
-            }
-        }
-    }
-
     /// Returns the reciprocal of the ratio.
     /// For example, the reciprocal of 2/3 is 3/2.
     pub(crate) fn recip(&self) -> Self {
@@ -91,9 +75,22 @@ impl Mul<&IcuRatio> for &IcuRatio {
     }
 }
 
-impl MulAssign for IcuRatio {
-    fn mul_assign(&mut self, rhs: Self) {
+impl MulAssign<IcuRatio> for IcuRatio {
+    fn mul_assign(&mut self, rhs: IcuRatio) {
         self.0 *= rhs.0;
+    }
+}
+
+impl MulAssign<&SiPrefix> for IcuRatio {
+    fn mul_assign(&mut self, rhs: &SiPrefix) {
+        match rhs.base {
+            Base::Decimal => {
+                *self *= IcuRatio::ten().pow(rhs.power as i32);
+            }
+            Base::Binary => {
+                *self *= IcuRatio::two().pow(rhs.power as i32);
+            }
+        }
     }
 }
 
