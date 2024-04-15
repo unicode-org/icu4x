@@ -118,6 +118,8 @@ part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
 part 'TimeLength.g.dart';
 part 'TimeZoneFormatter.g.dart';
+part 'TimeZoneIdMapper.g.dart';
+part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';

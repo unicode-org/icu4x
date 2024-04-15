@@ -110,6 +110,8 @@ export { ICU4XTime } from './ICU4XTime.mjs';
 export { ICU4XTimeFormatter } from './ICU4XTimeFormatter.mjs';
 export { ICU4XTimeLength } from './ICU4XTimeLength.mjs';
 export { ICU4XTimeZoneFormatter } from './ICU4XTimeZoneFormatter.mjs';
+export { ICU4XTimeZoneIdMapper } from './ICU4XTimeZoneIdMapper.mjs';
+export { ICU4XTimeZoneIdMapperWithFastCanonicalization } from './ICU4XTimeZoneIdMapperWithFastCanonicalization.mjs';
 export { ICU4XTitlecaseMapper } from './ICU4XTitlecaseMapper.mjs';
 export { ICU4XTitlecaseOptionsV1 } from './ICU4XTitlecaseOptionsV1.mjs';
 export { ICU4XTrailingCase } from './ICU4XTrailingCase.mjs';

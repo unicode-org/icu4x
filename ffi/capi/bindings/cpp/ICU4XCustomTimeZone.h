@@ -19,6 +19,7 @@ typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
 #include "diplomat_result_int32_t_ICU4XError.h"
 #include "diplomat_result_bool_ICU4XError.h"
 #include "ICU4XIanaToBcp47Mapper.h"
+#include "ICU4XTimeZoneIdMapper.h"
 #include "ICU4XMetazoneCalculator.h"
 #include "ICU4XIsoDateTime.h"
 #ifdef __cplusplus
@@ -49,6 +50,8 @@ diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_gmt_offset_has_seconds(const
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_time_zone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id(ICU4XCustomTimeZone* self, const ICU4XIanaToBcp47Mapper* mapper, const char* id_data, size_t id_len);
+
+diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(ICU4XCustomTimeZone* self, const ICU4XTimeZoneIdMapper* mapper, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_time_zone_id(ICU4XCustomTimeZone* self);
 

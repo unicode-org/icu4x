@@ -134,6 +134,7 @@ mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
+#[allow(deprecated)]
 pub use iana_ids::{
     IanaBcp47RoundTripMapper, IanaBcp47RoundTripMapperBorrowed, IanaToBcp47Mapper,
     IanaToBcp47MapperBorrowed,

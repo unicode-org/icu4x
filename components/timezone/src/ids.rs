@@ -148,6 +148,12 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
             .and_then(|trie_value| self.data.bcp47_ids.get(trie_value.index()))
     }
 
+    /// Same as [`Self::iana_to_bcp47()`] but works with potentially ill-formed UTF-8.
+    pub fn iana_bytes_to_bcp47(&self, iana_id: &[u8]) -> Option<TimeZoneBcp47Id> {
+        self.iana_lookup_quick(iana_id)
+            .and_then(|trie_value| self.data.bcp47_ids.get(trie_value.index()))
+    }
+
     /// Normalizes the syntax of an IANA time zone ID.
     ///
     /// Also returns the BCP-47 time zone ID.
@@ -298,7 +304,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
 
     /// Queries the data for `iana_id` without recording the normalized string.
     /// This is a fast, no-alloc lookup.
-    fn iana_lookup_quick(&self, iana_id: &str) -> Option<IanaTrieValue> {
+    fn iana_lookup_quick(&self, iana_id: impl AsRef<[u8]>) -> Option<IanaTrieValue> {
         self.data.map.get(iana_id).map(IanaTrieValue)
     }
 
