@@ -9,8 +9,10 @@ use icu_provider::prelude::*;
 use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
 
 use crate::{
-    provider::names::{IanaToBcp47MapV2, IanaToBcp47MapV2Marker},
-    TimeZoneBcp47Id,
+    provider::names::{
+        Bcp47ToIanaMapV1, Bcp47ToIanaMapV1Marker, IanaToBcp47MapV2, IanaToBcp47MapV2Marker,
+    },
+    TimeZoneBcp47Id, TimeZoneError,
 };
 
 /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
@@ -97,11 +99,18 @@ impl TimeZoneIdMapper {
 
     /// Returns a borrowed version of the mapper that can be queried.
     ///
-    /// This avoids a small potential cost of reading the data pointer.
+    /// This avoids a small potential indirection cost when querying the mapper.
     pub fn as_borrowed(&self) -> TimeZoneIdMapperBorrowed {
         TimeZoneIdMapperBorrowed {
             data: self.data.get(),
         }
+    }
+}
+
+impl AsRef<TimeZoneIdMapper> for TimeZoneIdMapper {
+    #[inline]
+    fn as_ref(&self) -> &TimeZoneIdMapper {
+        self
     }
 }
 
@@ -150,6 +159,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// ```
     /// use icu_timezone::TimeZoneBcp47Id;
     /// use icu_timezone::TimeZoneIdMapper;
+    /// use std::borrow::Cow;
     ///
     /// let mapper = TimeZoneIdMapper::new();
     /// let mapper = mapper.as_borrowed();
@@ -157,7 +167,13 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let result = mapper.normalize_iana("Asia/CALCUTTA").unwrap();
     ///
     /// assert_eq!(result.string, "Asia/Calcutta");
+    /// assert!(matches!(result.string, Cow::Owned(_)));
     /// assert_eq!(*result.bcp47_id, "inccu");
+    ///
+    /// // Borrows when able:
+    /// let result = mapper.normalize_iana("America/Chicago").unwrap();
+    /// assert_eq!(result.string, "America/Chicago");
+    /// assert!(matches!(result.string, Cow::Borrowed(_)));
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.normalize_iana("America/San_Francisco"), None);
@@ -185,6 +201,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// ```
     /// use icu_timezone::TimeZoneBcp47Id;
     /// use icu_timezone::TimeZoneIdMapper;
+    /// use std::borrow::Cow;
     ///
     /// let mapper = TimeZoneIdMapper::new();
     /// let mapper = mapper.as_borrowed();
@@ -192,7 +209,13 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let result = mapper.canonicalize_iana("Asia/CALCUTTA").unwrap();
     ///
     /// assert_eq!(result.string, "Asia/Kolkata");
+    /// assert!(matches!(result.string, Cow::Owned(_)));
     /// assert_eq!(*result.bcp47_id, "inccu");
+    ///
+    /// // Borrows when able:
+    /// let result = mapper.canonicalize_iana("America/Chicago").unwrap();
+    /// assert_eq!(result.string, "America/Chicago");
+    /// assert!(matches!(result.string, Cow::Borrowed(_)));
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
@@ -228,8 +251,12 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
 
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
     ///
-    /// Only use this function if you don't have the IANA ID. [`Self::canonicalize_iana()`]
-    /// is much faster in the common case.
+    /// This function performs a slow linear search. If this is problematic, consider one of the
+    /// following functions instead:
+    ///
+    /// 1. [`TimeZoneIdMapperBorrowed::canonicalize_iana()`] is faster if you have an IANA ID.
+    /// 2. [`TimeZoneIdMapperWithFastCanonicalizationBorrowed::canonical_iana_from_bcp47()`] is faster, but it requires
+    ///    loading additional data.
     ///
     /// Returns `None` if the BCP-47 ID is not found.
     ///
@@ -238,6 +265,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// ```
     /// use icu_timezone::TimeZoneBcp47Id;
     /// use icu_timezone::TimeZoneIdMapper;
+    /// use std::borrow::Cow;
     /// use tinystr::tinystr;
     ///
     /// let mapper = TimeZoneIdMapper::new();
@@ -247,13 +275,17 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let result = mapper.find_canonical_iana_from_bcp47(bcp47_id).unwrap();
     ///
     /// assert_eq!(result.string, "Asia/Kolkata");
+    /// assert!(matches!(result.string, Cow::Owned(_)));
     /// assert_eq!(*result.bcp47_id, "inccu");
     ///
     /// // Unknown BCP-47 time zone ID:
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
     /// assert_eq!(mapper.find_canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
-    pub fn find_canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<NormalizedIana<'static>> {
+    pub fn find_canonical_iana_from_bcp47(
+        &self,
+        bcp47_id: TimeZoneBcp47Id,
+    ) -> Option<NormalizedIana<'static>> {
         let index = self.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
         let stack = alloc::vec![(self.data.map.cursor(), 0, 0)];
         let needle = IanaTrieValue::canonical_for_index(index);
@@ -367,6 +399,232 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
                         return None;
                     }
                 }
+            }
+        }
+    }
+}
+
+/// A mapper that supplements [`TimeZoneIdMapper`] with additional data to improve the performance
+/// of canonical IANA ID lookup.
+#[derive(Debug, Clone)]
+pub struct TimeZoneIdMapperWithFastCanonicalization<I> {
+    inner: I,
+    data: DataPayload<Bcp47ToIanaMapV1Marker>,
+}
+
+impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
+    /// Creates a new [`TimeZoneIdMapperWithFastCanonicalization`] using compiled data.
+    ///
+    /// See [`TimeZoneIdMapperWithFastCanonicalization`] for an example.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2.bcp47_ids_checksum
+                == crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1.bcp47_ids_checksum,
+        );
+        Self {
+            inner: TimeZoneIdMapper {
+                data: DataPayload::from_static_ref(
+                    crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V2,
+                ),
+            },
+            data: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+            ),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
+        #[cfg(skip)]
+        functions: [
+            new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
+    where
+        P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+    {
+        let mapper = TimeZoneIdMapper::try_new_unstable(provider)?;
+        Self::try_new_with_mapper_unstable(provider, mapper)
+    }
+}
+
+impl<I> TimeZoneIdMapperWithFastCanonicalization<I>
+where
+    I: AsRef<TimeZoneIdMapper>,
+{
+    /// Creates a new [`TimeZoneIdMapperWithFastCanonicalization`] using compiled data
+    /// and a pre-existing [`TimeZoneIdMapper`], which can be borrowed.
+    ///
+    /// See [`TimeZoneIdMapperWithFastCanonicalization`] for an example.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_mapper(mapper: I) -> Result<Self, TimeZoneError> {
+        Self {
+            inner: mapper,
+            data: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+            ),
+        }
+        .validated()
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, mapper: I, error: TimeZoneError,
+        #[cfg(skip)]
+        functions: [
+            try_new_with_mapper,
+            try_new_with_mapper_with_any_provider,
+            try_new_with_mapper_with_buffer_provider,
+            try_new_with_mapper_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_with_mapper_unstable<P>(provider: &P, mapper: I) -> Result<Self, TimeZoneError>
+    where
+        P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+    {
+        let data = provider.load(Default::default())?.take_payload()?;
+        Self {
+            inner: mapper,
+            data,
+        }
+        .validated()
+    }
+
+    fn validated(self) -> Result<Self, TimeZoneError> {
+        if self.inner.as_ref().data.get().bcp47_ids_checksum != self.data.get().bcp47_ids_checksum {
+            return Err(TimeZoneError::MismatchedChecksums);
+        }
+        Ok(self)
+    }
+
+    /// Gets the inner [`TimeZoneIdMapper`] for performing queries.
+    pub fn inner(&self) -> &TimeZoneIdMapper {
+        self.inner.as_ref()
+    }
+
+    /// Returns a borrowed version of the mapper that can be queried.
+    ///
+    /// This avoids a small potential indirection cost when querying the mapper.
+    pub fn as_borrowed(&self) -> TimeZoneIdMapperWithFastCanonicalizationBorrowed {
+        TimeZoneIdMapperWithFastCanonicalizationBorrowed {
+            inner: self.inner.as_ref().as_borrowed(),
+            data: self.data.get(),
+        }
+    }
+}
+
+/// A borrowed wrapper around the time zone ID mapper, returned by
+/// [`TimeZoneIdMapperWithFastCanonicalization::as_borrowed()`]. More efficient to query.
+#[derive(Debug, Copy, Clone)]
+pub struct TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
+    inner: TimeZoneIdMapperBorrowed<'a>,
+    data: &'a Bcp47ToIanaMapV1<'a>,
+}
+
+impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
+    /// Gets the inner [`TimeZoneIdMapperBorrowed`] for performing queries.
+    pub fn inner(&self) -> TimeZoneIdMapperBorrowed<'a> {
+        self.inner
+    }
+
+    /// Returns the canonical, normalized name of the given IANA time zone.
+    ///
+    /// Also returns the BCP-47 time zone ID.
+    ///
+    /// This is a faster version of [`TimeZoneIdMapperBorrowed::canonicalize_iana()`]
+    /// and it always returns borrowed IANA strings, but it requires loading additional data.
+    ///
+    /// Returns `None` if the IANA ID is not found.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_timezone::TimeZoneBcp47Id;
+    /// use icu_timezone::TimeZoneIdMapperWithFastCanonicalization;
+    /// use std::borrow::Cow;
+    ///
+    /// let mapper = TimeZoneIdMapperWithFastCanonicalization::new();
+    /// let mapper = mapper.as_borrowed();
+    ///
+    /// let result = mapper.canonicalize_iana("Asia/CALCUTTA").unwrap();
+    ///
+    /// // The Cow is always returned borrowed:
+    /// assert_eq!(result.string, "Asia/Kolkata");
+    /// assert!(matches!(result.string, Cow::Borrowed(_)));
+    /// assert_eq!(*result.bcp47_id, "inccu");
+    ///
+    /// // Unknown IANA time zone ID:
+    /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
+    /// ```
+    pub fn canonicalize_iana(&self, iana_id: &str) -> Option<NormalizedIana> {
+        let trie_value = self.inner.iana_lookup_quick(iana_id)?;
+        let Some(bcp47_id) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
+            debug_assert!(false, "index should be in range");
+            return None;
+        };
+        self.get_with_index(trie_value.index(), bcp47_id)
+    }
+
+    /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
+    ///
+    /// This is a faster version of [`TimeZoneIdMapperBorrowed::find_canonical_iana_from_bcp47()`]
+    /// and it always returns borrowed IANA strings, but it requires loading additional data.
+    ///
+    /// Returns `None` if the BCP-47 ID is not found.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_timezone::TimeZoneBcp47Id;
+    /// use icu_timezone::TimeZoneIdMapperWithFastCanonicalization;
+    /// use std::borrow::Cow;
+    /// use tinystr::tinystr;
+    ///
+    /// let mapper = TimeZoneIdMapperWithFastCanonicalization::new();
+    /// let mapper = mapper.as_borrowed();
+    ///
+    /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "inccu"));
+    /// let result = mapper.canonical_iana_from_bcp47(bcp47_id).unwrap();
+    ///
+    /// // The Cow is always returned borrowed:
+    /// assert_eq!(result.string, "Asia/Kolkata");
+    /// assert!(matches!(result.string, Cow::Borrowed(_)));
+    /// assert_eq!(*result.bcp47_id, "inccu");
+    ///
+    /// // Unknown BCP-47 time zone ID:
+    /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
+    /// assert_eq!(mapper.canonical_iana_from_bcp47(bcp47_id), None);
+    /// ```
+    pub fn canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<NormalizedIana> {
+        let index = self.inner.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
+        self.get_with_index(index, bcp47_id)
+    }
+
+    fn get_with_index(&self, index: usize, bcp47_id: TimeZoneBcp47Id) -> Option<NormalizedIana> {
+        match self.data.canonical_iana_ids.get(index) {
+            Some(iana_id) => Some(NormalizedIana {
+                string: Cow::Borrowed(iana_id),
+                bcp47_id,
+            }),
+            None => {
+                debug_assert!(false, "index should be in range");
+                None
             }
         }
     }
