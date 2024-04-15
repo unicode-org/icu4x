@@ -278,7 +278,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         let mut i = 0;
         let trie_value = loop {
             cursor_fn(&cursor);
-            let Some(input_byte) = string.as_bytes().get(i).copied() else {
+            let Some(&input_byte) = string.as_bytes().get(i) else {
                 break cursor.take_value().map(IanaTrieValue);
             };
             let Some(matched_byte) = cursor.step(input_byte) else {
