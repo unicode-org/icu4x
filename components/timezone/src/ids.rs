@@ -32,7 +32,7 @@ use crate::{
 ///     Some("aumel".parse().unwrap())
 /// );
 ///
-/// // Lookup is ASCII-case insensitive:
+/// // Lookup is ASCII-case-insensitive:
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("australia/melbourne"),
 ///     Some("aumel".parse().unwrap())
