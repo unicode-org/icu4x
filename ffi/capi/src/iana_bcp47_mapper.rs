@@ -24,6 +24,7 @@ pub mod ffi {
 
     impl ICU4XIanaToBcp47Mapper {
         #[diplomat::rust_link(icu::timezone::IanaToBcp47Mapper::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XIanaToBcp47Mapper>, ICU4XError> {
@@ -45,6 +46,7 @@ pub mod ffi {
             icu::timezone::IanaBcp47RoundTripMapperBorrowed::iana_to_bcp47,
             FnInStruct
         )]
+        #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(
             &self,
             value: &DiplomatStr,
@@ -73,6 +75,7 @@ pub mod ffi {
 
     impl ICU4XBcp47ToIanaMapper {
         #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapper::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XBcp47ToIanaMapper>, ICU4XError> {
@@ -90,6 +93,7 @@ pub mod ffi {
             icu::timezone::IanaBcp47RoundTripMapperBorrowed::bcp47_to_iana,
             FnInStruct
         )]
+        #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(
             &self,
             value: &DiplomatStr,

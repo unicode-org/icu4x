@@ -43,6 +43,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         pub fn create_cardinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -61,6 +62,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal")]
         pub fn create_ordinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -83,6 +85,7 @@ pub mod ffi {
 
         /// Get all of the categories needed in the current locale
         #[diplomat::rust_link(icu::plurals::PluralRules::categories, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn categories(&self) -> ICU4XPluralCategories {
             ICU4XPluralCategories::from_iter(self.0.categories())
         }
@@ -95,6 +98,7 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(s: &DiplomatStr) -> Result<Box<ICU4XPluralOperands>, ICU4XError> {
             Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
                 // XXX should this have its own errors?
@@ -106,6 +110,7 @@ pub mod ffi {
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "icu_decimal")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_fixed_decimal")]
         pub fn create_from_fixed_decimal(
             x: &crate::fixed_decimal::ffi::ICU4XFixedDecimal,
         ) -> Box<Self> {

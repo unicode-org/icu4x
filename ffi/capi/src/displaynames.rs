@@ -60,6 +60,7 @@ pub mod ffi {
     impl ICU4XLocaleDisplayNamesFormatter {
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -95,6 +96,7 @@ pub mod ffi {
     impl ICU4XRegionDisplayNames {
         /// Creates a new `RegionDisplayNames` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

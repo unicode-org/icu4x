@@ -48,6 +48,7 @@ pub mod ffi {
 
     impl ICU4XSegmenterWordType {
         #[diplomat::rust_link(icu::segmenter::WordType::is_word_like, FnInEnum)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_word_like(self) -> bool {
             WordType::from(self).is_word_like()
         }
@@ -60,6 +61,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto")]
         pub fn create_auto(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
@@ -77,6 +79,7 @@ pub mod ffi {
         /// Warning: [`ICU4XWordSegmenter`] created by this function doesn't handle Chinese or
         /// Japanese.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm")]
         pub fn create_lstm(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
@@ -91,6 +94,7 @@ pub mod ffi {
         /// Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary")]
         pub fn create_dictionary(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
@@ -158,12 +162,14 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn word_type(&self) -> ICU4XSegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
@@ -192,12 +198,14 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn word_type(&self) -> ICU4XSegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
@@ -221,12 +229,14 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn word_type(&self) -> ICU4XSegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
