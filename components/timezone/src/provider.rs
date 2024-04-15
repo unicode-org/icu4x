@@ -15,6 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use core::ops::Deref;
 use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -84,6 +85,14 @@ impl From<TinyAsciiStr<8>> for TimeZoneBcp47Id {
 impl From<TimeZoneBcp47Id> for TinyAsciiStr<8> {
     fn from(other: TimeZoneBcp47Id) -> Self {
         other.0
+    }
+}
+
+impl Deref for TimeZoneBcp47Id {
+    type Target = TinyAsciiStr<8>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

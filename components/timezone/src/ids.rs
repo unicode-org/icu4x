@@ -123,15 +123,13 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// ```
     /// use icu_timezone::TimeZoneBcp47Id;
     /// use icu_timezone::TimeZoneIdMapper;
-    /// use tinystr::tinystr;
     ///
     /// let mapper = TimeZoneIdMapper::new();
     /// let mapper = mapper.as_borrowed();
     ///
-    /// assert_eq!(
-    ///     mapper.iana_to_bcp47("Asia/CALCUTTA"),
-    ///     Some(TimeZoneBcp47Id(tinystr!(8, "inccu")))
-    /// );
+    /// let result = mapper.iana_to_bcp47("Asia/CALCUTTA").unwrap();
+    ///
+    /// assert_eq!(*result, "inccu");
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.iana_to_bcp47("America/San_Francisco"), None);
@@ -152,7 +150,6 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// ```
     /// use icu_timezone::TimeZoneBcp47Id;
     /// use icu_timezone::TimeZoneIdMapper;
-    /// use tinystr::tinystr;
     ///
     /// let mapper = TimeZoneIdMapper::new();
     /// let mapper = mapper.as_borrowed();
@@ -160,7 +157,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let result = mapper.normalize_iana("Asia/CALCUTTA").unwrap();
     ///
     /// assert_eq!(result.string, "Asia/Calcutta");
-    /// assert_eq!(result.bcp47_id, TimeZoneBcp47Id(tinystr!(8, "inccu")));
+    /// assert_eq!(*result.bcp47_id, "inccu");
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.normalize_iana("America/San_Francisco"), None);
@@ -188,7 +185,6 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// ```
     /// use icu_timezone::TimeZoneBcp47Id;
     /// use icu_timezone::TimeZoneIdMapper;
-    /// use tinystr::tinystr;
     ///
     /// let mapper = TimeZoneIdMapper::new();
     /// let mapper = mapper.as_borrowed();
@@ -196,7 +192,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let result = mapper.canonicalize_iana("Asia/CALCUTTA").unwrap();
     ///
     /// assert_eq!(result.string, "Asia/Kolkata");
-    /// assert_eq!(result.bcp47_id, TimeZoneBcp47Id(tinystr!(8, "inccu")));
+    /// assert_eq!(*result.bcp47_id, "inccu");
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
@@ -253,7 +249,8 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// assert_eq!(result, "Asia/Kolkata");
     ///
     /// // Unknown BCP-47 time zone ID:
-    /// assert_eq!(mapper.find_canonical_iana_from_bcp47(TimeZoneBcp47Id(tinystr!(8, "ussfo"))), None);
+    /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
+    /// assert_eq!(mapper.find_canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
     pub fn find_canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<String> {
         let index = self.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
