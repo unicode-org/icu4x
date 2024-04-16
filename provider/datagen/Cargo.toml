@@ -161,9 +161,25 @@ baked_exporter = [
     "icu_experimental?/datagen",
 ]
 blob_exporter = ["dep:icu_provider_blob"]
+blob_input = [
+    "dep:icu_provider_blob",
+    "icu_calendar/datagen",
+    "icu_casemap/datagen",
+    "icu_collator/datagen",
+    "icu_datetime/datagen",
+    "icu_decimal/datagen",
+    "icu_list/datagen",
+    "icu_locid_transform/datagen",
+    "icu_normalizer/datagen",
+    "icu_plurals/datagen",
+    "icu_properties/datagen",
+    "icu_segmenter/datagen",
+    "icu_timezone/datagen",
+    "icu_experimental?/datagen",
+]
 fs_exporter = ["dep:icu_provider_fs"]
 legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter", "provider"]
-bin = ["dep:clap", "dep:eyre", "dep:simple_logger", "provider"]
+bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder?/wasm"]
