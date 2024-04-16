@@ -56,7 +56,10 @@ impl IterableDataProviderInternal<DecimalSymbolsV1Marker> for DatagenProvider {
 }
 
 #[derive(Debug)]
-struct NumbersWithNumsys<'a>(pub(in crate::provider) &'a cldr_serde::numbers::Numbers, pub(in crate::provider) TinyAsciiStr<8>);
+struct NumbersWithNumsys<'a>(
+    pub(in crate::provider) &'a cldr_serde::numbers::Numbers,
+    pub(in crate::provider) TinyAsciiStr<8>,
+);
 
 impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;

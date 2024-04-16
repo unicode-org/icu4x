@@ -20,7 +20,9 @@ pub(in crate::provider) struct MetazoneAliasData {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(in crate::provider) struct MetazoneIds(pub(in crate::provider) BTreeMap<MetazoneId, MetazoneAliasData>);
+pub(in crate::provider) struct MetazoneIds(
+    pub(in crate::provider) BTreeMap<MetazoneId, MetazoneAliasData>,
+);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(in crate::provider) struct UsesMetazone {

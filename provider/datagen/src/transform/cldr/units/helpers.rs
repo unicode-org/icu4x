@@ -281,7 +281,9 @@ pub(in crate::provider) fn process_constants<'a>(
 /// - " 1.5 E -2 " is converted to 15/1000
 /// - " 1.5 E - 2" is an invalid scientific notation number
 /// - "1.5E-2.5" is an invalid scientific notation number
-pub(in crate::provider) fn convert_scientific_notation_to_fraction(number: &str) -> Result<Ratio<BigInt>, DataError> {
+pub(in crate::provider) fn convert_scientific_notation_to_fraction(
+    number: &str,
+) -> Result<Ratio<BigInt>, DataError> {
     let mut parts = number.split('E');
     let base = parts.next().unwrap_or("1").trim();
     let exponent = parts.next().unwrap_or("0").trim();
@@ -420,7 +422,9 @@ pub(in crate::provider) fn is_scientific_number(s: &str) -> bool {
 }
 
 /// Transforms a fractional number into byte numerators, byte denominators, and a sign.
-pub(in crate::provider) fn flatten_fraction(fraction: Ratio<BigInt>) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
+pub(in crate::provider) fn flatten_fraction(
+    fraction: Ratio<BigInt>,
+) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
     let (n_sign, numer) = fraction.numer().to_bytes_le();
     let (d_sign, denom) = fraction.denom().to_bytes_le();
 
@@ -511,7 +515,9 @@ fn test_convert_array_of_strings_to_fraction() {
 /// - "2/" is split into (["2"], ["1"])
 /// - "1E2" is split into (["1E2"], ["1"])
 /// - "1 2 * 3" is an invalid constant string
-pub(in crate::provider) fn split_unit_term(constant_string: &str) -> Result<(Vec<String>, Vec<String>), DataError> {
+pub(in crate::provider) fn split_unit_term(
+    constant_string: &str,
+) -> Result<(Vec<String>, Vec<String>), DataError> {
     let split: Vec<&str> = constant_string.split('/').collect();
     if split.len() > 2 {
         return Err(DataError::custom("Invalid constant string"));

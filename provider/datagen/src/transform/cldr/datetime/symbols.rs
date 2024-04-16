@@ -9,7 +9,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
-pub(in crate::provider) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
+pub(in crate::provider) fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: &str,
+) -> DateSymbolsV1<'static> {
     let eras = if let Some(ref eras) = other.eras {
         convert_eras(eras, calendar)
     } else {
@@ -93,7 +96,9 @@ pub(in crate::provider) fn get_month_code_map(calendar: &str) -> &'static [TinyS
     }
 }
 
-pub(in crate::provider) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
+pub(in crate::provider) fn get_era_code_map(
+    calendar: &str,
+) -> impl Iterator<Item = (&str, TinyStr16)> {
     use either::Either;
 
     let array: &[_] = match calendar {

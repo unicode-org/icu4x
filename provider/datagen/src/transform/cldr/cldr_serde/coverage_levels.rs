@@ -9,5 +9,6 @@ use std::collections::HashMap;
 #[derive(PartialEq, Debug, Deserialize)]
 pub(in crate::provider) struct Resource {
     #[serde(rename = "coverageLevels")]
-    pub(in crate::provider) coverage_levels: HashMap<icu_locid::LanguageIdentifier, crate::CoverageLevel>,
+    pub(in crate::provider) coverage_levels:
+        HashMap<icu_locid::LanguageIdentifier, crate::CoverageLevel>,
 }

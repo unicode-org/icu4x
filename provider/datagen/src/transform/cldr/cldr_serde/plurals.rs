@@ -26,7 +26,9 @@ pub(in crate::provider) struct LocalePluralRules {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub(in crate::provider) struct Rules(pub(in crate::provider) HashMap<LanguageIdentifier, LocalePluralRules>);
+pub(in crate::provider) struct Rules(
+    pub(in crate::provider) HashMap<LanguageIdentifier, LocalePluralRules>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(in crate::provider) struct Supplemental {

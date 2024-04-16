@@ -52,7 +52,9 @@ pub(in crate::provider) enum LocationOrSubRegion {
 }
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
-pub(in crate::provider) struct Region(pub(in crate::provider) BTreeMap<String, LocationOrSubRegion>);
+pub(in crate::provider) struct Region(
+    pub(in crate::provider) BTreeMap<String, LocationOrSubRegion>,
+);
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
 pub(in crate::provider) struct Zones(pub(in crate::provider) BTreeMap<String, Region>);

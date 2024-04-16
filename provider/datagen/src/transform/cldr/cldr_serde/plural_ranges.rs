@@ -59,10 +59,14 @@ impl<'de> Deserialize<'de> for PluralRange {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub(in crate::provider) struct LocalePluralRanges(pub(in crate::provider) HashMap<PluralRange, String>);
+pub(in crate::provider) struct LocalePluralRanges(
+    pub(in crate::provider) HashMap<PluralRange, String>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub(in crate::provider) struct PluralRanges(pub(in crate::provider) HashMap<LanguageIdentifier, LocalePluralRanges>);
+pub(in crate::provider) struct PluralRanges(
+    pub(in crate::provider) HashMap<LanguageIdentifier, LocalePluralRanges>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(in crate::provider) struct Supplemental {

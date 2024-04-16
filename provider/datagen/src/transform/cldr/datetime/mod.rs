@@ -22,8 +22,9 @@ mod skeletons;
 mod symbols;
 pub(in crate::provider) mod week_data;
 
-pub(in crate::provider) static SUPPORTED_CALS: OnceCell<HashMap<icu_locid::extensions::unicode::Value, &'static str>> =
-    OnceCell::new();
+pub(in crate::provider) static SUPPORTED_CALS: OnceCell<
+    HashMap<icu_locid::extensions::unicode::Value, &'static str>,
+> = OnceCell::new();
 
 fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
