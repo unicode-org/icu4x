@@ -568,7 +568,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
 impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
     /// Cheaply converts a [`PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearTiny4Mapper`].
     ///
-    /// Note that while the conversion is cheap, [`PropertyEnumToValueNameLinearTiny4Mapper`] might inhibit some
+    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearTiny4Mapper`] might inhibit some
     /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
         PropertyEnumToValueNameLinearTiny4Mapper {
