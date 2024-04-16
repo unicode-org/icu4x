@@ -60,9 +60,11 @@ impl<'a, T> From<PatternItem<'a, T>> for PatternItemCow<'a, T> {
 /// The trait has no public methods and is not implementable outside of this crate.
 ///
 /// [`Pattern`]: crate::Pattern
-pub trait PatternBackend: crate::private::Sealed {
+pub trait PatternBackend: crate::private::Sealed + 'static {
     /// The type to be used as the placeholder key in code.
-    type PlaceholderKey;
+    type PlaceholderKey<'a>
+    where
+        Self: 'a;
 
     /// The type of error that the [`TryWriteable`] for this backend can return.
     type Error<'a>;
@@ -72,7 +74,7 @@ pub trait PatternBackend: crate::private::Sealed {
 
     /// The iterator type returned by [`Self::try_from_items`].
     #[doc(hidden)] // TODO(#4467): Should be internal
-    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey>>
+    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>
     where
         Self: 'a;
 
@@ -87,7 +89,7 @@ pub trait PatternBackend: crate::private::Sealed {
     #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'a>>, Error>>,
     >(
         items: I,
     ) -> Result<<Self::Store as ToOwned>::Owned, Error>

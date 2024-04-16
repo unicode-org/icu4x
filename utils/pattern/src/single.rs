@@ -165,7 +165,7 @@ pub enum SinglePlaceholder {}
 impl crate::private::Sealed for SinglePlaceholder {}
 
 impl PatternBackend for SinglePlaceholder {
-    type PlaceholderKey = SinglePlaceholderKey;
+    type PlaceholderKey<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
@@ -202,7 +202,7 @@ impl PatternBackend for SinglePlaceholder {
     #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'a>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {

@@ -22,9 +22,9 @@ use alloc::string::String;
 ///
 /// ```
 /// use core::cmp::Ordering;
-/// use icu_pattern::PatternItem;
 /// use icu_pattern::DoublePlaceholderKey;
 /// use icu_pattern::DoublePlaceholderPattern;
+/// use icu_pattern::PatternItem;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let pattern =
@@ -191,13 +191,14 @@ impl DoublePlaceholderInfo {
 /// Parsing a pattern into the encoding:
 ///
 /// ```
-/// use icu_pattern::Pattern;
 /// use icu_pattern::DoublePlaceholder;
+/// use icu_pattern::Pattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<DoublePlaceholder, _>::try_from_str("Hello, {0} and {1}!")
-///     .unwrap()
-///     .take_store();
+/// let store =
+///     Pattern::<DoublePlaceholder, _>::try_from_str("Hello, {0} and {1}!")
+///         .unwrap()
+///         .take_store();
 ///
 /// assert_eq!("\x10\x1BHello,  and !", store);
 /// ```
@@ -210,8 +211,8 @@ impl DoublePlaceholderInfo {
 /// Example patterns supported by this backend:
 ///
 /// ```
-/// use icu_pattern::Pattern;
 /// use icu_pattern::DoublePlaceholder;
+/// use icu_pattern::Pattern;
 ///
 /// // Single numeric placeholder (note, "5" is used):
 /// assert_eq!(
@@ -262,7 +263,7 @@ pub enum DoublePlaceholder {}
 impl crate::private::Sealed for DoublePlaceholder {}
 
 impl PatternBackend for DoublePlaceholder {
-    type PlaceholderKey = DoublePlaceholderKey;
+    type PlaceholderKey<'a> = DoublePlaceholderKey;
     type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
@@ -319,7 +320,7 @@ impl PatternBackend for DoublePlaceholder {
     #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'a>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {

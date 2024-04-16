@@ -112,8 +112,9 @@ impl<Backend, Store> Pattern<Backend, Store> {
     /// use writeable::assert_writeable_eq;
     ///
     /// // Create a pattern from a valid string:
-    /// let allocated_pattern: Pattern<SinglePlaceholder, String> =
-    ///     Pattern::try_from_str("{0} days").expect("valid pattern");
+    /// let allocated_pattern =
+    ///     Pattern::<SinglePlaceholder, String>::try_from_str("{0} days")
+    ///         .expect("valid pattern");
     ///
     /// // Transform the store and create a new Pattern. This is valid because
     /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
@@ -195,7 +196,7 @@ where
     pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
     where
         B: 'a,
-        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey>>,
+        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey<'a>>>,
     {
         let store = B::try_from_items(items.map(Ok))?;
         #[cfg(debug_assertions)]
@@ -216,9 +217,9 @@ where
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::PlaceholderKey: FromStr,
+    for<'a> B::PlaceholderKey<'a>: FromStr,
     B::Store: ToOwned,
-    <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
+    for<'a> <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
 {
     /// Creates a pattern by parsing a syntax string.
     ///
@@ -266,9 +267,9 @@ where
 impl<B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::PlaceholderKey: FromStr,
+    for<'a> B::PlaceholderKey<'a>: FromStr,
     B::Store: ToOwned,
-    <B::PlaceholderKey as FromStr>::Err: fmt::Debug,
+    for<'a> <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
 {
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
@@ -282,7 +283,7 @@ where
     Store: AsRef<B::Store> + ?Sized,
 {
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
-    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey>> + '_ {
+    pub fn iter<'a>(&'a self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'a>>> + 'a {
         B::iter_items(self.store.as_ref())
     }
 }
@@ -296,7 +297,7 @@ where
     /// into this pattern string.
     pub fn interpolate<'a, P>(&'a self, value_provider: P) -> impl Writeable + fmt::Display + 'a
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'a>> + 'a,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         TryWriteableInfallibleAsWriteable(WriteablePattern::<B, P> {
             store: self.store.as_ref(),
@@ -310,7 +311,7 @@ where
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn interpolate_to_string<'a, P>(&'a self, value_provider: P) -> String
     where
-        P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'a>>,
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         self.interpolate(value_provider)
             .write_to_string()
@@ -326,7 +327,7 @@ struct WriteablePattern<'a, B: PatternBackend, P> {
 impl<'a, B, P> TryWriteable for WriteablePattern<'a, B, P>
 where
     B: PatternBackend,
-    P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'a>>,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>>,
 {
     type Error = B::Error<'a>;
 
@@ -377,11 +378,20 @@ where
 impl<'b, B, P> fmt::Display for WriteablePattern<'b, B, P>
 where
     B: PatternBackend + 'b,
-    P: PlaceholderValueProvider<B::PlaceholderKey, Error = B::Error<'b>>,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'b>, Error = B::Error<'b>>,
 {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Discard the TryWriteable error (lossy mode)
         self.try_write_to(f).map(|_| ())
     }
+}
+
+#[test]
+fn test_try_from_store_inference() {
+    use crate::SinglePlaceholder;
+    // Does NOT work:
+    // let _: Pattern<SinglePlaceholder, String> = Pattern::try_from_str("{0} days").unwrap();
+    // Works:
+    let _ = Pattern::<SinglePlaceholder, String>::try_from_str("{0} days").unwrap();
 }
