@@ -57,7 +57,7 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 criterion = { workspace = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid" }
+icu = { path = "../../components/icu", features = ["experimental"]}
 #TODO: remove this once we are not using `BigRational` anymore.
 num-rational = "0.4.1"
 

@@ -1388,6 +1388,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "fixed_decimal",
+ "icu",
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
