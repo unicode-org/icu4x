@@ -7,7 +7,9 @@ pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_timezone::{TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneIdMapperWithFastCanonicalization};
+    use icu_timezone::{
+        TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneIdMapperWithFastCanonicalization,
+    };
     use tinystr::TinyAsciiStr;
 
     /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
@@ -34,10 +36,7 @@ pub mod ffi {
             )?)))
         }
 
-        #[diplomat::rust_link(
-            icu::timezone::TimeZoneIdMapperBorrowed::iana_to_bcp47,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::iana_to_bcp47, FnInStruct)]
         #[diplomat::rust_link(
             icu::timezone::TimeZoneIdMapperBorrowed::iana_bytes_to_bcp47,
             FnInStruct,
@@ -57,10 +56,7 @@ pub mod ffi {
             }
         }
 
-        #[diplomat::rust_link(
-            icu::timezone::TimeZoneIdMapperBorrowed::normalize_iana,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::normalize_iana, FnInStruct)]
         pub fn normalize_iana(
             &self,
             value: &DiplomatStr,
@@ -117,30 +113,52 @@ pub mod ffi {
         }
     }
 
-
     /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
     ///
     /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
     /// It also supports normalizing and canonicalizing the IANA strings.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperWithFastCanonicalization, Struct)]
-    #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperWithFastCanonicalization::as_borrowed, FnInStruct, hidden)]
-    #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperWithFastCanonicalization::inner, FnInStruct, hidden)]
-    #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed, Struct, hidden)]
-    #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::inner, FnInStruct, hidden)]
-    pub struct ICU4XTimeZoneIdMapperWithFastCanonicalization(pub TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper>);
+    #[diplomat::rust_link(
+        icu::timezone::TimeZoneIdMapperWithFastCanonicalization::as_borrowed,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(
+        icu::timezone::TimeZoneIdMapperWithFastCanonicalization::inner,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(
+        icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed,
+        Struct,
+        hidden
+    )]
+    #[diplomat::rust_link(
+        icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::inner,
+        FnInStruct,
+        hidden
+    )]
+    pub struct ICU4XTimeZoneIdMapperWithFastCanonicalization(
+        pub TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper>,
+    );
 
     impl ICU4XTimeZoneIdMapperWithFastCanonicalization {
-        #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
+            FnInStruct
+        )]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XTimeZoneIdMapperWithFastCanonicalization>, ICU4XError> {
-            Ok(Box::new(ICU4XTimeZoneIdMapperWithFastCanonicalization(call_constructor!(
-                TimeZoneIdMapperWithFastCanonicalization::new [r => Ok(r)],
-                TimeZoneIdMapperWithFastCanonicalization::try_new_with_any_provider,
-                TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider,
-                provider,
-            )?)))
+            Ok(Box::new(ICU4XTimeZoneIdMapperWithFastCanonicalization(
+                call_constructor!(
+                    TimeZoneIdMapperWithFastCanonicalization::new [r => Ok(r)],
+                    TimeZoneIdMapperWithFastCanonicalization::try_new_with_any_provider,
+                    TimeZoneIdMapperWithFastCanonicalization::try_new_with_buffer_provider,
+                    provider,
+                )?,
+            )))
         }
 
         #[diplomat::rust_link(

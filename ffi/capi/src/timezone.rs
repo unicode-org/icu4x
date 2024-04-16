@@ -131,7 +131,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::deref, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::Target, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneBcp47Id::Target,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn try_set_time_zone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
                 tinystr::TinyAsciiStr::from_bytes(id)?,

@@ -38,7 +38,7 @@ use icu_provider::prelude::*;
 /// );
 /// ```
 #[derive(Debug)]
-#[deprecated(since = "1.5.0", note="use `TimeZoneIdMapper` instead")]
+#[deprecated(since = "1.5.0", note = "use `TimeZoneIdMapper` instead")]
 pub struct IanaToBcp47Mapper {
     data: DataPayload<IanaToBcp47MapV1Marker>,
 }
@@ -94,7 +94,7 @@ impl IanaToBcp47Mapper {
 /// A borrowed wrapper around IANA-to-BCP47 time zone data, returned by
 /// [`IanaToBcp47Mapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
-#[deprecated(since = "1.5.0", note="use `TimeZoneIdMapper` instead")]
+#[deprecated(since = "1.5.0", note = "use `TimeZoneIdMapper` instead")]
 pub struct IanaToBcp47MapperBorrowed<'a> {
     data: &'a IanaToBcp47MapV1<'a>,
 }
@@ -164,7 +164,7 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 /// assert_eq!(iana_id, Some("Asia/Kolkata"))
 /// ```
 #[derive(Debug)]
-#[deprecated(since = "1.5.0", note="use `TimeZoneIdMapper` instead")]
+#[deprecated(since = "1.5.0", note = "use `TimeZoneIdMapper` instead")]
 pub struct IanaBcp47RoundTripMapper {
     data1: DataPayload<IanaToBcp47MapV1Marker>,
     data2: DataPayload<Bcp47ToIanaMapV1Marker>,
@@ -234,7 +234,7 @@ impl IanaBcp47RoundTripMapper {
 /// A borrowed wrapper around IANA-BCP47 time zone data, returned by
 /// [`IanaBcp47RoundTripMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
-#[deprecated(since = "1.5.0", note="use `TimeZoneIdMapper` instead")]
+#[deprecated(since = "1.5.0", note = "use `TimeZoneIdMapper` instead")]
 pub struct IanaBcp47RoundTripMapperBorrowed<'a> {
     data1: &'a IanaToBcp47MapV1<'a>,
     data2: &'a Bcp47ToIanaMapV1<'a>,

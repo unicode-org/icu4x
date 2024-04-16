@@ -68,6 +68,7 @@ impl TimeZoneIdMapper {
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[allow(clippy::new_without_default)] // feature-gated constructor
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
@@ -185,10 +186,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// assert_eq!(mapper.normalize_iana("America/San_Francisco"), None);
     /// ```
     pub fn normalize_iana<'s>(&self, iana_id: &'s str) -> Option<NormalizedIana<'s>> {
-        let Some((trie_value, string)) = self.iana_lookup_with_normalization(iana_id, |_| {})
-        else {
-            return None;
-        };
+        let (trie_value, string) = self.iana_lookup_with_normalization(iana_id, |_| {})?;
         let Some(bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
             return None;
@@ -231,11 +229,9 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         // nearby the input IANA name. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
         let mut stack = Vec::with_capacity(iana_id.len());
-        let Some((trie_value, string)) = self.iana_lookup_with_normalization(iana_id, |cursor| {
+        let (trie_value, string) = self.iana_lookup_with_normalization(iana_id, |cursor| {
             stack.push((cursor.clone(), 0, 1));
-        }) else {
-            return None;
-        };
+        })?;
         let Some(bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
             return None;
@@ -426,6 +422,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[allow(clippy::new_without_default)] // feature-gated constructor
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
@@ -639,6 +636,7 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
 /// A wrapper around a syntax-normalized IANA time zone identifier string
 /// and its corresponding BCP-47 time zone identifier.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct NormalizedIana<'s> {
     /// The syntax-normalized IANA time zone identifier string.
     pub string: Cow<'s, str>,
