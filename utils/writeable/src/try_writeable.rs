@@ -175,11 +175,11 @@ pub trait TryWriteable {
     }
 
     /// Writes the content of this writeable to a string.
-    /// 
+    ///
     /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
     ///
     /// Examples
-    /// 
+    ///
     /// ```
     /// # use std::borrow::Cow;
     /// # use writeable::TryWriteable;
