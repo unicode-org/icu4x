@@ -109,8 +109,8 @@ pub struct CodePointSetDataBorrowed<'a> {
 impl CodePointSetDataBorrowed<'static> {
     /// Cheaply converts a [`CodePointSetDataBorrowed<'static>`] into a [`CodePointSetData`].
     ///
-    /// Note that while the conversion is cheap, [`CodePointSetData`] is more expensive to use
-    /// than [`CodePointSetDataBorrowed`].
+    /// Note: Due to branching and indirection, using [`CodePointSetData`] might inhibit some
+    /// compile-time optimizations that are possible with [`CodePointSetDataBorrowed`].
     pub const fn static_to_owned(self) -> CodePointSetData {
         CodePointSetData {
             data: DataPayload::from_static_ref(self.set),
@@ -309,8 +309,8 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
 impl UnicodeSetDataBorrowed<'static> {
     /// Cheaply converts a [`UnicodeSetDataBorrowed<'static>`] into a [`UnicodeSetData`].
     ///
-    /// Note that while the conversion is cheap, [`UnicodeSetData`] is more expensive to use
-    /// than [`UnicodeSetDataBorrowed`].
+    /// Note: Due to branching and indirection, using [`UnicodeSetData`] might inhibit some
+    /// compile-time optimizations that are possible with [`UnicodeSetDataBorrowed`].
     pub const fn static_to_owned(self) -> UnicodeSetData {
         UnicodeSetData {
             data: DataPayload::from_static_ref(self.set),

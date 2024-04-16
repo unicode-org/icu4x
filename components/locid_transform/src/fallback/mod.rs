@@ -217,8 +217,8 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 impl LocaleFallbackerBorrowed<'static> {
     /// Cheaply converts a [`LocaleFallbackerBorrowed<'static>`] into a [`LocaleFallbacker`].
     ///
-    /// Note that while the conversion is cheap, [`LocaleFallbacker`] is more expensive to use
-    /// than [`LocaleFallbackerBorrowed`].
+    /// Note: Due to branching and indirection, using [`LocaleFallbacker`] might inhibit some
+    /// compile-time optimizations that are possible with [`LocaleFallbackerBorrowed`].
     pub const fn static_to_owned(self) -> LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
