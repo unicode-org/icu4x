@@ -112,7 +112,7 @@ provider = [
     "icu_collator/datagen",
     "icu_datetime/datagen",
     "icu_decimal/datagen",
-    "icu_experimental/datagen",
+    "icu_experimental?/datagen",
     "icu_list/datagen",
     "icu_locid_transform/datagen",
     "icu_locid/serde",
@@ -158,7 +158,7 @@ baked_exporter = [
     "icu_properties/datagen",
     "icu_segmenter/datagen",
     "icu_timezone/datagen",
-    "icu_experimental/datagen",
+    "icu_experimental?/datagen",
 ]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
@@ -166,12 +166,12 @@ legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger", "provider"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
-use_wasm = ["icu_codepointtrie_builder/wasm"]
+use_wasm = ["icu_codepointtrie_builder?/wasm"]
 # Use local ICU4C libraries for building codepointtries
 # (will do nothing if used with `use_wasm`)
 # If neither `use_wasm` nor `use_icu4c` are enabled,
 # rule based segmenter data will not be generated.
-use_icu4c = ["icu_codepointtrie_builder/icu4c"]
+use_icu4c = ["icu_codepointtrie_builder?/icu4c"]
 networking = ["dep:ureq"]
 experimental_components = [
     "dep:icu_experimental",

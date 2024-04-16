@@ -43,7 +43,7 @@ icu_segmenter.workspace = true
 icu_timezone.workspace = true
 
 [build-dependencies]
-icu_datagen = { workspace = true, features = ["networking", "use_wasm"] }
+icu_datagen = { workspace = true, features = ["networking", "use_wasm", "provider"] }
 icu_provider_blob = { workspace = true, features = ["export"] }
 log = "0.4"
 simple_logger = { version = "4.1.0", default-features = false }
