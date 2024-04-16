@@ -335,7 +335,8 @@ mod test {
             weekday: Some(components::Text::Short),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let default_hour_cycle = preferences::HourCycle::H23;
+        let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
@@ -359,7 +360,8 @@ mod test {
             weekday: Some(components::Text::Long),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let default_hour_cycle = preferences::HourCycle::H23;
+        let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
