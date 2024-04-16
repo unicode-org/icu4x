@@ -48,7 +48,7 @@ impl Direction {
 ///
 /// # Example
 /// ```
-/// use icu_experimental::transliterate::{RuleCollection, Transliterator};
+/// use icu::experimental::transliterate::{RuleCollection, Transliterator};
 ///
 /// let mut collection = RuleCollection::default();
 /// collection.register_source(

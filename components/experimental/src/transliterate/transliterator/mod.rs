@@ -166,7 +166,7 @@ impl Transliterator {
     ///
     /// # Examples
     /// ```ignore
-    /// use icu_experimental::transliterate::Transliterator;
+    /// use icu::experimental::transliterate::Transliterator;
     /// // BCP-47-T ID for Bengali to Arabic transliteration
     /// let locale = "und-Arab-t-und-beng".parse().unwrap();
     /// let t = Transliterator::try_new_unstable(locale, provider).unwrap();
@@ -206,8 +206,8 @@ impl Transliterator {
     /// # Example
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```ignore
-    /// use icu_experimental::transliterate::{Transliterator, CustomTransliterator};
-    /// use icu_locid::Locale;
+    /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
+    /// use icu::locid::Locale;
     /// use core::ops::Range;
     ///
     /// #[derive(Debug)]
