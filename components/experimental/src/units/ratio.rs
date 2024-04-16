@@ -15,6 +15,7 @@ use num_traits::{One, Pow, Zero};
 use super::provider::{Base, SiPrefix};
 
 // TODO: add test cases for IcuRatio.
+// TODO: Make a decicion on whether to keep the `IcuRatio` public or not.
 /// A ratio type that uses `BigInt` as the underlying type.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IcuRatio(Ratio<BigInt>);
