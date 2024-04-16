@@ -25,7 +25,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_timezone",
     // ICU4X utils
     "calendrical_calculations",
-    "embedded-io",
     "fixed_decimal",
     "icu_provider",
     "litemap",
