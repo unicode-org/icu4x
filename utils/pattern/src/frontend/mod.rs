@@ -286,6 +286,37 @@ where
     pub fn iter<'a>(&'a self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'a>>> + 'a {
         B::iter_items(self.store.as_ref())
     }
+
+    /// Returns a [`TryWriteable`] that interpolates items from the given replacement provider
+    /// into this pattern string.
+    pub fn try_interpolate<'a, P>(
+        &'a self,
+        value_provider: P,
+    ) -> impl TryWriteable<Error = B::Error<'a>> + fmt::Display + 'a
+    where
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+    {
+        WriteablePattern::<B, P> {
+            store: self.store.as_ref(),
+            value_provider,
+        }
+    }
+
+    #[cfg(feature = "alloc")]
+    /// Interpolates the pattern directly to a string, returning the string or an error.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    pub fn try_interpolate_to_string<'a, P>(
+        &'a self,
+        value_provider: P,
+    ) -> Result<String, B::Error<'a>>
+    where
+        P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
+    {
+        self.try_interpolate(value_provider)
+            .try_write_to_string()
+            .map(|s| s.into_owned())
+    }
 }
 
 impl<B, Store> Pattern<B, Store>

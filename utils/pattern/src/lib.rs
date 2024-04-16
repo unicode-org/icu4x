@@ -71,6 +71,7 @@ pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
 pub use frontend::Pattern;
+pub use multi_named::MissingNamedPlaceholderError;
 pub use multi_named::MultiNamedPlaceholder;
 pub use multi_named::MultiNamedPlaceholderKey;
 #[cfg(feature = "alloc")]
@@ -128,7 +129,7 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 /// ```
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use std::collections::BTreeMap;
-/// use writeable::assert_writeable_eq;
+/// use writeable::assert_try_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
 /// let pattern = MultiNamedPlaceholderPattern::try_from_str(
@@ -137,8 +138,8 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 /// .unwrap();
 ///
 /// // Interpolate some values into the pattern:
-/// assert_writeable_eq!(
-///     pattern.interpolate(
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(
 ///         [("person0", "Alice"), ("person1", "Bob")]
 ///             .into_iter()
 ///             .collect::<BTreeMap<&str, &str>>()

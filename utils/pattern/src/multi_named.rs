@@ -9,7 +9,6 @@ use alloc::collections::BTreeMap;
 use core::borrow::Borrow;
 use core::fmt;
 use core::str::FromStr;
-use either::Either;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -72,10 +71,10 @@ impl fmt::Display for MultiNamedPlaceholderKey<'_> {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MissingNamedPlaceholderError<'a> {
-    name: Cow<'a, str>,
+    pub name: Cow<'a, str>,
 }
 
 impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
@@ -154,7 +153,7 @@ where
 /// .unwrap()
 /// .take_store();
 ///
-/// assert_eq!("Hello, {person0} and {person1}!", store);
+/// assert_eq!("Hello, \x00\x07person0 and \x00\x07person1!", store);
 /// ```
 ///
 /// Example patterns supported by this backend:
@@ -164,16 +163,15 @@ where
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> = [
-///     ("num", "5"),
-///     ("letter", "X"),
-/// ].into_iter().collect();
+/// let placeholder_value_map: BTreeMap<&str, &str> =
+///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
 /// // Single placeholder:
 /// assert_eq!(
 ///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("{num} days ago")
 ///         .unwrap()
-///         .interpolate_to_string(&placeholder_value_map),
+///         .try_interpolate_to_string(&placeholder_value_map)
+///         .unwrap(),
 ///     "5 days ago",
 /// );
 ///
@@ -181,7 +179,8 @@ where
 /// assert_eq!(
 ///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("yesterday")
 ///         .unwrap()
-///         .interpolate_to_string(&placeholder_value_map),
+///         .try_interpolate_to_string(&placeholder_value_map)
+///         .unwrap(),
 ///     "yesterday",
 /// );
 ///
@@ -189,53 +188,57 @@ where
 /// assert_eq!(
 ///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("{letter}{num}")
 ///         .unwrap()
-///         .interpolate_to_string(&placeholder_value_map),
+///         .try_interpolate_to_string(&placeholder_value_map)
+///         .unwrap(),
 ///     "X5",
 /// );
 /// ```
 ///
-/// Missing placeholder values cause a debug assertion or are replaced with
-/// the Unicode replacement character U+FFFD.
-///
-/// With `debug_assertions` (debug mode):
+/// Missing placeholder values cause an error result to be returned. However,
+/// based on the design of [`TryWriteable`], the error can be discarded to get
+/// a best-effort interpolation with potential replacement characters.
 ///
 /// ```should_panic
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> = [
-///     ("num", "5"),
-///     ("letter", "X"),
-/// ].into_iter().collect();
+/// let placeholder_value_map: BTreeMap<&str, &str> =
+///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-///         Pattern::<MultiNamedPlaceholder, _>::try_from_str("Your name is {your_name}")
-///            .unwrap()
-///             .interpolate_to_string(&placeholder_value_map);
+/// Pattern::<MultiNamedPlaceholder, _>::try_from_str(
+///     "Your name is {your_name}",
+/// )
+/// .unwrap()
+/// .try_interpolate_to_string(&placeholder_value_map)
+/// .unwrap();
 /// ```
 ///
-/// Without `debug_assertions` (release mode):
+/// Recover the best-effort lossy string by directly using [`Pattern::try_interpolate()`]:
 ///
 /// ```
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
+/// use writeable::TryWriteable;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> = [
-///     ("num", "5"),
-///     ("letter", "X"),
-/// ].into_iter().collect();
+/// let placeholder_value_map: BTreeMap<&str, &str> =
+///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// if cfg!(not(debug_assertions)) {
-///     assert_eq!(
-///         Pattern::<MultiNamedPlaceholder, _>::try_from_str(
-///             "Your name is {your_name}"
-///         )
-///         .unwrap()
-///         .interpolate_to_string(&placeholder_value_map),
-///         "Your name is �",
-///     );
-/// }
+/// let pattern = Pattern::<MultiNamedPlaceholder, _>::try_from_str(
+///     "Your name is {your_name}",
+/// )
+/// .unwrap();
+///
+/// let mut buffer = String::new();
+/// let result = pattern
+///     .try_interpolate(&placeholder_value_map)
+///     .try_write_to(&mut buffer)
+///     .expect("infallible write to String");
+///
+/// assert!(matches!(result, Err(_)));
+/// assert_eq!(result.unwrap_err().name, "your_name");
+/// assert_eq!(buffer, "Your name is {your_name}");
 /// ```
 ///
 /// [`Pattern::interpolate()`]: crate::Pattern::interpolate
@@ -268,7 +271,28 @@ impl PatternBackend for MultiNamedPlaceholder {
     >(
         items: I,
     ) -> Result<String, Error> {
-        todo!()
+        let mut string = String::new();
+        for item in items {
+            match item? {
+                PatternItemCow::Literal(s) if s.contains(|x| (x as usize) <= 0x07) => {
+                    // TODO: Should this be a different error type?
+                    return Err(Error::InvalidPattern);
+                }
+                PatternItemCow::Literal(s) => string.push_str(&s),
+                PatternItemCow::Placeholder(ph_key) => {
+                    let name_length = ph_key.0.len();
+                    if name_length >= 64 {
+                        return Err(Error::InvalidPlaceholder);
+                    }
+                    let lead = (name_length >> 3) as u8;
+                    let trail = (name_length & 0x7) as u8;
+                    string.push(char::from(lead));
+                    string.push(char::from(trail));
+                    string.push_str(&ph_key.0);
+                }
+            }
+        }
+        Ok(string)
     }
 }
 
@@ -356,9 +380,15 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
                 self.store = remainder;
                 Ok(Some(PatternItem::Literal(literal)))
             }
-            None => {
+            None if self.store.is_empty() => {
                 // End of string
                 Ok(None)
+            }
+            None => {
+                // Closing literal
+                let literal = self.store;
+                self.store = "";
+                Ok(Some(PatternItem::Literal(literal)))
             }
         }
     }
