@@ -34,7 +34,7 @@ pub(in crate::provider) struct LocaleResource<T> {
 /// A map containing a single locale key and value.
 #[derive(Debug)]
 pub(in crate::provider) struct SingleLocaleMap<T> {
-    pub(in crate::provider) locale: LanguageIdentifier,
+    pub(in crate::provider) _locale: LanguageIdentifier,
     pub(in crate::provider) value: T,
 }
 
@@ -62,7 +62,10 @@ where
         if access.next_key::<LanguageIdentifier>()?.is_some() {
             return Err(M::Error::duplicate_field("<LOCALE>"));
         }
-        Ok(SingleLocaleMap { locale, value })
+        Ok(SingleLocaleMap {
+            _locale: locale,
+            value,
+        })
     }
 }
 

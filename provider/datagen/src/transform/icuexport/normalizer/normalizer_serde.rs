@@ -24,8 +24,10 @@ pub(in crate::provider) struct DecompositionTables {
 
 #[derive(serde::Deserialize)]
 pub(in crate::provider) struct CompositionPassthrough {
-    pub(in crate::provider) trie: CodePointTrieToml,
-    pub(in crate::provider) first: u32,
+    #[serde(rename = "trie")]
+    pub(in crate::provider) _trie: CodePointTrieToml,
+    #[serde(rename = "first")]
+    pub(in crate::provider) _first: u32,
 }
 
 #[derive(serde::Deserialize)]

@@ -38,8 +38,8 @@ pub(in crate::provider) struct Relative {
 
 #[derive(Debug)]
 pub(in crate::provider) struct Field {
-    pub(in crate::provider) display_name: String,
-    pub(in crate::provider) relative_period: Option<String>,
+    pub(in crate::provider) _display_name: String,
+    pub(in crate::provider) _relative_period: Option<String>,
     pub(in crate::provider) relatives: Vec<Relative>,
     pub(in crate::provider) past: PluralRulesPattern,
     pub(in crate::provider) future: PluralRulesPattern,
@@ -101,8 +101,8 @@ impl<'de> Visitor<'de> for FieldVisitor {
             }
         }
         Ok(Field {
-            display_name,
-            relative_period,
+            _display_name: display_name,
+            _relative_period: relative_period,
             relatives,
             past: past.unwrap_or_default(),
             future: future.unwrap_or_default(),

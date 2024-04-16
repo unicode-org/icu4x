@@ -87,7 +87,7 @@ pub(in crate::provider) struct Metazones {
     #[serde(rename = "metazoneInfo")]
     pub(in crate::provider) meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
-    pub(in crate::provider) meta_zones_territory: MetazonesTerritory,
+    pub(in crate::provider) _meta_zones_territory: MetazonesTerritory,
     #[serde(rename = "metazoneIds")]
     pub(in crate::provider) meta_zone_ids: MetazoneIds,
 }
