@@ -35,7 +35,7 @@ export class ICU4XTimeZoneIdMapper {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana Rust documentation for `normalize_iana`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana Rust documentation for `canonicalize_iana`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   canonicalize_iana(value: string): string | never;

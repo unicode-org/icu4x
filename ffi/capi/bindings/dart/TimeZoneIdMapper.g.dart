@@ -68,7 +68,7 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
     return writeable.finalize();
   }
 
-  /// See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
+  /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
   ///
   /// Throws [Error] on failure.
   String canonicalizeIana(String value) {

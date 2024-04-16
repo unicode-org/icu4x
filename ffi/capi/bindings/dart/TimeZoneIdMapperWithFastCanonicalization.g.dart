@@ -30,30 +30,15 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
-  static TimeZoneIdMapper create(DataProvider provider) {
+  factory TimeZoneIdMapperWithFastCanonicalization(DataProvider provider) {
     final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_create(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return TimeZoneIdMapper._fromFfi(result.union.ok, []);
+    return TimeZoneIdMapperWithFastCanonicalization._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `iana_to_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.ICU4XTimeZoneIdMapperWithFastCanonicalization.html#method.iana_to_bcp47) for more information.
-  ///
-  /// Throws [Error] on failure.
-  String ianaToBcp47(String value) {
-    final temp = ffi2.Arena();
-    final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_iana_to_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
-    temp.releaseAll();
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return writeable.finalize();
-  }
-
-  /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.ICU4XTimeZoneIdMapperWithFastCanonicalization.html#method.canonicalize_iana) for more information.
+  /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonicalize_iana) for more information.
   ///
   /// Throws [Error] on failure.
   String canonicalizeIana(String value) {
@@ -68,14 +53,14 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
     return writeable.finalize();
   }
 
-  /// See the [Rust documentation for `canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.ICU4XTimeZoneIdMapperWithFastCanonicalization.html#method.canonical_iana_from_bcp47) for more information.
+  /// See the [Rust documentation for `canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonical_iana_from_bcp47) for more information.
   ///
   /// Throws [Error] on failure.
-  String findCanonicalIanaFromBcp47(String value) {
+  String canonicalIanaFromBcp47(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_find_canonical_iana_from_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -94,17 +79,12 @@ external void _ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(ffi.Pointer
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_iana_to_bcp47')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_iana_to_bcp47')
-// ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_iana_to_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
-
 @meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_find_canonical_iana_from_bcp47')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_find_canonical_iana_from_bcp47')
+@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_find_canonical_iana_from_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);

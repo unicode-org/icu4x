@@ -429,6 +429,9 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
         "icu_provider_adapters::fork::MultiForkByKeyProvider",
 
+        // Specialized constructor for separately constructed instances
+        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
+
         // macros
         "icu::locid::langid",
         "icu::locid::locale",

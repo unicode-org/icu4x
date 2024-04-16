@@ -61,12 +61,12 @@ class ICU4XTimeZoneIdMapper {
   diplomat::result<std::string, ICU4XError> normalize_iana(const std::string_view value) const;
 
   /**
-   * See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
+   * See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> canonicalize_iana_to_writeable(const std::string_view value, W& write) const;
 
   /**
-   * See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
+   * See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
    */
   diplomat::result<std::string, ICU4XError> canonicalize_iana(const std::string_view value) const;
 
