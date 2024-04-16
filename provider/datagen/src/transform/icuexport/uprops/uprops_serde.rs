@@ -83,6 +83,7 @@ pub(in crate::provider) mod code_point_prop {
         pub(in crate::provider) _short_name: String,
         #[serde(rename = "ranges")]
         pub(in crate::provider) _ranges: Vec<CodePointPropertyMapRange>,
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         pub(in crate::provider) code_point_trie: super::CodePointTrieToml,
     }
 
@@ -90,6 +91,7 @@ pub(in crate::provider) mod code_point_prop {
     pub(in crate::provider) struct Main {
         // TODO: update icuexportdata to print a different TOML header than "enum_property"
         #[serde(default)]
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         pub(in crate::provider) enum_property: Vec<CodePointPropertyMap>,
     }
 }

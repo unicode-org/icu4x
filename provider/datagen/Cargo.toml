@@ -197,4 +197,4 @@ skip_optional_dependencies = true
 # and the nothing case is already tested in regular check CI
 always_include_features = ["experimental_components"]
 # We have a *lot* of features here
-# max_combination_size = 2
+max_combination_size = 2
