@@ -73,8 +73,7 @@ pub(crate) struct OffsetConverter {
 impl OffsetConverter {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
-        let result = self.proportional.convert(value);
-        result + self.offset.clone()
+        &self.proportional.convert(value) + &self.offset
     }
 }
 

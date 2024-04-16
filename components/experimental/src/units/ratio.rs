@@ -116,6 +116,14 @@ impl Add for IcuRatio {
     }
 }
 
+impl Add<&IcuRatio> for &IcuRatio {
+    type Output = IcuRatio;
+
+    fn add(self, rhs: &IcuRatio) -> IcuRatio {
+        IcuRatio(&self.0 + &rhs.0)
+    }
+}
+
 impl AddAssign for IcuRatio {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
