@@ -176,8 +176,21 @@ pub trait TryWriteable {
 
     /// Writes the content of this writeable to a string.
     ///
-    /// This function does not return a string in the failure case. If you need a replacement
-    /// string ("lossy mode"), use [`TryWriteable::try_write_to()`] instead.
+    /// "Lossy" mode can be achieved by discarding the error:
+    /// 
+    /// ```
+    /// # use std::borrow::Cow;
+    /// # use writeable::TryWriteable;
+    /// let r: Cow<str> = Ok::<&str, u8>("ok").try_write_to_string().unwrap_or_else(|(_, s)| s);
+    /// ```
+    /// 
+    /// Otherwise the error can be propagated by discarding the output string:
+    /// 
+    /// ```
+    /// # use std::borrow::Cow;
+    /// # use writeable::TryWriteable;
+    /// let r: Result<Cow<str>, u8> = Ok::<&str, u8>("ok").try_write_to_string().map_err(|(e, _)| e);
+    /// ```
     fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
