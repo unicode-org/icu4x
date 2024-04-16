@@ -62,6 +62,7 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
+    #[cfg(feature = "bench")]
     c.bench_function("cpt/get_range", |b| {
         b.iter(|| {
             black_box(&s)
