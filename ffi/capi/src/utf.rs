@@ -68,8 +68,34 @@ impl TryWriteable for PotentiallyInvalidUtf8<'_> {
         LengthHint::between(self.0.len(), self.0.len() * 3)
     }
 
-    fn try_write_to_string(&self) -> Result<Cow<str>, Self::Error> {
-        core::str::from_utf8(self.0).map(Cow::Borrowed)
+    fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
+        match core::str::from_utf8(self.0) {
+            Ok(valid) => Ok(Cow::Borrowed(valid)),
+            Err(e) => {
+                // SAFETY: By Utf8Error invariants
+                let valid = unsafe {
+                    core::str::from_utf8_unchecked(self.0.get_unchecked(..e.valid_up_to()))
+                };
+
+                // Let's assume this is the only error
+                let mut out = alloc::string::String::with_capacity(
+                    self.0.len() + char::REPLACEMENT_CHARACTER.len_utf8()
+                        - e.error_len().unwrap_or(0),
+                );
+
+                out.push_str(valid);
+                out.push(char::REPLACEMENT_CHARACTER);
+
+                // If there's more, we can use `try_write_to`
+                if let Some(error_len) = e.error_len() {
+                    // SAFETY: By Utf8Error invariants
+                    let remaining = unsafe { self.0.get_unchecked(e.valid_up_to() + error_len..) };
+                    let _discard = Self(remaining).try_write_to(&mut out);
+                }
+
+                Err((e, Cow::Owned(out)))
+            }
+        }
     }
 }
 
