@@ -12,7 +12,7 @@ use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 
-pub static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> = OnceCell::new();
+pub(in crate::provider) static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> = OnceCell::new();
 
 fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
     DATAKEY_FILTERS.get_or_init(|| {

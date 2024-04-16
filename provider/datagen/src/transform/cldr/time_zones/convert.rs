@@ -44,7 +44,7 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
 /// Returns a map from time zone long identifier to time zone BCP-47 ID.
 ///
 /// For example: "America/Chicago" to "uschi"
-pub fn compute_bcp47_tzids_btreemap(
+pub(in crate::provider) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<String, TimeZoneBcp47Id> {
     let mut bcp47_tzids = BTreeMap::new();
@@ -61,7 +61,7 @@ pub fn compute_bcp47_tzids_btreemap(
 /// Returns a map from BCP-47 ID to a single canonical long identifier.
 ///
 /// For example: "inccu" to "Asia/Kolkata"
-pub fn compute_canonical_tzids_btreemap(
+pub(in crate::provider) fn compute_canonical_tzids_btreemap(
     bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<TimeZoneBcp47Id, String> {
     let mut canonical_tzids = BTreeMap::new();

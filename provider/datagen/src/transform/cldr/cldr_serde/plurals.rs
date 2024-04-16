@@ -12,31 +12,31 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
-pub struct LocalePluralRules {
+pub(in crate::provider) struct LocalePluralRules {
     #[serde(rename = "pluralRule-count-zero")]
-    pub zero: Option<String>,
+    pub(in crate::provider) zero: Option<String>,
     #[serde(rename = "pluralRule-count-one")]
-    pub one: Option<String>,
+    pub(in crate::provider) one: Option<String>,
     #[serde(rename = "pluralRule-count-two")]
-    pub two: Option<String>,
+    pub(in crate::provider) two: Option<String>,
     #[serde(rename = "pluralRule-count-few")]
-    pub few: Option<String>,
+    pub(in crate::provider) few: Option<String>,
     #[serde(rename = "pluralRule-count-many")]
-    pub many: Option<String>,
+    pub(in crate::provider) many: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Rules(pub HashMap<LanguageIdentifier, LocalePluralRules>);
+pub(in crate::provider) struct Rules(pub(in crate::provider) HashMap<LanguageIdentifier, LocalePluralRules>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "plurals-type-cardinal")]
-    pub plurals_type_cardinal: Option<Rules>,
+    pub(in crate::provider) plurals_type_cardinal: Option<Rules>,
     #[serde(rename = "plurals-type-ordinal")]
-    pub plurals_type_ordinal: Option<Rules>,
+    pub(in crate::provider) plurals_type_ordinal: Option<Rules>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

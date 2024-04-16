@@ -15,7 +15,7 @@ use std::borrow::Cow;
 use std::str::FromStr;
 
 #[derive(Display, Debug, PartialEq)]
-pub enum Error {
+pub(in crate::provider) enum Error {
     #[displaydoc("No body in decimal subpattern")]
     NoBodyInSubpattern,
     #[displaydoc("Unknown decimal body: {0}")]
@@ -26,13 +26,13 @@ impl std::error::Error for Error {}
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
-pub struct DecimalSubPattern {
-    pub prefix: String,
-    pub suffix: String,
-    pub primary_grouping: u8,
-    pub secondary_grouping: u8,
-    pub min_fraction_digits: u8,
-    pub max_fraction_digits: u8,
+pub(in crate::provider) struct DecimalSubPattern {
+    pub(in crate::provider) prefix: String,
+    pub(in crate::provider) suffix: String,
+    pub(in crate::provider) primary_grouping: u8,
+    pub(in crate::provider) secondary_grouping: u8,
+    pub(in crate::provider) min_fraction_digits: u8,
+    pub(in crate::provider) max_fraction_digits: u8,
 }
 
 impl FromStr for DecimalSubPattern {
@@ -82,7 +82,7 @@ impl FromStr for DecimalSubPattern {
 
 impl DecimalSubPattern {
     #[cfg(feature = "experimental_components")]
-    pub fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
+    pub(in crate::provider) fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
         vec![
             PatternItemCow::Literal(Cow::Borrowed(&self.prefix)),
             PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
@@ -94,9 +94,9 @@ impl DecimalSubPattern {
 /// Representation of a UTS-35 number pattern, including positive subpattern (required) and negative
 /// subpattern (optional).
 #[derive(Debug, PartialEq)]
-pub struct DecimalPattern {
-    pub positive: DecimalSubPattern,
-    pub negative: Option<DecimalSubPattern>,
+pub(in crate::provider) struct DecimalPattern {
+    pub(in crate::provider) positive: DecimalSubPattern,
+    pub(in crate::provider) negative: Option<DecimalSubPattern>,
 }
 
 impl FromStr for DecimalPattern {
@@ -117,7 +117,7 @@ impl FromStr for DecimalPattern {
 }
 
 impl DecimalPattern {
-    pub fn localize_sign(&self, sign_str: &str) -> AffixesV1<'static> {
+    pub(in crate::provider) fn localize_sign(&self, sign_str: &str) -> AffixesV1<'static> {
         // UTS 35: the absence of a negative pattern means a single prefixed sign
         let signed_affixes = self
             .negative
@@ -135,8 +135,8 @@ impl DecimalPattern {
 fn test_basic() {
     #[derive(Debug)]
     struct TestCase<'s> {
-        pub pattern: &'s str,
-        pub expected: Result<DecimalPattern, Error>,
+        pub(in crate::provider) pattern: &'s str,
+        pub(in crate::provider) expected: Result<DecimalPattern, Error>,
     }
     let cases = [
         TestCase {

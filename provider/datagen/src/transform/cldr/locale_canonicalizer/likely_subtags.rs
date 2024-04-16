@@ -93,13 +93,13 @@ impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvi
     }
 }
 
-pub struct LikelySubtagsResources<'a> {
+pub(in crate::provider) struct LikelySubtagsResources<'a> {
     likely_subtags: &'a cldr_serde::likely_subtags::Resource,
     basic_plus_languages: HashSet<Language>,
 }
 
 impl<'a> LikelySubtagsResources<'a> {
-    pub fn try_from_cldr_cache(
+    pub(in crate::provider) fn try_from_cldr_cache(
         cache: &'a super::super::source::CldrCache,
     ) -> Result<LikelySubtagsResources, DataError> {
         let likely_subtags: &cldr_serde::likely_subtags::Resource = cache
@@ -138,7 +138,7 @@ impl<'a> LikelySubtagsResources<'a> {
             || **minimized == LanguageIdentifier::UND
     }
 
-    pub fn get_common(
+    pub(in crate::provider) fn get_common(
         &self,
     ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
         self.likely_subtags
@@ -148,7 +148,7 @@ impl<'a> LikelySubtagsResources<'a> {
             .filter(|min_max| self.common_predicate(min_max))
     }
 
-    pub fn get_extended(
+    pub(in crate::provider) fn get_extended(
         &self,
     ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
         self.likely_subtags
@@ -159,7 +159,7 @@ impl<'a> LikelySubtagsResources<'a> {
     }
 }
 
-pub fn transform<'x>(
+pub(in crate::provider) fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LikelySubtagsV1<'static> {
     let mut language_script = BTreeMap::new();

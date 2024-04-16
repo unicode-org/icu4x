@@ -14,16 +14,16 @@ use serde::{
 use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct ZoneFormat(pub BTreeMap<String, String>);
+pub(in crate::provider) struct ZoneFormat(pub(in crate::provider) BTreeMap<String, String>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct Metazone {
-    pub long: Option<ZoneFormat>,
-    pub short: Option<ZoneFormat>,
+pub(in crate::provider) struct Metazone {
+    pub(in crate::provider) long: Option<ZoneFormat>,
+    pub(in crate::provider) short: Option<ZoneFormat>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct Metazones(pub BTreeMap<String, Metazone>);
+pub(in crate::provider) struct Metazones(pub(in crate::provider) BTreeMap<String, Metazone>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 // Since this value can be either a Location or a table of sub-regions, we use
@@ -35,41 +35,41 @@ pub struct Metazones(pub BTreeMap<String, Metazone>);
 // - Cannot find bcp47 for "America/Argentina".
 // - Cannot find bcp47 for "Etc/UTC/short".
 #[serde(deny_unknown_fields)]
-pub struct Location {
-    pub long: Option<ZoneFormat>,
-    pub short: Option<ZoneFormat>,
+pub(in crate::provider) struct Location {
+    pub(in crate::provider) long: Option<ZoneFormat>,
+    pub(in crate::provider) short: Option<ZoneFormat>,
     #[serde(rename = "exemplarCity")]
-    pub exemplar_city: Option<String>,
+    pub(in crate::provider) exemplar_city: Option<String>,
     #[serde(rename = "exemplarCity-alt-secondary")]
-    pub exemplar_city_alt_secondary: Option<String>,
+    pub(in crate::provider) exemplar_city_alt_secondary: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
-pub enum LocationOrSubRegion {
+pub(in crate::provider) enum LocationOrSubRegion {
     Location(Location),
     SubRegion(BTreeMap<String, Location>),
 }
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
-pub struct Region(pub BTreeMap<String, LocationOrSubRegion>);
+pub(in crate::provider) struct Region(pub(in crate::provider) BTreeMap<String, LocationOrSubRegion>);
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
-pub struct Zones(pub BTreeMap<String, Region>);
+pub(in crate::provider) struct Zones(pub(in crate::provider) BTreeMap<String, Region>);
 
 #[derive(PartialEq, Debug, Default, Clone)]
-pub struct TimeZoneNames {
-    pub hour_format: String,
-    pub gmt_format: String,
-    pub gmt_zero_format: String,
-    pub region_format: String,
-    pub region_format_variants: BTreeMap<String, String>,
-    pub fallback_format: String,
-    pub zone: Zones,
-    pub metazone: Option<Metazones>,
+pub(in crate::provider) struct TimeZoneNames {
+    pub(in crate::provider) hour_format: String,
+    pub(in crate::provider) gmt_format: String,
+    pub(in crate::provider) gmt_zero_format: String,
+    pub(in crate::provider) region_format: String,
+    pub(in crate::provider) region_format_variants: BTreeMap<String, String>,
+    pub(in crate::provider) fallback_format: String,
+    pub(in crate::provider) zone: Zones,
+    pub(in crate::provider) metazone: Option<Metazones>,
 }
 
-pub struct TimeZoneNamesVisitor;
+pub(in crate::provider) struct TimeZoneNamesVisitor;
 
 impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
     type Value = TimeZoneNames;
@@ -133,14 +133,14 @@ impl<'de> Deserialize<'de> for TimeZoneNames {
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct Dates {
+pub(in crate::provider) struct Dates {
     #[serde(rename = "timeZoneNames")]
-    pub time_zone_names: TimeZoneNames,
+    pub(in crate::provider) time_zone_names: TimeZoneNames,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangTimeZones {
-    pub dates: Dates,
+pub(in crate::provider) struct LangTimeZones {
+    pub(in crate::provider) dates: Dates,
 }
 
-pub type Resource = super::super::LocaleResource<LangTimeZones>;
+pub(in crate::provider) type Resource = super::super::LocaleResource<LangTimeZones>;

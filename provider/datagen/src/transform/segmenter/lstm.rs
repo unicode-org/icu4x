@@ -18,9 +18,9 @@ use zerovec::{ule::UnvalidatedStr, ZeroVec};
 #[derive(serde::Deserialize, Debug)]
 struct RawLstmMatrix {
     #[allow(dead_code)]
-    pub v: i16,
-    pub dim: Vec<usize>,
-    pub data: Vec<f32>,
+    pub(in crate::provider) v: i16,
+    pub(in crate::provider) dim: Vec<usize>,
+    pub(in crate::provider) data: Vec<f32>,
 }
 
 impl RawLstmMatrix {
@@ -65,7 +65,7 @@ struct RawLstmData {
 }
 
 impl RawLstmData {
-    pub fn try_convert(&self) -> Result<LstmDataV1<'static>, DataError> {
+    pub(in crate::provider) fn try_convert(&self) -> Result<LstmDataV1<'static>, DataError> {
         let embedding = self.embedding.to_ndarray2()?;
         let fw_w = self.fw_w.to_ndarray2()?;
         let fw_u = self.fw_u.to_ndarray2()?;

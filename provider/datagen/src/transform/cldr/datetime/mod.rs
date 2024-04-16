@@ -20,9 +20,9 @@ mod neo_skeleton;
 mod patterns;
 mod skeletons;
 mod symbols;
-pub mod week_data;
+pub(in crate::provider) mod week_data;
 
-pub static SUPPORTED_CALS: OnceCell<HashMap<icu_locid::extensions::unicode::Value, &'static str>> =
+pub(in crate::provider) static SUPPORTED_CALS: OnceCell<HashMap<icu_locid::extensions::unicode::Value, &'static str>> =
     OnceCell::new();
 
 fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {

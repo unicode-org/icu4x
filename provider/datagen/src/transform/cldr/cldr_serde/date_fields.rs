@@ -15,37 +15,37 @@ use serde::{
 };
 
 #[derive(Debug, Deserialize, Default)]
-pub struct PluralRulesPattern {
+pub(in crate::provider) struct PluralRulesPattern {
     #[serde(rename = "relativeTimePattern-count-zero")]
-    pub zero: Option<String>,
+    pub(in crate::provider) zero: Option<String>,
     #[serde(rename = "relativeTimePattern-count-one")]
-    pub one: Option<String>,
+    pub(in crate::provider) one: Option<String>,
     #[serde(rename = "relativeTimePattern-count-two")]
-    pub two: Option<String>,
+    pub(in crate::provider) two: Option<String>,
     #[serde(rename = "relativeTimePattern-count-few")]
-    pub few: Option<String>,
+    pub(in crate::provider) few: Option<String>,
     #[serde(rename = "relativeTimePattern-count-many")]
-    pub many: Option<String>,
+    pub(in crate::provider) many: Option<String>,
     #[serde(rename = "relativeTimePattern-count-other")]
-    pub other: String,
+    pub(in crate::provider) other: String,
 }
 
 #[derive(Debug)]
-pub struct Relative {
-    pub count: i8,
-    pub pattern: String,
+pub(in crate::provider) struct Relative {
+    pub(in crate::provider) count: i8,
+    pub(in crate::provider) pattern: String,
 }
 
 #[derive(Debug)]
-pub struct Field {
-    pub display_name: String,
-    pub relative_period: Option<String>,
-    pub relatives: Vec<Relative>,
-    pub past: PluralRulesPattern,
-    pub future: PluralRulesPattern,
+pub(in crate::provider) struct Field {
+    pub(in crate::provider) display_name: String,
+    pub(in crate::provider) relative_period: Option<String>,
+    pub(in crate::provider) relatives: Vec<Relative>,
+    pub(in crate::provider) past: PluralRulesPattern,
+    pub(in crate::provider) future: PluralRulesPattern,
 }
 
-pub struct FieldVisitor;
+pub(in crate::provider) struct FieldVisitor;
 
 impl<'de> Visitor<'de> for FieldVisitor {
     type Value = Field;
@@ -120,16 +120,16 @@ impl<'de> Deserialize<'de> for Field {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Fields(pub HashMap<String, Field>);
+pub(in crate::provider) struct Fields(pub(in crate::provider) HashMap<String, Field>);
 
 #[derive(Debug, Deserialize)]
-pub struct Dates {
-    pub fields: Fields,
+pub(in crate::provider) struct Dates {
+    pub(in crate::provider) fields: Fields,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct RelativeTimeDates {
-    pub dates: Dates,
+pub(in crate::provider) struct RelativeTimeDates {
+    pub(in crate::provider) dates: Dates,
 }
 
-pub type Resource = super::LocaleResource<RelativeTimeDates>;
+pub(in crate::provider) type Resource = super::LocaleResource<RelativeTimeDates>;

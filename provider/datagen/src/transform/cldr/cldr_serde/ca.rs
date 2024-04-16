@@ -16,33 +16,33 @@ use std::collections::BTreeMap;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct FormatWidths<Symbols> {
-    pub abbreviated: Symbols,
-    pub narrow: Symbols,
-    pub short: Option<Symbols>,
-    pub wide: Symbols,
+pub(in crate::provider) struct FormatWidths<Symbols> {
+    pub(in crate::provider) abbreviated: Symbols,
+    pub(in crate::provider) narrow: Symbols,
+    pub(in crate::provider) short: Option<Symbols>,
+    pub(in crate::provider) wide: Symbols,
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct StandAloneWidths<Symbols> {
-    pub abbreviated: Option<Symbols>,
-    pub narrow: Option<Symbols>,
-    pub short: Option<Symbols>,
-    pub wide: Option<Symbols>,
+pub(in crate::provider) struct StandAloneWidths<Symbols> {
+    pub(in crate::provider) abbreviated: Option<Symbols>,
+    pub(in crate::provider) narrow: Option<Symbols>,
+    pub(in crate::provider) short: Option<Symbols>,
+    pub(in crate::provider) wide: Option<Symbols>,
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct Numeric<Symbols> {
-    pub all: Symbols,
+pub(in crate::provider) struct Numeric<Symbols> {
+    pub(in crate::provider) all: Symbols,
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct Contexts<Symbols> {
-    pub format: FormatWidths<Symbols>,
+pub(in crate::provider) struct Contexts<Symbols> {
+    pub(in crate::provider) format: FormatWidths<Symbols>,
     #[serde(rename = "stand-alone")]
-    pub stand_alone: Option<StandAloneWidths<Symbols>>,
+    pub(in crate::provider) stand_alone: Option<StandAloneWidths<Symbols>>,
     // currently only found on monthPatterns
-    pub numeric: Option<Numeric<Symbols>>,
+    pub(in crate::provider) numeric: Option<Numeric<Symbols>>,
 }
 
 impl<Symbols> Contexts<Symbols> {
@@ -73,7 +73,7 @@ impl<Symbols> Contexts<Symbols> {
     ///
     /// I.e. missing `standalone`s fall back to `format`, missing `short` falls back to
     /// `abbr`.
-    pub fn get_symbols(&self, context: Context, length: Length) -> &Symbols {
+    pub(in crate::provider) fn get_symbols(&self, context: Context, length: Length) -> &Symbols {
         if context == Context::Standalone {
             if let Some(sym) = self.get_symbols_exact(context, length) {
                 return sym;
@@ -97,36 +97,36 @@ impl<Symbols> Contexts<Symbols> {
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct MonthSymbols(pub HashMap<String, String>);
+pub(in crate::provider) struct MonthSymbols(pub(in crate::provider) HashMap<String, String>);
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct MonthPatternSymbols {
-    pub leap: String,
+pub(in crate::provider) struct MonthPatternSymbols {
+    pub(in crate::provider) leap: String,
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct DaySymbols {
-    pub sun: String,
-    pub mon: String,
-    pub tue: String,
-    pub wed: String,
-    pub thu: String,
-    pub fri: String,
-    pub sat: String,
+pub(in crate::provider) struct DaySymbols {
+    pub(in crate::provider) sun: String,
+    pub(in crate::provider) mon: String,
+    pub(in crate::provider) tue: String,
+    pub(in crate::provider) wed: String,
+    pub(in crate::provider) thu: String,
+    pub(in crate::provider) fri: String,
+    pub(in crate::provider) sat: String,
 }
 
 // The day period symbols are Cow<'static, str> instead of String because the Option
 // needs to be retained when converting them into Cow for the data provider.
 #[derive(Debug, PartialEq, Clone, Deserialize)]
-pub struct DayPeriodSymbols {
-    pub am: Cow<'static, str>,
-    pub pm: Cow<'static, str>,
-    pub noon: Option<Cow<'static, str>>,
-    pub midnight: Option<Cow<'static, str>>,
+pub(in crate::provider) struct DayPeriodSymbols {
+    pub(in crate::provider) am: Cow<'static, str>,
+    pub(in crate::provider) pm: Cow<'static, str>,
+    pub(in crate::provider) noon: Option<Cow<'static, str>>,
+    pub(in crate::provider) midnight: Option<Cow<'static, str>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 #[serde(untagged)]
-pub enum LengthPattern {
+pub(in crate::provider) enum LengthPattern {
     Plain(String),
     WithNumberingSystems {
         #[serde(rename = "_value")]
@@ -138,7 +138,7 @@ pub enum LengthPattern {
 
 impl LengthPattern {
     /// Get the pattern, dropping the numbering system if present.
-    pub fn get_pattern(&self) -> &String {
+    pub(in crate::provider) fn get_pattern(&self) -> &String {
         match self {
             Self::Plain(pattern) => pattern,
             Self::WithNumberingSystems { pattern, .. } => pattern,
@@ -147,20 +147,20 @@ impl LengthPattern {
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone, Default)]
-pub struct Eras {
+pub(in crate::provider) struct Eras {
     #[serde(rename = "eraNames")]
-    pub names: HashMap<String, String>,
+    pub(in crate::provider) names: HashMap<String, String>,
     #[serde(rename = "eraAbbr")]
-    pub abbr: HashMap<String, String>,
+    pub(in crate::provider) abbr: HashMap<String, String>,
     #[serde(rename = "eraNarrow")]
-    pub narrow: HashMap<String, String>,
+    pub(in crate::provider) narrow: HashMap<String, String>,
 }
 
 impl Eras {
     /// Load the era corresponding to a [`Length`] value
     ///
     /// Panics on Length::Short
-    pub fn load(&self, length: Length) -> &HashMap<String, String> {
+    pub(in crate::provider) fn load(&self, length: Length) -> &HashMap<String, String> {
         match length {
             Length::Abbr => &self.abbr,
             Length::Narrow => &self.narrow,
@@ -173,25 +173,25 @@ impl Eras {
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
-pub struct LengthPatterns {
-    pub full: LengthPattern,
-    pub long: LengthPattern,
-    pub medium: LengthPattern,
-    pub short: LengthPattern,
+pub(in crate::provider) struct LengthPatterns {
+    pub(in crate::provider) full: LengthPattern,
+    pub(in crate::provider) long: LengthPattern,
+    pub(in crate::provider) medium: LengthPattern,
+    pub(in crate::provider) short: LengthPattern,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
-pub struct DateTimeFormats {
-    pub full: LengthPattern,
-    pub long: LengthPattern,
-    pub medium: LengthPattern,
-    pub short: LengthPattern,
+pub(in crate::provider) struct DateTimeFormats {
+    pub(in crate::provider) full: LengthPattern,
+    pub(in crate::provider) long: LengthPattern,
+    pub(in crate::provider) medium: LengthPattern,
+    pub(in crate::provider) short: LengthPattern,
     #[serde(rename = "availableFormats")]
-    pub available_formats: AvailableFormats,
+    pub(in crate::provider) available_formats: AvailableFormats,
 }
 
 impl LengthPatterns {
-    pub fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
+    pub(in crate::provider) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {
             PatternLength::Full => &self.full,
             PatternLength::Long => &self.long,
@@ -202,7 +202,7 @@ impl LengthPatterns {
 }
 
 impl DateTimeFormats {
-    pub fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
+    pub(in crate::provider) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {
             PatternLength::Full => &self.full,
             PatternLength::Long => &self.long,
@@ -213,11 +213,11 @@ impl DateTimeFormats {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub struct AvailableFormats(pub HashMap<String, String>);
+pub(in crate::provider) struct AvailableFormats(pub(in crate::provider) HashMap<String, String>);
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub struct CyclicNameSets {
-    pub years: Option<Contexts<BTreeMap<u8, String>>>,
+pub(in crate::provider) struct CyclicNameSets {
+    pub(in crate::provider) years: Option<Contexts<BTreeMap<u8, String>>>,
 }
 
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
@@ -226,32 +226,32 @@ pub struct CyclicNameSets {
 /// e.g.
 /// <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 #[derive(PartialEq, Debug, Deserialize, Clone)]
-pub struct Dates {
-    pub months: Contexts<MonthSymbols>,
+pub(in crate::provider) struct Dates {
+    pub(in crate::provider) months: Contexts<MonthSymbols>,
     #[serde(rename = "monthPatterns")]
-    pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
-    pub days: Contexts<DaySymbols>,
-    pub eras: Option<Eras>,
+    pub(in crate::provider) month_patterns: Option<Contexts<MonthPatternSymbols>>,
+    pub(in crate::provider) days: Contexts<DaySymbols>,
+    pub(in crate::provider) eras: Option<Eras>,
     #[serde(rename = "cyclicNameSets")]
-    pub cyclic_name_sets: Option<CyclicNameSets>,
+    pub(in crate::provider) cyclic_name_sets: Option<CyclicNameSets>,
     #[serde(rename = "dayPeriods")]
-    pub day_periods: Contexts<DayPeriodSymbols>,
+    pub(in crate::provider) day_periods: Contexts<DayPeriodSymbols>,
     #[serde(rename = "dateFormats")]
-    pub date_formats: LengthPatterns,
+    pub(in crate::provider) date_formats: LengthPatterns,
     #[serde(rename = "timeFormats")]
-    pub time_formats: LengthPatterns,
+    pub(in crate::provider) time_formats: LengthPatterns,
     #[serde(rename = "dateTimeFormats")]
-    pub datetime_formats: DateTimeFormats,
+    pub(in crate::provider) datetime_formats: DateTimeFormats,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct DatesCalendars {
-    pub calendars: HashMap<String, Dates>,
+pub(in crate::provider) struct DatesCalendars {
+    pub(in crate::provider) calendars: HashMap<String, Dates>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangDates {
-    pub dates: DatesCalendars,
+pub(in crate::provider) struct LangDates {
+    pub(in crate::provider) dates: DatesCalendars,
 }
 
-pub type Resource = super::LocaleResource<LangDates>;
+pub(in crate::provider) type Resource = super::LocaleResource<LangDates>;

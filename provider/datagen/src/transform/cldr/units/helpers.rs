@@ -19,14 +19,14 @@ use crate::provider::transform::cldr::cldr_serde::units::info::Constant;
 /// NOTE:
 ///   clean means that there is no constant in the numerator or denominator.
 ///   For example, ["1.2"] is clean, but ["1.2", ft_to_m"] is not clean.
-pub struct ScientificNumber {
+pub(in crate::provider) struct ScientificNumber {
     /// Contains numerator terms that are represented as scientific numbers
-    pub clean_num: Vec<String>,
+    pub(in crate::provider) clean_num: Vec<String>,
     /// Contains denominator terms that are represented as scientific numbers
-    pub clean_den: Vec<String>,
+    pub(in crate::provider) clean_den: Vec<String>,
 
     /// Indicates if the constant is exact or approximate
-    pub exactness: Exactness,
+    pub(in crate::provider) exactness: Exactness,
 }
 
 /// Represents a general constant which contains scientific and non scientific numbers.
@@ -78,7 +78,7 @@ impl GeneralNonScientificNumber {
     }
 }
 
-pub fn process_factor_part(
+pub(in crate::provider) fn process_factor_part(
     factor_part: &str,
     cons_map: &BTreeMap<&str, ScientificNumber>,
 ) -> Result<ScientificNumber, DataError> {
@@ -114,7 +114,7 @@ pub fn process_factor_part(
 ///     "3 * ft_to_m" is converted to ScientificNumber { clean_num: ["3", "ft_to_m"], clean_den: ["1"], exactness: Exact }
 /// NOTE:
 ///    If one of the constants in the factor is approximate, the whole factor is approximate.
-pub fn process_factor(
+pub(in crate::provider) fn process_factor(
     factor: &str,
     cons_map: &BTreeMap<&str, ScientificNumber>,
 ) -> Result<ScientificNumber, DataError> {
@@ -145,7 +145,7 @@ fn to_str_vec(string_vec: &[String]) -> Vec<&str> {
 }
 
 /// Extracts the conversion info from a base unit, factor and offset.
-pub fn extract_conversion_info<'data>(
+pub(in crate::provider) fn extract_conversion_info<'data>(
     base_unit: &str,
     factor: &ScientificNumber,
     offset: &ScientificNumber,
@@ -188,7 +188,7 @@ pub fn extract_conversion_info<'data>(
 }
 
 /// Processes the constants and return them in a numerator-denominator form.
-pub fn process_constants<'a>(
+pub(in crate::provider) fn process_constants<'a>(
     constants: &'a BTreeMap<String, Constant>,
 ) -> Result<BTreeMap<&'a str, ScientificNumber>, DataError> {
     let mut constants_with_non_scientific =
@@ -281,7 +281,7 @@ pub fn process_constants<'a>(
 /// - " 1.5 E -2 " is converted to 15/1000
 /// - " 1.5 E - 2" is an invalid scientific notation number
 /// - "1.5E-2.5" is an invalid scientific notation number
-pub fn convert_scientific_notation_to_fraction(number: &str) -> Result<Ratio<BigInt>, DataError> {
+pub(in crate::provider) fn convert_scientific_notation_to_fraction(number: &str) -> Result<Ratio<BigInt>, DataError> {
     let mut parts = number.split('E');
     let base = parts.next().unwrap_or("1").trim();
     let exponent = parts.next().unwrap_or("0").trim();
@@ -379,7 +379,7 @@ fn test_convert_scientific_notation_to_fraction() {
 /// - "ft_to_m" returns true
 /// - "1E2" returns true
 /// - "1.5E-2" returns true
-pub fn contains_alphabetic_chars(s: &str) -> bool {
+pub(in crate::provider) fn contains_alphabetic_chars(s: &str) -> bool {
     s.chars().any(char::is_alphabetic)
 }
 
@@ -408,7 +408,7 @@ fn test_contains_alphabetic_chars() {
 
 /// Checks if a string is a valid scientific notation number.
 /// Returns true if the string is a valid scientific notation number, false otherwise.  
-pub fn is_scientific_number(s: &str) -> bool {
+pub(in crate::provider) fn is_scientific_number(s: &str) -> bool {
     let mut parts = s.split('E');
     let base = parts.next().unwrap_or("0");
     let exponent = parts.next().unwrap_or("0");
@@ -420,7 +420,7 @@ pub fn is_scientific_number(s: &str) -> bool {
 }
 
 /// Transforms a fractional number into byte numerators, byte denominators, and a sign.
-pub fn flatten_fraction(fraction: Ratio<BigInt>) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
+pub(in crate::provider) fn flatten_fraction(fraction: Ratio<BigInt>) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
     let (n_sign, numer) = fraction.numer().to_bytes_le();
     let (d_sign, denom) = fraction.denom().to_bytes_le();
 
@@ -443,7 +443,7 @@ pub fn flatten_fraction(fraction: Ratio<BigInt>) -> Result<(Vec<u8>, Vec<u8>, Si
 /// - ["1", "2"], ["3", "1E-2.5"] is an invalid scientific notation number
 /// - ["1E2"], ["2"] is converted to 1E2/2 --> 100/2 --> 50/1
 /// - ["1E2", "2"], ["3", "1E2"] is converted to 1E2*2/(3*1E2) --> 2/3
-pub fn convert_slices_to_fraction(
+pub(in crate::provider) fn convert_slices_to_fraction(
     numerator_strings: &[&str],
     denominator_strings: &[&str],
 ) -> Result<Ratio<BigInt>, DataError> {
@@ -511,7 +511,7 @@ fn test_convert_array_of_strings_to_fraction() {
 /// - "2/" is split into (["2"], ["1"])
 /// - "1E2" is split into (["1E2"], ["1"])
 /// - "1 2 * 3" is an invalid constant string
-pub fn split_unit_term(constant_string: &str) -> Result<(Vec<String>, Vec<String>), DataError> {
+pub(in crate::provider) fn split_unit_term(constant_string: &str) -> Result<(Vec<String>, Vec<String>), DataError> {
     let split: Vec<&str> = constant_string.split('/').collect();
     if split.len() > 2 {
         return Err(DataError::custom("Invalid constant string"));

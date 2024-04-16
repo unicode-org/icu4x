@@ -191,7 +191,7 @@ impl IterableDataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
 }
 
 /// Computes the japanese era code map or loads from static cache
-pub fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
+pub(in crate::provider) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
     static MAP: once_cell::sync::OnceCell<BTreeMap<String, TinyStr16>> =
         once_cell::sync::OnceCell::new();
 
