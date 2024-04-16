@@ -176,17 +176,31 @@ pub trait TryWriteable {
 
     /// Writes the content of this writeable to a string.
     ///
-    /// This function does not return a string in the failure case. If you need a replacement
-    /// string ("lossy mode"), use [`TryWriteable::try_write_to()`] instead.
-    fn try_write_to_string(&self) -> Result<Cow<str>, Self::Error> {
+    /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
+    ///
+    /// Examples
+    ///
+    /// ```
+    /// # use std::borrow::Cow;
+    /// # use writeable::TryWriteable;
+    /// // use the best-effort string
+    /// let r1: Cow<str> = Ok::<&str, u8>("ok").try_write_to_string().unwrap_or_else(|(_, s)| s);
+    /// // propagate the error
+    /// let r2: Result<Cow<str>, u8> = Ok::<&str, u8>("ok").try_write_to_string().map_err(|(e, _)| e);
+    /// ```
+    fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
         }
         let mut output = String::with_capacity(hint.capacity());
-        self.try_write_to(&mut output)
+        match self
+            .try_write_to(&mut output)
             .unwrap_or_else(|fmt::Error| Ok(()))
-            .map(|()| Cow::Owned(output))
+        {
+            Ok(()) => Ok(Cow::Owned(output)),
+            Err(e) => Err((e, Cow::Owned(output))),
+        }
     }
 
     /// Compares the content of this writeable to a byte slice.
@@ -311,10 +325,10 @@ where
     }
 
     #[inline]
-    fn try_write_to_string(&self) -> Result<Cow<str>, Self::Error> {
+    fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
         match self {
             Ok(t) => Ok(t.write_to_string()),
-            Err(e) => Err(e.clone()),
+            Err(e) => Err((e.clone(), e.write_to_string())),
         }
     }
 
@@ -370,7 +384,10 @@ macro_rules! assert_try_writeable_eq {
                 assert_eq!(actual_cow_str, $expected_str, $($arg)+);
                 Ok(())
             }
-            Err(e) => Err(e)
+            Err((e, actual_cow_str)) => {
+                assert_eq!(actual_cow_str, $expected_str, $($arg)+);
+                Err(e)
+            }
         };
         assert_eq!(actual_result, Result::<(), _>::from($expected_result), $($arg)*);
         let length_hint = actual_writeable.writeable_length_hint();
