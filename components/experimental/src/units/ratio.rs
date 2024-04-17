@@ -45,8 +45,9 @@ impl IcuRatio {
         Self(self.0.recip())
     }
 
+    // TODO: Make the function private after fixing the need for it in the tests.
     /// Returns the value of the ratio as a `f64`.
-    pub(crate) fn to_f64(&self) -> Option<f64> {
+    pub fn to_f64(&self) -> Option<f64> {
         Some(self.0.numer().to_f64()? / self.0.denom().to_f64()?)
     }
 
@@ -82,14 +83,6 @@ impl Mul<&IcuRatio> for &IcuRatio {
     }
 }
 
-impl Mul<f64> for &IcuRatio {
-    type Output = Option<f64>;
-
-    fn mul(self, rhs: f64) -> Option<f64> {
-        Some(&self.0.to_f64()? * rhs)
-    }
-}
-
 impl MulAssign<IcuRatio> for IcuRatio {
     fn mul_assign(&mut self, rhs: IcuRatio) {
         self.0 *= rhs.0;
@@ -117,22 +110,6 @@ impl Div for IcuRatio {
     }
 }
 
-impl Div<f64> for &IcuRatio {
-    type Output = Option<f64>;
-
-    fn div(self, rhs: f64) -> Option<f64> {
-        Some(&self.0.to_f64()? / rhs)
-    }
-}
-
-impl Div<&IcuRatio> for f64 {
-    type Output = Option<f64>;
-
-    fn div(self, rhs: &IcuRatio) -> Option<f64> {
-        Some(self / rhs.0.to_f64()?)
-    }
-}
-
 impl DivAssign for IcuRatio {
     fn div_assign(&mut self, rhs: Self) {
         self.0 /= rhs.0;
@@ -155,14 +132,6 @@ impl Add<&IcuRatio> for &IcuRatio {
     }
 }
 
-impl Add<f64> for &IcuRatio {
-    type Output = Option<f64>;
-
-    fn add(self, rhs: f64) -> Option<f64> {
-        Some(&self.0.to_f64()? + rhs)
-    }
-}
-
 impl AddAssign for IcuRatio {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
@@ -174,14 +143,6 @@ impl Sub for IcuRatio {
 
     fn sub(self, rhs: Self) -> Self {
         Self(self.0 - rhs.0)
-    }
-}
-
-impl Sub<f64> for &IcuRatio {
-    type Output = Option<f64>;
-
-    fn sub(self, rhs: f64) -> Option<f64> {
-        Some(&self.0.to_f64()? - rhs)
     }
 }
 

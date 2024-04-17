@@ -94,16 +94,18 @@ fn test_cldr_unit_tests() {
             .unwrap();
         let result = converter.convert(&IcuRatio::from(1000));
         let result_f64 = converter.convert_f64(1000.0);
-        // TODO: remove this extra clones by implementing Sub<&IcuRatio> & Div<&IcuRatio> for IcuRatio.
-        let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
-        let diff_ratio_f64 = ((&test.result - result_f64).unwrap().abs() / &test.result).unwrap();
 
+        // TODO: remove this extra clones by implementing Sub<&IcuRatio> & Div<&IcuRatio> for IcuRatio.
+        let diff_ratio = ((result.clone() - test.result.clone()) / test.result.clone()).abs();
         if diff_ratio > IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(1000000))) {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
                 test.category, test.input_unit, test.output_unit, result, test.result
             );
         }
+
+        let test_result_f64 = test.result.to_f64().unwrap();
+        let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
 
         if diff_ratio_f64 > 0.000001 {
             panic!(
