@@ -246,8 +246,10 @@ registry!(
         "datetime/patterns/japanext/date@1",
     icu_datetime::provider::neo::PersianDatePatternV1Marker = "datetime/patterns/persian/date@1",
     icu_datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
-    icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker =
-        "datetime/patterns/gregory/date_skeleton@1",
+    icu_datetime::provider::neo::GregorianDateDayNeoSkeletonPatternsV1Marker =
+        "datetime/patterns/gregory/date_day_skeleton@1",
+    icu_datetime::provider::neo::GregorianDateExtNeoSkeletonPatternsV1Marker =
+        "datetime/patterns/gregory/date_ext_skeleton@1",
     icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker =
         "datetime/patterns/time_skeleton@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =

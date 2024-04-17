@@ -15,27 +15,56 @@ use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
-    neo::{GregorianDateNeoSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
+    neo::{
+        GregorianDateDayNeoSkeletonPatternsV1Marker, GregorianDateExtNeoSkeletonPatternsV1Marker,
+        PackedSkeletonDataV1, SkeletonDataIndex,
+    },
 };
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
 
 use super::supported_cals;
 
-impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider {
+impl DataProvider<GregorianDateDayNeoSkeletonPatternsV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<GregorianDateNeoSkeletonPatternsV1Marker>, DataError> {
+    ) -> Result<DataResponse<GregorianDateDayNeoSkeletonPatternsV1Marker>, DataError> {
         let packed_skeleton_data = self.make_packed_skeleton_data(
             req,
-            NeoDateComponents::VALUES.iter().map(|neo_components| {
-                (
-                    neo_components,
-                    !matches!(neo_components, NeoDateComponents::Quarter)
-                        && !matches!(neo_components, NeoDateComponents::YearQuarter),
-                )
-            }),
+            NeoDateComponents::VALUES
+                .iter()
+                .take(9)
+                .map(|neo_components| (neo_components, true)),
+            |length, neo_components| {
+                NeoDateSkeleton::for_length_and_components(length, **neo_components)
+                    .to_components_bag()
+            },
+        )?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
+        })
+    }
+}
+
+impl DataProvider<GregorianDateExtNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<GregorianDateExtNeoSkeletonPatternsV1Marker>, DataError> {
+        let packed_skeleton_data = self.make_packed_skeleton_data(
+            req,
+            NeoDateComponents::VALUES
+                .iter()
+                .skip(9)
+                .map(|neo_components| {
+                    (
+                        neo_components,
+                        !matches!(neo_components, NeoDateComponents::Quarter)
+                            && !matches!(neo_components, NeoDateComponents::YearQuarter),
+                    )
+                }),
             |length, neo_components| {
                 NeoDateSkeleton::for_length_and_components(length, **neo_components)
                     .to_components_bag()
@@ -185,7 +214,21 @@ impl DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider {
+impl IterableDataProviderInternal<GregorianDateDayNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        let calendar = value!("gregory");
+        let mut r = HashSet::new();
+
+        let cldr_cal = supported_cals()
+            .get(&calendar)
+            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(Into::into));
+
+        Ok(r)
+    }
+}
+
+impl IterableDataProviderInternal<GregorianDateExtNeoSkeletonPatternsV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         let calendar = value!("gregory");
         let mut r = HashSet::new();
