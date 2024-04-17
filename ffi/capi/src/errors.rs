@@ -156,7 +156,7 @@ pub mod ffi {
 
         // Conversion Erros
         #[cfg(feature = "experimental_components")]
-        InvalidCLDRUnitIdentifierError = 0x0C_00,
+        InvalidCldrUnitIdentifierError = 0x0C_00,
     }
 }
 
