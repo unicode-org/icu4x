@@ -121,61 +121,57 @@ pub struct UTCOffsetRecord {
 pub struct DurationParseRecord {
     /// Duration Sign
     pub sign: Sign,
-    /// The `years` value.
-    pub years: u32,
-    /// The `months` value.
-    pub months: u32,
-    /// The `weeks` value.
-    pub weeks: u32,
-    /// The `days` value.
-    pub days: u32,
-    /// The `hours` value.
-    pub hours: u32,
-    /// The `minutes` value.
-    pub minutes: u32,
-    /// The `seconds` value.
-    pub seconds: u32,
-    /// Any fraction part of a duration.
-    pub fraction: Option<DurationFraction>,
-}
-
-/// An enum representing the fraction part of a duration.
-#[non_exhaustive]
-#[cfg(feature = "duration")]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum DurationFraction {
-    /// The fraction value applied to an hour.
-    Hours(u64),
-    /// The fraction value applied to the minutes field.
-    Minutes(u64),
-    /// The fraction value applied to the seconds field.
-    Seconds(u32),
+    /// A parsed Date Duration record.
+    pub date: Option<DateDurationRecord>,
+    /// A parsed Time Duration record.
+    pub time: Option<TimeDurationRecord>,
 }
 
 /// A `DateDuration` Parse Node.
+#[non_exhaustive]
 #[cfg(feature = "duration")]
-#[derive(Default, Debug, Clone, Copy)]
-pub(crate) struct DateDurationRecord {
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
+pub struct DateDurationRecord {
     /// Years value.
-    pub(crate) years: u32,
+    pub years: u32,
     /// Months value.
-    pub(crate) months: u32,
+    pub months: u32,
     /// Weeks value.
-    pub(crate) weeks: u32,
+    pub weeks: u32,
     /// Days value.
-    pub(crate) days: u32,
+    pub days: u32,
 }
 
 /// A `TimeDuration` Parse Node
+#[non_exhaustive]
 #[cfg(feature = "duration")]
-#[derive(Default, Debug, Clone, Copy)]
-pub(crate) struct TimeDurationRecord {
-    /// Hours value.
-    pub(crate) hours: u32,
-    /// Minutes value.
-    pub(crate) minutes: u32,
-    /// Seconds value.
-    pub(crate) seconds: u32,
-    /// Any parsed fraction value.
-    pub(crate) fraction: Option<DurationFraction>,
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum TimeDurationRecord {
+    // An hours Time duration record.
+    Hours {
+        /// Hours value.
+        hours: u32,
+        /// Any parsed fraction value.
+        fraction: u64,
+    },
+    // A Minutes Time duration record.
+    Minutes {
+        /// Hours value.
+        hours: u32,
+        /// Minutes value.
+        minutes: u32,
+        /// Any parsed fraction value.
+        fraction: u64,
+    },
+    // A Seconds Time duration record.
+    Seconds {
+        /// Hours value.
+        hours: u32,
+        /// Minutes value.
+        minutes: u32,
+        /// Seconds value.
+        seconds: u32,
+        /// Any parsed fraction value.
+        fraction: u32,
+    },
 }
