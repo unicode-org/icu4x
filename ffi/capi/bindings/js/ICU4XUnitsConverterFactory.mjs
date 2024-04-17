@@ -61,8 +61,4 @@ export class ICU4XUnitsConverterFactory {
     buf_arg_unit_id.free();
     return diplomat_out;
   }
-
-  convert_f64(arg_input) {
-    return wasm.ICU4XUnitsConverterFactory_convert_f64(this.underlying, arg_input);
-  }
 }

@@ -14,4 +14,8 @@ export class ICU4XUnitsConverter {
       ICU4XUnitsConverter_box_destroy_registry.register(this, underlying);
     }
   }
+
+  convert_f64(arg_input) {
+    return wasm.ICU4XUnitsConverter_convert_f64(this.underlying, arg_input);
+  }
 }

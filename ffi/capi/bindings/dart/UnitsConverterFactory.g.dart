@@ -58,14 +58,6 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     }
     return MeasureUnit._fromFfi(result.union.ok, []);
   }
-
-  /// Converts the input value in float from the input unit to the output unit.
-  /// NOTE:
-  /// The conversion using float is not as accurate as the conversion using ratios.
-  double convertF64(double input) {
-    final result = _ICU4XUnitsConverterFactory_convert_f64(_ffi, input);
-    return result;
-  }
 }
 
 @meta.ResourceIdentifier('ICU4XUnitsConverterFactory_destroy')
@@ -87,8 +79,3 @@ external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Point
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parse')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_parse(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
-
-@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_convert_f64')
-@ffi.Native<ffi.Double Function(ffi.Pointer<ffi.Opaque>, ffi.Double)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_convert_f64')
-// ignore: non_constant_identifier_names
-external double _ICU4XUnitsConverterFactory_convert_f64(ffi.Pointer<ffi.Opaque> self, double input);

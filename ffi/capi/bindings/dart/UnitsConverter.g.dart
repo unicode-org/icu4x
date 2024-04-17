@@ -23,9 +23,22 @@ final class UnitsConverter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnitsConverter_destroy));
+
+  /// Converts the input value in float from the input unit to the output unit.
+  /// NOTE:
+  /// The conversion using float is not as accurate as the conversion using ratios.
+  double convertF64(double input) {
+    final result = _ICU4XUnitsConverter_convert_f64(_ffi, input);
+    return result;
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XUnitsConverter_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XUnitsConverter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XUnitsConverter_destroy(ffi.Pointer<ffi.Void> self);
+
+@meta.ResourceIdentifier('ICU4XUnitsConverter_convert_f64')
+@ffi.Native<ffi.Double Function(ffi.Pointer<ffi.Opaque>, ffi.Double)>(isLeaf: true, symbol: 'ICU4XUnitsConverter_convert_f64')
+// ignore: non_constant_identifier_names
+external double _ICU4XUnitsConverter_convert_f64(ffi.Pointer<ffi.Opaque> self, double input);

@@ -69,7 +69,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct, hidden)]
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
-    impl ICU4XUnitsConverterFactory {
+    impl ICU4XUnitsConverter {
         /// Converts the input value in float from the input unit to the output unit.
         /// NOTE:
         ///   The conversion using float is not as accurate as the conversion using ratios.

@@ -29,8 +29,6 @@ diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XError ICU4XUnitsConverterFac
 ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* input_unit, const ICU4XMeasureUnit* output_unit);
 
 diplomat_result_box_ICU4XMeasureUnit_ICU4XError ICU4XUnitsConverterFactory_parse(const ICU4XUnitsConverterFactory* self, const char* unit_id_data, size_t unit_id_len);
-
-double ICU4XUnitsConverterFactory_convert_f64(const ICU4XUnitsConverterFactory* self, double input);
 void ICU4XUnitsConverterFactory_destroy(ICU4XUnitsConverterFactory* self);
 
 #ifdef __cplusplus

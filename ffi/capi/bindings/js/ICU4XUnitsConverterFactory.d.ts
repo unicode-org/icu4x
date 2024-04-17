@@ -1,4 +1,3 @@
-import { f64 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
@@ -34,10 +33,4 @@ export class ICU4XUnitsConverterFactory {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   parse(unit_id: string): ICU4XMeasureUnit | never;
-
-  /**
-
-   * Converts the input value in float from the input unit to the output unit. NOTE: The conversion using float is not as accurate as the conversion using ratios.
-   */
-  convert_f64(input: f64): f64;
 }

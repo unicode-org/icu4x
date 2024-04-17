@@ -54,13 +54,6 @@ class ICU4XUnitsConverterFactory {
    * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<ICU4XMeasureUnit, ICU4XError> parse(const std::string_view unit_id) const;
-
-  /**
-   * Converts the input value in float from the input unit to the output unit.
-   * NOTE:
-   * The conversion using float is not as accurate as the conversion using ratios.
-   */
-  double convert_f64(double input) const;
   inline const capi::ICU4XUnitsConverterFactory* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnitsConverterFactory* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XUnitsConverterFactory(capi::ICU4XUnitsConverterFactory* i) : inner(i) {}
@@ -104,8 +97,5 @@ inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XUnitsConverterFactory
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
-}
-inline double ICU4XUnitsConverterFactory::convert_f64(double input) const {
-  return capi::ICU4XUnitsConverterFactory_convert_f64(this->inner.get(), input);
 }
 #endif
