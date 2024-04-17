@@ -24,7 +24,7 @@ final class UnitsConverter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnitsConverter_destroy));
 
-  /// Converts the input value in float from the input unit to the output unit.
+  /// Converts the input value from the input unit to the output unit.
   /// NOTE:
   /// The conversion using float is not as accurate as the conversion using ratios.
   double convertF64(double input) {

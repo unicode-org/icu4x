@@ -26,11 +26,11 @@ export class ICU4XUnitsConverterFactory {
 
    * Creates a new {@link ICU4XUnitsConverter `ICU4XUnitsConverter`} from the input and output `ICU4XMeasureUnit`s. Returns `None` if the conversion between the two units is not possible. For example, conversion between `meter` and `second` is not possible.
    */
-  converter(input_unit: ICU4XMeasureUnit, output_unit: ICU4XMeasureUnit): ICU4XUnitsConverter | undefined;
+  converter(from: ICU4XMeasureUnit, to: ICU4XMeasureUnit): ICU4XUnitsConverter | undefined;
 
   /**
 
-   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}.
+   * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   parser(): ICU4XMeasureUnitParser | never;

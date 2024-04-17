@@ -49,10 +49,10 @@ class ICU4XUnitsConverterFactory {
    * Returns `None` if the conversion between the two units is not possible.
    * For example, conversion between `meter` and `second` is not possible.
    */
-  std::optional<ICU4XUnitsConverter> converter(const ICU4XMeasureUnit& input_unit, const ICU4XMeasureUnit& output_unit) const;
+  std::optional<ICU4XUnitsConverter> converter(const ICU4XMeasureUnit& from, const ICU4XMeasureUnit& to) const;
 
   /**
-   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
+   * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
    */
   diplomat::result<ICU4XMeasureUnitParser, ICU4XError> parser() const;
   inline const capi::ICU4XUnitsConverterFactory* AsFFI() const { return this->inner.get(); }
@@ -80,8 +80,8 @@ inline diplomat::result<ICU4XUnitsConverterFactory, ICU4XError> ICU4XUnitsConver
   }
   return diplomat_result_out_value;
 }
-inline std::optional<ICU4XUnitsConverter> ICU4XUnitsConverterFactory::converter(const ICU4XMeasureUnit& input_unit, const ICU4XMeasureUnit& output_unit) const {
-  auto diplomat_optional_raw_out_value = capi::ICU4XUnitsConverterFactory_converter(this->inner.get(), input_unit.AsFFI(), output_unit.AsFFI());
+inline std::optional<ICU4XUnitsConverter> ICU4XUnitsConverterFactory::converter(const ICU4XMeasureUnit& from, const ICU4XMeasureUnit& to) const {
+  auto diplomat_optional_raw_out_value = capi::ICU4XUnitsConverterFactory_converter(this->inner.get(), from.AsFFI(), to.AsFFI());
   std::optional<ICU4XUnitsConverter> diplomat_optional_out_value;
   if (diplomat_optional_raw_out_value != nullptr) {
     diplomat_optional_out_value = ICU4XUnitsConverter(diplomat_optional_raw_out_value);

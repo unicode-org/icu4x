@@ -42,12 +42,12 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   /// Creates a new [`UnitsConverter`] from the input and output `MeasureUnit`s.
   /// Returns `None` if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
-  UnitsConverter? converter(MeasureUnit inputUnit, MeasureUnit outputUnit) {
-    final result = _ICU4XUnitsConverterFactory_converter(_ffi, inputUnit._ffi, outputUnit._ffi);
+  UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
+    final result = _ICU4XUnitsConverterFactory_converter(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
 
-  /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`].
+  /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
   ///
   /// Throws [Error] on failure.
   MeasureUnitParser parser() {
@@ -72,7 +72,7 @@ external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(ffi.Pointer<ffi.O
 @meta.ResourceIdentifier('ICU4XUnitsConverterFactory_converter')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_converter')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> inputUnit, ffi.Pointer<ffi.Opaque> outputUnit);
+external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
 
 @meta.ResourceIdentifier('ICU4XUnitsConverterFactory_parser')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')

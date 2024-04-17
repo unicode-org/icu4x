@@ -54,7 +54,7 @@ pub mod ffi {
             self.0.converter(input_unit.0, output_unit.0)
         }
 
-        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
+        /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
         pub fn parser(&self) -> Result<Box<ICU4XMeasureUnitParser>, ICU4XError> {
             self.0.parser().map(Box::new)
         }

@@ -35,9 +35,9 @@ export class ICU4XUnitsConverterFactory {
     })();
   }
 
-  converter(arg_input_unit, arg_output_unit) {
+  converter(arg_from, arg_to) {
     return (() => {
-      const option_ptr = wasm.ICU4XUnitsConverterFactory_converter(this.underlying, arg_input_unit.underlying, arg_output_unit.underlying);
+      const option_ptr = wasm.ICU4XUnitsConverterFactory_converter(this.underlying, arg_from.underlying, arg_to.underlying);
       return (option_ptr == 0) ? undefined : new ICU4XUnitsConverter(option_ptr, true, []);
     })();
   }

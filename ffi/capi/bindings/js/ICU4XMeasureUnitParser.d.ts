@@ -15,5 +15,5 @@ export class ICU4XMeasureUnitParser {
    * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}. Returns an error if the unit identifier is not valid.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  parse(unit_id: string): ICU4XMeasureUnit | never;
+  parse_measure_unit(unit_id: string): ICU4XMeasureUnit | never;
 }

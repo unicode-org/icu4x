@@ -26,7 +26,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XError ICU4XUnitsConverterFactory_create(const ICU4XDataProvider* provider);
 
-ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* input_unit, const ICU4XMeasureUnit* output_unit);
+ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* from, const ICU4XMeasureUnit* to);
 
 diplomat_result_box_ICU4XMeasureUnitParser_ICU4XError ICU4XUnitsConverterFactory_parser(const ICU4XUnitsConverterFactory* self);
 void ICU4XUnitsConverterFactory_destroy(ICU4XUnitsConverterFactory* self);

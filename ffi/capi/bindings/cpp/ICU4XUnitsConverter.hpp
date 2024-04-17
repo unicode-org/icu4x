@@ -30,7 +30,7 @@ class ICU4XUnitsConverter {
  public:
 
   /**
-   * Converts the input value in float from the input unit to the output unit.
+   * Converts the input value from the input unit to the output unit.
    * NOTE:
    * The conversion using float is not as accurate as the conversion using ratios.
    */

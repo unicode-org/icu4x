@@ -29,10 +29,10 @@ final class MeasureUnitParser implements ffi.Finalizable {
   /// Returns an error if the unit identifier is not valid.
   ///
   /// Throws [Error] on failure.
-  MeasureUnit parse(String unitId) {
+  MeasureUnit parseMeasureUnit(String unitId) {
     final temp = ffi2.Arena();
     final unitIdView = unitId.utf8View;
-    final result = _ICU4XMeasureUnitParser_parse(_ffi, unitIdView.allocIn(temp), unitIdView.length);
+    final result = _ICU4XMeasureUnitParser_parse_measure_unit(_ffi, unitIdView.allocIn(temp), unitIdView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -46,7 +46,7 @@ final class MeasureUnitParser implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _ICU4XMeasureUnitParser_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XMeasureUnitParser_parse')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XMeasureUnitParser_parse')
+@meta.ResourceIdentifier('ICU4XMeasureUnitParser_parse_measure_unit')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XMeasureUnitParser_parse_measure_unit')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XMeasureUnitParser_parse(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
+external _ResultOpaqueInt32 _ICU4XMeasureUnitParser_parse_measure_unit(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
