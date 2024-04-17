@@ -56,9 +56,9 @@ class ICU4XUnitsConverterFactory {
   diplomat::result<ICU4XMeasureUnit, ICU4XError> parse(const std::string_view unit_id) const;
 
   /**
-   * Converts the input value in [`f64`] from the input unit to the output unit.
+   * Converts the input value in float from the input unit to the output unit.
    * NOTE:
-   * The conversion using [`f64`] is not as accurate as the conversion using ratios.
+   * The conversion using float is not as accurate as the conversion using ratios.
    */
   double convert_f64(double input) const;
   inline const capi::ICU4XUnitsConverterFactory* AsFFI() const { return this->inner.get(); }

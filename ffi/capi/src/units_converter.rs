@@ -53,7 +53,7 @@ pub mod ffi {
 
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         pub fn parse(&self, unit_id: &str) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-             self.0.parse(unit_id).map(Box::new)
+            self.0.parse(unit_id).map(Box::new)
         }
     }
 
@@ -70,9 +70,9 @@ pub mod ffi {
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
     impl ICU4XUnitsConverterFactory {
-        /// Converts the input value in [`f64`] from the input unit to the output unit.
+        /// Converts the input value in float from the input unit to the output unit.
         /// NOTE:
-        ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
+        ///   The conversion using float is not as accurate as the conversion using ratios.
         pub fn convert_f64(&self, input: f64) -> f64 {
             self.0.convert_f64(input)
         }
