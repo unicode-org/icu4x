@@ -53,54 +53,6 @@
       "has_medium": false,
       "has_plurals": false,
       "index": 20
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 21
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 24
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 27
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 29
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 30
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 32
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 33
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 34
     }
   ],
   "patterns": [
@@ -124,20 +76,6 @@
     "d.M.y E",
     "GGGG d MMMM y EEEE",
     "GGG d MMM y E",
-    "ccc",
-    "MMMM",
-    "LLL",
-    "L",
-    "MMMM y",
-    "MMM y",
-    "MM/y",
-    "GGGG MMMM y",
-    "GGG MMM y",
-    "y",
-    "GGGG y",
-    "GGG y",
-    "Y 'yılının' w'. haftası'",
-    "'unimplemented'",
-    "'unimplemented'"
+    "ccc"
   ]
 }

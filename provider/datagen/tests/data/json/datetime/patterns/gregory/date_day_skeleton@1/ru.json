@@ -53,54 +53,6 @@
       "has_medium": false,
       "has_plurals": false,
       "index": 19
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 20
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 23
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 26
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 28
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 29
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 31
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 32
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 33
     }
   ],
   "patterns": [
@@ -123,20 +75,6 @@
     "ccc, dd.MM.y г.",
     "EEEE, d MMMM y г. GGGG",
     "E, d MMM y г. GGG",
-    "ccc",
-    "MMMM",
-    "LLL",
-    "L",
-    "LLLL y г.",
-    "LLL y г.",
-    "MM.y",
-    "MMMM y г. GGGG",
-    "LLL y г. GGG",
-    "y",
-    "y г. GGGG",
-    "y г. GGG",
-    "w-я неделя Y г.",
-    "'unimplemented'",
-    "'unimplemented'"
+    "ccc"
   ]
 }

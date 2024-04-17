@@ -53,54 +53,6 @@
       "has_medium": false,
       "has_plurals": false,
       "index": 18
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 19
-    },
-    {
-      "has_long": false,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 20
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 22
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 24
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 25
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 27
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 28
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 29
     }
   ],
   "patterns": [
@@ -122,17 +74,6 @@
     "y/M/d(E)",
     "GGGGy年M月d日EEEE",
     "GGGy年M月d日(E)",
-    "ccc",
-    "M月",
-    "y年M月",
-    "y/M",
-    "GGGGy年M月",
-    "GGGy年M月",
-    "y年",
-    "GGGGy年",
-    "GGGy年",
-    "Y年第w週",
-    "'unimplemented'",
-    "'unimplemented'"
+    "ccc"
   ]
 }
