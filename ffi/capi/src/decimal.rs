@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::borrow::Cow;
     use alloc::boxed::Box;
     use icu_decimal::{
         options::{FixedDecimalFormatterOptions, GroupingStrategy},
@@ -14,10 +15,12 @@ pub mod ffi {
     use writeable::Writeable;
 
     use crate::{
-        data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XError,
-        fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
+        errors::ffi::ICU4XError, fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
+
+    use icu_provider::AnyPayload;
+    use icu_provider::DataPayload;
 
     #[diplomat::opaque]
     /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
@@ -108,6 +111,80 @@ pub mod ffi {
         ) -> Result<(), ICU4XError> {
             self.0.format(&value.0).write_to(write)?;
             Ok(())
+        }
+    }
+
+    #[diplomat::opaque]
+    /// A generic data struct to be used by ICU4X
+    ///
+    /// This can be used to construct a StructDataProvider.
+    #[diplomat::attr(*, disable)]
+    pub struct ICU4XDataStruct(pub(crate) AnyPayload);
+
+    impl ICU4XDataStruct {
+        /// Construct a new DecimalSymbolsV1 data struct.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
+        #[allow(clippy::too_many_arguments)]
+        pub fn create_decimal_symbols_v1(
+            plus_sign_prefix: &DiplomatStr,
+            plus_sign_suffix: &DiplomatStr,
+            minus_sign_prefix: &DiplomatStr,
+            minus_sign_suffix: &DiplomatStr,
+            decimal_separator: &DiplomatStr,
+            grouping_separator: &DiplomatStr,
+            primary_group_size: u8,
+            secondary_group_size: u8,
+            min_group_size: u8,
+            digits: &[DiplomatChar],
+        ) -> Result<Box<ICU4XDataStruct>, ICU4XError> {
+            fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
+                if s.is_empty() {
+                    Cow::default()
+                } else {
+                    Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
+                }
+            }
+
+            use icu_decimal::provider::{
+                AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
+            };
+            let digits = if digits.len() == 10 {
+                let mut new_digits = ['\0'; 10];
+                for (old, new) in digits.iter().zip(new_digits.iter_mut()) {
+                    *new = char::from_u32(*old).ok_or(ICU4XError::DataStructValidityError)?;
+                }
+                new_digits
+            } else {
+                return Err(ICU4XError::DataStructValidityError);
+            };
+            let plus_sign_affixes = AffixesV1 {
+                prefix: str_to_cow(plus_sign_prefix),
+                suffix: str_to_cow(plus_sign_suffix),
+            };
+            let minus_sign_affixes = AffixesV1 {
+                prefix: str_to_cow(minus_sign_prefix),
+                suffix: str_to_cow(minus_sign_suffix),
+            };
+            let grouping_sizes = GroupingSizesV1 {
+                primary: primary_group_size,
+                secondary: secondary_group_size,
+                min_grouping: min_group_size,
+            };
+
+            let symbols = DecimalSymbolsV1 {
+                plus_sign_affixes,
+                minus_sign_affixes,
+                decimal_separator: str_to_cow(decimal_separator),
+                grouping_separator: str_to_cow(grouping_separator),
+                grouping_sizes,
+                digits,
+            };
+
+            let payload: DataPayload<DecimalSymbolsV1Marker> = DataPayload::from_owned(symbols);
+            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload())))
         }
     }
 }

@@ -59,7 +59,6 @@ extern crate libc_alloc;
 // Common modules
 
 pub mod common;
-pub mod data_struct;
 pub mod errors;
 pub mod locale;
 #[cfg(feature = "logging")]
