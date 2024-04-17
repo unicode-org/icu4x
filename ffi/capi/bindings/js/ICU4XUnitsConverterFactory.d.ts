@@ -31,7 +31,6 @@ export class ICU4XUnitsConverterFactory {
   /**
 
    * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  parser(): ICU4XMeasureUnitParser | never;
+  parser(): ICU4XMeasureUnitParser;
 }

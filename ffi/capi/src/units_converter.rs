@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use core::str;
     use icu_experimental::units::converter::UnitsConverter;
     use icu_experimental::units::converter_factory::ConverterFactory;
     use icu_experimental::units::measureunit::MeasureUnit;
@@ -50,12 +49,12 @@ pub mod ffi {
             from: &ICU4XMeasureUnit,
             to: &ICU4XMeasureUnit,
         ) -> Option<Box<ICU4XUnitsConverter>> {
-            self.0.converter(input_unit.0, output_unit.0)
+            Some(ICU4XUnitsConverter(self.0.converter(&from.0, &to.0)?).into())
         }
 
         /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
-        pub fn parser(&self) -> Result<Box<ICU4XMeasureUnitParser>, ICU4XError> {
-            self.0.parser().map(Box::new)
+        pub fn parser<'a>(&self) -> Box<ICU4XMeasureUnitParser<'a>> {
+            ICU4XMeasureUnitParser(self.0.parser()).into()
         }
     }
 
@@ -68,16 +67,19 @@ pub mod ffi {
         Struct,
         hidden
     )]
-    pub struct ICU4XMeasureUnitParser(pub MeasureUnitParser);
+    pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
 
-    impl ICU4XMeasureUnitParser {
+    impl ICU4XMeasureUnitParser <'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         /// Returns an error if the unit identifier is not valid.
         pub fn parse_measure_unit(
             &self,
             unit_id: &str,
-        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            self.0.try_from_identifier(unit_id).map(Box::new)
+        ) -> Result<Box< ICU4XMeasureUnit , ICU4XError>> {
+            match self.0.try_from_identifier(unit_id) {
+                Ok(unit) => Ok(Box::new(ICU4XMeasureUnit(unit))),
+                Err(_) => Err(ICU4XError::InvalidCLDRUnitIdentifierError),
+            }
         }
     }
 

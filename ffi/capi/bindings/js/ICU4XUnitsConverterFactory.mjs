@@ -43,19 +43,6 @@ export class ICU4XUnitsConverterFactory {
   }
 
   parser() {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XUnitsConverterFactory_parser(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = new ICU4XMeasureUnitParser(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
+    return new ICU4XMeasureUnitParser(wasm.ICU4XUnitsConverterFactory_parser(this.underlying), true, []);
   }
 }
