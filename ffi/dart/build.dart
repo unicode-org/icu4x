@@ -17,14 +17,17 @@ void main(List<String> args) async {
 
   final linkMode = config.linkModePreference.preferredLinkMode;
 
+  final path = '${config.outDir.path}/icu4x';
+
+  await buildLib(target, linkMode, path);
+
   await BuildOutput(
     assets: [
       Asset(
           id: 'package:icu/src/lib.g.dart',
           linkMode: linkMode,
           target: target,
-          path: AssetAbsolutePath(
-              Uri.file(await buildLib(target, linkMode, config.outDir.path))))
+          path: AssetAbsolutePath(Uri.file(path)))
     ],
     dependencies: Dependencies([config.packageRoot.resolve('build.rs')]),
   ).writeToFile(outDir: config.outDir);

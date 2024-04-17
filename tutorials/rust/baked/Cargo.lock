@@ -340,6 +340,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -539,6 +540,37 @@ name = "icu_decimal_data"
 version = "1.4.0"
 
 [[package]]
+name = "icu_experimental"
+version = "0.0.0"
+dependencies = [
+ "displaydoc",
+ "fixed_decimal",
+ "icu_collections",
+ "icu_decimal",
+ "icu_experimental_data",
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_pattern",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "litemap",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "smallvec",
+ "tinystr",
+ "writeable",
+ "zerotrie",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_experimental_data"
+version = "0.0.0"
+
+[[package]]
 name = "icu_list"
 version = "1.4.0"
 dependencies = [
@@ -617,6 +649,8 @@ dependencies = [
  "displaydoc",
  "either",
  "writeable",
+ "yoke",
+ "zerofrom",
 ]
 
 [[package]]
@@ -868,6 +902,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-bigint"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "608e7659b5c3d7cba262d894801b9ec9d00de989e8a82bd4bef91d08da45cdc0"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "num-complex"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -882,6 +927,17 @@ version = "0.1.46"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
 dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
+dependencies = [
+ "autocfg",
+ "num-integer",
  "num-traits",
 ]
 
@@ -1587,14 +1643,6 @@ version = "0.0.0"
 [[patch.unused]]
 name = "icu_capi"
 version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_experimental"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_experimental_data"
-version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_freertos"
