@@ -419,7 +419,7 @@ impl From<NormalizerError> for ICU4XError {
 impl From<ConversionError> for ICU4XError {
     fn from(value: ConversionError) -> Self {
         match value {
-            ConversionError::InvalidUnit => ICU4XError::InvalidCLDRUnitIdentifierError,
+            ConversionError::InvalidUnit => ICU4XError::InvalidCldrUnitIdentifierError,
             _ => ICU4XError::UnknownError,
         }
     }
