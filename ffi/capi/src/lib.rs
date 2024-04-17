@@ -153,7 +153,7 @@ pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
 
-#[cfg(feature = "icu_experimental")]
+#[cfg(feature = "experimental_components")]
 pub mod units_converter;
 #[cfg(feature = "icu_calendar")]
 pub mod week;
