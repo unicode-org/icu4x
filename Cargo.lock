@@ -1294,6 +1294,7 @@ version = "1.4.0"
 dependencies = [
  "clap",
  "eyre",
+ "icu",
  "icu_calendar",
  "icu_casemap",
  "icu_collator",

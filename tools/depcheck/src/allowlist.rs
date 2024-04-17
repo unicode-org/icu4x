@@ -9,6 +9,7 @@
 /// For other crates, please get approval from @unicode-org/icu4x-owners
 pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X components
+    "icu",
     "icu_calendar",
     "icu_casemap",
     "icu_collator",
