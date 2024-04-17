@@ -182,7 +182,8 @@ experimental_components = [
     "icu_plurals/experimental",
     # Only required if both provider and experimental are enabled, but that's not expressible with features
     "dep:num-bigint",
-    "dep:num-rational"
+    "dep:num-rational",
+    "icu/experimental",
 ]
 
 [[bin]]

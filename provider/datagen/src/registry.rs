@@ -43,7 +43,6 @@ macro_rules! registry(
             icu::datetime::provider::calendar::CopticDateSymbolsV1Marker = "datetime/coptic/datesymbols@1",
             icu::datetime::provider::calendar::DangiDateLengthsV1Marker = "datetime/dangi/datelengths@1",
             icu::datetime::provider::calendar::DangiDateSymbolsV1Marker = "datetime/dangi/datesymbols@1",
-            icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",
             icu::datetime::provider::calendar::EthiopianDateLengthsV1Marker = "datetime/ethiopic/datelengths@1",
             icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker = "datetime/ethiopic/datesymbols@1",
             icu::datetime::provider::calendar::GregorianDateLengthsV1Marker = "datetime/gregory/datelengths@1",
@@ -93,7 +92,6 @@ macro_rules! registry(
             icu::normalizer::provider::Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1",
             icu::plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
             icu::plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",
-            icu::plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",
             icu::properties::provider::AlnumV1Marker = "props/alnum@1",
             icu::properties::provider::AlphabeticV1Marker = "props/Alpha@1",
             icu::properties::provider::AsciiHexDigitV1Marker = "props/AHex@1",
@@ -224,6 +222,7 @@ macro_rules! registry(
             icu::timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
             icu::timezone::provider::names::IanaToBcp47MapV2Marker = "time_zone/iana_to_bcp47@2",
             #[experimental]
+            icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",
             icu::datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
             icu::datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",
             icu::datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
@@ -304,6 +303,7 @@ macro_rules! registry(
             icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker = "relativetime/narrow/year@1",
             icu::experimental::transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
             icu::experimental::units::provider::UnitsInfoV1Marker = "units/info@1",
+            icu::plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",
         );
     }
 );
