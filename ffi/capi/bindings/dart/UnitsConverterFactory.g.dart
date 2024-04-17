@@ -50,15 +50,12 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`].
   ///
   /// Throws [Error] on failure.
-  MeasureUnit parse(String unitId) {
-    final temp = ffi2.Arena();
-    final unitIdView = unitId.utf8View;
-    final result = _ICU4XUnitsConverterFactory_parse(_ffi, unitIdView.allocIn(temp), unitIdView.length);
-    temp.releaseAll();
+  MeasureUnitParser parser() {
+    final result = _ICU4XUnitsConverterFactory_parser(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return MeasureUnit._fromFfi(result.union.ok, []);
+    return MeasureUnitParser._fromFfi(result.union.ok, []);
   }
 }
 
@@ -77,7 +74,7 @@ external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(ffi.Pointer<ffi.O
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> inputUnit, ffi.Pointer<ffi.Opaque> outputUnit);
 
-@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_parse')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parse')
+@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_parser')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_parse(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
+external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_parser(ffi.Pointer<ffi.Opaque> self);

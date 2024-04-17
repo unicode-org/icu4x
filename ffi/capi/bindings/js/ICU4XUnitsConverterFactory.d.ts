@@ -2,6 +2,7 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XMeasureUnit } from "./ICU4XMeasureUnit";
+import { ICU4XMeasureUnitParser } from "./ICU4XMeasureUnitParser";
 import { ICU4XUnitsConverter } from "./ICU4XUnitsConverter";
 
 /**
@@ -32,5 +33,5 @@ export class ICU4XUnitsConverterFactory {
    * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  parse(unit_id: string): ICU4XMeasureUnit | never;
+  parser(): ICU4XMeasureUnitParser | never;
 }

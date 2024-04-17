@@ -18,7 +18,7 @@ typedef struct ICU4XUnitsConverterFactory ICU4XUnitsConverterFactory;
 #include "diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XError.h"
 #include "ICU4XMeasureUnit.h"
 #include "ICU4XUnitsConverter.h"
-#include "diplomat_result_box_ICU4XMeasureUnit_ICU4XError.h"
+#include "diplomat_result_box_ICU4XMeasureUnitParser_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -28,7 +28,7 @@ diplomat_result_box_ICU4XUnitsConverterFactory_ICU4XError ICU4XUnitsConverterFac
 
 ICU4XUnitsConverter* ICU4XUnitsConverterFactory_converter(const ICU4XUnitsConverterFactory* self, const ICU4XMeasureUnit* input_unit, const ICU4XMeasureUnit* output_unit);
 
-diplomat_result_box_ICU4XMeasureUnit_ICU4XError ICU4XUnitsConverterFactory_parse(const ICU4XUnitsConverterFactory* self, const char* unit_id_data, size_t unit_id_len);
+diplomat_result_box_ICU4XMeasureUnitParser_ICU4XError ICU4XUnitsConverterFactory_parser(const ICU4XUnitsConverterFactory* self);
 void ICU4XUnitsConverterFactory_destroy(ICU4XUnitsConverterFactory* self);
 
 #ifdef __cplusplus

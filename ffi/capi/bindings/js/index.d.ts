@@ -89,6 +89,7 @@ export { ICU4XLocaleFallbacker } from './ICU4XLocaleFallbacker';
 export { ICU4XLocaleFallbackerWithConfig } from './ICU4XLocaleFallbackerWithConfig';
 export { ICU4XLogger } from './ICU4XLogger';
 export { ICU4XMeasureUnit } from './ICU4XMeasureUnit';
+export { ICU4XMeasureUnitParser } from './ICU4XMeasureUnitParser';
 export { ICU4XMetazoneCalculator } from './ICU4XMetazoneCalculator';
 export { ICU4XOrdering } from './ICU4XOrdering';
 export { ICU4XPluralCategories } from './ICU4XPluralCategories';

@@ -16,6 +16,7 @@ class ICU4XUnitsConverterFactory;
 #include "ICU4XError.hpp"
 class ICU4XMeasureUnit;
 class ICU4XUnitsConverter;
+class ICU4XMeasureUnitParser;
 
 /**
  * A destruction policy for using ICU4XUnitsConverterFactory with std::unique_ptr.
@@ -52,10 +53,8 @@ class ICU4XUnitsConverterFactory {
 
   /**
    * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-   * 
-   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> parse(const std::string_view unit_id) const;
+  diplomat::result<ICU4XMeasureUnitParser, ICU4XError> parser() const;
   inline const capi::ICU4XUnitsConverterFactory* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnitsConverterFactory* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XUnitsConverterFactory(capi::ICU4XUnitsConverterFactory* i) : inner(i) {}
@@ -69,6 +68,7 @@ class ICU4XUnitsConverterFactory {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XMeasureUnit.hpp"
 #include "ICU4XUnitsConverter.hpp"
+#include "ICU4XMeasureUnitParser.hpp"
 
 inline diplomat::result<ICU4XUnitsConverterFactory, ICU4XError> ICU4XUnitsConverterFactory::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XUnitsConverterFactory_create(provider.AsFFI());
@@ -90,11 +90,11 @@ inline std::optional<ICU4XUnitsConverter> ICU4XUnitsConverterFactory::converter(
   }
   return diplomat_optional_out_value;
 }
-inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XUnitsConverterFactory::parse(const std::string_view unit_id) const {
-  auto diplomat_result_raw_out_value = capi::ICU4XUnitsConverterFactory_parse(this->inner.get(), unit_id.data(), unit_id.size());
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> diplomat_result_out_value;
+inline diplomat::result<ICU4XMeasureUnitParser, ICU4XError> ICU4XUnitsConverterFactory::parser() const {
+  auto diplomat_result_raw_out_value = capi::ICU4XUnitsConverterFactory_parser(this->inner.get());
+  diplomat::result<ICU4XMeasureUnitParser, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnit>(ICU4XMeasureUnit(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnitParser>(ICU4XMeasureUnitParser(diplomat_result_raw_out_value.ok));
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }

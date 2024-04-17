@@ -95,6 +95,7 @@ part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
 part 'Logger.g.dart';
 part 'MeasureUnit.g.dart';
+part 'MeasureUnitParser.g.dart';
 part 'MetazoneCalculator.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';

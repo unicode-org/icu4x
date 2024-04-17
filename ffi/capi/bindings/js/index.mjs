@@ -89,6 +89,7 @@ export { ICU4XLocaleFallbacker } from './ICU4XLocaleFallbacker.mjs';
 export { ICU4XLocaleFallbackerWithConfig } from './ICU4XLocaleFallbackerWithConfig.mjs';
 export { ICU4XLogger } from './ICU4XLogger.mjs';
 export { ICU4XMeasureUnit } from './ICU4XMeasureUnit.mjs';
+export { ICU4XMeasureUnitParser } from './ICU4XMeasureUnitParser.mjs';
 export { ICU4XMetazoneCalculator } from './ICU4XMetazoneCalculator.mjs';
 export { ICU4XOrdering } from './ICU4XOrdering.mjs';
 export { ICU4XPluralCategories } from './ICU4XPluralCategories.mjs';

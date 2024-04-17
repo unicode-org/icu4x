@@ -1,7 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.mjs"
-import { ICU4XMeasureUnit } from "./ICU4XMeasureUnit.mjs"
+import { ICU4XMeasureUnitParser } from "./ICU4XMeasureUnitParser.mjs"
 import { ICU4XUnitsConverter } from "./ICU4XUnitsConverter.mjs"
 
 const ICU4XUnitsConverterFactory_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -42,14 +42,13 @@ export class ICU4XUnitsConverterFactory {
     })();
   }
 
-  parse(arg_unit_id) {
-    const buf_arg_unit_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_unit_id);
-    const diplomat_out = (() => {
+  parser() {
+    return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XUnitsConverterFactory_parse(diplomat_receive_buffer, this.underlying, buf_arg_unit_id.ptr, buf_arg_unit_id.size);
+      wasm.ICU4XUnitsConverterFactory_parser(diplomat_receive_buffer, this.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
-        const ok_value = new ICU4XMeasureUnit(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        const ok_value = new ICU4XMeasureUnitParser(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
@@ -58,7 +57,5 @@ export class ICU4XUnitsConverterFactory {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-    buf_arg_unit_id.free();
-    return diplomat_out;
   }
 }

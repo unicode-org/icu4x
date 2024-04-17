@@ -5,6 +5,7 @@
 use icu_experimental::units::converter::UnitsConverter;
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::measureunit::MeasureUnit;
+use icu_experimental::units::measureunit::MeasureUnitParser;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -54,8 +55,27 @@ pub mod ffi {
         }
 
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
+        pub fn parser(&self) -> Result<Box<ICU4XMeasureUnitParser>, ICU4XError> {
+            self.0.parser().map(Box::new)
+        }
+    }
+
+    #[diplomat::opaque]
+    /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
+    /// (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
+    #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnitParser, Struct)]
+    #[diplomat::rust_link(
+        icu::experimental::units::measureunit::MeasureUnitParser,
+        Struct,
+        hidden
+    )]
+    pub struct ICU4XMeasureUnitParser(pub MeasureUnitParser);
+
+    impl ICU4XMeasureUnitParser {
+        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
+        /// Returns an error if the unit identifier is not valid.
         pub fn parse(&self, unit_id: &str) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            self.0.parse(unit_id).map(Box::new)
+            self.0.try_from_identifier(unit_id).map(Box::new)
         }
     }
 
