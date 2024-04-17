@@ -67,11 +67,11 @@ pub mod ffi {
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
     impl ICU4XUnitsConverterFactory {
-        /// Converts the input value from the input unit to the output unit.
-        // TODO: do we need to wrap the input value in a `Ratio<BigInt>`?
-        // TODO: do we need to return a `Ratio<BigInt>`?
-        pub fn convert(&self, input: f64) -> Result<f64, ICU4XError> {
-            self.0.convert(input)
+        /// Converts the input value in [`f64`] from the input unit to the output unit.
+        /// NOTE:
+        ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
+        pub fn convert_f64(&self, input: f64) -> f64 {
+            self.0.convert_f64(input)
         }
     }
 }
