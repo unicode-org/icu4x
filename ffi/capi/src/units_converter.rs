@@ -8,7 +8,7 @@ use icu_experimental::units::measureunit::MeasureUnit;
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
     use core::str;
 
@@ -25,17 +25,20 @@ pub mod ffi {
     pub struct ICU4XUnitsConverterFactory(pub ConverterFactory);
 
     impl ICU4XUnitsConverterFactory {
-        /// Creates a new [`ICU4XUnitsConverterFactory`] from supplemental data
-        // (TODO: is it locale data? or something else?)
+        /// Construct a new [`ICU4XUnitsConverterFactory`] instance.
         #[diplomat::rust_link(
             icu::experimental::units::converter_factory::ConverterFactory::new,
             FnInStruct
         )]
-        pub fn create() -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XError> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XUnitsConverterFactory>, ICU4XError> {
             Ok(Box::new(ICU4XUnitsConverterFactory(call_constructor!(
-                ConverterFactory::new,
+                ConverterFactory::new [r => Ok(r)],
                 ConverterFactory::try_new_with_any_provider,
                 ConverterFactory::try_new_with_buffer_provider,
+                provider,
             )?)))
         }
 
