@@ -605,8 +605,12 @@ impl AsULE for SkeletonDataIndex {
 
 #[icu_provider::data_struct(
     marker(
-        GregorianDateNeoSkeletonPatternsV1Marker,
-        "datetime/patterns/gregory/date_skeleton@1"
+        GregorianDateDayNeoSkeletonPatternsV1Marker,
+        "datetime/patterns/gregory/date_day_skeleton@1"
+    ),
+    marker(
+        GregorianDateExtNeoSkeletonPatternsV1Marker,
+        "datetime/patterns/gregory/date_ext_skeleton@1"
     ),
     marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
@@ -619,7 +623,7 @@ impl AsULE for SkeletonDataIndex {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
-    // len = 12 for time, 17 for date
+    // len = 12 for time, 9 for date (day), 8 for date (ext)
     #[allow(missing_docs)] // TODO
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub indices: ZeroVec<'data, SkeletonDataIndex>,
@@ -635,7 +639,7 @@ impl<'data> PackedSkeletonDataV1<'data> {
         &self,
         sk: NeoDateSkeleton,
     ) -> Option<&runtime::PatternULE> {
-        self.get_for_discriminant(sk.components.discriminant())
+        self.get_for_discriminant(sk.components.discriminant() % 9)
     }
     #[cfg(feature = "experimental")]
     pub(crate) fn get_for_time_skeleton(
