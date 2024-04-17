@@ -12,7 +12,7 @@ export class ICU4XUnitsConverter {
 
   /**
 
-   * Converts the input value in float from the input unit to the output unit. NOTE: The conversion using floating-point operations is not as accurate as the conversion using ratios.
+   * Converts the input value in float from the input unit to the output unit (that have been used to create this converter). NOTE: The conversion using floating-point operations is not as accurate as the conversion using ratios.
    */
   convert_f64(value: f64): f64;
 }

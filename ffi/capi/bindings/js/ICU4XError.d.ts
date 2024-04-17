@@ -185,5 +185,5 @@ export enum ICU4XError {
   NormalizerValidationError = 'NormalizerValidationError',
   /**
    */
-  InvalidCLDRUnitIdentifierError = 'InvalidCLDRUnitIdentifierError',
+  InvalidCldrUnitIdentifierError = 'InvalidCldrUnitIdentifierError',
 }

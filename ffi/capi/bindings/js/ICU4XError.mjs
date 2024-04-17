@@ -57,7 +57,7 @@ export const ICU4XError_js_to_rust = {
   "TimeZoneInvalidIdError": 2563,
   "NormalizerFutureExtensionError": 2816,
   "NormalizerValidationError": 2817,
-  "InvalidCLDRUnitIdentifierError": 3072,
+  "InvalidCldrUnitIdentifierError": 3072,
 };
 
 export const ICU4XError_rust_to_js = {
@@ -116,7 +116,7 @@ export const ICU4XError_rust_to_js = {
   [2563]: "TimeZoneInvalidIdError",
   [2816]: "NormalizerFutureExtensionError",
   [2817]: "NormalizerValidationError",
-  [3072]: "InvalidCLDRUnitIdentifierError",
+  [3072]: "InvalidCldrUnitIdentifierError",
 };
 
 export const ICU4XError = {
@@ -175,5 +175,5 @@ export const ICU4XError = {
   "TimeZoneInvalidIdError": "TimeZoneInvalidIdError",
   "NormalizerFutureExtensionError": "NormalizerFutureExtensionError",
   "NormalizerValidationError": "NormalizerValidationError",
-  "InvalidCLDRUnitIdentifierError": "InvalidCLDRUnitIdentifierError",
+  "InvalidCldrUnitIdentifierError": "InvalidCldrUnitIdentifierError",
 };

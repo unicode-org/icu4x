@@ -99,7 +99,7 @@ enum struct ICU4XError {
   TimeZoneInvalidIdError = 2563,
   NormalizerFutureExtensionError = 2816,
   NormalizerValidationError = 2817,
-  InvalidCLDRUnitIdentifierError = 3072,
+  InvalidCldrUnitIdentifierError = 3072,
 };
 
 #endif

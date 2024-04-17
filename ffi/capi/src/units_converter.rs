@@ -100,7 +100,7 @@ pub mod ffi {
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
     impl ICU4XUnitsConverter {
-        /// Converts the input value in float from the input unit to the output unit.
+        /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
         /// NOTE:
         ///   The conversion using floating-point operations is not as accurate as the conversion using ratios.
         #[diplomat::attr(dart, rename = "convert_double")]
