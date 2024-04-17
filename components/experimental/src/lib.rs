@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 `icu_experimental` is the development crate of the `ICU4X` project.
+//! 🚧 The experimental development module of the `ICU4X` project.
+//!
+//! This module is published as its own crate ([`icu_experimental`](https://docs.rs/icu_experimental/latest/icu_experimental/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! It will usually undergo a major SemVer bump for every ICU4X release. Components in this
-//! crate will eventually stabilize and move to the `icu` crate.
+//! crate will eventually stabilize and move to their own top-level components.
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -32,9 +35,8 @@ pub mod provider {
 
     #[cfg(feature = "compiled_data")]
     const _: () = {
-        pub use crate as icu_experimental;
-
         pub mod icu {
+            pub use crate as experimental;
             #[allow(unused_imports)] // baked data may or may not need this
             pub use icu_locid_transform as locid_transform;
         }

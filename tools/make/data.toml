@@ -24,7 +24,7 @@ args = [
     "test",
     "-p=icu_datagen",
     "--no-default-features",
-    "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components",
+    "--features=fs_exporter,baked_exporter,use_wasm,rayon,experimental_components,provider",
     "--",
     "--nocapture",
     "make_testdata",

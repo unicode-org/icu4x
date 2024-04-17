@@ -94,6 +94,7 @@ macro_rules! registry {
                 );
             }
         }
+        #[allow(unused_imports)]
         pub(crate) use make_exportable_provider;
 
 
@@ -172,7 +173,9 @@ registry!(
     icu_datetime::provider::calendar::CopticDateSymbolsV1Marker = "datetime/coptic/datesymbols@1",
     icu_datetime::provider::calendar::DangiDateLengthsV1Marker = "datetime/dangi/datelengths@1",
     icu_datetime::provider::calendar::DangiDateSymbolsV1Marker = "datetime/dangi/datesymbols@1",
+    #[cfg(feature = "experimental_components")]
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",
+    #[cfg(all())]
     icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker =
         "datetime/ethiopic/datelengths@1",
     icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker =
@@ -201,7 +204,7 @@ registry!(
     icu_datetime::provider::calendar::RocDateSymbolsV1Marker = "datetime/roc/datesymbols@1",
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
-    // new datetime symbols stuff (unused so far)
+    #[cfg(feature = "experimental_components")]
     icu_datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
     icu_datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",
     icu_datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
@@ -252,6 +255,7 @@ registry!(
         "datetime/patterns/gregory/date_skeleton@1",
     icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker =
         "datetime/patterns/time_skeleton@1",
+    #[cfg(all())]
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
         "time_zone/generic_long@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker =
@@ -306,6 +310,7 @@ registry!(
     #[cfg(all())]
     icu_plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
     icu_plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",
+    #[cfg(feature = "experimental_components")]
     icu_plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",
     #[cfg(all())]
     icu_properties::provider::AlnumV1Marker = "props/alnum@1",

@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{
     extensions::unicode::{key, value},
@@ -19,10 +20,11 @@ mod neo_skeleton;
 mod patterns;
 mod skeletons;
 mod symbols;
-pub mod week_data;
+pub(in crate::provider) mod week_data;
 
-pub static SUPPORTED_CALS: OnceCell<HashMap<icu_locid::extensions::unicode::Value, &'static str>> =
-    OnceCell::new();
+pub(in crate::provider) static SUPPORTED_CALS: OnceCell<
+    HashMap<icu_locid::extensions::unicode::Value, &'static str>,
+> = OnceCell::new();
 
 fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
@@ -51,7 +53,7 @@ fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &
 
 macro_rules! impl_data_provider {
     ($marker:ident, $expr:expr, $calendar:expr) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
@@ -209,7 +211,7 @@ macro_rules! impl_data_provider {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
@@ -383,7 +385,7 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -400,7 +402,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let locale: Locale = locale!("haw");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -423,7 +425,7 @@ mod test {
         use icu_plurals::PluralCategory;
         use std::convert::TryFrom;
 
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
@@ -467,7 +469,7 @@ mod test {
     fn test_basic_symbols() {
         use icu_calendar::types::MonthCode;
         use tinystr::tinystr;
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
@@ -498,7 +500,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider

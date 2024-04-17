@@ -96,7 +96,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadGeneralCategory(DataProvider provider) {
+  factory CodePointMapData8.generalCategory(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_general_category(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -107,7 +107,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadBidiClass(DataProvider provider) {
+  factory CodePointMapData8.bidiClass(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_bidi_class(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -118,7 +118,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadEastAsianWidth(DataProvider provider) {
+  factory CodePointMapData8.eastAsianWidth(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_east_asian_width(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -129,7 +129,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadIndicSyllabicCategory(DataProvider provider) {
+  factory CodePointMapData8.indicSyllabicCategory(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_indic_syllabic_category(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -140,7 +140,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadLineBreak(DataProvider provider) {
+  factory CodePointMapData8.lineBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_line_break(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -151,7 +151,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.graphemeClusterBreak(DataProvider provider) {
+  static CodePointMapData8 tryGraphemeClusterBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -162,7 +162,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadWordBreak(DataProvider provider) {
+  factory CodePointMapData8.wordBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_word_break(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -173,7 +173,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadSentenceBreak(DataProvider provider) {
+  factory CodePointMapData8.sentenceBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_sentence_break(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -184,7 +184,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `joining_type`](https://docs.rs/icu/latest/icu/properties/maps/fn.joining_type.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.loadJoiningType(DataProvider provider) {
+  factory CodePointMapData8.joiningType(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_joining_type(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
