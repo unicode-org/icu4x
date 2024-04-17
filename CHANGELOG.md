@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Components
+  - General
+    - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
   - `icu_datetime`
     - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
   - `icu_calendar`
