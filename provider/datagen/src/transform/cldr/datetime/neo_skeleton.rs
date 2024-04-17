@@ -24,6 +24,7 @@ use icu_datetime::provider::{
 };
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 use super::supported_cals;
 
@@ -181,7 +182,8 @@ impl DatagenProvider {
                         CoarseHourCycle::H23H24 => preferences::HourCycle::H23,
                     },
                 )
-                .unwrap()
+                .unwrap_or_else(|| PatternPlurals::SinglePattern("'missing'".parse().unwrap()))
+                // .unwrap_or_else(|| panic!("{req:?} {neo_components:?} {cal:?}"))
             });
             let [long, medium, short] = if long_medium_short
                 .iter()
@@ -227,7 +229,12 @@ impl DatagenProvider {
             patterns.extend(short);
             // Search for deduplication opportunity
             let needed_patterns = &patterns[skeleton_data_index.index as usize..];
-            let first_start = patterns.windows(needed_patterns.len()).enumerate().find(|(_, window)| window == &needed_patterns).expect("should always find the last window").0;
+            let first_start = patterns
+                .windows(needed_patterns.len())
+                .enumerate()
+                .find(|(_, window)| window == &needed_patterns)
+                .expect("should always find the last window")
+                .0;
             if first_start != skeleton_data_index.index as usize {
                 patterns.splice(skeleton_data_index.index as usize.., []);
                 skeleton_data_index.index = first_start as u8;
@@ -289,6 +296,95 @@ impl IterableDataProviderInternal<XcalYearMonthDayNeoSkeletonPatternsV1Marker> f
 
         Ok(r)
     }
+}
+
+#[test]
+fn test_all_calendars_and_skeleta() {
+    use std::collections::BTreeMap;
+    simple_logger::init_with_env().unwrap();
+    let provider = DatagenProvider::new_testing();
+    let mut results: BTreeMap<
+        (
+            String,
+            icu_locid::extensions::unicode::Value,
+            NeoDateComponents,
+        ),
+        Vec<u8>,
+    > = Default::default();
+
+    for locale in icu_provider::datagen::IterableDataProvider::<
+        GregorianDateNeoSkeletonPatternsV1Marker,
+    >::supported_locales(&provider)
+    .unwrap()
+    {
+        for calendar in AnyCalendarKind::VALUES.iter().filter_map(|kind| {
+            if matches!(kind, AnyCalendarKind::EthiopianAmeteAlem)
+                || matches!(kind, AnyCalendarKind::IslamicCivil)
+                || matches!(kind, AnyCalendarKind::IslamicTabular)
+                || matches!(kind, AnyCalendarKind::IslamicUmmAlQura)
+                || matches!(kind, AnyCalendarKind::Iso)
+            {
+                None
+            } else {
+                Some(kind.as_bcp47_value())
+            }
+        }) {
+            for components in NeoDateComponents::VALUES
+                .iter()
+                .filter_map(|neo_components| {
+                    if matches!(neo_components, NeoDateComponents::Quarter)
+                        || matches!(neo_components, NeoDateComponents::YearQuarter)
+                    {
+                        None
+                    } else {
+                        Some(neo_components)
+                    }
+                })
+            {
+                let Ok(packed) = provider.make_packed_skeleton_data(
+                    DataRequest {
+                        locale: &locale,
+                        metadata: Default::default(),
+                    },
+                    [(components, calendar.clone(), true)].into_iter(),
+                    |length, neo_components| {
+                        NeoDateSkeleton::for_length_and_components(length, **neo_components)
+                            .to_components_bag()
+                    },
+                ) else {
+                    // log::warn!("Not found: locale: {:?}, calendar: {:?}, components: {:?}", locale, calendar, components);
+                    continue;
+                };
+                let postcard_vec = postcard::to_allocvec(&packed).unwrap();
+                results.insert(
+                    (
+                        locale.write_to_string().into_owned(),
+                        calendar.clone(),
+                        *components,
+                    ),
+                    postcard_vec,
+                );
+            }
+        }
+    }
+
+    let total_count = results.len();
+    let total_size = results.values().map(|v| v.len()).sum::<usize>();
+    let unique_values = results
+        .values()
+        .map(|v| v.as_slice())
+        .collect::<HashSet<&[u8]>>();
+    let uniqueness = unique_values.len();
+    let unique_size = unique_values.iter().map(|v| v.len()).sum::<usize>();
+
+    println!("{:?}", results.keys());
+
+    println!(
+        "Total count: {}, total size: {}, uniqueness: {}, unique size: {}",
+        total_count, total_size, uniqueness, unique_size
+    );
+
+    panic!();
 }
 
 #[test]

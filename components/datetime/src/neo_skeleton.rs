@@ -185,7 +185,7 @@ impl TypedNeoTimeSkeletonComponents for HourMinuteMarker {
 /// opposed to a whole month, week, or quarter).
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum NeoDayComponents {
     /// The day of the month, as in
@@ -292,7 +292,7 @@ impl NeoDayComponents {
 /// A specification for a set of parts of a date.
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
 /// a date such as “fourth quarter, Anno Domini”.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum NeoDateComponents {
     /// A date that specifies a single day. See [`NeoDayComponents`].
@@ -416,7 +416,7 @@ fn test_neo_date_components_discriminants() {
 /// A specification for a set of parts of a time.
 /// Only sets that yield “sensible” time are allowed: this type cannot describe
 /// a time such as “am, 5 minutes, 25 milliseconds”.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
     /// An hour (12-hour or 24-hour chosen by locale), as in
