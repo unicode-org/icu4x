@@ -84,9 +84,9 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
     #[cfg(feature = "alloc")]
     fn try_from_items<
-        'a,
-        'b,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'b>>, Error>>,
+        'cow,
+        'ph,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
     >(
         items: I,
     ) -> Result<<Self::Store as ToOwned>::Owned, Error>

@@ -213,12 +213,12 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
+impl<'a, B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::PlaceholderKey<'static>: FromStr,
+    B::PlaceholderKey<'a>: FromStr,
     B::Store: ToOwned,
-    <B::PlaceholderKey<'static> as FromStr>::Err: fmt::Debug,
+    <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
 {
     /// Creates a pattern by parsing a syntax string.
     ///
@@ -241,7 +241,7 @@ where
     ///     .expect_err("mismatched braces");
     /// ```
     pub fn try_from_str(pattern: &str) -> Result<Self, Error> {
-        let parser: Parser<B::PlaceholderKey<'static>> = Parser::new(
+        let parser = Parser::new(
             pattern,
             ParserOptions {
                 allow_raw_letters: true,
@@ -263,12 +263,12 @@ where
 }
 
 #[cfg(feature = "alloc")]
-impl<B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
+impl<'a, B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    for<'a> B::PlaceholderKey<'a>: FromStr,
+    B::PlaceholderKey<'a>: FromStr,
     B::Store: ToOwned,
-    for<'a> <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
+    <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
 {
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
@@ -405,10 +405,10 @@ where
     }
 }
 
-impl<'b, B, P> fmt::Display for WriteablePattern<'b, B, P>
+impl<'a, B, P> fmt::Display for WriteablePattern<'a, B, P>
 where
-    B: PatternBackend + 'b,
-    P: PlaceholderValueProvider<B::PlaceholderKey<'b>, Error = B::Error<'b>>,
+    B: PatternBackend,
+    P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>>,
 {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
