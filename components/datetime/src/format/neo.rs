@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::write_pattern;
+use super::datetime::try_write_pattern;
 use crate::calendar::{
     CldrCalendar, DayPeriodNamesV1Provider, MonthNamesV1Provider, WeekdayNamesV1Provider,
     YearNamesV1Provider,
 };
-use crate::error::DateTimeError as Error;
 use crate::external_loaders::*;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
@@ -21,6 +20,7 @@ use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
+use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
@@ -32,7 +32,7 @@ use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
-use writeable::Writeable;
+use writeable::TryWriteable;
 
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
@@ -192,7 +192,7 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
 /// let mut buffer = String::new();
-/// assert!(names.with_pattern(&pattern).format(&datetime).write_to(&mut buffer).is_err());
+/// assert!(names.with_pattern(&pattern).format(&datetime).try_write_to(&mut buffer).is_err());
 /// ```
 #[derive(Debug)]
 pub struct TypedDateTimeNames<C: CldrCalendar> {
@@ -1172,34 +1172,35 @@ pub struct FormattedDateTimePattern<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedDateTimePattern<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
+    type Error = Error;
+
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Error>, fmt::Error> {
         let loc_datetime =
             DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
-        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
-            // TODO(#4340): Make the FixedDecimalFormatter optional
-            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
-            return Err(core::fmt::Error);
-        };
-        write_pattern(
+        try_write_pattern(
             self.pattern.0.items.iter(),
             self.pattern.0.metadata,
             Some(&self.names),
             Some(&self.names),
             &loc_datetime,
-            fixed_decimal_formatter,
+            self.names.fixed_decimal_formatter,
             sink,
         )
-        .map_err(|_e| {
-            icu_provider::_internal::log::warn!("{_e:?}");
-            core::fmt::Error
-        })
+    }
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        todo!()
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedDateTimePattern<'_>);
 
 impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
     fn get_symbol_for_month(

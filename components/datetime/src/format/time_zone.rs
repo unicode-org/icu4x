@@ -4,7 +4,7 @@
 
 use core::fmt;
 
-use crate::error::DateTimeError as Error;
+use crate::Error;
 use crate::{
     input::TimeZoneInput,
     time_zone::{FormatTimeZone, TimeZoneFormatter, TimeZoneFormatterUnit},

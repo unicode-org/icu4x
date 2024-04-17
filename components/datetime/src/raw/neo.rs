@@ -5,7 +5,7 @@
 use core::fmt;
 
 use crate::calendar::DatePatternV1Provider;
-use crate::format::datetime::write_pattern;
+use crate::format::datetime::try_write_pattern;
 use crate::format::neo::*;
 use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
@@ -490,26 +490,20 @@ where
     I: Iterator<Item = PatternItem> + 'b,
     'a: 'b,
 {
-    pub(crate) fn write_to<W: fmt::Write + ?Sized>(self, sink: &mut W) -> fmt::Result {
+    pub(crate) fn try_write_to<W: fmt::Write + ?Sized>(
+        self,
+        sink: &mut W,
+    ) -> Result<Result<(), Error>, fmt::Error> {
         let loc_datetime =
             DateTimeInputWithWeekConfig::new(self.datetime, self.names.week_calculator);
-        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
-            // TODO(#4340): Make the FixedDecimalFormatter optional
-            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
-            return Err(core::fmt::Error);
-        };
-        write_pattern(
+        try_write_pattern(
             self.pattern_items,
             self.pattern_metadata,
             Some(&self.names),
             Some(&self.names),
             &loc_datetime,
-            fixed_decimal_formatter,
+            self.names.fixed_decimal_formatter,
             sink,
         )
-        .map_err(|_e| {
-            icu_provider::_internal::log::warn!("{_e:?}");
-            core::fmt::Error
-        })
     }
 }

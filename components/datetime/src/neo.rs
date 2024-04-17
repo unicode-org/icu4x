@@ -27,7 +27,7 @@ use icu_calendar::provider::{
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::{prelude::*, NeverMarker};
-use writeable::Writeable;
+use writeable::TryWriteable;
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
@@ -644,21 +644,31 @@ pub struct FormattedNeoDate<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedNeoDate<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedNeoDate<'a> {
+    type Error = Error;
+
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         DateTimeWriter {
             datetime: &self.datetime,
             names: self.names,
             pattern_items: self.pattern.iter_items(),
             pattern_metadata: self.pattern.metadata(),
         }
-        .write_to(sink)
+        .try_write_to(sink)
+    }
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        todo!()
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedNeoDate<'_>);
 
 impl<'a> FormattedNeoDate<'a> {
     /// Gets the pattern used in this formatted value.
@@ -911,21 +921,30 @@ pub struct FormattedNeoTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedNeoTime<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedNeoTime<'a> {
+    type Error = Error;
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         DateTimeWriter {
             datetime: &self.datetime,
             names: self.names,
             pattern_items: self.pattern.iter_items(),
             pattern_metadata: self.pattern.metadata(),
         }
-        .write_to(sink)
+        .try_write_to(sink)
+    }
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        todo!()
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedNeoTime<'_>);
 
 impl<'a> FormattedNeoTime<'a> {
     /// Gets the pattern used in this formatted value.
@@ -1945,21 +1964,31 @@ pub struct FormattedNeoDateTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedNeoDateTime<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
+    type Error = Error;
+
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         DateTimeWriter {
             datetime: &self.datetime,
             names: self.names,
             pattern_items: self.pattern.iter_items(),
             pattern_metadata: self.pattern.metadata(),
         }
-        .write_to(sink)
+        .try_write_to(sink)
+    }
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        todo!()
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedNeoDateTime<'_>);
 
 impl<'a> FormattedNeoDateTime<'a> {
     /// Gets the pattern used in this formatted value.
