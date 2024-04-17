@@ -234,13 +234,8 @@ struct Cli {
 
     #[arg(long)]
     #[arg(help = "Use data from this blob file instead of generating it from sources")]
-    #[cfg(all(feature = "blob_input", feature = "provider"))]
+    #[cfg(feature = "blob_input")]
     input_blob: Option<PathBuf>,
-
-    #[arg(long)]
-    #[arg(help = "Use data from this blob file instead of generating it from sources")]
-    #[cfg(all(feature = "blob_input", not(feature = "provider")))]
-    input_blob: PathBuf,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -351,18 +346,15 @@ fn main() -> eyre::Result<()> {
     };
 
     let provider: Box<dyn ExportableProvider> = match () {
-        #[cfg(all(feature = "blob_input", not(feature = "provider")))]
-        () => Box::new(ReexportableBlobDataProvider(
-            icu_provider_blob::BlobDataProvider::try_new_from_blob(
-                std::fs::read(cli.input_blob)?.into(),
-            )?,
-        )),
-        #[cfg(all(feature = "blob_input", feature = "provider"))]
+        #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => Box::new(ReexportableBlobDataProvider(
             icu_provider_blob::BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
             )?,
         )),
+
+        #[cfg(not(feature = "provider"))]
+        () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
 
         #[cfg(feature = "provider")]
         () => {
@@ -453,6 +445,7 @@ fn main() -> eyre::Result<()> {
 
             Box::new(p)
         }
+
         #[cfg(all(not(feature = "blob_input"), not(feature = "provider")))]
         () => compile_error!("Feature `bin` requires either `blob_input` or `provider`"),
     };
