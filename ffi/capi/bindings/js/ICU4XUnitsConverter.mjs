@@ -15,7 +15,7 @@ export class ICU4XUnitsConverter {
     }
   }
 
-  convert_f64(arg_input) {
-    return wasm.ICU4XUnitsConverter_convert_f64(this.underlying, arg_input);
+  convert_f64(arg_value) {
+    return wasm.ICU4XUnitsConverter_convert_f64(this.underlying, arg_value);
   }
 }

@@ -32,11 +32,11 @@ class ICU4XUnitsConverter {
  public:
 
   /**
-   * Converts the input value from the input unit to the output unit.
+   * Converts the input value in float from the input unit to the output unit.
    * NOTE:
    * The conversion using float is not as accurate as the conversion using ratios.
    */
-  double convert_f64(double input) const;
+  double convert_f64(double value) const;
   inline const capi::ICU4XUnitsConverter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnitsConverter* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XUnitsConverter(capi::ICU4XUnitsConverter* i) : inner(i) {}
@@ -48,7 +48,7 @@ class ICU4XUnitsConverter {
 };
 
 
-inline double ICU4XUnitsConverter::convert_f64(double input) const {
-  return capi::ICU4XUnitsConverter_convert_f64(this->inner.get(), input);
+inline double ICU4XUnitsConverter::convert_f64(double value) const {
+  return capi::ICU4XUnitsConverter_convert_f64(this->inner.get(), value);
 }
 #endif

@@ -15,7 +15,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`ICU4XUnitsConverter`]
-    /// from [`ICU4XMeasureUnit`]s.
+    /// for converting between two [`ICU4XMeasureUnit`]s.
     /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
     #[diplomat::rust_link(
@@ -100,11 +100,12 @@ pub mod ffi {
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
     impl ICU4XUnitsConverter {
-        /// Converts the input value from the input unit to the output unit.
+        /// Converts the input value in float from the input unit to the output unit.
         /// NOTE:
         ///   The conversion using float is not as accurate as the conversion using ratios.
-        pub fn convert_f64(&self, input: f64) -> f64 {
-            self.0.convert_f64(input)
+        #[diplomat::attr(dart, rename = "convert_double")]
+        pub fn convert_f64(&self, value: f64) -> f64 {
+            self.0.convert_f64(value)
         }
     }
 }

@@ -29,7 +29,7 @@ struct ICU4XUnitsConverterFactoryDeleter {
 
 /**
  * An ICU4X Units Converter Factory object, capable of creating converters a [`ICU4XUnitsConverter`]
- * from [`ICU4XMeasureUnit`]s.
+ * for converting between two [`ICU4XMeasureUnit`]s.
  * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
  * 
  * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.

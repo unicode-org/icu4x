@@ -19,7 +19,7 @@ namespace capi {
 extern "C" {
 #endif
 
-double ICU4XUnitsConverter_convert_f64(const ICU4XUnitsConverter* self, double input);
+double ICU4XUnitsConverter_convert_f64(const ICU4XUnitsConverter* self, double value);
 void ICU4XUnitsConverter_destroy(ICU4XUnitsConverter* self);
 
 #ifdef __cplusplus
