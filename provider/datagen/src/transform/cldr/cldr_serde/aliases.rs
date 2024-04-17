@@ -12,36 +12,36 @@ use std::collections::HashMap;
 use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Replacement<T> {
+pub(in crate::provider) struct Replacement<T> {
     #[serde(rename = "_replacement")]
-    pub replacement: T,
+    pub(in crate::provider) replacement: T,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Alias {
+pub(in crate::provider) struct Alias {
     #[serde(rename = "languageAlias")]
-    pub language_aliases: HashMap<String, Replacement<String>>,
+    pub(in crate::provider) language_aliases: HashMap<String, Replacement<String>>,
     #[serde(rename = "scriptAlias")]
-    pub script_aliases: HashMap<TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>>,
+    pub(in crate::provider) script_aliases: HashMap<TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>>,
     #[serde(rename = "territoryAlias")]
-    pub region_aliases: HashMap<TinyAsciiStr<3>, Replacement<String>>,
+    pub(in crate::provider) region_aliases: HashMap<TinyAsciiStr<3>, Replacement<String>>,
     #[serde(rename = "variantAlias")]
-    pub variant_aliases: HashMap<TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>>,
+    pub(in crate::provider) variant_aliases: HashMap<TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>>,
     #[serde(rename = "subdivisionAlias")]
-    pub subdivision_aliases: HashMap<TinyAsciiStr<7>, Replacement<String>>,
+    pub(in crate::provider) subdivision_aliases: HashMap<TinyAsciiStr<7>, Replacement<String>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Metadata {
-    pub alias: Alias,
+pub(in crate::provider) struct Metadata {
+    pub(in crate::provider) alias: Alias,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
-    pub metadata: Metadata,
+pub(in crate::provider) struct Supplemental {
+    pub(in crate::provider) metadata: Metadata,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

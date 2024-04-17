@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use calendrical_calculations::islamic::{IslamicBasedMarker, ObservationalIslamicMarker};
 use calendrical_calculations::iso;
 use icu_calendar::provider::islamic::*;
@@ -17,7 +18,7 @@ fn load<IB: IslamicBasedMarker>() -> IslamicCacheV1<'static> {
     IslamicCacheV1::compute_for::<IB>(extended_start..extended_end)
 }
 
-impl DataProvider<IslamicObservationalCacheV1Marker> for crate::DatagenProvider {
+impl DataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -31,7 +32,7 @@ impl DataProvider<IslamicObservationalCacheV1Marker> for crate::DatagenProvider 
     }
 }
 
-impl IterableDataProvider<IslamicObservationalCacheV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

@@ -4,14 +4,16 @@
 
 use std::borrow::Borrow;
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 
-pub static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> = OnceCell::new();
+pub(in crate::provider) static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> =
+    OnceCell::new();
 
 fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
     DATAKEY_FILTERS.get_or_init(|| {
@@ -69,7 +71,7 @@ fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
 macro_rules! make_data_provider {
     ($($marker: ident),+ $(,)?) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider {
+            impl DataProvider<$marker> for DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
@@ -94,7 +96,7 @@ macro_rules! make_data_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            impl IterableDataProviderInternal<$marker> for DatagenProvider {
                 fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     Ok(self
                         .cldr()?
@@ -187,7 +189,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -207,7 +209,7 @@ mod tests {
 
     #[test]
     fn test_singular_sub_pattern() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("ar").into(),

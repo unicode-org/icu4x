@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-pub mod collator;
-pub mod normalizer;
-pub mod ucase;
-pub mod uprops;
+pub(in crate::provider) mod collator;
+pub(in crate::provider) mod normalizer;
+pub(in crate::provider) mod ucase;
+pub(in crate::provider) mod uprops;

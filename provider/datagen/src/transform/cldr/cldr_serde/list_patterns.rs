@@ -12,40 +12,40 @@ use serde::Deserialize;
 use super::locale_resource::LocaleResource;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ListPattern {
-    pub start: String,
-    pub middle: String,
-    pub end: String,
+pub(in crate::provider) struct ListPattern {
+    pub(in crate::provider) start: String,
+    pub(in crate::provider) middle: String,
+    pub(in crate::provider) end: String,
     #[serde(rename = "2")]
-    pub pair: String,
+    pub(in crate::provider) pair: String,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ListPatterns {
+pub(in crate::provider) struct ListPatterns {
     #[serde(rename = "listPattern-type-standard")]
-    pub standard: ListPattern,
+    pub(in crate::provider) standard: ListPattern,
     #[serde(rename = "listPattern-type-standard-narrow")]
-    pub standard_narrow: ListPattern,
+    pub(in crate::provider) standard_narrow: ListPattern,
     #[serde(rename = "listPattern-type-standard-short")]
-    pub standard_short: ListPattern,
+    pub(in crate::provider) standard_short: ListPattern,
     #[serde(rename = "listPattern-type-or")]
-    pub or: ListPattern,
+    pub(in crate::provider) or: ListPattern,
     #[serde(rename = "listPattern-type-or-narrow")]
-    pub or_narrow: ListPattern,
+    pub(in crate::provider) or_narrow: ListPattern,
     #[serde(rename = "listPattern-type-or-short")]
-    pub or_short: ListPattern,
+    pub(in crate::provider) or_short: ListPattern,
     #[serde(rename = "listPattern-type-unit")]
-    pub unit: ListPattern,
+    pub(in crate::provider) unit: ListPattern,
     #[serde(rename = "listPattern-type-unit-narrow")]
-    pub unit_narrow: ListPattern,
+    pub(in crate::provider) unit_narrow: ListPattern,
     #[serde(rename = "listPattern-type-unit-short")]
-    pub unit_short: ListPattern,
+    pub(in crate::provider) unit_short: ListPattern,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangListPatterns {
+pub(in crate::provider) struct LangListPatterns {
     #[serde(rename = "listPatterns")]
-    pub list_patterns: ListPatterns,
+    pub(in crate::provider) list_patterns: ListPatterns,
 }
 
-pub type Resource = LocaleResource<LangListPatterns>;
+pub(in crate::provider) type Resource = LocaleResource<LangListPatterns>;

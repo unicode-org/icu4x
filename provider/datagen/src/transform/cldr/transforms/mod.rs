@@ -4,6 +4,7 @@
 
 use super::cldr_serde::transforms;
 use super::source::CldrCache;
+use crate::provider::DatagenProvider;
 use icu_experimental::transliterate::provider::*;
 use icu_experimental::transliterate::RuleCollection;
 use icu_locid::Locale;
@@ -111,7 +112,7 @@ impl CldrCache {
     }
 }
 
-impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
+impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -126,7 +127,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     // Don't do caching for this one. It uses its own mutex
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         self.cldr()?
@@ -144,7 +145,7 @@ mod tests {
 
     #[test]
     fn test_de_ascii_forward() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
@@ -158,7 +159,7 @@ mod tests {
 
     #[test]
     fn test_latin_ascii_backward() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
