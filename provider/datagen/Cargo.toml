@@ -51,6 +51,7 @@ databake = { workspace = true, optional = true}
 proc-macro2 = {version = "1", optional = true }
 
 # The components are needed for the registry, provider, baked exporter, with different features
+icu = { workspace = true }
 icu_calendar = { workspace = true }
 icu_casemap = { workspace = true }
 icu_collator = { workspace = true }
@@ -197,7 +198,8 @@ experimental_components = [
     "icu_plurals/experimental",
     # Only required if both provider and experimental are enabled, but that's not expressible with features
     "dep:num-bigint",
-    "dep:num-rational"
+    "dep:num-rational",
+    "icu/experimental",
 ]
 
 [[bin]]
