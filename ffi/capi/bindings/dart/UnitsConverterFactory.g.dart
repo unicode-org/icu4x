@@ -39,8 +39,8 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     return UnitsConverterFactory._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`UnitsConverter`] from the input and output `MeasureUnit`s.
-  /// Returns `None` if the conversion between the two units is not possible.
+  /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
+  /// Returns nothing if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
   UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
     final result = _ICU4XUnitsConverterFactory_converter(_ffi, from._ffi, to._ffi);

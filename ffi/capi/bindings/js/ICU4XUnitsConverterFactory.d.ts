@@ -24,7 +24,7 @@ export class ICU4XUnitsConverterFactory {
 
   /**
 
-   * Creates a new {@link ICU4XUnitsConverter `ICU4XUnitsConverter`} from the input and output `ICU4XMeasureUnit`s. Returns `None` if the conversion between the two units is not possible. For example, conversion between `meter` and `second` is not possible.
+   * Creates a new {@link ICU4XUnitsConverter `ICU4XUnitsConverter`} from the input and output {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}s. Returns nothing if the conversion between the two units is not possible. For example, conversion between `meter` and `second` is not possible.
    */
   converter(from: ICU4XMeasureUnit, to: ICU4XMeasureUnit): ICU4XUnitsConverter | undefined;
 

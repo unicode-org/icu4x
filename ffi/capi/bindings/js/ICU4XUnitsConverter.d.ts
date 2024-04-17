@@ -4,6 +4,8 @@ import { f64 } from "./diplomat-runtime"
 
  * An ICU4X Units Converter object, capable of converting between two {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}s.
 
+ * You can create an instance of this object using {@link ICU4XUnitsConverterFactory `ICU4XUnitsConverterFactory`} by calling the `converter` method.
+
  * See the {@link https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html Rust documentation for `UnitsConverter`} for more information.
  */
 export class ICU4XUnitsConverter {

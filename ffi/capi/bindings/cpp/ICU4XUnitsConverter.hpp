@@ -24,6 +24,8 @@ struct ICU4XUnitsConverterDeleter {
 /**
  * An ICU4X Units Converter object, capable of converting between two [`ICU4XMeasureUnit`]s.
  * 
+ * You can create an instance of this object using [`ICU4XUnitsConverterFactory`] by calling the `converter` method.
+ * 
  * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
  */
 class ICU4XUnitsConverter {

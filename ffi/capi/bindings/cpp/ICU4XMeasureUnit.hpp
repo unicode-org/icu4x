@@ -22,7 +22,10 @@ struct ICU4XMeasureUnitDeleter {
 };
 
 /**
- * An ICU4X Measurement Unit object which represents a single unit of measurement such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
+ * An ICU4X Measurement Unit object which represents a single unit of measurement
+ * such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
+ * 
+ * You can create an instance of this object using [`ICU4XMeasureUnitParser`] by calling the `parse_measure_unit` method.
  * 
  * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnit.html) for more information.
  */

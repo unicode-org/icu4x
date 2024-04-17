@@ -45,8 +45,8 @@ class ICU4XUnitsConverterFactory {
   static diplomat::result<ICU4XUnitsConverterFactory, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
-   * Creates a new [`ICU4XUnitsConverter`] from the input and output `ICU4XMeasureUnit`s.
-   * Returns `None` if the conversion between the two units is not possible.
+   * Creates a new [`ICU4XUnitsConverter`] from the input and output [`ICU4XMeasureUnit`]s.
+   * Returns nothing if the conversion between the two units is not possible.
    * For example, conversion between `meter` and `second` is not possible.
    */
   std::optional<ICU4XUnitsConverter> converter(const ICU4XMeasureUnit& from, const ICU4XMeasureUnit& to) const;

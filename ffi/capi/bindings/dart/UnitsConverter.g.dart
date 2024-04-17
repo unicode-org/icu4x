@@ -4,6 +4,8 @@ part of 'lib.g.dart';
 
 /// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
 ///
+/// You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+///
 /// See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
 final class UnitsConverter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
