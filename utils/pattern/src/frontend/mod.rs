@@ -216,9 +216,9 @@ where
 impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    for<'a> B::PlaceholderKey<'a>: FromStr,
+    B::PlaceholderKey<'static>: FromStr,
     B::Store: ToOwned,
-    for<'a> <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
+    <B::PlaceholderKey<'static> as FromStr>::Err: fmt::Debug,
 {
     /// Creates a pattern by parsing a syntax string.
     ///
@@ -241,7 +241,7 @@ where
     ///     .expect_err("mismatched braces");
     /// ```
     pub fn try_from_str(pattern: &str) -> Result<Self, Error> {
-        let parser = Parser::new(
+        let parser: Parser<B::PlaceholderKey<'static>> = Parser::new(
             pattern,
             ParserOptions {
                 allow_raw_letters: true,
@@ -418,10 +418,8 @@ where
 }
 
 #[test]
-fn test_try_from_store_inference() {
+fn test_try_from_str_inference() {
     use crate::SinglePlaceholder;
-    // Does NOT work:
-    // let _: Pattern<SinglePlaceholder, String> = Pattern::try_from_str("{0} days").unwrap();
-    // Works:
+    let _: Pattern<SinglePlaceholder, String> = Pattern::try_from_str("{0} days").unwrap();
     let _ = Pattern::<SinglePlaceholder, String>::try_from_str("{0} days").unwrap();
 }

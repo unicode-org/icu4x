@@ -320,7 +320,8 @@ impl PatternBackend for DoublePlaceholder {
     #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'a>>, Error>>,
+        'b,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'b>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {

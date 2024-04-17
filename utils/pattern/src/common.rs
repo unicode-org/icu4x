@@ -85,7 +85,8 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     #[cfg(feature = "alloc")]
     fn try_from_items<
         'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'a>>, Error>>,
+        'b,
+        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey<'b>>, Error>>,
     >(
         items: I,
     ) -> Result<<Self::Store as ToOwned>::Owned, Error>
