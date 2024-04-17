@@ -187,7 +187,6 @@ version = "1.4.0"
 dependencies = [
  "icu",
  "icu_datagen",
- "icu_experimental",
  "log",
  "simple_logger",
 ]
@@ -1042,6 +1041,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1388,6 +1388,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "fixed_decimal",
+ "icu",
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
