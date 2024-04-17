@@ -195,7 +195,6 @@ where
     /// ```
     pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
     where
-        B: 'a,
         I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey<'a>>>,
     {
         let store = B::try_from_items(items.map(Ok))?;

@@ -62,9 +62,7 @@ impl<'a, T> From<PatternItem<'a, T>> for PatternItemCow<'a, T> {
 /// [`Pattern`]: crate::Pattern
 pub trait PatternBackend: crate::private::Sealed + 'static {
     /// The type to be used as the placeholder key in code.
-    type PlaceholderKey<'a>
-    where
-        Self: 'a;
+    type PlaceholderKey<'a>;
 
     /// The type of error that the [`TryWriteable`] for this backend can return.
     type Error<'a>;
@@ -74,9 +72,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
 
     /// The iterator type returned by [`Self::try_from_items`].
     #[doc(hidden)] // TODO(#4467): Should be internal
-    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>
-    where
-        Self: 'a;
+    type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>;
 
     /// Checks a store for validity, returning an error if invalid.
     #[doc(hidden)] // TODO(#4467): Should be internal
@@ -94,7 +90,6 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
         items: I,
     ) -> Result<<Self::Store as ToOwned>::Owned, Error>
     where
-        Self: 'a,
         Self::Store: ToOwned;
 
     /// Iterates over the pattern items in a store.
