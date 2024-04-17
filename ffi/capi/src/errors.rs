@@ -154,7 +154,7 @@ pub mod ffi {
         NormalizerFutureExtensionError = 0xB_00,
         NormalizerValidationError = 0xB_01,
 
-        // Conversion Erros
+        // Units errors
         #[cfg(feature = "experimental_components")]
         InvalidCldrUnitIdentifierError = 0x0C_00,
     }
