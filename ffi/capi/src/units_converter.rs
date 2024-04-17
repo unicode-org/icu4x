@@ -48,8 +48,8 @@ pub mod ffi {
         /// For example, conversion between `meter` and `second` is not possible.
         pub fn converter(
             &self,
-            input_unit: &ICU4XMeasureUnit,
-            output_unit: &ICU4XMeasureUnit,
+            from: &ICU4XMeasureUnit,
+            to: &ICU4XMeasureUnit,
         ) -> Option<Box<ICU4XUnitsConverter>> {
             self.0.converter(input_unit.0, output_unit.0)
         }
@@ -74,7 +74,10 @@ pub mod ffi {
     impl ICU4XMeasureUnitParser {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         /// Returns an error if the unit identifier is not valid.
-        pub fn parse(&self, unit_id: &str) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
+        pub fn parse_measure_unit(
+            &self,
+            unit_id: &str,
+        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
             self.0.try_from_identifier(unit_id).map(Box::new)
         }
     }
