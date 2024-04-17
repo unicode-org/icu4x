@@ -5,6 +5,7 @@
 use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
 use icu_provider::datagen::*;
+use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
@@ -198,9 +199,34 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
 
         MeasuringAllocator::start_measure();
 
-        let ((allocated, deallocated), payload_after) =
-            crate::deserialize_and_measure(key, buffer_payload, MeasuringAllocator::end_measure)
-                .unwrap();
+        let allocated;
+        let deallocated;
+        let payload_after;
+
+        macro_rules! cb {
+            ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+                ((allocated, deallocated), payload_after) = match key {
+                    k if k == icu_provider::hello_world::HelloWorldV1Marker::KEY => {
+                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                        (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
+                    }
+                    $(
+                        k if k == <$marker>::KEY => {
+                            let deserialized: DataPayload<$marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                            (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
+                        }
+                    )+
+                    $(
+                        k if k == <$emarker>::KEY => {
+                            let deserialized: DataPayload<$emarker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                            (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
+                        }
+                    )+
+                    _ => unreachable!("unregistered key {key:?}")
+                };
+            }
+        }
+        crate::registry!(cb);
 
         if payload_before != &payload_after {
             self.rountrip_errors
