@@ -1,0 +1,73 @@
+{
+  "indices": [
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 0
+    },
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 3
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 6
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 8
+    },
+    {
+      "has_long": true,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 9
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": true,
+      "index": 11
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 17
+    },
+    {
+      "has_long": false,
+      "has_medium": false,
+      "has_plurals": false,
+      "index": 18
+    }
+  ],
+  "patterns": [
+    "LLLL",
+    "LLL",
+    "L",
+    "MMMM y",
+    "MMM y",
+    "M/y",
+    "MMMM y GGGG",
+    "MMM y GGG",
+    "y",
+    "y GGGG",
+    "y GGG",
+    "'linggo' w 'ng' Y",
+    "'ika-'w 'linggo ng' Y",
+    "'linggo' w 'ng' Y",
+    "'linggo' w 'ng' Y",
+    "'linggo' w 'ng' Y",
+    "'linggo' w 'ng' Y",
+    "'unimplemented'",
+    "'unimplemented'"
+  ]
+}

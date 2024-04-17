@@ -53,54 +53,6 @@
       "has_medium": false,
       "has_plurals": false,
       "index": 20
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 22
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 25
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 28
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 30
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 31
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 33
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 34
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 35
     }
   ],
   "patterns": [
@@ -125,20 +77,6 @@
     "EEEEที่ d MMMM GGGG y",
     "E d MMM GGG y",
     "cccc",
-    "ccc",
-    "LLLL",
-    "LLL",
-    "L",
-    "MMMM y",
-    "MMM y",
-    "M/y",
-    "MMMM GGGG y",
-    "MMM GGG y",
-    "y",
-    "GGGG y",
-    "GGG y",
-    "สัปดาห์ที่ w ของปี Y",
-    "'unimplemented'",
-    "'unimplemented'"
+    "ccc"
   ]
 }

@@ -53,54 +53,6 @@
       "has_medium": false,
       "has_plurals": false,
       "index": 20
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 22
-    },
-    {
-      "has_long": true,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 25
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 28
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 30
-    },
-    {
-      "has_long": true,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 31
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": true,
-      "index": 33
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 39
-    },
-    {
-      "has_long": false,
-      "has_medium": false,
-      "has_plurals": false,
-      "index": 40
     }
   ],
   "patterns": [
@@ -125,25 +77,6 @@
     "EEEE, MMMM d, y GGGG",
     "E, MMM d, y GGG",
     "cccc",
-    "ccc",
-    "LLLL",
-    "LLL",
-    "L",
-    "MMMM y",
-    "MMM y",
-    "M/y",
-    "MMMM y GGGG",
-    "MMM y GGG",
-    "y",
-    "y GGGG",
-    "y GGG",
-    "'linggo' w 'ng' Y",
-    "'ika-'w 'linggo ng' Y",
-    "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y",
-    "'unimplemented'",
-    "'unimplemented'"
+    "ccc"
   ]
 }
