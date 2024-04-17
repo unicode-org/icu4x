@@ -81,6 +81,7 @@ impl ReciprocalConverter {
     /// NOTE:
     ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
     pub fn convert_f64(&self, value: f64) -> f64 {
+        // TODO: handle the case when the conversion rate is zero or the value is zero.
         self.proportional.convert_f64(value).recip()
     }
 }
@@ -93,6 +94,9 @@ pub(crate) struct OffsetConverter {
 
     /// The offset value to be added to the result of the proportional converter.
     pub(crate) offset: IcuRatio,
+
+    /// The offset value to be added to the result of the proportional converter in [`f64`].
+    pub(crate) offset_f64: f64,
 }
 
 impl OffsetConverter {
@@ -105,7 +109,7 @@ impl OffsetConverter {
     /// NOTE:
     ///    The conversion using [`f64`] is not as accurate as the conversion using ratios.
     pub fn convert_f64(&self, value: f64) -> f64 {
-        (&self.offset + self.proportional.convert_f64(value)).unwrap_or(f64::NAN)
+        self.proportional.convert_f64(value) + self.offset_f64
     }
 }
 
@@ -121,6 +125,9 @@ impl OffsetConverter {
 pub(crate) struct ProportionalConverter {
     /// The conversion rate between the input and output units.
     pub(crate) conversion_rate: IcuRatio,
+
+    /// The conversion rate between the input and output units in [`f64`].
+    pub(crate) conversion_rate_f64: f64,
 }
 
 impl ProportionalConverter {
@@ -133,6 +140,6 @@ impl ProportionalConverter {
     /// NOTE:
     ///     The conversion using [`f64`] is not as accurate as the conversion using ratios.
     pub fn convert_f64(&self, value: f64) -> f64 {
-        (&self.conversion_rate * value).unwrap_or(f64::NAN)
+        self.conversion_rate_f64 * value
     }
 }

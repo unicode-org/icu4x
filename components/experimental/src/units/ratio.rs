@@ -45,6 +45,11 @@ impl IcuRatio {
         Self(self.0.recip())
     }
 
+    /// Returns the value of the ratio as a `f64`.
+    pub(crate) fn to_f64(&self) -> Option<f64> {
+        self.0.to_f64()
+    }
+
     /// Returns the absolute value of the ratio.
     pub fn abs(&self) -> Self {
         Self(self.0.abs())
