@@ -302,7 +302,7 @@ impl IterableDataProviderInternal<XcalYearMonthDayNeoSkeletonPatternsV1Marker> f
 fn test_all_calendars_and_skeleta() {
     use std::collections::BTreeMap;
     simple_logger::init_with_env().unwrap();
-    let provider = DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_latest_tested();
     let mut results: BTreeMap<
         (
             String,
@@ -341,6 +341,10 @@ fn test_all_calendars_and_skeleta() {
                     }
                 })
             {
+                println!(
+                    "Loading: locale: {:?}, calendar: {}, components: {:?}",
+                    locale, calendar, components
+                );
                 let Ok(packed) = provider.make_packed_skeleton_data(
                     DataRequest {
                         locale: &locale,
@@ -352,7 +356,6 @@ fn test_all_calendars_and_skeleta() {
                             .to_components_bag()
                     },
                 ) else {
-                    // log::warn!("Not found: locale: {:?}, calendar: {:?}, components: {:?}", locale, calendar, components);
                     continue;
                 };
                 let postcard_vec = postcard::to_allocvec(&packed).unwrap();
@@ -376,8 +379,6 @@ fn test_all_calendars_and_skeleta() {
         .collect::<HashSet<&[u8]>>();
     let uniqueness = unique_values.len();
     let unique_size = unique_values.iter().map(|v| v.len()).sum::<usize>();
-
-    println!("{:?}", results.keys());
 
     println!(
         "Total count: {}, total size: {}, uniqueness: {}, unique size: {}",
