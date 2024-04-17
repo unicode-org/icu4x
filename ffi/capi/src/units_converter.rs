@@ -83,13 +83,18 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X Measurement Unit object which represents a single unit of measurement such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
+    /// An ICU4X Measurement Unit object which represents a single unit of measurement
+    /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
+    ///
+    /// You can create an instance of this object using [`ICU4XMeasureUnitParser`] by calling the `parse_measure_unit` method.
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct)]
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct, hidden)]
     pub struct ICU4XMeasureUnit(pub MeasureUnit);
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter object, capable of converting between two [`ICU4XMeasureUnit`]s.
+    ///
+    /// You can create an instance of this object using [`ICU4XUnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct, hidden)]
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
