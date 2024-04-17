@@ -10,6 +10,7 @@ use core::{
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
+use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
 use super::provider::{Base, SiPrefix};
@@ -76,6 +77,14 @@ impl Mul<&IcuRatio> for &IcuRatio {
     }
 }
 
+impl Mul<f64> for &IcuRatio {
+    type Output = Option<f64>;
+
+    fn mul(self, rhs: f64) -> Option<f64> {
+        Some(&self.0.to_f64()? * rhs)
+    }
+}
+
 impl MulAssign<IcuRatio> for IcuRatio {
     fn mul_assign(&mut self, rhs: IcuRatio) {
         self.0 *= rhs.0;
@@ -103,6 +112,22 @@ impl Div for IcuRatio {
     }
 }
 
+impl Div<f64> for &IcuRatio {
+    type Output = Option<f64>;
+
+    fn div(self, rhs: f64) -> Option<f64> {
+        Some(&self.0.to_f64()? / rhs)
+    }
+}
+
+impl Div<&IcuRatio> for f64 {
+    type Output = Option<f64>;
+
+    fn div(self, rhs: &IcuRatio) -> Option<f64> {
+        Some(self / rhs.0.to_f64()?)
+    }
+}
+
 impl DivAssign for IcuRatio {
     fn div_assign(&mut self, rhs: Self) {
         self.0 /= rhs.0;
@@ -125,6 +150,14 @@ impl Add<&IcuRatio> for &IcuRatio {
     }
 }
 
+impl Add<f64> for &IcuRatio {
+    type Output = Option<f64>;
+
+    fn add(self, rhs: f64) -> Option<f64> {
+        Some(&self.0.to_f64()? + rhs)
+    }
+}
+
 impl AddAssign for IcuRatio {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
@@ -136,6 +169,14 @@ impl Sub for IcuRatio {
 
     fn sub(self, rhs: Self) -> Self {
         Self(self.0 - rhs.0)
+    }
+}
+
+impl Sub<f64> for &IcuRatio {
+    type Output = Option<f64>;
+
+    fn sub(self, rhs: f64) -> Option<f64> {
+        Some(&self.0.to_f64()? - rhs)
     }
 }
 

@@ -20,6 +20,13 @@ impl UnitsConverter {
     pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
         self.0.convert(value)
     }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        self.0.convert_f64(value)
+    }
 }
 
 /// Enum containing all the of converters: Proportional, Reciprocal, and Offset converters as follows:
@@ -42,6 +49,17 @@ impl UnitsConverterInner {
             UnitsConverterInner::Offset(converter) => converter.convert(value),
         }
     }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit based on the inner converter type.
+    /// NOTE:
+    ///    The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    fn convert_f64(&self, value: f64) -> f64 {
+        match self {
+            UnitsConverterInner::Proportional(converter) => converter.convert_f64(value),
+            UnitsConverterInner::Reciprocal(converter) => converter.convert_f64(value),
+            UnitsConverterInner::Offset(converter) => converter.convert_f64(value),
+        }
+    }
 }
 
 /// A converter for converting between two units that are reciprocal.
@@ -57,6 +75,13 @@ impl ReciprocalConverter {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
         self.proportional.convert(value).recip()
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        self.proportional.convert_f64(value).recip()
     }
 }
 
@@ -74,6 +99,13 @@ impl OffsetConverter {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
         &self.proportional.convert(value) + &self.offset
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///    The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        (&self.offset + self.proportional.convert_f64(value)).unwrap_or(f64::NAN)
     }
 }
 
@@ -95,5 +127,12 @@ impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
         &self.conversion_rate * value
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///     The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        (&self.conversion_rate * value).unwrap_or(f64::NAN)
     }
 }

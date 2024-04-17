@@ -262,6 +262,7 @@ impl ConverterFactory {
         Some(conversion_info_factor)
     }
 
+    // TODO: check that the conversion rate and offset are numbers and not NaN.
     /// Creates a converter for converting between two single or compound units.
     /// For example:
     ///    1 - `meter` to `foot` --> Simple
