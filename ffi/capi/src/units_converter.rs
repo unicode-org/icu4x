@@ -43,6 +43,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`ICU4XUnitsConverter`] from the input and output `ICU4XMeasureUnit`s.
+        /// Returns `None` if the conversion between the two units is not possible.
+        /// For example, conversion between `meter` and `second` is not possible.
         pub fn converter(
             &self,
             input_unit: &ICU4XMeasureUnit,

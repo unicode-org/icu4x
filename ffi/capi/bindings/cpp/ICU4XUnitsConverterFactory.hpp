@@ -45,6 +45,8 @@ class ICU4XUnitsConverterFactory {
 
   /**
    * Creates a new [`ICU4XUnitsConverter`] from the input and output `ICU4XMeasureUnit`s.
+   * Returns `None` if the conversion between the two units is not possible.
+   * For example, conversion between `meter` and `second` is not possible.
    */
   std::optional<ICU4XUnitsConverter> converter(const ICU4XMeasureUnit& input_unit, const ICU4XMeasureUnit& output_unit) const;
 
