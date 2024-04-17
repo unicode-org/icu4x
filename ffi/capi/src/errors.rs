@@ -416,12 +416,10 @@ impl From<NormalizerError> for ICU4XError {
 }
 
 #[cfg(feature = "experimental_components")]
-impl From<icu_experimental::units::ConversionError> for ICU4XError {
-    fn from(value: icu_experimental::units::ConversionError) -> Self {
+impl From<ConversionError> for ICU4XError {
+    fn from(value: ConversionError) -> Self {
         match value {
-            icu_experimental::units::ConversionError::InvalidUnit => {
-                ICU4XError::InvalidCLDRUnitIdentifierError
-            }
+            ConversionError::InvalidUnit => ICU4XError::InvalidCLDRUnitIdentifierError,
             _ => ICU4XError::UnknownError,
         }
     }
