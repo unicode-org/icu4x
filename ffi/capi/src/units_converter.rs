@@ -75,7 +75,7 @@ pub mod ffi {
         pub fn parse_measure_unit(
             &self,
             unit_id: &str,
-        ) -> Result<Box<ICU4XMeasureUnit, ICU4XError>> {
+        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
             match self.0.try_from_identifier(unit_id) {
                 Ok(unit) => Ok(Box::new(ICU4XMeasureUnit(unit))),
                 Err(_) => Err(ICU4XError::InvalidCLDRUnitIdentifierError),

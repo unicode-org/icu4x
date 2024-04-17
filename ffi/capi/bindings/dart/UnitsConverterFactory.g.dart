@@ -48,14 +48,11 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   }
 
   /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-  ///
-  /// Throws [Error] on failure.
   MeasureUnitParser parser() {
+    // This lifetime edge depends on lifetimes: 'a
+    core.List<Object> aEdges = [this];
     final result = _ICU4XUnitsConverterFactory_parser(_ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return MeasureUnitParser._fromFfi(result.union.ok, []);
+    return MeasureUnitParser._fromFfi(result, [], aEdges);
   }
 }
 
@@ -75,6 +72,6 @@ external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(ffi.Pointer<ffi.O
 external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
 
 @meta.ResourceIdentifier('ICU4XUnitsConverterFactory_parser')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_parser(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_parser(ffi.Pointer<ffi.Opaque> self);

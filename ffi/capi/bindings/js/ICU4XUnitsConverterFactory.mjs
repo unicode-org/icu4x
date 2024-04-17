@@ -43,6 +43,6 @@ export class ICU4XUnitsConverterFactory {
   }
 
   parser() {
-    return new ICU4XMeasureUnitParser(wasm.ICU4XUnitsConverterFactory_parser(this.underlying), true, []);
+    return new ICU4XMeasureUnitParser(wasm.ICU4XUnitsConverterFactory_parser(this.underlying), true, [this]);
   }
 }

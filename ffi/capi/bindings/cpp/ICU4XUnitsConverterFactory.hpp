@@ -53,8 +53,10 @@ class ICU4XUnitsConverterFactory {
 
   /**
    * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
    */
-  diplomat::result<ICU4XMeasureUnitParser, ICU4XError> parser() const;
+  ICU4XMeasureUnitParser parser() const;
   inline const capi::ICU4XUnitsConverterFactory* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnitsConverterFactory* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XUnitsConverterFactory(capi::ICU4XUnitsConverterFactory* i) : inner(i) {}
@@ -90,14 +92,7 @@ inline std::optional<ICU4XUnitsConverter> ICU4XUnitsConverterFactory::converter(
   }
   return diplomat_optional_out_value;
 }
-inline diplomat::result<ICU4XMeasureUnitParser, ICU4XError> ICU4XUnitsConverterFactory::parser() const {
-  auto diplomat_result_raw_out_value = capi::ICU4XUnitsConverterFactory_parser(this->inner.get());
-  diplomat::result<ICU4XMeasureUnitParser, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnitParser>(ICU4XMeasureUnitParser(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+inline ICU4XMeasureUnitParser ICU4XUnitsConverterFactory::parser() const {
+  return ICU4XMeasureUnitParser(capi::ICU4XUnitsConverterFactory_parser(this->inner.get()));
 }
 #endif
