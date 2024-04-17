@@ -72,7 +72,7 @@ pub mod ffi {
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
     impl ICU4XUnitsConverter {
-        /// Converts the input value in float from the input unit to the output unit.
+        /// Converts the input value from the input unit to the output unit.
         /// NOTE:
         ///   The conversion using float is not as accurate as the conversion using ratios.
         pub fn convert_f64(&self, input: f64) -> f64 {
