@@ -53,7 +53,7 @@ pub mod ffi {
         }
 
         /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
-        pub fn parser<'a>(&self) -> Box<ICU4XMeasureUnitParser<'a>> {
+        pub fn parser<'a>(&'a self) -> Box<ICU4XMeasureUnitParser<'a>> {
             ICU4XMeasureUnitParser(self.0.parser()).into()
         }
     }
@@ -69,13 +69,13 @@ pub mod ffi {
     )]
     pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
 
-    impl ICU4XMeasureUnitParser <'a> {
+    impl<'a> ICU4XMeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         /// Returns an error if the unit identifier is not valid.
         pub fn parse_measure_unit(
             &self,
             unit_id: &str,
-        ) -> Result<Box< ICU4XMeasureUnit , ICU4XError>> {
+        ) -> Result<Box<ICU4XMeasureUnit, ICU4XError>> {
             match self.0.try_from_identifier(unit_id) {
                 Ok(unit) => Ok(Box::new(ICU4XMeasureUnit(unit))),
                 Err(_) => Err(ICU4XError::InvalidCLDRUnitIdentifierError),
