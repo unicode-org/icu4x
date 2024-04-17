@@ -52,8 +52,8 @@ pub mod ffi {
         }
 
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-        pub fn parse(&self, unit_id: &str) -> Result<ICU4XMeasureUnit, ICU4XError> {
-            self.0.parse(unit_id)
+        pub fn parse(&self, unit_id: &str) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
+             self.0.parse(unit_id).map(Box::new)
         }
     }
 
