@@ -28,7 +28,7 @@ final class UnitsConverter implements ffi.Finalizable {
 
   /// Converts the input value in float from the input unit to the output unit.
   /// NOTE:
-  /// The conversion using float is not as accurate as the conversion using ratios.
+  /// The conversion using floating-point operations is not as accurate as the conversion using ratios.
   double convertDouble(double value) {
     final result = _ICU4XUnitsConverter_convert_f64(_ffi, value);
     return result;

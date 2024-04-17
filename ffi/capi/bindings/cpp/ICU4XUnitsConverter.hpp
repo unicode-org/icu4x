@@ -34,7 +34,7 @@ class ICU4XUnitsConverter {
   /**
    * Converts the input value in float from the input unit to the output unit.
    * NOTE:
-   * The conversion using float is not as accurate as the conversion using ratios.
+   * The conversion using floating-point operations is not as accurate as the conversion using ratios.
    */
   double convert_f64(double value) const;
   inline const capi::ICU4XUnitsConverter* AsFFI() const { return this->inner.get(); }

@@ -102,7 +102,7 @@ pub mod ffi {
     impl ICU4XUnitsConverter {
         /// Converts the input value in float from the input unit to the output unit.
         /// NOTE:
-        ///   The conversion using float is not as accurate as the conversion using ratios.
+        ///   The conversion using floating-point operations is not as accurate as the conversion using ratios.
         #[diplomat::attr(dart, rename = "convert_double")]
         pub fn convert_f64(&self, value: f64) -> f64 {
             self.0.convert_f64(value)
