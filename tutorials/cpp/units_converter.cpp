@@ -13,13 +13,13 @@
 int main() {
   ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
   auto converter_factory = ICU4XUnitsConverterFactory::create(dp).ok().value();
-  auto parser = converter_factory.parser().ok().value();
+  auto parser = converter_factory.parser();
   auto from = parser.parse_measure_unit("meter").ok().value();
   auto to = parser.parse_measure_unit("foot").ok().value();
   auto converter = converter_factory.converter(from, to).value();
   auto result = converter.convert_f64(1.0);
 
-  if (result != 3.28084) {
+  if (std::abs(result - 3.28084) > 0.00001 ){
     std::cout << "Conversion failed" << std::endl;
     return 1;
   } else {
