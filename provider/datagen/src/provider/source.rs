@@ -19,8 +19,8 @@ use std::path::PathBuf;
 use std::sync::RwLock;
 use zip::ZipArchive;
 
-pub(crate) struct SerdeCache {
-    pub(crate) root: AbstractFs,
+pub(super) struct SerdeCache {
+    pub(super) root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
 }
 
@@ -92,12 +92,12 @@ impl SerdeCache {
     }
 }
 
-pub(crate) struct ZipData {
+pub(super) struct ZipData {
     archive: ZipArchive<Cursor<Vec<u8>>>,
     file_list: HashSet<String>,
 }
 
-pub(crate) enum AbstractFs {
+pub(super) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipData, String>>),
     Memory(BTreeMap<&'static str, &'static [u8]>),
@@ -209,7 +209,7 @@ impl AbstractFs {
     }
 
     #[allow(dead_code)]
-    pub(crate) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
+    pub(super) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
         let vec = self.read_to_buf(path)?;
         let s = String::from_utf8(vec)
             .map_err(|e| DataError::custom("Invalid UTF-8").with_display_context(&e))?;

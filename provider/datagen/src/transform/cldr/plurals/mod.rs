@@ -5,14 +5,15 @@
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
         if key == CardinalV1Marker::KEY {
             self.cldr()?
@@ -48,7 +49,7 @@ impl crate::DatagenProvider {
 
 macro_rules! implement {
     ($marker:ident) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
                 Ok(DataResponse {
@@ -63,7 +64,7 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
@@ -96,7 +97,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
     }
 }
 
-impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
+impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
         self.check_req::<PluralRangesV1Marker>(req)?;
         if req.locale.is_und() {
@@ -120,7 +121,7 @@ impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<PluralRangesV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<PluralRangesV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .get_plural_ranges()?
@@ -171,7 +172,7 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
 fn test_basic() {
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
@@ -203,7 +204,7 @@ fn test_basic() {
 fn test_ranges() {
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     // locale 'sl' seems to have a lot of interesting cases.
     let plural_ranges: DataPayload<PluralRangesV1Marker> = provider

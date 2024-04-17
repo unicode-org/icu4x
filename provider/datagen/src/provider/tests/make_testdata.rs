@@ -13,7 +13,7 @@ use std::fs::File;
 use std::io::Write;
 use std::sync::Mutex;
 
-include!("../../tests/locales.rs.data");
+include!("../../../tests/locales.rs.data");
 
 #[test]
 #[cfg(feature = "use_wasm")]

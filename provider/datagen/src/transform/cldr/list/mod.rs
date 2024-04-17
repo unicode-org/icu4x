@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use icu_list::provider::*;
 use icu_locid::subtags::language;
 use icu_provider::prelude::*;
@@ -12,7 +13,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 
 fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
-    selff: &crate::DatagenProvider,
+    selff: &DatagenProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {
     let langid = req.locale.get_langid();
@@ -119,14 +120,14 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
 macro_rules! implement {
     ($marker:ident) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
                 load(self, req)
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .cldr()?

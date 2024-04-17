@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use icu_calendar::provider::*;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
@@ -16,7 +17,7 @@ use tinystr::TinyStr16;
 const JAPANEXT_FILE: &str =
     include_str!("../../../../data/japanese-golden/calendar/japanext@1/und.json");
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn load_japanese_eras(
         &self,
         japanext: bool,
@@ -111,14 +112,14 @@ impl crate::DatagenProvider {
     }
 }
 
-impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
+impl DataProvider<JapaneseErasV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         self.check_req::<JapaneseErasV1Marker>(req)?;
         self.load_japanese_eras(false)
     }
 }
 
-impl DataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
+impl DataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -177,20 +178,20 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-impl IterableDataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<JapaneseErasV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableDataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 /// Computes the japanese era code map or loads from static cache
-pub fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
+pub(in crate::provider) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
     static MAP: once_cell::sync::OnceCell<BTreeMap<String, TinyStr16>> =
         once_cell::sync::OnceCell::new();
 

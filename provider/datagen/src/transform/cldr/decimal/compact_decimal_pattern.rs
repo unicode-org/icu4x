@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde::numbers::DecimalFormat;
+use crate::provider::transform::cldr::cldr_serde::numbers::DecimalFormat;
 use icu_experimental::compactdecimal::provider::CompactDecimalPatternDataV1;
 use icu_experimental::compactdecimal::provider::*;
 use itertools::Itertools;
@@ -20,9 +20,9 @@ use zerovec::ule::encode_varule_to_box;
 struct ParsedPattern {
     /// The unescaped literal text, e.g., " mille" for the pattern "00 mille",
     /// "mille" for the pattern "mille".
-    pub literal_text: Cow<'static, str>,
+    pub(in crate::provider) literal_text: Cow<'static, str>,
     /// The placeholder; `None` for patterns such as "mille".
-    pub placeholder: Option<ParsedPlaceholder>,
+    pub(in crate::provider) placeholder: Option<ParsedPlaceholder>,
 }
 
 /// Represents the placeholder in a compact decimal pattern as its position in
@@ -33,8 +33,8 @@ struct ParsedPlaceholder {
     /// The position in the literal text where the placeholder is to be inserted;
     /// in particular, this is 0 for insertion at the beginning, which is the
     /// most frequent case, as in "00 mille".
-    pub index: usize,
-    pub number_of_0s: i8,
+    pub(in crate::provider) index: usize,
+    pub(in crate::provider) number_of_0s: i8,
 }
 
 /// Parses a compact decimal pattern string, performing any validation that can

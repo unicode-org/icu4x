@@ -12,12 +12,12 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "likelySubtags")]
-    pub likely_subtags: HashMap<LanguageIdentifier, LanguageIdentifier>,
+    pub(in crate::provider) likely_subtags: HashMap<LanguageIdentifier, LanguageIdentifier>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

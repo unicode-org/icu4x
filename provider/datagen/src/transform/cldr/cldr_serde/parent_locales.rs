@@ -12,19 +12,19 @@ use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ParentLocales {
+pub(in crate::provider) struct ParentLocales {
     #[serde(rename = "parentLocale")]
-    pub parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
-    pub collations: BTreeMap<String, LanguageIdentifier>,
+    pub(in crate::provider) parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
+    pub(in crate::provider) collations: BTreeMap<String, LanguageIdentifier>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "parentLocales")]
-    pub parent_locales: ParentLocales,
+    pub(in crate::provider) parent_locales: ParentLocales,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

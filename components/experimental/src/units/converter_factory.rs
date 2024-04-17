@@ -302,21 +302,27 @@ impl ConverterFactory {
             return None;
         }
 
+        let conversion_rate_f64 = conversion_rate.to_f64()?;
+        let proportional = ProportionalConverter {
+            conversion_rate,
+            conversion_rate_f64,
+        };
+
         if is_reciprocal {
             Some(UnitsConverter(UnitsConverterInner::Reciprocal(
-                ReciprocalConverter {
-                    proportional: ProportionalConverter { conversion_rate },
-                },
+                ReciprocalConverter { proportional },
             )))
         } else if offset.is_zero() {
             Some(UnitsConverter(UnitsConverterInner::Proportional(
-                ProportionalConverter { conversion_rate },
+                proportional,
             )))
         } else {
+            let offset_f64 = offset.to_f64()?;
             Some(UnitsConverter(UnitsConverterInner::Offset(
                 OffsetConverter {
-                    proportional: ProportionalConverter { conversion_rate },
+                    proportional,
                     offset,
+                    offset_f64,
                 },
             )))
         }

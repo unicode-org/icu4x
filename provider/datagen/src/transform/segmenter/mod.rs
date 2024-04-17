@@ -7,6 +7,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+use crate::provider::DatagenProvider;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie;
 use icu_properties::{
@@ -20,8 +21,8 @@ use icu_segmenter::WordType;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
-pub(crate) mod dictionary;
-pub(crate) mod lstm;
+mod dictionary;
+mod lstm;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -82,9 +83,9 @@ struct SegmenterRuleTable {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn generate_rule_break_data(
-    provider: &crate::DatagenProvider,
+    provider: &DatagenProvider,
     rules_file: &str,
-    trie_type: crate::TrieType,
+    trie_type: crate::provider::TrieType,
 ) -> RuleBreakDataV1<'static> {
     let segmenter = provider
         .icuexport()
@@ -537,8 +538,8 @@ fn generate_rule_break_data(
             default_value: 0,
             error_value: 0,
             trie_type: match trie_type {
-                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-                crate::TrieType::Small => codepointtrie::TrieType::Small,
+                crate::provider::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::provider::TrieType::Small => codepointtrie::TrieType::Small,
             },
         }
         .build(),
@@ -576,7 +577,7 @@ fn generate_rule_break_data(
 
 macro_rules! implement {
     ($marker:ident, $rules:literal) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
                 return Err(DataError::custom(
@@ -600,7 +601,7 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
+        impl IterableDataProvider<$marker> for DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(vec![Default::default()])
             }
@@ -608,9 +609,9 @@ macro_rules! implement {
     }
 }
 
-fn hardcoded_segmenter_provider() -> crate::DatagenProvider {
+fn hardcoded_segmenter_provider() -> DatagenProvider {
     #![allow(deprecated)]
-    use crate::{
+    use crate::provider::{
         source::{AbstractFs, SerdeCache},
         DatagenProvider,
     };
@@ -708,7 +709,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")
@@ -723,7 +724,7 @@ mod tests {
 
     #[test]
     fn load_line_data() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
         let payload: DataPayload<LineBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")
