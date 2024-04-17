@@ -34,6 +34,7 @@ icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
 icu_segmenter = { workspace = true }
 icu_timezone = { workspace = true }
+icu_experimental = { workspace = true, optional = true }
 
 # For docs links and features
 icu_provider = { workspace = true }
@@ -58,6 +59,7 @@ default = [
     "icu_properties/default",
     "icu_segmenter/default",
     "icu_timezone/default",
+    "icu_experimental?/default",
 ]
 std = [
     "icu_calendar/std",
@@ -74,6 +76,7 @@ std = [
     "icu_properties/std",
     "icu_segmenter/std",
     "icu_timezone/std",
+    "icu_experimental?/std",
 ]
 serde = [
     "icu_calendar/serde",
@@ -90,6 +93,7 @@ serde = [
     "icu_properties/serde",
     "icu_segmenter/serde",
     "icu_timezone/serde",
+    "icu_experimental?/serde",
 ]
 compiled_data = [
     "icu_calendar/compiled_data",
@@ -104,6 +108,7 @@ compiled_data = [
     "icu_properties/compiled_data",
     "icu_segmenter/compiled_data",
     "icu_timezone/compiled_data",
+    "icu_experimental?/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"
@@ -117,6 +122,7 @@ icu_plurals_experimental = [
 experimental = [
     "icu_datetime_experimental",
     "icu_plurals_experimental",
+    "dep:icu_experimental",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging"]

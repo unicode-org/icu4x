@@ -66,6 +66,7 @@ typedef enum ICU4XError {
   ICU4XError_TimeZoneInvalidIdError = 2563,
   ICU4XError_NormalizerFutureExtensionError = 2816,
   ICU4XError_NormalizerValidationError = 2817,
+  ICU4XError_InvalidCLDRUnitIdentifierError = 3072,
 } ICU4XError;
 #ifdef __cplusplus
 } // namespace capi

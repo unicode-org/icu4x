@@ -5,14 +5,14 @@
 use core::str::FromStr;
 
 use icu_experimental::units::converter_factory::ConverterFactory;
+use icu_experimental::units::ratio::IcuRatio;
 use num_bigint::BigInt;
-use num_rational::BigRational;
 use num_rational::Ratio;
-use num_traits::sign::Signed;
+use num_traits::Pow;
 
-// TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
+// TODO: add this function to IcuRatio.
 /// Convert a decimal number to a BigRational.
-fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
+fn convert_decimal_to_rational(decimal: &str) -> Option<IcuRatio> {
     let mut components = decimal.split('.');
     let integer_component = components.next().unwrap_or("0");
     let decimal_component = components.next().unwrap_or("0");
@@ -22,18 +22,17 @@ fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
         return None;
     }
 
-    let mut integer_component = BigRational::from_str(integer_component).unwrap();
-    let decimal_component = BigRational::from_str(decimal_component).unwrap();
+    let mut integer_component = IcuRatio::from_str(integer_component).unwrap();
+    let decimal_component = IcuRatio::from_str(decimal_component).unwrap();
 
-    let ten = BigRational::from_integer(10.into());
+    let ten = IcuRatio::ten();
     let decimal_component = decimal_component / ten.pow(decimal_length);
     integer_component += decimal_component;
     Some(integer_component)
 }
 
-// TODO: use Ratio<BigInt> instead of BigRational as in the DataGen.
-/// Convert a scientific notation string to a BigRational.
-pub fn get_rational(rational: &str) -> Option<BigRational> {
+/// Convert a scientific notation string to a IcuRatio.
+pub fn get_rational(rational: &str) -> Option<IcuRatio> {
     // remove all the commas
     let rational = rational.replace(',', "");
 
@@ -47,7 +46,7 @@ pub fn get_rational(rational: &str) -> Option<BigRational> {
     let mut rational_part = convert_decimal_to_rational(rational_part)?;
     let exponent_part = i32::from_str(exponent_part).unwrap();
 
-    let ten = BigRational::from_integer(10.into());
+    let ten = IcuRatio::ten();
     let exponent_part = ten.pow(exponent_part);
     rational_part *= exponent_part;
     Some(rational_part)
@@ -61,7 +60,7 @@ fn test_cldr_unit_tests() {
         category: String,
         input_unit: String,
         output_unit: String,
-        result: BigRational,
+        result: IcuRatio,
     }
 
     let data = std::fs::read_to_string("tests/units/data/unitsTest.txt").unwrap();
@@ -93,13 +92,25 @@ fn test_cldr_unit_tests() {
         let converter = converter_factory
             .converter(&input_unit, &output_unit)
             .unwrap();
-        let result = converter.convert(&Ratio::from_integer(1000.into()));
-        let diff_ratio = (result.clone() - test.result.clone()).abs() / test.result.clone();
+        let result = converter.convert(&IcuRatio::from(1000));
+        let result_f64 = converter.convert_f64(1000.0);
 
-        if diff_ratio > Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
+        // TODO: remove this extra clones by implementing Sub<&IcuRatio> & Div<&IcuRatio> for IcuRatio.
+        let diff_ratio = ((result.clone() - test.result.clone()) / test.result.clone()).abs();
+        if diff_ratio > IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(1000000))) {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
                 test.category, test.input_unit, test.output_unit, result, test.result
+            );
+        }
+
+        let test_result_f64 = test.result.to_f64().unwrap();
+        let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
+
+        if diff_ratio_f64 > 0.000001 {
+            panic!(
+                "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
+                test.category, test.input_unit, test.output_unit, result_f64, test.result
             );
         }
     }

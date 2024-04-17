@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 
 use icu_experimental::displaynames::provider::*;
 use icu_locid::subtags::Language;
@@ -11,7 +12,7 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::ule::UnvalidatedStr;
 
-impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<LanguageDisplayNamesV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -30,7 +31,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
         })
     }
 }
-impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -50,7 +51,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
@@ -69,7 +70,7 @@ impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for crate::Datag
     }
 }
 
-impl IterableDataProviderInternal<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<LocaleDisplayNamesV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
@@ -204,7 +205,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_display_names() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -226,7 +227,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_short_display_names() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -248,7 +249,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_long_display_names() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -270,7 +271,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_menu_display_names() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -292,7 +293,7 @@ mod tests {
 
     #[test]
     fn test_basic_locale_display_names() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {

@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use num_bigint::BigInt;
-use num_rational::Ratio;
+use crate::units::ratio::IcuRatio;
 
 /// A converter for converting between two single or compound units.
 /// For example:
@@ -18,8 +17,15 @@ pub struct UnitsConverter(pub(crate) UnitsConverterInner);
 
 impl UnitsConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+    pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
         self.0.convert(value)
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        self.0.convert_f64(value)
     }
 }
 
@@ -36,11 +42,22 @@ pub(crate) enum UnitsConverterInner {
 
 impl UnitsConverterInner {
     /// Converts the given value from the input unit to the output unit based on the inner converter type.
-    fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+    fn convert(&self, value: &IcuRatio) -> IcuRatio {
         match self {
             UnitsConverterInner::Proportional(converter) => converter.convert(value),
             UnitsConverterInner::Reciprocal(converter) => converter.convert(value),
             UnitsConverterInner::Offset(converter) => converter.convert(value),
+        }
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit based on the inner converter type.
+    /// NOTE:
+    ///    The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    fn convert_f64(&self, value: f64) -> f64 {
+        match self {
+            UnitsConverterInner::Proportional(converter) => converter.convert_f64(value),
+            UnitsConverterInner::Reciprocal(converter) => converter.convert_f64(value),
+            UnitsConverterInner::Offset(converter) => converter.convert_f64(value),
         }
     }
 }
@@ -56,8 +73,16 @@ pub(crate) struct ReciprocalConverter {
 
 impl ReciprocalConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
+    pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
         self.proportional.convert(value).recip()
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///   The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        // TODO: handle the case when the conversion rate is zero or the value is zero.
+        self.proportional.convert_f64(value).recip()
     }
 }
 
@@ -68,14 +93,23 @@ pub(crate) struct OffsetConverter {
     pub(crate) proportional: ProportionalConverter,
 
     /// The offset value to be added to the result of the proportional converter.
-    pub(crate) offset: Ratio<BigInt>,
+    pub(crate) offset: IcuRatio,
+
+    /// The offset value to be added to the result of the proportional converter in [`f64`].
+    pub(crate) offset_f64: f64,
 }
 
 impl OffsetConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
-        let result = self.proportional.convert(value);
-        result + &self.offset
+    pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
+        &self.proportional.convert(value) + &self.offset
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///    The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        self.proportional.convert_f64(value) + self.offset_f64
     }
 }
 
@@ -89,14 +123,23 @@ impl OffsetConverter {
 /// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
 #[derive(Debug)]
 pub(crate) struct ProportionalConverter {
-    // TODO(#4554): Implement a New Struct `IcuRatio` to Encapsulate `Ratio<BigInt>`.
     /// The conversion rate between the input and output units.
-    pub(crate) conversion_rate: Ratio<BigInt>,
+    pub(crate) conversion_rate: IcuRatio,
+
+    /// The conversion rate between the input and output units in [`f64`].
+    pub(crate) conversion_rate_f64: f64,
 }
 
 impl ProportionalConverter {
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &Ratio<BigInt>) -> Ratio<BigInt> {
-        value * &self.conversion_rate
+    pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
+        &self.conversion_rate * value
+    }
+
+    /// Converts the given value in [`f64`] from the input unit to the output unit.
+    /// NOTE:
+    ///     The conversion using [`f64`] is not as accurate as the conversion using ratios.
+    pub fn convert_f64(&self, value: f64) -> f64 {
+        self.conversion_rate_f64 * value
     }
 }

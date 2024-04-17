@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub enum Rtl {
+pub(in crate::provider) enum Rtl {
     #[serde(rename = "YES")]
     Yes,
     #[serde(rename = "NO")]
@@ -17,13 +17,13 @@ pub enum Rtl {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Metadata {
-    pub rtl: Rtl,
+pub(in crate::provider) struct Metadata {
+    pub(in crate::provider) rtl: Rtl,
 }
 
 // cldr-core/scriptMetadata.json
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
+pub(in crate::provider) struct Resource {
     #[serde(rename = "scriptMetadata")]
-    pub script_metadata: HashMap<TinyAsciiStr<4>, Metadata>,
+    pub(in crate::provider) script_metadata: HashMap<TinyAsciiStr<4>, Metadata>,
 }

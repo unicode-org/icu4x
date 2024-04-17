@@ -12,41 +12,41 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct Bcp47TzidAliasData {
+pub(in crate::provider) struct Bcp47TzidAliasData {
     #[serde(rename = "_deprecated")]
-    pub deprecated: Option<bool>,
+    pub(in crate::provider) deprecated: Option<bool>,
     #[serde(rename = "_preferred")]
-    pub preferred: Option<TimeZoneBcp47Id>,
+    pub(in crate::provider) preferred: Option<TimeZoneBcp47Id>,
     #[serde(rename = "_description")]
-    pub description: String,
+    pub(in crate::provider) description: String,
     #[serde(rename = "_alias")]
-    pub alias: Option<String>,
+    pub(in crate::provider) alias: Option<String>,
     #[serde(rename = "_since")]
-    pub since: Option<String>,
+    pub(in crate::provider) since: Option<String>,
     #[serde(rename = "_iana")]
-    pub iana: Option<String>,
+    pub(in crate::provider) iana: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Bcp47TimeZoneIds {
-    pub _alias: String,
-    pub _description: String,
+pub(in crate::provider) struct Bcp47TimeZoneIds {
+    pub(in crate::provider) _alias: String,
+    pub(in crate::provider) _description: String,
     #[serde(flatten)]
-    pub values: BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    pub(in crate::provider) values: BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct U {
+pub(in crate::provider) struct U {
     #[serde(rename = "tz")]
-    pub time_zones: Bcp47TimeZoneIds,
+    pub(in crate::provider) time_zones: Bcp47TimeZoneIds,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Keyword {
-    pub u: U,
+pub(in crate::provider) struct Keyword {
+    pub(in crate::provider) u: U,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub keyword: Keyword,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) keyword: Keyword,
 }

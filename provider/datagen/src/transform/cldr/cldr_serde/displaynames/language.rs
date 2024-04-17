@@ -11,14 +11,14 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Languages {
-    pub languages: HashMap<String, String>,
+pub(in crate::provider) struct Languages {
+    pub(in crate::provider) languages: HashMap<String, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangDisplayNames {
+pub(in crate::provider) struct LangDisplayNames {
     #[serde(rename = "localeDisplayNames")]
-    pub localedisplaynames: Languages,
+    pub(in crate::provider) localedisplaynames: Languages,
 }
 
-pub type Resource = super::super::LocaleResource<LangDisplayNames>;
+pub(in crate::provider) type Resource = super::super::LocaleResource<LangDisplayNames>;

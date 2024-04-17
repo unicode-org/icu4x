@@ -255,8 +255,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
-                .replace("icu::pattern", "icu_pattern")
-                .replace("icu::experimental", "icu_experimental");
+                .replace("icu::pattern", "icu_pattern");
         }
 
         std::fs::create_dir_all(path.parent().unwrap())?;
@@ -360,7 +359,7 @@ impl DataExporter for BakedExporter {
         key: DataKey,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
+        let marker = key_to_marker_bake(key, &self.dependencies);
 
         let singleton_ident = format!("SINGLETON_{}", Self::ident(key).to_ascii_uppercase())
             .parse::<TokenStream>()
@@ -424,7 +423,7 @@ impl BakedExporter {
         key: DataKey,
         fallback_mode: Option<BuiltInFallbackMode>,
     ) -> Result<(), DataError> {
-        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
+        let marker = key_to_marker_bake(key, &self.dependencies);
 
         let (struct_type, into_data_payload) = if marker
             .to_string()
@@ -733,3 +732,29 @@ impl BakedExporter {
         Ok(())
     }
 }
+
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
+            use databake::Bake;
+            // This is a bit naughty, we need the marker's type, but we're actually
+            // baking its value. This works as long as all markers are unit structs.
+            if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
+                return icu_provider::hello_world::HelloWorldV1Marker.bake(env);
+            }
+            $(
+                if key == <$marker>::KEY {
+                    return $marker.bake(env);
+                }
+            )+
+            $(
+                #[cfg(feature = "experimental_components")]
+                if key == <$emarker>::KEY {
+                    return $emarker.bake(env);
+                }
+            )+
+            unreachable!("unregistered key {key:?}")
+        }
+    }
+}
+crate::registry!(cb);
