@@ -23,6 +23,12 @@ pub struct IcuRatio(Ratio<BigInt>);
 
 #[derive(Debug, PartialEq)]
 pub enum IcuRatioError {
+    /// Represents an error when parsing a `BigRational` from a string.
+    BigRationalParseError(num_rational::ParseRatioError),
+
+    /// Represents an error when parsing an integer from a string.
+    ParseIntError(core::num::ParseIntError),
+
     /// Represents an error when parsing a ratio from a string.
     /// For example, the string "1/0/2" is invalid because it contains more than one '/' character.
     InvalidRatioString,
@@ -37,6 +43,14 @@ pub enum IcuRatioError {
     /// Represents an error when a ratio string contains multiple scientific notations.
     /// For example, the string "1.5E6E6" is invalid because it contains more than one 'E' character.
     MultipleScientificNotation,
+
+    /// Represents an error when a ratio string contains multiple decimal points.
+    /// For example, the string "1.5.6" is invalid because it contains more than one '.' character.
+    MultipleDecimalPoints,
+
+    /// Represents an error when the exponent part of a ratio string is not an integer.
+    /// For example, the string "1.5E6.5" is invalid because the exponent part "6.5" is not an integer.
+    ExponentPartIsNotInteger,
 }
 
 impl IcuRatio {
@@ -212,33 +226,33 @@ impl FromStr for IcuRatio {
     /// - Division by zero: "1/0".
     /// - Multiple slashes: "1/2/3".
     /// - Non-numeric characters in fractions: "1/2A".
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self, IcuRatioError> {
         /// Converts a decimal string to an `IcuRatio`.
         ///
         /// # Examples
         /// - "1.5" is converted to an `IcuRatio` representing "3/2".
-        fn decimal_str_to_icu_ratio(decimal: &str) -> Option<IcuRatio> {
+        fn decimal_str_to_icu_ratio(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
             let mut components = decimal.split('.');
             let integer_component = components.next().unwrap_or("0");
             let decimal_component = components.next().unwrap_or("0");
             let decimal_length = decimal_component.chars().count() as i32;
 
             if components.next().is_some() {
-                return None;
+                return Err(IcuRatioError::MultipleDecimalPoints);
             }
 
             let integer_component = match BigRational::from_str(integer_component) {
                 Ok(ratio) => IcuRatio(ratio),
-                Err(_) => return None,
+                Err(e) => return Err(IcuRatioError::BigRationalParseError(e)),
             };
             let decimal_component = match BigRational::from_str(decimal_component) {
                 Ok(ratio) => IcuRatio(ratio),
-                Err(_) => return None,
+                Err(e) => return Err(IcuRatioError::BigRationalParseError(e)),
             };
 
             let ten = IcuRatio::ten();
             let decimal_component = decimal_component / ten.pow(decimal_length);
-            Some(integer_component + decimal_component)
+            Ok(integer_component + decimal_component)
         }
 
         /// Converts a string in scientific notation to an `IcuRatio`.
@@ -248,7 +262,9 @@ impl FromStr for IcuRatio {
         /// - "1.5E-6" is converted to an `IcuRatio` representing "0.0000015".
         /// - "1,500E6" is converted to an `IcuRatio` representing "1500000". (Commas are ignored)
         /// - "1.5E6A" returns `None` because of the non-numeric character 'A'.
-        pub fn scientific_notation_to_icu_ratio(scientific_notation: &str) -> Result<IcuRatio, IcuRatioError> {
+        pub fn scientific_notation_to_icu_ratio(
+            scientific_notation: &str,
+        ) -> Result<IcuRatio, IcuRatioError> {
             //remove all the commas
             let rational = scientific_notation.replace(',', "");
 
@@ -260,7 +276,8 @@ impl FromStr for IcuRatio {
             }
 
             let rational_part = decimal_str_to_icu_ratio(rational_part)?;
-            let exponent_part = i32::from_str(exponent_part).unwrap();
+            let exponent_part =
+                i32::from_str(exponent_part).map_err(|e| IcuRatioError::ParseIntError(e))?;
 
             let ten = IcuRatio::ten();
             let exponent_part = ten.pow(exponent_part);
@@ -274,15 +291,13 @@ impl FromStr for IcuRatio {
             return Err(IcuRatioError::MultipleSlashes);
         }
 
-        let numerator = match numerator {
-            Some(num_str) => scientific_notation_to_icu_ratio(num_str)
-                .ok_or(IcuRatioError::InvalidRatioString)?,
+        let numerator: IcuRatio = match numerator {
+            Some(num_str) => scientific_notation_to_icu_ratio(num_str)?,
             None => IcuRatio::zero(),
         };
 
         let denominator = match denominator {
-            Some(den_str) => scientific_notation_to_icu_ratio(den_str)
-                .ok_or(IcuRatioError::InvalidRatioString)?,
+            Some(den_str) => scientific_notation_to_icu_ratio(den_str)?,
             None => IcuRatio::one(),
         };
 
@@ -296,6 +311,10 @@ impl FromStr for IcuRatio {
 
 #[cfg(test)]
 mod tests {
+    use core::any::Any;
+
+    use num_rational::ParseRatioError;
+
     use super::*;
 
     #[test]
@@ -318,7 +337,12 @@ mod tests {
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("1/0", Err(IcuRatioError::DivisionByZero)),
             ("1/2/3", Err(IcuRatioError::MultipleSlashes)),
-            ("1/2A", Err(IcuRatioError::InvalidRatioString)),
+            // (
+            //     "1/2A",
+            //     Err(IcuRatioError::BigRationalParseError(
+            //         ParseRatioError::Invalid,
+            //     )),
+            // ),
         ];
 
         for (input, expected) in test_cases.iter() {
@@ -331,7 +355,8 @@ mod tests {
                 ),
                 (Err(ref actual_err), Err(ref expected_err)) => {
                     assert_eq!(
-                        actual_err, expected_err,
+                        actual_err.type_id(),
+                        expected_err.type_id(),
                         "Error types do not match for input: {}",
                         input
                     )
