@@ -275,7 +275,7 @@ impl FromStr for IcuRatio {
                 1 => {
                     let decimal_part_length = decimal.split('.').last().unwrap().len();
                     // remove "." from the string
-                    let number_str = decimal.replace(".", "");
+                    let number_str = decimal.replace('.', "");
                     if number_str.is_empty() {
                         return Err(IcuRatioError::InvalidRatioString);
                     }
@@ -292,7 +292,7 @@ impl FromStr for IcuRatio {
             }
         }
 
-        let number_str = number_str.replace(",", ""); // Remove commas for parsing
+        let number_str = number_str.replace(',', ""); // Remove commas for parsing
         if number_str.is_empty() {
             return Ok(IcuRatio::zero());
         }
@@ -376,11 +376,7 @@ mod tests {
                         input
                     )
                 }
-                _ => assert!(
-                    false,
-                    "Result types (Ok/Err) do not match for input: {}",
-                    input
-                ),
+                _ => panic!("Result types (Ok/Err) do not match for input: {}", input),
             }
         }
 
