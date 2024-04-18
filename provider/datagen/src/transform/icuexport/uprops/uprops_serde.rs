@@ -4,111 +4,133 @@
 
 use icu_collections::codepointtrie::toml::CodePointTrieToml;
 
-pub mod binary {
+pub(in crate::provider) mod binary {
     #[derive(serde::Deserialize)]
-    pub struct BinaryProperty {
-        pub long_name: String,
+    pub(in crate::provider) struct BinaryProperty {
+        #[serde(rename = "long_name")]
+        pub(in crate::provider) _long_name: String,
         #[serde(skip)]
-        pub short_name: String,
-        pub ranges: Vec<(u32, u32)>,
-        pub strings: Option<Vec<String>>,
+        #[serde(rename = "short_name")]
+        pub(in crate::provider) _short_name: String,
+        pub(in crate::provider) ranges: Vec<(u32, u32)>,
+        pub(in crate::provider) strings: Option<Vec<String>>,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Main {
+    pub(in crate::provider) struct Main {
         #[serde(default)]
-        pub binary_property: Vec<BinaryProperty>,
+        pub(in crate::provider) binary_property: Vec<BinaryProperty>,
     }
 }
 
 #[derive(serde::Deserialize)]
-pub struct PropertyValue {
-    pub discr: u32,
-    pub long: String,
-    pub short: Option<String>,
+pub(in crate::provider) struct PropertyValue {
+    pub(in crate::provider) discr: u32,
+    pub(in crate::provider) long: String,
+    pub(in crate::provider) short: Option<String>,
     #[serde(default)]
-    pub aliases: Vec<String>,
+    pub(in crate::provider) aliases: Vec<String>,
 }
 
-pub mod enumerated {
+pub(in crate::provider) mod enumerated {
     #[derive(serde::Deserialize)]
-    pub struct EnumeratedPropertyMapRange {
-        pub a: u32,
-        pub b: u32,
-        pub v: u32,
-        pub name: String,
+    pub(in crate::provider) struct EnumeratedPropertyMapRange {
+        #[serde(rename = "a")]
+        pub(in crate::provider) _a: u32,
+        #[serde(rename = "b")]
+        pub(in crate::provider) _b: u32,
+        #[serde(rename = "v")]
+        pub(in crate::provider) _v: u32,
+        #[serde(rename = "name")]
+        pub(in crate::provider) _name: String,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct EnumeratedPropertyMap {
-        pub long_name: String,
-        pub short_name: String,
-        pub values: Vec<super::PropertyValue>,
-        pub ranges: Vec<EnumeratedPropertyMapRange>,
-        pub code_point_trie: super::CodePointTrieToml,
+    pub(in crate::provider) struct EnumeratedPropertyMap {
+        #[serde(rename = "long_name")]
+        pub(in crate::provider) _long_name: String,
+        #[serde(rename = "short_name")]
+        pub(in crate::provider) _short_name: String,
+        pub(in crate::provider) values: Vec<super::PropertyValue>,
+        #[serde(rename = "ranges")]
+        pub(in crate::provider) _ranges: Vec<EnumeratedPropertyMapRange>,
+        pub(in crate::provider) code_point_trie: super::CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Main {
+    pub(in crate::provider) struct Main {
         #[serde(default)]
-        pub enum_property: Vec<EnumeratedPropertyMap>,
+        pub(in crate::provider) enum_property: Vec<EnumeratedPropertyMap>,
     }
 }
 
-pub mod code_point_prop {
+pub(in crate::provider) mod code_point_prop {
     #[derive(serde::Deserialize)]
-    pub struct CodePointPropertyMapRange {
-        pub a: u32,
-        pub b: u32,
-        pub v: u32,
+    pub(in crate::provider) struct CodePointPropertyMapRange {
+        #[serde(rename = "a")]
+        pub(in crate::provider) _a: u32,
+        #[serde(rename = "b")]
+        pub(in crate::provider) _b: u32,
+        #[serde(rename = "v")]
+        pub(in crate::provider) _v: u32,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct CodePointPropertyMap {
-        pub long_name: String,
-        pub short_name: String,
-        pub ranges: Vec<CodePointPropertyMapRange>,
-        pub code_point_trie: super::CodePointTrieToml,
+    pub(in crate::provider) struct CodePointPropertyMap {
+        #[serde(rename = "long_name")]
+        pub(in crate::provider) _long_name: String,
+        #[serde(rename = "short_name")]
+        pub(in crate::provider) _short_name: String,
+        #[serde(rename = "ranges")]
+        pub(in crate::provider) _ranges: Vec<CodePointPropertyMapRange>,
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        pub(in crate::provider) code_point_trie: super::CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Main {
+    pub(in crate::provider) struct Main {
         // TODO: update icuexportdata to print a different TOML header than "enum_property"
         #[serde(default)]
-        pub enum_property: Vec<CodePointPropertyMap>,
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        pub(in crate::provider) enum_property: Vec<CodePointPropertyMap>,
     }
 }
 
-pub mod mask {
+pub(in crate::provider) mod mask {
     #[derive(serde::Deserialize)]
-    pub struct MaskPropertyMap {
-        pub long_name: String,
-        pub short_name: String,
-        pub mask_for: String,
-        pub values: Vec<super::PropertyValue>,
+    pub(in crate::provider) struct MaskPropertyMap {
+        #[serde(rename = "long_name")]
+        pub(in crate::provider) _long_name: String,
+        #[serde(rename = "short_name")]
+        pub(in crate::provider) _short_name: String,
+        #[serde(rename = "mask_for")]
+        pub(in crate::provider) _mask_for: String,
+        pub(in crate::provider) values: Vec<super::PropertyValue>,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Main {
+    pub(in crate::provider) struct Main {
         #[serde(default)]
-        pub mask_property: Vec<MaskPropertyMap>,
+        pub(in crate::provider) mask_property: Vec<MaskPropertyMap>,
     }
 }
 
-pub mod script_extensions {
+pub(in crate::provider) mod script_extensions {
     use super::CodePointTrieToml;
 
     #[derive(serde::Deserialize)]
-    pub struct ScriptWithExtensionsPropertyV1Property {
-        pub long_name: String,
-        pub short_name: String,
-        pub script_code_array: Vec<Vec<u16>>,
-        pub code_point_trie: CodePointTrieToml,
+    pub(in crate::provider) struct ScriptWithExtensionsPropertyV1Property {
+        #[serde(rename = "long_name")]
+        pub(in crate::provider) _long_name: String,
+        #[serde(rename = "short_name")]
+        pub(in crate::provider) _short_name: String,
+        pub(in crate::provider) script_code_array: Vec<Vec<u16>>,
+        pub(in crate::provider) code_point_trie: CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Main {
+    pub(in crate::provider) struct Main {
         #[serde(default)]
-        pub script_extensions: Vec<ScriptWithExtensionsPropertyV1Property>,
+        pub(in crate::provider) script_extensions: Vec<ScriptWithExtensionsPropertyV1Property>,
     }
 }

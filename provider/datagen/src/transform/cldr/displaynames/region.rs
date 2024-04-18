@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
 use icu_locid::subtags::Region;
@@ -11,7 +12,7 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
 
-impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<RegionDisplayNamesV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -35,7 +36,7 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<RegionDisplayNamesV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
@@ -94,7 +95,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -116,7 +117,7 @@ mod tests {
 
     #[test]
     fn test_basic_short_names() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {

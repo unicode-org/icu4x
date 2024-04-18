@@ -10,18 +10,18 @@
 use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LocaleExemplarCharacters {
+pub(in crate::provider) struct LocaleExemplarCharacters {
     #[serde(rename = "exemplarCharacters")]
-    pub main: Option<String>,
-    pub auxiliary: Option<String>,
-    pub index: Option<String>,
-    pub numbers: Option<String>,
-    pub punctuation: Option<String>,
+    pub(in crate::provider) main: Option<String>,
+    pub(in crate::provider) auxiliary: Option<String>,
+    pub(in crate::provider) index: Option<String>,
+    pub(in crate::provider) numbers: Option<String>,
+    pub(in crate::provider) punctuation: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Characters {
-    pub characters: LocaleExemplarCharacters,
+pub(in crate::provider) struct Characters {
+    pub(in crate::provider) characters: LocaleExemplarCharacters,
 }
 
-pub type Resource = super::LocaleResource<Characters>;
+pub(in crate::provider) type Resource = super::LocaleResource<Characters>;

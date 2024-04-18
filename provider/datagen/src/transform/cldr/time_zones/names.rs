@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::convert::{compute_bcp47_tzids_btreemap, compute_canonical_tzids_btreemap};
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_timezone::provider::names::*;
@@ -14,7 +15,7 @@ use std::hash::Hasher;
 use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTriePerfectHash};
 use zerovec::{ZeroSlice, ZeroVec};
 
-impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
+impl DataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV1Marker>, DataError> {
         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
             self.cldr()?.bcp47().read_and_parse("timezone.json")?;
@@ -56,13 +57,13 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<IanaToBcp47MapV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl DataProvider<IanaToBcp47MapV2Marker> for crate::DatagenProvider {
+impl DataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV2Marker>, DataError> {
         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
             self.cldr()?.bcp47().read_and_parse("timezone.json")?;
@@ -110,13 +111,13 @@ impl DataProvider<IanaToBcp47MapV2Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<IanaToBcp47MapV2Marker> for crate::DatagenProvider {
+impl IterableDataProvider<IanaToBcp47MapV2Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
+impl DataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
             self.cldr()?.bcp47().read_and_parse("timezone.json")?;
@@ -142,7 +143,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

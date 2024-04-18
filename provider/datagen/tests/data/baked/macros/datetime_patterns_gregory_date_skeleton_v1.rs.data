@@ -1,0 +1,25 @@
+// @generated
+/// Implement `DataProvider<GregorianDateNeoSkeletonPatternsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_patterns_gregory_date_skeleton_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker>, icu_provider::DataError> {
+                static UND: <icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::PackedSkeletonDataV1 { indices: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\xC0\x01\xC0\x04\xC0\x07\x80\n\xC0\x0C\xC0\x0F\x80\x12\x80\x14\xC0\x16\xC0\x19\x80\x1C\0\x1E\x80\x1F\0!\0\"\0#") }, patterns: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"$\0\0\0\0\0\x04\0\x0E\0\x18\0\"\x002\0B\0R\0h\0~\0\x94\0\xA1\0\xAE\0\xC1\0\xD4\0\xE7\0\0\x01\x19\x012\x01Q\x01p\x01t\x01x\x01|\x01\x80\x01\x84\x01\x8E\x01\x98\x01\xA2\x01\xB2\x01\xC2\x01\xC6\x01\xD0\x01\xDA\x01\xFC\x01$\x02\0\x80@\x01\0\x80 \x04\0\0 \x80@\x01\0\x80 \x03\0\0 \x80@\x01\0\x80 \x02\0\0-\x80@\x02\0\x80\x10\x01\0\0 \x80 \x04\0\0 \x80@\x01\0\x80\x10\x01\0\0 \x80 \x03\0\0 \x80@\x01\0\x80\x10\x01\0\0-\x80 \x02\0\0-\x80@\x02\0\x80\0\x04\0\0 \x80\x10\x01\0\0 \x80 \x04\0\0 \x80@\x01\0\x80\0\x03\0\0 \x80\x10\x01\0\0 \x80 \x03\0\0 \x80@\x01\0\x80\0\x03\0\0 \x80\x10\x01\0\0-\x80 \x01\0\0-\x80@\x01\0\x80@\x01\0\0,\0\0 \x80P\x04\0\x80@\x01\0\0,\0\0 \x80P\x01\0\x80 \x04\0\0 \x80@\x01\0\0,\0\0 \x80P\x04\0\x80 \x03\0\0 \x80@\x01\0\0,\0\0 \x80P\x01\0\x80 \x02\0\0-\x80@\x02\0\0,\0\0 \x80P\x01\0\x80\x10\x01\0\0 \x80 \x04\0\0 \x80@\x01\0\0,\0\0 \x80P\x04\0\x80\x10\x01\0\0 \x80 \x03\0\0 \x80@\x01\0\0,\0\0 \x80P\x01\0\x80\x10\x01\0\0-\x80 \x02\0\0-\x80@\x02\0\0,\0\0 \x80P\x01\0\x80\0\x04\0\0 \x80\x10\x01\0\0 \x80 \x04\0\0 \x80@\x01\0\0,\0\0 \x80P\x04\0\x80\0\x03\0\0 \x80\x10\x01\0\0 \x80 \x03\0\0 \x80@\x01\0\0,\0\0 \x80P\x01\0\x80R\x04\0\x80R\x03\0\x80!\x04\0\x80!\x03\0\x80!\x01\0\x80\x10\x01\0\0 \x80 \x04\0\x80\x10\x01\0\0 \x80 \x03\0\x80\x10\x01\0\0-\x80 \x02\0\x80\0\x04\0\0 \x80\x10\x01\0\0 \x80 \x04\0\x80\0\x03\0\0 \x80\x10\x01\0\0 \x80 \x03\0\x80\x10\x01\0\x80\0\x04\0\0 \x80\x10\x01\0\x80\0\x03\0\0 \x80\x10\x01\0\0\0w\0\0e\0\0e\0\0k\0\0 \x800\x01\0\0 \0\0o\0\0f\0\0 \x80\x11\x01\0\0\0u\0\0n\0\0i\0\0m\0\0p\0\0l\0\0e\0\0m\0\0e\0\0n\0\0t\0\0e\0\0d\0\0\0u\0\0n\0\0i\0\0m\0\0p\0\0l\0\0e\0\0m\0\0e\0\0n\0\0t\0\0e\0\0d") } };
+                static VALUES: [&<icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
+                static KEYS: [&str; 1usize] = ["und"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

@@ -61,6 +61,9 @@
         - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
     - `zerovec`
         - Change `ZeroHashMap` to use `twox-hash` (https://github.com/unicode-org/icu4x/pull/4592)
+    - `writeable`
+        - Add `TryWriteable` for fallibility (https://github.com/unicode-org/icu4x/pull/4787)
+        - Add `writeable_cmp_bytes` for more efficient comparison (https://github.com/unicode-org/icu4x/pull/4402)
 
 ## icu4x 1.4.x
 

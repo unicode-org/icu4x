@@ -4,11 +4,13 @@
 
 mod adapter;
 
-use crate::pattern::runtime;
+#[cfg(feature = "experimental")]
+use crate::neo_skeleton::{NeoDateSkeleton, NeoTimeSkeleton};
+use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::ule::UnvalidatedStr;
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
+use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 #[cfg(feature = "experimental")]
 use core::ops::Range;
@@ -544,6 +546,134 @@ pub struct DateTimePatternV1<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
+// conceptually:
+// {
+//   has_long: bool,
+//   has_medium: bool,
+//   has_short: bool,
+//   index: u16, // index of first pattern (long if present, else medium, else short)
+// }
+#[allow(missing_docs)] // TODO
+#[derive(Debug, Copy, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SkeletonDataIndex {
+    /// If true, the first pattern is for `Long`.
+    /// If false, fall back to the next pattern (`Medium``).
+    pub has_long: bool,
+    /// If true, the next pattern is for `Long`.
+    /// If false, fall back to the next pattern (`Short`).
+    pub has_medium: bool,
+    /// If true, there are 6 plural variants for each pattern.
+    /// If false, it is just a single variant.
+    pub has_plurals: bool,
+    /// The offset into the vector of the first pattern.
+    pub index: u8,
+}
+
+/// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
+#[derive(Debug, Copy, Clone, ULE)]
+#[repr(transparent)]
+pub struct SkeletonDataIndexULE([u8; 2]);
+
+impl AsULE for SkeletonDataIndex {
+    type ULE = SkeletonDataIndexULE;
+
+    fn to_unaligned(self) -> Self::ULE {
+        let mut flags = 0;
+        flags |= (self.has_long as u8) << 7;
+        flags |= (self.has_medium as u8) << 6;
+        flags |= (self.has_plurals as u8) << 5;
+        SkeletonDataIndexULE([flags, self.index])
+    }
+
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        let [flags, index] = unaligned.0;
+        // TODO: `flags` could have more bits set, but we don't check that here.
+        SkeletonDataIndex {
+            has_long: (flags & (1 << 7)) != 0,
+            has_medium: (flags & (1 << 6)) != 0,
+            has_plurals: (flags & (1 << 5)) != 0,
+            index,
+        }
+    }
+}
+
+#[icu_provider::data_struct(
+    marker(
+        GregorianDateNeoSkeletonPatternsV1Marker,
+        "datetime/patterns/gregory/date_skeleton@1"
+    ),
+    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(missing_docs)] // TODO
+pub struct PackedSkeletonDataV1<'data> {
+    // len = 12 for time, 17 for date
+    #[allow(missing_docs)] // TODO
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub indices: ZeroVec<'data, SkeletonDataIndex>,
+    // TODO: This should support plurals
+    #[allow(missing_docs)] // TODO
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub patterns: VarZeroVec<'data, PatternULE>,
+}
+
+impl<'data> PackedSkeletonDataV1<'data> {
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_for_date_skeleton(
+        &self,
+        sk: NeoDateSkeleton,
+    ) -> Option<&runtime::PatternULE> {
+        self.get_for_discriminant(sk.components.discriminant())
+    }
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_for_time_skeleton(
+        &self,
+        sk: NeoTimeSkeleton,
+    ) -> Option<&runtime::PatternULE> {
+        self.get_for_discriminant(sk.components.discriminant())
+    }
+    #[cfg(feature = "experimental")]
+    fn get_for_discriminant(&self, discriminant: u8) -> Option<&runtime::PatternULE> {
+        self.indices
+            .get(discriminant as usize)
+            .and_then(|index_info| self.patterns.get(index_info.index as usize))
+    }
+}
+
+#[icu_provider::data_struct(marker(
+    DateTimeSkeletonPatternsV1Marker,
+    "datetime/patterns/datetime_skeleton@1"
+))]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+#[allow(missing_docs)] // TODO
+pub struct DateTimeSkeletonsV1<'data> {
+    // will typically be small, there are only a couple special cases like E B h m
+    // TODO: This should support plurals
+    // TODO: The key of this map should be Skeleton
+    #[allow(missing_docs)] // TODO
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, str, PatternULE>,
+}
+
 pub(crate) struct ErasedYearNamesV1Marker;
 impl DataMarker for ErasedYearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
@@ -557,4 +687,9 @@ impl DataMarker for ErasedMonthNamesV1Marker {
 pub(crate) struct ErasedDatePatternV1Marker;
 impl DataMarker for ErasedDatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
+}
+
+pub(crate) struct ErasedPackedSkeletonDataV1Marker;
+impl DataMarker for ErasedPackedSkeletonDataV1Marker {
+    type Yokeable = PackedSkeletonDataV1<'static>;
 }

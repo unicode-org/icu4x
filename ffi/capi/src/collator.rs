@@ -110,7 +110,7 @@ pub mod ffi {
     impl ICU4XCollator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
-        #[diplomat::attr(dart, rename = "create")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create_v1(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -151,15 +151,31 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::attr(dart, rename = "compare")]
+        #[diplomat::attr(dart, disable)]
         pub fn compare_utf16(&self, left: &DiplomatStr16, right: &DiplomatStr16) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()
+        }
+
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
+        #[diplomat::skip_if_ast]
+        #[diplomat::attr(dart, rename = "compare")]
+        pub fn compare_utf16_(
+            &self,
+            left: &DiplomatStr16,
+            right: &DiplomatStr16,
+        ) -> core::cmp::Ordering {
+            self.0.compare_utf16(left, right)
         }
 
         /// The resolved options showing how the default options, the requested options,
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn resolved_options(&self) -> ICU4XCollatorResolvedOptionsV1 {
             self.0.resolved_options().into()
         }

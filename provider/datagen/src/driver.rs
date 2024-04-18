@@ -32,7 +32,7 @@ pub struct NoFallbackOptions {}
 /// the locale fallback algorithm. If internal fallback is requested for an exporter that does
 /// not support it, an error will occur.
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum RuntimeFallbackLocation {
     /// Include fallbacking code in the exported data provider.
     Internal,
@@ -64,7 +64,7 @@ pub enum RuntimeFallbackLocation {
 /// [`Maximal`]: DeduplicationStrategy::Maximal
 /// [`None`]: DeduplicationStrategy::None
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum DeduplicationStrategy {
     /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,
@@ -239,27 +239,6 @@ impl FromStr for LocaleFamily {
     }
 }
 
-impl serde::Serialize for LocaleFamily {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.write_to_string().serialize(serializer)
-    }
-}
-
-impl<'de> serde::Deserialize<'de> for LocaleFamily {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        use serde::de::Error;
-        <&str>::deserialize(deserializer)?
-            .parse()
-            .map_err(D::Error::custom)
-    }
-}
-
 #[test]
 fn test_locale_family_parsing() {
     let valid_families = ["und", "de-CH", "^es", "@pt-BR", "full"];
@@ -268,9 +247,6 @@ fn test_locale_family_parsing() {
         let family = family_str.parse::<LocaleFamily>().unwrap();
         let family_to_str = family.to_string();
         assert_eq!(family_str, family_to_str);
-        let family_json = serde_json::to_string(&family).unwrap();
-        let family_from_json = serde_json::from_str(&family_json).unwrap();
-        assert_eq!(family, family_from_json);
     }
     for family_str in invalid_families {
         assert!(family_str.parse::<LocaleFamily>().is_err());
@@ -972,36 +948,27 @@ fn select_locales_for_key(
         };
     }
 
-    if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
-        || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
-    {
+    if key.path().get().starts_with("segmenter/dictionary/") {
         supported_map.retain(|_, locales| {
             locales.retain(|locale| {
-                let model =
-                    crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
+                let model = crate::dictionary_data_locale_to_model_name(locale);
                 segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
             });
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
-    } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
+    } else if key.path().get().starts_with("segmenter/lstm/") {
         supported_map.retain(|_, locales| {
             locales.retain(|locale| {
-                let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
+                let model = crate::lstm_data_locale_to_model_name(locale);
                 segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
             });
             !locales.is_empty()
         });
         // Don't perform additional locale filtering
         return Ok(supported_map.into_values().flatten().collect());
-    } else if key == icu_collator::provider::CollationDataV1Marker::KEY
-        || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
-        || key == icu_collator::provider::CollationJamoV1Marker::KEY
-        || key == icu_collator::provider::CollationMetadataV1Marker::KEY
-        || key == icu_collator::provider::CollationReorderingV1Marker::KEY
-        || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
-    {
+    } else if key.path().get().starts_with("collator/") {
         supported_map.retain(|_, locales| {
             locales.retain(|locale| {
                 let Some(collation) = locale
@@ -1083,9 +1050,7 @@ fn select_locales_for_key(
             }
             // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
             // This would get caught later on, but it makes datagen faster and quieter to catch it here
-            if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
-                && !locale.has_unicode_ext()
-            {
+            if key.path().get() == "datetime/skeletons@1" && !locale.has_unicode_ext() {
                 return false;
             }
             let mut iter = fallbacker_with_config.fallback_for(locale);
@@ -1198,7 +1163,7 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let resolved_locales = select_locales_for_key(
-            &crate::DatagenProvider::new_testing(),
+            &crate::provider::DatagenProvider::new_testing(),
             icu_collator::provider::CollationDataV1Marker::KEY,
             &LocalesWithOrWithoutFallback::WithoutFallback {
                 locales: [cas.language.clone()].into_iter().collect(),

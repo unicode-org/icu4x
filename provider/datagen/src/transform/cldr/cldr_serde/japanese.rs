@@ -7,28 +7,28 @@ use std::collections::HashMap;
 
 // cldr-core/supplemental/calendarData.json
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "calendarData")]
-    pub calendar_data: CalendarDatas,
+    pub(in crate::provider) calendar_data: CalendarDatas,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CalendarDatas {
-    pub japanese: CalendarData,
+pub(in crate::provider) struct CalendarDatas {
+    pub(in crate::provider) japanese: CalendarData,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CalendarData {
-    pub eras: HashMap<String, EraStart>,
+pub(in crate::provider) struct CalendarData {
+    pub(in crate::provider) eras: HashMap<String, EraStart>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct EraStart {
+pub(in crate::provider) struct EraStart {
     #[serde(rename = "_start")]
-    pub start: Option<String>,
+    pub(in crate::provider) start: Option<String>,
 }

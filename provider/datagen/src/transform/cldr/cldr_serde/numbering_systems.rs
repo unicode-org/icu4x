@@ -13,28 +13,28 @@ use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum NumberingSystemType {
+pub(in crate::provider) enum NumberingSystemType {
     Numeric,
     Algorithmic,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct NumberingSystem {
+pub(in crate::provider) struct NumberingSystem {
     #[serde(rename = "_type")]
-    pub nstype: NumberingSystemType,
+    pub(in crate::provider) nstype: NumberingSystemType,
     #[serde(rename = "_digits")]
-    pub digits: Option<String>,
+    pub(in crate::provider) digits: Option<String>,
     #[serde(rename = "_rules")]
-    pub rules: Option<String>,
+    pub(in crate::provider) rules: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct SupplementalData {
+pub(in crate::provider) struct SupplementalData {
     #[serde(rename = "numberingSystems")]
-    pub numbering_systems: HashMap<TinyStr8, NumberingSystem>,
+    pub(in crate::provider) numbering_systems: HashMap<TinyStr8, NumberingSystem>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: SupplementalData,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: SupplementalData,
 }
