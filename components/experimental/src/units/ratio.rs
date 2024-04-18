@@ -267,29 +267,35 @@ impl FromStr for IcuRatio {
         /// An empty string input is interpreted as "0".
         /// Note: Fractional inputs are not supported in this context.
         fn parse_decimal(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
-            let dot_count = decimal.matches('.').count();
-            match dot_count {
-                0 => Ratio::<BigInt>::from_str(decimal)
-                    .map(IcuRatio)
-                    .map_err(|_| IcuRatioError::InvalidRatioString),
-                1 => {
-                    let decimal_part_length = decimal.split('.').last().unwrap().len();
-                    // remove "." from the string
-                    let number_str = decimal.replace('.', "");
-                    if number_str.is_empty() {
-                        return Err(IcuRatioError::InvalidRatioString);
-                    }
-                    let number = IcuRatio(
-                        Ratio::<BigInt>::from_str(&number_str)
+            let mut dot_parts = decimal.split('.');
+            let integer_part = dot_parts.next();
+            let decimal_part = dot_parts.next();
+            if dot_parts.next().is_some() {
+                return Err(IcuRatioError::MultipleDecimalPoints);
+            }
+
+            let integer_part = match integer_part {
+                Some(integer_part) => IcuRatio(
+                    Ratio::<BigInt>::from_str(integer_part)
+                        .map_err(|_| IcuRatioError::InvalidRatioString)?,
+                ),
+                None => IcuRatio::zero(),
+            };
+
+            let decimal_part = match decimal_part {
+                Some(decimal_part) => {
+                    let decimal_power = decimal_part.len() as i32;
+                    let decimal_part = IcuRatio(
+                        Ratio::<BigInt>::from_str(decimal_part)
                             .map_err(|_| IcuRatioError::InvalidRatioString)?,
                     );
-                    let ten = IcuRatio::ten();
-                    let ten = ten.pow(decimal_part_length as i32);
 
-                    Ok(number / ten)
+                    decimal_part / IcuRatio::ten().pow(decimal_power) // Divide by 10^decimal_power
                 }
-                _ => Err(IcuRatioError::MultipleDecimalPoints),
-            }
+                None => return Ok(integer_part),
+            };
+
+            Ok(integer_part + decimal_part)
         }
 
         let number_str = number_str.replace(',', ""); // Remove commas for parsing
