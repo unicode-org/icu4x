@@ -216,6 +216,10 @@ impl FromStr for IcuRatio {
     /// - Scientific notation with commas: "1,500E6" becomes "1500000000". Commas are disregarded.
     /// - Integer notation: "1" becomes "1".
     /// - Empty string: "" becomes "0".
+    /// - Negative numbers: "-1/2" becomes "-1/2".
+    /// - Negative numbers with decimal notation: "-1.5" becomes "-3/2".
+    /// - Negative numbers with scientific notation: "-1.5E6" becomes "-1500000".
+    /// - Negative numbers with scientific notation with commas: "-1,500E6" becomes "-1500000000".
     /// Parsing errors are returned for:
     /// - Division by zero: "1/0".
     /// - Multiple slashes: "1/2/3".
@@ -223,15 +227,14 @@ impl FromStr for IcuRatio {
     /// - Multiple scientific notations: "1.5E6E6".
     /// - Multiple decimal points: "1.5.6".
     /// - Exponent part is not an integer: "1.5E6.5".
+    /// NOTE:
+    ///    You can add as many commas as you want in the string, they will be disregarded.
     fn from_str(number_str: &str) -> Result<Self, IcuRatioError> {
         /// Parses a fraction from a string.
         /// The input string is expected to be in any fractional format.
         /// For example, "1", "1/2", "1.5", "1.5/6", "1.4/5.6".
         /// No scientific notation is allowed.
         fn parce_fraction(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
-            // remove commas
-            let decimal = decimal.replace(",", "");
-
             let mut components = decimal.split('/');
             let numerator = components.next();
             let denominator = components.next();
@@ -294,6 +297,10 @@ impl FromStr for IcuRatio {
             Ok(IcuRatio(integer_part) + decimal_part)
         }
 
+        // remove commas from the string
+        let number_str = number_str.replace(",", "");
+
+        // check if the number is empty after removing commas
         if number_str.is_empty() {
             return Ok(IcuRatio::zero());
         }
@@ -348,6 +355,7 @@ mod tests {
                 Ok(IcuRatio::from_big_ints(1500000000.into(), 1.into())),
             ),
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
+            ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             ("1/0", Err(IcuRatioError::DivisionByZero)),
             ("1/2/3", Err(IcuRatioError::MultipleSlashes)),
             ("1/2A", Err(IcuRatioError::InvalidRatioString)),
