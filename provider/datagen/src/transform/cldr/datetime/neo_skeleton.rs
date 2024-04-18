@@ -6,7 +6,8 @@ use std::collections::HashSet;
 
 use crate::provider::{DatagenProvider, IterableDataProviderInternal};
 use icu_datetime::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
+    NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
+    NeoTimeSkeleton,
 };
 use icu_datetime::options::{components, preferences};
 use icu_datetime::pattern::runtime::PatternPlurals;
@@ -20,6 +21,7 @@ use icu_datetime::provider::{
         PackedSkeletonDataV1, SkeletonDataIndex,
     },
 };
+use icu_locid::extensions::private::Subtag;
 use icu_locid::extensions::unicode::{key, value};
 use icu_provider::prelude::*;
 
@@ -30,15 +32,28 @@ impl DataProvider<GregorianDateDayNeoSkeletonPatternsV1Marker> for DatagenProvid
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GregorianDateDayNeoSkeletonPatternsV1Marker>, DataError> {
+        self.check_req::<GregorianDateDayNeoSkeletonPatternsV1Marker>(req)?;
+        let aux_subtag = req
+            .locale
+            .get_aux()
+            .and_then(|aux| aux.iter().next())
+            .expect("Skeleton data provider called without aux subtag");
+        let neo_components = NeoDayComponents::from_id_str(aux_subtag.into_tinystr())
+            .expect("Skeleton data provider called with unknown skeleton");
+        let mut locale_no_aux = req.locale.clone();
+        locale_no_aux.remove_aux();
         let packed_skeleton_data = self.make_packed_skeleton_data(
-            req,
-            NeoDateComponents::VALUES
-                .iter()
-                .take(9)
-                .map(|neo_components| (neo_components, true)),
+            DataRequest {
+                locale: &locale_no_aux,
+                metadata: Default::default(),
+            },
+            [(neo_components, true)].into_iter(),
             |length, neo_components| {
-                NeoDateSkeleton::for_length_and_components(length, **neo_components)
-                    .to_components_bag()
+                NeoDateSkeleton::for_length_and_components(
+                    length,
+                    NeoDateComponents::Day(*neo_components),
+                )
+                .to_components_bag()
             },
         )?;
         Ok(DataResponse {
@@ -222,7 +237,20 @@ impl IterableDataProviderInternal<GregorianDateDayNeoSkeletonPatternsV1Marker> f
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(Into::into));
+        r.extend(
+            self.cldr()?
+                .dates(cldr_cal)
+                .list_langs()?
+                .flat_map(|langid| {
+                    NeoDayComponents::VALUES.iter().map(move |neo_components| {
+                        let mut data_locale = DataLocale::from(&langid);
+                        let subtag =
+                            Subtag::try_from_raw(*neo_components.id_str().all_bytes()).unwrap();
+                        data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+                        data_locale
+                    })
+                }),
+        );
 
         Ok(r)
     }
