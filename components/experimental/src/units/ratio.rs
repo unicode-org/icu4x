@@ -275,11 +275,11 @@ impl FromStr for IcuRatio {
             }
 
             let integer_part = match integer_part {
+                None | Some("") => IcuRatio::zero(),
                 Some(integer_part) => IcuRatio(
                     Ratio::<BigInt>::from_str(integer_part)
                         .map_err(|_| IcuRatioError::InvalidRatioString)?,
                 ),
-                None => IcuRatio::zero(),
             };
 
             let decimal_part = match decimal_part {
@@ -359,6 +359,10 @@ mod tests {
             (".0005", Ok(IcuRatio::from_big_ints(5.into(), 10000.into()))),
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (
+                "-1/2E5",
+                Ok(IcuRatio::from_big_ints(BigInt::from(-50000), 1.into())),
+            ),
             // commas are neglected
             (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             (".", Err(IcuRatioError::InvalidRatioString)),
