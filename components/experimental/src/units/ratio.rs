@@ -230,11 +230,12 @@ impl FromStr for IcuRatio {
     /// NOTE:
     ///    You can add as many commas as you want in the string, they will be disregarded.
     fn from_str(number_str: &str) -> Result<Self, IcuRatioError> {
-        /// Parses a fraction from a string.
-        /// The input string is expected to be in any fractional format.
-        /// For example, "1", "1/2", "1.5", "1.5/6", "1.4/5.6".
-        /// No scientific notation is allowed.
-        fn parce_fraction(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
+        /// This function interprets numeric strings and converts them into an `IcuRatio` object, supporting:
+        /// - Simple fractions: e.g., "1/2".
+        /// - Decimals: e.g., "1.5".
+        /// - Mixed fractions: e.g., "1.5/6", "1.4/5.6".
+        /// Note: Scientific notation is not supported.
+        fn parse_fraction(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
             let mut components = decimal.split('/');
             let numerator = components.next();
             let denominator = components.next();
@@ -259,45 +260,39 @@ impl FromStr for IcuRatio {
             Ok(numerator / denominator)
         }
 
-        /// Parses a decimal from a string.
-        /// The input string is expected to be in any decimal format.
-        /// For example, "1", "1.5".
-        /// Empty strings are treated as "0".
-        /// No fractions are allowed.
+        /// Parses a decimal number from a string input.
+        /// Accepts input in various decimal formats, including:
+        /// - Whole numbers: "1"
+        /// - Decimal numbers: "1.5"
+        /// An empty string input is interpreted as "0".
+        /// Note: Fractional inputs are not supported in this context.
         fn parse_decimal(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
-            // count the "." in the string
-            let dot_count = decimal.chars().filter(|&c| c == '.').count();
-            if dot_count > 1 {
-                return Err(IcuRatioError::MultipleDecimalPoints);
+            let dot_count = decimal.matches('.').count();
+            match dot_count {
+                0 => BigRational::from_str(decimal)
+                    .map(IcuRatio)
+                    .map_err(|_| IcuRatioError::InvalidRatioString),
+                1 => {
+                    let decimal_part_length = decimal.split('.').last().unwrap().len();
+                    // remove "." from the string
+                    let number_str = decimal.replace(".", "");
+                    if number_str.is_empty() {
+                        return Err(IcuRatioError::InvalidRatioString);
+                    }
+                    let number = IcuRatio(
+                        BigRational::from_str(&number_str)
+                            .map_err(|_| IcuRatioError::InvalidRatioString)?,
+                    );
+                    let ten = IcuRatio::ten();
+                    let ten = ten.pow(decimal_part_length as i32);
+
+                    Ok(number / ten)
+                }
+                _ => Err(IcuRatioError::MultipleDecimalPoints),
             }
-
-            if dot_count == 0 {
-                return Ok(IcuRatio(
-                    BigRational::from_str(decimal)
-                        .map_err(|_| IcuRatioError::InvalidRatioString)?,
-                ));
-            }
-
-            // calculate the length between the "." and the end of the string
-            let decimal_length = decimal.len() - decimal.find('.').unwrap() - 1;
-
-            // remove the "." from the string
-            let decimal = decimal.replace(".", "");
-
-            let numerator = IcuRatio(
-                BigRational::from_str(&decimal).map_err(|_| IcuRatioError::InvalidRatioString)?,
-            );
-
-            let ten = IcuRatio::ten();
-            let denomerator = ten.pow(decimal_length as i32);
-
-            Ok(numerator / denomerator)
         }
 
-        // remove commas from the string
-        let number_str = number_str.replace(",", "");
-
-        // check if the number is empty after removing commas
+        let number_str = number_str.replace(",", ""); // Remove commas for parsing
         if number_str.is_empty() {
             return Ok(IcuRatio::zero());
         }
@@ -310,7 +305,7 @@ impl FromStr for IcuRatio {
         }
 
         let significand = match significand {
-            Some(significand) => parce_fraction(significand)?,
+            Some(significand) => parse_fraction(significand)?,
             None => IcuRatio::one(),
         };
 
@@ -358,6 +353,9 @@ mod tests {
             (".0005", Ok(IcuRatio::from_big_ints(5.into(), 10000.into()))),
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            // commas are neglected
+            (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (".", Err(IcuRatioError::InvalidRatioString)),
             ("1/0", Err(IcuRatioError::DivisionByZero)),
             ("1/2/3", Err(IcuRatioError::MultipleSlashes)),
             ("1/2A", Err(IcuRatioError::InvalidRatioString)),
