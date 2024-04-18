@@ -48,11 +48,6 @@ pub mod ffi {
             icu::experimental::units::converter_factory::ConverterFactory::converter,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::experimental::units::converter_factory::ConverterFactory::converter,
-            FnInStruct,
-            hidden
-        )]
         pub fn converter(
             &self,
             from: &ICU4XMeasureUnit,
@@ -65,11 +60,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::experimental::units::converter_factory::ConverterFactory::parser,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::experimental::units::converter_factory::ConverterFactory::parser,
-            FnInStruct,
-            hidden
         )]
         pub fn parser<'a>(&'a self) -> Box<ICU4XMeasureUnitParser<'a>> {
             ICU4XMeasureUnitParser(self.0.parser()).into()
@@ -93,11 +83,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::experimental::units::measureunit::MeasureUnitParser::parse,
-            FnInStruct,
-            hidden
         )]
         pub fn parse_measure_unit(
             &self,
@@ -133,11 +118,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::experimental::units::converter::UnitsConverter::convert_f64,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::experimental::units::converter::UnitsConverter::convert_f64,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(dart, rename = "convert_double")]
         pub fn convert_f64(&self, value: f64) -> f64 {
