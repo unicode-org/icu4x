@@ -20,6 +20,29 @@ use crate::{
 /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
 /// It also supports normalizing and canonicalizing the IANA strings.
 ///
+/// # Normalization vs Canonicalization
+///
+/// Multiple IANA time zone identifiers can refer to the same BCP-47 time zone. For example, the
+/// following three IANA identifiers all map to `"usind"`:
+///
+/// - "America/Fort_Wayne"
+/// - "America/Indiana/Indianapolis"
+/// - "America/Indianapolis"
+/// - "US/East-Indiana"
+///
+/// There is only one canonical name, which is "America/Indiana/Indianapolis". The
+/// *canonicalization* operation returns the canonical name. You should canonicalize if you
+/// need to compare time zones for equality or display the name to the user. Note that the
+/// canonical name can change over time.
+///
+/// The *normalization* operation, on the other hand, keeps the input identifier but normalizes
+/// the casing. For example, "AMERICA/FORT_WAYNE" normalizes to "America/Fort_Wayne".
+/// Normalization is a data-driven operation because there are no algorithmic casing rules that
+/// work for all IANA time zone identifiers.
+///
+/// Normalization is a cheap operation, but canonicalization might be expensive. If you need
+/// canonicalization that is reliably fast, use [`TimeZoneIdMapperWithFastCanonicalization`].
+///
 /// # Examples
 ///
 /// ```
