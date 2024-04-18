@@ -7,6 +7,7 @@ use core::{
     str::FromStr,
 };
 
+use alloc::borrow::Cow;
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
@@ -374,10 +375,7 @@ mod tests {
                 "-1/2E5",
                 Ok(IcuRatio::from_big_ints(BigInt::from(-50000), 1.into())),
             ),
-            (
-                "1/2E5",
-                Ok(IcuRatio::from_big_ints(50000.into(), 1.into())),
-            ),
+            ("1/2E5", Ok(IcuRatio::from_big_ints(50000.into(), 1.into()))),
             // commas are neglected
             (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             ("1/0", Err(RatioFromStrError::DivisionByZero)),
