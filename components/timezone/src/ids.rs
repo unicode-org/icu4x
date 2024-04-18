@@ -60,6 +60,13 @@ pub struct TimeZoneIdMapper {
     data: DataPayload<IanaToBcp47MapV2Marker>,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for TimeZoneIdMapper {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TimeZoneIdMapper {
     /// Creates a new [`TimeZoneIdMapper`] using compiled data.
     ///
@@ -68,7 +75,6 @@ impl TimeZoneIdMapper {
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[allow(clippy::new_without_default)] // feature-gated constructor
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
@@ -414,6 +420,13 @@ pub struct TimeZoneIdMapperWithFastCanonicalization<I> {
     data: DataPayload<Bcp47ToIanaMapV1Marker>,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     /// Creates a new [`TimeZoneIdMapperWithFastCanonicalization`] using compiled data.
     ///
@@ -422,7 +435,6 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[allow(clippy::new_without_default)] // feature-gated constructor
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
