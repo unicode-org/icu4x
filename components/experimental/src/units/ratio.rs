@@ -266,6 +266,7 @@ impl FromStr for IcuRatio {
             };
 
             let decimal_part = match decimal_part {
+                None | Some("") => return Ok(integer_part),
                 Some(decimal_part) => {
                     let decimal_power = decimal_part.len() as i32;
                     let decimal_part = IcuRatio(
@@ -275,7 +276,6 @@ impl FromStr for IcuRatio {
 
                     decimal_part / IcuRatio::ten().pow(decimal_power) // Divide by 10^decimal_power
                 }
-                None => return Ok(integer_part),
             };
 
             Ok(integer_part + decimal_part)
@@ -300,12 +300,10 @@ impl FromStr for IcuRatio {
 
         let exponent = match exponent {
             Some(exponent) => {
-                let exponent = match exponent.parse::<i32>() {
-                    Ok(exponent) => exponent,
-                    Err(_) => return Err(IcuRatioError::RatioFromStrError),
-                };
-                let ten = IcuRatio::ten();
-                ten.pow(exponent)
+                let exponent = exponent
+                    .parse::<i32>()
+                    .map_err(|_| IcuRatioError::RatioFromStrError)?;
+                IcuRatio::ten().pow(exponent)
             }
             None => IcuRatio::one(),
         };
@@ -342,13 +340,13 @@ mod tests {
             (".0005", Ok(IcuRatio::from_big_ints(5.into(), 10000.into()))),
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (".", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             (
                 "-1/2E5",
                 Ok(IcuRatio::from_big_ints(BigInt::from(-50000), 1.into())),
             ),
             // commas are neglected
             (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
-            (".", Err(IcuRatioError::RatioFromStrError)),
             ("1/0", Err(IcuRatioError::RatioFromStrError)),
             ("1/2/3", Err(IcuRatioError::RatioFromStrError)),
             ("1/2A", Err(IcuRatioError::RatioFromStrError)),
