@@ -25,6 +25,7 @@ pub mod ffi {
 
     impl ICU4XTimeZoneIdMapper {
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XTimeZoneIdMapper>, ICU4XError> {
@@ -148,6 +149,7 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct
         )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XTimeZoneIdMapperWithFastCanonicalization>, ICU4XError> {
