@@ -285,9 +285,10 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// This function performs a slow linear search. If this is problematic, consider one of the
     /// following functions instead:
     ///
-    /// 1. [`TimeZoneIdMapperBorrowed::canonicalize_iana()`] is faster if you have an IANA ID.
-    /// 2. [`TimeZoneIdMapperWithFastCanonicalizationBorrowed::canonical_iana_from_bcp47()`] is faster, but it requires
-    ///    loading additional data.
+    /// 1. [`TimeZoneIdMapperBorrowed::canonicalize_iana()`]
+    ///    is faster if you have an IANA ID.
+    /// 2. [`TimeZoneIdMapperWithFastCanonicalizationBorrowed::canonical_iana_from_bcp47()`]
+    ///    is faster, but it requires loading additional data.
     ///
     /// Returns `None` if the BCP-47 ID is not found.
     ///
