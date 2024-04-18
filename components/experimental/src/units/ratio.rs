@@ -380,21 +380,11 @@ mod tests {
 
         for (input, expected) in test_cases.iter() {
             let actual = IcuRatio::from_str(input);
-            match (actual, expected) {
-                (Ok(ref actual_val), Ok(ref expected_val)) => assert_eq!(
-                    actual_val, expected_val,
-                    "Values do not match for input: {}",
-                    input
-                ),
-                (Err(ref actual_err), Err(ref expected_err)) => {
-                    assert_eq!(
-                        actual_err, expected_err,
-                        "Error types do not match for input: {}",
-                        input
-                    )
-                }
-                _ => panic!("Result types (Ok/Err) do not match for input: {}", input),
-            }
+            assert_eq!(
+                actual, expected,
+                "Values do not match for input: {}",
+                input
+            );
         }
 
         let actual = IcuRatio::from_str("1.5").unwrap();
