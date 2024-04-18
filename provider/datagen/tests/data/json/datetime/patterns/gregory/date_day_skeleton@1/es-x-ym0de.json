@@ -1,0 +1,15 @@
+{
+  "indices": [
+    {
+      "has_long": true,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 0
+    }
+  ],
+  "patterns": [
+    "EEEE, d 'de' MMMM 'de' y",
+    "EEE, d MMM y",
+    "EEE, d/M/y"
+  ]
+}

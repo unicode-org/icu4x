@@ -1,0 +1,14 @@
+{
+  "indices": [
+    {
+      "has_long": false,
+      "has_medium": true,
+      "has_plurals": false,
+      "index": 0
+    }
+  ],
+  "patterns": [
+    "y年M月d日",
+    "y/M/d"
+  ]
+}
