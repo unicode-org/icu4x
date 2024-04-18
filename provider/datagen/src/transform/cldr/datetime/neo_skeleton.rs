@@ -68,20 +68,24 @@ impl DataProvider<GregorianDateExtNeoSkeletonPatternsV1Marker> for DatagenProvid
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GregorianDateExtNeoSkeletonPatternsV1Marker>, DataError> {
+        self.check_req::<GregorianDateExtNeoSkeletonPatternsV1Marker>(req)?;
+        let aux_subtag = req
+            .locale
+            .get_aux()
+            .and_then(|aux| aux.iter().next())
+            .expect("Skeleton data provider called without aux subtag");
+        let neo_components = NeoDateComponents::from_id_str(aux_subtag.into_tinystr())
+            .expect("Skeleton data provider called with unknown skeleton");
+        let mut locale_no_aux = req.locale.clone();
+        locale_no_aux.remove_aux();
         let packed_skeleton_data = self.make_packed_skeleton_data(
-            req,
-            NeoDateComponents::VALUES
-                .iter()
-                .skip(9)
-                .map(|neo_components| {
-                    (
-                        neo_components,
-                        !matches!(neo_components, NeoDateComponents::Quarter)
-                            && !matches!(neo_components, NeoDateComponents::YearQuarter),
-                    )
-                }),
+            DataRequest {
+                locale: &locale_no_aux,
+                metadata: Default::default(),
+            },
+            [(neo_components, true)].into_iter(),
             |length, neo_components| {
-                NeoDateSkeleton::for_length_and_components(length, **neo_components)
+                NeoDateSkeleton::for_length_and_components(length, *neo_components)
                     .to_components_bag()
             },
         )?;
@@ -264,7 +268,27 @@ impl IterableDataProviderInternal<GregorianDateExtNeoSkeletonPatternsV1Marker> f
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(Into::into));
+        r.extend(
+            self.cldr()?
+                .dates(cldr_cal)
+                .list_langs()?
+                .flat_map(|langid| {
+                    NeoDateComponents::VALUES
+                        .iter()
+                        .filter(|neo_components| {
+                            !matches!(neo_components, NeoDateComponents::Day(_))
+                            && !matches!(neo_components, NeoDateComponents::Quarter)
+                            && !matches!(neo_components, NeoDateComponents::YearQuarter)
+                        })
+                        .map(move |neo_components| {
+                            let mut data_locale = DataLocale::from(&langid);
+                            let subtag =
+                                Subtag::try_from_raw(*neo_components.id_str().all_bytes()).unwrap();
+                            data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+                            data_locale
+                        })
+                }),
+        );
 
         Ok(r)
     }
