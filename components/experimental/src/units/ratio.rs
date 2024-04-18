@@ -315,7 +315,7 @@ impl FromStr for IcuRatio {
             return Ok(IcuRatio::zero());
         }
 
-        let mut parts = number_str.split(|c| c == 'e' || c == 'E');
+        let mut parts = number_str.split(['e', 'E']);
         let significand = parts.next();
         let exponent = parts.next();
         if parts.next().is_some() {
