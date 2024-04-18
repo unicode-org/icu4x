@@ -13,6 +13,7 @@ use crate::units::ratio::IcuRatio;
 /// NOTE:
 ///     This converter does not support conversions between mixed units,
 ///     for example, from "meter" to "foot-and-inch".
+#[derive(Debug, Clone)]
 pub struct UnitsConverter(pub(crate) UnitsConverterInner);
 
 impl UnitsConverter {
@@ -33,7 +34,7 @@ impl UnitsConverter {
 ///    1 - Proportional: Converts between two units that are proportionally related (e.g. `meter` to `foot`).
 ///    2 - Reciprocal: Converts between two units that are reciprocal (e.g. `mile-per-gallon` to `liter-per-100-kilometer`).
 ///    3 - Offset: Converts between two units that require an offset (e.g. `celsius` to `fahrenheit`).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum UnitsConverterInner {
     Proportional(ProportionalConverter),
     Reciprocal(ReciprocalConverter),
@@ -66,7 +67,7 @@ impl UnitsConverterInner {
 /// For example:
 ///    1 - `meter-per-second` to `second-per-meter`.
 ///    2 - `mile-per-gallon` to `liter-per-100-kilometer`.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct ReciprocalConverter {
     pub(crate) proportional: ProportionalConverter,
 }
@@ -87,7 +88,7 @@ impl ReciprocalConverter {
 }
 
 /// A converter for converting between two units that require an offset.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct OffsetConverter {
     /// The proportional converter.
     pub(crate) proportional: ProportionalConverter,
@@ -121,7 +122,7 @@ impl OffsetConverter {
 /// such as `celsius` to `fahrenheit` and `mile-per-gallon` to `liter-per-100-kilometer`.
 ///
 /// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct ProportionalConverter {
     /// The conversion rate between the input and output units.
     pub(crate) conversion_rate: IcuRatio,
