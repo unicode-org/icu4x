@@ -284,7 +284,7 @@ impl FromStr for IcuRatio {
                 None | Some("") => IcuRatio::zero(),
                 Some(integer_part) => IcuRatio(
                     BigInt::from_str(integer_part)
-                        .map_err(|e| RatioFromStrError::ParsingBigIntError(e))?
+                        .map_err(RatioFromStrError::ParsingBigIntError)?
                         .into(),
                 ),
             };
@@ -295,7 +295,7 @@ impl FromStr for IcuRatio {
                     let decimal_power = decimal_part.len() as i32;
                     let decimal_part = IcuRatio(
                         BigInt::from_str(decimal_part)
-                            .map_err(|e| RatioFromStrError::ParsingBigIntError(e))?
+                            .map_err(RatioFromStrError::ParsingBigIntError)?
                             .into(),
                     );
 
