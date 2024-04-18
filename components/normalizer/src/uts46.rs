@@ -25,10 +25,9 @@ use icu_provider::DataProvider;
 // 1. Denying public access to parts of the `ComposingNormalizer` API
 //    that don't work when the data contains markers for ignorables.
 // 2. Providing a place where additional iterator pre-processing or
-//    post-processing can take place. (For example, special handling
-//    of the characters from
-//    https://www.unicode.org/versions/corrigendum4.html , although
-//    the special handling might be going away.)
+//    post-processing can take place if needed in the future. (When
+//    writing this, it looked like such processing was needed but
+//    now isn't needed after all.)
 
 /// A mapper that knows how to performs the subsets of UTS 46 processing
 /// documented on the methods.
@@ -38,7 +37,7 @@ pub struct Uts46Mapper {
 }
 
 impl Uts46Mapper {
-    ///
+    /// Construct with compiled data.
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Uts46Mapper {
@@ -46,6 +45,7 @@ impl Uts46Mapper {
         }
     }
 
+    /// Construct with provider.
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new<D>(provider: &D) -> Result<Self, NormalizerError>
     where
@@ -69,8 +69,6 @@ impl Uts46Mapper {
     /// operations from the "Map" and "Normalize" steps of the "Processing"
     /// section of UTS 46 lazily applied to it:
     ///
-    /// 0. The characters from https://www.unicode.org/versions/corrigendum4.html
-    ///    are decomposed.
     /// 1. The _ignored_ characters are ignored.
     /// 2. The _mapped_ characters are mapped.
     /// 3. The _disallowed_ characters are replaced with U+FFFD,
@@ -102,8 +100,6 @@ impl Uts46Mapper {
     /// operations from the NFC check and statucs steps of the "Validity
     /// Criteria" section of UTS 46 lazily applied to it:
     ///
-    /// 0. The characters from https://www.unicode.org/versions/corrigendum4.html
-    ///    are treated as _disallowed_.
     /// 1. The _ignored_ characters are treated as _disallowed_.
     /// 2. The _mapped_ characters are mapped.
     /// 3. The _disallowed_ characters are replaced with U+FFFD,
@@ -124,27 +120,14 @@ impl Uts46Mapper {
     ///   deprecated, and none of Firefox, Safari, or Chrome use it.
     /// * The output needs to be compared with input to see if anything
     ///   changed. This check catches failures to adhere to the normalization
-    ///   and status requirements.
+    ///   and status requirements. In particular, this comparison results
+    ///   in _mapped_ characters resulting in error like "Validity Criteria"
+    ///   requires.
     pub fn normalize_validate<'delegate, I: Iterator<Item = char> + 'delegate>(
         &'delegate self,
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
-        self.normalizer.normalize_iter_private(
-            iter.map(|c| {
-                if crate::in_inclusive_range(c, '\u{2F868}', '\u{2F9BF}') {
-                    // https://unicode-org.atlassian.net/browse/ICU-22658
-                    // Perhaps remove this special case if the PAG so decides.
-                    match c {
-                        '\u{2F868}' | '\u{2F874}' | '\u{2F91F}' | '\u{2F95F}' | '\u{2F9BF}' => {
-                            REPLACEMENT_CHARACTER
-                        }
-                        _ => c,
-                    }
-                } else {
-                    c
-                }
-            }),
-            crate::IgnorableBehavior::ReplacementCharacter,
-        )
+        self.normalizer
+            .normalize_iter_private(iter, crate::IgnorableBehavior::ReplacementCharacter)
     }
 }
