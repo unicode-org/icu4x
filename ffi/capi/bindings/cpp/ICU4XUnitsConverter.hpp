@@ -35,6 +35,8 @@ class ICU4XUnitsConverter {
    * Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
    * NOTE:
    * The conversion using floating-point operations is not as accurate as the conversion using ratios.
+   * 
+   * See the [Rust documentation for `convert_f64`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert_f64) for more information.
    */
   double convert_f64(double value) const;
   inline const capi::ICU4XUnitsConverter* AsFFI() const { return this->inner.get(); }

@@ -44,6 +44,15 @@ pub mod ffi {
         /// Creates a new [`ICU4XUnitsConverter`] from the input and output [`ICU4XMeasureUnit`]s.
         /// Returns nothing if the conversion between the two units is not possible.
         /// For example, conversion between `meter` and `second` is not possible.
+        #[diplomat::rust_link(
+            icu::experimental::units::converter_factory::ConverterFactory::converter,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::units::converter_factory::ConverterFactory::converter,
+            FnInStruct,
+            hidden
+        )]
         pub fn converter(
             &self,
             from: &ICU4XMeasureUnit,
@@ -53,6 +62,15 @@ pub mod ffi {
         }
 
         /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
+        #[diplomat::rust_link(
+            icu::experimental::units::converter_factory::ConverterFactory::parser,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::units::converter_factory::ConverterFactory::parser,
+            FnInStruct,
+            hidden
+        )]
         pub fn parser<'a>(&'a self) -> Box<ICU4XMeasureUnitParser<'a>> {
             ICU4XMeasureUnitParser(self.0.parser()).into()
         }
@@ -72,6 +90,15 @@ pub mod ffi {
     impl<'a> ICU4XMeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         /// Returns an error if the unit identifier is not valid.
+        #[diplomat::rust_link(
+            icu::experimental::units::measureunit::MeasureUnitParser::parse,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::units::measureunit::MeasureUnitParser::parse,
+            FnInStruct,
+            hidden
+        )]
         pub fn parse_measure_unit(
             &self,
             unit_id: &str,
@@ -103,6 +130,15 @@ pub mod ffi {
         /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
         /// NOTE:
         ///   The conversion using floating-point operations is not as accurate as the conversion using ratios.
+        #[diplomat::rust_link(
+            icu::experimental::units::converter::UnitsConverter::convert_f64,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::experimental::units::converter::UnitsConverter::convert_f64,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(dart, rename = "convert_double")]
         pub fn convert_f64(&self, value: f64) -> f64 {
             self.0.convert_f64(value)

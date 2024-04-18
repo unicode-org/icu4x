@@ -48,11 +48,15 @@ class ICU4XUnitsConverterFactory {
    * Creates a new [`ICU4XUnitsConverter`] from the input and output [`ICU4XMeasureUnit`]s.
    * Returns nothing if the conversion between the two units is not possible.
    * For example, conversion between `meter` and `second` is not possible.
+   * 
+   * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
    */
   std::optional<ICU4XUnitsConverter> converter(const ICU4XMeasureUnit& from, const ICU4XMeasureUnit& to) const;
 
   /**
    * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
+   * 
+   * See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

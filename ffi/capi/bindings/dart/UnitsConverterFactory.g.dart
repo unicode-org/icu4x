@@ -42,12 +42,16 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
   /// Returns nothing if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
+  ///
+  /// See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
   UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
     final result = _ICU4XUnitsConverterFactory_converter(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
 
   /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+  ///
+  /// See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
   MeasureUnitParser parser() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];

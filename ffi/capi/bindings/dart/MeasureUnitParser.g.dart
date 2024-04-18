@@ -30,6 +30,8 @@ final class MeasureUnitParser implements ffi.Finalizable {
   /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`].
   /// Returns an error if the unit identifier is not valid.
   ///
+  /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
+  ///
   /// Throws [Error] on failure.
   MeasureUnit parseMeasureUnit(String unitId) {
     final temp = ffi2.Arena();
