@@ -140,8 +140,8 @@ pub use iana_ids::{
     IanaToBcp47MapperBorrowed,
 };
 pub use ids::{
-    TimeZoneIdMapper, TimeZoneIdMapperBorrowed,
-    TimeZoneIdMapperWithFastCanonicalization, TimeZoneIdMapperWithFastCanonicalizationBorrowed,
+    TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
+    TimeZoneIdMapperWithFastCanonicalizationBorrowed,
 };
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
