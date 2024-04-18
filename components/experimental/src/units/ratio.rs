@@ -23,16 +23,6 @@ pub struct IcuRatio(Ratio<BigInt>);
 
 #[derive(Debug, PartialEq)]
 pub enum IcuRatioError {
-    /// Represents an error when parsing a `BigRational` from a string.
-    BigRationalParseError(num_rational::ParseRatioError),
-
-    /// Represents an error when parsing an integer from a string.
-    ParseIntError(core::num::ParseIntError),
-
-    /// Represents an error when parsing a ratio from a string.
-    /// For example, the string "1/0/2" is invalid because it contains more than one '/' character.
-    InvalidRatioString,
-
     /// Represents an error when a division by zero is attempted or when the denominator is zero in a ratio.
     DivisionByZero,
 
@@ -42,7 +32,7 @@ pub enum IcuRatioError {
 
     /// Represents an error when a ratio string contains multiple scientific notations.
     /// For example, the string "1.5E6E6" is invalid because it contains more than one 'E' character.
-    MultipleScientificNotation,
+    MultipleScientificNotations,
 
     /// Represents an error when a ratio string contains multiple decimal points.
     /// For example, the string "1.5.6" is invalid because it contains more than one '.' character.
@@ -51,6 +41,9 @@ pub enum IcuRatioError {
     /// Represents an error when the exponent part of a ratio string is not an integer.
     /// For example, the string "1.5E6.5" is invalid because the exponent part "6.5" is not an integer.
     ExponentPartIsNotInteger,
+
+    /// Represents an error when a ratio string is invalid.
+    InvalidRatioString,
 }
 
 impl IcuRatio {
@@ -222,99 +215,119 @@ impl FromStr for IcuRatio {
     /// - Scientific notation: "1.5E6" becomes "1500000", "1.5E-6" becomes "0.0000015".
     /// - Scientific notation with commas: "1,500E6" becomes "1500000000". Commas are disregarded.
     /// - Integer notation: "1" becomes "1".
+    /// - Empty string: "" becomes "0".
     /// Parsing errors are returned for:
     /// - Division by zero: "1/0".
     /// - Multiple slashes: "1/2/3".
     /// - Non-numeric characters in fractions: "1/2A".
-    fn from_str(s: &str) -> Result<Self, IcuRatioError> {
-        /// Converts a decimal string to an `IcuRatio`.
-        ///
-        /// # Examples
-        /// - "1.5" is converted to an `IcuRatio` representing "3/2".
-        fn decimal_str_to_icu_ratio(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
+    /// - Multiple scientific notations: "1.5E6E6".
+    /// - Multiple decimal points: "1.5.6".
+    /// - Exponent part is not an integer: "1.5E6.5".
+    fn from_str(number_str: &str) -> Result<Self, IcuRatioError> {
+        /// Parses a fraction from a string.
+        /// The input string is expected to be in any fractional format.
+        /// For example, "1", "1/2", "1.5", "1.5/6", "1.4/5.6".
+        /// No scientific notation is allowed.
+        fn parce_fraction(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
+            // remove commas
+            let decimal = decimal.replace(",", "");
+
+            let mut components = decimal.split('/');
+            let numerator = components.next();
+            let denominator = components.next();
+            if components.next().is_some() {
+                return Err(IcuRatioError::MultipleSlashes);
+            }
+
+            let numerator = match numerator {
+                Some(numerator) => parse_decimal(numerator)?,
+                None => IcuRatio::zero(),
+            };
+
+            let denominator = match denominator {
+                Some(denominator) => parse_decimal(denominator)?,
+                None => IcuRatio::one(),
+            };
+
+            if denominator.is_zero() {
+                return Err(IcuRatioError::DivisionByZero);
+            }
+
+            Ok(numerator / denominator)
+        }
+
+        /// Parses a decimal from a string.
+        /// The input string is expected to be in any decimal format.
+        /// For example, "1", "1.5".
+        /// Empty strings are treated as "0".
+        /// No fractions are allowed.
+        fn parse_decimal(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
             let mut components = decimal.split('.');
-            let integer_component = components.next().unwrap_or("0");
-            let decimal_component = components.next().unwrap_or("0");
-            let decimal_length = decimal_component.chars().count() as i32;
+            let integer_part = components.next();
+            let decimal_part = components.next();
 
             if components.next().is_some() {
                 return Err(IcuRatioError::MultipleDecimalPoints);
             }
 
-            let integer_component = match BigRational::from_str(integer_component) {
-                Ok(ratio) => IcuRatio(ratio),
-                Err(e) => return Err(IcuRatioError::BigRationalParseError(e)),
+            let integer_part = match integer_part {
+                Some(integer_part) => integer_part
+                    .parse::<BigRational>()
+                    .map_err(|_| IcuRatioError::InvalidRatioString)?,
+
+                None => BigRational::zero(),
             };
-            let decimal_component = match BigRational::from_str(decimal_component) {
-                Ok(ratio) => IcuRatio(ratio),
-                Err(e) => return Err(IcuRatioError::BigRationalParseError(e)),
+
+            let decimal_part_len;
+            let decimal_part = match decimal_part {
+                Some(decimal_part) => {
+                    decimal_part_len = decimal_part.len() as i32;
+                    decimal_part
+                        .parse::<BigRational>()
+                        .map_err(|_| IcuRatioError::InvalidRatioString)?
+                }
+                None => return Ok(IcuRatio(integer_part)),
             };
 
             let ten = IcuRatio::ten();
-            let decimal_component = decimal_component / ten.pow(decimal_length);
-            Ok(integer_component + decimal_component)
+            let decimal_part = ten.pow(-decimal_part_len) * IcuRatio(decimal_part);
+            Ok(IcuRatio(integer_part) + decimal_part)
         }
 
-        /// Converts a string in scientific notation to an `IcuRatio`.
-        ///
-        /// # Examples
-        /// - "1.5E6" is converted to an `IcuRatio` representing "1500000".
-        /// - "1.5E-6" is converted to an `IcuRatio` representing "0.0000015".
-        /// - "1,500E6" is converted to an `IcuRatio` representing "1500000". (Commas are ignored)
-        /// - "1.5E6A" returns `None` because of the non-numeric character 'A'.
-        pub fn scientific_notation_to_icu_ratio(
-            scientific_notation: &str,
-        ) -> Result<IcuRatio, IcuRatioError> {
-            //remove all the commas
-            let rational = scientific_notation.replace(',', "");
-
-            let mut parts = rational.split('E');
-            let rational_part = parts.next().unwrap_or("1");
-            let exponent_part = parts.next().unwrap_or("0");
-            if parts.next().is_some() {
-                return Err(IcuRatioError::MultipleScientificNotation);
-            }
-
-            let rational_part = decimal_str_to_icu_ratio(rational_part)?;
-            let exponent_part =
-                i32::from_str(exponent_part).map_err(|e| IcuRatioError::ParseIntError(e))?;
-
-            let ten = IcuRatio::ten();
-            let exponent_part = ten.pow(exponent_part);
-            Ok(rational_part * exponent_part)
+        if number_str.is_empty() {
+            return Ok(IcuRatio::zero());
         }
 
-        let mut parts = s.split('/');
-        let numerator = parts.next();
-        let denominator = parts.next();
+        let mut parts = number_str.split(|c| c == 'e' || c == 'E');
+        let significand = parts.next();
+        let exponent = parts.next();
         if parts.next().is_some() {
-            return Err(IcuRatioError::MultipleSlashes);
+            return Err(IcuRatioError::MultipleScientificNotations);
         }
 
-        let numerator: IcuRatio = match numerator {
-            Some(num_str) => scientific_notation_to_icu_ratio(num_str)?,
-            None => IcuRatio::zero(),
-        };
-
-        let denominator = match denominator {
-            Some(den_str) => scientific_notation_to_icu_ratio(den_str)?,
+        let significand = match significand {
+            Some(significand) => parce_fraction(significand)?,
             None => IcuRatio::one(),
         };
 
-        if denominator.is_zero() {
-            return Err(IcuRatioError::DivisionByZero);
-        }
+        let exponent = match exponent {
+            Some(exponent) => {
+                let exponent = match exponent.parse::<i32>() {
+                    Ok(exponent) => exponent,
+                    Err(_) => return Err(IcuRatioError::ExponentPartIsNotInteger),
+                };
+                let ten = IcuRatio::ten();
+                ten.pow(exponent)
+            }
+            None => IcuRatio::one(),
+        };
 
-        Ok(numerator / denominator)
+        Ok(significand * exponent)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use core::any::Any;
-
-    use num_rational::ParseRatioError;
-
     use super::*;
 
     #[test]
@@ -337,12 +350,7 @@ mod tests {
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("1/0", Err(IcuRatioError::DivisionByZero)),
             ("1/2/3", Err(IcuRatioError::MultipleSlashes)),
-            // (
-            //     "1/2A",
-            //     Err(IcuRatioError::BigRationalParseError(
-            //         ParseRatioError::Invalid,
-            //     )),
-            // ),
+            ("1/2A", Err(IcuRatioError::InvalidRatioString)),
         ];
 
         for (input, expected) in test_cases.iter() {
@@ -355,8 +363,7 @@ mod tests {
                 ),
                 (Err(ref actual_err), Err(ref expected_err)) => {
                     assert_eq!(
-                        actual_err.type_id(),
-                        expected_err.type_id(),
+                        actual_err, expected_err,
                         "Error types do not match for input: {}",
                         input
                     )
