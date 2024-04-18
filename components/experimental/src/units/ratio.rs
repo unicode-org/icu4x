@@ -306,7 +306,11 @@ impl FromStr for IcuRatio {
             Ok(integer_part + decimal_part)
         }
 
-        let number_str = number_str.replace(',', ""); // Remove commas for parsing
+        let number_str = if number_str.contains(',') {
+            Cow::Owned(number_str.replace(',', ""))
+        } else {
+            Cow::Borrowed(number_str)
+        };
         if number_str.is_empty() {
             return Ok(IcuRatio::zero());
         }
