@@ -198,6 +198,7 @@ impl FromStr for IcuRatio {
     /// - Scientific notation with commas: "1,500E6" becomes "1500000000". Commas are disregarded.
     /// - Integer notation: "1" becomes "1".
     /// - Empty string: "" becomes "0".
+    /// - Fractional notation with exponent: "1/2E5" becomes "1/200000".
     /// - Negative numbers: "-1/2" becomes "-1/2".
     /// - Negative numbers with decimal notation: "-1.5" becomes "-3/2".
     /// - Negative numbers with scientific notation: "-1.5E6" becomes "-1500000".
