@@ -69,11 +69,6 @@ impl Uts46Mapper {
     /// operations from the "Map" and "Normalize" steps of the "Processing"
     /// section of UTS 46 lazily applied to it:
     ///
-<<<<<<< HEAD
-    /// 0. The characters from <https://www.unicode.org/versions/corrigendum4.html>
-    ///    are decomposed.
-=======
->>>>>>> nocompatideographspecialcase
     /// 1. The _ignored_ characters are ignored.
     /// 2. The _mapped_ characters are mapped.
     /// 3. The _disallowed_ characters are replaced with U+FFFD,
@@ -105,11 +100,6 @@ impl Uts46Mapper {
     /// operations from the NFC check and statucs steps of the "Validity
     /// Criteria" section of UTS 46 lazily applied to it:
     ///
-<<<<<<< HEAD
-    /// 0. The characters from <https://www.unicode.org/versions/corrigendum4.html>
-    ///    are treated as _disallowed_.
-=======
->>>>>>> nocompatideographspecialcase
     /// 1. The _ignored_ characters are treated as _disallowed_.
     /// 2. The _mapped_ characters are mapped.
     /// 3. The _disallowed_ characters are replaced with U+FFFD,
