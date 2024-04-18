@@ -23,27 +23,9 @@ pub struct IcuRatio(Ratio<BigInt>);
 
 #[derive(Debug, PartialEq)]
 pub enum IcuRatioError {
-    /// Represents an error when a division by zero is attempted or when the denominator is zero in a ratio.
-    DivisionByZero,
-
-    /// Represents an error when a ratio string contains multiple slashes.
-    /// For example, the string "1/2/3" is invalid because it contains more than one '/' character.
-    MultipleSlashes,
-
-    /// Represents an error when a ratio string contains multiple scientific notations.
-    /// For example, the string "1.5E6E6" is invalid because it contains more than one 'E' character.
-    MultipleScientificNotations,
-
-    /// Represents an error when a ratio string contains multiple decimal points.
-    /// For example, the string "1.5.6" is invalid because it contains more than one '.' character.
-    MultipleDecimalPoints,
-
-    /// Represents an error when the exponent part of a ratio string is not an integer.
-    /// For example, the string "1.5E6.5" is invalid because the exponent part "6.5" is not an integer.
-    ExponentPartIsNotInteger,
-
-    /// Represents an error when a ratio string is invalid.
-    InvalidRatioString,
+    /// Represents an error when the ratio string is invalid and cannot be parsed.
+    /// This error is returned from the `from_str` function.
+    RatioFromStrError,
 }
 
 impl IcuRatio {
@@ -240,7 +222,7 @@ impl FromStr for IcuRatio {
             let numerator = components.next();
             let denominator = components.next();
             if components.next().is_some() {
-                return Err(IcuRatioError::MultipleSlashes);
+                return Err(IcuRatioError::RatioFromStrError);
             }
 
             let numerator = match numerator {
@@ -254,7 +236,7 @@ impl FromStr for IcuRatio {
             };
 
             if denominator.is_zero() {
-                return Err(IcuRatioError::DivisionByZero);
+                return Err(IcuRatioError::RatioFromStrError);
             }
 
             Ok(numerator / denominator)
@@ -271,14 +253,14 @@ impl FromStr for IcuRatio {
             let integer_part = dot_parts.next();
             let decimal_part = dot_parts.next();
             if dot_parts.next().is_some() {
-                return Err(IcuRatioError::MultipleDecimalPoints);
+                return Err(IcuRatioError::RatioFromStrError);
             }
 
             let integer_part = match integer_part {
                 None | Some("") => IcuRatio::zero(),
                 Some(integer_part) => IcuRatio(
                     Ratio::<BigInt>::from_str(integer_part)
-                        .map_err(|_| IcuRatioError::InvalidRatioString)?,
+                        .map_err(|_| IcuRatioError::RatioFromStrError)?,
                 ),
             };
 
@@ -287,7 +269,7 @@ impl FromStr for IcuRatio {
                     let decimal_power = decimal_part.len() as i32;
                     let decimal_part = IcuRatio(
                         Ratio::<BigInt>::from_str(decimal_part)
-                            .map_err(|_| IcuRatioError::InvalidRatioString)?,
+                            .map_err(|_| IcuRatioError::RatioFromStrError)?,
                     );
 
                     decimal_part / IcuRatio::ten().pow(decimal_power) // Divide by 10^decimal_power
@@ -307,7 +289,7 @@ impl FromStr for IcuRatio {
         let significand = parts.next();
         let exponent = parts.next();
         if parts.next().is_some() {
-            return Err(IcuRatioError::MultipleScientificNotations);
+            return Err(IcuRatioError::RatioFromStrError);
         }
 
         let significand = match significand {
@@ -319,7 +301,7 @@ impl FromStr for IcuRatio {
             Some(exponent) => {
                 let exponent = match exponent.parse::<i32>() {
                     Ok(exponent) => exponent,
-                    Err(_) => return Err(IcuRatioError::ExponentPartIsNotInteger),
+                    Err(_) => return Err(IcuRatioError::RatioFromStrError),
                 };
                 let ten = IcuRatio::ten();
                 ten.pow(exponent)
@@ -365,10 +347,10 @@ mod tests {
             ),
             // commas are neglected
             (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
-            (".", Err(IcuRatioError::InvalidRatioString)),
-            ("1/0", Err(IcuRatioError::DivisionByZero)),
-            ("1/2/3", Err(IcuRatioError::MultipleSlashes)),
-            ("1/2A", Err(IcuRatioError::InvalidRatioString)),
+            (".", Err(IcuRatioError::RatioFromStrError)),
+            ("1/0", Err(IcuRatioError::RatioFromStrError)),
+            ("1/2/3", Err(IcuRatioError::RatioFromStrError)),
+            ("1/2A", Err(IcuRatioError::RatioFromStrError)),
         ];
 
         for (input, expected) in test_cases.iter() {
