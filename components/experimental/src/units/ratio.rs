@@ -8,7 +8,7 @@ use core::{
 };
 
 use num_bigint::BigInt;
-use num_rational::{BigRational, Ratio};
+use num_rational::Ratio;
 use num_traits::Signed;
 use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
@@ -269,7 +269,7 @@ impl FromStr for IcuRatio {
         fn parse_decimal(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
             let dot_count = decimal.matches('.').count();
             match dot_count {
-                0 => BigRational::from_str(decimal)
+                0 => Ratio::<BigInt>::from_str(decimal)
                     .map(IcuRatio)
                     .map_err(|_| IcuRatioError::InvalidRatioString),
                 1 => {
@@ -280,7 +280,7 @@ impl FromStr for IcuRatio {
                         return Err(IcuRatioError::InvalidRatioString);
                     }
                     let number = IcuRatio(
-                        BigRational::from_str(&number_str)
+                        Ratio::<BigInt>::from_str(&number_str)
                             .map_err(|_| IcuRatioError::InvalidRatioString)?,
                     );
                     let ten = IcuRatio::ten();
