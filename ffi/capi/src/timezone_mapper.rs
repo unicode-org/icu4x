@@ -68,7 +68,7 @@ pub mod ffi {
             // Validate the UTF-8 here because it gets echoed back to the writeable
             let value = core::str::from_utf8(value)?;
             if let Some(s) = handle.normalize_iana(value) {
-                Ok(s.string.write_to(write)?)
+                Ok(s.0.write_to(write)?)
             } else {
                 Err(ICU4XError::TimeZoneInvalidIdError)
             }
@@ -88,7 +88,7 @@ pub mod ffi {
             // Validate the UTF-8 here because it gets echoed back to the writeable
             let value = core::str::from_utf8(value)?;
             if let Some(s) = handle.canonicalize_iana(value) {
-                Ok(s.string.write_to(write)?)
+                Ok(s.0.write_to(write)?)
             } else {
                 Err(ICU4XError::TimeZoneInvalidIdError)
             }
@@ -107,7 +107,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let bcp47_id = TimeZoneBcp47Id(TinyAsciiStr::from_bytes(value)?);
             if let Some(s) = handle.find_canonical_iana_from_bcp47(bcp47_id) {
-                Ok(s.string.write_to(write)?)
+                Ok(s.write_to(write)?)
             } else {
                 Err(ICU4XError::TimeZoneInvalidIdError)
             }
@@ -177,7 +177,7 @@ pub mod ffi {
             // Validate the UTF-8 here because it gets echoed back to the writeable
             let value = core::str::from_utf8(value)?;
             if let Some(s) = handle.canonicalize_iana(value) {
-                Ok(s.string.write_to(write)?)
+                Ok(s.0.write_to(write)?)
             } else {
                 Err(ICU4XError::TimeZoneInvalidIdError)
             }
@@ -196,7 +196,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let bcp47_id = TimeZoneBcp47Id(TinyAsciiStr::from_bytes(value)?);
             if let Some(s) = handle.canonical_iana_from_bcp47(bcp47_id) {
-                Ok(s.string.write_to(write)?)
+                Ok(s.write_to(write)?)
             } else {
                 Err(ICU4XError::TimeZoneInvalidIdError)
             }

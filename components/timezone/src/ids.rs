@@ -74,7 +74,7 @@ use crate::{
 ///     mapper
 ///         .canonicalize_iana("Australia/Victoria")
 ///         .unwrap()
-///         .string,
+///         .0,
 ///     "Australia/Melbourne"
 /// );
 /// ```
@@ -202,25 +202,25 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     ///
     /// let result = mapper.normalize_iana("Asia/CALCUTTA").unwrap();
     ///
-    /// assert_eq!(result.string, "Asia/Calcutta");
-    /// assert!(matches!(result.string, Cow::Owned(_)));
-    /// assert_eq!(*result.bcp47_id, "inccu");
+    /// assert_eq!(result.0, "Asia/Calcutta");
+    /// assert!(matches!(result.0, Cow::Owned(_)));
+    /// assert_eq!(*result.1, "inccu");
     ///
     /// // Borrows when able:
     /// let result = mapper.normalize_iana("America/Chicago").unwrap();
-    /// assert_eq!(result.string, "America/Chicago");
-    /// assert!(matches!(result.string, Cow::Borrowed(_)));
+    /// assert_eq!(result.0, "America/Chicago");
+    /// assert!(matches!(result.0, Cow::Borrowed(_)));
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.normalize_iana("America/San_Francisco"), None);
     /// ```
-    pub fn normalize_iana<'s>(&self, iana_id: &'s str) -> Option<NormalizedIana<'s>> {
+    pub fn normalize_iana<'s>(&self, iana_id: &'s str) -> Option<(Cow<'s, str>, TimeZoneBcp47Id)> {
         let (trie_value, string) = self.iana_lookup_with_normalization(iana_id, |_| {})?;
         let Some(bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
             return None;
         };
-        Some(NormalizedIana { string, bcp47_id })
+        Some((string, bcp47_id))
     }
 
     /// Returns the canonical, normalized name of the given IANA time zone.
@@ -241,19 +241,19 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     ///
     /// let result = mapper.canonicalize_iana("Asia/CALCUTTA").unwrap();
     ///
-    /// assert_eq!(result.string, "Asia/Kolkata");
-    /// assert!(matches!(result.string, Cow::Owned(_)));
-    /// assert_eq!(*result.bcp47_id, "inccu");
+    /// assert_eq!(result.0, "Asia/Kolkata");
+    /// assert!(matches!(result.0, Cow::Owned(_)));
+    /// assert_eq!(*result.1, "inccu");
     ///
     /// // Borrows when able:
     /// let result = mapper.canonicalize_iana("America/Chicago").unwrap();
-    /// assert_eq!(result.string, "America/Chicago");
-    /// assert!(matches!(result.string, Cow::Borrowed(_)));
+    /// assert_eq!(result.0, "America/Chicago");
+    /// assert!(matches!(result.0, Cow::Borrowed(_)));
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
     /// ```
-    pub fn canonicalize_iana<'s>(&self, iana_id: &'s str) -> Option<NormalizedIana<'s>> {
+    pub fn canonicalize_iana<'s>(&self, iana_id: &'s str) -> Option<(Cow<'s, str>, TimeZoneBcp47Id)> {
         // Note: We collect the cursors into a stack so that we start probing
         // nearby the input IANA name. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
@@ -266,7 +266,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
             return None;
         };
         if trie_value.is_canonical() {
-            return Some(NormalizedIana { string, bcp47_id });
+            return Some((string, bcp47_id));
         }
         // If we get here, we need to walk the trie to find the canonical IANA ID.
         let needle = trie_value.to_canonical();
@@ -274,10 +274,9 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
             debug_assert!(false, "every time zone should have a canonical IANA ID");
             return None;
         };
-        Some(NormalizedIana {
-            string: Cow::Owned(string),
+        Some((Cow::Owned(string),
             bcp47_id,
-        })
+        ))
     }
 
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
@@ -306,9 +305,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "inccu"));
     /// let result = mapper.find_canonical_iana_from_bcp47(bcp47_id).unwrap();
     ///
-    /// assert_eq!(result.string, "Asia/Kolkata");
-    /// assert!(matches!(result.string, Cow::Owned(_)));
-    /// assert_eq!(*result.bcp47_id, "inccu");
+    /// assert_eq!(result, "Asia/Kolkata");
     ///
     /// // Unknown BCP-47 time zone ID:
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
@@ -317,15 +314,12 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     pub fn find_canonical_iana_from_bcp47(
         &self,
         bcp47_id: TimeZoneBcp47Id,
-    ) -> Option<NormalizedIana<'static>> {
+    ) -> Option<String> {
         let index = self.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
         let stack = alloc::vec![(self.data.map.cursor(), 0, 0)];
         let needle = IanaTrieValue::canonical_for_index(index);
         let string = self.iana_search(needle, String::new(), stack)?;
-        Some(NormalizedIana {
-            string: Cow::Owned(string),
-            bcp47_id,
-        })
+        Some(string)
     }
 
     /// Queries the data for `iana_id` without recording the normalized string.
@@ -604,20 +598,23 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// let result = mapper.canonicalize_iana("Asia/CALCUTTA").unwrap();
     ///
     /// // The Cow is always returned borrowed:
-    /// assert_eq!(result.string, "Asia/Kolkata");
-    /// assert!(matches!(result.string, Cow::Borrowed(_)));
-    /// assert_eq!(*result.bcp47_id, "inccu");
+    /// assert_eq!(result.0, "Asia/Kolkata");
+    /// assert_eq!(*result.1, "inccu");
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(mapper.canonicalize_iana("America/San_Francisco"), None);
     /// ```
-    pub fn canonicalize_iana(&self, iana_id: &str) -> Option<NormalizedIana> {
+    pub fn canonicalize_iana(&self, iana_id: &str) -> Option<(&str, TimeZoneBcp47Id)> {
         let trie_value = self.inner.iana_lookup_quick(iana_id)?;
         let Some(bcp47_id) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
             return None;
         };
-        self.get_with_index(trie_value.index(), bcp47_id)
+        let Some(string) = self.data.canonical_iana_ids.get(trie_value.index()) else {
+            debug_assert!(false, "index should be in range");
+            return None;
+        };
+        Some((string, bcp47_id))
     }
 
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
@@ -642,42 +639,20 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// let result = mapper.canonical_iana_from_bcp47(bcp47_id).unwrap();
     ///
     /// // The Cow is always returned borrowed:
-    /// assert_eq!(result.string, "Asia/Kolkata");
-    /// assert!(matches!(result.string, Cow::Borrowed(_)));
-    /// assert_eq!(*result.bcp47_id, "inccu");
+    /// assert_eq!(result, "Asia/Kolkata");
     ///
     /// // Unknown BCP-47 time zone ID:
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "ussfo"));
     /// assert_eq!(mapper.canonical_iana_from_bcp47(bcp47_id), None);
     /// ```
-    pub fn canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<NormalizedIana> {
+    pub fn canonical_iana_from_bcp47(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
         let index = self.inner.data.bcp47_ids.binary_search(&bcp47_id).ok()?;
-        self.get_with_index(index, bcp47_id)
+        let Some(string) = self.data.canonical_iana_ids.get(index) else {
+            debug_assert!(false, "index should be in range");
+            return None;
+        };
+        Some(string)
     }
-
-    fn get_with_index(&self, index: usize, bcp47_id: TimeZoneBcp47Id) -> Option<NormalizedIana> {
-        match self.data.canonical_iana_ids.get(index) {
-            Some(iana_id) => Some(NormalizedIana {
-                string: Cow::Borrowed(iana_id),
-                bcp47_id,
-            }),
-            None => {
-                debug_assert!(false, "index should be in range");
-                None
-            }
-        }
-    }
-}
-
-/// A wrapper around a syntax-normalized IANA time zone identifier string
-/// and its corresponding BCP-47 time zone identifier.
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub struct NormalizedIana<'s> {
-    /// The syntax-normalized IANA time zone identifier string.
-    pub string: Cow<'s, str>,
-    /// The corresponding BCP-47 time zone identifier.
-    pub bcp47_id: TimeZoneBcp47Id,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
