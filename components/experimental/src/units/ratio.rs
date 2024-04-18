@@ -265,36 +265,33 @@ impl FromStr for IcuRatio {
         /// Empty strings are treated as "0".
         /// No fractions are allowed.
         fn parse_decimal(decimal: &str) -> Result<IcuRatio, IcuRatioError> {
-            let mut components = decimal.split('.');
-            let integer_part = components.next();
-            let decimal_part = components.next();
-
-            if components.next().is_some() {
+            // count the "." in the string
+            let dot_count = decimal.chars().filter(|&c| c == '.').count();
+            if dot_count > 1 {
                 return Err(IcuRatioError::MultipleDecimalPoints);
             }
 
-            let integer_part = match integer_part {
-                Some(integer_part) => integer_part
-                    .parse::<BigRational>()
-                    .map_err(|_| IcuRatioError::InvalidRatioString)?,
+            if dot_count == 0 {
+                return Ok(IcuRatio(
+                    BigRational::from_str(decimal)
+                        .map_err(|_| IcuRatioError::InvalidRatioString)?,
+                ));
+            }
 
-                None => BigRational::zero(),
-            };
+            // calculate the length between the "." and the end of the string
+            let decimal_length = decimal.len() - decimal.find('.').unwrap() - 1;
 
-            let decimal_part_len;
-            let decimal_part = match decimal_part {
-                Some(decimal_part) => {
-                    decimal_part_len = decimal_part.len() as i32;
-                    decimal_part
-                        .parse::<BigRational>()
-                        .map_err(|_| IcuRatioError::InvalidRatioString)?
-                }
-                None => return Ok(IcuRatio(integer_part)),
-            };
+            // remove the "." from the string
+            let decimal = decimal.replace(".", "");
+
+            let numerator = IcuRatio(
+                BigRational::from_str(&decimal).map_err(|_| IcuRatioError::InvalidRatioString)?,
+            );
 
             let ten = IcuRatio::ten();
-            let decimal_part = ten.pow(-decimal_part_len) * IcuRatio(decimal_part);
-            Ok(IcuRatio(integer_part) + decimal_part)
+            let denomerator = ten.pow(decimal_length as i32);
+
+            Ok(numerator / denomerator)
         }
 
         // remove commas from the string
@@ -354,6 +351,11 @@ mod tests {
                 "1,500E6",
                 Ok(IcuRatio::from_big_ints(1500000000.into(), 1.into())),
             ),
+            (
+                "1.0005",
+                Ok(IcuRatio::from_big_ints(10005.into(), 10000.into())),
+            ),
+            (".0005", Ok(IcuRatio::from_big_ints(5.into(), 10000.into()))),
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             ("1/0", Err(IcuRatioError::DivisionByZero)),
