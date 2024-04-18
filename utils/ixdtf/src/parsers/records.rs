@@ -102,32 +102,32 @@ impl From<bool> for Sign {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UTCOffsetRecord {
-    /// The `Sign` value of the `UtcOffsetRecord`
+    /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
-    /// The hour value of the `UtcOffsetRecord`
+    /// The hour value of the `UtcOffsetRecord`.
     pub hour: u8,
     /// The minute value of the `UtcOffsetRecord`.
     pub minute: u8,
     /// The second value of the `UtcOffsetRecord`.
     pub second: u8,
-    /// Any nanosecond value of the `UTCOffsetRecord`
+    /// Any nanosecond value of the `UTCOffsetRecord`.
     pub nanosecond: u32,
 }
 
-/// The resulting record of a `Duration` parse.
+/// The resulting record of parsing `Duration` string.
 #[non_exhaustive]
 #[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
     /// Duration Sign
     pub sign: Sign,
-    /// A parsed Date Duration record.
+    /// The parsed `DateDurationRecord` if present.
     pub date: Option<DateDurationRecord>,
-    /// A parsed Time Duration record.
+    /// The parsed `TimeDurationRecord` if present.
     pub time: Option<TimeDurationRecord>,
 }
 
-/// A `DateDuration` Parse Node.
+/// A `DateDurationRecord` represents the result of parsing the date component of a Duration string.
 #[non_exhaustive]
 #[cfg(feature = "duration")]
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
@@ -142,7 +142,7 @@ pub struct DateDurationRecord {
     pub days: u32,
 }
 
-/// A `TimeDuration` Parse Node
+/// A `TimeDurationRecord` represents the result of parsing the time component of a Duration string.
 #[non_exhaustive]
 #[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -151,7 +151,7 @@ pub enum TimeDurationRecord {
     Hours {
         /// Hours value.
         hours: u32,
-        /// Any parsed fraction value.
+        /// The parsed fraction value in nanoseconds.
         fraction: u64,
     },
     // A Minutes Time duration record.
@@ -160,7 +160,7 @@ pub enum TimeDurationRecord {
         hours: u32,
         /// Minutes value.
         minutes: u32,
-        /// Any parsed fraction value.
+        /// The parsed fraction value in nanoseconds.
         fraction: u64,
     },
     // A Seconds Time duration record.
@@ -171,7 +171,7 @@ pub enum TimeDurationRecord {
         minutes: u32,
         /// Seconds value.
         seconds: u32,
-        /// Any parsed fraction value.
+        /// The parsed fraction value in nanoseconds.
         fraction: u32,
     },
 }
