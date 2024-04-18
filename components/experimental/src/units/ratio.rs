@@ -221,7 +221,7 @@ impl FromStr for IcuRatio {
     /// - Scientific notation with commas: "1,500E6" becomes "1500000000". Commas are disregarded.
     /// - Integer notation: "1" becomes "1".
     /// - Empty string: "" becomes "0".
-    /// - Fractional notation with exponent: "1/2E5" becomes "1/200000".
+    /// - Fractional notation with exponent: "1/2E5" becomes "50000".
     /// - Negative numbers: "-1/2" becomes "-1/2".
     /// - Negative numbers with decimal notation: "-1.5" becomes "-3/2".
     /// - Negative numbers with scientific notation: "-1.5E6" becomes "-1500000".
@@ -370,6 +370,10 @@ mod tests {
                 "-1/2E5",
                 Ok(IcuRatio::from_big_ints(BigInt::from(-50000), 1.into())),
             ),
+            (
+                "1/2E5",
+                Ok(IcuRatio::from_big_ints(50000.into(), 1.into())),
+            ),
             // commas are neglected
             (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             ("1/0", Err(RatioFromStrError::DivisionByZero)),
@@ -379,12 +383,8 @@ mod tests {
         ];
 
         for (input, expected) in test_cases.iter() {
-            let actual = IcuRatio::from_str(input);
-            assert_eq!(
-                actual, expected,
-                "Values do not match for input: {}",
-                input
-            );
+            let actual = &IcuRatio::from_str(input);
+            assert_eq!(actual, expected, "Values do not match for input: {}", input);
         }
 
         let actual = IcuRatio::from_str("1.5").unwrap();
