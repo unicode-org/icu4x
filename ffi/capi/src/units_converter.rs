@@ -16,11 +16,6 @@ pub mod ffi {
     /// for converting between two [`ICU4XMeasureUnit`]s.
     /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
-    #[diplomat::rust_link(
-        icu::experimental::units::converter_factory::ConverterFactory,
-        Struct,
-        hidden
-    )]
     pub struct ICU4XUnitsConverterFactory(pub ConverterFactory);
 
     impl ICU4XUnitsConverterFactory {
@@ -48,11 +43,6 @@ pub mod ffi {
             icu::experimental::units::converter_factory::ConverterFactory::converter,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::experimental::units::converter_factory::ConverterFactory::converter,
-            FnInStruct,
-            hidden
-        )]
         pub fn converter(
             &self,
             from: &ICU4XMeasureUnit,
@@ -66,11 +56,6 @@ pub mod ffi {
             icu::experimental::units::converter_factory::ConverterFactory::parser,
             FnInStruct
         )]
-        #[diplomat::rust_link(
-            icu::experimental::units::converter_factory::ConverterFactory::parser,
-            FnInStruct,
-            hidden
-        )]
         pub fn parser<'a>(&'a self) -> Box<ICU4XMeasureUnitParser<'a>> {
             ICU4XMeasureUnitParser(self.0.parser()).into()
         }
@@ -80,11 +65,6 @@ pub mod ffi {
     /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
     /// (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnitParser, Struct)]
-    #[diplomat::rust_link(
-        icu::experimental::units::measureunit::MeasureUnitParser,
-        Struct,
-        hidden
-    )]
     pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
@@ -93,11 +73,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::experimental::units::measureunit::MeasureUnitParser::parse,
-            FnInStruct,
-            hidden
         )]
         pub fn parse_measure_unit(
             &self,
@@ -115,7 +90,6 @@ pub mod ffi {
     ///
     /// You can create an instance of this object using [`ICU4XMeasureUnitParser`] by calling the `parse_measure_unit` method.
     #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct)]
-    #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct, hidden)]
     pub struct ICU4XMeasureUnit(pub MeasureUnit);
 
     #[diplomat::opaque]
@@ -123,7 +97,6 @@ pub mod ffi {
     ///
     /// You can create an instance of this object using [`ICU4XUnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
-    #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct, hidden)]
     pub struct ICU4XUnitsConverter(pub UnitsConverter);
 
     impl ICU4XUnitsConverter {
@@ -133,11 +106,6 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::experimental::units::converter::UnitsConverter::convert_f64,
             FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::experimental::units::converter::UnitsConverter::convert_f64,
-            FnInStruct,
-            hidden
         )]
         #[diplomat::attr(dart, rename = "convert_double")]
         pub fn convert_f64(&self, value: f64) -> f64 {
