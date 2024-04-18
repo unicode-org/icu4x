@@ -388,9 +388,5 @@ mod tests {
             let actual = &IcuRatio::from_str(input);
             assert_eq!(actual, expected, "Values do not match for input: {}", input);
         }
-
-        let actual = IcuRatio::from_str("1.5").unwrap();
-        let expected = IcuRatio::from_big_ints(3.into(), 2.into());
-        assert_eq!(actual, expected);
     }
 }
