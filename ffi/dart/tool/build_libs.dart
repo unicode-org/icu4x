@@ -10,7 +10,7 @@ Future<void> main(List<String> args) async {
     print('Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> (<link mode: ${LinkMode.values}>)');
     exit(1);
   }
-  final out = args[0];
+  final out = Uri.file(args[0]).toFilePath();
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
   final linkMode = LinkMode.values.firstWhere(
       (l) => l.toString() == (args.elementAtOrNull(2) ?? 'dynamic'));
