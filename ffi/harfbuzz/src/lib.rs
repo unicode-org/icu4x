@@ -77,7 +77,7 @@ use harfbuzz_traits::{
     CombiningClassFunc, ComposeFunc, DecomposeFunc, GeneralCategoryFunc, MirroringFunc, ScriptFunc,
 };
 
-/// A single copyable UnicodeFuncs type that implements all of the `harfbuzz_trait` traits.
+/// A single copyable UnicodeFuncs type that implements all of the `harfbuzz_trait` traits with compiled data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[cfg(feature = "compiled_data")]
