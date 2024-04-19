@@ -32,7 +32,7 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
 
   final isNoStd = noStdTargets.contains(target);
 
-  final cargo = await Process.run('cargo', [
+  final cargo = await Process.start('cargo', [
     if (isNoStd) '+nightly',
     'rustc',
     '--manifest-path=$root/ffi/capi/Cargo.toml',
@@ -49,11 +49,12 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
   ]);
+  stdout.addStream(cargo.stdout);
+  stderr.addStream(cargo.stderr);
 
-  if (cargo.exitCode != 0) {
-    throw cargo.stderr;
+  if (await cargo.exitCode != 0) {
+    throw (await cargo.exitCode);
   }
-
 
   await File(
     Uri.file('$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}').toFilePath())
