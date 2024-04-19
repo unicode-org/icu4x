@@ -4,10 +4,11 @@
 
 use std::collections::BTreeMap;
 
-use crate::transform::cldr::{
+use crate::provider::transform::cldr::{
     cldr_serde::{self},
     units::helpers::ScientificNumber,
 };
+use crate::provider::DatagenProvider;
 use icu_experimental::units::{
     measureunit::MeasureUnitParser,
     provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
@@ -21,7 +22,7 @@ use zerovec::VarZeroVec;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
-impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
+impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1Marker>, DataError> {
         self.check_req::<UnitsInfoV1Marker>(_req)?;
 
@@ -99,7 +100,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -116,7 +117,7 @@ fn test_basic() {
     use zerovec::maps::ZeroVecLike;
     use zerovec::ZeroVec;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let und: DataPayload<UnitsInfoV1Marker> = provider
         .load(DataRequest {

@@ -87,7 +87,6 @@ members = [
     "tools/ffi_coverage",
     "tools/testdata-scripts",
     "tools/md-tests",
-    "ffi/dart/tools/datagen",
     "tools/graveyard",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
@@ -209,10 +208,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "bf3ebcbdfbd3ce5da2086801b47b54487b1b727c" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "bf3ebcbdfbd3ce5da2086801b47b54487b1b727c" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "bf3ebcbdfbd3ce5da2086801b47b54487b1b727c" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "bf3ebcbdfbd3ce5da2086801b47b54487b1b727c" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
 
 # Size optimized builds
 [profile.release-opt-size]

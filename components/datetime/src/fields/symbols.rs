@@ -161,6 +161,22 @@ impl FieldSymbol {
     pub(crate) fn discriminant_cmp(&self, other: &Self) -> Ordering {
         self.discriminant_idx().cmp(&other.discriminant_idx())
     }
+
+    /// UTS 35 defines several 1 and 2 symbols to be the same as 3 symbols (abbreviated).
+    /// For example, 'a' represents an abbreviated day period, the same as 'aaa'.
+    ///
+    /// This function maps field lengths 1 and 2 to field length 3.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn is_at_least_abbreviated(&self) -> bool {
+        matches!(
+            self,
+            FieldSymbol::Era
+                | FieldSymbol::Year(Year::Cyclic)
+                | FieldSymbol::Weekday(Weekday::Format)
+                | FieldSymbol::DayPeriod(_)
+                | FieldSymbol::TimeZone(TimeZone::LowerZ | TimeZone::UpperZ)
+        )
+    }
 }
 
 /// [`ULE`](zerovec::ule::ULE) type for [`FieldSymbol`]
@@ -585,8 +601,8 @@ impl LengthType for Weekday {
         match self {
             Self::Format => TextOrNumeric::Text,
             Self::Local | Self::StandAlone => match length {
-                FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Text,
-                _ => TextOrNumeric::Numeric,
+                FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Numeric,
+                _ => TextOrNumeric::Text,
             },
         }
     }

@@ -79,7 +79,6 @@ part 'LineBreakOptions.g.dart';
 part 'LineBreakStrictness.g.dart';
 part 'LineBreakWordOption.g.dart';
 part 'LineSegmenter.g.dart';
-part 'List.g.dart';
 part 'ListFormatter.g.dart';
 part 'ListLength.g.dart';
 part 'Locale.g.dart';
@@ -95,8 +94,9 @@ part 'LocaleFallbackSupplement.g.dart';
 part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
 part 'Logger.g.dart';
+part 'MeasureUnit.g.dart';
+part 'MeasureUnitParser.g.dart';
 part 'MetazoneCalculator.g.dart';
-part 'Ordering.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
@@ -123,6 +123,8 @@ part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnicodeSetData.g.dart';
+part 'UnitsConverter.g.dart';
+part 'UnitsConverterFactory.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
@@ -214,6 +216,13 @@ extension on String {
   _Utf16View get utf16View => _Utf16View(this);
 }
 
+extension on core.List<String> {
+  // ignore: unused_element
+  _ListUtf8View get utf8View => _ListUtf8View(this);
+  // ignore: unused_element
+  _ListUtf16View get utf16View => _ListUtf16View(this);
+}
+
 extension on core.List<bool> {
   // ignore: unused_element
   _BoolListView get boolView => _BoolListView(this);
@@ -279,7 +288,48 @@ class _Utf16View {
 }
 
 // ignore: unused_element
-class _BoolListView{
+class _ListUtf8View {
+  final core.List<String> _strings;
+
+  // Copies
+  _ListUtf8View(this._strings);
+
+  ffi.Pointer<_SliceUtf8> allocIn(ffi.Allocator alloc) {
+    final slice = alloc<_SliceUtf8>(length);
+    for (var i = 0; i < length; i++) {
+      final codeUnits = Utf8Encoder().convert(_strings[i]);
+      final str = alloc<ffi.Uint8>(codeUnits.length)..asTypedList(codeUnits.length).setRange(0, codeUnits.length, codeUnits);
+      slice[i]._data = str;
+      slice[i]._length = codeUnits.length;
+    }
+    return slice;
+  }
+
+  int get length => _strings.length;
+}
+
+// ignore: unused_element
+class _ListUtf16View {
+  final core.List<String> _strings;
+
+  _ListUtf16View(this._strings);
+
+  ffi.Pointer<_SliceUtf16> allocIn(ffi.Allocator alloc) {
+    final slice = alloc<_SliceUtf16>(length);
+    for (var i = 0; i < length; i++) {
+      final codeUnits = _strings[i].codeUnits;
+      final str = alloc<ffi.Uint16>(codeUnits.length)..asTypedList(codeUnits.length).setRange(0, codeUnits.length, codeUnits);
+      slice[i]._data = str;
+      slice[i]._length = codeUnits.length;
+    }
+    return slice;
+  }
+
+  int get length => _strings.length;
+}
+
+// ignore: unused_element
+class _BoolListView {
   final core.List<bool> _values;
 
   _BoolListView(this._values);
@@ -608,6 +658,40 @@ final class _SliceUsize extends ffi.Struct {
     final r = core.Iterable.generate(_length).map((i) => _data[i]).toList(growable: false);
     if (lifetimeEdges.isEmpty) {
       _diplomat_free(_data.cast(), _length * ffi.sizeOf<ffi.Size>(), ffi.sizeOf<ffi.Size>());
+    }
+    return r;
+  }
+}
+
+final class _SliceUtf16 extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint16> _data;
+
+  @ffi.Size()
+  external int _length;
+
+  // This is expensive
+  @override
+  bool operator ==(Object other) {
+    if (other is! _SliceUtf16 || other._length != _length) {
+      return false;
+    }
+
+    for (var i = 0; i < _length; i++) {
+      if (other._data[i] != _data[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // This is cheap
+  @override
+  int get hashCode => _length.hashCode;
+
+  String _toDart(core.List<Object> lifetimeEdges) {
+    final r = core.String.fromCharCodes(_data.asTypedList(_length));
+    if (lifetimeEdges.isEmpty) {
+      _diplomat_free(_data.cast(), _length * 2, 2);
     }
     return r;
   }

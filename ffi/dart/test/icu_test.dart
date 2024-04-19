@@ -17,13 +17,13 @@ void main() {
             fallbackSupplement: LocaleFallbackSupplement.none))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'de-CH-u-ca-japanese');
+    expect(iterator.current, Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'de-CH');
+    expect(iterator.current, Locale.fromString('de-CH'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'und-CH-u-ca-japanese');
+    expect(iterator.current, Locale.fromString('und-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current.toString(), 'und-CH');
+    expect(iterator.current, Locale.fromString('und-CH'));
     expect(iterator.moveNext(), false);
   });
 
@@ -42,12 +42,22 @@ void main() {
   test('ListFormatter', () {
     final formatter = ListFormatter.andWithLength(
         DataProvider.compiled(), Locale.fromString('es'), ListLength.wide);
-    final list = List()
-      ..push('España')
-      ..push('Francia')
-      ..push('Suiza')
-      ..push('Italia');
+    final list = ['España', 'Francia', 'Suiza', 'Italia'];
 
     expect(formatter.format(list), 'España, Francia, Suiza e Italia');
+  });
+
+  test('Locale ordering', () {
+    expect(
+        [
+          Locale.fromString('en-GB'),
+          Locale.fromString('de'),
+          Locale.fromString('az'),
+        ]..sort(),
+        [
+          Locale.fromString('az'),
+          Locale.fromString('de'),
+          Locale.fromString('en-GB'),
+        ]);
   });
 }

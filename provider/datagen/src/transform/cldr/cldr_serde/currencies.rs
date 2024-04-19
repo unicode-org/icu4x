@@ -12,22 +12,22 @@ use std::collections::BTreeMap;
 use tinystr::UnvalidatedTinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CurrencyPatterns {
+pub(in crate::provider) struct CurrencyPatterns {
     #[serde(rename = "symbol")]
-    pub short: Option<String>,
+    pub(in crate::provider) short: Option<String>,
 
     #[serde(rename = "symbol-alt-narrow")]
-    pub narrow: Option<String>,
+    pub(in crate::provider) narrow: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Numbers {
-    pub currencies: BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
+pub(in crate::provider) struct Numbers {
+    pub(in crate::provider) currencies: BTreeMap<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangNumbers {
-    pub numbers: Numbers,
+pub(in crate::provider) struct LangNumbers {
+    pub(in crate::provider) numbers: Numbers,
 }
 
-pub type Resource = super::LocaleResource<LangNumbers>;
+pub(in crate::provider) type Resource = super::LocaleResource<LangNumbers>;

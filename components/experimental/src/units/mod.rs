@@ -9,6 +9,7 @@ pub mod converter_factory;
 pub mod measureunit;
 pub mod power;
 pub mod provider;
+pub mod ratio;
 pub mod si_prefix;
 
 /// Represents the possible errors that can occur during the measurement unit operations.

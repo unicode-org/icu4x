@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
@@ -16,34 +17,12 @@ struct SegmenterDictionaryData {
     trie_data: Vec<u16>,
 }
 
-fn model_name_to_data_locale(name: &str) -> Option<DataLocale> {
-    match name {
-        "khmerdict" => Some(langid!("km").into()),
-        "cjdict" => Some(langid!("ja").into()),
-        "laodict" => Some(langid!("lo").into()),
-        "burmesedict" => Some(langid!("my").into()),
-        "thaidict" => Some(langid!("th").into()),
-        _ => None,
-    }
-}
-
-pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
-    match locale.get_langid() {
-        id if id == langid!("km") => Some("khmerdict"),
-        id if id == langid!("ja") => Some("cjdict"),
-        id if id == langid!("lo") => Some("laodict"),
-        id if id == langid!("my") => Some("burmesedict"),
-        id if id == langid!("th") => Some("thaidict"),
-        _ => None,
-    }
-}
-
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
     ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
-        let model = data_locale_to_model_name(req.locale)
+        let model = crate::dictionary_data_locale_to_model_name(req.locale)
             .ok_or(DataErrorKind::MissingLocale.into_error())?;
 
         let filename = format!("segmenter/dictionary/{model}.toml");
@@ -70,7 +49,7 @@ impl crate::DatagenProvider {
 
 macro_rules! implement {
     ($marker:ident, $supported:expr) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
                 let data = self.load_dictionary_data(req)?;
@@ -81,11 +60,11 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok($supported
                     .into_iter()
-                    .filter_map(model_name_to_data_locale)
+                    .filter_map(crate::dictionary_model_name_to_data_locale)
                     .collect())
             }
         }

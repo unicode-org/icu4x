@@ -187,7 +187,6 @@ version = "1.4.0"
 dependencies = [
  "icu",
  "icu_datagen",
- "icu_experimental",
  "log",
  "simple_logger",
 ]
@@ -679,7 +678,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -697,7 +696,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 dependencies = [
  "log",
 ]
@@ -705,7 +704,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 dependencies = [
  "askama",
  "clap",
@@ -725,7 +724,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 dependencies = [
  "displaydoc",
  "either",
@@ -1042,6 +1041,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1289,32 +1289,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_datagen_dart"
-version = "1.4.0"
-dependencies = [
- "clap",
- "eyre",
- "icu_calendar",
- "icu_casemap",
- "icu_collator",
- "icu_datagen",
- "icu_datetime",
- "icu_decimal",
- "icu_list",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_blob",
- "icu_segmenter",
- "icu_timezone",
- "log",
- "serde",
- "simple_logger",
-]
-
-[[package]]
 name = "icu_datetime"
 version = "1.4.0"
 dependencies = [
@@ -1388,6 +1362,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "fixed_decimal",
+ "icu",
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
