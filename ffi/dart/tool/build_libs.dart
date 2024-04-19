@@ -7,10 +7,11 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
-    print('Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> (<link mode: ${LinkMode.values}>)');
+    print(
+        'Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> (<link mode: ${LinkMode.values}>)');
     exit(1);
   }
-  final out = args[0];
+  final out = Uri.file(args[0]).toFilePath();
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
   final linkMode = LinkMode.values.firstWhere(
       (l) => l.toString() == (args.elementAtOrNull(2) ?? 'dynamic'));
@@ -19,7 +20,8 @@ Future<void> main(List<String> args) async {
 }
 
 Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
-  final root = Platform.script.toFilePath().split('ffi')[0];
+  var root = Platform.script.toFilePath().split('ffi')[0];
+  root = root.substring(0, root.length - 1); // trim trailing slash
 
   print('Building $outName');
 
@@ -32,7 +34,19 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
 
   final isNoStd = noStdTargets.contains(target);
 
-  final cargo = await Process.run('cargo', [
+  final rustup = await Process.start('rustup', [
+    'target',
+    'add',
+    rustTarget,
+  ]);
+  stdout.addStream(rustup.stdout);
+  stderr.addStream(rustup.stderr);
+
+  if (await rustup.exitCode != 0) {
+    throw (await rustup.exitCode);
+  }
+
+  final cargo = await Process.start('cargo', [
     if (isNoStd) '+nightly',
     'rustc',
     '--manifest-path=$root/ffi/capi/Cargo.toml',
@@ -49,13 +63,16 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
   ]);
+  stdout.addStream(cargo.stdout);
+  stderr.addStream(cargo.stderr);
 
-  if (cargo.exitCode != 0) {
-    throw cargo.stderr;
+  if (await cargo.exitCode != 0) {
+    throw (await cargo.exitCode);
   }
 
-  await File(
-          '$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}')
+  await File(Uri.file(
+              '$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}')
+          .toFilePath())
       .copy(outName);
 }
 
