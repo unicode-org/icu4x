@@ -7,7 +7,8 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
-    print('Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> (<link mode: ${LinkMode.values}>)');
+    print(
+        'Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> (<link mode: ${LinkMode.values}>)');
     exit(1);
   }
   final out = Uri.file(args[0]).toFilePath();
@@ -31,6 +32,18 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
   ];
 
   final isNoStd = noStdTargets.contains(target);
+
+  final rustup = await Process.start('rustup', [
+    'target',
+    'add',
+    rustTarget,
+  ]);
+  stdout.addStream(rustup.stdout);
+  stderr.addStream(rustup.stderr);
+
+  if (await rustup.exitCode != 0) {
+    throw (await rustup.exitCode);
+  }
 
   final cargo = await Process.start('cargo', [
     if (isNoStd) '+nightly',
@@ -56,8 +69,9 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
     throw (await cargo.exitCode);
   }
 
-  await File(
-    Uri.file('$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}').toFilePath())
+  await File(Uri.file(
+              '$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}')
+          .toFilePath())
       .copy(outName);
 }
 
