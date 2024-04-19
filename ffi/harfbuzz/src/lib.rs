@@ -23,20 +23,31 @@
 //!
 //! # Examples
 //!
+//! Setting UnicodeFuncs to compiled data
+//!
 //! ```
 //! use harfbuzz::{Buffer, Direction, UnicodeFuncsBuilder, sys};
+//! use icu_harfbuzz::UnicodeFuncs;
 //!
 //! let mut b = Buffer::with("مساء الخير");
 //!
-//! let unicode_funcs = icu_harfbuzz::UnicodeFuncs::new().unwrap();
+//! let mut builder = UnicodeFuncsBuilder::new_with_empty_parent().unwrap();
+//! builder.set_general_category_func(Box::new(UnicodeFuncs));
+//! builder.set_combining_class_func(Box::new(UnicodeFuncs));
+//! builder.set_mirroring_func(Box::new(UnicodeFuncs));
+//! builder.set_script_func(Box::new(UnicodeFuncs));
+//! builder.set_compose_func(Box::new(UnicodeFuncs));
+//! builder.set_decompose_func(Box::new(UnicodeFuncs));
 //!
-//! b.set_unicode_funcs(&unicode_funcs);
+//! b.set_unicode_funcs(&builder.build());
 //!
 //! b.guess_segment_properties();
 //! assert_eq!(b.get_direction(), Direction::RTL);
 //! assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
 //! ```
-
+//!
+//! If you wish to load data dynamically, you can individually load [`GeneralCategoryData`], [`CombiningClassData`],
+//! [`MirroringData`], [`ScriptData`], [`ComposeData`], [`DecomposeData`] and set them as the relevant funcs.
 extern crate alloc;
 mod error;
 
@@ -66,122 +77,226 @@ use harfbuzz_traits::{
     CombiningClassFunc, ComposeFunc, DecomposeFunc, GeneralCategoryFunc, MirroringFunc, ScriptFunc,
 };
 
-/// Implementor of various Harbfuzz traits using Unicode data.
+/// A single copyable UnicodeFuncs type that implements all of the `harfbuzz_trait` traits.
 ///
-/// Can be passed to the `harfbuzz` crate's `Buffer::set_unicode_funcs()`.
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+#[cfg(feature = "compiled_data")]
+#[derive(Default, Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[allow(clippy::exhaustive_structs)] // unit struct
+pub struct UnicodeFuncs;
+
+#[cfg(feature = "compiled_data")]
+impl UnicodeFuncs {
+    /// Construct a new [`UnicodeFuncs`]
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl GeneralCategoryFunc for UnicodeFuncs {
+    fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
+        convert_gc(maps::general_category().get(ch))
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl CombiningClassFunc for UnicodeFuncs {
+    fn combining_class(&self, ch: char) -> u8 {
+        CanonicalCombiningClassMap::new().get(ch).0
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl MirroringFunc for UnicodeFuncs {
+    fn mirroring(&self, ch: char) -> char {
+        bidi_data::bidi_auxiliary_properties()
+            .get32_mirroring_props(ch.into())
+            .mirroring_glyph
+            .unwrap_or(ch)
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl ScriptFunc for UnicodeFuncs {
+    fn script(&self, ch: char) -> [u8; 4] {
+        let script = maps::script().get(ch);
+        let name = Script::enum_to_short_name_mapper()
+            .get(script)
+            .unwrap_or(tinystr!(4, "Zzzz"));
+        *name.all_bytes()
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl ComposeFunc for UnicodeFuncs {
+    fn compose(&self, a: char, b: char) -> Option<char> {
+        CanonicalComposition::new().compose(a, b)
+    }
+}
+#[cfg(feature = "compiled_data")]
+impl DecomposeFunc for UnicodeFuncs {
+    fn decompose(&self, ab: char) -> Option<(char, char)> {
+        match CanonicalDecomposition::new().decompose(ab) {
+            Decomposed::Default => None,
+            Decomposed::Expansion(first, second) => Some((first, second)),
+            Decomposed::Singleton(single) => Some((single, '\0')),
+        }
+    }
+}
+
+/// Implementor of [`GeneralCategoryFunc`] using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
-pub struct UnicodeFuncs {
+pub struct GeneralCategoryData {
     gc: CodePointMapData<GeneralCategory>,
-    script: CodePointMapData<Script>,
-    script_name: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
-    bidi: BidiAuxiliaryProperties,
-    comp: CanonicalComposition,
-    decomp: CanonicalDecomposition,
+}
+
+impl GeneralCategoryData {
+    /// Construct a new [`GeneralCategoryData`] from a data provider.
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    where
+        D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
+    {
+        let gc = maps::load_general_category(provider)?;
+
+        Ok(Self { gc })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_downcasting())
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_deserializing())
+    }
+}
+
+fn convert_gc(gc: GeneralCategory) -> harfbuzz_traits::GeneralCategory {
+    match gc {
+        GeneralCategory::Unassigned => harfbuzz_traits::GeneralCategory::Unassigned,
+        GeneralCategory::UppercaseLetter => harfbuzz_traits::GeneralCategory::UppercaseLetter,
+        GeneralCategory::LowercaseLetter => harfbuzz_traits::GeneralCategory::LowercaseLetter,
+        GeneralCategory::TitlecaseLetter => harfbuzz_traits::GeneralCategory::TitlecaseLetter,
+        GeneralCategory::ModifierLetter => harfbuzz_traits::GeneralCategory::ModifierLetter,
+        GeneralCategory::OtherLetter => harfbuzz_traits::GeneralCategory::OtherLetter,
+        GeneralCategory::NonspacingMark => harfbuzz_traits::GeneralCategory::NonSpacingMark,
+        GeneralCategory::SpacingMark => harfbuzz_traits::GeneralCategory::SpacingMark,
+        GeneralCategory::EnclosingMark => harfbuzz_traits::GeneralCategory::EnclosingMark,
+        GeneralCategory::DecimalNumber => harfbuzz_traits::GeneralCategory::DecimalNumber,
+        GeneralCategory::LetterNumber => harfbuzz_traits::GeneralCategory::LetterNumber,
+        GeneralCategory::OtherNumber => harfbuzz_traits::GeneralCategory::OtherNumber,
+        GeneralCategory::SpaceSeparator => harfbuzz_traits::GeneralCategory::SpaceSeparator,
+        GeneralCategory::LineSeparator => harfbuzz_traits::GeneralCategory::LineSeparator,
+        GeneralCategory::ParagraphSeparator => harfbuzz_traits::GeneralCategory::ParagraphSeparator,
+        GeneralCategory::Control => harfbuzz_traits::GeneralCategory::Control,
+        GeneralCategory::Format => harfbuzz_traits::GeneralCategory::Format,
+        GeneralCategory::PrivateUse => harfbuzz_traits::GeneralCategory::PrivateUse,
+        GeneralCategory::Surrogate => harfbuzz_traits::GeneralCategory::Surrogate,
+        GeneralCategory::DashPunctuation => harfbuzz_traits::GeneralCategory::DashPunctuation,
+        GeneralCategory::OpenPunctuation => harfbuzz_traits::GeneralCategory::OpenPunctuation,
+        GeneralCategory::ClosePunctuation => harfbuzz_traits::GeneralCategory::ClosePunctuation,
+        GeneralCategory::ConnectorPunctuation => {
+            harfbuzz_traits::GeneralCategory::ConnectPunctuation
+        }
+        GeneralCategory::InitialPunctuation => harfbuzz_traits::GeneralCategory::InitialPunctuation,
+        GeneralCategory::FinalPunctuation => harfbuzz_traits::GeneralCategory::FinalPunctuation,
+        GeneralCategory::OtherPunctuation => harfbuzz_traits::GeneralCategory::OtherPunctuation,
+        GeneralCategory::MathSymbol => harfbuzz_traits::GeneralCategory::MathSymbol,
+        GeneralCategory::CurrencySymbol => harfbuzz_traits::GeneralCategory::CurrencySymbol,
+        GeneralCategory::ModifierSymbol => harfbuzz_traits::GeneralCategory::ModifierSymbol,
+        GeneralCategory::OtherSymbol => harfbuzz_traits::GeneralCategory::OtherSymbol,
+    }
+}
+
+impl GeneralCategoryFunc for GeneralCategoryData {
+    fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
+        convert_gc(self.gc.as_borrowed().get(ch))
+    }
+}
+
+/// Implementor of [`CombiningClassFunc`] using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+#[derive(Debug)]
+pub struct CombiningClassData {
     ccc: CanonicalCombiningClassMap,
 }
 
-impl UnicodeFuncs {
-    /// Sets up a `UnicodeFuncs` with ICU4X compiled data as the back end as the Unicode
-    /// Database operations that HarfBuzz needs.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
-        Self {
-            gc: maps::general_category().static_to_owned(),
-            script: maps::script().static_to_owned(),
-            script_name: Script::enum_to_short_name_mapper().static_to_owned(),
-            bidi: bidi_data::bidi_auxiliary_properties().static_to_owned(),
-            ccc: CanonicalCombiningClassMap::new(),
-            comp: CanonicalComposition::new(),
-            decomp: CanonicalDecomposition::new(),
-        }
-    }
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+impl CombiningClassData {
+    /// Construct a new [`CombiningClassData`] from a data provider.
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
     where
-        D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
-            + DataProvider<GeneralCategoryV1Marker>
-            + DataProvider<ScriptValueToShortNameV1Marker>
-            + DataProvider<ScriptV1Marker>
-            + ?Sized,
+        D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
     {
         let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
-        let gc = maps::load_general_category(provider)?;
-        let bidi = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
-        let script = maps::load_script(provider)?;
-        let script_name = Script::get_enum_to_short_name_mapper(provider)?;
-        let comp = CanonicalComposition::try_new_unstable(provider)?;
-        let decomp = CanonicalDecomposition::try_new_unstable(provider)?;
 
-        Ok(Self {
-            gc,
-            script,
-            script_name,
-            bidi,
-            comp,
-            decomp,
-            ccc,
-        })
+        Ok(Self { ccc })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_downcasting())
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_deserializing())
     }
 }
 
-impl GeneralCategoryFunc for UnicodeFuncs {
-    fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
-        match self.gc.as_borrowed().get(ch) {
-            GeneralCategory::Unassigned => harfbuzz_traits::GeneralCategory::Unassigned,
-            GeneralCategory::UppercaseLetter => harfbuzz_traits::GeneralCategory::UppercaseLetter,
-            GeneralCategory::LowercaseLetter => harfbuzz_traits::GeneralCategory::LowercaseLetter,
-            GeneralCategory::TitlecaseLetter => harfbuzz_traits::GeneralCategory::TitlecaseLetter,
-            GeneralCategory::ModifierLetter => harfbuzz_traits::GeneralCategory::ModifierLetter,
-            GeneralCategory::OtherLetter => harfbuzz_traits::GeneralCategory::OtherLetter,
-            GeneralCategory::NonspacingMark => harfbuzz_traits::GeneralCategory::NonSpacingMark,
-            GeneralCategory::SpacingMark => harfbuzz_traits::GeneralCategory::SpacingMark,
-            GeneralCategory::EnclosingMark => harfbuzz_traits::GeneralCategory::EnclosingMark,
-            GeneralCategory::DecimalNumber => harfbuzz_traits::GeneralCategory::DecimalNumber,
-            GeneralCategory::LetterNumber => harfbuzz_traits::GeneralCategory::LetterNumber,
-            GeneralCategory::OtherNumber => harfbuzz_traits::GeneralCategory::OtherNumber,
-            GeneralCategory::SpaceSeparator => harfbuzz_traits::GeneralCategory::SpaceSeparator,
-            GeneralCategory::LineSeparator => harfbuzz_traits::GeneralCategory::LineSeparator,
-            GeneralCategory::ParagraphSeparator => {
-                harfbuzz_traits::GeneralCategory::ParagraphSeparator
-            }
-            GeneralCategory::Control => harfbuzz_traits::GeneralCategory::Control,
-            GeneralCategory::Format => harfbuzz_traits::GeneralCategory::Format,
-            GeneralCategory::PrivateUse => harfbuzz_traits::GeneralCategory::PrivateUse,
-            GeneralCategory::Surrogate => harfbuzz_traits::GeneralCategory::Surrogate,
-            GeneralCategory::DashPunctuation => harfbuzz_traits::GeneralCategory::DashPunctuation,
-            GeneralCategory::OpenPunctuation => harfbuzz_traits::GeneralCategory::OpenPunctuation,
-            GeneralCategory::ClosePunctuation => harfbuzz_traits::GeneralCategory::ClosePunctuation,
-            GeneralCategory::ConnectorPunctuation => {
-                harfbuzz_traits::GeneralCategory::ConnectPunctuation
-            }
-            GeneralCategory::InitialPunctuation => {
-                harfbuzz_traits::GeneralCategory::InitialPunctuation
-            }
-            GeneralCategory::FinalPunctuation => harfbuzz_traits::GeneralCategory::FinalPunctuation,
-            GeneralCategory::OtherPunctuation => harfbuzz_traits::GeneralCategory::OtherPunctuation,
-            GeneralCategory::MathSymbol => harfbuzz_traits::GeneralCategory::MathSymbol,
-            GeneralCategory::CurrencySymbol => harfbuzz_traits::GeneralCategory::CurrencySymbol,
-            GeneralCategory::ModifierSymbol => harfbuzz_traits::GeneralCategory::ModifierSymbol,
-            GeneralCategory::OtherSymbol => harfbuzz_traits::GeneralCategory::OtherSymbol,
-        }
-    }
-}
-
-impl CombiningClassFunc for UnicodeFuncs {
+impl CombiningClassFunc for CombiningClassData {
     fn combining_class(&self, ch: char) -> u8 {
         self.ccc.get(ch).0
     }
 }
 
-impl MirroringFunc for UnicodeFuncs {
+/// Implementor of [`CombiningClassFunc`] using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+#[derive(Debug)]
+pub struct MirroringData {
+    bidi: BidiAuxiliaryProperties,
+}
+
+impl MirroringData {
+    /// Construct a new [`MirroringData`] from a data provider.
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    where
+        D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
+    {
+        let bidi = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
+
+        Ok(Self { bidi })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_downcasting())
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_deserializing())
+    }
+}
+
+impl MirroringFunc for MirroringData {
     fn mirroring(&self, ch: char) -> char {
         self.bidi
             .as_borrowed()
@@ -191,7 +306,45 @@ impl MirroringFunc for UnicodeFuncs {
     }
 }
 
-impl ScriptFunc for UnicodeFuncs {
+/// Implementor of [`CombiningClassFunc`] using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+#[derive(Debug)]
+pub struct ScriptData {
+    script: CodePointMapData<Script>,
+    script_name: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
+}
+
+impl ScriptData {
+    /// Construct a new [`ScriptData`] from a data provider.
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    where
+        D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
+    {
+        let script = maps::load_script(provider)?;
+        let script_name = Script::get_enum_to_short_name_mapper(provider)?;
+        Ok(Self {
+            script,
+            script_name,
+        })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_downcasting())
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_deserializing())
+    }
+}
+
+impl ScriptFunc for ScriptData {
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
         let name = self
@@ -203,13 +356,84 @@ impl ScriptFunc for UnicodeFuncs {
     }
 }
 
-impl ComposeFunc for UnicodeFuncs {
+/// Implementor of [`CombiningClassFunc`] using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+#[derive(Debug)]
+pub struct ComposeData {
+    comp: CanonicalComposition,
+}
+
+impl ComposeData {
+    /// Construct a new [`ComposeData`] from a data provider.
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    where
+        D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
+    {
+        let comp = CanonicalComposition::try_new_unstable(provider)?;
+
+        Ok(Self { comp })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_downcasting())
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_deserializing())
+    }
+}
+
+impl ComposeFunc for ComposeData {
     fn compose(&self, a: char, b: char) -> Option<char> {
         self.comp.compose(a, b)
     }
 }
 
-impl DecomposeFunc for UnicodeFuncs {
+/// Implementor of [`CombiningClassFunc`] using Unicode data.
+///
+/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+#[derive(Debug)]
+pub struct DecomposeData {
+    decomp: CanonicalDecomposition,
+}
+
+impl DecomposeData {
+    /// Construct a new [`DecomposeData`] from a data provider.
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, HarfBuzzError>
+    where
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + ?Sized,
+    {
+        let decomp = CanonicalDecomposition::try_new_unstable(provider)?;
+
+        Ok(Self { decomp })
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl icu_provider::AnyProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_downcasting())
+    }
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::BufferProvider + ?Sized),
+    ) -> Result<Self, HarfBuzzError> {
+        Self::try_new_unstable(&provider.as_deserializing())
+    }
+}
+
+impl DecomposeFunc for DecomposeData {
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         match self.decomp.decompose(ab) {
             Decomposed::Default => None,
