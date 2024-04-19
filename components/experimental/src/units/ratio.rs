@@ -253,10 +253,6 @@ impl FromStr for IcuRatio {
     /// let ratio = IcuRatio::from_str("1").unwrap();
     /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(1))));
     ///
-    /// // Empty string
-    /// let ratio = IcuRatio::from_str("").unwrap();
-    /// assert_eq!(ratio, IcuRatio::zero());
-    ///
     /// // Fractional notation with exponent
     /// let ratio = IcuRatio::from_str("1/2E5").unwrap();
     /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(50000))));
@@ -276,6 +272,28 @@ impl FromStr for IcuRatio {
     /// // Negative numbers in scientific notation with commas
     /// let ratio = IcuRatio::from_str("-1,500E6").unwrap();
     /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000000))));
+    ///
+    /// // Corner cases
+    ///
+    /// // Empty string
+    /// let ratio = IcuRatio::from_str("").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Single dot
+    /// let ratio = IcuRatio::from_str(".").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Single minus
+    /// let ratio = IcuRatio::from_str("-").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Single plus
+    /// let ratio = IcuRatio::from_str("+").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Only zeros after dot
+    /// let ratio = IcuRatio::from_str(".000").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
     ///
     /// // Error cases
     /// // Division by zero
@@ -449,6 +467,9 @@ mod tests {
             ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
             ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             (".", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            ("-", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            ("+", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (".000", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
             (
                 "-1/2E5",
                 Ok(IcuRatio::from_big_ints(BigInt::from(-50000), 1.into())),
