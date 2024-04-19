@@ -20,7 +20,8 @@ Future<void> main(List<String> args) async {
 }
 
 Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
-  final root = Platform.script.toFilePath().split('ffi')[0];
+  var root = Platform.script.toFilePath().split('ffi')[0];
+  root = root.substring(0, root.length - 1); // trim trailing slash
 
   print('Building $outName');
 
