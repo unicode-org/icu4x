@@ -23,29 +23,7 @@
 //!
 //! # Examples
 //!
-//! Setting UnicodeFuncs to compiled data
-//!
-//! ```
-//! use harfbuzz::{Buffer, Direction, UnicodeFuncsBuilder, sys};
-//! use icu_harfbuzz::UnicodeFuncs;
-//!
-//! let mut b = Buffer::with("مساء الخير");
-//!
-//! let mut builder = UnicodeFuncsBuilder::new_with_empty_parent().unwrap();
-//! //  Note: UnicodeFuncs is zero-sized, so these boxes don't allocate memory.
-//! builder.set_general_category_func(Box::new(UnicodeFuncs));
-//! builder.set_combining_class_func(Box::new(UnicodeFuncs));
-//! builder.set_mirroring_func(Box::new(UnicodeFuncs));
-//! builder.set_script_func(Box::new(UnicodeFuncs));
-//! builder.set_compose_func(Box::new(UnicodeFuncs));
-//! builder.set_decompose_func(Box::new(UnicodeFuncs));
-//!
-//! b.set_unicode_funcs(&builder.build());
-//!
-//! b.guess_segment_properties();
-//! assert_eq!(b.get_direction(), Direction::RTL);
-//! assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
-//! ```
+//! See `tutorials/harfbuzz` in the ICU4X repo for an example.
 //!
 //! If you wish to load data dynamically, you can individually load [`GeneralCategoryData`], [`CombiningClassData`],
 //! [`MirroringData`], [`ScriptData`], [`ComposeData`], [`DecomposeData`] and set them as the relevant funcs.
@@ -78,24 +56,24 @@ use harfbuzz_traits::{
     CombiningClassFunc, ComposeFunc, DecomposeFunc, GeneralCategoryFunc, MirroringFunc, ScriptFunc,
 };
 
-/// A single copyable UnicodeFuncs type that implements all of the `harfbuzz_trait` traits with compiled data.
+/// A single copyable AllUnicodeFuncs type that implements all of the `harfbuzz_trait` traits with compiled data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[cfg(feature = "compiled_data")]
 #[derive(Default, Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // unit struct
-pub struct UnicodeFuncs;
+pub struct AllUnicodeFuncs;
 
 #[cfg(feature = "compiled_data")]
-impl UnicodeFuncs {
-    /// Construct a new [`UnicodeFuncs`]
+impl AllUnicodeFuncs {
+    /// Construct a new [`AllUnicodeFuncs`]
     pub fn new() -> Self {
         Self
     }
 }
 
 #[cfg(feature = "compiled_data")]
-impl GeneralCategoryFunc for UnicodeFuncs {
+impl GeneralCategoryFunc for AllUnicodeFuncs {
     #[inline]
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
         convert_gc(maps::general_category().get(ch))
@@ -103,7 +81,7 @@ impl GeneralCategoryFunc for UnicodeFuncs {
 }
 
 #[cfg(feature = "compiled_data")]
-impl CombiningClassFunc for UnicodeFuncs {
+impl CombiningClassFunc for AllUnicodeFuncs {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
         CanonicalCombiningClassMap::new().get(ch).0
@@ -111,7 +89,7 @@ impl CombiningClassFunc for UnicodeFuncs {
 }
 
 #[cfg(feature = "compiled_data")]
-impl MirroringFunc for UnicodeFuncs {
+impl MirroringFunc for AllUnicodeFuncs {
     #[inline]
     fn mirroring(&self, ch: char) -> char {
         bidi_data::bidi_auxiliary_properties()
@@ -122,9 +100,9 @@ impl MirroringFunc for UnicodeFuncs {
 }
 
 #[cfg(feature = "compiled_data")]
-impl ScriptFunc for UnicodeFuncs {
+impl ScriptFunc for AllUnicodeFuncs {
+    #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
-        #[inline]
         let script = maps::script().get(ch);
         let name = Script::enum_to_short_name_mapper()
             .get(script)
@@ -134,14 +112,14 @@ impl ScriptFunc for UnicodeFuncs {
 }
 
 #[cfg(feature = "compiled_data")]
-impl ComposeFunc for UnicodeFuncs {
+impl ComposeFunc for AllUnicodeFuncs {
     #[inline]
     fn compose(&self, a: char, b: char) -> Option<char> {
         CanonicalComposition::new().compose(a, b)
     }
 }
 #[cfg(feature = "compiled_data")]
-impl DecomposeFunc for UnicodeFuncs {
+impl DecomposeFunc for AllUnicodeFuncs {
     #[inline]
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         match CanonicalDecomposition::new().decompose(ab) {
@@ -154,7 +132,7 @@ impl DecomposeFunc for UnicodeFuncs {
 
 /// Implementer of [`GeneralCategoryFunc`] using dynamically loaded Unicode data.
 ///
-/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+/// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct GeneralCategoryData {
     gc: CodePointMapData<GeneralCategory>,
@@ -232,7 +210,7 @@ impl GeneralCategoryFunc for GeneralCategoryData {
 
 /// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
-/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+/// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct CombiningClassData {
     ccc: CanonicalCombiningClassMap,
@@ -273,7 +251,7 @@ impl CombiningClassFunc for CombiningClassData {
 
 /// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
-/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+/// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct MirroringData {
     bidi: BidiAuxiliaryProperties,
@@ -318,7 +296,7 @@ impl MirroringFunc for MirroringData {
 
 /// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
-/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+/// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
@@ -369,7 +347,7 @@ impl ScriptFunc for ScriptData {
 
 /// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
-/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+/// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct ComposeData {
     comp: CanonicalComposition,
@@ -410,7 +388,7 @@ impl ComposeFunc for ComposeData {
 
 /// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
-/// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
+/// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct DecomposeData {
     decomp: CanonicalDecomposition,

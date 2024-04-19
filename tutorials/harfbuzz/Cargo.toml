@@ -1,0 +1,10 @@
+[package]
+name = "icu_harfbuzz_tutorial"
+publish = false
+license = "Unicode-3.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+icu_harfbuzz = { version = "0.1.2", features = ["compiled_data"] }
+harfbuzz = { version = "0.6.0" }
