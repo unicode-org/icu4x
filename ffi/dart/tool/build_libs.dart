@@ -54,8 +54,9 @@ Future<void> buildLib(Target target, LinkMode linkMode, String outName) async {
     throw cargo.stderr;
   }
 
+
   await File(
-          '$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}')
+    Uri.file('$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}').toFilePath())
       .copy(outName);
 }
 
