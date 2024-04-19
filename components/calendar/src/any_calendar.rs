@@ -1234,7 +1234,7 @@ impl IntoAnyCalendar for IslamicCivil {
         AnyCalendar::IslamicCivil(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicCivil(self.clone())
+        AnyCalendar::IslamicCivil(*self)
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicCivil(*d)
@@ -1258,7 +1258,7 @@ impl IntoAnyCalendar for IslamicTabular {
         AnyCalendar::IslamicTabular(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicTabular(self.clone())
+        AnyCalendar::IslamicTabular(*self)
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicTabular(*d)

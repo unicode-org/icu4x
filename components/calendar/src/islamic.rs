@@ -79,7 +79,8 @@ pub struct IslamicObservational {
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // unit struct
 pub struct IslamicCivil;
 
 /// Umm al-Qura Hijri Calendar (Used in Saudi Arabia)
@@ -107,7 +108,8 @@ pub struct IslamicUmmAlQura {
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // unit struct
 pub struct IslamicTabular;
 
 impl IslamicObservational {

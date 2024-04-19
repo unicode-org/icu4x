@@ -89,7 +89,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
-        icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+        icu::calendar::islamic::IslamicCivil::new(),
     );
 
     #[cfg(feature = "bench")]
@@ -103,7 +103,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",
-        icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+        icu::calendar::islamic::IslamicTabular::new(),
     );
 
     group.finish();
