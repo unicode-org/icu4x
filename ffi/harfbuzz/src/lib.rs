@@ -32,6 +32,7 @@
 //! let mut b = Buffer::with("مساء الخير");
 //!
 //! let mut builder = UnicodeFuncsBuilder::new_with_empty_parent().unwrap();
+//! //  Note: UnicodeFuncs is zero-sized, so these boxes don't allocate memory.
 //! builder.set_general_category_func(Box::new(UnicodeFuncs));
 //! builder.set_combining_class_func(Box::new(UnicodeFuncs));
 //! builder.set_mirroring_func(Box::new(UnicodeFuncs));
@@ -95,6 +96,7 @@ impl UnicodeFuncs {
 
 #[cfg(feature = "compiled_data")]
 impl GeneralCategoryFunc for UnicodeFuncs {
+    #[inline]
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
         convert_gc(maps::general_category().get(ch))
     }
@@ -102,6 +104,7 @@ impl GeneralCategoryFunc for UnicodeFuncs {
 
 #[cfg(feature = "compiled_data")]
 impl CombiningClassFunc for UnicodeFuncs {
+    #[inline]
     fn combining_class(&self, ch: char) -> u8 {
         CanonicalCombiningClassMap::new().get(ch).0
     }
@@ -109,6 +112,7 @@ impl CombiningClassFunc for UnicodeFuncs {
 
 #[cfg(feature = "compiled_data")]
 impl MirroringFunc for UnicodeFuncs {
+    #[inline]
     fn mirroring(&self, ch: char) -> char {
         bidi_data::bidi_auxiliary_properties()
             .get32_mirroring_props(ch.into())
@@ -120,6 +124,7 @@ impl MirroringFunc for UnicodeFuncs {
 #[cfg(feature = "compiled_data")]
 impl ScriptFunc for UnicodeFuncs {
     fn script(&self, ch: char) -> [u8; 4] {
+        #[inline]
         let script = maps::script().get(ch);
         let name = Script::enum_to_short_name_mapper()
             .get(script)
@@ -130,12 +135,14 @@ impl ScriptFunc for UnicodeFuncs {
 
 #[cfg(feature = "compiled_data")]
 impl ComposeFunc for UnicodeFuncs {
+    #[inline]
     fn compose(&self, a: char, b: char) -> Option<char> {
         CanonicalComposition::new().compose(a, b)
     }
 }
 #[cfg(feature = "compiled_data")]
 impl DecomposeFunc for UnicodeFuncs {
+    #[inline]
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         match CanonicalDecomposition::new().decompose(ab) {
             Decomposed::Default => None,
@@ -145,7 +152,7 @@ impl DecomposeFunc for UnicodeFuncs {
     }
 }
 
-/// Implementor of [`GeneralCategoryFunc`] using Unicode data.
+/// Implementer of [`GeneralCategoryFunc`] using dynamically loaded Unicode data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
@@ -217,12 +224,13 @@ fn convert_gc(gc: GeneralCategory) -> harfbuzz_traits::GeneralCategory {
 }
 
 impl GeneralCategoryFunc for GeneralCategoryData {
+    #[inline]
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
         convert_gc(self.gc.as_borrowed().get(ch))
     }
 }
 
-/// Implementor of [`CombiningClassFunc`] using Unicode data.
+/// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
@@ -257,12 +265,13 @@ impl CombiningClassData {
 }
 
 impl CombiningClassFunc for CombiningClassData {
+    #[inline]
     fn combining_class(&self, ch: char) -> u8 {
         self.ccc.get(ch).0
     }
 }
 
-/// Implementor of [`CombiningClassFunc`] using Unicode data.
+/// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
@@ -297,6 +306,7 @@ impl MirroringData {
 }
 
 impl MirroringFunc for MirroringData {
+    #[inline]
     fn mirroring(&self, ch: char) -> char {
         self.bidi
             .as_borrowed()
@@ -306,7 +316,7 @@ impl MirroringFunc for MirroringData {
     }
 }
 
-/// Implementor of [`CombiningClassFunc`] using Unicode data.
+/// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
@@ -345,6 +355,7 @@ impl ScriptData {
 }
 
 impl ScriptFunc for ScriptData {
+    #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
         let name = self
@@ -356,7 +367,7 @@ impl ScriptFunc for ScriptData {
     }
 }
 
-/// Implementor of [`CombiningClassFunc`] using Unicode data.
+/// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
@@ -391,12 +402,13 @@ impl ComposeData {
 }
 
 impl ComposeFunc for ComposeData {
+    #[inline]
     fn compose(&self, a: char, b: char) -> Option<char> {
         self.comp.compose(a, b)
     }
 }
 
-/// Implementor of [`CombiningClassFunc`] using Unicode data.
+/// Implementer of [`CombiningClassFunc`] using dynamically loaded Unicode data.
 ///
 /// Can be passed to the `harfbuzz` crate's `UnicodeFuncsBuilder`.
 #[derive(Debug)]
@@ -434,6 +446,7 @@ impl DecomposeData {
 }
 
 impl DecomposeFunc for DecomposeData {
+    #[inline]
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         match self.decomp.decompose(ab) {
             Decomposed::Default => None,
