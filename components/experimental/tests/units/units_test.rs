@@ -8,49 +8,6 @@ use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
 use num_bigint::BigInt;
 use num_rational::Ratio;
-use num_traits::Pow;
-
-// TODO: add this function to IcuRatio.
-/// Convert a decimal number to a BigRational.
-fn convert_decimal_to_rational(decimal: &str) -> Option<IcuRatio> {
-    let mut components = decimal.split('.');
-    let integer_component = components.next().unwrap_or("0");
-    let decimal_component = components.next().unwrap_or("0");
-    let decimal_length = decimal_component.chars().count() as i32;
-
-    if components.next().is_some() {
-        return None;
-    }
-
-    let mut integer_component = IcuRatio::from_str(integer_component).unwrap();
-    let decimal_component = IcuRatio::from_str(decimal_component).unwrap();
-
-    let ten = IcuRatio::ten();
-    let decimal_component = decimal_component / ten.pow(decimal_length);
-    integer_component += decimal_component;
-    Some(integer_component)
-}
-
-/// Convert a scientific notation string to a IcuRatio.
-pub fn get_rational(rational: &str) -> Option<IcuRatio> {
-    // remove all the commas
-    let rational = rational.replace(',', "");
-
-    let mut parts = rational.split('E');
-    let rational_part = parts.next().unwrap_or("1");
-    let exponent_part = parts.next().unwrap_or("0");
-    if parts.next().is_some() {
-        return None;
-    }
-
-    let mut rational_part = convert_decimal_to_rational(rational_part)?;
-    let exponent_part = i32::from_str(exponent_part).unwrap();
-
-    let ten = IcuRatio::ten();
-    let exponent_part = ten.pow(exponent_part);
-    rational_part *= exponent_part;
-    Some(rational_part)
-}
 
 #[test]
 fn test_cldr_unit_tests() {
@@ -73,7 +30,7 @@ fn test_cldr_unit_tests() {
                 category: parts[0].to_string(),
                 input_unit: parts[1].to_string(),
                 output_unit: parts[2].to_string(),
-                result: get_rational(parts[4]).unwrap(),
+                result: IcuRatio::from_str(parts[4]).unwrap(),
             }
         })
         .collect();
