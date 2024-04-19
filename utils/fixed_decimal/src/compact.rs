@@ -22,7 +22,7 @@ use crate::FixedDecimal;
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompactDecimal {
     significand: FixedDecimal,
-    exponent: i16,
+    exponent: u8,
 }
 
 impl CompactDecimal {
@@ -74,7 +74,7 @@ impl CompactDecimal {
     /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().exponent(), 6);
     /// assert_eq!(CompactDecimal::from_str("1729").unwrap().exponent(), 0);
     /// ```
-    pub fn exponent(&self) -> i16 {
+    pub fn exponent(&self) -> u8 {
         self.exponent
     }
 }

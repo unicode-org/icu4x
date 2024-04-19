@@ -236,25 +236,24 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &FixedDecimal, exp: i16) -> PluralOperands {
-        let exp_usize = usize::try_from(exp).unwrap_or(0);
-        let exp = exp_usize as i16; // infallible because it started as an i16
+    fn from_significand_and_exponent(dec: &FixedDecimal, exp: u8) -> PluralOperands {
+        let exp_i16 = i16::from(exp);
 
         let mag_range = dec.magnitude_range();
-        let mag_high = core::cmp::min(17, *mag_range.end() + exp);
-        let mag_low = core::cmp::max(-18, *mag_range.start() + exp);
+        let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
+        let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
             i *= 10;
-            i += dec.digit_at(magnitude - exp) as u64;
+            i += dec.digit_at(magnitude - exp_i16) as u64;
         }
 
         let mut f: u64 = 0;
         let mut t: u64 = 0;
         let mut w: usize = 0;
         for magnitude in (mag_low..=-1).rev() {
-            let digit = dec.digit_at(magnitude - exp) as u64;
+            let digit = dec.digit_at(magnitude - exp_i16) as u64;
             f *= 10;
             f += digit;
             if digit != 0 {
@@ -269,7 +268,7 @@ impl PluralOperands {
             w,
             f,
             t,
-            c: exp_usize,
+            c: usize::from(exp),
         }
     }
 }
@@ -285,8 +284,6 @@ impl From<&FixedDecimal> for PluralOperands {
 impl From<&CompactDecimal> for PluralOperands {
     /// Converts a [`fixed_decimal::CompactDecimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
-    ///
-    /// If the [`CompactDecimal`] exponent is negative, it gets set to 0.
     ///
     /// # Examples
     ///
