@@ -114,8 +114,9 @@ pub struct UTCOffsetRecord {
     pub nanosecond: u32,
 }
 
-/// The resulting record of parsing `Duration` string.
-#[non_exhaustive]
+/// The resulting record of parsing a `Duration` string.
+#[allow(clippy::exhaustive_structs)]
+// A duration can only be a Sign, a DateDuration part, and a TimeDuration part that users need to match on.
 #[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
@@ -128,7 +129,8 @@ pub struct DurationParseRecord {
 }
 
 /// A `DateDurationRecord` represents the result of parsing the date component of a Duration string.
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)]
+// A `DateDurationRecord` by spec can only be made up of years, months, weeks, and days parts that users need to match on.
 #[cfg(feature = "duration")]
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct DateDurationRecord {
@@ -143,7 +145,8 @@ pub struct DateDurationRecord {
 }
 
 /// A `TimeDurationRecord` represents the result of parsing the time component of a Duration string.
-#[non_exhaustive]
+#[allow(clippy::exhaustive_enums)]
+// A `TimeDurationRecord` by spec can only be made up of the valid parts up to a present fraction that users need to match on.
 #[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TimeDurationRecord {
