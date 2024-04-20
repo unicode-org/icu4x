@@ -79,7 +79,7 @@ pub struct MissingNamedPlaceholderError<'a> {
 impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_char('{')?;
-        sink.write_str(&self.name)?;
+        sink.write_str(self.name)?;
         sink.write_char('}')?;
         Ok(())
     }
@@ -99,7 +99,7 @@ where
         &'a self,
         key: MultiNamedPlaceholderKey<'k>,
     ) -> (Self::W<'a>, writeable::Part) {
-        let writeable = match self.get(&*key.0) {
+        let writeable = match self.get(key.0) {
             Some(value) => Ok(value),
             None => Err(MissingNamedPlaceholderError { name: key.0 }),
         };
@@ -122,7 +122,7 @@ where
         &'a self,
         key: MultiNamedPlaceholderKey<'k>,
     ) -> (Self::W<'a>, writeable::Part) {
-        let writeable = match self.get(&*key.0) {
+        let writeable = match self.get(key.0) {
             Some(value) => Ok(value),
             None => Err(MissingNamedPlaceholderError { name: key.0 }),
         };
