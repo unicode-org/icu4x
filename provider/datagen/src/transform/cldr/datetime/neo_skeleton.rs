@@ -4,7 +4,7 @@
 
 use std::collections::HashSet;
 
-use crate::{provider::IterableDataProviderInternal, DatagenProvider};
+use crate::provider::{DatagenProvider, IterableDataProviderInternal};
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };

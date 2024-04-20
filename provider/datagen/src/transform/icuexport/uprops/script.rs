@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
@@ -14,7 +15,7 @@ use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 // implement data provider
-impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
+impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -59,7 +60,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvid
     }
 }
 
-impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -72,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_script_val_from_script_extensions() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -92,7 +93,7 @@ mod tests {
 
     #[test]
     fn test_scx_array_from_script_extensions() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -166,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_has_script() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -246,7 +247,7 @@ mod tests {
 
     #[test]
     fn test_get_script_extensions_set() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())

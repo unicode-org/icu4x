@@ -10,5 +10,5 @@ version = "0.0.0"
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", features = ["provider_fs"] }
+icu_capi = { version = "1.4", features = ["provider_fs", "experimental_components"] }
 icu_provider = { version = "1.4", features = ["deserialize_json"] }

@@ -186,7 +186,7 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/civil",
         &fxs,
-        icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+        icu::calendar::islamic::IslamicCivil::new(),
         |y, m, d, h, min, s| {
             DateTime::try_new_islamic_civil_datetime_with_calendar(
                 y,
@@ -195,7 +195,7 @@ fn datetime_benches(c: &mut Criterion) {
                 h,
                 min,
                 s,
-                icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+                icu::calendar::islamic::IslamicCivil::new(),
             )
             .unwrap()
         },
@@ -206,7 +206,7 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/tabular",
         &fxs,
-        icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+        icu::calendar::islamic::IslamicTabular::new(),
         |y, m, d, h, min, s| {
             DateTime::try_new_islamic_tabular_datetime_with_calendar(
                 y,
@@ -215,7 +215,7 @@ fn datetime_benches(c: &mut Criterion) {
                 h,
                 min,
                 s,
-                icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+                icu::calendar::islamic::IslamicTabular::new(),
             )
             .unwrap()
         },

@@ -9,6 +9,7 @@
 /// For other crates, please get approval from @unicode-org/icu4x-owners
 pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X components
+    "icu",
     "icu_calendar",
     "icu_casemap",
     "icu_collator",
@@ -86,7 +87,14 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 
 /// Dependencies allowed when opting in to experimental code
 /// This will likely grow when we add experimental crates
-pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &["icu_experimental"];
+pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
+    "icu_experimental",
+    "icu_pattern",
+    "num-bigint",
+    "num-integer",
+    "num-rational",
+    "num-traits",
+];
 
 /// Dependencies allowed when opting in to compiled data
 /// for experimental crates.

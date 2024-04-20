@@ -96,13 +96,9 @@
 #![warn(missing_docs)]
 
 mod driver;
+#[cfg(feature = "provider")]
 mod provider;
 mod registry;
-mod source;
-mod transform;
-
-#[cfg(test)]
-mod tests;
 
 pub use driver::DatagenDriver;
 pub use driver::DeduplicationStrategy;
@@ -110,11 +106,13 @@ pub use driver::FallbackOptions;
 pub use driver::LocaleFamily;
 pub use driver::NoFallbackOptions;
 pub use driver::RuntimeFallbackLocation;
+
+#[cfg(feature = "provider")]
+pub use provider::CollationHanDatabase;
+#[cfg(feature = "provider")]
+pub use provider::CoverageLevel;
+#[cfg(feature = "provider")]
 pub use provider::DatagenProvider;
-#[doc(hidden)] // for CLI serde
-pub use provider::TrieType;
-#[allow(deprecated)] // ugh
-pub use registry::*;
 
 #[cfg(feature = "baked_exporter")]
 pub mod baked_exporter;
@@ -126,9 +124,12 @@ pub use icu_provider_fs::export as fs_exporter;
 /// A prelude for using the datagen API
 pub mod prelude {
     #[doc(no_inline)]
+    #[cfg(feature = "provider")]
+    pub use crate::provider::{CollationHanDatabase, CoverageLevel, DatagenProvider};
+    #[doc(no_inline)]
     pub use crate::{
-        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, DeduplicationStrategy,
-        FallbackMode, FallbackOptions, LocaleFamily, NoFallbackOptions, RuntimeFallbackLocation,
+        DatagenDriver, DeduplicationStrategy, FallbackMode, FallbackOptions, LocaleFamily,
+        NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
@@ -139,7 +140,7 @@ pub mod prelude {
     #[cfg(feature = "legacy_api")]
     #[allow(deprecated)]
     #[doc(hidden)]
-    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out, SourceData};
+    pub use crate::{provider::CldrLocaleSubset, syntax, BakedOptions, Out, SourceData};
 }
 
 use icu_provider::prelude::*;
@@ -157,6 +158,124 @@ pub(crate) mod rayon_prelude {
     }
     impl<T: IntoIterator> IntoParallelIterator for T {}
 }
+
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        /// List of all keys that are available.
+        ///
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
+        // Excludes the hello world key, as that generally should not be generated.
+        pub fn all_keys() -> Vec<DataKey> {
+            #[cfg(features = "experimental_components")]
+            log::warn!("The icu_datagen crates has been built with the `experimental_components` feature, so `all_keys` returns experimental keys");
+            vec![
+                $(
+                    <$marker>::KEY,
+                )+
+                $(
+                    #[cfg(feature = "experimental_components")]
+                    <$emarker>::KEY,
+                )+
+            ]
+        }
+
+        #[test]
+        fn no_key_collisions() {
+            let mut map = std::collections::BTreeMap::new();
+            let mut failed = false;
+            for key in all_keys() {
+                if let Some(colliding_key) = map.insert(key.hashed(), key) {
+                    println!(
+                        "{:?} and {:?} collide at {:?}",
+                        key.path(),
+                        colliding_key.path(),
+                        key.hashed()
+                    );
+                    failed = true;
+                }
+            }
+            if failed {
+                panic!();
+            }
+        }
+
+        /// Parses a human-readable key identifier into a [`DataKey`].
+        //  Supports the hello world key
+        /// # Example
+        /// ```
+        /// # use icu_provider::KeyedDataMarker;
+        /// assert_eq!(
+        ///     icu_datagen::key("list/and@1"),
+        ///     Some(icu_list::provider::AndListV1Marker::KEY),
+        /// );
+        /// ```
+        pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
+            use once_cell::sync::OnceCell;
+            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            let lookup = LOOKUP.get_or_init(|| {
+                [
+                    ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),
+                    $(
+                        ($path, Ok(<$marker>::KEY)),
+                    )+
+                    $(
+                        #[cfg(feature = "experimental_components")]
+                        ($epath, Ok(<$emarker>::KEY)),
+                        #[cfg(not(feature = "experimental_components"))]
+                        ($epath, Err(stringify!(feature = "experimental_components"))),
+                    )+
+
+                ]
+                .into_iter()
+                .collect()
+            });
+            let path = string.as_ref();
+            match lookup.get(path).copied() {
+                None => {
+                    log::warn!("Unknown key {path:?}");
+                    None
+                },
+                Some(Err(feature)) => {
+                    log::warn!("Key {path:?} requires {feature}");
+                    None
+                },
+                Some(Ok(key)) => Some(key)
+            }
+        }
+
+        #[test]
+        fn test_paths_correct() {
+            $(
+                assert_eq!(<$marker>::KEY.path().get(), $path);
+            )+
+            $(
+                assert_eq!(<$emarker>::KEY.path().get(), $epath);
+            )+
+        }
+
+        #[macro_export]
+        #[doc(hidden)]
+        macro_rules! make_exportable_provider {
+            ($ty:ty) => {
+                icu_provider::make_exportable_provider!(
+                    $ty,
+                    [
+                        icu_provider::hello_world::HelloWorldV1Marker,
+                        $(
+                            $marker,
+                        )+
+                        $(
+                            #[cfg(feature = "experimental_components")]
+                            $emarker,
+                        )+
+                    ]
+                );
+            }
+        }
+    }
+}
+crate::registry!(cb);
 
 /// Defines how fallback will apply to the generated data.
 ///
@@ -181,9 +300,8 @@ pub(crate) mod rayon_prelude {
 /// [`RuntimeManual`]: FallbackMode::RuntimeManual
 /// [`Preresolved`]: FallbackMode::Preresolved
 /// [`Hybrid`]: FallbackMode::Hybrid
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
-#[serde(rename_all = "camelCase")]
 pub enum FallbackMode {
     /// Selects the fallback mode based on [`DataExporter::supports_built_in_fallback()`](
     /// icu_provider::datagen::DataExporter::supports_built_in_fallback()), resolving to either
@@ -247,58 +365,6 @@ pub enum FallbackMode {
     ///
     /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
     Hybrid,
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    #[serde(rename = "implicit")]
-    #[default]
-    Implicit,
-    /// Unihan
-    #[serde(rename = "unihan")]
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
-
-/// A language's CLDR coverage level.
-///
-/// In ICU4X, these are disjoint sets: a language belongs to a single coverage level. This
-/// contrasts with CLDR usage, where these levels are understood to be additive (i.e., "basic"
-/// includes all language with "basic", or better coverage). The ICU4X semantics allow
-/// generating different data files for different coverage levels without duplicating data.
-/// However, the data itself is still additive (e.g. for fallback to work correctly), so data
-/// for moderate (basic) languages should only be loaded if modern (modern and moderate) data
-/// is already present.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
-#[non_exhaustive]
-#[serde(rename_all = "camelCase")]
-pub enum CoverageLevel {
-    /// Locales listed as modern coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the highest level of coverage.
-    Modern,
-    /// Locales listed as moderate, but not modern, coverage targets by the CLDR subcomittee.
-    ///
-    /// This is a medium level of coverage.
-    Moderate,
-    /// Locales listed as basic, but not moderate or modern, coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the lowest level of coverage.
-    Basic,
 }
 
 /// Parses a list of human-readable key identifiers and returns a
@@ -549,14 +615,10 @@ pub fn datagen(
                 let mut models = vec![];
                 for locale in locales {
                     let locale = locale.into();
-                    if let Some(model) =
-                        transform::segmenter::lstm::data_locale_to_model_name(&locale)
-                    {
+                    if let Some(model) = crate::lstm_data_locale_to_model_name(&locale) {
                         models.push(model.into());
                     }
-                    if let Some(model) =
-                        transform::segmenter::dictionary::data_locale_to_model_name(&locale)
-                    {
+                    if let Some(model) = crate::dictionary_data_locale_to_model_name(&locale) {
                         models.push(model.into());
                     }
                 }
@@ -626,6 +688,52 @@ pub fn datagen(
     )
 }
 
+use icu_locid::langid;
+
+#[cfg(feature = "provider")]
+fn lstm_model_name_to_data_locale(name: &str) -> Option<DataLocale> {
+    match name {
+        "Burmese_codepoints_exclusive_model4_heavy" => Some(langid!("my").into()),
+        "Khmer_codepoints_exclusive_model4_heavy" => Some(langid!("km").into()),
+        "Lao_codepoints_exclusive_model4_heavy" => Some(langid!("lo").into()),
+        "Thai_codepoints_exclusive_model4_heavy" => Some(langid!("th").into()),
+        _ => None,
+    }
+}
+
+fn lstm_data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+    match locale.get_langid() {
+        id if id == langid!("my") => Some("Burmese_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("km") => Some("Khmer_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("lo") => Some("Lao_codepoints_exclusive_model4_heavy"),
+        id if id == langid!("th") => Some("Thai_codepoints_exclusive_model4_heavy"),
+        _ => None,
+    }
+}
+
+#[cfg(feature = "provider")]
+fn dictionary_model_name_to_data_locale(name: &str) -> Option<DataLocale> {
+    match name {
+        "khmerdict" => Some(langid!("km").into()),
+        "cjdict" => Some(langid!("ja").into()),
+        "laodict" => Some(langid!("lo").into()),
+        "burmesedict" => Some(langid!("my").into()),
+        "thaidict" => Some(langid!("th").into()),
+        _ => None,
+    }
+}
+
+fn dictionary_data_locale_to_model_name(locale: &DataLocale) -> Option<&'static str> {
+    match locale.get_langid() {
+        id if id == langid!("km") => Some("khmerdict"),
+        id if id == langid!("ja") => Some("cjdict"),
+        id if id == langid!("lo") => Some("laodict"),
+        id if id == langid!("my") => Some("burmesedict"),
+        id if id == langid!("th") => Some("thaidict"),
+        _ => None,
+    }
+}
+
 #[test]
 fn test_keys() {
     assert_eq!(
@@ -681,6 +789,21 @@ fn test_keys_from_bin() {
 
 // SEMVER GRAVEYARD
 
+/// Same as `all_keys`.
+///
+/// Note that since v1.3, `all_keys` also contains experimental keys for which the
+/// corresponding Cargo features has been enabled.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(
+    since = "1.3.0",
+    note = "use `all_keys` with the required cargo features"
+)]
+#[cfg(feature = "legacy_api")]
+pub fn all_keys_with_experimental() -> Vec<DataKey> {
+    all_keys()
+}
+
 #[cfg(feature = "legacy_api")]
 #[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
 /// Identifies errors that are due to missing CLDR data.
@@ -717,33 +840,6 @@ pub mod syntax {
 #[doc(hidden)]
 pub use baked_exporter::Options as BakedOptions;
 
-#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[cfg(feature = "legacy_api")]
 #[doc(hidden)]
-#[derive(Debug)]
-#[cfg(feature = "legacy_api")]
-pub enum CldrLocaleSubset {
-    Ignored,
-}
-
-#[cfg(feature = "legacy_api")]
-impl Default for CldrLocaleSubset {
-    fn default() -> Self {
-        Self::Ignored
-    }
-}
-
-#[cfg(feature = "legacy_api")]
-impl CldrLocaleSubset {
-    #[allow(non_upper_case_globals)]
-    pub const Full: Self = Self::Ignored;
-    #[allow(non_upper_case_globals)]
-    pub const Modern: Self = Self::Ignored;
-}
-
-#[cfg(feature = "legacy_api")]
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-impl AnyProvider for DatagenProvider {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.as_any_provider().load_any(key, req)
-    }
-}
+pub use provider::CldrLocaleSubset;

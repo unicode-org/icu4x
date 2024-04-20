@@ -207,6 +207,9 @@ lazy_static::lazy_static! {
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
         "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
 
+        // experimental
+        "icu::experimental",
+
         // Experimental and unused decimal types
         "fixed_decimal::CompactDecimal",
         "fixed_decimal::FixedInteger",

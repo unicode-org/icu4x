@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use icu_locid::{
     subtags::{self, language},
     LanguageIdentifier,
@@ -14,7 +15,7 @@ use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
-impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
+impl DataProvider<AliasesV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         self.check_req::<AliasesV1Marker>(req)?;
         let data: &cldr_serde::aliases::Resource = self
@@ -28,13 +29,13 @@ impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<AliasesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<AliasesV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl DataProvider<AliasesV2Marker> for crate::DatagenProvider {
+impl DataProvider<AliasesV2Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2Marker>, DataError> {
         self.check_req::<AliasesV2Marker>(req)?;
         let data: &cldr_serde::aliases::Resource = self
@@ -48,7 +49,7 @@ impl DataProvider<AliasesV2Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<AliasesV2Marker> for crate::DatagenProvider {
+impl IterableDataProvider<AliasesV2Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -296,7 +297,7 @@ fn test_appendix_c_cmp() {
 fn test_basic() {
     use icu_locid::subtags::{language, region, script};
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
     let data: DataPayload<AliasesV2Marker> = provider
         .load(Default::default())
         .unwrap()
