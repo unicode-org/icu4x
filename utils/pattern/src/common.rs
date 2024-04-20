@@ -46,10 +46,13 @@ pub enum PatternItemCow<'a, T> {
 }
 
 #[cfg(feature = "alloc")]
-impl<'a, T> From<PatternItem<'a, T>> for PatternItemCow<'a, T> {
-    fn from(value: PatternItem<'a, T>) -> Self {
+impl<'a, T, U> From<PatternItem<'a, U>> for PatternItemCow<'a, T>
+where
+    T: From<U>,
+{
+    fn from(value: PatternItem<'a, U>) -> Self {
         match value {
-            PatternItem::Placeholder(t) => Self::Placeholder(t),
+            PatternItem::Placeholder(t) => Self::Placeholder(t.into()),
             PatternItem::Literal(s) => Self::Literal(Cow::Borrowed(s)),
         }
     }
@@ -63,6 +66,11 @@ impl<'a, T> From<PatternItem<'a, T>> for PatternItemCow<'a, T> {
 pub trait PatternBackend: crate::private::Sealed + 'static {
     /// The type to be used as the placeholder key in code.
     type PlaceholderKey<'a>;
+
+    /// Cowable version of the type to be used as the placeholder key in code.
+    // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
+    #[cfg(feature = "alloc")]
+    type PlaceholderKeyCow<'a>;
 
     /// The type of error that the [`TryWriteable`] for this backend can return.
     type Error<'a>;
@@ -86,7 +94,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     fn try_from_items<
         'cow,
         'ph,
-        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKeyCow<'ph>>, Error>>,
     >(
         items: I,
     ) -> Result<<Self::Store as ToOwned>::Owned, Error>

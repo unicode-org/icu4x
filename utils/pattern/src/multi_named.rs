@@ -4,18 +4,13 @@
 
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
-use alloc::borrow::Cow;
-use alloc::collections::BTreeMap;
-use core::borrow::Borrow;
+#[cfg(feature = "alloc")]
+use alloc::{borrow::Borrow, borrow::Cow, collections::BTreeMap, str::FromStr, string::String};
 use core::fmt;
-use core::str::FromStr;
 use writeable::Writeable;
 
 use crate::common::*;
 use crate::Error;
-
-#[cfg(feature = "alloc")]
-use alloc::string::String;
 
 /// A string wrapper for the [`MultiNamedPlaceholder`] pattern backend.
 ///
@@ -52,29 +47,31 @@ use alloc::string::String;
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // transparent newtype
+pub struct MultiNamedPlaceholderKey<'a>(&'a str);
+
+/// Cowable version of [`MultiNamedPlaceholderKey`], used during construction.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[repr(transparent)]
-#[allow(clippy::exhaustive_enums)] // transparent
-pub struct MultiNamedPlaceholderKey<'a>(pub Cow<'a, str>);
+#[allow(clippy::exhaustive_structs)] // transparent newtype
+#[cfg(feature = "alloc")]
+pub struct MultiNamedPlaceholderKeyCow<'a>(Cow<'a, str>);
 
-impl<'a> FromStr for MultiNamedPlaceholderKey<'a> {
+#[cfg(feature = "alloc")]
+impl<'a> FromStr for MultiNamedPlaceholderKeyCow<'a> {
     type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Can't borrow the str here unfortunately
-        Ok(MultiNamedPlaceholderKey(Cow::Owned(String::from(s))))
-    }
-}
-
-impl fmt::Display for MultiNamedPlaceholderKey<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{{{0}}}", self.0)
+        Ok(MultiNamedPlaceholderKeyCow(Cow::Owned(String::from(s))))
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct MissingNamedPlaceholderError<'a> {
-    pub name: Cow<'a, str>,
+    pub name: &'a str,
 }
 
 impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
@@ -86,6 +83,7 @@ impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'k, K, W> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>> for BTreeMap<K, W>
 where
     K: Ord + Borrow<str>,
@@ -224,8 +222,10 @@ where
 /// Recover the best-effort lossy string by directly using [`Pattern::try_interpolate()`]:
 ///
 /// ```
+/// use icu_pattern::MissingNamedPlaceholderError;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
+/// use std::borrow::Cow;
 /// use std::collections::BTreeMap;
 /// use writeable::TryWriteable;
 ///
@@ -243,12 +243,20 @@ where
 ///     .try_write_to(&mut buffer)
 ///     .expect("infallible write to String");
 ///
-/// assert!(matches!(result, Err(_)));
+/// assert!(matches!(
+///     result,
+///     Err(MissingNamedPlaceholderError {
+///         name: Cow::Borrowed(_),
+///         ..
+///     })
+/// ));
 /// assert_eq!(result.unwrap_err().name, "your_name");
 /// assert_eq!(buffer, "Your name is {your_name}");
 /// ```
 ///
 /// [`Pattern::interpolate()`]: crate::Pattern::interpolate
+/// [`Pattern::try_interpolate()`]: crate::Pattern::try_interpolate
+/// [`TryWriteable`]: writeable::TryWriteable
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_enums)] // Empty Enum
 pub enum MultiNamedPlaceholder {}
@@ -257,19 +265,25 @@ impl crate::private::Sealed for MultiNamedPlaceholder {}
 
 impl PatternBackend for MultiNamedPlaceholder {
     type PlaceholderKey<'a> = MultiNamedPlaceholderKey<'a>;
+    #[cfg(feature = "alloc")]
+    type PlaceholderKeyCow<'a> = MultiNamedPlaceholderKeyCow<'a>;
     type Error<'a> = MissingNamedPlaceholderError<'a>;
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut iter = MultiNamedPlaceholderPatternIterator::new(store);
-        while let Some(_) = iter.try_next().map_err(|e| match e {
-            MultiNamedPlaceholderError::InvalidStore => Error::InvalidPattern,
-            MultiNamedPlaceholderError::Unreachable => {
-                debug_assert!(false, "unreachable");
-                Error::InvalidPattern
-            }
-        })? {}
+        while iter
+            .try_next()
+            .map_err(|e| match e {
+                MultiNamedPlaceholderError::InvalidStore => Error::InvalidPattern,
+                MultiNamedPlaceholderError::Unreachable => {
+                    debug_assert!(false, "unreachable");
+                    Error::InvalidPattern
+                }
+            })?
+            .is_some()
+        {}
         Ok(())
     }
 
@@ -281,7 +295,7 @@ impl PatternBackend for MultiNamedPlaceholder {
     fn try_from_items<
         'cow,
         'ph,
-        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKeyCow<'ph>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {
@@ -375,7 +389,7 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
                 };
                 self.store = remainder;
                 Ok(Some(PatternItem::Placeholder(MultiNamedPlaceholderKey(
-                    Cow::Borrowed(placeholder_name),
+                    placeholder_name,
                 ))))
             }
             Some(i) => {

@@ -344,6 +344,8 @@ where
 /// A wrapper around [`TryWriteable`] that implements [`Writeable`]
 /// if [`TryWriteable::Error`] is [`Infallible`].
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // transparent newtype
 pub struct TryWriteableInfallibleAsWriteable<T>(pub T);
 
 impl<T> Writeable for TryWriteableInfallibleAsWriteable<T>
@@ -400,6 +402,8 @@ where
 /// A wrapper around [`Writeable`] that implements [`TryWriteable`]
 /// with [`TryWriteable::Error`] set to [`Infallible`].
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)]
+#[allow(clippy::exhaustive_structs)] // transparent newtype
 pub struct WriteableAsTryWriteableInfallible<T>(pub T);
 
 impl<T> TryWriteable for WriteableAsTryWriteableInfallible<T>

@@ -195,7 +195,7 @@ where
     /// ```
     pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
     where
-        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKey<'a>>>,
+        I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKeyCow<'a>>>,
     {
         let store = B::try_from_items(items.map(Ok))?;
         #[cfg(debug_assertions)]
@@ -216,9 +216,9 @@ where
 impl<'a, B> Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::PlaceholderKey<'a>: FromStr,
+    B::PlaceholderKeyCow<'a>: FromStr,
     B::Store: ToOwned,
-    <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
+    <B::PlaceholderKeyCow<'a> as FromStr>::Err: fmt::Debug,
 {
     /// Creates a pattern by parsing a syntax string.
     ///
@@ -266,9 +266,9 @@ where
 impl<'a, B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
 where
     B: PatternBackend,
-    B::PlaceholderKey<'a>: FromStr,
+    B::PlaceholderKeyCow<'a>: FromStr,
     B::Store: ToOwned,
-    <B::PlaceholderKey<'a> as FromStr>::Err: fmt::Debug,
+    <B::PlaceholderKeyCow<'a> as FromStr>::Err: fmt::Debug,
 {
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
@@ -282,7 +282,7 @@ where
     Store: AsRef<B::Store> + ?Sized,
 {
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
-    pub fn iter<'a>(&'a self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'a>>> + 'a {
+    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'_>>> + '_ {
         B::iter_items(self.store.as_ref())
     }
 
@@ -303,6 +303,8 @@ where
 
     #[cfg(feature = "alloc")]
     /// Interpolates the pattern directly to a string, returning the string or an error.
+    ///
+    /// In addition to the error, the lossy fallback string is returned in the failure case.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn try_interpolate_to_string<'a, P>(

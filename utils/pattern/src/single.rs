@@ -166,6 +166,8 @@ impl crate::private::Sealed for SinglePlaceholder {}
 
 impl PatternBackend for SinglePlaceholder {
     type PlaceholderKey<'a> = SinglePlaceholderKey;
+    #[cfg(feature = "alloc")]
+    type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
     type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
