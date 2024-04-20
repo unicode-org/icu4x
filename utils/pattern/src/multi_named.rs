@@ -5,8 +5,10 @@
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Borrow, borrow::Cow, collections::BTreeMap, str::FromStr, string::String};
+use alloc::{borrow::Cow, collections::BTreeMap, str::FromStr, string::String};
 use core::fmt;
+#[cfg(feature = "litemap")]
+use litemap::LiteMap;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -49,7 +51,7 @@ use crate::Error;
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
-pub struct MultiNamedPlaceholderKey<'a>(&'a str);
+pub struct MultiNamedPlaceholderKey<'a>(pub &'a str);
 
 /// Cowable version of [`MultiNamedPlaceholderKey`], used during construction.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -57,7 +59,7 @@ pub struct MultiNamedPlaceholderKey<'a>(&'a str);
 #[repr(transparent)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
 #[cfg(feature = "alloc")]
-pub struct MultiNamedPlaceholderKeyCow<'a>(Cow<'a, str>);
+pub struct MultiNamedPlaceholderKeyCow<'a>(pub Cow<'a, str>);
 
 #[cfg(feature = "alloc")]
 impl<'a> FromStr for MultiNamedPlaceholderKeyCow<'a> {
@@ -86,8 +88,31 @@ impl<'a> Writeable for MissingNamedPlaceholderError<'a> {
 #[cfg(feature = "alloc")]
 impl<'k, K, W> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>> for BTreeMap<K, W>
 where
-    K: Ord + Borrow<str>,
+    K: Ord + core::borrow::Borrow<str>,
     W: Writeable,
+{
+    type Error = MissingNamedPlaceholderError<'k>;
+    type W<'a> = Result<&'a W, Self::Error> where W: 'a, Self: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+    #[inline]
+    fn value_for<'a>(
+        &'a self,
+        key: MultiNamedPlaceholderKey<'k>,
+    ) -> (Self::W<'a>, writeable::Part) {
+        let writeable = match self.get(&*key.0) {
+            Some(value) => Ok(value),
+            None => Err(MissingNamedPlaceholderError { name: key.0 }),
+        };
+        (writeable, crate::PATTERN_PLACEHOLDER_PART)
+    }
+}
+
+#[cfg(feature = "litemap")]
+impl<'k, K, W, S> PlaceholderValueProvider<MultiNamedPlaceholderKey<'k>> for LiteMap<K, W, S>
+where
+    K: Ord + core::borrow::Borrow<str>,
+    W: Writeable,
+    S: litemap::store::Store<K, W>,
 {
     type Error = MissingNamedPlaceholderError<'k>;
     type W<'a> = Result<&'a W, Self::Error> where W: 'a, Self: 'a;
@@ -199,6 +224,29 @@ where
 /// );
 /// ```
 ///
+/// Use [`LiteMap`] for alloc-free formatting:
+///
+/// ```
+/// use icu_pattern::MultiNamedPlaceholderPattern;
+/// use litemap::LiteMap;
+/// use writeable::TryWriteable;
+///
+/// static placeholder_value_map: LiteMap<&str, usize, &[(&str, usize)]> =
+///     LiteMap::from_sorted_store_unchecked(&[("seven", 11)]);
+///
+/// // Note: String allocates, but this could be a non-allocating sink
+/// let mut sink = String::new();
+///
+/// MultiNamedPlaceholderPattern::try_from_str("{seven}")
+///     .unwrap()
+///     .try_interpolate(&placeholder_value_map)
+///     .try_write_to(&mut sink)
+///     .unwrap()
+///     .unwrap();
+///
+/// assert_eq!(sink, "11");
+/// ```
+///
 /// Missing placeholder values cause an error result to be returned. However,
 /// based on the design of [`TryWriteable`], the error can be discarded to get
 /// a best-effort interpolation with potential replacement characters.
@@ -243,13 +291,7 @@ where
 ///     .try_write_to(&mut buffer)
 ///     .expect("infallible write to String");
 ///
-/// assert!(matches!(
-///     result,
-///     Err(MissingNamedPlaceholderError {
-///         name: Cow::Borrowed(_),
-///         ..
-///     })
-/// ));
+/// assert!(matches!(result, Err(MissingNamedPlaceholderError { .. })));
 /// assert_eq!(result.unwrap_err().name, "your_name");
 /// assert_eq!(buffer, "Your name is {your_name}");
 /// ```
