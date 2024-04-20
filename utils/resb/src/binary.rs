@@ -112,7 +112,10 @@ primitive_enum!(
     u8,
     /// The endianness used to write a resource bundle.
     #[derive(Clone, Copy, Debug, PartialEq)]
-    #[allow(clippy::exhaustive_enums, missing_docs)]
+    // The resource bundle format doesn't support any sort of mixed-endian or
+    // middle-endian encodings.
+    #[allow(clippy::exhaustive_enums)]
+    #[allow(missing_docs)]
     pub enum Endianness {
         Little = 0,
         Big = 1,
@@ -441,11 +444,6 @@ fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), BinaryDeserializerError> {
         .unwrap();
     let value = u16::from_le_bytes(bytes);
 
-    let rest =
-        input
-            .get(core::mem::size_of::<u16>()..)
-            .ok_or(BinaryDeserializerError::invalid_data(
-                "unexpected end of input",
-            ))?;
+    let rest = get_subslice(input, core::mem::size_of::<u16>()..)?;
     Ok((value, rest))
 }
