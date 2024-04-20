@@ -123,15 +123,16 @@ where
 /// The literals and placeholders are stored in context. A placeholder is encoded as a name length
 /// in octal code points followed by the placeholder name.
 ///
-/// For example, consider the pattern: "Hello, {person0} and {person1}!"
+/// For example, consider the pattern: "Hello, {user} and {someone_else}!"
 ///
 /// The encoding for this would be:
 ///
 /// ```txt
-/// Hello, \x00\x07person0 and \x00\x07person1!
+/// Hello, \x00\x04user and \x01\x04someone_else!
 /// ```
 ///
-/// where `\x00\x07` is a big-endian octal number representing the length of the placeholder name.
+/// where `\x00\x04` and `\x01\x04` are a big-endian octal number representing the lengths of
+/// their respective placeholder names.
 ///
 /// Consequences of this encoding:
 ///
@@ -140,7 +141,7 @@ where
 ///
 /// # Examples
 ///
-/// The pattern store syntax is identical to the human-readable syntax:
+/// Parsing and comparing the pattern store:
 ///
 /// ```
 /// use icu_pattern::MultiNamedPlaceholder;
@@ -148,12 +149,12 @@ where
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let store = Pattern::<MultiNamedPlaceholder, _>::try_from_str(
-///     "Hello, {person0} and {person1}!",
+///     "Hello, {user} and {someone_else}!",
 /// )
 /// .unwrap()
 /// .take_store();
 ///
-/// assert_eq!("Hello, \x00\x07person0 and \x00\x07person1!", store);
+/// assert_eq!("Hello, \x00\x04user and \x01\x04someone_else!", store);
 /// ```
 ///
 /// Example patterns supported by this backend:
@@ -163,8 +164,14 @@ where
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> =
-///     [("num", "5"), ("letter", "X")].into_iter().collect();
+/// let placeholder_value_map: BTreeMap<&str, &str> = [
+///     ("num", "5"),
+///     ("letter", "X"),
+///     ("", "empty"),
+///     ("unused", "unused"),
+/// ]
+/// .into_iter()
+/// .collect();
 ///
 /// // Single placeholder:
 /// assert_eq!(
@@ -186,11 +193,11 @@ where
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("{letter}{num}")
+///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("{letter}{num}{}")
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
-///     "X5",
+///     "X5empty",
 /// );
 /// ```
 ///
@@ -256,7 +263,13 @@ impl PatternBackend for MultiNamedPlaceholder {
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut iter = MultiNamedPlaceholderPatternIterator::new(store);
-        while let Some(_) = iter.try_next().map_err(|_| Error::InvalidPattern)? {}
+        while let Some(_) = iter.try_next().map_err(|e| match e {
+            MultiNamedPlaceholderError::InvalidStore => Error::InvalidPattern,
+            MultiNamedPlaceholderError::Unreachable => {
+                debug_assert!(false, "unreachable");
+                Error::InvalidPattern
+            }
+        })? {}
         Ok(())
     }
 
@@ -297,7 +310,6 @@ impl PatternBackend for MultiNamedPlaceholder {
     }
 }
 
-#[doc(hidden)] // TODO(#4467): Should be internal
 #[derive(Debug)]
 pub struct MultiNamedPlaceholderPatternIterator<'a> {
     store: &'a str,
@@ -397,21 +409,35 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::MultiNamedPlaceholderPattern;
 
     #[test]
     fn test_invalid() {
-        let cases = [
-            "\x00", // too short
-            "\x02", // no placeholder name
-        ];
         let long_str = "0123456789".repeat(1000000);
-        for cas in cases {
-            let cas = cas.replace('@', &long_str);
+        let strings = [
+            "{",    // invalid syntax
+            "{@}",  // placeholder name too long
+            "\x00", // invalid character
+            "\x07", // invalid character
+        ];
+        for string in strings {
+            let string = string.replace('@', &long_str);
             assert!(
-                MultiNamedPlaceholderPattern::try_from_store(&cas).is_err(),
-                "{cas:?}"
+                MultiNamedPlaceholderPattern::try_from_str(&string).is_err(),
+                "{string:?}"
+            );
+        }
+        let stores = [
+            "\x00",      // too short
+            "\x02",      // too short
+            "\x00\x02",  // no placeholder name
+            "\x00\x02a", // placeholder name too short
+        ];
+        for store in stores {
+            let store = store.replace('@', &long_str);
+            assert!(
+                MultiNamedPlaceholderPattern::try_from_store(&store).is_err(),
+                "{store:?}"
             );
         }
     }
