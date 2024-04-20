@@ -308,13 +308,14 @@ where
     pub fn try_interpolate_to_string<'a, P>(
         &'a self,
         value_provider: P,
-    ) -> Result<String, B::Error<'a>>
+    ) -> Result<String, (B::Error<'a>, String)>
     where
         P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         self.try_interpolate(value_provider)
             .try_write_to_string()
             .map(|s| s.into_owned())
+            .map_err(|(e, s)| (e, s.into_owned()))
     }
 }
 

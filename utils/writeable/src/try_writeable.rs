@@ -377,13 +377,13 @@ where
     fn write_to_string(&self) -> Cow<str> {
         match self.0.try_write_to_string() {
             Ok(s) => s,
-            Err(infallible) => match infallible {},
+            Err((infallible, _)) => match infallible {},
         }
     }
 
     #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        self.0.write_cmp_bytes(other)
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.0.writeable_cmp_bytes(other)
     }
 }
 
@@ -424,13 +424,13 @@ where
     }
 
     #[inline]
-    fn try_write_to_string(&self) -> Result<Cow<str>, Infallible> {
+    fn try_write_to_string(&self) -> Result<Cow<str>, (Infallible, Cow<str>)> {
         Ok(self.0.write_to_string())
     }
 
     #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        self.0.write_cmp_bytes(other)
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.0.writeable_cmp_bytes(other)
     }
 }
 
