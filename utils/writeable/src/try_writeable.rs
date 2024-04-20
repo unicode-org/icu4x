@@ -409,12 +409,18 @@ where
     type Error = Infallible;
 
     #[inline]
-    fn try_write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> Result<Result<(), Infallible>, fmt::Error> {
+    fn try_write_to<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<Result<(), Infallible>, fmt::Error> {
         self.0.write_to(sink).map(Ok)
     }
 
     #[inline]
-    fn try_write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> Result<Result<(), Infallible>, fmt::Error> {
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Infallible>, fmt::Error> {
         self.0.write_to_parts(sink).map(Ok)
     }
 
