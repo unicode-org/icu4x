@@ -300,7 +300,7 @@ impl Keywords {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.write_cmp_bytes(other)
+        self.writeable_cmp_bytes(other)
     }
 
     /// Compare this [`Keywords`] with an iterator of BCP-47 subtags.

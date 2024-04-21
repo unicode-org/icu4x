@@ -117,7 +117,7 @@ impl Writeable for str {
     }
 
     #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         self.as_bytes().cmp(other)
     }
 }
@@ -139,7 +139,7 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         self.as_bytes().cmp(other)
     }
 }
@@ -163,7 +163,7 @@ impl Writeable for char {
     }
 
     #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         self.encode_utf8(&mut [0u8; 4]).as_bytes().cmp(other)
     }
 }
@@ -190,8 +190,8 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        (*self).write_cmp_bytes(other)
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        (*self).writeable_cmp_bytes(other)
     }
 }
 
@@ -215,8 +215,8 @@ macro_rules! impl_write_smart_pointer {
                 core::borrow::Borrow::<T>::borrow(self).write_to_string()
             }
             #[inline]
-            fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-                core::borrow::Borrow::<T>::borrow(self).write_cmp_bytes(other)
+            fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+                core::borrow::Borrow::<T>::borrow(self).writeable_cmp_bytes(other)
             }
         }
     };
@@ -255,7 +255,7 @@ fn test_string_impls() {
         assert_writeable_eq!(&chars[i], s);
         for j in 0..chars.len() {
             assert_eq!(
-                chars[j].write_cmp_bytes(s.as_bytes()),
+                chars[j].writeable_cmp_bytes(s.as_bytes()),
                 chars[j].cmp(&chars[i]),
                 "{:?} vs {:?}",
                 chars[j],
