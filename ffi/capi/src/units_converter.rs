@@ -104,7 +104,7 @@ pub mod ffi {
         /// NOTE:
         ///   The conversion using floating-point operations is not as accurate as the conversion using ratios.
         #[diplomat::rust_link(
-            icu::experimental::units::converter::UnitsConverter::convert_f64,
+            icu::experimental::units::converter::UnitsConverter::convert,
             FnInStruct
         )]
         #[diplomat::attr(dart, rename = "convert_double")]
