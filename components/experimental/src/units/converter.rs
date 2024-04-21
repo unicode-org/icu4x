@@ -97,7 +97,7 @@ where
 {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &N) -> N {
-        self.proportional.convert(value).adding(&self.offset)
+        self.proportional.convert(value).add(&self.offset)
     }
 }
 
@@ -124,6 +124,6 @@ where
 {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &N) -> N {
-        self.conversion_rate.multiply(value)
+        value.mul(&self.conversion_rate)
     }
 }
