@@ -111,5 +111,14 @@ pub mod ffi {
         pub fn convert_f64(&self, value: f64) -> f64 {
             self.0.convert_f64(value)
         }
+
+        /// Clones the current [`ICU4XUnitsConverter`] object.
+        #[diplomat::rust_link(
+            icu::experimental::units::converter::UnitsConverter::clone,
+            FnInStruct
+        )]
+        pub fn clone(&self) -> Box<Self> {
+            Box::new(ICU4XUnitsConverter(self.0.clone()))
+        }
     }
 }

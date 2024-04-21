@@ -11,6 +11,7 @@
 
 #include "ICU4XUnitsConverter.h"
 
+class ICU4XUnitsConverter;
 
 /**
  * A destruction policy for using ICU4XUnitsConverter with std::unique_ptr.
@@ -39,6 +40,13 @@ class ICU4XUnitsConverter {
    * See the [Rust documentation for `convert_f64`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert_f64) for more information.
    */
   double convert_f64(double value) const;
+
+  /**
+   * Clones the current [`ICU4XUnitsConverter`] object.
+   * 
+   * See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+   */
+  ICU4XUnitsConverter clone() const;
   inline const capi::ICU4XUnitsConverter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnitsConverter* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XUnitsConverter(capi::ICU4XUnitsConverter* i) : inner(i) {}
@@ -52,5 +60,8 @@ class ICU4XUnitsConverter {
 
 inline double ICU4XUnitsConverter::convert_f64(double value) const {
   return capi::ICU4XUnitsConverter_convert_f64(this->inner.get(), value);
+}
+inline ICU4XUnitsConverter ICU4XUnitsConverter::clone() const {
+  return ICU4XUnitsConverter(capi::ICU4XUnitsConverter_clone(this->inner.get()));
 }
 #endif

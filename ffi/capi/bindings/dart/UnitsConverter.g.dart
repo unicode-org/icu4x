@@ -35,6 +35,14 @@ final class UnitsConverter implements ffi.Finalizable {
     final result = _ICU4XUnitsConverter_convert_f64(_ffi, value);
     return result;
   }
+
+  /// Clones the current [`UnitsConverter`] object.
+  ///
+  /// See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+  UnitsConverter clone() {
+    final result = _ICU4XUnitsConverter_clone(_ffi);
+    return UnitsConverter._fromFfi(result, []);
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XUnitsConverter_destroy')
@@ -46,3 +54,8 @@ external void _ICU4XUnitsConverter_destroy(ffi.Pointer<ffi.Void> self);
 @ffi.Native<ffi.Double Function(ffi.Pointer<ffi.Opaque>, ffi.Double)>(isLeaf: true, symbol: 'ICU4XUnitsConverter_convert_f64')
 // ignore: non_constant_identifier_names
 external double _ICU4XUnitsConverter_convert_f64(ffi.Pointer<ffi.Opaque> self, double value);
+
+@meta.ResourceIdentifier('ICU4XUnitsConverter_clone')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverter_clone')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverter_clone(ffi.Pointer<ffi.Opaque> self);
