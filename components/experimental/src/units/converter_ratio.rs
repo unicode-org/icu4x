@@ -9,13 +9,13 @@ use crate::units::ratio::IcuRatio;
 // TODO: add Mul & Add for references to avoid cloning.
 /// A trait for types that can be converted between two units.
 pub trait ConverterRatio: Mul<Output = Self> + Add<Output = Self> + Clone {
-    fn recip(&self) -> Self;
+    fn reciprocal(&self) -> Self;
 
     // TODO: is there a way to implement this for all types that implement From<IcuRatio>?
     fn from_icu_ratio(value: IcuRatio) -> Option<Self>;
 }
 impl ConverterRatio for IcuRatio {
-    fn recip(&self) -> Self {
+    fn reciprocal(&self) -> Self {
         self.recip()
     }
 
@@ -25,7 +25,7 @@ impl ConverterRatio for IcuRatio {
 }
 
 impl ConverterRatio for f64 {
-    fn recip(&self) -> Self {
+    fn reciprocal(&self) -> Self {
         self.recip()
     }
 

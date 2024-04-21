@@ -74,7 +74,7 @@ where
 {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &N) -> N {
-        self.proportional.convert(value).recip()
+        self.proportional.convert(value).reciprocal()
     }
 }
 
