@@ -14,7 +14,10 @@ use num_traits::Signed;
 use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
-use super::provider::{Base, SiPrefix};
+use super::{
+    converter_ratio::ConverterRatio,
+    provider::{Base, SiPrefix},
+};
 
 // TODO: add test cases for IcuRatio.
 // TODO: Make a decicion on whether to keep the `IcuRatio` public or not.

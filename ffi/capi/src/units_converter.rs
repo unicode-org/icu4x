@@ -48,7 +48,8 @@ pub mod ffi {
             from: &ICU4XMeasureUnit,
             to: &ICU4XMeasureUnit,
         ) -> Option<Box<ICU4XUnitsConverter>> {
-            Some(ICU4XUnitsConverter(self.0.converter(&from.0, &to.0)?).into())
+            let converter: Option<UnitsConverter<f64>> = self.0.converter(&from.0, &to.0);
+            Some(ICU4XUnitsConverter(converter?).into())
         }
 
         /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ICU4XMeasureUnit`].
@@ -97,8 +98,7 @@ pub mod ffi {
     ///
     /// You can create an instance of this object using [`ICU4XUnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
-    pub struct ICU4XUnitsConverter(pub UnitsConverter);
-
+    pub struct ICU4XUnitsConverter(pub UnitsConverter<f64>);
     impl ICU4XUnitsConverter {
         /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
         /// NOTE:
@@ -109,7 +109,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(dart, rename = "convert_double")]
         pub fn convert_f64(&self, value: f64) -> f64 {
-            self.0.convert_f64(value)
+            self.0.convert(&value)
         }
     }
 }
