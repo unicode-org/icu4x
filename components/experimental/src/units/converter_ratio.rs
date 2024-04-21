@@ -11,6 +11,12 @@ use crate::units::ratio::IcuRatio;
 pub trait ConverterRatio: Mul<Output = Self> + Add<Output = Self> + Clone {
     fn reciprocal(&self) -> Self;
 
+    // TODO: remove this method once implement Mul & Add for references to avoid cloning.
+    fn adding(&self, other: &Self) -> Self;
+
+    // TODO: remove this method once implement Mul & Add for references to avoid cloning.
+    fn multiply(&self, other: &Self) -> Self;
+
     // TODO: is there a way to implement this for all types that implement From<IcuRatio>?
     fn from_icu_ratio(value: IcuRatio) -> Option<Self>;
 }
@@ -22,6 +28,14 @@ impl ConverterRatio for IcuRatio {
     fn from_icu_ratio(value: IcuRatio) -> Option<Self> {
         Some(value)
     }
+
+    fn multiply(&self, other: &Self) -> Self {
+        self * other
+    }
+
+    fn adding(&self, other: &Self) -> Self {
+        self + other
+    }
 }
 
 impl ConverterRatio for f64 {
@@ -31,5 +45,13 @@ impl ConverterRatio for f64 {
 
     fn from_icu_ratio(value: IcuRatio) -> Option<Self> {
         value.to_f64()
+    }
+
+    fn multiply(&self, other: &Self) -> Self {
+        self * other
+    }
+
+    fn adding(&self, other: &Self) -> Self {
+        self + other
     }
 }
