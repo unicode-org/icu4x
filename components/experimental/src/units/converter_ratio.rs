@@ -18,6 +18,7 @@ pub trait ConverterRatio: Clone {
     // TODO: is there a way to implement this for all types that implement From<IcuRatio>?
     fn from_icu_ratio(value: IcuRatio) -> Option<Self>;
 }
+
 impl ConverterRatio for IcuRatio {
     fn reciprocal(&self) -> Self {
         self.recip()
