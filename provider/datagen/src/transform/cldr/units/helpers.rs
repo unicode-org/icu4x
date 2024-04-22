@@ -2,15 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::{Div, Mul};
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
 use icu_experimental::units::measureunit::MeasureUnitParser;
 use icu_experimental::units::provider::{ConversionInfo, Exactness, Sign};
+use icu_experimental::units::ratio::IcuRatio;
 use icu_provider::DataError;
-use num_bigint::BigInt;
-use num_rational::Ratio;
+use num_traits::One;
 use zerovec::ZeroVec;
 
 use crate::provider::transform::cldr::cldr_serde::units::info::Constant;
@@ -139,11 +138,6 @@ pub(in crate::provider) fn process_factor(
     Ok(result)
 }
 
-/// Converts a vector of strings to a vector of string slices.
-fn to_str_vec(string_vec: &[String]) -> Vec<&str> {
-    string_vec.iter().map(|s| s.as_str()).collect()
-}
-
 /// Extracts the conversion info from a base unit, factor and offset.
 pub(in crate::provider) fn extract_conversion_info<'data>(
     base_unit: &str,
@@ -151,6 +145,11 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
     offset: &ScientificNumber,
     parser: &MeasureUnitParser,
 ) -> Result<ConversionInfo<'data>, DataError> {
+    /// Converts a vector of strings to a vector of string slices.
+    fn to_str_vec(string_vec: &[String]) -> Vec<&str> {
+        string_vec.iter().map(|s| s.as_str()).collect()
+    }
+
     let factor_fraction = convert_slices_to_fraction(
         &to_str_vec(&factor.clean_num),
         &to_str_vec(&factor.clean_den),
@@ -272,108 +271,6 @@ pub(in crate::provider) fn process_constants<'a>(
         .collect())
 }
 
-/// Converts a scientific notation number represented as a string to a fraction.
-/// Examples:
-/// - "1E2" is converted to 100/1
-/// - "1E-2" is converted to 1/100
-/// - "1.5E2" is converted to 150/1
-/// - "1.5E-2" is converted to 15/1000
-/// - " 1.5 E -2 " is converted to 15/1000
-/// - " 1.5 E - 2" is an invalid scientific notation number
-/// - "1.5E-2.5" is an invalid scientific notation number
-pub(in crate::provider) fn convert_scientific_notation_to_fraction(
-    number: &str,
-) -> Result<Ratio<BigInt>, DataError> {
-    let mut parts = number.split('E');
-    let base = parts.next().unwrap_or("1").trim();
-    let exponent = parts.next().unwrap_or("0").trim();
-    if parts.next().is_some() {
-        return Err(DataError::custom(
-            "the number is not a valid scientific notation number",
-        ));
-    }
-
-    let mut split = base.split('.');
-    let base_whole = split.next().ok_or(DataError::custom("the base is empty"))?;
-    let base_whole = if base_whole.is_empty() {
-        BigInt::from(0)
-    } else {
-        BigInt::from_str(base_whole).map_err(|_| {
-            DataError::custom("the whole part of the base is not a valid whole number")
-        })?
-    };
-
-    let base_dec = if let Some(dec_str) = split.next() {
-        let dec = BigInt::from_str(dec_str).map_err(|_| {
-            DataError::custom("the decimal part of the base is not a valid whole number")
-        })?;
-        let exp = dec_str.chars().filter(char::is_ascii_digit).count();
-        Ratio::new(dec, BigInt::from(10u32).pow(exp as u32))
-    } else {
-        Ratio::new(BigInt::from(0), BigInt::from(1))
-    };
-
-    let base = base_dec + base_whole;
-
-    let exponent = i32::from_str(exponent)
-        .map_err(|_| DataError::custom("the exponent is not a valid integer"))?;
-
-    let result = if exponent >= 0 {
-        base.mul(Ratio::new(
-            BigInt::from(10u32).pow(exponent as u32),
-            BigInt::from(1u32),
-        ))
-    } else {
-        base.div(Ratio::new(
-            BigInt::from(10u32).pow((-exponent) as u32),
-            BigInt::from(1u32),
-        ))
-    };
-    Ok(result)
-}
-
-// TODO: move this to the comment above.
-#[test]
-fn test_convert_scientific_notation_to_fraction() {
-    let input = "1E2";
-    let expected = Ratio::<BigInt>::new(BigInt::from(100u32), BigInt::from(1u32));
-    let actual = convert_scientific_notation_to_fraction(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1E-2";
-    let expected = Ratio::<BigInt>::new(BigInt::from(1u32), BigInt::from(100u32));
-    let actual = convert_scientific_notation_to_fraction(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1.5E2";
-    let expected = Ratio::<BigInt>::new(BigInt::from(150u32), BigInt::from(1u32));
-    let actual = convert_scientific_notation_to_fraction(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1.5E-2";
-    let expected = Ratio::<BigInt>::new(BigInt::from(15u32), BigInt::from(1000u32));
-    let actual = convert_scientific_notation_to_fraction(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = " 1.5 E -2 ";
-    let expected = Ratio::<BigInt>::new(BigInt::from(15u32), BigInt::from(1000u32));
-    let actual = convert_scientific_notation_to_fraction(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = " 1.5 E - 2";
-    let actual = convert_scientific_notation_to_fraction(input);
-    assert!(actual.is_err());
-
-    let input = "1.5E-2.5";
-    let actual = convert_scientific_notation_to_fraction(input);
-    assert!(actual.is_err());
-
-    let input = "0.308";
-    let expected = Ratio::<BigInt>::new(BigInt::from(308), BigInt::from(1000u32));
-    let actual = convert_scientific_notation_to_fraction(input).unwrap();
-    assert_eq!(expected, actual);
-}
-
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
 /// Examples:
@@ -423,7 +320,7 @@ pub(in crate::provider) fn is_scientific_number(s: &str) -> bool {
 
 /// Transforms a fractional number into byte numerators, byte denominators, and a sign.
 pub(in crate::provider) fn flatten_fraction(
-    fraction: Ratio<BigInt>,
+    fraction: IcuRatio,
 ) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
     let (n_sign, numer) = fraction.numer().to_bytes_le();
     let (d_sign, denom) = fraction.denom().to_bytes_le();
@@ -450,16 +347,20 @@ pub(in crate::provider) fn flatten_fraction(
 pub(in crate::provider) fn convert_slices_to_fraction(
     numerator_strings: &[&str],
     denominator_strings: &[&str],
-) -> Result<Ratio<BigInt>, DataError> {
-    let mut fraction = Ratio::new(BigInt::from(1u32), BigInt::from(1u32));
+) -> Result<IcuRatio, DataError> {
+    let mut fraction = IcuRatio::one();
 
     for numerator in numerator_strings {
-        let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
+        let num_fraction = IcuRatio::from_str(numerator).map_err(|_| {
+            DataError::custom("The numerator is not a valid scientific notation number")
+        })?;
         fraction *= num_fraction;
     }
 
     for denominator in denominator_strings {
-        let den_fraction = convert_scientific_notation_to_fraction(denominator)?;
+        let den_fraction = IcuRatio::from_str(denominator).map_err(|_| {
+            DataError::custom("The denominator is not a valid scientific notation number")
+        })?;
         fraction /= den_fraction;
     }
 
@@ -469,21 +370,23 @@ pub(in crate::provider) fn convert_slices_to_fraction(
 // TODO: move some of these tests to the comment above.
 #[test]
 fn test_convert_array_of_strings_to_fraction() {
+    use num_bigint::BigInt;
+
     let numerator: Vec<&str> = vec!["1"];
     let denominator: Vec<&str> = vec!["2"];
-    let expected = Ratio::new(BigInt::from(1i32), BigInt::from(2i32));
+    let expected = IcuRatio::from_big_ints(BigInt::from(1i32), BigInt::from(2i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1", "2"];
     let denominator = vec!["3", "1E2"];
-    let expected = Ratio::new(BigInt::from(2i32), BigInt::from(300i32));
+    let expected = IcuRatio::from_big_ints(BigInt::from(2i32), BigInt::from(300i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1", "2"];
     let denominator = vec!["3", "1E-2"];
-    let expected = Ratio::new(BigInt::from(200i32), BigInt::from(3i32));
+    let expected = IcuRatio::from_big_ints(BigInt::from(200i32), BigInt::from(3i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
@@ -494,13 +397,13 @@ fn test_convert_array_of_strings_to_fraction() {
 
     let numerator = vec!["1E2"];
     let denominator = vec!["2"];
-    let expected = Ratio::new(BigInt::from(50i32), BigInt::from(1i32));
+    let expected = IcuRatio::from_big_ints(BigInt::from(50i32), BigInt::from(1i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1E2", "2"];
     let denominator = vec!["3", "1E2"];
-    let expected = Ratio::new(BigInt::from(2i32), BigInt::from(3i32));
+    let expected = IcuRatio::from_big_ints(BigInt::from(2i32), BigInt::from(3i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 }
