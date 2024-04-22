@@ -20,15 +20,15 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 zerovec = { workspace = true, features = ["derive"] }
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 
-unicode-bidi = { version = "0.3.13", default-features = false, optional = true }
+unicode-bidi = { workspace = true, optional = true }
 
 icu_properties_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
