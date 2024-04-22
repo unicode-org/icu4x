@@ -20,7 +20,7 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 icu_calendar = { workspace = true }
 icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
@@ -29,7 +29,7 @@ zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_timezone_data = { workspace = true, optional = true }
 
