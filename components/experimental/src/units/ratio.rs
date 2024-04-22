@@ -63,12 +63,12 @@ impl IcuRatio {
     ///     The numerator retains the sign of the overall ratio.
     ///     For instance, in the ratio -2/3, the numerator is -2.
     pub fn numer(&self) -> &BigInt {
-        &self.0.numer()
+        self.0.numer()
     }
 
     /// Retrieves the denominator of the ratio.
     pub fn denom(&self) -> &BigInt {
-        &self.0.denom()
+        self.0.denom()
     }
 
     /// Returns the reciprocal of the ratio.
