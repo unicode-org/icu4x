@@ -348,23 +348,28 @@ pub(in crate::provider) fn convert_slices_to_fraction(
     numerator_strings: &[&str],
     denominator_strings: &[&str],
 ) -> Result<IcuRatio, DataError> {
-    let mut fraction = IcuRatio::one();
-
-    for numerator in numerator_strings {
-        let num_fraction = IcuRatio::from_str(numerator).map_err(|_| {
-            DataError::custom("The numerator is not a valid scientific notation number")
-        })?;
-        fraction *= num_fraction;
-    }
-
-    for denominator in denominator_strings {
-        let den_fraction = IcuRatio::from_str(denominator).map_err(|_| {
-            DataError::custom("The denominator is not a valid scientific notation number")
-        })?;
-        fraction /= den_fraction;
-    }
-
-    Ok(fraction)
+    numerator_strings
+        .iter()
+        .try_fold(IcuRatio::one(), |result, &num| {
+            IcuRatio::from_str(num)
+                .map_err(|_| {
+                    DataError::custom("The numerator is not a valid scientific notation number")
+                })
+                .map(|num_fraction| result * num_fraction)
+        })
+        .and_then(|num_product| {
+            denominator_strings
+                .iter()
+                .try_fold(num_product, |result, &den| {
+                    IcuRatio::from_str(den)
+                        .map_err(|_| {
+                            DataError::custom(
+                                "The denominator is not a valid scientific notation number",
+                            )
+                        })
+                        .map(|den_fraction| result / den_fraction)
+                })
+        })
 }
 
 // TODO: move some of these tests to the comment above.
