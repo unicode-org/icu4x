@@ -9,10 +9,8 @@ use icu_experimental::units::measureunit::MeasureUnitParser;
 use icu_experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu_experimental::units::ratio::IcuRatio;
 use icu_provider::DataError;
-use num_bigint::BigInt;
-use num_rational::Ratio;
-use num_traits::Signed;
 use num_traits::One;
+use num_traits::Signed;
 use zerovec::ZeroVec;
 
 use crate::provider::transform::cldr::cldr_serde::units::info::Constant;
@@ -151,8 +149,8 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
     let factor_fraction = convert_slices_to_fraction(&factor.clean_num, &factor.clean_den)?;
     let offset_fraction = convert_slices_to_fraction(&offset.clean_num, &offset.clean_den)?;
 
-    let (factor_num, factor_den, factor_sign) = flatten_fraction(factor_fraction);
-    let (offset_num, offset_den, offset_sign) = flatten_fraction(offset_fraction);
+    let (factor_num, factor_den, factor_sign) = flatten_fraction(&factor_fraction);
+    let (offset_num, offset_den, offset_sign) = flatten_fraction(&offset_fraction);
 
     let exactness = if factor.exactness == Exactness::Exact && offset.exactness == Exactness::Exact
     {
@@ -311,7 +309,8 @@ pub(in crate::provider) fn is_scientific_number(s: &str) -> bool {
 }
 
 /// Converts a fractional number into its byte representation for numerator and denominator, along with its sign.
-pub(in crate::provider) fn flatten_fraction(fraction: Ratio<BigInt>) -> (Vec<u8>, Vec<u8>, Sign) {
+pub(in crate::provider) fn flatten_fraction(fraction: &IcuRatio) -> (Vec<u8>, Vec<u8>, Sign) {
+    let fraction = fraction.get_ratio();
     let numer_bytes = fraction.numer().to_bytes_le().1;
     let denom_bytes = fraction.denom().to_bytes_le().1;
     let sign = match fraction.is_negative() {

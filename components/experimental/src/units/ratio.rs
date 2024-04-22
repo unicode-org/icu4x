@@ -58,14 +58,9 @@ impl IcuRatio {
         Self(Ratio::new(numerator, denominator))
     }
 
-    /// Retrieves the numerator of the ratio.
-    pub fn numer(&self) -> &BigInt {
-        self.0.numer()
-    }
-
-    /// Retrieves the denominator of the ratio.
-    pub fn denom(&self) -> &BigInt {
-        self.0.denom()
+    /// Returns the an immutable reference to the internal ratio.
+    pub fn get_ratio(&self) -> &Ratio<BigInt> {
+        &self.0
     }
 
     /// Returns the reciprocal of the ratio.
