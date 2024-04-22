@@ -145,19 +145,8 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
     offset: &ScientificNumber,
     parser: &MeasureUnitParser,
 ) -> Result<ConversionInfo<'data>, DataError> {
-    /// Converts a vector of strings to a vector of string slices.
-    fn to_str_vec(string_vec: &[String]) -> Vec<&str> {
-        string_vec.iter().map(|s| s.as_str()).collect()
-    }
-
-    let factor_fraction = convert_slices_to_fraction(
-        &to_str_vec(&factor.clean_num),
-        &to_str_vec(&factor.clean_den),
-    )?;
-    let offset_fraction = convert_slices_to_fraction(
-        &to_str_vec(&offset.clean_num),
-        &to_str_vec(&offset.clean_den),
-    )?;
+    let factor_fraction = convert_slices_to_fraction(&factor.clean_num, &factor.clean_den)?;
+    let offset_fraction = convert_slices_to_fraction(&offset.clean_num, &offset.clean_den)?;
 
     let (factor_num, factor_den, factor_sign) = flatten_fraction(factor_fraction)?;
     let (offset_num, offset_den, offset_sign) = flatten_fraction(offset_fraction)?;
@@ -345,13 +334,13 @@ pub(in crate::provider) fn flatten_fraction(
 /// - ["1E2"], ["2"] is converted to 1E2/2 --> 100/2 --> 50/1
 /// - ["1E2", "2"], ["3", "1E2"] is converted to 1E2*2/(3*1E2) --> 2/3
 pub(in crate::provider) fn convert_slices_to_fraction(
-    numerator_strings: &[&str],
-    denominator_strings: &[&str],
+    numerator_strings: &[String],
+    denominator_strings: &[String],
 ) -> Result<IcuRatio, DataError> {
     numerator_strings
         .iter()
-        .try_fold(IcuRatio::one(), |result, &num| {
-            IcuRatio::from_str(num)
+        .try_fold(IcuRatio::one(), |result, num| {
+            IcuRatio::from_str(num.as_str())
                 .map_err(|_| {
                     DataError::custom("The numerator is not a valid scientific notation number")
                 })
@@ -360,8 +349,8 @@ pub(in crate::provider) fn convert_slices_to_fraction(
         .and_then(|num_product| {
             denominator_strings
                 .iter()
-                .try_fold(num_product, |result, &den| {
-                    IcuRatio::from_str(den)
+                .try_fold(num_product, |result, den| {
+                    IcuRatio::from_str(den.as_str())
                         .map_err(|_| {
                             DataError::custom(
                                 "The denominator is not a valid scientific notation number",
@@ -376,38 +365,36 @@ pub(in crate::provider) fn convert_slices_to_fraction(
 #[test]
 fn test_convert_array_of_strings_to_fraction() {
     use num_bigint::BigInt;
-
-    let numerator: Vec<&str> = vec!["1"];
-    let denominator: Vec<&str> = vec!["2"];
+    let numerator = vec!["1".to_string()];
+    let denominator = vec!["2".to_string()];
     let expected = IcuRatio::from_big_ints(BigInt::from(1i32), BigInt::from(2i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
-    let numerator = vec!["1", "2"];
-    let denominator = vec!["3", "1E2"];
+    let numerator = vec!["1".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E2".to_string()];
     let expected = IcuRatio::from_big_ints(BigInt::from(2i32), BigInt::from(300i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
-    let numerator = vec!["1", "2"];
-    let denominator = vec!["3", "1E-2"];
+    let numerator = vec!["1".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E-2".to_string()];
     let expected = IcuRatio::from_big_ints(BigInt::from(200i32), BigInt::from(3i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
-    let numerator = vec!["1", "2"];
-    let denominator = vec!["3", "1E-2.5"];
+    let numerator = vec!["1".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E-2.5".to_string()];
     let actual = convert_slices_to_fraction(&numerator, &denominator);
     assert!(actual.is_err());
-
-    let numerator = vec!["1E2"];
-    let denominator = vec!["2"];
+    let numerator = vec!["1E2".to_string()];
+    let denominator = vec!["2".to_string()];
     let expected = IcuRatio::from_big_ints(BigInt::from(50i32), BigInt::from(1i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
-    let numerator = vec!["1E2", "2"];
-    let denominator = vec!["3", "1E2"];
+    let numerator = vec!["1E2".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E2".to_string()];
     let expected = IcuRatio::from_big_ints(BigInt::from(2i32), BigInt::from(3i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
