@@ -59,9 +59,6 @@ impl IcuRatio {
     }
 
     /// Retrieves the numerator of the ratio.
-    /// NOTE:
-    ///     The numerator retains the sign of the overall ratio.
-    ///     For instance, in the ratio -2/3, the numerator is -2.
     pub fn numer(&self) -> &BigInt {
         self.0.numer()
     }
@@ -449,12 +446,15 @@ mod tests {
     fn test_ratio_always_keep_sign_in_numerator() {
         let ratio = Ratio::new(BigInt::from(-1), BigInt::from(2));
         let ratio2 = Ratio::new(BigInt::from(1), BigInt::from(-2));
+        let ratio3 = Ratio::new(BigInt::from(-1), BigInt::from(-2));
 
         assert_eq!(BigInt::from(-1), ratio.numer().clone());
         assert_eq!(BigInt::from(-1), ratio2.numer().clone());
+        assert_eq!(BigInt::from(1), ratio3.numer().clone());
 
         assert_eq!(BigInt::from(2), ratio.denom().clone());
         assert_eq!(BigInt::from(2), ratio2.denom().clone());
+        assert_eq!(BigInt::from(2), ratio3.denom().clone());
     }
 
     #[test]
