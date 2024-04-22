@@ -1270,6 +1270,7 @@ dependencies = [
  "ndarray",
  "num-bigint",
  "num-rational",
+ "num-traits",
  "once_cell",
  "postcard",
  "proc-macro2",
