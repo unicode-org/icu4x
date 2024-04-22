@@ -231,7 +231,8 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a31672b3ebc3c7866c3c98726f7a9a5ac8f13962e77d3c8225f6be49a7b8c5f2"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -242,12 +243,14 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7b0f23d549a46540e26e5490cd44c64ced0d762959f1ffdec6ab0399634cf3c"
 
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfaa5e13e8b8735d2338f2836c06cd8643902ab87dda1dd07dbb351998ddc127"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -361,6 +364,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
+name = "icu"
+version = "1.4.0"
+dependencies = [
+ "icu_calendar",
+ "icu_casemap",
+ "icu_collator",
+ "icu_collections",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_segmenter",
+ "icu_timezone",
+]
+
+[[package]]
 name = "icu_calendar"
 version = "1.4.0"
 dependencies = [
@@ -377,7 +401,9 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.4.0"
+version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aaee220e1a11e2dec3c1ca06aa6861b1bb021adb47c42a32f9968d56870f1f05"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -455,6 +481,7 @@ dependencies = [
  "either",
  "elsa",
  "eyre",
+ "icu",
  "icu_calendar",
  "icu_casemap",
  "icu_codepointtrie_builder",
@@ -462,6 +489,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -532,6 +560,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_experimental"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_collections",
+ "icu_decimal",
+ "icu_locid",
+ "icu_normalizer",
+ "icu_pattern",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "litemap",
+ "log",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "smallvec",
+ "tinystr",
+ "writeable",
+ "zerotrie",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_list"
 version = "1.4.0"
 dependencies = [
@@ -591,9 +647,13 @@ dependencies = [
 name = "icu_pattern"
 version = "0.1.5"
 dependencies = [
+ "databake",
  "displaydoc",
  "either",
+ "serde",
  "writeable",
+ "yoke",
+ "zerofrom",
 ]
 
 [[package]]
@@ -829,6 +889,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-bigint"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "608e7659b5c3d7cba262d894801b9ec9d00de989e8a82bd4bef91d08da45cdc0"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "num-complex"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -843,6 +914,17 @@ version = "0.1.46"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f"
 dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
+dependencies = [
+ "autocfg",
+ "num-integer",
  "num-traits",
 ]
 
@@ -961,9 +1043,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.22.3"
+version = "0.22.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99008d7ad0bbbea527ec27bddbc0e432c5b87d8175178cee68d2eec9c4a1813c"
+checksum = "bf4ef73721ac7bcd79b2b315da7779d8fc09718c6b3d2d1b2d94850eb8c18432"
 dependencies = [
  "log",
  "ring",
@@ -1298,9 +1380,9 @@ dependencies = [
 
 [[package]]
 name = "wasmparser-nostd"
-version = "0.100.1"
+version = "0.100.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9157cab83003221bfd385833ab587a039f5d6fa7304854042ba358a3b09e0724"
+checksum = "d5a015fe95f3504a94bb1462c717aae75253e39b9dd6c3fb1062c934535c64aa"
 dependencies = [
  "indexmap-nostd",
 ]
@@ -1552,10 +1634,6 @@ name = "bies"
 version = "0.2.1"
 
 [[patch.unused]]
-name = "icu"
-version = "1.4.0"
-
-[[patch.unused]]
 name = "icu4x_ecma402"
 version = "0.8.1"
 
@@ -1565,6 +1643,10 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_calendar_data"
+version = "1.4.0"
+
+[[patch.unused]]
+name = "icu_capi"
 version = "1.4.0"
 
 [[patch.unused]]
@@ -1582,10 +1664,6 @@ version = "1.4.0"
 [[patch.unused]]
 name = "icu_decimal_data"
 version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_experimental"
-version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_experimental_data"
