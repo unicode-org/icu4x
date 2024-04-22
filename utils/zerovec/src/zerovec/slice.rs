@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::alloc::string::ToString;
+use ::serde::Serialize;
 use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::ops::Range;
@@ -540,6 +542,41 @@ impl<T: AsULE + PartialOrd> PartialOrd for ZeroSlice<T> {
 impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.iter().cmp(other.iter())
+    }
+}
+
+impl<T> JsonSchema for ZeroSlice<T>
+where
+    T: AsULE + JsonSchema + Serialize, // Ensure T is serializable for accurate schema representation
+{
+    fn schema_name() -> String {
+        format!("ZeroSlice<{}>", T::schema_name())
+    }
+
+    fn schema_id() -> Cow<'static, str> {
+        Cow::Owned(format!("zerovec::ZeroSlice<{}>", T::schema_id()))
+    }
+
+    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+        // Instead of generating a subschema for T, we generate a schema representing the byte array
+        let byte_schema = gen.subschema_for::<Vec<u8>>();
+
+        SchemaObject {
+            instance_type: Some(InstanceType::Object.into()),
+            object: Some(Box::new({
+                let mut object_validation = schemars::schema::ObjectValidation::default();
+                object_validation
+                    .properties
+                    .insert("data".to_string(), byte_schema);
+                object_validation
+                    .properties
+                    .insert("error".to_string(), gen.subschema_for::<ZeroVecError>());
+                object_validation.required.insert("data".to_string());
+                object_validation
+            })),
+            ..Default::default()
+        }
+        .into()
     }
 }
 

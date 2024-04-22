@@ -5,6 +5,19 @@
 use core::any;
 use core::fmt;
 
+use crate::__zerovec_internal_reexport::boxed::Box;
+use alloc::borrow::ToOwned;
+use alloc::format;
+use alloc::string::String;
+use alloc::vec;
+use schemars::gen::SchemaGenerator;
+use schemars::schema::InstanceType;
+use schemars::schema::Schema;
+use schemars::schema::SchemaObject;
+use schemars::JsonSchema;
+
+use serde_json::Value;
+
 /// A generic error type to be used for decoding slices of ULE types
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
@@ -31,6 +44,27 @@ impl fmt::Display for ZeroVecError {
                 write!(f, "Invalid format for VarZeroVec buffer")
             }
         }
+    }
+}
+impl JsonSchema for ZeroVecError {
+    fn schema_name() -> String {
+        format!("ZeroVecError")
+    }
+
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
+        Schema::Object(SchemaObject {
+            instance_type: Some(InstanceType::String.into()),
+            enum_values: Some(vec![
+                Value::String("InvalidLength".to_owned()),
+                Value::String("ParseError".to_owned()),
+                Value::String("VarZeroVecFormatError".to_owned()),
+            ]),
+            metadata: Some(Box::new(schemars::schema::Metadata {
+                description: Some("ZeroVecError is an enum representing errors that can occur during the decoding of slices of ULE".into()),
+                ..Default::default()
+            })),
+            ..Default::default()
+        })
     }
 }
 

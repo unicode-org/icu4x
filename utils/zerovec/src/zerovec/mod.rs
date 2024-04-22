@@ -10,10 +10,15 @@ mod serde;
 
 mod slice;
 
+use schemars::gen::SchemaGenerator;
+use schemars::schema::{ArrayValidation, InstanceType, Schema};
 pub use slice::ZeroSlice;
 
 use crate::ule::*;
 use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
@@ -23,6 +28,7 @@ use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
 use core::ptr::{self, NonNull};
+use schemars::{schema::SchemaObject, JsonSchema};
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -111,6 +117,32 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     fn deref(&self) -> &Self::Target {
         let slice: &[T::ULE] = self.vector.as_slice();
         ZeroSlice::from_ule_slice(slice)
+    }
+}
+
+impl<'a, T> JsonSchema for ZeroVec<'a, T>
+where
+    T: AsULE + JsonSchema,
+{
+    fn schema_name() -> String {
+        format!("ZeroVec<{}>", T::schema_name())
+    }
+
+    fn schema_id() -> Cow<'static, str> {
+        Cow::Owned(format!("zerovec::ZeroVec<{}>", T::schema_id()))
+    }
+
+    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+        let element_schema = gen.subschema_for::<T>();
+        SchemaObject {
+            instance_type: Some(InstanceType::Array.into()),
+            array: Some(Box::new(ArrayValidation {
+                items: Some(element_schema.into()),
+                ..Default::default()
+            })),
+            ..Default::default()
+        }
+        .into()
     }
 }
 
