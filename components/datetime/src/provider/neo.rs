@@ -604,15 +604,8 @@ impl AsULE for SkeletonDataIndex {
 }
 
 #[icu_provider::data_struct(
-    marker(
-        GregorianDateDayNeoSkeletonPatternsV1Marker,
-        "datetime/patterns/gregory/date_day_skeleton@1"
-    ),
-    marker(
-        GregorianDateExtNeoSkeletonPatternsV1Marker,
-        "datetime/patterns/gregory/date_ext_skeleton@1"
-    ),
-    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
+    marker(GregorianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/gregory/skeleton@1"),
+    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time/skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
