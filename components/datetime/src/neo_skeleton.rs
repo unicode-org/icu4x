@@ -560,24 +560,6 @@ impl NeoTimeComponents {
         Self::Hour24MinuteSecond,
     ];
 
-    #[cfg(feature = "experimental")]
-    pub(crate) fn discriminant(self) -> u8 {
-        match self {
-            Self::Hour => 0,
-            Self::HourMinute => 1,
-            Self::HourMinuteSecond => 2,
-            Self::DayPeriodHour12 => 3,
-            Self::Hour12 => 4,
-            Self::DayPeriodHour12Minute => 5,
-            Self::Hour12Minute => 6,
-            Self::DayPeriodHour12MinuteSecond => 7,
-            Self::Hour12MinuteSecond => 8,
-            Self::Hour24 => 9,
-            Self::Hour24Minute => 10,
-            Self::Hour24MinuteSecond => 11,
-        }
-    }
-
     const HOUR_STR: TinyAsciiStr<8> = tinystr!(8, "j");
     const HOUR_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "jm");
     const HOUR_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "jms");
@@ -659,13 +641,6 @@ impl NeoTimeComponents {
             Self::Hour24Minute => todo!(),
             Self::Hour24MinuteSecond => todo!(),
         }
-    }
-}
-
-#[test]
-fn test_neo_time_components_discriminants() {
-    for (i, component) in NeoTimeComponents::VALUES.iter().enumerate() {
-        assert_eq!(component.discriminant() as usize, i);
     }
 }
 

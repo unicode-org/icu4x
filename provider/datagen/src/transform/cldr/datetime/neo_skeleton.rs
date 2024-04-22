@@ -65,18 +65,24 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
+        self.check_req::<TimeNeoSkeletonPatternsV1Marker>(req)?;
+        let aux_subtag = req
+            .locale
+            .get_aux()
+            .and_then(|aux| aux.iter().next())
+            .expect("Skeleton data provider called without aux subtag");
+        let neo_components = NeoTimeComponents::from_id_str(aux_subtag.into_tinystr())
+            .expect("Skeleton data provider called with unknown skeleton");
+        let mut locale_no_aux = req.locale.clone();
+        locale_no_aux.remove_aux();
         let packed_skeleton_data = self.make_packed_skeleton_data(
-            req,
-            NeoTimeComponents::VALUES.iter().map(|neo_components| {
-                (
-                    neo_components,
-                    matches!(neo_components, NeoTimeComponents::Hour)
-                        || matches!(neo_components, NeoTimeComponents::HourMinute)
-                        || matches!(neo_components, NeoTimeComponents::HourMinuteSecond),
-                )
-            }),
+            DataRequest {
+                locale: &locale_no_aux,
+                metadata: Default::default(),
+            },
+            [(neo_components, true)].into_iter(),
             |length, neo_components| {
-                NeoTimeSkeleton::for_length_and_components(length, **neo_components)
+                NeoTimeSkeleton::for_length_and_components(length, *neo_components)
                     .to_components_bag()
             },
         )?;
@@ -233,7 +239,29 @@ impl IterableDataProviderInternal<GregorianDateNeoSkeletonPatternsV1Marker> for 
 impl IterableDataProviderInternal<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         let mut r = HashSet::new();
-        r.extend(self.cldr()?.dates("generic").list_langs()?.map(Into::into));
+
+        r.extend(
+            self.cldr()?
+                .dates("generic")
+                .list_langs()?
+                .flat_map(|langid| {
+                    NeoTimeComponents::VALUES
+                        .iter()
+                        .filter(|neo_components| {
+                            matches!(neo_components, NeoTimeComponents::Hour)
+                                || matches!(neo_components, NeoTimeComponents::HourMinute)
+                                || matches!(neo_components, NeoTimeComponents::HourMinuteSecond)
+                        })
+                        .map(move |neo_components| {
+                            let mut data_locale = DataLocale::from(&langid);
+                            let subtag =
+                                Subtag::try_from_raw(*neo_components.id_str().all_bytes()).unwrap();
+                            data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+                            data_locale
+                        })
+                }),
+        );
+
         Ok(r)
     }
 }

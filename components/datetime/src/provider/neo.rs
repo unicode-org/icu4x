@@ -4,8 +4,6 @@
 
 mod adapter;
 
-#[cfg(feature = "experimental")]
-use crate::neo_skeleton::NeoTimeSkeleton;
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
@@ -636,9 +634,8 @@ impl<'data> PackedSkeletonDataV1<'data> {
     #[cfg(feature = "experimental")]
     pub(crate) fn get_for_time_skeleton(
         &self,
-        sk: NeoTimeSkeleton,
     ) -> Option<&runtime::PatternULE> {
-        self.get_for_discriminant(sk.components.discriminant())
+        self.get_for_discriminant(0)
     }
     #[cfg(feature = "experimental")]
     fn get_for_discriminant(&self, discriminant: u8) -> Option<&runtime::PatternULE> {

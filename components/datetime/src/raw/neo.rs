@@ -263,9 +263,18 @@ impl TimePatternSelectionData {
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
+        let mut locale = locale.clone();
+        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
+            Ok(subtag) => subtag,
+            Err(e) => {
+                debug_assert!(false, "invalid neo skeleton components: {components:?}: {e:?}");
+                return Err(Error::UnsupportedOptions);
+            }
+        };
+        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
             .load(DataRequest {
-                locale,
+                locale: &locale,
                 metadata: Default::default(),
             })?
             .take_payload()?
@@ -283,7 +292,7 @@ impl TimePatternSelectionData {
             TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => payload
                 .get()
-                .get_for_time_skeleton(*skeleton)
+                .get_for_time_skeleton()
                 .map(|pattern_ule| &pattern_ule.items)
                 .unwrap_or_else(|| {
                     debug_assert!(
@@ -306,7 +315,7 @@ impl TimePatternSelectionData {
                 TimePatternDataBorrowed::Resolved(
                     payload
                         .get()
-                        .get_for_time_skeleton(*skeleton)
+                        .get_for_time_skeleton()
                         .map(|pattern_ule| pattern_ule.as_borrowed())
                         .unwrap_or_else(|| {
                             debug_assert!(
