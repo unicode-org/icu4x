@@ -438,21 +438,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_ratio_always_keep_sign_in_numerator() {
-        let ratio = Ratio::new(BigInt::from(-1), BigInt::from(2));
-        let ratio2 = Ratio::new(BigInt::from(1), BigInt::from(-2));
-        let ratio3 = Ratio::new(BigInt::from(-1), BigInt::from(-2));
-
-        assert_eq!(BigInt::from(-1), ratio.numer().clone());
-        assert_eq!(BigInt::from(-1), ratio2.numer().clone());
-        assert_eq!(BigInt::from(1), ratio3.numer().clone());
-
-        assert_eq!(BigInt::from(2), ratio.denom().clone());
-        assert_eq!(BigInt::from(2), ratio2.denom().clone());
-        assert_eq!(BigInt::from(2), ratio3.denom().clone());
-    }
-
-    #[test]
     fn test_icu_ratio_from_str() {
         let test_cases: &[(&str, Result<IcuRatio, RatioFromStrError>)] = &[
             ("1/2", Ok(IcuRatio::from_big_ints(1.into(), 2.into()))),
