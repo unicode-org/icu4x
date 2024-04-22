@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -16,12 +16,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=bf3ebcbdfbd3ce5da2086801b47b54487b1b727c#bf3ebcbdfbd3ce5da2086801b47b54487b1b727c"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -125,36 +125,36 @@ version = "0.7.2"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.79"
+version = "1.0.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e835ff2298f5721608eb1a980ecaee1aef2c132bf95ecc026a11b7bf3c01c02e"
+checksum = "3d1597b0c024618f09a9c3b8655b7e430397a36d23fdafec26d6965e9eec3eba"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.35"
+version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "291ec9ab5efd934aaf503a6466c5d5251535d108ee747472c3977cc5acc868ef"
+checksum = "0fa76aaf39101c457836aec0ce2316dbdc3ab723cdda1c6bd4e6ad4208acaca7"
 dependencies = [
  "proc-macro2",
 ]
 
 [[package]]
 name = "serde"
-version = "1.0.197"
+version = "1.0.198"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fb1c873e1b9b056a4dc4c0c198b24c3ffa059243875552b2bd0933b1aee4ce2"
+checksum = "9846a40c979031340571da2545a4e5b7c4163bdae79b301d5f86d03979451fcc"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.197"
+version = "1.0.198"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7eb0b34b42edc17f6b7cac84a52a1c5f0e1bb2227e997ca9011ea3dd34e8610b"
+checksum = "e88edab869b01783ba905e7d0153f9fc1a6505a96e4ad3018011eedb838566d9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -191,9 +191,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.58"
+version = "2.0.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44cfb93f38070beee36b3fef7d4f5a16f27751d94b187b666a5cc5e9b0d30687"
+checksum = "909518bc7b1c9b779f1bbf07f2929d35af9f0f37e47c6e9ef7f9dddc1e1821f3"
 dependencies = [
  "proc-macro2",
  "quote",
