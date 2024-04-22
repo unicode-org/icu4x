@@ -241,15 +241,10 @@ mod datetime_patterns_gregory_date_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_gregory_date_v1 as impl_datetime_patterns_gregory_date_v1;
 #[macro_use]
-#[path = "macros/datetime_patterns_gregory_date_day_skeleton_v1.rs.data"]
-mod datetime_patterns_gregory_date_day_skeleton_v1;
+#[path = "macros/datetime_patterns_gregory_skeleton_v1.rs.data"]
+mod datetime_patterns_gregory_skeleton_v1;
 #[doc(inline)]
-pub use __impl_datetime_patterns_gregory_date_day_skeleton_v1 as impl_datetime_patterns_gregory_date_day_skeleton_v1;
-#[macro_use]
-#[path = "macros/datetime_patterns_gregory_date_ext_skeleton_v1.rs.data"]
-mod datetime_patterns_gregory_date_ext_skeleton_v1;
-#[doc(inline)]
-pub use __impl_datetime_patterns_gregory_date_ext_skeleton_v1 as impl_datetime_patterns_gregory_date_ext_skeleton_v1;
+pub use __impl_datetime_patterns_gregory_skeleton_v1 as impl_datetime_patterns_gregory_skeleton_v1;
 #[macro_use]
 #[path = "macros/datetime_patterns_hebrew_date_v1.rs.data"]
 mod datetime_patterns_hebrew_date_v1;
@@ -286,15 +281,15 @@ mod datetime_patterns_roc_date_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_roc_date_v1 as impl_datetime_patterns_roc_date_v1;
 #[macro_use]
-#[path = "macros/datetime_patterns_time_v1.rs.data"]
-mod datetime_patterns_time_v1;
-#[doc(inline)]
-pub use __impl_datetime_patterns_time_v1 as impl_datetime_patterns_time_v1;
-#[macro_use]
 #[path = "macros/datetime_patterns_time_skeleton_v1.rs.data"]
 mod datetime_patterns_time_skeleton_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_time_skeleton_v1 as impl_datetime_patterns_time_skeleton_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_time_v1.rs.data"]
+mod datetime_patterns_time_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_time_v1 as impl_datetime_patterns_time_v1;
 #[macro_use]
 #[path = "macros/datetime_persian_datelengths_v1.rs.data"]
 mod datetime_persian_datelengths_v1;
