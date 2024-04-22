@@ -161,8 +161,8 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
         &to_str_vec(&offset.clean_den),
     )?;
 
-    let (factor_num, factor_den, factor_sign) = flatten_fraction(factor_fraction)?;
-    let (offset_num, offset_den, offset_sign) = flatten_fraction(offset_fraction)?;
+    let (factor_num, factor_den, factor_sign) = flatten_fraction(factor_fraction);
+    let (offset_num, offset_den, offset_sign) = flatten_fraction(offset_fraction);
 
     let exactness = if factor.exactness == Exactness::Exact && offset.exactness == Exactness::Exact
     {
@@ -423,9 +423,7 @@ pub(in crate::provider) fn is_scientific_number(s: &str) -> bool {
 }
 
 /// Converts a fractional number into its byte representation for numerator and denominator, along with its sign.
-pub(in crate::provider) fn flatten_fraction(
-    fraction: Ratio<BigInt>,
-) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
+pub(in crate::provider) fn flatten_fraction(fraction: Ratio<BigInt>) -> (Vec<u8>, Vec<u8>, Sign) {
     let numer_bytes = fraction.numer().to_bytes_le().1;
     let denom_bytes = fraction.denom().to_bytes_le().1;
     let sign = match fraction.is_negative() {
@@ -433,7 +431,7 @@ pub(in crate::provider) fn flatten_fraction(
         false => Sign::Positive,
     };
 
-    Ok((numer_bytes, denom_bytes, sign))
+    (numer_bytes, denom_bytes, sign)
 }
 
 /// Converts slices of numerator and denominator strings to a fraction.
