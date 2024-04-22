@@ -415,29 +415,6 @@ impl NeoDateComponents {
         Self::YearQuarter,
     ];
 
-    #[cfg(feature = "experimental")]
-    pub(crate) fn discriminant(self) -> u8 {
-        match self {
-            Self::Day(NeoDayComponents::Day) => 0,
-            Self::Day(NeoDayComponents::MonthDay) => 1,
-            Self::Day(NeoDayComponents::YearMonthDay) => 2,
-            Self::Day(NeoDayComponents::EraYearMonthDay) => 3,
-            Self::Day(NeoDayComponents::DayWeekday) => 4,
-            Self::Day(NeoDayComponents::MonthDayWeekday) => 5,
-            Self::Day(NeoDayComponents::YearMonthDayWeekday) => 6,
-            Self::Day(NeoDayComponents::EraYearMonthDayWeekday) => 7,
-            Self::Day(NeoDayComponents::Weekday) => 8,
-            Self::Month => 9,
-            Self::YearMonth => 10,
-            Self::EraYearMonth => 11,
-            Self::Year => 12,
-            Self::EraYear => 13,
-            Self::YearWeek => 14,
-            Self::Quarter => 15,
-            Self::YearQuarter => 16,
-        }
-    }
-
     const MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "m0");
     const YEAR_MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "ym0");
     const ERA_YEAR_MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "gym0");
@@ -519,13 +496,6 @@ impl NeoDateComponents {
             Self::Quarter => todo!(),
             Self::YearQuarter => todo!(),
         }
-    }
-}
-
-#[test]
-fn test_neo_date_components_discriminants() {
-    for (i, component) in NeoDateComponents::VALUES.iter().enumerate() {
-        assert_eq!(component.discriminant() as usize, i);
     }
 }
 
