@@ -451,6 +451,7 @@ dependencies = [
  "either",
  "elsa",
  "eyre",
+ "icu",
  "icu_calendar",
  "icu_casemap",
  "icu_codepointtrie_builder",
@@ -458,6 +459,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -543,6 +545,7 @@ version = "1.4.0"
 name = "icu_experimental"
 version = "0.0.0"
 dependencies = [
+ "databake",
  "displaydoc",
  "fixed_decimal",
  "icu_collections",
@@ -556,9 +559,11 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "litemap",
+ "log",
  "num-bigint",
  "num-rational",
  "num-traits",
+ "serde",
  "smallvec",
  "tinystr",
  "writeable",
@@ -646,8 +651,10 @@ version = "1.4.0"
 name = "icu_pattern"
 version = "0.1.5"
 dependencies = [
+ "databake",
  "displaydoc",
  "either",
+ "serde",
  "writeable",
  "yoke",
  "zerofrom",
@@ -1056,9 +1063,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.22.3"
+version = "0.22.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99008d7ad0bbbea527ec27bddbc0e432c5b87d8175178cee68d2eec9c4a1813c"
+checksum = "bf4ef73721ac7bcd79b2b315da7779d8fc09718c6b3d2d1b2d94850eb8c18432"
 dependencies = [
  "log",
  "ring",
