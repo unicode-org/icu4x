@@ -54,8 +54,13 @@ pub enum RatioFromStrError {
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
-    pub(crate) fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
+    pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
+    }
+
+    /// Returns the an immutable reference to the internal ratio.
+    pub fn get_ratio(&self) -> &Ratio<BigInt> {
+        &self.0
     }
 
     /// Returns the reciprocal of the ratio.
@@ -431,6 +436,21 @@ impl FromStr for IcuRatio {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_ratio_always_keep_sign_in_numerator() {
+        let ratio = Ratio::new(BigInt::from(-1), BigInt::from(2));
+        let ratio2 = Ratio::new(BigInt::from(1), BigInt::from(-2));
+        let ratio3 = Ratio::new(BigInt::from(-1), BigInt::from(-2));
+
+        assert_eq!(BigInt::from(-1), ratio.numer().clone());
+        assert_eq!(BigInt::from(-1), ratio2.numer().clone());
+        assert_eq!(BigInt::from(1), ratio3.numer().clone());
+
+        assert_eq!(BigInt::from(2), ratio.denom().clone());
+        assert_eq!(BigInt::from(2), ratio2.denom().clone());
+        assert_eq!(BigInt::from(2), ratio3.denom().clone());
+    }
 
     #[test]
     fn test_icu_ratio_from_str() {
