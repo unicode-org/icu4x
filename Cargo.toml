@@ -194,10 +194,6 @@ zerotrie = { version = "0.1.2", path = "utils/zerotrie", default-features = fals
 zerovec = { version = "0.10.1", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.10.1", path = "utils/zerovec/derive", default-features = false }
 
-# External deps from crates.io
-criterion = { version = "0.5" }
-either = { version = "1", default-features = false }
-
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # icu_benchmark_binsize never used as a dep
@@ -212,6 +208,66 @@ diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
 diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
+
+# External deps from crates.io
+bincode = { version = "1.3", default-features = false }
+clap = { version = "4", default-features = false }
+combine = { version = "4.6.4", default-features = false }
+core_maths = { version = "0.1", default-features = false }
+displaydoc = { version = "0.2.3", default-features = false }
+either = { version = "1", default-features = false }
+elsa = { version = "1.10", default-features = false }
+erased-serde = { version = "0.3", default-features = false }
+eyre = { version = "0.6", default-features = false }
+indexmap = { version = "1.9.3", default-features = false }
+itertools = { version = "0.10", default-features = false}
+libc_alloc = { version = "1.0.6", default-features = false }
+log = { version = "0.4", default-features = false }
+memchr = { version = "2.5.0", default-features = false }
+ndarray = { version = "0.15.5", default-features = false }
+nom = { version = "7.1.3", default-features = false }
+num-bigint = { version = "0.4.1", default-features = false }
+num-rational = { version = "0.4.1", default-features = false }
+num-traits = { version = "0.2.17", default-features = false }
+once_cell = {version = "1", default-features = false}
+postcard = { version = "1.0.0", default-features = false }
+proc-macro2 = { version = "1", default-features = false }
+quote = { version = "1.0.9", default-features = false }
+rayon = { version = "1.5", default-features = false }
+regex-automata = { version = "0.2", default-features = false }
+ryu = { version = "1.0.5", default-features = false }
+serde = { version = "1.0", default-features = false }
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] } # requires either alloc or std to build
+serde-aux = { version = "4.1.2", default-features = false }
+serde-json-core = { version = "0.4", default-features = false }
+simple_logger = { version = "4.1.0", default-features = false}
+smallvec = { version = "1.6", default-features = false }
+stable_deref_trait = { version = "1.2.0", default-features = false }
+syn = { version = "2", default-features = false }
+synstructure = { version = "0.13", default-features = false }
+toml = { version = "0.5", default-features = false }
+twox-hash = { version = "1.6", default-features = false }
+unicode-bidi = { version = "0.3.13", default-features = false }
+ureq = { version = "2", default-features = false }
+utf16_iter = { version = "1.0", default-features = false }
+utf8_iter = { version = "1.0", default-features = false }
+wasmi = { version = "0.31.2", default-features = false }
+write16 = { version = "1.0", default-features = false }
+zip = { version = ">=0.5, <0.7", default-features = false }
+
+## Dev only
+arraystring = "0.3.0"
+arrayvec = "0.7.2"
+atoi = "1.0.0"
+criterion = "0.5.0"
+detone = "1.0.0"
+getrandom = "0.2"
+iai = "0.1.1"
+rand = "0.8"
+rand_distr = "0.4"
+rand_pcg = "0.3"
+rkyv = "0.7"
+walkdir = "2.3.2"
 
 # Size optimized builds
 [profile.release-opt-size]
