@@ -79,30 +79,42 @@ pub struct ConversionInfo<'data> {
 
     /// Represents the numerator of the conversion factor.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub factor_num: ZeroVec<'data, u8>,
-
-    /// Represents the denominator of the conversion factor.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub factor_den: ZeroVec<'data, u8>,
-
-    /// Represents the sign of the conversion factor.
-    pub factor_sign: Sign,
+    pub factor: Ratio<'data>,
 
     // TODO(#4311).
     /// Represents the numerator of the offset.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub offset_num: ZeroVec<'data, u8>,
-
-    // TODO(#4311).
-    /// Represents the denominator of the offset.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub offset_den: ZeroVec<'data, u8>,
-
-    /// Represents the sign of the offset.
-    pub offset_sign: Sign,
+    pub offset: Ratio<'data>,
 
     /// Represents the exactness of the conversion factor.
     pub exactness: Exactness,
+}
+
+#[zerovec::make_varule(RatioULE)]
+#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(databake::Bake),
+    databake(path = icu_experimental::units::provider),
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+pub struct Ratio<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub num: ZeroVec<'data, u8>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub den: ZeroVec<'data, u8>,
+
+    pub sign: Sign,
 }
 
 /// This enum is used to represent the sign of a constant value.
