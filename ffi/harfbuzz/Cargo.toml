@@ -31,15 +31,13 @@ skip_optional_dependencies = true
 denylist = ["bench", "serde", "logging"]
 
 [dependencies]
-harfbuzz-sys = { version = "0.5.0" }
+harfbuzz-traits = { version = "0.6.0" }
 icu_normalizer = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = {workspace = true, features = ["macros"] }
 displaydoc = { workspace = true }
 tinystr = { workspace = true }
 
-[dev-dependencies]
-harfbuzz = { version = "0.4.0" }
 
 [features]
 default = []

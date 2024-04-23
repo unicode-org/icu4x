@@ -6,23 +6,10 @@ Using ICU4X as the Unicode Database back end for HarfBuzz.
 
 ## Examples
 
-```rust
-use harfbuzz::{Buffer, Direction, sys};
+See `tutorials/rust/harfbuzz` in the ICU4X repo for an example.
 
-let mut b = Buffer::with("مساء الخير");
-
-let unicode_funcs = icu_harfbuzz::UnicodeFuncs::new().unwrap();
-
-// NOTE: This currently requires `unsafe` code. For progress toward a safe abstraction, see:
-// <https://github.com/servo/rust-harfbuzz/pull/197>
-unsafe {
-    harfbuzz::sys::hb_buffer_set_unicode_funcs(b.as_ptr(), unicode_funcs.as_ptr());
-}
-
-b.guess_segment_properties();
-assert_eq!(b.get_direction(), Direction::RTL);
-assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
-```
+If you wish to load data dynamically, you can individually load [`GeneralCategoryData`], [`CombiningClassData`],
+[`MirroringData`], [`ScriptData`], [`ComposeData`], [`DecomposeData`] and set them as the relevant funcs.
 
 <!-- cargo-rdme end -->
 
