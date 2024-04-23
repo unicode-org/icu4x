@@ -68,12 +68,9 @@ pub enum RuntimeFallbackLocation {
 pub enum DeduplicationStrategy {
     /// Removes from the lookup table any locale whose parent maps to the same data.
     Maximal,
-    // TODO(#58): Add `RetainBaseLanguages`
-    /*
     /// Removes from the lookup table any locale whose parent maps to the same data, except if
     /// the parent is `und`.
     RetainBaseLanguages,
-    */
     /// Keeps all selected locales in the lookup table.
     None,
 }
@@ -635,8 +632,8 @@ impl DatagenDriver {
                     },
                     match deduplication_strategy {
                         DeduplicationStrategy::Maximal => "maximal deduplication",
-                        // TODO(#58): Add `RetainBaseLanguages`
-                        // DeduplicationStrategy::RetainBaseLanguages => "deduplication retaining base languages",
+                        DeduplicationStrategy::RetainBaseLanguages =>
+                            "deduplication retaining base languages",
                         DeduplicationStrategy::None => "no deduplication",
                     },
                     sorted_locales
@@ -748,8 +745,6 @@ impl DatagenDriver {
             )?;
 
             let (slowest_duration, slowest_locale) = match deduplication_strategy {
-                // TODO(#58): Add `RetainBaseLanguages`
-                // DeduplicationStrategy::RetainBaseLanguages => todo!(),
                 DeduplicationStrategy::Maximal => {
                     let payloads = locales_to_export
                         .into_par_iter()
@@ -760,48 +755,19 @@ impl DatagenDriver {
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
-                    payloads
-                        .iter()
-                        .try_for_each(|(locale, (payload, _duration))| {
-                            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                            while !iter.get().is_und() {
-                                iter.step();
-                                if let Some((inherited_payload, _duration)) =
-                                    payloads.get(iter.get())
-                                {
-                                    if inherited_payload == payload {
-                                        // Found a match: don't need to write anything
-                                        log::trace!(
-                                            "Deduplicating {key}/{locale} (inherits from {})",
-                                            iter.get()
-                                        );
-                                        return Ok(());
-                                    } else {
-                                        // Not a match: we must include this
-                                        break;
-                                    }
-                                }
-                            }
-                            // Did not find a match: export this payload
-                            sink.put_payload(key, locale, payload).map_err(|e| {
-                                e.with_req(
-                                    key,
-                                    DataRequest {
-                                        locale,
-                                        metadata: Default::default(),
-                                    },
-                                )
-                            })
-                        })?;
-
-                    // Slowest locale calculation:
-                    payloads
-                        .iter()
-                        .map(|(locale, (_payload, duration))| {
-                            (*duration, locale.write_to_string().into_owned())
+                    deduplicate_locales::<true>(key, &payloads, fallbacker, sink)?
+                }
+                DeduplicationStrategy::RetainBaseLanguages => {
+                    let payloads = locales_to_export
+                        .into_par_iter()
+                        .filter_map(|locale| {
+                            let instant2 = Instant::now();
+                            load_with_fallback(key, &locale)
+                                .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
-                        .max()
+                        .collect::<Result<HashMap<_, _>, _>>()?;
+                    let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                    deduplicate_locales::<false>(key, &payloads, fallbacker, sink)?
                 }
                 DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
@@ -1066,6 +1032,76 @@ fn select_locales_for_key(
         .collect();
 
     Ok(result)
+}
+
+fn deduplicate_locales<const MAXIMAL: bool>(
+    key: DataKey,
+    payloads: &HashMap<DataLocale, (DataPayload<ExportMarker>, Duration)>,
+    fallbacker: &LocaleFallbacker,
+    sink: &dyn DataExporter,
+) -> Result<Option<(Duration, String)>, DataError> {
+    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+    payloads
+        .iter()
+        .try_for_each(|(locale, (payload, _duration))| {
+            // Always export `und`. This prevents calling `step` on an empty locale.
+            if locale.is_und() {
+                return sink.put_payload(key, locale, payload).map_err(|e| {
+                    e.with_req(
+                        key,
+                        DataRequest {
+                            locale,
+                            metadata: Default::default(),
+                        },
+                    )
+                });
+            }
+            let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+            loop {
+                if !MAXIMAL {
+                    // To retain base languages, preemptively step to the
+                    // parent locale. This should retain the locale if
+                    // the next parent is `und`.
+                    iter.step();
+                }
+                if iter.get().is_und() {
+                    break;
+                }
+                if MAXIMAL {
+                    iter.step();
+                }
+
+                if let Some((inherited_payload, _duration)) = payloads.get(iter.get()) {
+                    if inherited_payload == payload {
+                        // Found a match: don't need to write anything
+                        log::trace!(
+                            "Deduplicating {key}/{locale} (inherits from {})",
+                            iter.get()
+                        );
+                        return Ok(());
+                    } else {
+                        // Not a match: we must include this
+                        break;
+                    }
+                }
+            }
+            // Did not find a match: export this payload
+            sink.put_payload(key, locale, payload).map_err(|e| {
+                e.with_req(
+                    key,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )
+            })
+        })?;
+
+    // Slowest locale calculation:
+    Ok(payloads
+        .iter()
+        .map(|(locale, (_payload, duration))| (*duration, locale.write_to_string().into_owned()))
+        .max())
 }
 
 struct DisplayDuration(pub Duration);
