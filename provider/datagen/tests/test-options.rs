@@ -218,14 +218,12 @@ fn export_to_map_1_5(
     let mut exporter = TestingExporter::default();
     driver.export(provider, &mut exporter).unwrap();
 
-    let results = exporter
+    exporter
         .0
         .into_tuple_vec()
         .into_iter()
         .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
-        .collect();
-
-    results
+        .collect()
 }
 
 #[test]
