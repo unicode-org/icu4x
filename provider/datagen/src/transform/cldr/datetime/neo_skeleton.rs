@@ -6,8 +6,7 @@ use std::collections::HashSet;
 
 use crate::provider::{DatagenProvider, IterableDataProviderInternal};
 use icu_datetime::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents,
-    NeoTimeSkeleton,
+    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
 use icu_datetime::options::{components, preferences};
 use icu_datetime::pattern::runtime::PatternPlurals;
@@ -16,10 +15,7 @@ use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
-    neo::{
-        GregorianDateNeoSkeletonPatternsV1Marker,
-        PackedSkeletonDataV1, SkeletonDataIndex,
-    },
+    neo::{GregorianDateNeoSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
 };
 use icu_locid::extensions::private::Subtag;
 use icu_locid::extensions::unicode::{key, value};
@@ -207,7 +203,7 @@ impl IterableDataProviderInternal<GregorianDateNeoSkeletonPatternsV1Marker> for 
                         .iter()
                         .filter(|neo_components| {
                             !matches!(neo_components, NeoDateComponents::Quarter)
-                            && !matches!(neo_components, NeoDateComponents::YearQuarter)
+                                && !matches!(neo_components, NeoDateComponents::YearQuarter)
                         })
                         .map(move |neo_components| {
                             let mut data_locale = DataLocale::from(&langid);

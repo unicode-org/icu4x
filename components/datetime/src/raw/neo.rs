@@ -135,7 +135,10 @@ impl DatePatternSelectionData {
         let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
             Err(e) => {
-                debug_assert!(false, "invalid neo skeleton components: {components:?}: {e:?}");
+                debug_assert!(
+                    false,
+                    "invalid neo skeleton components: {components:?}: {e:?}"
+                );
                 return Err(Error::UnsupportedOptions);
             }
         };
@@ -158,10 +161,9 @@ impl DatePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
-            DatePatternSelectionData::SkeletonDate { skeleton, payload } => payload
-                .get()
-                .get_pattern(skeleton.length)
-                .items,
+            DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
+                payload.get().get_pattern(skeleton.length).items
+            }
             // Assumption: with_era has all the fields of without_era
             DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern.items,
         };
@@ -175,11 +177,7 @@ impl DatePatternSelectionData {
                 DatePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
             }
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                DatePatternDataBorrowed::Resolved(
-                    payload
-                        .get()
-                        .get_pattern(skeleton.length)
-                )
+                DatePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
             DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
         }
@@ -252,7 +250,10 @@ impl TimePatternSelectionData {
         let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
             Err(e) => {
-                debug_assert!(false, "invalid neo skeleton components: {components:?}: {e:?}");
+                debug_assert!(
+                    false,
+                    "invalid neo skeleton components: {components:?}: {e:?}"
+                );
                 return Err(Error::UnsupportedOptions);
             }
         };
@@ -275,10 +276,9 @@ impl TimePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
-            TimePatternSelectionData::SkeletonTime { skeleton, payload } => payload
-                .get()
-                .get_pattern(skeleton.length)
-                .items,
+            TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
+                payload.get().get_pattern(skeleton.length).items
+            }
         };
         items.iter()
     }
@@ -290,11 +290,7 @@ impl TimePatternSelectionData {
                 TimePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
             }
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
-                TimePatternDataBorrowed::Resolved(
-                    payload
-                        .get()
-                        .get_pattern(skeleton.length),
-                )
+                TimePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
         }
     }

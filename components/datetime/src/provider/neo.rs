@@ -11,11 +11,11 @@ use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
 use zerovec::{VarZeroVec, ZeroMap};
 
 #[cfg(feature = "experimental")]
-use core::ops::Range;
+use crate::neo_skeleton::NeoSkeletonLength;
 #[cfg(feature = "experimental")]
 use crate::pattern::runtime::PatternBorrowed;
 #[cfg(feature = "experimental")]
-use crate::neo_skeleton::NeoSkeletonLength;
+use core::ops::Range;
 
 /// Helpers involving the auxiliary subtags used for date symbols.
 ///
@@ -619,7 +619,10 @@ impl AsULE for SkeletonDataIndex {
 }
 
 #[icu_provider::data_struct(
-    marker(GregorianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/gregory/skeleton@1"),
+    marker(
+        GregorianDateNeoSkeletonPatternsV1Marker,
+        "datetime/patterns/gregory/skeleton@1"
+    ),
     marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time/skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
@@ -644,7 +647,10 @@ impl<'data> PackedSkeletonDataV1<'data> {
     #[cfg(feature = "experimental")]
     // TODO: Handle plurals
     pub(crate) fn get_pattern(&self, length: NeoSkeletonLength) -> PatternBorrowed {
-        match self.patterns.get(self.index_info.index_for(length) as usize) {
+        match self
+            .patterns
+            .get(self.index_info.index_for(length) as usize)
+        {
             Some(pattern_ule) => pattern_ule.as_borrowed(),
             None => {
                 debug_assert!(false, "failed to load a pattern for length {length:?}");
