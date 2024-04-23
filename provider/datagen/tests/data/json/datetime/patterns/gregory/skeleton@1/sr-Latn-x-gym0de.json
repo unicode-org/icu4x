@@ -2,8 +2,7 @@
   "index_info": {
     "has_long": true,
     "has_medium": false,
-    "has_plurals": false,
-    "index": 0
+    "has_plurals": false
   },
   "patterns": [
     "EEEE, d. MMMM y. GGGG",
