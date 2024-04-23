@@ -18,4 +18,8 @@ export class ICU4XUnitsConverter {
   convert_f64(arg_value) {
     return wasm.ICU4XUnitsConverter_convert_f64(this.underlying, arg_value);
   }
+
+  clone() {
+    return new ICU4XUnitsConverter(wasm.ICU4XUnitsConverter_clone(this.underlying), true, []);
+  }
 }

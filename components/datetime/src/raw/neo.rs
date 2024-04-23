@@ -17,6 +17,7 @@ use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
 use crate::Error;
+use icu_locid::extensions::private::Subtag;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
@@ -130,9 +131,21 @@ impl DatePatternSelectionData {
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
+        let mut locale = locale.clone();
+        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
+            Ok(subtag) => subtag,
+            Err(e) => {
+                debug_assert!(
+                    false,
+                    "invalid neo skeleton components: {components:?}: {e:?}"
+                );
+                return Err(Error::UnsupportedOptions);
+            }
+        };
+        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
             .load(DataRequest {
-                locale,
+                locale: &locale,
                 metadata: Default::default(),
             })?
             .take_payload()?
@@ -148,17 +161,9 @@ impl DatePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
-            DatePatternSelectionData::SkeletonDate { skeleton, payload } => payload
-                .get()
-                .get_for_date_skeleton(*skeleton)
-                .map(|pattern_ule| &pattern_ule.items)
-                .unwrap_or_else(|| {
-                    debug_assert!(
-                        false,
-                        "failed to get pattern for date skeleton: {skeleton:?}"
-                    );
-                    ZeroSlice::new_empty()
-                }),
+            DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
+                payload.get().get_pattern(skeleton.length).items
+            }
             // Assumption: with_era has all the fields of without_era
             DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern.items,
         };
@@ -172,19 +177,7 @@ impl DatePatternSelectionData {
                 DatePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
             }
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                DatePatternDataBorrowed::Resolved(
-                    payload
-                        .get()
-                        .get_for_date_skeleton(*skeleton)
-                        .map(|pattern_ule| pattern_ule.as_borrowed())
-                        .unwrap_or_else(|| {
-                            debug_assert!(
-                                false,
-                                "failed to get pattern for date skeleton: {skeleton:?}"
-                            );
-                            runtime::PatternBorrowed::DEFAULT
-                        }),
-                )
+                DatePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
             DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
         }
@@ -253,9 +246,21 @@ impl TimePatternSelectionData {
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
+        let mut locale = locale.clone();
+        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
+            Ok(subtag) => subtag,
+            Err(e) => {
+                debug_assert!(
+                    false,
+                    "invalid neo skeleton components: {components:?}: {e:?}"
+                );
+                return Err(Error::UnsupportedOptions);
+            }
+        };
+        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
             .load(DataRequest {
-                locale,
+                locale: &locale,
                 metadata: Default::default(),
             })?
             .take_payload()?
@@ -271,17 +276,9 @@ impl TimePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
-            TimePatternSelectionData::SkeletonTime { skeleton, payload } => payload
-                .get()
-                .get_for_time_skeleton(*skeleton)
-                .map(|pattern_ule| &pattern_ule.items)
-                .unwrap_or_else(|| {
-                    debug_assert!(
-                        false,
-                        "failed to get pattern for time skeleton: {skeleton:?}"
-                    );
-                    ZeroSlice::new_empty()
-                }),
+            TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
+                payload.get().get_pattern(skeleton.length).items
+            }
         };
         items.iter()
     }
@@ -293,19 +290,7 @@ impl TimePatternSelectionData {
                 TimePatternDataBorrowed::Resolved(payload.get().pattern.as_borrowed())
             }
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
-                TimePatternDataBorrowed::Resolved(
-                    payload
-                        .get()
-                        .get_for_time_skeleton(*skeleton)
-                        .map(|pattern_ule| pattern_ule.as_borrowed())
-                        .unwrap_or_else(|| {
-                            debug_assert!(
-                                false,
-                                "failed to get pattern for time skeleton: {skeleton:?}"
-                            );
-                            runtime::PatternBorrowed::DEFAULT
-                        }),
-                )
+                TimePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
             }
         }
     }

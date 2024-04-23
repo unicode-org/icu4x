@@ -22,7 +22,8 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::{
     ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV2Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    WeekDataV2Marker,
 };
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -257,7 +258,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
     ///     &locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Medium
+    ///     NeoSkeletonLength::Long
     /// )
     /// .unwrap();
     ///
@@ -511,6 +512,7 @@ impl NeoDateFormatter {
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             // FixedDecimalFormatter keys
@@ -667,7 +669,7 @@ impl<'a> FormattedNeoDate<'a> {
     }
 }
 
-size_test!(NeoTimeFormatter, neo_time_formatter_size, 472);
+size_test!(NeoTimeFormatter, neo_time_formatter_size, 456);
 
 /// [`NeoTimeFormatter`] can format times of day.
 /// It supports both 12-hour and 24-hour formats.
@@ -937,7 +939,7 @@ impl<'a> FormattedNeoTime<'a> {
 size_test!(
     TypedNeoDateTimeFormatter<icu_calendar::Gregorian>,
     typed_neo_date_time_formatter_size,
-    592
+    576
 );
 
 /// [`TypedNeoDateTimeFormatter`] can format dates with times of day. The dates must be in
@@ -1354,7 +1356,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     }
 }
 
-size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 648);
+size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 632);
 
 /// [`NeoDateTimeFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
@@ -1472,6 +1474,7 @@ impl NeoDateTimeFormatter {
             + DataProvider<IslamicYearNamesV1Marker>
             + DataProvider<IslamicMonthNamesV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDatePatternV1Marker>
             + DataProvider<JapaneseYearNamesV1Marker>
             + DataProvider<JapaneseMonthNamesV1Marker>
@@ -1645,6 +1648,7 @@ impl NeoDateTimeFormatter {
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             // FixedDecimalFormatter keys
@@ -1773,6 +1777,7 @@ impl NeoDateTimeFormatter {
             + DataProvider<IslamicYearNamesV1Marker>
             + DataProvider<IslamicMonthNamesV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDatePatternV1Marker>
             + DataProvider<JapaneseYearNamesV1Marker>
             + DataProvider<JapaneseMonthNamesV1Marker>
