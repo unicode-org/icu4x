@@ -88,6 +88,8 @@ export { ICU4XLocaleFallbackSupplement } from './ICU4XLocaleFallbackSupplement.m
 export { ICU4XLocaleFallbacker } from './ICU4XLocaleFallbacker.mjs';
 export { ICU4XLocaleFallbackerWithConfig } from './ICU4XLocaleFallbackerWithConfig.mjs';
 export { ICU4XLogger } from './ICU4XLogger.mjs';
+export { ICU4XMeasureUnit } from './ICU4XMeasureUnit.mjs';
+export { ICU4XMeasureUnitParser } from './ICU4XMeasureUnitParser.mjs';
 export { ICU4XMetazoneCalculator } from './ICU4XMetazoneCalculator.mjs';
 export { ICU4XOrdering } from './ICU4XOrdering.mjs';
 export { ICU4XPluralCategories } from './ICU4XPluralCategories.mjs';
@@ -117,6 +119,8 @@ export { ICU4XTitlecaseOptionsV1 } from './ICU4XTitlecaseOptionsV1.mjs';
 export { ICU4XTrailingCase } from './ICU4XTrailingCase.mjs';
 export { ICU4XTransformResult } from './ICU4XTransformResult.mjs';
 export { ICU4XUnicodeSetData } from './ICU4XUnicodeSetData.mjs';
+export { ICU4XUnitsConverter } from './ICU4XUnitsConverter.mjs';
+export { ICU4XUnitsConverterFactory } from './ICU4XUnitsConverterFactory.mjs';
 export { ICU4XWeekCalculator } from './ICU4XWeekCalculator.mjs';
 export { ICU4XWeekOf } from './ICU4XWeekOf.mjs';
 export { ICU4XWeekRelativeUnit } from './ICU4XWeekRelativeUnit.mjs';

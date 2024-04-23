@@ -154,6 +154,8 @@ pub mod timezone;
 pub mod timezone_formatter;
 #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod timezone_mapper;
+#[cfg(feature = "experimental_components")]
+pub mod units_converter;
 #[cfg(feature = "icu_calendar")]
 pub mod week;
 #[cfg(feature = "icu_datetime")]
