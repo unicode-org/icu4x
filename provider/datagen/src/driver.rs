@@ -755,7 +755,7 @@ impl DatagenDriver {
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                    deduplicate_locales::<true>(key, &payloads, fallbacker, sink)?
+                    deduplicate_payloads::<true>(key, &payloads, fallbacker, sink)?
                 }
                 DeduplicationStrategy::RetainBaseLanguages => {
                     let payloads = locales_to_export
@@ -767,7 +767,7 @@ impl DatagenDriver {
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                    deduplicate_locales::<false>(key, &payloads, fallbacker, sink)?
+                    deduplicate_payloads::<false>(key, &payloads, fallbacker, sink)?
                 }
                 DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
@@ -1034,7 +1034,7 @@ fn select_locales_for_key(
     Ok(result)
 }
 
-fn deduplicate_locales<const MAXIMAL: bool>(
+fn deduplicate_payloads<const MAXIMAL: bool>(
     key: DataKey,
     payloads: &HashMap<DataLocale, (DataPayload<ExportMarker>, Duration)>,
     fallbacker: &LocaleFallbacker,
