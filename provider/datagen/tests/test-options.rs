@@ -141,41 +141,41 @@ fn families(
     langids.into_iter().map(LocaleFamily::with_descendants)
 }
 
+#[derive(Default)]
+struct TestingExporter(FrozenMap<DataLocale, String>);
+
+impl DataExporter for &mut TestingExporter {
+    fn put_payload(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        let mut serializer = postcard::Serializer {
+            output: AllocVec::new(),
+        };
+        payload.serialize(&mut serializer)?;
+        let output = serializer
+            .output
+            .finalize()
+            .expect("Failed to finalize serializer output");
+        println!("Putting: {key}/{locale}");
+        self.0.insert(
+            locale.clone(),
+            postcard::from_bytes::<HelloWorldV1>(&output)
+                .unwrap()
+                .message
+                .to_string(),
+        );
+        Ok(())
+    }
+}
+
 fn export_to_map(
     driver_1_4: DatagenDriver,
     driver_1_5: DatagenDriver,
     provider: &TestingProvider,
 ) -> BTreeMap<String, String> {
-    #[derive(Default)]
-    struct TestingExporter(FrozenMap<DataLocale, String>);
-
-    impl DataExporter for &mut TestingExporter {
-        fn put_payload(
-            &self,
-            key: DataKey,
-            locale: &DataLocale,
-            payload: &DataPayload<ExportMarker>,
-        ) -> Result<(), DataError> {
-            let mut serializer = postcard::Serializer {
-                output: AllocVec::new(),
-            };
-            payload.serialize(&mut serializer)?;
-            let output = serializer
-                .output
-                .finalize()
-                .expect("Failed to finalize serializer output");
-            println!("Putting: {key}/{locale}");
-            self.0.insert(
-                locale.clone(),
-                postcard::from_bytes::<HelloWorldV1>(&output)
-                    .unwrap()
-                    .message
-                    .to_string(),
-            );
-            Ok(())
-        }
-    }
-
     let _ = simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Trace)
@@ -204,6 +204,28 @@ fn export_to_map(
     assert_eq!(results_1_4, results_1_5);
 
     results_1_4
+}
+
+fn export_to_map_1_5(
+    driver: DatagenDriver,
+    provider: &TestingProvider,
+) -> BTreeMap<String, String> {
+    let _ = simple_logger::SimpleLogger::new()
+        .env()
+        .with_level(log::LevelFilter::Trace)
+        .init();
+
+    let mut exporter = TestingExporter::default();
+    driver.export(provider, &mut exporter).unwrap();
+
+    let results = exporter
+        .0
+        .into_tuple_vec()
+        .into_iter()
+        .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
+        .collect();
+
+    results
 }
 
 #[test]
@@ -339,6 +361,50 @@ fn all_runtime() {
         "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn",
         // "th", (same as 'und')
+        "th-u-nu-thai",
+        "tr",
+        "und",
+    ];
+
+    // Should return the supported locales set with deduplication.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn all_runtime_retain_base() {
+    let exported = export_to_map_1_5(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleFamily::full()], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::RetainBaseLanguages);
+                options
+            }),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // These are all of the supported locales with deduplication applied.
+    let locales = [
+        "ar",
+        // "ar-EG", (same as 'ar')
+        "ar-EG-u-nu-latn", // (same as 'ar-u-nu-latn' but DIFFERENT than 'ar-EG')
+        "ar-u-nu-latn",
+        "bn",
+        "bn-u-nu-latn",
+        "ccp",
+        "ccp-u-nu-latn",
+        "en", // (same as 'und', but retained)
+        // "en-001", (same as 'en')
+        // "en-ZA", (same as 'en-001')
+        "es",
+        "es-AR",
+        "fil", // (same as 'und', but retained)
+        "fr",
+        "ja", // (same as 'und', but retained)
+        "ru",
+        "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        "sr-Latn",
+        "th", // (same as 'und', but retained)
         "th-u-nu-thai",
         "tr",
         "und",
@@ -503,6 +569,54 @@ fn explicit_runtime() {
 }
 
 #[test]
+fn explicit_runtime_retain_base() {
+    const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
+        langid!("arc"), // Aramaic, not in supported list
+        langid!("ar-EG"),
+        langid!("ar-SA"),
+        langid!("en-GB"),
+        langid!("es"),
+        langid!("sr-ME"),
+        langid!("ru-Cyrl-RU"),
+    ];
+    let exported = export_to_map_1_5(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback(families(SELECTED_LOCALES), {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::RetainBaseLanguages);
+                options
+            }),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    let locales = [
+        "ar",
+        // "ar-Arab-EG", (same as 'ar')
+        // "ar-EG", (same as 'ar')
+        "ar-EG-u-nu-latn",
+        // "ar-SA", (same as 'ar')
+        // "ar-SA-u-nu-latn", (same as 'ar-u-nu-latn')
+        "ar-u-nu-latn",
+        "arc", // (same as 'und', but retained)
+        "en",  // (same as 'und', but retained)
+        // "en-001", (same as 'en')
+        // "en-GB", (same as 'en-001')
+        "es",
+        "es-AR",
+        "ru",
+        // "ru-Cyrl-RU", (same as 'ru')
+        "sr-Latn",
+        // "sr-ME", (same as 'sr-Latn')
+        "und",
+    ];
+
+    // Should return the expanded then deduplicated explicit locales set above.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn explicit_preresolved() {
     const SELECTED_LOCALES: [LanguageIdentifier; 7] = [
         langid!("arc"), // Aramaic, not in supported list
@@ -553,6 +667,26 @@ fn explicit_runtime_und() {
             .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                options
+            }),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "und"
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_und_retain_base() {
+    let exported = export_to_map_1_5(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([LocaleFamily::with_descendants(langid!("und"))], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::RetainBaseLanguages);
                 options
             }),
         &TestingProvider::with_decimal_symbol_like_data(),
@@ -621,6 +755,26 @@ fn explicit_runtime_empty() {
             .with_locales_and_fallback([], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
+                options
+            }),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are empty
+    let locales = ["und"];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
+fn explicit_runtime_empty_retain_base() {
+    let exported = export_to_map_1_5(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback([], {
+                let mut options = FallbackOptions::default();
+                options.deduplication_strategy = Some(DeduplicationStrategy::RetainBaseLanguages);
                 options
             }),
         &TestingProvider::with_decimal_symbol_like_data(),
