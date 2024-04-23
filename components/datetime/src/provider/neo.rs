@@ -8,10 +8,14 @@ use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{VarZeroVec, ZeroMap};
 
 #[cfg(feature = "experimental")]
 use core::ops::Range;
+#[cfg(feature = "experimental")]
+use crate::pattern::runtime::PatternBorrowed;
+#[cfg(feature = "experimental")]
+use crate::neo_skeleton::NeoSkeletonLength;
 
 /// Helpers involving the auxiliary subtags used for date symbols.
 ///
@@ -573,6 +577,22 @@ pub struct SkeletonDataIndex {
     pub index: u8,
 }
 
+impl SkeletonDataIndex {
+    // TODO: This should handle plurals
+    #[cfg(feature = "experimental")]
+    pub(crate) fn index_for(self, length: NeoSkeletonLength) -> u8 {
+        self.index + match (length, self.has_long, self.has_medium) {
+            (NeoSkeletonLength::Long, _, _) => 0,
+            (NeoSkeletonLength::Medium, true, _) => 1,
+            (NeoSkeletonLength::Medium, false, _) => 0,
+            (NeoSkeletonLength::Short, true, true) => 2,
+            (NeoSkeletonLength::Short, true, false) => 1,
+            (NeoSkeletonLength::Short, false, true) => 1,
+            (NeoSkeletonLength::Short, false, false) => 0,
+        }
+    }
+}
+
 /// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
 #[derive(Debug, Copy, Clone, ULE)]
 #[repr(transparent)]
@@ -614,10 +634,8 @@ impl AsULE for SkeletonDataIndex {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
-    // len = 12 for time, 9 for date (day), 8 for date (ext)
     #[allow(missing_docs)] // TODO
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub indices: ZeroVec<'data, SkeletonDataIndex>,
+    pub index_info: SkeletonDataIndex,
     // TODO: This should support plurals
     #[allow(missing_docs)] // TODO
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -626,23 +644,15 @@ pub struct PackedSkeletonDataV1<'data> {
 
 impl<'data> PackedSkeletonDataV1<'data> {
     #[cfg(feature = "experimental")]
-    pub(crate) fn get_for_date_skeleton(
-        &self
-    ) -> Option<&runtime::PatternULE> {
-        self.get_for_discriminant(0)
-    }
-    #[cfg(feature = "experimental")]
-    pub(crate) fn get_for_time_skeleton(
-        &self,
-    ) -> Option<&runtime::PatternULE> {
-        self.get_for_discriminant(0)
-    }
-    #[cfg(feature = "experimental")]
-    fn get_for_discriminant(&self, discriminant: u8) -> Option<&runtime::PatternULE> {
-        // TODO: Load the plural here
-        self.indices
-            .get(discriminant as usize)
-            .and_then(|index_info| self.patterns.get(index_info.index as usize))
+    // TODO: Handle plurals
+    pub(crate) fn get_pattern(&self, length: NeoSkeletonLength) -> PatternBorrowed {
+        match self.patterns.get(self.index_info.index_for(length) as usize) {
+            Some(pattern_ule) => pattern_ule.as_borrowed(),
+            None => {
+                debug_assert!(false, "failed to load a pattern for length {length:?}");
+                PatternBorrowed::DEFAULT
+            }
+        }
     }
 }
 

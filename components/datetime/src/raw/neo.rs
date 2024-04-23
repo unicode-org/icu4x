@@ -160,15 +160,8 @@ impl DatePatternSelectionData {
             DatePatternSelectionData::SingleDate(payload) => &payload.get().pattern.items,
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => payload
                 .get()
-                .get_for_date_skeleton()
-                .map(|pattern_ule| &pattern_ule.items)
-                .unwrap_or_else(|| {
-                    debug_assert!(
-                        false,
-                        "failed to get pattern for date skeleton: {skeleton:?}"
-                    );
-                    ZeroSlice::new_empty()
-                }),
+                .get_pattern(skeleton.length)
+                .items,
             // Assumption: with_era has all the fields of without_era
             DatePatternSelectionData::OptionalEra { with_era, .. } => &with_era.get().pattern.items,
         };
@@ -185,15 +178,7 @@ impl DatePatternSelectionData {
                 DatePatternDataBorrowed::Resolved(
                     payload
                         .get()
-                        .get_for_date_skeleton()
-                        .map(|pattern_ule| pattern_ule.as_borrowed())
-                        .unwrap_or_else(|| {
-                            debug_assert!(
-                                false,
-                                "failed to get pattern for date skeleton: {skeleton:?}"
-                            );
-                            runtime::PatternBorrowed::DEFAULT
-                        }),
+                        .get_pattern(skeleton.length)
                 )
             }
             DatePatternSelectionData::OptionalEra { .. } => unimplemented!("#4478"),
@@ -292,15 +277,8 @@ impl TimePatternSelectionData {
             TimePatternSelectionData::SingleTime(payload) => &payload.get().pattern.items,
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => payload
                 .get()
-                .get_for_time_skeleton()
-                .map(|pattern_ule| &pattern_ule.items)
-                .unwrap_or_else(|| {
-                    debug_assert!(
-                        false,
-                        "failed to get pattern for time skeleton: {skeleton:?}"
-                    );
-                    ZeroSlice::new_empty()
-                }),
+                .get_pattern(skeleton.length)
+                .items,
         };
         items.iter()
     }
@@ -315,15 +293,7 @@ impl TimePatternSelectionData {
                 TimePatternDataBorrowed::Resolved(
                     payload
                         .get()
-                        .get_for_time_skeleton()
-                        .map(|pattern_ule| pattern_ule.as_borrowed())
-                        .unwrap_or_else(|| {
-                            debug_assert!(
-                                false,
-                                "failed to get pattern for time skeleton: {skeleton:?}"
-                            );
-                            runtime::PatternBorrowed::DEFAULT
-                        }),
+                        .get_pattern(skeleton.length),
                 )
             }
         }
