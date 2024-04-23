@@ -167,7 +167,7 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     - name: Install harfbuzz
-      run: apt install libharfbuzz-dev
+      run: sudo apt install libharfbuzz-dev
 
     # Actual job
     - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`

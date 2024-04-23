@@ -451,6 +451,7 @@ dependencies = [
  "either",
  "elsa",
  "eyre",
+ "icu",
  "icu_calendar",
  "icu_casemap",
  "icu_codepointtrie_builder",
@@ -458,6 +459,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_experimental",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -543,6 +545,7 @@ version = "1.4.0"
 name = "icu_experimental"
 version = "0.0.0"
 dependencies = [
+ "databake",
  "displaydoc",
  "fixed_decimal",
  "icu_collections",
@@ -556,9 +559,11 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "litemap",
+ "log",
  "num-bigint",
  "num-rational",
  "num-traits",
+ "serde",
  "smallvec",
  "tinystr",
  "writeable",
@@ -646,8 +651,10 @@ version = "1.4.0"
 name = "icu_pattern"
 version = "0.1.5"
 dependencies = [
+ "databake",
  "displaydoc",
  "either",
+ "serde",
  "writeable",
  "yoke",
  "zerofrom",
