@@ -23,7 +23,7 @@
 //!
 //! # Examples
 //!
-//! See `tutorials/harfbuzz` in the ICU4X repo for an example.
+//! See `tutorials/rust/harfbuzz` in the ICU4X repo for an example.
 //!
 //! If you wish to load data dynamically, you can individually load [`GeneralCategoryData`], [`CombiningClassData`],
 //! [`MirroringData`], [`ScriptData`], [`ComposeData`], [`DecomposeData`] and set them as the relevant funcs.
