@@ -257,7 +257,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
     ///     &locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Medium
+    ///     NeoSkeletonLength::Long
     /// )
     /// .unwrap();
     ///
