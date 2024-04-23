@@ -266,7 +266,7 @@ macro_rules! registry(
             icu::datetime::provider::neo::JapaneseExtendedDatePatternV1Marker = "datetime/patterns/japanext/date@1",
             icu::datetime::provider::neo::PersianDatePatternV1Marker = "datetime/patterns/persian/date@1",
             icu::datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
-            icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker = "datetime/patterns/gregory/date_skeleton@1",
+            icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker = "datetime/patterns/gregory/skeleton@1",
             icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker = "datetime/patterns/time_skeleton@1",
             icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
             icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
