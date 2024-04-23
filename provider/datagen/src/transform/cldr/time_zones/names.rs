@@ -262,13 +262,13 @@ fn test_normalize_canonicalize_iana_coverage() {
     let mapper = mapper.as_borrowed();
 
     for iana_id in iana2bcp.keys() {
-        let normalized = mapper.normalize_iana(&iana_id).unwrap().0;
+        let normalized = mapper.normalize_iana(iana_id).unwrap().0;
         assert_eq!(&normalized, iana_id);
     }
 
     let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
     for (iana_id, bcp47_id) in iana2bcp.iter() {
-        let canonicalized = mapper.canonicalize_iana(&iana_id).unwrap().0;
+        let canonicalized = mapper.canonicalize_iana(iana_id).unwrap().0;
         assert_eq!(&canonicalized, bcp2iana.get(bcp47_id).unwrap());
     }
 }
