@@ -93,6 +93,7 @@ exec --fail-on-error cargo run --manifest-path default/Cargo.toml
 exec --fail-on-error cargo run --manifest-path experimental/Cargo.toml
 exec --fail-on-error cargo run --manifest-path sync/Cargo.toml
 exec --fail-on-error cargo run --manifest-path baked/Cargo.toml
+exec --fail-on-error cargo run --manifest-path harfbuzz/Cargo.toml
 
 # Copy our own tutorial_buffer to speed up the task
 exec --fail-on-error cargo build --manifest-path buffer/Cargo.toml
@@ -128,6 +129,7 @@ exec --fail-on-error cargo run --release --manifest-path default/Cargo.toml
 # exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
 exec --fail-on-error cargo run --release --manifest-path sync/Cargo.toml
 exec --fail-on-error cargo run --release --manifest-path baked/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path harfbuzz/Cargo.toml
 
 # Build the postcard file
 # Use the full Makefile task

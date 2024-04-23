@@ -148,18 +148,6 @@ if ${code}
 end
 '''
 
-
-[tasks.check-harfbuzz]
-description = "Ensure icu_harfbuzz works"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd tutorials/harfbuzz
-exec cargo run
-'''
-
-
 # Install tasks
 
 [tasks.install-nightly]
