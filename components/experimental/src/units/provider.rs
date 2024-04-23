@@ -78,19 +78,19 @@ pub struct ConversionInfo<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub basic_units: ZeroVec<'data, MeasureUnitItem>,
 
-    /// Represents the numerator of the conversion factor.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub factor: Ratio<'data>,
-
-    // TODO(#4311).
-    /// Represents the numerator of the offset.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub offset: Ratio<'data>,
-
     /// Represents the exactness of the conversion factor.
     pub exactness: Exactness,
+
+    /// Represents the numerator of the conversion factor.
+    #[zerovec::varule(RatioULE)]
+    pub factor: Ratio<'data>,
+
+    /// Represents the numerator of the offset.
+    #[zerovec::varule(RatioULE)]
+    pub offset: Ratio<'data>,
 }
 
+// TODO(#4311).: Consider reducing the size of this struct while implementing the ULE.
 #[zerovec::make_varule(RatioULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
