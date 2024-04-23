@@ -66,11 +66,6 @@ pub struct AllUnicodeFuncs;
 
 #[cfg(feature = "compiled_data")]
 impl AllUnicodeFuncs {
-    /// Construct a new [`AllUnicodeFuncs`]
-    pub fn new() -> Self {
-        Self
-    }
-
     /// Construct a new boxed [`AllUnicodeFuncs`]. As [`AllUnicodeFuncs`] is zero-sized,
     /// this does not allocate memory. Useful for use with harfbuzz's `UnicodeFuncs::set_*_func()`
     pub fn boxed() -> alloc::boxed::Box<Self> {
