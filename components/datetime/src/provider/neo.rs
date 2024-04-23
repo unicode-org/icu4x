@@ -623,7 +623,7 @@ impl AsULE for SkeletonDataIndex {
         GregorianDateNeoSkeletonPatternsV1Marker,
         "datetime/patterns/gregory/skeleton@1"
     ),
-    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time/skeleton@1")
+    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
