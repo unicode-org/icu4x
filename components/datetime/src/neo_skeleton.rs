@@ -140,7 +140,7 @@ where
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
-    type DateSkeletonPatternsV1Marker = C::SkeletonPatternsV1Marker;
+    type DateSkeletonPatternsV1Marker = C::DateSkeletonPatternsV1Marker;
 
     // Data to exclude
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
