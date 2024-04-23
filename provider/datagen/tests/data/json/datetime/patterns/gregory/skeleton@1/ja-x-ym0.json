@@ -1,12 +1,10 @@
 {
-  "indices": [
-    {
-      "has_long": false,
-      "has_medium": true,
-      "has_plurals": false,
-      "index": 0
-    }
-  ],
+  "index_info": {
+    "has_long": false,
+    "has_medium": true,
+    "has_plurals": false,
+    "index": 0
+  },
   "patterns": [
     "y年M月",
     "y/M"
