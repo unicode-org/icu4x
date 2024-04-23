@@ -122,7 +122,6 @@ impl DatagenProvider {
             has_long: true,
             has_medium: true,
             has_plurals: false,
-            index: patterns.len().try_into().unwrap(),
         };
         let long_medium_short = [
             NeoSkeletonLength::Long,

@@ -573,15 +573,13 @@ pub struct SkeletonDataIndex {
     /// If true, there are 6 plural variants for each pattern.
     /// If false, it is just a single variant.
     pub has_plurals: bool,
-    /// The offset into the vector of the first pattern.
-    pub index: u8,
 }
 
 impl SkeletonDataIndex {
     // TODO: This should handle plurals
     #[cfg(feature = "experimental")]
     pub(crate) fn index_for(self, length: NeoSkeletonLength) -> u8 {
-        self.index + match (length, self.has_long, self.has_medium) {
+        match (length, self.has_long, self.has_medium) {
             (NeoSkeletonLength::Long, _, _) => 0,
             (NeoSkeletonLength::Medium, true, _) => 1,
             (NeoSkeletonLength::Medium, false, _) => 0,
@@ -596,7 +594,7 @@ impl SkeletonDataIndex {
 /// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
 #[derive(Debug, Copy, Clone, ULE)]
 #[repr(transparent)]
-pub struct SkeletonDataIndexULE([u8; 2]);
+pub struct SkeletonDataIndexULE(u8);
 
 impl AsULE for SkeletonDataIndex {
     type ULE = SkeletonDataIndexULE;
@@ -606,17 +604,16 @@ impl AsULE for SkeletonDataIndex {
         flags |= (self.has_long as u8) << 7;
         flags |= (self.has_medium as u8) << 6;
         flags |= (self.has_plurals as u8) << 5;
-        SkeletonDataIndexULE([flags, self.index])
+        SkeletonDataIndexULE(flags)
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let [flags, index] = unaligned.0;
+        let flags = unaligned.0;
         // TODO: `flags` could have more bits set, but we don't check that here.
         SkeletonDataIndex {
             has_long: (flags & (1 << 7)) != 0,
             has_medium: (flags & (1 << 6)) != 0,
             has_plurals: (flags & (1 << 5)) != 0,
-            index,
         }
     }
 }
@@ -635,6 +632,7 @@ impl AsULE for SkeletonDataIndex {
 #[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
     #[allow(missing_docs)] // TODO
+    // TODO: Use the bitpacked version here
     pub index_info: SkeletonDataIndex,
     // TODO: This should support plurals
     #[allow(missing_docs)] // TODO
