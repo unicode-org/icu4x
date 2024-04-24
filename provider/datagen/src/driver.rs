@@ -122,6 +122,26 @@ impl LocaleFamily {
         }
     }
 
+    /// The family containing all descendants of the selected locale.
+    ///
+    /// This family is primarily useful if the root locale is not desired.
+    ///
+    /// For example, the family `::without_ancestors("en-001")` contains:
+    ///
+    /// - Self: "en-001"
+    /// - Descendants: "en-GB", "en-ZA", ...
+    ///
+    /// but it does _not_ contain the ancestors "en" and "und".
+    ///
+    /// Stylized on the CLI as: "%en-US"
+    pub fn without_ancestors(langid: LanguageIdentifier) -> Self {
+        Self {
+            langid: Some(langid),
+            include_ancestors: false,
+            include_descendants: true,
+        }
+    }
+
     /// The family containing only the selected locale.
     ///
     /// For example, the family `::single("en-001")` contains only "en-001".
@@ -159,11 +179,14 @@ impl Writeable for LocaleFamily {
                 sink.write_char('^')?;
                 langid.write_to(sink)
             }
+            (Some(langid), false, true) => {
+                sink.write_char('%')?;
+                langid.write_to(sink)
+            }
             (Some(langid), false, false) => {
                 sink.write_char('@')?;
                 langid.write_to(sink)
             }
-            (Some(_), false, true) => unreachable!(),
             (None, _, _) => sink.write_str("full"),
         }
     }
@@ -176,8 +199,8 @@ impl Writeable for LocaleFamily {
         ) {
             (Some(langid), true, true) => langid.writeable_length_hint(),
             (Some(langid), true, false) => langid.writeable_length_hint() + 1,
+            (Some(langid), false, true) => langid.writeable_length_hint() + 1,
             (Some(langid), false, false) => langid.writeable_length_hint() + 1,
-            (Some(_), false, true) => unreachable!(),
             (None, _, _) => writeable::LengthHint::exact(4),
         }
     }
@@ -221,6 +244,11 @@ impl FromStr for LocaleFamily {
                 include_ancestors: true,
                 include_descendants: false,
             }),
+            b'%' => Ok(Self {
+                langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
+                include_ancestors: false,
+                include_descendants: true,
+            }),
             b'@' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
                 include_ancestors: false,
@@ -238,7 +266,7 @@ impl FromStr for LocaleFamily {
 
 #[test]
 fn test_locale_family_parsing() {
-    let valid_families = ["und", "de-CH", "^es", "@pt-BR", "full"];
+    let valid_families = ["und", "de-CH", "^es", "@pt-BR", "%en-001", "full"];
     let invalid_families = ["invalid", "@invalid", "-foo", "@full", "full-001"];
     for family_str in valid_families {
         let family = family_str.parse::<LocaleFamily>().unwrap();
