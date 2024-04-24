@@ -55,6 +55,7 @@ mod common;
 mod double;
 mod error;
 mod frontend;
+mod multi_named;
 #[cfg(feature = "alloc")]
 mod parser;
 mod single;
@@ -64,10 +65,15 @@ pub use common::PatternItem;
 #[cfg(feature = "alloc")]
 pub use common::PatternItemCow;
 pub use common::PlaceholderValueProvider;
+pub use common::PATTERN_LITERAL_PART;
+pub use common::PATTERN_PLACEHOLDER_PART;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
 pub use frontend::Pattern;
+pub use multi_named::MissingNamedPlaceholderError;
+pub use multi_named::MultiNamedPlaceholder;
+pub use multi_named::MultiNamedPlaceholderKey;
 #[cfg(feature = "alloc")]
 pub use parser::ParsedPatternItem;
 #[cfg(feature = "alloc")]
@@ -111,9 +117,37 @@ pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 ///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!").unwrap();
 ///
 /// // Interpolate some values into the pattern:
-/// assert_writeable_eq!(pattern.interpolate(["Alice", "Bob"]), "Hello, Alice and Bob!");
+/// assert_writeable_eq!(
+///     pattern.interpolate(["Alice", "Bob"]),
+///     "Hello, Alice and Bob!"
+/// );
 /// ```
 pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
+
+/// # Examples
+///
+/// ```
+/// use icu_pattern::MultiNamedPlaceholderPattern;
+/// use std::collections::BTreeMap;
+/// use writeable::assert_try_writeable_eq;
+///
+/// // Create a pattern from the string syntax:
+/// let pattern = MultiNamedPlaceholderPattern::try_from_str(
+///     "Hello, {person0} and {person1}!",
+/// )
+/// .unwrap();
+///
+/// // Interpolate some values into the pattern:
+/// assert_try_writeable_eq!(
+///     pattern.try_interpolate(
+///         [("person0", "Alice"), ("person1", "Bob")]
+///             .into_iter()
+///             .collect::<BTreeMap<&str, &str>>()
+///     ),
+///     "Hello, Alice and Bob!"
+/// );
+/// ```
+pub type MultiNamedPlaceholderPattern<Store> = Pattern<MultiNamedPlaceholder, Store>;
 
 #[test]
 #[cfg(feature = "alloc")]
