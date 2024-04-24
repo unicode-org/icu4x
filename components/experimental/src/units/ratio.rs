@@ -54,8 +54,13 @@ pub enum RatioFromStrError {
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
-    pub(crate) fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
+    pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
+    }
+
+    /// Returns the an immutable reference to the internal ratio.
+    pub fn get_ratio(&self) -> &Ratio<BigInt> {
+        &self.0
     }
 
     /// Returns the reciprocal of the ratio.

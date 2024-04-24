@@ -20,7 +20,7 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_locid = { workspace = true }
 icu_properties = { workspace = true }
@@ -29,7 +29,7 @@ zerovec = { workspace = true, features = ["yoke"] }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_casemap_data = { workspace = true, optional = true }
 

@@ -47,7 +47,7 @@ macro_rules! impl_data_provider {
         impl_datetime_patterns_datetime_v1!($provider);
         impl_datetime_patterns_ethiopic_date_v1!($provider);
         impl_datetime_patterns_gregory_date_v1!($provider);
-        impl_datetime_patterns_gregory_date_skeleton_v1!($provider);
+        impl_datetime_patterns_gregory_skeleton_v1!($provider);
         impl_datetime_patterns_hebrew_date_v1!($provider);
         impl_datetime_patterns_indian_date_v1!($provider);
         impl_datetime_patterns_islamic_date_v1!($provider);

@@ -101,7 +101,7 @@ const _: () = {
     icu_datetime_data::impl_datetime_patterns_time_skeleton_v1!(Baked);
 
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_datetime_patterns_gregory_date_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_gregory_skeleton_v1!(Baked);
 
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_buddhist_months_v1!(Baked);

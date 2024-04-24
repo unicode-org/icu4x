@@ -19,7 +19,10 @@ int main() {
   auto converter = converter_factory.converter(from, to).value();
   auto result = converter.convert_f64(1.0);
 
-  if (std::abs(result - 3.28084) > 0.00001 ){
+  auto converter_cloned = converter.clone();
+  auto result_cloned = converter_cloned.convert_f64(1.0);
+
+  if (std::abs(result - 3.28084) > 0.00001 && std::abs(result_cloned - 3.28084) > 0.00001){
     std::cout << "Conversion failed" << std::endl;
     return 1;
   } else {

@@ -258,7 +258,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
     ///     &locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Medium
+    ///     NeoSkeletonLength::Long
     /// )
     /// .unwrap();
     ///
@@ -669,7 +669,7 @@ impl<'a> FormattedNeoDate<'a> {
     }
 }
 
-size_test!(NeoTimeFormatter, neo_time_formatter_size, 472);
+size_test!(NeoTimeFormatter, neo_time_formatter_size, 456);
 
 /// [`NeoTimeFormatter`] can format times of day.
 /// It supports both 12-hour and 24-hour formats.
@@ -939,7 +939,7 @@ impl<'a> FormattedNeoTime<'a> {
 size_test!(
     TypedNeoDateTimeFormatter<icu_calendar::Gregorian>,
     typed_neo_date_time_formatter_size,
-    592
+    576
 );
 
 /// [`TypedNeoDateTimeFormatter`] can format dates with times of day. The dates must be in
@@ -1356,7 +1356,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     }
 }
 
-size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 648);
+size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 632);
 
 /// [`NeoDateTimeFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the

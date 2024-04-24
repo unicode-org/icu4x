@@ -148,7 +148,6 @@ if ${code}
 end
 '''
 
-
 # Install tasks
 
 [tasks.install-nightly]
