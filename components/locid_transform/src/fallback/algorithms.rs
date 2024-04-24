@@ -457,7 +457,7 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: Some(LocaleFallbackSupplement::Collation),
-            expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
+            expected_language_chain: &["yue-HK", "yue", "zh-Hant", "zh"],
             expected_region_chain: &["yue-HK", "und-HK"],
         },
     ];

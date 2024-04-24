@@ -5,6 +5,11 @@
       null,
       "ME"
     ],
+    "sr-Latn": [
+      "sr",
+      null,
+      null
+    ],
     "yue": [
       "zh",
       "Hant",
@@ -28,6 +33,11 @@
     "yue-Hant": [
       "zh",
       "Hant",
+      null
+    ],
+    "zh-Hant": [
+      "zh",
+      null,
       null
     ]
   },
