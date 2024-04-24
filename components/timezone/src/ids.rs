@@ -22,7 +22,7 @@ use crate::{
 ///
 /// There are approximately 600 IANA identifiers and 450 BCP-47 identifiers.
 ///
-/// BCP-47 time zone identifiers are 8 ASCII characters or less and currently 
+/// BCP-47 time zone identifiers are 8 ASCII characters or less and currently
 /// average 5.1 characters long. Current IANA time zone identifiers are less than
 /// 40 ASCII characters and average 14.2 characters long.
 ///
