@@ -45,7 +45,7 @@ zerovec = { workspace = true, features = ["derive", "yoke"] }
 displaydoc = { workspace = true }
 log = { workspace = true, optional = true }
 num-bigint = { workspace = true }
-num-rational = { workspace = true }
+num-rational = { workspace = true , features = ["num-bigint"]}
 num-traits = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 smallvec = { workspace = true }

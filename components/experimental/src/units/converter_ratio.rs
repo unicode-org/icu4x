@@ -2,55 +2,58 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::units::ratio::IcuRatio;
+use num_bigint::BigInt;
+use num_rational::Ratio;
+use num_traits::ToPrimitive;
 
 // TODO: add Mul & Add for references to avoid cloning.
 /// A trait for types that can be converted between two units.
 pub trait ConverterRatio: Clone {
+    /// Adds two values by reference, avoiding data cloning.
+    fn add_refs(&self, other: &Self) -> Self;
+
+    /// Multiplies two values by reference, avoiding data cloning.
+    fn mul_refs(&self, other: &Self) -> Self;
+
+    /// Converts a Ratio<BigInt> to the implementing type.
+    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self>;
+
+    /// Returns the reciprocal of the implementing type.
     fn reciprocal(&self) -> Self;
-
-    // TODO: remove this method once implement Mul & Add for references to avoid cloning.
-    fn add(&self, other: &Self) -> Self;
-
-    // TODO: remove this method once implement Mul & Add for references to avoid cloning.
-    fn mul(&self, other: &Self) -> Self;
-
-    // TODO: is there a way to implement this for all types that implement From<IcuRatio>?
-    fn from_icu_ratio(value: IcuRatio) -> Option<Self>;
 }
 
-impl ConverterRatio for IcuRatio {
-    fn reciprocal(&self) -> Self {
-        self.recip()
-    }
-
-    fn from_icu_ratio(value: IcuRatio) -> Option<Self> {
-        Some(value)
-    }
-
-    fn mul(&self, other: &Self) -> Self {
+impl ConverterRatio for Ratio<BigInt> {
+    fn mul_refs(&self, other: &Self) -> Self {
         self * other
     }
 
-    fn add(&self, other: &Self) -> Self {
+    fn add_refs(&self, other: &Self) -> Self {
         self + other
+    }
+
+    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
+        Some(ratio)
+    }
+
+    fn reciprocal(&self) -> Self {
+        self.recip()
     }
 }
 
 impl ConverterRatio for f64 {
-    fn reciprocal(&self) -> Self {
-        self.recip()
-    }
-
-    fn from_icu_ratio(value: IcuRatio) -> Option<Self> {
-        value.to_f64()
-    }
-
-    fn mul(&self, other: &Self) -> Self {
+    fn mul_refs(&self, other: &Self) -> Self {
         self * other
     }
 
-    fn add(&self, other: &Self) -> Self {
+    fn add_refs(&self, other: &Self) -> Self {
         self + other
+    }
+
+    fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self> {
+        ratio.to_f64()
+    }
+
+    fn reciprocal(&self) -> Self {
+        self.recip()
     }
 }

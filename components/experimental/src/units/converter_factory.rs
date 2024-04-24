@@ -304,7 +304,7 @@ impl ConverterFactory {
             return None;
         }
 
-        let conversion_rate = T::from_icu_ratio(conversion_rate)?;
+        let conversion_rate = T::from_ratio_bigint(conversion_rate.get_ratio())?;
         let proportional = ProportionalConverter { conversion_rate };
 
         if is_reciprocal {
@@ -316,7 +316,7 @@ impl ConverterFactory {
                 proportional,
             )))
         } else {
-            let offset = T::from_icu_ratio(offset)?;
+            let offset = T::from_ratio_bigint(offset.get_ratio())?;
             Some(UnitsConverter(UnitsConverterInner::Offset(
                 OffsetConverter {
                     proportional,
