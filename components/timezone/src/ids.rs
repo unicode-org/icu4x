@@ -20,6 +20,14 @@ use crate::{
 /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
 /// It also supports normalizing and canonicalizing the IANA strings.
 ///
+/// There are approximately 600 IANA identifiers and 450 BCP-47 identifiers.
+///
+/// BCP-47 time zone identifiers are 8 ASCII characters or less and currently 
+/// average 5.1 characters long. Current IANA time zone identifiers are less than
+/// 40 ASCII characters and average 14.2 characters long.
+///
+/// These lists grow very slowly; in a typical year, 2-3 new identifiers are added.
+///
 /// # Normalization vs Canonicalization
 ///
 /// Multiple IANA time zone identifiers can refer to the same BCP-47 time zone. For example, the
@@ -30,17 +38,19 @@ use crate::{
 /// - "America/Indianapolis"
 /// - "US/East-Indiana"
 ///
-/// There is only one canonical name, which is "America/Indiana/Indianapolis". The
-/// *canonicalization* operation returns the canonical name. You should canonicalize if you
-/// need to compare time zones for equality or display the name to the user. Note that the
-/// canonical name can change over time.
+/// There is only one canonical identifier, which is "America/Indiana/Indianapolis". The
+/// *canonicalization* operation returns the canonical identifier. You should canonicalize if
+/// you need to compare time zones for equality. Note that the canonical identifier can change
+/// over time. For example, the identifier "Europe/Kiev" was renamed to the newly-added
+/// identifier "Europe/Kyiv" in 2022.
 ///
 /// The *normalization* operation, on the other hand, keeps the input identifier but normalizes
 /// the casing. For example, "AMERICA/FORT_WAYNE" normalizes to "America/Fort_Wayne".
 /// Normalization is a data-driven operation because there are no algorithmic casing rules that
 /// work for all IANA time zone identifiers.
 ///
-/// Normalization is a cheap operation, but canonicalization might be expensive. If you need
+/// Normalization is a cheap operation, but canonicalization might be expensive, since it might
+/// require searching over all IANA IDs to find the canonicalization. If you need
 /// canonicalization that is reliably fast, use [`TimeZoneIdMapperWithFastCanonicalization`].
 ///
 /// # Examples
@@ -69,7 +79,7 @@ use crate::{
 ///     Some("aumel".parse().unwrap())
 /// );
 ///
-/// // We can recover the canonical name from the mapper:
+/// // We can recover the canonical identifier from the mapper:
 /// assert_eq!(
 ///     mapper
 ///         .canonicalize_iana("Australia/Victoria")
@@ -223,7 +233,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         Some((string, bcp47_id))
     }
 
-    /// Returns the canonical, normalized name of the given IANA time zone.
+    /// Returns the canonical, normalized identifier of the given IANA time zone.
     ///
     /// Also returns the BCP-47 time zone ID.
     ///
@@ -258,7 +268,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         iana_id: &'s str,
     ) -> Option<(Cow<'s, str>, TimeZoneBcp47Id)> {
         // Note: We collect the cursors into a stack so that we start probing
-        // nearby the input IANA name. This should improve lookup time since
+        // nearby the input IANA identifier. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
         let mut stack = Vec::with_capacity(iana_id.len());
         let (trie_value, string) = self.iana_lookup_with_normalization(iana_id, |cursor| {
@@ -282,13 +292,14 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
 
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
     ///
-    /// This function performs a slow linear search. If this is problematic, consider one of the
+    /// This function performs a linear search over all IANA IDs. If this is problematic, consider one of the
     /// following functions instead:
     ///
     /// 1. [`TimeZoneIdMapperBorrowed::canonicalize_iana()`]
     ///    is faster if you have an IANA ID.
     /// 2. [`TimeZoneIdMapperWithFastCanonicalizationBorrowed::canonical_iana_from_bcp47()`]
-    ///    is faster, but it requires loading additional data.
+    ///    is faster, but it requires loading additional data
+    ///    (see [`TimeZoneIdMapperWithFastCanonicalization`]).
     ///
     /// Returns `None` if the BCP-47 ID is not found.
     ///
@@ -428,8 +439,12 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     }
 }
 
-/// A mapper that supplements [`TimeZoneIdMapper`] with additional data to improve the performance
-/// of canonical IANA ID lookup.
+/// A mapper that supplements [`TimeZoneIdMapper`] with about 8 KB of additional data to
+/// improve the performance of canonical IANA ID lookup.
+///
+/// The data in [`TimeZoneIdMapper`] is optimized for IANA to BCP-47 lookup; the reverse
+/// requires a linear walk over all ~600 IANA identifiers. The data added here allows for
+/// constant-time mapping from BCP-47 to IANA.
 #[derive(Debug, Clone)]
 pub struct TimeZoneIdMapperWithFastCanonicalization<I> {
     inner: I,
@@ -574,12 +589,13 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
         self.inner
     }
 
-    /// Returns the canonical, normalized name of the given IANA time zone.
+    /// Returns the canonical, normalized identifier of the given IANA time zone.
     ///
     /// Also returns the BCP-47 time zone ID.
     ///
     /// This is a faster version of [`TimeZoneIdMapperBorrowed::canonicalize_iana()`]
-    /// and it always returns borrowed IANA strings, but it requires loading additional data.
+    /// and it always returns borrowed IANA strings, but it requires loading additional data
+    /// (see [`TimeZoneIdMapperWithFastCanonicalization`]).
     ///
     /// Returns `None` if the IANA ID is not found.
     ///
@@ -618,7 +634,8 @@ impl<'a> TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     /// Returns the canonical, normalized IANA ID of the given BCP-47 ID.
     ///
     /// This is a faster version of [`TimeZoneIdMapperBorrowed::find_canonical_iana_from_bcp47()`]
-    /// and it always returns borrowed IANA strings, but it requires loading additional data.
+    /// and it always returns borrowed IANA strings, but it requires loading additional data
+    /// (see [`TimeZoneIdMapperWithFastCanonicalization`]).
     ///
     /// Returns `None` if the BCP-47 ID is not found.
     ///
