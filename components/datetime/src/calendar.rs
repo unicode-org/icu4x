@@ -70,7 +70,7 @@ pub trait CldrCalendar: InternalCldrCalendar {
     type DatePatternV1Marker: KeyedDataMarker<Yokeable = DatePatternV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    /// The data marker for loading date pattern skeletons for this calendar.
+    /// The data marker for loading skeleton patterns for this calendar.
     type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
