@@ -15,7 +15,7 @@ icu_datagen = { workspace = true, features = ["legacy_api", "use_wasm", "network
 icu_locid = { workspace = true, features = ["databake"] }
 icu_provider = { workspace = true }
 
-clap = { workspace = true, features = ["derive", "std"] }
+clap = { workspace = true, features = ["derive", "default"] }
 eyre = { workspace = true, features = ["default"]}
 log = { workspace = true }
 quote = { workspace = true }

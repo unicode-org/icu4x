@@ -96,7 +96,7 @@ ureq = { workspace = true, features = ["tls"], optional = true }
 zip = { workspace = true, features = ["deflate"], optional = true }
 
 # "bin" feature
-clap = { workspace = true, optional = true, features = ["derive", "std"] }
+clap = { workspace = true, optional = true, features = ["derive", "default"] }
 eyre = { workspace = true, optional = true, features = ["default"] }
 simple_logger = { workspace = true, optional = true }
 
