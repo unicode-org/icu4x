@@ -15,7 +15,7 @@ pub trait ConverterRatio: Clone {
     /// Multiplies two values by reference, avoiding data cloning.
     fn mul_refs(&self, other: &Self) -> Self;
 
-    /// Converts a Ratio<BigInt> to the implementing type.
+    /// Converts a [`Ratio<BigInt>`] to the implementing type.
     fn from_ratio_bigint(ratio: Ratio<BigInt>) -> Option<Self>;
 
     /// Returns the reciprocal of the implementing type.
