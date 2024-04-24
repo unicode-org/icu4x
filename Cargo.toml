@@ -211,7 +211,7 @@ diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "
 
 # External deps from crates.io
 bincode = { version = "1.3.1", default-features = false }
-clap = { version = "4.2.0", default-features = false }
+clap = { version = "4.2.0" } # clap has a lot of default features and we want them
 combine = { version = "4.3.1", default-features = false }
 core_maths = { version = "0.1.0", default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
