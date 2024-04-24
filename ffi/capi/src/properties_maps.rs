@@ -29,10 +29,9 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
     fn convert_8<P: TrieValue>(data: maps::CodePointMapData<P>) -> Box<ICU4XCodePointMapData8> {
-        #[allow(clippy::expect_used)] // infallible for the chosen properties
+        #[allow(clippy::unwrap_used)] // infallible for the chosen properties
         Box::new(ICU4XCodePointMapData8(
-            data.try_into_converted()
-                .expect("try_into_converted to u8 must be infallible"),
+            data.try_into_converted().map_err(|_| ()).unwrap(),
         ))
     }
 
@@ -320,7 +319,7 @@ pub mod ffi {
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XError> {
-            #[allow(clippy::expect_used)] // script is a 16-bit property
+            #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(ICU4XCodePointMapData16(
                 call_constructor_unstable!(
                     maps::script [r => Ok(r.static_to_owned())],
@@ -328,7 +327,8 @@ pub mod ffi {
                     provider,
                 )?
                 .try_into_converted()
-                .expect("try_into_converted to u16 must be infallible"),
+                .map_err(|_| ())
+                .unwrap(),
             )))
         }
     }
