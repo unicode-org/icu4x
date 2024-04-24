@@ -522,30 +522,27 @@ fn main() -> eyre::Result<()> {
                 .collect::<eyre::Result<Vec<_>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
-        options.deduplication_strategy = match (
-            cli.deduplication,
-            cli.fallback,
-            cli.without_fallback,
-        ) {
-            (None, _, true) => None,
-            (Some(_), _, true) => {
-                eyre::bail!("cannot combine --without-fallback and --deduplication")
-            }
-            (Some(x), _, false) => match x {
-                Deduplication::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Deduplication::RetainBaseLanguages => {
-                    Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+        options.deduplication_strategy =
+            match (cli.deduplication, cli.fallback, cli.without_fallback) {
+                (None, _, true) => None,
+                (Some(_), _, true) => {
+                    eyre::bail!("cannot combine --without-fallback and --deduplication")
                 }
-                Deduplication::None => Some(icu_datagen::DeduplicationStrategy::None),
-            },
-            (None, fallback_mode, false) => match fallback_mode {
-                Fallback::Auto => None,
-                Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
-                Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::Preresolved => None,
-            },
-        };
+                (Some(x), _, false) => match x {
+                    Deduplication::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Deduplication::RetainBaseLanguages => {
+                        Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+                    }
+                    Deduplication::None => Some(icu_datagen::DeduplicationStrategy::None),
+                },
+                (None, fallback_mode, false) => match fallback_mode {
+                    Fallback::Auto => None,
+                    Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
+                    Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Fallback::Preresolved => None,
+                },
+            };
         options.runtime_fallback_location = match (
             cli.runtime_fallback_location,
             cli.fallback,
