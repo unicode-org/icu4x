@@ -325,7 +325,7 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
             ResourceReprType::StringV2 => {
                 if let Some(data_16_bit) = self.data_16_bit {
                     if descriptor.is_empty() {
-                        return visitor.visit_string(String::from(""));
+                        return visitor.visit_str("");
                     }
 
                     let input = get_subslice(data_16_bit, descriptor.value_as_16_bit_offset()..)?;

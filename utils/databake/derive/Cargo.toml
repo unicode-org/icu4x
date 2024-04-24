@@ -24,10 +24,10 @@ proc_macro = true
 path = "src/lib.rs"
 
 [dependencies]
-proc-macro2 = "1.0.27"
-quote = "1.0.9"
-syn = { version = "2", features = ["derive", "fold"] }
-synstructure = "0.13"
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true, features = ["derive", "fold", "proc-macro", "parsing"] }
+synstructure = { workspace = true }
 
 [dev-dependencies]
 databake = { path = "..", features = ["derive"]}

@@ -19,7 +19,7 @@ rust-version.workspace = true
 independent = true
 
 [dependencies]
-combine = "4.6.4"
+combine= { workspace = true, features = ["default"] }
 
 [dev-dependencies]
-walkdir = "2.3.2"
+walkdir = { workspace = true }
