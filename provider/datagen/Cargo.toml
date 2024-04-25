@@ -35,7 +35,6 @@ all-features = true
 
 # DatagenDriver
 displaydoc = { workspace = true }
-either = { workspace = true }
 icu_locid = { workspace = true, features = ["std"] }
 icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
 log = { workspace = true }
@@ -80,6 +79,7 @@ zerotrie = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true, features = ["serde", "yoke"], optional = true }
 
 ## External dependencies
+either = { workspace = true, optional = true }
 elsa = { workspace = true, optional = true }
 itertools = { workspace = true, features = ["use_alloc"], optional = true }
 ndarray = { workspace = true, optional = true }
@@ -132,6 +132,7 @@ provider = [
     "dep:tinystr",
     "dep:zerotrie",
     "dep:zerovec",
+    "dep:either",
     "dep:elsa",
     "dep:itertools",
     "dep:ndarray",
