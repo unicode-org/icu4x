@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::units::converter_ratio::ConverterRatio;
+use crate::units::convertible::Convertible;
 
 /// A converter for converting between two single or compound units.
 /// For example:
@@ -16,11 +16,11 @@ use crate::units::converter_ratio::ConverterRatio;
 #[derive(Debug, Clone)]
 pub struct UnitsConverter<N>(pub(crate) UnitsConverterInner<N>)
 where
-    N: ConverterRatio;
+    N: Convertible;
 
 impl<N> UnitsConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &N) -> N {
@@ -35,7 +35,7 @@ where
 #[derive(Debug, Clone)]
 pub(crate) enum UnitsConverterInner<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     Proportional(ProportionalConverter<N>),
     Reciprocal(ReciprocalConverter<N>),
@@ -44,7 +44,7 @@ where
 
 impl<N> UnitsConverterInner<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit based on the inner converter type.
     fn convert(&self, value: &N) -> N {
@@ -63,14 +63,14 @@ where
 #[derive(Debug, Clone)]
 pub(crate) struct ReciprocalConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     pub(crate) proportional: ProportionalConverter<N>,
 }
 
 impl<N> ReciprocalConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &N) -> N {
@@ -82,7 +82,7 @@ where
 #[derive(Debug, Clone)]
 pub(crate) struct OffsetConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// The proportional converter.
     pub(crate) proportional: ProportionalConverter<N>,
@@ -93,7 +93,7 @@ where
 
 impl<N> OffsetConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
     pub(crate) fn convert(&self, value: &N) -> N {
@@ -112,7 +112,7 @@ where
 #[derive(Debug, Clone)]
 pub(crate) struct ProportionalConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// The conversion rate between the input and output units.
     pub(crate) conversion_rate: N,
@@ -120,7 +120,7 @@ where
 
 impl<N> ProportionalConverter<N>
 where
-    N: ConverterRatio,
+    N: Convertible,
 {
     /// Converts the given value from the input unit to the output unit.
     pub fn convert(&self, value: &N) -> N {
