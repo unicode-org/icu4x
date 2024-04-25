@@ -1161,7 +1161,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     }
 }
 
-/// A pattern that has been interpolated and implements [`Writeable`].
+/// A pattern that has been interpolated and implements [`TryWriteable`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
