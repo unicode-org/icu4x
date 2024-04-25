@@ -962,17 +962,14 @@ fn select_locales_for_key(
         }
     }
 
-    let locale_family_everything = LocaleFamily::with_descendants(LanguageIdentifier::UND);
+    let mut include_full = false;
     if let LocalesWithOrWithoutFallback::WithFallback { locales, .. } = locales_fallback {
-        let value = locales_map.entry(LanguageIdentifier::UND).or_default();
         if locales.is_empty() {
             // If no locales are selected but fallback is enabled, select the root locale
+            let value = locales_map.entry(LanguageIdentifier::UND).or_default();
             value.is_selected = true;
         }
         if locales.contains(&LocaleFamily::full()) {
-            // Include all locales by including all descendants of the root locale
-            value.family = Some(&locale_family_everything);
-            value.is_selected = true;
             if locales.len() == 1 {
                 // Special case: return now so we don't need the fallbacker
                 let selected_locales = locales_map
@@ -981,6 +978,7 @@ fn select_locales_for_key(
                     .collect();
                 return Ok(selected_locales);
             }
+            include_full = true;
         }
     }
 
@@ -990,7 +988,11 @@ fn select_locales_for_key(
         if current_langid == LanguageIdentifier::UND {
             continue;
         }
-        let current_value = locales_map.get(&current_langid).unwrap();
+        let current_value = locales_map.get_mut(&current_langid).unwrap();
+        if include_full && !current_value.is_selected {
+            log::trace!("Including {current_langid}: the full locale family is present");
+            current_value.is_selected = true;
+        }
         let include_ancestors = current_value
             .family
             .map(|family| family.include_ancestors)
