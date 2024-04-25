@@ -13,6 +13,7 @@ use crate::units::{
     measureunit::{MeasureUnit, MeasureUnitParser},
     provider::Sign,
 };
+use num_traits::ToPrimitive;
 
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -302,7 +303,7 @@ impl ConverterFactory {
             return None;
         }
 
-        let conversion_rate_f64 = conversion_rate.to_f64()?;
+        let conversion_rate_f64 = conversion_rate.get_ratio().to_f64()?;
         let proportional = ProportionalConverter {
             conversion_rate,
             conversion_rate_f64,
@@ -317,7 +318,7 @@ impl ConverterFactory {
                 proportional,
             )))
         } else {
-            let offset_f64 = offset.to_f64()?;
+            let offset_f64 = offset.get_ratio().to_f64()?;
             Some(UnitsConverter(UnitsConverterInner::Offset(
                 OffsetConverter {
                     proportional,

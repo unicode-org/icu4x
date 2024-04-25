@@ -8,6 +8,7 @@ use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
 use num_bigint::BigInt;
 use num_rational::Ratio;
+use num_traits::ToPrimitive;
 
 #[test]
 fn test_cldr_unit_tests() {
@@ -61,7 +62,7 @@ fn test_cldr_unit_tests() {
             );
         }
 
-        let test_result_f64 = test.result.to_f64().unwrap();
+        let test_result_f64 = test.result.get_ratio().to_f64().unwrap();
         let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
 
         if diff_ratio_f64 > 0.000001 {

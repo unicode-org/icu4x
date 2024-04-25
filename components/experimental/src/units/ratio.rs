@@ -11,7 +11,6 @@ use alloc::borrow::Cow;
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
-use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
 use super::provider::{Base, SiPrefix};
