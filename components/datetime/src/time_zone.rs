@@ -773,7 +773,7 @@ impl TimeZoneFormatter {
     }
 
     /// Formats the seconds as a [`String`] with zero-padding.
-    fn format_offset_seconds<W: fmt::Write + ?Sized>(
+    fn format_offset_seconds<W: writeable::PartsWrite + ?Sized>(
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
     ) -> Result<fmt::Result, DateTimeError> {
@@ -932,7 +932,7 @@ impl Default for TimeZoneFormatterUnit {
 }
 
 pub(super) trait FormatTimeZone {
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -941,7 +941,7 @@ pub(super) trait FormatTimeZone {
 }
 
 impl FormatTimeZone for TimeZoneFormatterUnit {
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -964,7 +964,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
     /// Writes the time zone in long generic non-location format as defined by the UTS-35 spec.
     /// e.g. Pacific Time
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1002,7 +1002,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
     /// Writes the time zone in short generic non-location format as defined by the UTS-35 spec.
     /// e.g. PT
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1040,7 +1040,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
     /// Writes the time zone in short specific non-location format as defined by the UTS-35 spec.
     /// e.g. PDT
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1082,7 +1082,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
     /// Writes the time zone in long specific non-location format as defined by the UTS-35 spec.
     /// e.g. Pacific Daylight Time
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1127,7 +1127,7 @@ impl FormatTimeZone for LocalizedGmtFormat {
     ///
     /// You can see more information about our decision to resolve this conflict here:
     /// <https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing>
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1193,7 +1193,7 @@ impl FormatTimeZone for GenericLocationFormat {
     /// Writes the time zone in generic location format as defined by the UTS-35 spec.
     /// e.g. France Time
     /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1231,7 +1231,7 @@ impl FormatTimeZone for Iso8601Format {
     ///
     /// [`IsoMinutes`] can be required or optional.
     /// [`IsoSeconds`] can be optional or never.
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
@@ -1314,7 +1314,7 @@ impl FormatTimeZone for Iso8601Format {
 }
 
 impl FormatTimeZone for ExemplarCityFormat {
-    fn format<W: fmt::Write + ?Sized>(
+    fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
         time_zone: &impl TimeZoneInput,

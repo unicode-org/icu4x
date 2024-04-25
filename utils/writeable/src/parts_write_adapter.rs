@@ -4,7 +4,9 @@
 
 use crate::*;
 
-pub(crate) struct CoreWriteAsPartsWrite<W: fmt::Write + ?Sized>(pub W);
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct CoreWriteAsPartsWrite<W: fmt::Write + ?Sized>(pub W);
 
 impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<W> {
     #[inline]

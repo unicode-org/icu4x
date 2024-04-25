@@ -36,8 +36,9 @@ impl<'l> Writeable for FormattedZonedDateTime<'l> {
             self.zoned_datetime_format,
             &self.datetime,
             &self.time_zone,
-            sink,
+            &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
         )?;
+        debug_assert!(matches!(_lossy, Ok(())));
         Ok(())
     }
 
@@ -59,7 +60,7 @@ pub(crate) fn try_write_pattern<D, Z, W>(
 where
     D: DateTimeInput,
     Z: TimeZoneInput,
-    W: fmt::Write + ?Sized,
+    W: writeable::PartsWrite + ?Sized,
 {
     let mut r = Ok(());
 
@@ -78,26 +79,23 @@ where
         )
         .unwrap_or_else(|e| {
             r = Err(e);
-            todo!("fallback value")
+            todo!("fallback pattern")
         });
 
     let mut iter = pattern.items.iter().peekable();
     loop {
         match iter.next() {
-            Some(PatternItem::Field(field)) => try_write_field(
-                pattern.metadata,
-                field,
-                iter.peek(),
-                zoned_datetime_format,
-                &loc_datetime,
-                time_zone,
-                w,
-            )?
-            .unwrap_or_else(|e| {
-                if r.is_ok() {
-                    r = Err(e);
-                }
-            }),
+            Some(PatternItem::Field(field)) => {
+                r = r.and(try_write_field(
+                    pattern.metadata,
+                    field,
+                    iter.peek(),
+                    zoned_datetime_format,
+                    &loc_datetime,
+                    time_zone,
+                    w,
+                )?)
+            }
             Some(PatternItem::Literal(ch)) => w.write_char(ch)?,
             None => break,
         }
@@ -117,7 +115,7 @@ fn try_write_field<D, Z, W>(
 where
     D: DateTimeInput,
     Z: TimeZoneInput,
-    W: fmt::Write + ?Sized,
+    W: writeable::PartsWrite + ?Sized,
 {
     let date_symbols = zoned_datetime_format
         .datetime_format

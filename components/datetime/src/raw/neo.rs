@@ -490,7 +490,7 @@ where
     I: Iterator<Item = PatternItem> + 'b,
     'a: 'b,
 {
-    pub(crate) fn try_write_to<W: fmt::Write + ?Sized>(
+    pub(crate) fn try_write_to<W: writeable::PartsWrite + ?Sized>(
         self,
         sink: &mut W,
     ) -> Result<Result<(), Error>, fmt::Error> {

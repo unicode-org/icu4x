@@ -72,6 +72,9 @@ mod either;
 mod impls;
 mod ops;
 mod parts_write_adapter;
+pub mod adapters {
+    pub use super::parts_write_adapter::CoreWriteAsPartsWrite;
+}
 mod testing;
 mod try_writeable;
 

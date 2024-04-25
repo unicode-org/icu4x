@@ -147,7 +147,7 @@ size_test!(
 /// use icu::datetime::fields;
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::locid::locale;
-/// use writeable::assert_writeable_eq;
+/// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
@@ -166,7 +166,7 @@ size_test!(
 ///
 /// // Test it:
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -174,12 +174,11 @@ size_test!(
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
-/// use icu::datetime::TypedDateTimeNames;
-/// use icu::datetime::fields::FieldLength;
-/// use icu::datetime::fields;
+/// use icu::datetime::{Error, TypedDateTimeNames};
+/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::locid::locale;
-/// use writeable::Writeable;
+/// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
@@ -192,7 +191,12 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
 /// let mut buffer = String::new();
-/// assert!(names.with_pattern(&pattern).format(&datetime).try_write_to(&mut buffer).is_err());
+/// // Missing data is filled in on a best-effort basis, and an error is signaled.
+/// assert_try_writeable_eq!(
+///     names.with_pattern(&pattern).format(&datetime),
+///     "It is: <ICU4X ERROR> <ICU4X ERROR> 20 2023 at 11:35 <ICU4X ERROR>",
+///     Err(Error::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
+/// );
 /// ```
 #[derive(Debug)]
 pub struct TypedDateTimeNames<C: CldrCalendar> {
@@ -511,7 +515,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
@@ -526,7 +530,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// let pattern_str = "'Week' w 'of' Y";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     /// let date = Date::try_new_gregorian_date(2023, 12, 5).unwrap();
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_date(&date),
     ///     "Week 49 of 2023"
     /// );
@@ -619,7 +623,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
@@ -632,7 +636,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// // Load data for the pattern and format:
     /// let datetime =
     ///     DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
     ///         .unwrap()
@@ -1060,7 +1064,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian> =
@@ -1079,11 +1083,11 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// // Note: extended year -50 is year 51 BCE
     /// let date_bce = Date::try_new_gregorian_date(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian_date(1700, 11, 20).unwrap();
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_date(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_date(&date_ce),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
@@ -1110,7 +1114,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian> =
@@ -1128,19 +1132,19 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// let time_pm = Time::try_new(13, 41, 28, 0).unwrap();
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_time(&time_am),
     ///     "The time is: 11:04 AM"
     /// );
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_time(&time_pm),
     ///     "The time is: 1:41 PM"
     /// );
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_time(&time_noon),
     ///     "The time is: 12:00 noon"
     /// );
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_time(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
@@ -1174,11 +1178,10 @@ pub struct FormattedDateTimePattern<'a> {
 
 impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     type Error = Error;
-
-    fn try_write_to<W: fmt::Write + ?Sized>(
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
-        sink: &mut W,
-    ) -> Result<Result<(), Error>, fmt::Error> {
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         let loc_datetime =
             DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
         try_write_pattern(
@@ -1190,13 +1193,6 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
             self.names.fixed_decimal_formatter,
             sink,
         )
-    }
-
-    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut S,
-    ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        todo!()
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -1346,7 +1342,7 @@ mod tests {
     use super::*;
     use icu_calendar::{DateTime, Gregorian};
     use icu_locid::locale;
-    use writeable::assert_writeable_eq;
+    use writeable::assert_try_writeable_eq;
 
     #[test]
     fn test_basic_pattern_formatting() {
@@ -1376,9 +1372,10 @@ mod tests {
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
-        assert_writeable_eq!(
+        assert_try_writeable_eq!(
             formatted_pattern,
-            "It is Wed, October 25, 2023 A at 03:00 PM!"
+            "It is Wed, October 25, 2023 A at 03:00 PM!",
+            Ok(()),
         );
     }
 
@@ -1433,7 +1430,7 @@ mod tests {
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
-            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+            assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
     }
 
@@ -1504,7 +1501,7 @@ mod tests {
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
-            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+            assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
     }
 
@@ -1622,7 +1619,7 @@ mod tests {
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
-            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+            assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
     }
 
@@ -1704,7 +1701,7 @@ mod tests {
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = names.with_pattern(&pattern).format(&datetime);
 
-            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+            assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
         }
     }
 }
