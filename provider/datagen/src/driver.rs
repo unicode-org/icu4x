@@ -973,6 +973,14 @@ fn select_locales_for_key(
             // Include all locales by including all descendants of the root locale
             value.family = Some(&locale_family_everything);
             value.is_selected = true;
+            if locales.len() == 1 {
+                // Special case: return now so we don't need the fallbacker
+                let selected_locales = locales_map
+                    .into_iter()
+                    .flat_map(|(_, value)| value.data_locales)
+                    .collect();
+                return Ok(selected_locales);
+            }
         }
     }
 
