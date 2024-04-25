@@ -303,6 +303,7 @@ enum Fallback {
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum DeduplicationStrategy {
     Maximal,
+    RetainBaseLanguages,
     None,
 }
 
@@ -532,6 +533,9 @@ fn main() -> eyre::Result<()> {
             }
             (Some(x), _, false) => match x {
                 DeduplicationStrategy::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                DeduplicationStrategy::RetainBaseLanguages => {
+                    Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+                }
                 DeduplicationStrategy::None => Some(icu_datagen::DeduplicationStrategy::None),
             },
             (None, fallback_mode, false) => match fallback_mode {
