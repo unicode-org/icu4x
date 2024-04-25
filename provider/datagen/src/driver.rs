@@ -985,13 +985,18 @@ fn select_locales_for_key(
     // Fill in missing extensions and aux keys from parent locales,
     // and calculate which langids are ancestors and descendants.
     for current_langid in locales_map.keys().cloned().collect::<Vec<_>>() {
-        if current_langid == LanguageIdentifier::UND {
-            continue;
-        }
         let current_value = locales_map.get_mut(&current_langid).unwrap();
         if include_full && !current_value.is_selected {
             log::trace!("Including {current_langid}: the full locale family is present");
             current_value.is_selected = true;
+        }
+        if current_langid.language.is_empty() {
+            if current_langid != LanguageIdentifier::UND {
+                log::trace!("Including {current_langid}: variants of und are always included");
+                current_value.is_selected = true;
+            }
+            // Nothing left to be done here
+            continue;
         }
         let include_ancestors = current_value
             .family
