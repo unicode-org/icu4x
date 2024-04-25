@@ -21,7 +21,7 @@ use num_traits::Pow;
 use num_traits::{One, Zero};
 use zerovec::ZeroSlice;
 
-use super::converter_ratio::ConverterRatio;
+use super::convertable::Convertable;
 /// ConverterFactory is a factory for creating a converter.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
@@ -274,7 +274,7 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
-    pub fn converter<T: ConverterRatio>(
+    pub fn converter<T: Convertable>(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,

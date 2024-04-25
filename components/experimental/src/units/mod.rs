@@ -6,7 +6,7 @@ use displaydoc::Display;
 
 pub mod converter;
 pub mod converter_factory;
-pub mod converter_ratio;
+pub mod convertable;
 pub mod measureunit;
 pub mod power;
 pub mod provider;
