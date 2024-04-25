@@ -72,9 +72,6 @@ mod either;
 mod impls;
 mod ops;
 mod parts_write_adapter;
-pub mod adapters {
-    pub use super::parts_write_adapter::CoreWriteAsPartsWrite;
-}
 mod testing;
 mod try_writeable;
 
@@ -88,6 +85,7 @@ pub use try_writeable::TryWriteable;
 pub mod adapters {
     use super::*;
 
+    pub use parts_write_adapter::CoreWriteAsPartsWrite;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
     pub use try_writeable::WriteableAsTryWriteableInfallible;
 }
