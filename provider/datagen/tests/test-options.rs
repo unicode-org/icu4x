@@ -699,6 +699,51 @@ fn explicit_hybrid_without_descendants() {
 }
 
 #[test]
+fn explicit_hybrid_without_ancestors() {
+    const SELECTED_LOCALES: [LocaleFamily; 7] = [
+        LocaleFamily::without_ancestors(langid!("arc")), // Aramaic, not in supported list
+        LocaleFamily::without_ancestors(langid!("ar-EG")),
+        LocaleFamily::without_ancestors(langid!("ar-SA")),
+        LocaleFamily::without_ancestors(langid!("en-GB")),
+        LocaleFamily::without_ancestors(langid!("es")),
+        LocaleFamily::without_ancestors(langid!("sr-ME")),
+        LocaleFamily::without_ancestors(langid!("ru-Cyrl-RU")),
+    ];
+    let exported = export_to_map_1_5(
+        DatagenDriver::new()
+            .with_keys([HelloWorldV1Marker::KEY])
+            .with_locales_and_fallback(SELECTED_LOCALES, Default::default()),
+        &TestingProvider::with_decimal_symbol_like_data(),
+    );
+
+    // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    let locales = [
+        // "ar",           // excluded: ancestor of ar-EG
+        "ar-EG",           // explicit locale
+        "ar-EG-u-nu-latn", // explicit with extensions
+        "ar-SA",           // explicit locale, inheriting from ar
+        "ar-SA-u-nu-latn", // extensions should be included (#4533)
+        // "ar-u-nu-latn",    // excluded: ancestor of ar-EG
+        "arc", // Aramaic, inheriting from und
+        // "en",              // excluded: ancestor of en-GB
+        // "en-001",          // excluded: ancestor of en-GB
+        "en-GB", // explicit locale not in supported locales
+        // "en-ZA",        // not reachable
+        "es",    // explicit and supported
+        "es-AR", // descendant of es
+        // "ru",         // excluded: ancestor of ru-Cyrl-RU
+        "ru-Cyrl-RU", // explicit locale, even though it is not normalized
+        // "sr",           // not reachable from sr-ME
+        // "sr-Latn", // excluded: ancestor of sr-ME
+        "sr-ME", // explicit locale not in supported locales
+                 // "und", // excluded: ancestor of everything
+    ];
+
+    // Should return the exact explicit locales set.
+    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+}
+
+#[test]
 fn explicit_runtime_und() {
     let exported = export_to_map(
         DatagenDriver::new()
