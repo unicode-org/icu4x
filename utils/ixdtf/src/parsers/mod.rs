@@ -164,10 +164,12 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// let result = IsoDurationParser::new(duration_str).parse().unwrap();
 ///
-/// assert_eq!(result.years, 1);
-/// assert_eq!(result.months, 2);
-/// assert_eq!(result.weeks, 3);
-/// assert_eq!(result.days, 1);
+/// let date_duration = result.date.unwrap();
+///
+/// assert_eq!(date_duration.years, 1);
+/// assert_eq!(date_duration.months, 2);
+/// assert_eq!(date_duration.weeks, 3);
+/// assert_eq!(date_duration.days, 1);
 ///
 /// ```
 #[cfg(feature = "duration")]

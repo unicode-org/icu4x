@@ -58,7 +58,7 @@ impl IcuRatio {
         Self(Ratio::new(numerator, denominator))
     }
 
-    /// Returns the `Ratio<BigInt>` value of the ratio.
+    /// Returns the current [`IcuRatio`] as a [`Ratio`] of [`BigInt`].
     pub fn get_ratio(self) -> Ratio<BigInt> {
         self.0
     }
