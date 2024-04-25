@@ -918,8 +918,7 @@ fn select_locales_for_key(
         // Don't perform additional locale filtering
         return Ok(locales_map
             .into_values()
-            .map(|value| value.data_locales)
-            .flatten()
+            .flat_map(|value| value.data_locales)
             .collect());
     } else if key.path().get().starts_with("segmenter/lstm/") {
         locales_map.retain(|_, value| {
@@ -932,8 +931,7 @@ fn select_locales_for_key(
         // Don't perform additional locale filtering
         return Ok(locales_map
             .into_values()
-            .map(|value| value.data_locales)
-            .flatten()
+            .flat_map(|value| value.data_locales)
             .collect());
     } else if key.path().get().starts_with("collator/") {
         locales_map.retain(|_, value| {
@@ -1027,7 +1025,7 @@ fn select_locales_for_key(
         .filter(|(_, value)| value.is_selected)
         .flat_map(|(_, value)| value.data_locales)
         .collect();
-    return Ok(selected_locales);
+    Ok(selected_locales)
 }
 
 fn deduplicate_payloads<const MAXIMAL: bool>(
