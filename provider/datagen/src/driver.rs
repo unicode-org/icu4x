@@ -307,15 +307,18 @@ enum LocalesWithOrWithoutFallback {
 }
 
 impl LocalesWithOrWithoutFallback {
-    fn langid_families(&self) -> impl Iterator<Item = (&LanguageIdentifier, Option<&LocaleFamily>)> + '_ {
+    fn langid_families(
+        &self,
+    ) -> impl Iterator<Item = (&LanguageIdentifier, Option<&LocaleFamily>)> + '_ {
         match self {
             Self::WithFallback { locales, .. } => {
-                Either::Left(locales.iter().filter_map(|family| family.langid.as_ref().map(|langid| {
-                    (langid, Some(family))
-                }
-                )))
+                Either::Left(locales.iter().filter_map(|family| {
+                    family.langid.as_ref().map(|langid| (langid, Some(family)))
+                }))
             }
-            Self::WithoutFallback { locales } => Either::Right(locales.iter().map(|langid| (langid, None))),
+            Self::WithoutFallback { locales } => {
+                Either::Right(locales.iter().map(|langid| (langid, None)))
+            }
         }
     }
 }
@@ -890,7 +893,7 @@ fn select_locales_for_key(
     struct LocalesMapValue<'a> {
         family: Option<&'a LocaleFamily>,
         is_selected: bool,
-        data_locales: HashSet<DataLocale>
+        data_locales: HashSet<DataLocale>,
     }
     let mut locales_map: HashMap<LanguageIdentifier, LocalesMapValue> = Default::default();
     for locale in provider
@@ -913,7 +916,11 @@ fn select_locales_for_key(
             !value.data_locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(locales_map.into_values().map(|value| value.data_locales).flatten().collect());
+        return Ok(locales_map
+            .into_values()
+            .map(|value| value.data_locales)
+            .flatten()
+            .collect());
     } else if key.path().get().starts_with("segmenter/lstm/") {
         locales_map.retain(|_, value| {
             value.data_locales.retain(|locale| {
@@ -923,7 +930,11 @@ fn select_locales_for_key(
             !value.data_locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(locales_map.into_values().map(|value| value.data_locales).flatten().collect());
+        return Ok(locales_map
+            .into_values()
+            .map(|value| value.data_locales)
+            .flatten()
+            .collect());
     } else if key.path().get().starts_with("collator/") {
         locales_map.retain(|_, value| {
             value.data_locales.retain(|locale| {
@@ -946,9 +957,7 @@ fn select_locales_for_key(
 
     // Add the explicit langids to the map
     for (langid, maybe_family) in locales_fallback.langid_families() {
-        let value = locales_map
-            .entry(langid.clone())
-            .or_default();
+        let value = locales_map.entry(langid.clone()).or_default();
         value.is_selected = true;
         if *langid != LanguageIdentifier::UND {
             value.family = maybe_family;
@@ -976,7 +985,10 @@ fn select_locales_for_key(
             continue;
         }
         let current_value = locales_map.get(&current_langid).unwrap();
-        let include_ancestors = current_value.family.map(|family| family.include_ancestors).unwrap_or(false);
+        let include_ancestors = current_value
+            .family
+            .map(|family| family.include_ancestors)
+            .unwrap_or(false);
         let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
         let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
         let mut iter = fallbacker_with_config.fallback_for((&current_langid).into());
@@ -988,7 +1000,10 @@ fn select_locales_for_key(
                     log::trace!("Including {parent_langid}: ancestor of {current_langid}");
                     parent_value.is_selected = true;
                 }
-                let include_descendants = parent_value.family.map(|family| family.include_descendants).unwrap_or(false);
+                let include_descendants = parent_value
+                    .family
+                    .map(|family| family.include_descendants)
+                    .unwrap_or(false);
                 let parent_locales = parent_value.data_locales.clone();
                 let current_value = locales_map.get_mut(&current_langid).unwrap();
                 if include_descendants && !current_value.is_selected {
