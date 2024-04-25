@@ -5,6 +5,7 @@
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use displaydoc::Display;
+use either::Either;
 use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
 use icu_locid::ParserError;
@@ -95,7 +96,7 @@ impl LocaleFamily {
     /// - Descendants: "en-GB", "en-ZA", ...
     ///
     /// Stylized on the CLI as: "en-US"
-    pub fn with_descendants(langid: LanguageIdentifier) -> Self {
+    pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
             include_ancestors: true,
@@ -114,7 +115,7 @@ impl LocaleFamily {
     /// - Ancestors: "und", "en"
     ///
     /// Stylized on the CLI as: "^en-US"
-    pub fn without_descendants(langid: LanguageIdentifier) -> Self {
+    pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
             include_ancestors: true,
@@ -134,7 +135,7 @@ impl LocaleFamily {
     /// but it does _not_ contain the ancestors "en" and "und".
     ///
     /// Stylized on the CLI as: "%en-US"
-    pub fn without_ancestors(langid: LanguageIdentifier) -> Self {
+    pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
             include_ancestors: false,
@@ -147,7 +148,7 @@ impl LocaleFamily {
     /// For example, the family `::single("en-001")` contains only "en-001".
     ///
     /// Stylized on the CLI as: "@en-US"
-    pub fn single(langid: LanguageIdentifier) -> Self {
+    pub const fn single(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
             include_ancestors: false,
@@ -158,7 +159,7 @@ impl LocaleFamily {
     /// The family containing all locales.
     ///
     /// Stylized on the CLI as: "full"
-    pub fn full() -> Self {
+    pub const fn full() -> Self {
         Self {
             langid: None,
             include_ancestors: false,
@@ -303,6 +304,20 @@ enum LocalesWithOrWithoutFallback {
     WithoutFallback {
         locales: HashSet<LanguageIdentifier>,
     },
+}
+
+impl LocalesWithOrWithoutFallback {
+    fn langid_families(&self) -> impl Iterator<Item = (&LanguageIdentifier, Option<&LocaleFamily>)> + '_ {
+        match self {
+            Self::WithFallback { locales, .. } => {
+                Either::Left(locales.iter().filter_map(|family| family.langid.as_ref().map(|langid| {
+                    (langid, Some(family))
+                }
+                )))
+            }
+            Self::WithoutFallback { locales } => Either::Right(locales.iter().map(|langid| (langid, None))),
+        }
+    }
 }
 
 /// Configuration for a data export operation.
@@ -856,65 +871,6 @@ impl DatagenDriver {
     }
 }
 
-struct ExplicitImplicitLocaleSets {
-    explicit: HashSet<DataLocale>,
-    implicit: HashSet<DataLocale>,
-}
-
-/// Resolves the set of explicit langids and the supported locales into two sets of locales:
-///
-/// - `explicit` contains the explicit langids but with aux keys and extension keywords included.
-///   For example, if `ar-SA` is requested (explicit langid), and `ar` and `ar-u-nu-latn` are supported,
-///   then `ar-SA` and `ar-SA-u-nu-latn` will be returned as `explicit`.
-/// - `implcit` contains all supported locales reachable by fallback from an `explicit` locale.
-///   These locales can be included without increasing data payload size.
-fn make_explicit_implicit_sets(
-    key: DataKey,
-    explicit_langids: &mut dyn Iterator<Item = (&LanguageIdentifier, bool)>,
-    supported_map: &HashMap<LanguageIdentifier, HashSet<DataLocale>>,
-    fallbacker: &Lazy<
-        Result<LocaleFallbacker, DataError>,
-        impl FnOnce() -> Result<LocaleFallbacker, DataError>,
-    >,
-) -> Result<ExplicitImplicitLocaleSets, DataError> {
-    let mut implicit = HashSet::new();
-    let mut explicit: HashSet<DataLocale> = Default::default();
-    for (explicit_langid, include_ancestors) in explicit_langids {
-        explicit.insert(explicit_langid.into());
-        if let Some(locales) = supported_map.get(explicit_langid) {
-            explicit.extend(locales.iter().cloned()); // adds ar-EG-u-nu-latn
-        }
-        if explicit_langid == &LanguageIdentifier::UND {
-            continue;
-        }
-        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-        let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
-        let mut iter = fallbacker_with_config.fallback_for(explicit_langid.into());
-        loop {
-            if include_ancestors {
-                implicit.insert(iter.get().clone());
-            }
-            if iter.get().is_und() {
-                break;
-            }
-            // Inherit aux keys and extension keywords from parent locales
-            let iter_langid = iter.get().get_langid();
-            if let Some(locales) = supported_map.get(&iter_langid) {
-                if include_ancestors {
-                    implicit.extend(locales.iter().cloned()); // adds ar-u-nu-latn
-                }
-                for locale in locales {
-                    let mut morphed_locale = locale.clone();
-                    morphed_locale.set_langid(explicit_langid.clone());
-                    explicit.insert(morphed_locale); // adds ar-SA-u-nu-latn
-                }
-            }
-            iter.step();
-        }
-    }
-    Ok(ExplicitImplicitLocaleSets { explicit, implicit })
-}
-
 /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
 fn select_locales_for_key(
@@ -930,41 +886,47 @@ fn select_locales_for_key(
 ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
     // A map from langid to data locales. Keys that have aux keys or extension keywords
     // may have multiple data locales per langid.
-    let mut supported_map: HashMap<LanguageIdentifier, HashSet<DataLocale>> = Default::default();
+    #[derive(Default)]
+    struct LocalesMapValue<'a> {
+        family: Option<&'a LocaleFamily>,
+        is_selected: bool,
+        data_locales: HashSet<DataLocale>
+    }
+    let mut locales_map: HashMap<LanguageIdentifier, LocalesMapValue> = Default::default();
     for locale in provider
         .supported_locales_for_key(key)
         .map_err(|e| e.with_key(key))?
     {
         use std::collections::hash_map::Entry;
-        match supported_map.entry(locale.get_langid()) {
-            Entry::Occupied(mut entry) => entry.get_mut().insert(locale),
-            Entry::Vacant(entry) => entry.insert(Default::default()).insert(locale),
+        match locales_map.entry(locale.get_langid()) {
+            Entry::Occupied(mut entry) => entry.get_mut().data_locales.insert(locale),
+            Entry::Vacant(entry) => entry.insert(Default::default()).data_locales.insert(locale),
         };
     }
 
     if key.path().get().starts_with("segmenter/dictionary/") {
-        supported_map.retain(|_, locales| {
-            locales.retain(|locale| {
+        locales_map.retain(|_, value| {
+            value.data_locales.retain(|locale| {
                 let model = crate::dictionary_data_locale_to_model_name(locale);
                 segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
             });
-            !locales.is_empty()
+            !value.data_locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(supported_map.into_values().flatten().collect());
+        return Ok(locales_map.into_values().map(|value| value.data_locales).flatten().collect());
     } else if key.path().get().starts_with("segmenter/lstm/") {
-        supported_map.retain(|_, locales| {
-            locales.retain(|locale| {
+        locales_map.retain(|_, value| {
+            value.data_locales.retain(|locale| {
                 let model = crate::lstm_data_locale_to_model_name(locale);
                 segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
             });
-            !locales.is_empty()
+            !value.data_locales.is_empty()
         });
         // Don't perform additional locale filtering
-        return Ok(supported_map.into_values().flatten().collect());
+        return Ok(locales_map.into_values().map(|value| value.data_locales).flatten().collect());
     } else if key.path().get().starts_with("collator/") {
-        supported_map.retain(|_, locales| {
-            locales.retain(|locale| {
+        locales_map.retain(|_, value| {
+            value.data_locales.retain(|locale| {
                 let Some(collation) = locale
                     .get_unicode_ext(&key!("co"))
                     .and_then(|co| co.as_single_subtag().copied())
@@ -978,88 +940,79 @@ fn select_locales_for_key(
                         !["big5han", "gb2312"].contains(&collation.as_str())
                     }
             });
-            !locales.is_empty()
+            !value.data_locales.is_empty()
         });
     }
 
-    let locale_families = match locales_fallback {
-        // `FallbackMode::Preresolved` exports all supported locales whose langid matches
-        // one of the explicit locales. This ensures extensions are included. In addition, any
-        // explicit locales are added to the list, even if they themselves don't contain data;
-        // fallback should be performed upon exporting.
-        LocalesWithOrWithoutFallback::WithoutFallback { locales, .. } => {
-            let mut it = locales.iter().map(|langid| (langid, false));
-            let ExplicitImplicitLocaleSets { explicit, .. } =
-                make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
-            return Ok(explicit);
+    // Add the explicit langids to the map
+    for (langid, maybe_family) in locales_fallback.langid_families() {
+        let value = locales_map
+            .entry(langid.clone())
+            .or_default();
+        value.is_selected = true;
+        if *langid != LanguageIdentifier::UND {
+            value.family = maybe_family;
         }
-        // All other modes resolve to fallback-aware inclusion.
-        LocalesWithOrWithoutFallback::WithFallback { locales, .. } => locales,
-    };
-
-    let mut it = locale_families.iter().filter_map(|x| {
-        x.langid
-            .as_ref()
-            .map(|langid| (langid, x.include_ancestors))
-    });
-    let ExplicitImplicitLocaleSets { explicit, implicit } =
-        make_explicit_implicit_sets(key, &mut it, &supported_map, fallbacker)?;
-
-    let supported_and_explicit = supported_map
-        .into_values()
-        .flatten()
-        .chain(explicit.iter().cloned());
-
-    // Need to check this ahead of time because we can avoid loading the fallbacker.
-    if locale_families.contains(&LocaleFamily::full()) {
-        return Ok(supported_and_explicit.collect());
     }
 
-    let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+    let locale_family_everything = LocaleFamily::with_descendants(LanguageIdentifier::UND);
+    if let LocalesWithOrWithoutFallback::WithFallback { locales, .. } = locales_fallback {
+        let value = locales_map.entry(LanguageIdentifier::UND).or_default();
+        if locales.is_empty() {
+            // If no locales are selected but fallback is enabled, select the root locale
+            value.is_selected = true;
+        }
+        if locales.contains(&LocaleFamily::full()) {
+            // Include all locales by including all descendants of the root locale
+            value.family = Some(&locale_family_everything);
+            value.is_selected = true;
+        }
+    }
 
-    // TODO(#4629): Allow the exclusion of und
-    let include_und = true;
-
-    let result = supported_and_explicit
-        .filter(|locale_orig| {
-            let mut locale = locale_orig.clone();
-            locale.remove_aux();
-            if implicit.contains(&locale) {
-                return true;
-            }
-            if explicit.contains(&locale) {
-                return true;
-            }
-            if locale.is_langid_und() && include_und {
-                return true;
-            }
-            if locale.language().is_empty()
-                && matches!(
-                    key.fallback_config().priority,
-                    icu_provider::FallbackPriority::Region
-                )
-            {
-                return true;
-            }
-            // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
-            // This would get caught later on, but it makes datagen faster and quieter to catch it here
-            if key.path().get() == "datetime/skeletons@1" && !locale.has_unicode_ext() {
-                return false;
-            }
-            let mut iter = fallbacker_with_config.fallback_for(locale);
-            while !iter.get().is_und() {
-                if explicit.contains(iter.get()) {
-                    return true;
+    // Fill in missing extensions and aux keys from parent locales,
+    // and calculate which langids are ancestors and descendants.
+    for current_langid in locales_map.keys().cloned().collect::<Vec<_>>() {
+        if current_langid == LanguageIdentifier::UND {
+            continue;
+        }
+        let current_value = locales_map.get(&current_langid).unwrap();
+        let include_ancestors = current_value.family.map(|family| family.include_ancestors).unwrap_or(false);
+        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+        let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+        let mut iter = fallbacker_with_config.fallback_for((&current_langid).into());
+        loop {
+            // Inherit aux keys and extension keywords from parent locales
+            let parent_langid: LanguageIdentifier = iter.get().get_langid();
+            if let Some(parent_value) = locales_map.get_mut(&parent_langid) {
+                if include_ancestors && !parent_value.is_selected {
+                    log::trace!("Including {parent_langid}: ancestor of {current_langid}");
+                    parent_value.is_selected = true;
                 }
-                iter.step();
+                let include_descendants = parent_value.family.map(|family| family.include_descendants).unwrap_or(false);
+                let parent_locales = parent_value.data_locales.clone();
+                let current_value = locales_map.get_mut(&current_langid).unwrap();
+                if include_descendants && !current_value.is_selected {
+                    log::trace!("Including {current_langid}: descendant of {parent_langid}");
+                    current_value.is_selected = true;
+                }
+                for mut morphed_locale in parent_locales {
+                    morphed_locale.set_langid(current_langid.clone());
+                    current_value.data_locales.insert(morphed_locale);
+                }
             }
-            log::trace!("Filtered out: {key}/{locale_orig}"); // this will print aux keys too but it avoids a clone
-            false
-        })
-        .collect();
+            if iter.get().is_und() {
+                break;
+            }
+            iter.step();
+        }
+    }
 
-    Ok(result)
+    let selected_locales = locales_map
+        .into_iter()
+        .filter(|(_, value)| value.is_selected)
+        .flat_map(|(_, value)| value.data_locales)
+        .collect();
+    return Ok(selected_locales);
 }
 
 fn deduplicate_payloads<const MAXIMAL: bool>(
