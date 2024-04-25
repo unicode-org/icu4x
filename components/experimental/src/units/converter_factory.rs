@@ -13,7 +13,6 @@ use crate::units::{
     measureunit::{MeasureUnit, MeasureUnitParser},
     provider::Sign,
 };
-use num_traits::ToPrimitive;
 
 use icu_provider::prelude::*;
 use icu_provider::DataError;
