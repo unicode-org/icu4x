@@ -4,11 +4,12 @@
 
 use core::str::FromStr;
 
+use icu_experimental::units::converter::UnitsConverter;
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
 use num_bigint::BigInt;
 use num_rational::Ratio;
-use num_traits::ToPrimitive;
+use num_traits::Signed;
 
 #[test]
 fn test_cldr_unit_tests() {
@@ -47,15 +48,21 @@ fn test_cldr_unit_tests() {
             .try_from_identifier(test.output_unit.as_str())
             .unwrap();
 
-        let converter = converter_factory
+        let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
             .unwrap();
-        let result = converter.convert(&IcuRatio::from(1000));
-        let result_f64 = converter.convert_f64(1000.0);
+        let result = converter.convert(&Ratio::<BigInt>::from_str("1000").unwrap());
+
+        let converter_f64: UnitsConverter<f64> = converter_factory
+            .converter(&input_unit, &output_unit)
+            .unwrap();
+        let result_f64 = converter_f64.convert(&1000.0);
 
         // TODO: remove this extra clones by implementing Sub<&IcuRatio> & Div<&IcuRatio> for IcuRatio.
-        let diff_ratio = ((result.clone() - test.result.clone()) / test.result.clone()).abs();
-        if diff_ratio > IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(1000000))) {
+        let diff_ratio = ((result.clone() - test.result.clone().get_ratio())
+            / test.result.clone().get_ratio())
+        .abs();
+        if diff_ratio > Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
                 test.category, test.input_unit, test.output_unit, result, test.result
