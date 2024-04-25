@@ -37,7 +37,7 @@ class ICU4XUnitsConverter {
    * NOTE:
    * The conversion using floating-point operations is not as accurate as the conversion using ratios.
    * 
-   * See the [Rust documentation for `convert_f64`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert_f64) for more information.
+   * See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
    */
   double convert_f64(double value) const;
 

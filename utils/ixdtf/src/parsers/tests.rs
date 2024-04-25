@@ -538,7 +538,7 @@ fn temporal_valid_instant_strings() {
 #[cfg(feature = "duration")]
 fn temporal_duration_parsing() {
     use crate::parsers::{
-        records::{DurationFraction, DurationParseRecord, Sign},
+        records::{DateDurationRecord, DurationParseRecord, Sign, TimeDurationRecord},
         IsoDurationParser,
     };
 
@@ -562,14 +562,18 @@ fn temporal_duration_parsing() {
         sub_second,
         DurationParseRecord {
             sign: Sign::Negative,
-            years: 1,
-            months: 1,
-            weeks: 1,
-            days: 1,
-            hours: 1,
-            minutes: 1,
-            seconds: 1,
-            fraction: Some(DurationFraction::Seconds(123456789))
+            date: Some(DateDurationRecord {
+                years: 1,
+                months: 1,
+                weeks: 1,
+                days: 1,
+            }),
+            time: Some(TimeDurationRecord::Seconds {
+                hours: 1,
+                minutes: 1,
+                seconds: 1,
+                fraction: 123456789
+            })
         },
         "Failing to parse a valid Duration string: \"{}\" should pass.",
         durations[2]
@@ -580,14 +584,16 @@ fn temporal_duration_parsing() {
         test_result,
         DurationParseRecord {
             sign: Sign::Negative,
-            years: 1,
-            months: 0,
-            weeks: 3,
-            days: 0,
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
-            fraction: Some(DurationFraction::Hours(1_800_000_000_000)),
+            date: Some(DateDurationRecord {
+                years: 1,
+                months: 0,
+                weeks: 3,
+                days: 0,
+            }),
+            time: Some(TimeDurationRecord::Hours {
+                hours: 0,
+                fraction: 1_800_000_000_000,
+            })
         }
     );
 }
