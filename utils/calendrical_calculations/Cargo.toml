@@ -32,8 +32,8 @@ independent = true
 all-features = true
 
 [dependencies]
-core_maths = "0.1"
-displaydoc = { version = "0.2.3", default-features = false }
+core_maths = { workspace = true }
+displaydoc = { workspace = true }
 
 [features]
 std = []

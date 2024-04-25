@@ -7,9 +7,11 @@ use core::{
     str::FromStr,
 };
 
+use alloc::borrow::Cow;
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
+use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
 use super::provider::{Base, SiPrefix};
@@ -20,28 +22,57 @@ use super::provider::{Base, SiPrefix};
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IcuRatio(Ratio<BigInt>);
 
-#[derive(Debug)]
-pub enum IcuRatioError {
-    /// Represents an error when parsing a `BigInt` from a string.
-    /// For example, the string "1/23" is invalid because it contains a '/' character.
-    ///              the string "3A" is invalid because it contains a non-numeric character.
-    BigIntParseError(num_bigint::ParseBigIntError),
+/// Represents an error when the ratio string is invalid and cannot be parsed.
+#[derive(Debug, PartialEq)]
+pub enum RatioFromStrError {
+    /// Represents an error when the ratio string is divided by zero.
+    DivisionByZero,
 
-    /// Represents an error when parsing a ratio from a string.
-    /// For example, the string "1/0/2" is invalid because it contains more than one '/' character.
-    InvalidRatioString,
+    /// Represents an error when the ratio string contains multiple slashes.
+    /// For example, "1/2/3".
+    MultipleSlashes,
+
+    /// Represents an error when the ratio string contains non-numeric characters in fractions.
+    /// For example, "1/2A".
+    NonNumericCharactersInFractions,
+
+    /// Represents an error when the ratio string contains multiple scientific notations.
+    /// For example, "1.5E6E6".
+    MultipleScientificNotations,
+
+    /// Represents an error when the ratio string contains multiple decimal points.
+    /// For example, "1.5.6".
+    MultipleDecimalPoints,
+
+    /// Represents an error when the exponent part of the ratio string is not an integer.
+    /// For example, "1.5E6.5".
+    ExponentPartIsNotAnInteger,
+
+    /// Represents an error when the ratio string is dificient in some other way.
+    ParsingBigIntError(num_bigint::ParseBigIntError),
 }
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
-    pub(crate) fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
+    pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
+    }
+
+    /// Returns the an immutable reference to the internal ratio.
+    pub fn get_ratio(&self) -> &Ratio<BigInt> {
+        &self.0
     }
 
     /// Returns the reciprocal of the ratio.
     /// For example, the reciprocal of 2/3 is 3/2.
     pub(crate) fn recip(&self) -> Self {
         Self(self.0.recip())
+    }
+
+    // TODO: Make the function private after fixing the need for it in the tests.
+    /// Returns the value of the ratio as a `f64`.
+    pub fn to_f64(&self) -> Option<f64> {
+        Some(self.0.numer().to_f64()? / self.0.denom().to_f64()?)
     }
 
     /// Returns the absolute value of the ratio.
@@ -57,6 +88,11 @@ impl IcuRatio {
     /// Returns a Ratio with value of 10.
     pub fn ten() -> Self {
         Self(Ratio::from_integer(10.into()))
+    }
+
+    /// Returns true if the ratio is negative.
+    pub fn is_negative(&self) -> bool {
+        self.0.is_negative()
     }
 }
 
@@ -186,26 +222,275 @@ impl From<u32> for IcuRatio {
 }
 
 impl FromStr for IcuRatio {
-    type Err = IcuRatioError;
+    type Err = RatioFromStrError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut parts = s.split('/');
-        let numerator = parts.next();
-        let denominator = parts.next();
-        if parts.next().is_some() {
-            return Err(IcuRatioError::InvalidRatioString);
+    /// Converts a string representation of a ratio into an `IcuRatio`.
+    /// Supported string formats include:
+    /// ```
+    /// use icu_experimental::units::ratio::IcuRatio;
+    /// use num_bigint::BigInt;
+    /// use core::str::FromStr;
+    /// use num_traits::identities::Zero;
+    /// use num_rational::Ratio;
+    ///
+    ///
+    /// // Fractional notation
+    /// let ratio = IcuRatio::from_str("1/2").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(2))));
+    ///
+    /// // Decimal notation
+    /// let ratio = IcuRatio::from_str("1.5").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(3), BigInt::from(2))));
+    ///
+    /// // Scientific notation
+    /// let ratio = IcuRatio::from_str("1.5E6").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(1500000))));
+    ///
+    /// // Scientific notation with negative exponent
+    /// let ratio = IcuRatio::from_str("1.5E-6").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(15), BigInt::from(10000000))));
+    ///
+    /// // Scientific notation with commas
+    /// let ratio = IcuRatio::from_str("1,500E6").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(1500000000))));
+    ///
+    /// // Integer notation
+    /// let ratio = IcuRatio::from_str("1").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(1))));
+    ///
+    /// // Fractional notation with exponent
+    /// let ratio = IcuRatio::from_str("1/2E5").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(50000))));
+    ///
+    /// // Negative numbers in fractional notation
+    /// let ratio = IcuRatio::from_str("-1/2").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(-1), BigInt::from(2))));
+    ///
+    /// // Negative numbers in decimal notation
+    /// let ratio = IcuRatio::from_str("-1.5").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(-3), BigInt::from(2))));
+    ///
+    /// // Negative numbers in scientific notation
+    /// let ratio = IcuRatio::from_str("-1.5E6").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000))));
+    ///
+    /// // Negative numbers in scientific notation with commas
+    /// let ratio = IcuRatio::from_str("-1,500E6").unwrap();
+    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000000))));
+    ///
+    /// // Corner cases
+    ///
+    /// // Empty string
+    /// let ratio = IcuRatio::from_str("").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Single dot
+    /// let ratio = IcuRatio::from_str(".").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Single minus
+    /// let ratio = IcuRatio::from_str("-").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Single plus
+    /// let ratio = IcuRatio::from_str("+").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Only zeros after dot
+    /// let ratio = IcuRatio::from_str(".000").unwrap();
+    /// assert_eq!(ratio, IcuRatio::zero());
+    ///
+    /// // Error cases
+    /// // Division by zero
+    /// assert!(IcuRatio::from_str("1/0").is_err());
+    ///
+    /// // Multiple slashes
+    /// assert!(IcuRatio::from_str("1/2/3").is_err());
+    ///
+    /// // Non-numeric characters in fractions
+    /// assert!(IcuRatio::from_str("1/2A").is_err());
+    ///
+    /// // Multiple scientific notations
+    /// assert!(IcuRatio::from_str("1.5E6E6").is_err());
+    ///
+    /// // Multiple decimal points
+    /// assert!(IcuRatio::from_str("1.5.6").is_err());
+    ///
+    /// // Exponent part is not an integer
+    /// assert!(IcuRatio::from_str("1.5E6.5").is_err());
+    /// ```
+    /// NOTE:
+    ///    You can add as many commas as you want in the string, they will be disregarded.
+    fn from_str(number_str: &str) -> Result<Self, RatioFromStrError> {
+        /// This function interprets numeric strings and converts them into an `IcuRatio` object, supporting:
+        /// - Simple fractions: e.g., "1/2".
+        /// - Decimals: e.g., "1.5".
+        /// - Mixed fractions: e.g., "1.5/6", "1.4/5.6".
+        /// Note: Scientific notation is not supported.
+        fn parse_fraction(decimal: &str) -> Result<IcuRatio, RatioFromStrError> {
+            let mut components = decimal.split('/');
+            let numerator = components.next();
+            let denominator = components.next();
+            if components.next().is_some() {
+                return Err(RatioFromStrError::MultipleSlashes);
+            }
+
+            let numerator = match numerator {
+                Some(numerator) => parse_decimal(numerator)?,
+                None => IcuRatio::zero(),
+            };
+
+            let denominator = match denominator {
+                Some(denominator) => parse_decimal(denominator)?,
+                None => IcuRatio::one(),
+            };
+
+            if denominator.is_zero() {
+                return Err(RatioFromStrError::DivisionByZero);
+            }
+
+            Ok(numerator / denominator)
         }
 
-        let numerator = match numerator {
-            Some(num_str) => BigInt::from_str(num_str).map_err(IcuRatioError::BigIntParseError)?,
-            None => BigInt::zero(),
+        /// Parses a decimal number from a string input.
+        /// Accepts input in various decimal formats, including:
+        /// - Whole numbers: "1"
+        /// - Decimal numbers: "1.5"
+        /// An empty string input is interpreted as "0".
+        /// Note: Fractional inputs are not supported in this context.
+        fn parse_decimal(decimal: &str) -> Result<IcuRatio, RatioFromStrError> {
+            let is_negative = decimal.starts_with('-');
+            let mut dot_parts = decimal.split('.');
+            let integer_part = dot_parts.next();
+            let decimal_part = dot_parts.next();
+            if dot_parts.next().is_some() {
+                return Err(RatioFromStrError::MultipleDecimalPoints);
+            }
+
+            let integer_part = match integer_part {
+                None | Some("") => IcuRatio::zero(),
+                Some("-") | Some("+") => IcuRatio::zero(),
+                Some(integer_part) => IcuRatio(
+                    BigInt::from_str(integer_part)
+                        .map_err(RatioFromStrError::ParsingBigIntError)?
+                        .into(),
+                ),
+            };
+
+            let decimal_part = match decimal_part {
+                None | Some("") => return Ok(integer_part),
+                Some(decimal_part) => {
+                    let decimal_power = decimal_part.len() as i32;
+                    let decimal_part = IcuRatio(
+                        BigInt::from_str(decimal_part)
+                            .map_err(RatioFromStrError::ParsingBigIntError)?
+                            .into(),
+                    );
+
+                    decimal_part / IcuRatio::ten().pow(decimal_power) // Divide by 10^decimal_power
+                }
+            };
+
+            Ok(if is_negative {
+                integer_part - decimal_part
+            } else {
+                integer_part + decimal_part
+            })
+        }
+
+        let number_str = if number_str.contains(',') {
+            Cow::Owned(number_str.replace(',', ""))
+        } else {
+            Cow::Borrowed(number_str)
+        };
+        if number_str.is_empty() {
+            return Ok(IcuRatio::zero());
+        }
+
+        let mut parts = number_str.split(['e', 'E']);
+        let significand = parts.next();
+        let exponent = parts.next();
+        if parts.next().is_some() {
+            return Err(RatioFromStrError::MultipleScientificNotations);
+        }
+
+        let significand = match significand {
+            Some(significand) => parse_fraction(significand)?,
+            None => IcuRatio::one(),
         };
 
-        let denominator = match denominator {
-            Some(den_str) => BigInt::from_str(den_str).map_err(IcuRatioError::BigIntParseError)?,
-            None => BigInt::one(),
+        let exponent = match exponent {
+            Some(exponent) => {
+                let exponent = exponent
+                    .parse::<i32>()
+                    .map_err(|_| RatioFromStrError::ExponentPartIsNotAnInteger)?;
+                IcuRatio::ten().pow(exponent)
+            }
+            None => IcuRatio::one(),
         };
 
-        Ok(Self::from_big_ints(numerator, denominator))
+        Ok(significand * exponent)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_icu_ratio_from_str() {
+        let test_cases: &[(&str, Result<IcuRatio, RatioFromStrError>)] = &[
+            ("1/2", Ok(IcuRatio::from_big_ints(1.into(), 2.into()))),
+            ("1.5", Ok(IcuRatio::from_big_ints(3.into(), 2.into()))),
+            (
+                "-1.5",
+                Ok(IcuRatio::from_big_ints(BigInt::from(-3), 2.into())),
+            ),
+            (
+                "-.05",
+                Ok(IcuRatio::from_big_ints(BigInt::from(-5), 100.into())),
+            ),
+            ("+.05", Ok(IcuRatio::from_big_ints(5.into(), 100.into()))),
+            ("+1.5", Ok(IcuRatio::from_big_ints(15.into(), 10.into()))),
+            (
+                "1.5E6",
+                Ok(IcuRatio::from_big_ints(1500000.into(), 1.into())),
+            ),
+            (
+                "1.5E-6",
+                Ok(IcuRatio::from_big_ints(15.into(), 10000000.into())),
+            ),
+            (
+                "1,500E6",
+                Ok(IcuRatio::from_big_ints(1500000000.into(), 1.into())),
+            ),
+            (
+                "1.0005",
+                Ok(IcuRatio::from_big_ints(10005.into(), 10000.into())),
+            ),
+            (".0005", Ok(IcuRatio::from_big_ints(5.into(), 10000.into()))),
+            ("1", Ok(IcuRatio::from_big_ints(1.into(), 1.into()))),
+            ("", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (".", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            ("-", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            ("+", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (".000", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            (
+                "-1/2E5",
+                Ok(IcuRatio::from_big_ints(BigInt::from(-50000), 1.into())),
+            ),
+            ("1/2E5", Ok(IcuRatio::from_big_ints(50000.into(), 1.into()))),
+            // commas are neglected
+            (",,,,", Ok(IcuRatio::from_big_ints(0.into(), 1.into()))),
+            ("1/0", Err(RatioFromStrError::DivisionByZero)),
+            ("1/2/3", Err(RatioFromStrError::MultipleSlashes)),
+            // TODO: fix how to test the error returned as another error type.
+            // ("1/2A", Err(RatioFromStrError::ParsingBigIntError()),
+        ];
+
+        for (input, expected) in test_cases.iter() {
+            let actual = &IcuRatio::from_str(input);
+            assert_eq!(actual, expected, "Values do not match for input: {}", input);
+        }
     }
 }

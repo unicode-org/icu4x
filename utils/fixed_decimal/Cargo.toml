@@ -22,18 +22,18 @@ independent = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
-smallvec = "1.9"
+displaydoc = { workspace = true }
+smallvec = { workspace = true }
 writeable = { workspace = true }
 
-ryu = { version = "1.0.5", features = ["small"], optional = true }
+ryu = { workspace = true, features = ["small"], optional = true }
 
 [dev-dependencies]
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { workspace = true, features = ["js"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-rand = "0.8"
-rand_distr = "0.4"
-rand_pcg = "0.3"
+rand = { workspace = true }
+rand_distr = { workspace = true }
+rand_pcg = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

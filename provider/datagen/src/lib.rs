@@ -113,8 +113,6 @@ pub use provider::CollationHanDatabase;
 pub use provider::CoverageLevel;
 #[cfg(feature = "provider")]
 pub use provider::DatagenProvider;
-#[allow(deprecated)] // ugh
-pub use registry::*;
 
 #[cfg(feature = "baked_exporter")]
 pub mod baked_exporter;
@@ -160,6 +158,124 @@ pub(crate) mod rayon_prelude {
     }
     impl<T: IntoIterator> IntoParallelIterator for T {}
 }
+
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        /// List of all keys that are available.
+        ///
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
+        // Excludes the hello world key, as that generally should not be generated.
+        pub fn all_keys() -> Vec<DataKey> {
+            #[cfg(features = "experimental_components")]
+            log::warn!("The icu_datagen crates has been built with the `experimental_components` feature, so `all_keys` returns experimental keys");
+            vec![
+                $(
+                    <$marker>::KEY,
+                )+
+                $(
+                    #[cfg(feature = "experimental_components")]
+                    <$emarker>::KEY,
+                )+
+            ]
+        }
+
+        #[test]
+        fn no_key_collisions() {
+            let mut map = std::collections::BTreeMap::new();
+            let mut failed = false;
+            for key in all_keys() {
+                if let Some(colliding_key) = map.insert(key.hashed(), key) {
+                    println!(
+                        "{:?} and {:?} collide at {:?}",
+                        key.path(),
+                        colliding_key.path(),
+                        key.hashed()
+                    );
+                    failed = true;
+                }
+            }
+            if failed {
+                panic!();
+            }
+        }
+
+        /// Parses a human-readable key identifier into a [`DataKey`].
+        //  Supports the hello world key
+        /// # Example
+        /// ```
+        /// # use icu_provider::KeyedDataMarker;
+        /// assert_eq!(
+        ///     icu_datagen::key("list/and@1"),
+        ///     Some(icu_list::provider::AndListV1Marker::KEY),
+        /// );
+        /// ```
+        pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
+            use once_cell::sync::OnceCell;
+            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            let lookup = LOOKUP.get_or_init(|| {
+                [
+                    ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),
+                    $(
+                        ($path, Ok(<$marker>::KEY)),
+                    )+
+                    $(
+                        #[cfg(feature = "experimental_components")]
+                        ($epath, Ok(<$emarker>::KEY)),
+                        #[cfg(not(feature = "experimental_components"))]
+                        ($epath, Err(stringify!(feature = "experimental_components"))),
+                    )+
+
+                ]
+                .into_iter()
+                .collect()
+            });
+            let path = string.as_ref();
+            match lookup.get(path).copied() {
+                None => {
+                    log::warn!("Unknown key {path:?}");
+                    None
+                },
+                Some(Err(feature)) => {
+                    log::warn!("Key {path:?} requires {feature}");
+                    None
+                },
+                Some(Ok(key)) => Some(key)
+            }
+        }
+
+        #[test]
+        fn test_paths_correct() {
+            $(
+                assert_eq!(<$marker>::KEY.path().get(), $path);
+            )+
+            $(
+                assert_eq!(<$emarker>::KEY.path().get(), $epath);
+            )+
+        }
+
+        #[macro_export]
+        #[doc(hidden)]
+        macro_rules! make_exportable_provider {
+            ($ty:ty) => {
+                icu_provider::make_exportable_provider!(
+                    $ty,
+                    [
+                        icu_provider::hello_world::HelloWorldV1Marker,
+                        $(
+                            $marker,
+                        )+
+                        $(
+                            #[cfg(feature = "experimental_components")]
+                            $emarker,
+                        )+
+                    ]
+                );
+            }
+        }
+    }
+}
+crate::registry!(cb);
 
 /// Defines how fallback will apply to the generated data.
 ///
@@ -672,6 +788,21 @@ fn test_keys_from_bin() {
 }
 
 // SEMVER GRAVEYARD
+
+/// Same as `all_keys`.
+///
+/// Note that since v1.3, `all_keys` also contains experimental keys for which the
+/// corresponding Cargo features has been enabled.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(
+    since = "1.3.0",
+    note = "use `all_keys` with the required cargo features"
+)]
+#[cfg(feature = "legacy_api")]
+pub fn all_keys_with_experimental() -> Vec<DataKey> {
+    all_keys()
+}
 
 #[cfg(feature = "legacy_api")]
 #[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]

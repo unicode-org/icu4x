@@ -41,6 +41,11 @@ mod calendar_islamicobservationalcache_v1;
 #[doc(inline)]
 pub use __impl_calendar_islamicobservationalcache_v1 as impl_calendar_islamicobservationalcache_v1;
 #[macro_use]
+#[path = "macros/calendar_islamicummalquracache_v1.rs.data"]
+mod calendar_islamicummalquracache_v1;
+#[doc(inline)]
+pub use __impl_calendar_islamicummalquracache_v1 as impl_calendar_islamicummalquracache_v1;
+#[macro_use]
 #[path = "macros/calendar_japanese_v1.rs.data"]
 mod calendar_japanese_v1;
 #[doc(inline)]
