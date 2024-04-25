@@ -4,9 +4,9 @@
 
 use displaydoc::Display;
 
-pub mod convertable;
 pub mod converter;
 pub mod converter_factory;
+pub mod convertible;
 pub mod measureunit;
 pub mod power;
 pub mod provider;

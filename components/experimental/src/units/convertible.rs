@@ -8,7 +8,7 @@ use num_traits::ToPrimitive;
 
 // TODO: add Mul & Add for references to avoid cloning.
 /// A trait for types that can be converted between two units.
-pub trait Convertable: Clone {
+pub trait Convertible: Clone {
     /// Adds two values by reference, avoiding data cloning.
     fn add_refs(&self, other: &Self) -> Self;
 
@@ -22,7 +22,7 @@ pub trait Convertable: Clone {
     fn reciprocal(&self) -> Self;
 }
 
-impl Convertable for Ratio<BigInt> {
+impl Convertible for Ratio<BigInt> {
     fn mul_refs(&self, other: &Self) -> Self {
         self * other
     }
@@ -40,7 +40,7 @@ impl Convertable for Ratio<BigInt> {
     }
 }
 
-impl Convertable for f64 {
+impl Convertible for f64 {
     fn mul_refs(&self, other: &Self) -> Self {
         self * other
     }
