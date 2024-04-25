@@ -5,7 +5,6 @@
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use displaydoc::Display;
-use either::Either;
 use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
 use icu_locid::ParserError;
@@ -298,29 +297,12 @@ pub struct FallbackOptions {
 #[derive(Debug, Clone)]
 enum LocalesWithOrWithoutFallback {
     WithFallback {
-        locales: HashSet<LocaleFamily>,
+        families: HashSet<LocaleFamily>,
         options: FallbackOptions,
     },
     WithoutFallback {
-        locales: HashSet<LanguageIdentifier>,
+        langids: HashSet<LanguageIdentifier>,
     },
-}
-
-impl LocalesWithOrWithoutFallback {
-    fn langid_families(
-        &self,
-    ) -> impl Iterator<Item = (&LanguageIdentifier, Option<&LocaleFamily>)> + '_ {
-        match self {
-            Self::WithFallback { locales, .. } => {
-                Either::Left(locales.iter().filter_map(|family| {
-                    family.langid.as_ref().map(|langid| (langid, Some(family)))
-                }))
-            }
-            Self::WithoutFallback { locales } => {
-                Either::Right(locales.iter().map(|langid| (langid, None)))
-            }
-        }
-    }
 }
 
 /// Configuration for a data export operation.
@@ -427,7 +409,7 @@ impl DatagenDriver {
     ) -> Self {
         Self {
             locales_fallback: Some(LocalesWithOrWithoutFallback::WithoutFallback {
-                locales: locales.into_iter().collect(),
+                langids: locales.into_iter().collect(),
             }),
             ..self
         }
@@ -447,7 +429,7 @@ impl DatagenDriver {
     ) -> Self {
         Self {
             locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback {
-                locales: locales.into_iter().collect(),
+                families: locales.into_iter().collect(),
                 options,
             }),
             ..self
@@ -582,7 +564,7 @@ impl DatagenDriver {
             // 1.4 API
             (_, Some(legacy_locales), FallbackMode::PreferredForExporter) => {
                 LocalesWithOrWithoutFallback::WithFallback {
-                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
+                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: None,
                         deduplication_strategy: None,
@@ -591,7 +573,7 @@ impl DatagenDriver {
             }
             (_, Some(legacy_locales), FallbackMode::Runtime) => {
                 LocalesWithOrWithoutFallback::WithFallback {
-                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
+                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::Internal),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
@@ -600,7 +582,7 @@ impl DatagenDriver {
             }
             (_, Some(legacy_locales), FallbackMode::RuntimeManual) => {
                 LocalesWithOrWithoutFallback::WithFallback {
-                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
+                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::Maximal),
@@ -609,7 +591,7 @@ impl DatagenDriver {
             }
             (_, Some(Some(locales)), FallbackMode::Preresolved) => {
                 LocalesWithOrWithoutFallback::WithoutFallback {
-                    locales: locales.into_iter().collect(),
+                    langids: locales.into_iter().collect(),
                 }
             }
             (_, Some(None), FallbackMode::Preresolved) => {
@@ -619,7 +601,7 @@ impl DatagenDriver {
             }
             (_, Some(legacy_locales), FallbackMode::Hybrid) => {
                 LocalesWithOrWithoutFallback::WithFallback {
-                    locales: map_legacy_locales_to_locales_with_expansion(legacy_locales),
+                    families: map_legacy_locales_to_locales_with_expansion(legacy_locales),
                     options: FallbackOptions {
                         runtime_fallback_location: Some(RuntimeFallbackLocation::External),
                         deduplication_strategy: Some(DeduplicationStrategy::None),
@@ -639,7 +621,7 @@ impl DatagenDriver {
         }
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback { locales } => {
+            LocalesWithOrWithoutFallback::WithoutFallback { langids: locales } => {
                 let mut sorted_locales =
                     locales.iter().map(ToString::to_string).collect::<Vec<_>>();
                 sorted_locales.sort();
@@ -649,7 +631,7 @@ impl DatagenDriver {
                 );
                 (false, DeduplicationStrategy::None)
             }
-            LocalesWithOrWithoutFallback::WithFallback { options, locales } => {
+            LocalesWithOrWithoutFallback::WithFallback { options, families: locales } => {
                 let uses_internal_fallback = match options.runtime_fallback_location {
                     None => sink.supports_built_in_fallback(),
                     Some(RuntimeFallbackLocation::Internal) => true,
@@ -954,23 +936,27 @@ fn select_locales_for_key(
     }
 
     // Add the explicit langids to the map
-    for (langid, maybe_family) in locales_fallback.langid_families() {
-        let value = locales_map.entry(langid.clone()).or_default();
-        value.is_selected = true;
-        if *langid != LanguageIdentifier::UND {
-            value.family = maybe_family;
-        }
-    }
-
     let mut include_full = false;
-    if let LocalesWithOrWithoutFallback::WithFallback { locales, .. } = locales_fallback {
-        if locales.is_empty() {
-            // If no locales are selected but fallback is enabled, select the root locale
-            let value = locales_map.entry(LanguageIdentifier::UND).or_default();
-            value.is_selected = true;
-        }
-        if locales.contains(&LocaleFamily::full()) {
-            if locales.len() == 1 {
+    match locales_fallback {
+        LocalesWithOrWithoutFallback::WithFallback { families, .. } => {
+            if families.is_empty() {
+                // If no locales are selected but fallback is enabled, select the root locale
+                let value = locales_map.entry(LanguageIdentifier::UND).or_default();
+                value.is_selected = true;
+            }
+            for family in families {
+                let Some(langid) = family.langid.as_ref() else {
+                    debug_assert_eq!(*family, LocaleFamily::full());
+                    include_full = true;
+                    continue;
+                };
+                let value = locales_map.entry(langid.clone()).or_default();
+                value.is_selected = true;
+                if *langid != LanguageIdentifier::UND {
+                    value.family = Some(family);
+                }
+            }
+            if include_full && families.len() == 1 {
                 // Special case: return now so we don't need the fallbacker
                 let selected_locales = locales_map
                     .into_iter()
@@ -978,7 +964,12 @@ fn select_locales_for_key(
                     .collect();
                 return Ok(selected_locales);
             }
-            include_full = true;
+        }
+        LocalesWithOrWithoutFallback::WithoutFallback { langids: locales } => {
+            for langid in locales {
+                let value = locales_map.entry(langid.clone()).or_default();
+                value.is_selected = true;
+            }
         }
     }
 
@@ -1215,7 +1206,7 @@ fn test_collation_filtering() {
             &crate::provider::DatagenProvider::new_testing(),
             icu_collator::provider::CollationDataV1Marker::KEY,
             &LocalesWithOrWithoutFallback::WithoutFallback {
-                locales: [cas.language.clone()].into_iter().collect(),
+                langids: [cas.language.clone()].into_iter().collect(),
             },
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
