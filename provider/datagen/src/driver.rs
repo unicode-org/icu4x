@@ -631,7 +631,7 @@ impl DatagenDriver {
                 );
                 (false, DeduplicationStrategy::None)
             }
-            LocalesWithOrWithoutFallback::WithFallback { options, families: locales } => {
+            LocalesWithOrWithoutFallback::WithFallback { options, families } => {
                 let uses_internal_fallback = match options.runtime_fallback_location {
                     None => sink.supports_built_in_fallback(),
                     Some(RuntimeFallbackLocation::Internal) => true,
@@ -649,7 +649,7 @@ impl DatagenDriver {
                     Some(x) => x,
                 };
                 let mut sorted_locales =
-                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
+                    families.iter().map(ToString::to_string).collect::<Vec<_>>();
                 sorted_locales.sort();
                 log::info!(
                     "Datagen configured with {}, {}, and these locales: {:?}",
