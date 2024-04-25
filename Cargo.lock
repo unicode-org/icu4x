@@ -1371,6 +1371,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "either",
+ "litemap",
  "postcard",
  "serde",
  "serde_json",

@@ -9,7 +9,8 @@ use core::fmt::Display;
 
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-type HumanReadablePattern<'a, B> = Vec<PatternItemCow<'a, <B as PatternBackend>::PlaceholderKey>>;
+type HumanReadablePattern<'a, B> =
+    Vec<PatternItemCow<'a, <B as PatternBackend>::PlaceholderKeyCow<'a>>>;
 
 impl<'de, 'data, B, Store> Deserialize<'de> for Pattern<B, Store>
 where
@@ -17,7 +18,7 @@ where
     B: PatternBackend,
     B::Store: ToOwned + 'de,
     &'de B::Store: Deserialize<'de>,
-    B::PlaceholderKey: Deserialize<'de>,
+    B::PlaceholderKeyCow<'data>: Deserialize<'de>,
     Store: TryFrom<Cow<'data, B::Store>> + AsRef<B::Store>,
     Store::Error: Display,
 {
@@ -53,7 +54,7 @@ impl<B, Store> Serialize for Pattern<B, Store>
 where
     B: PatternBackend,
     B::Store: Serialize,
-    B::PlaceholderKey: Serialize,
+    for<'a> B::PlaceholderKeyCow<'a>: Serialize + From<B::PlaceholderKey<'a>>,
     Store: AsRef<B::Store>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
