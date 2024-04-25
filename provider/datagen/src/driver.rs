@@ -1009,6 +1009,14 @@ fn select_locales_for_key(
                     current_value.is_selected = true;
                 }
                 for mut morphed_locale in parent_locales {
+                    // Special case: don't pull -u-co up from the root.
+                    // TODO(#1964): Consider changing this behavior.
+                    if parent_langid == LanguageIdentifier::UND
+                        && morphed_locale
+                            .contains_unicode_ext(&icu_locid::extensions::unicode::key!("co"))
+                    {
+                        continue;
+                    }
                     morphed_locale.set_langid(current_langid.clone());
                     current_value.data_locales.insert(morphed_locale);
                 }
