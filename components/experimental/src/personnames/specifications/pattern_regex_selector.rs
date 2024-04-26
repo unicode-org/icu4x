@@ -184,22 +184,22 @@ impl FromStr for NameField {
 
         let field_modifier_1 = value_iter
             .next()
-            .map(|field| FieldModifier::from_str(field))
+            .map(FieldModifier::from_str)
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
         let field_modifier_2 = value_iter
             .next()
-            .map(|field| FieldModifier::from_str(field))
+            .map(FieldModifier::from_str)
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
         let field_modifier_3 = value_iter
             .next()
-            .map(|field| FieldModifier::from_str(field))
+            .map(FieldModifier::from_str)
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
         let field_modifier_4 = value_iter
             .next()
-            .map(|field| FieldModifier::from_str(field))
+            .map(FieldModifier::from_str)
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
 
@@ -212,9 +212,7 @@ impl FromStr for NameField {
     }
 }
 
-pub fn to_person_name_pattern<'pattern_lt>(
-    value: &'pattern_lt str,
-) -> Result<PersonNamePattern, PersonNamesFormatterError> {
+pub fn to_person_name_pattern(value: &str) -> Result<PersonNamePattern, PersonNamesFormatterError> {
     let mut name_fields_map: Vec<(NameField, Cow<str>)> = Vec::new();
 
     let parsed_pattern = MultiNamedPlaceholderPattern::try_from_str(value)?;

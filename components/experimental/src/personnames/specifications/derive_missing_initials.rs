@@ -33,7 +33,7 @@ pub fn derive_missing_initials(
                 modifier: requested_field.modifier.with_length(FieldLength::Auto),
             })
             .split(' ')
-            .filter_map(|s| s.trim().chars().nth(0));
+            .filter_map(|s| s.trim().chars().next());
 
         let mut interpolated_initials =
             initials.map(|initial| initial_pattern.interpolate((initial,)));
@@ -44,7 +44,7 @@ pub fn derive_missing_initials(
             .unwrap_or(String::new());
 
         // TODO: Interpolate these strings without so many allocations
-        while let Some(s) = interpolated_initials.next() {
+        for s in interpolated_initials {
             output = initial_sequence_pattern
                 .interpolate((output, s.write_to_string().into_owned()))
                 .write_to_string()
