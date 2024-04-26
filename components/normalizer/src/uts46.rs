@@ -8,8 +8,6 @@
 //! This is meant to be used as a building block of an UTS 46
 //! implementation, such as the `idna` crate.
 
-use core::char::REPLACEMENT_CHARACTER;
-
 use crate::CanonicalCompositionsV1Marker;
 use crate::CanonicalDecompositionDataV1Marker;
 use crate::CanonicalDecompositionTablesV1Marker;
