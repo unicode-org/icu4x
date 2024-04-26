@@ -49,6 +49,9 @@ class ICU4XBidi {
    * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
    * 
    * Lifetimes: `text` must live at least as long as the output.
+   * 
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   ICU4XBidiInfo for_text(const std::string_view text, uint8_t default_level) const;
 

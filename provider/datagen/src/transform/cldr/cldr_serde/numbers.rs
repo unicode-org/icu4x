@@ -14,41 +14,41 @@ use std::collections::HashMap;
 use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Symbols {
+pub(in crate::provider) struct Symbols {
     // This list is not comprehensive; add more fields when needed
-    pub decimal: String,
-    pub group: String,
+    pub(in crate::provider) decimal: String,
+    pub(in crate::provider) group: String,
     #[serde(rename = "minusSign")]
-    pub minus_sign: String,
+    pub(in crate::provider) minus_sign: String,
     #[serde(rename = "plusSign")]
-    pub plus_sign: String,
+    pub(in crate::provider) plus_sign: String,
     #[serde(rename = "percentSign")]
-    pub percent_sign: String,
+    pub(in crate::provider) percent_sign: String,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct DecimalFormats {
-    pub standard: String,
-    pub long: DecimalFormatLength,
-    pub short: DecimalFormatLength,
+pub(in crate::provider) struct DecimalFormats {
+    pub(in crate::provider) standard: String,
+    pub(in crate::provider) long: DecimalFormatLength,
+    pub(in crate::provider) short: DecimalFormatLength,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct DecimalFormatLength {
+pub(in crate::provider) struct DecimalFormatLength {
     #[serde(rename = "decimalFormat")]
-    pub decimal_format: DecimalFormat,
+    pub(in crate::provider) decimal_format: DecimalFormat,
 }
 
 #[derive(PartialEq, Debug, Default)]
-pub struct DecimalFormat {
-    pub patterns: Vec<CompactDecimalPattern>,
+pub(in crate::provider) struct DecimalFormat {
+    pub(in crate::provider) patterns: Vec<CompactDecimalPattern>,
 }
 
 #[derive(PartialEq, Debug, Default)]
-pub struct CompactDecimalPattern {
-    pub compact_decimal_type: String,
-    pub compact_decimal_count: String,
-    pub pattern: String,
+pub(in crate::provider) struct CompactDecimalPattern {
+    pub(in crate::provider) compact_decimal_type: String,
+    pub(in crate::provider) compact_decimal_count: String,
+    pub(in crate::provider) pattern: String,
 }
 
 impl<'de> Deserialize<'de> for DecimalFormat {
@@ -89,34 +89,34 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CurrencyFormattingPatterns {
+pub(in crate::provider) struct CurrencyFormattingPatterns {
     /// Standard pattern
-    pub standard: String,
+    pub(in crate::provider) standard: String,
 
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
-    pub standard_alpha_next_to_number: Option<String>,
+    pub(in crate::provider) standard_alpha_next_to_number: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct PercentFormattingPatterns {
+pub(in crate::provider) struct PercentFormattingPatterns {
     /// Standard pattern
-    pub standard: String,
+    pub(in crate::provider) standard: String,
 }
 
 #[derive(PartialEq, Debug, Default)]
-pub struct NumberingSystemData {
+pub(in crate::provider) struct NumberingSystemData {
     /// Map from numbering system to symbols
-    pub symbols: HashMap<TinyStr8, Symbols>,
+    pub(in crate::provider) symbols: HashMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
-    pub formats: HashMap<TinyStr8, DecimalFormats>,
+    pub(in crate::provider) formats: HashMap<TinyStr8, DecimalFormats>,
     /// Map from numbering system to patterns
-    pub currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
+    pub(in crate::provider) currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
     /// Map from numbering system to percent patterns
-    pub percent_patterns: HashMap<TinyStr8, PercentFormattingPatterns>,
+    pub(in crate::provider) percent_patterns: HashMap<TinyStr8, PercentFormattingPatterns>,
 }
 
-pub struct NumberingSystemDataVisitor;
+pub(in crate::provider) struct NumberingSystemDataVisitor;
 
 impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
     type Value = NumberingSystemData;
@@ -177,19 +177,19 @@ impl<'de> Deserialize<'de> for NumberingSystemData {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Numbers {
+pub(in crate::provider) struct Numbers {
     #[serde(rename = "defaultNumberingSystem")]
-    pub default_numbering_system: TinyStr8,
+    pub(in crate::provider) default_numbering_system: TinyStr8,
     #[serde(rename = "minimumGroupingDigits")]
     #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
-    pub minimum_grouping_digits: u8,
+    pub(in crate::provider) minimum_grouping_digits: u8,
     #[serde(flatten)]
-    pub numsys_data: NumberingSystemData,
+    pub(in crate::provider) numsys_data: NumberingSystemData,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangNumbers {
-    pub numbers: Numbers,
+pub(in crate::provider) struct LangNumbers {
+    pub(in crate::provider) numbers: Numbers,
 }
 
-pub type Resource = super::LocaleResource<LangNumbers>;
+pub(in crate::provider) type Resource = super::LocaleResource<LangNumbers>;

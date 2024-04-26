@@ -38,7 +38,7 @@ pub mod ffi {
 
     impl ICU4XTitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
-        #[diplomat::attr(dart, rename = "default")]
+        #[diplomat::attr(supports = constructors, constructor)]
         pub fn default_options() -> ICU4XTitlecaseOptionsV1 {
             // named default_options to avoid keyword clashes
             Self {
@@ -55,6 +55,7 @@ pub mod ffi {
     impl ICU4XCaseMapper {
         /// Construct a new ICU4XCaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapper>, ICU4XError> {
             Ok(Box::new(ICU4XCaseMapper(call_constructor!(
                 CaseMapper::new [r => Ok(r)],
@@ -249,6 +250,7 @@ pub mod ffi {
         /// Construct a new ICU4XCaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XCaseMapCloser>, ICU4XError> {
             Ok(Box::new(ICU4XCaseMapCloser(call_constructor!(
                 CaseMapCloser::new [r => Ok(r)],
@@ -296,6 +298,7 @@ pub mod ffi {
         /// Construct a new `ICU4XTitlecaseMapper` instance
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XTitlecaseMapper>, ICU4XError> {

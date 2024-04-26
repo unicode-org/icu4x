@@ -97,6 +97,11 @@ const _: () = {
     icu_datetime_data::impl_datetime_patterns_datetime_v1!(Baked);
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_patterns_time_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_time_skeleton_v1!(Baked);
+
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_gregory_skeleton_v1!(Baked);
 
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_buddhist_months_v1!(Baked);
@@ -229,6 +234,10 @@ pub const KEYS: &[DataKey] = &[
     neo::DateTimePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::TimePatternV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::TimeNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::GregorianDateNeoSkeletonPatternsV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::BuddhistYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]

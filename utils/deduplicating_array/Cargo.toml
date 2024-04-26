@@ -18,11 +18,11 @@ rust-version.workspace = true
 independent = true
 
 [dependencies]
-serde = { version = "1.0", default-features = false, features = ["alloc", "derive"] }
+serde = { workspace = true, features = ["alloc", "derive"] }
 
 [dev-dependencies]
-serde_json = "1.0"
-postcard = { version = "1.0.0", features = ["alloc"], default_features = false }
+serde_json = { workspace = true }
+postcard = { workspace = true, features = ["alloc"] }
 
 [[example]]
 name = "postcard"

@@ -134,7 +134,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `has_minutes`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
   ///
   /// Throws [Error] on failure.
-  bool gmtOffsetHasMinutes() {
+  bool get gmtOffsetHasMinutes {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_minutes(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -149,7 +149,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `has_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
   ///
   /// Throws [Error] on failure.
-  bool gmtOffsetHasSeconds() {
+  bool get gmtOffsetHasSeconds {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_seconds(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);

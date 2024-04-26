@@ -26,6 +26,6 @@ all-features = true
 derive = ["dep:databake-derive"]
 
 [dependencies]
-proc-macro2 = "1.0.27"
-quote = "1.0.9"
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
 databake-derive = { workspace = true, optional = true}

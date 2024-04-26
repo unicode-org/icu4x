@@ -42,13 +42,13 @@ writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 
-displaydoc = { version = "0.2.3", default-features = false }
-log = { version = "0.4", optional = true }
-num-bigint = { version = "0.4.1", default-features = false }
-num-rational = { version = "0.4.1", default-features = false }
-num-traits = { version = "0.2.17", default-features = false }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-smallvec = "1.11.2"
+displaydoc = { workspace = true }
+log = { workspace = true, optional = true }
+num-bigint = { workspace = true }
+num-rational = { workspace = true , features = ["num-bigint"]}
+num-traits = { workspace = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+smallvec = { workspace = true }
 
 icu_experimental_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
@@ -57,9 +57,7 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 criterion = { workspace = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid" }
-#TODO: remove this once we are not using `BigRational` anymore.
-num-rational = "0.4.1"
+icu = { path = "../../components/icu", features = ["experimental"]}
 
 [features]
 default = ["compiled_data"]

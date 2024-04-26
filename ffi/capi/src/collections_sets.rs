@@ -23,6 +23,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::new,
             FnInStruct
         )]
+        #[diplomat::attr(supports = constructors, constructor)]
         pub fn create() -> Box<Self> {
             Box::new(Self(CodePointInversionListBuilder::new()))
         }
@@ -62,6 +63,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::is_empty,
             FnInStruct
         )]
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_empty(&self) -> bool {
             self.0.is_empty()
         }
@@ -85,7 +87,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_u32,
             FnInStruct
         )]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(*, disable)]
         pub fn add_u32(&mut self, ch: u32) {
             self.add_char(ch)
         }
@@ -109,7 +111,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range_u32,
             FnInStruct
         )]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(*, disable)]
         pub fn add_inclusive_range_u32(&mut self, start: u32, end: u32) {
             self.add_inclusive_range(start, end)
         }

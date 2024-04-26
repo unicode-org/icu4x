@@ -312,7 +312,17 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
-                    return Some(PatternItem::Field(*requested_field));
+                    let length = requested_field.length;
+                    #[cfg(feature = "experimental")]
+                    let length = if requested_field.symbol.is_at_least_abbreviated() {
+                        length.numeric_to_abbr()
+                    } else {
+                        length
+                    };
+                    return Some(PatternItem::Field(Field {
+                        length,
+                        ..*pattern_field
+                    }));
                 }
             }
         }
@@ -522,4 +532,21 @@ pub fn get_best_available_format_pattern<'data>(
     }
 
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
+}
+
+impl components::Bag {
+    #[doc(hidden)] // TODO(#4467): Internal
+    #[cfg(feature = "datagen")]
+    pub fn select_pattern<'data>(
+        self,
+        skeletons: &DateSkeletonPatternsV1<'data>,
+        length_patterns: &GenericLengthPatternsV1<'data>,
+        default_hour_cycle: crate::options::preferences::HourCycle,
+    ) -> Option<PatternPlurals<'data>> {
+        let fields = self.to_vec_fields(default_hour_cycle);
+        match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
+            BestSkeleton::AllFieldsMatch(p) => Some(p),
+            _ => None,
+        }
+    }
 }

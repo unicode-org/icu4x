@@ -322,6 +322,11 @@ impl<A: AsCalendar> Date<A> {
     pub fn calendar_wrapper(&self) -> &A {
         &self.calendar
     }
+
+    #[cfg(test)]
+    pub(crate) fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
+        Iso::fixed_from_iso(self.to_iso().inner)
+    }
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {

@@ -36,6 +36,7 @@ pub mod ffi {
     impl ICU4XFixedDecimalFormatter {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_grouping_strategy")]
         pub fn create_with_grouping_strategy(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -66,7 +67,7 @@ pub mod ffi {
         ///
         /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
         /// Passing a consumed struct to this method will return an error.
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(*, disable)]
         pub fn create_with_decimal_symbols_v1(
             data_struct: &ICU4XDataStruct,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,

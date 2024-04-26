@@ -27,17 +27,17 @@ all-features = true
 [dependencies]
 icu_locid = { workspace = true, features = ["zerovec"] }
 icu_provider = { workspace = true, features = ["macros"] }
-serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true,  features = ["yoke"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 
 icu_locid_transform_data = { workspace = true, optional = true }
 
 [dev-dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
 writeable = { path = "../../utils/writeable" }
 

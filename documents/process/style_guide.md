@@ -192,6 +192,8 @@ Often in internationalization, we deal with code points from other scripts. It i
 - If directly rendering the characters could cause confusion due to the bidi algorithm
 - If the test cares more about the code point values than the characters they represent
 
+Special case: if dealing with the Unicode replacement character U+FFFD, it is suggested to use [char::REPLACEMENT_CHARACTER](https://doc.rust-lang.org/std/primitive.char.html#associatedconstant.REPLACEMENT_CHARACTER) instead of either a literal code point or the escape syntax.
+
 ### Render invisible characters in docs but escape them in code :: suggested
 
 There are several types of invisible code points in Unicode, including whitespace, zero-width characters, and bidi marks. The policy surrounding these characters is:

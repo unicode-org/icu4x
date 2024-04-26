@@ -15,16 +15,19 @@ pub mod ffi {
 
     /// A list of strings
     #[diplomat::opaque]
+    #[diplomat::attr(*, disable)]
     pub struct ICU4XList(pub Vec<String>);
 
     impl ICU4XList {
         /// Create a new list of strings
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create() -> Box<ICU4XList> {
             Box::new(ICU4XList(Vec::new()))
         }
 
         /// Create a new list of strings with preallocated space to hold
         /// at least `capacity` elements
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_capacity")]
         pub fn create_with_capacity(capacity: usize) -> Box<ICU4XList> {
             Box::new(ICU4XList(Vec::with_capacity(capacity)))
         }
@@ -38,12 +41,13 @@ pub mod ffi {
         }
 
         /// The number of elements in this list
-        #[diplomat::attr(dart, rename = "length")]
+        #[diplomat::attr(supports = accessors, getter = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
         }
 
         /// Whether this list is empty
+        #[diplomat::attr(supports = accessors, getter)]
         pub fn is_empty(&self) -> bool {
             self.0.is_empty()
         }
@@ -63,6 +67,7 @@ pub mod ffi {
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
         pub fn create_and_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -80,6 +85,7 @@ pub mod ffi {
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
         pub fn create_or_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -97,6 +103,7 @@ pub mod ffi {
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
         pub fn create_unit_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -116,12 +123,69 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
+        #[diplomat::attr(*, disable)]
         pub fn format(
             &self,
             list: &ICU4XList,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0.format(list.0.iter()).write_to(write)?;
+            Ok(())
+        }
+
+        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
+        #[diplomat::attr(dart, disable)]
+        #[diplomat::skip_if_ast]
+        pub fn format_valid_utf8(
+            &self,
+            list: &[&str],
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            self.0.format(list.iter()).write_to(write)?;
+            Ok(())
+        }
+
+        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
+        #[diplomat::attr(dart, disable)]
+        #[diplomat::skip_if_ast]
+        pub fn format_utf8(
+            &self,
+            list: &[&DiplomatStr],
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            self.0
+                .format(
+                    list.iter()
+                        .copied()
+                        .map(crate::utf::PotentiallyInvalidUtf8)
+                        .map(crate::utf::LossyWrap),
+                )
+                .write_to(write)?;
+            Ok(())
+        }
+
+        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
+        #[diplomat::attr(dart, rename = "format")]
+        #[diplomat::skip_if_ast]
+        pub fn format_utf16(
+            &self,
+            list: &[&DiplomatStr16],
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            self.0
+                .format(
+                    list.iter()
+                        .copied()
+                        .map(crate::utf::PotentiallyInvalidUtf16)
+                        .map(crate::utf::LossyWrap),
+                )
+                .write_to(write)?;
             Ok(())
         }
     }

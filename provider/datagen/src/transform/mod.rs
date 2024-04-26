@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod cldr;
-pub mod icuexport;
-pub mod segmenter;
+pub(in crate::provider) mod cldr;
+pub(in crate::provider) mod icuexport;
+pub(in crate::provider) mod segmenter;
 
-use crate::DatagenProvider;
+use crate::provider::DatagenProvider;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
