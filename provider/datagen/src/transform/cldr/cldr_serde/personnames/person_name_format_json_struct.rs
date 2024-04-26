@@ -7,16 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-person-names-full/main/en/personNames.json>
 
-use serde::Deserialize;
 use litemap::LiteMap;
+use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct FormalityFormatting(pub LiteMap<String, String>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ReferringFormatting(
-    pub LiteMap<String, FormalityFormatting>,
-);
+pub struct ReferringFormatting(pub LiteMap<String, FormalityFormatting>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct SizedFormatting(pub LiteMap<String, ReferringFormatting>);
