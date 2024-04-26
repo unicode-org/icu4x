@@ -71,6 +71,11 @@ mod percent_essentials_v1;
 #[doc(inline)]
 pub use __impl_percent_essentials_v1 as impl_percent_essentials_v1;
 #[macro_use]
+#[path = "macros/personnames_personnames_v1.rs.data"]
+mod personnames_personnames_v1;
+#[doc(inline)]
+pub use __impl_personnames_personnames_v1 as impl_personnames_personnames_v1;
+#[macro_use]
 #[path = "macros/relativetime_long_day_v1.rs.data"]
 mod relativetime_long_day_v1;
 #[doc(inline)]

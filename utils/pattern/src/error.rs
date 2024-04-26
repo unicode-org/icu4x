@@ -4,7 +4,7 @@
 
 use displaydoc::Display;
 
-#[derive(Debug, Display)]
+#[derive(Debug, Display, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum PatternError {
     #[displaydoc("Syntax error in pattern string or invalid serialized pattern")]

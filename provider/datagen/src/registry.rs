@@ -302,6 +302,7 @@ macro_rules! registry(
             icu::experimental::relativetime::provider::LongYearRelativeTimeFormatDataV1Marker = "relativetime/long/year@1",
             icu::experimental::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker = "relativetime/short/year@1",
             icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker = "relativetime/narrow/year@1",
+            icu::experimental::personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
             icu::experimental::transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
             icu::experimental::units::provider::UnitsInfoV1Marker = "units/info@1",
             icu::plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",

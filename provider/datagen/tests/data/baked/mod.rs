@@ -121,6 +121,7 @@ macro_rules! impl_data_provider {
         impl_normalizer_nfkdex_v1!($provider);
         impl_normalizer_uts46d_v1!($provider);
         impl_percent_essentials_v1!($provider);
+        impl_personnames_personnames_v1!($provider);
         impl_plurals_cardinal_v1!($provider);
         impl_plurals_ordinal_v1!($provider);
         impl_plurals_ranges_v1!($provider);
@@ -414,6 +415,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::normalizer::provider::CompatibilityDecompositionTablesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CompatibilityDecompositionTablesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::normalizer::provider::Uts46DecompositionSupplementV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::Uts46DecompositionSupplementV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::personnames::provider::PersonNamesFormatV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::experimental::personnames::provider::PersonNamesFormatV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::plurals::provider::CardinalV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::plurals::provider::OrdinalV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::PluralRangesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::plurals::provider::PluralRangesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
