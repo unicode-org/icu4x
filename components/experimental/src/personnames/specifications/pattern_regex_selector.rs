@@ -183,22 +183,22 @@ impl FromStr for NameField {
             })?;
 
         let field_modifier_1 = value_iter
-        .next()
+            .next()
             .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
         let field_modifier_2 = value_iter
-        .next()
+            .next()
             .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
         let field_modifier_3 = value_iter
-        .next()
+            .next()
             .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
         let field_modifier_4 = value_iter
-        .next()
+            .next()
             .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
