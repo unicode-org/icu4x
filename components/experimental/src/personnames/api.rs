@@ -47,6 +47,8 @@ pub enum PersonNamesFormatterError {
     Data(DataError),
     #[displaydoc("{0}")]
     Properties(icu_properties::Error),
+    #[displaydoc("{0}")]
+    Pattern(icu_pattern::Error),
 }
 
 impl From<DataError> for PersonNamesFormatterError {
@@ -58,6 +60,12 @@ impl From<DataError> for PersonNamesFormatterError {
 impl From<icu_properties::Error> for PersonNamesFormatterError {
     fn from(e: icu_properties::Error) -> Self {
         PersonNamesFormatterError::Properties(e)
+    }
+}
+
+impl From<icu_pattern::Error> for PersonNamesFormatterError {
+    fn from(e: icu_pattern::Error) -> Self {
+        PersonNamesFormatterError::Pattern(e)
     }
 }
 

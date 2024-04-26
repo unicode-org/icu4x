@@ -49,10 +49,6 @@ log = { workspace = true, optional = true }
 num-bigint = { workspace = true }
 num-rational = { workspace = true , features = ["num-bigint"]}
 num-traits = { workspace = true }
-once_cell = { version = "1", default-features = false, features = ["race", "alloc"] }
-# if pulling regex 1.9.x is pulling conflicting dependencies
-# regex-automata => ^0.3.8
-regex = "=1.8.4"
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 smallvec = { workspace = true }
 

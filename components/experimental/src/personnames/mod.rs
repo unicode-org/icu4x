@@ -9,5 +9,4 @@ pub mod formatter;
 pub mod provided_struct;
 pub mod provider;
 
-mod helpers;
 mod specifications;

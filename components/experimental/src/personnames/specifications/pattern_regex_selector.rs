@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::str::FromStr;
+
+use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
-
-use crate::personnames::helpers::OnceLock;
-use regex::{Captures, Match, Regex};
+use icu_pattern::{MultiNamedPlaceholderPattern, PatternItem};
 
 use crate::personnames::api::{
     FieldModifier, FieldModifierSet, NameField, NameFieldKind, PersonName,
@@ -14,29 +15,22 @@ use crate::personnames::api::{
 };
 use crate::personnames::specifications;
 
-fn person_name_pattern() -> &'static Regex {
-    static PERSON_NAMES_PATTERN: OnceLock<Regex> = OnceLock::<Regex>::new();
-    PERSON_NAMES_PATTERN.get_or_init(|| {
-        Regex::new(r"\{(?P<name_field_kind>title|given|given2|surname|generation|credentials)(?P<field_mod_1>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_2>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_3>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_4>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?}(?P<trailing>[^{]+)?")
-            .unwrap()
-    })
-}
-
 /// Contains meta information about the person name pattern.
 #[derive(PartialEq, Debug)]
 pub struct PersonNamePattern<'lt> {
-    pub name_fields: Vec<(NameField, &'lt str)>,
+    // TODO: Make this use a regular icu_pattern::Pattern as its data store
+    pub name_fields: Vec<(NameField, Cow<'lt, str>)>,
 }
 
 impl<'lt> PersonNamePattern<'lt> {}
 
 impl PersonNamePattern<'_> {
     #[cfg(test)]
-    fn get_field(&self, lookup_name_field: &NameField) -> Option<&str> {
+    fn get_field(&self, lookup_name_field: &NameField) -> Option<Cow<str>> {
         self.name_fields
             .iter()
             .find(|(k, _)| k == lookup_name_field)
-            .map(|(_, v)| *v)
+            .map(|(_, v)| v.clone())
     }
 
     fn pattern_requires_given_name(&self) -> bool {
@@ -122,17 +116,17 @@ impl PersonNamePattern<'_> {
                         initial_sequence_pattern,
                     )
                     .join(" ");
-                [p_name, String::from(*v)]
+                [p_name, v.to_string()]
             })
             .collect()
     }
 }
 
-impl TryFrom<Match<'_>> for NameFieldKind {
-    type Error = PersonNamesFormatterError;
+impl FromStr for NameFieldKind {
+    type Err = PersonNamesFormatterError;
 
-    fn try_from(value: Match) -> Result<Self, Self::Error> {
-        match value.as_str() {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
             "title" => Ok(NameFieldKind::Title),
             "given" => Ok(NameFieldKind::Given),
             "given2" => Ok(NameFieldKind::Given2),
@@ -144,7 +138,7 @@ impl TryFrom<Match<'_>> for NameFieldKind {
             _ => {
                 icu_provider::_internal::log::warn!(
                     "Invalid NameFieldKind value matched [{}]",
-                    value.as_str()
+                    value
                 );
                 Err(PersonNamesFormatterError::InvalidCldrData)
             }
@@ -152,22 +146,22 @@ impl TryFrom<Match<'_>> for NameFieldKind {
     }
 }
 
-impl TryFrom<&Match<'_>> for FieldModifier {
-    type Error = PersonNamesFormatterError;
+impl FromStr for FieldModifier {
+    type Err = PersonNamesFormatterError;
 
-    fn try_from(value: &Match) -> Result<Self, Self::Error> {
-        match value.as_str() {
-            "-informal" => Ok(FieldModifier::Informal),
-            "-prefix" => Ok(FieldModifier::Prefix),
-            "-core" => Ok(FieldModifier::Core),
-            "-allCaps" => Ok(FieldModifier::AllCaps),
-            "-initialCap" => Ok(FieldModifier::InitialCap),
-            "-initial" => Ok(FieldModifier::Initial),
-            "-monogram" => Ok(FieldModifier::Monogram),
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            "informal" => Ok(FieldModifier::Informal),
+            "prefix" => Ok(FieldModifier::Prefix),
+            "core" => Ok(FieldModifier::Core),
+            "allCaps" => Ok(FieldModifier::AllCaps),
+            "initialCap" => Ok(FieldModifier::InitialCap),
+            "initial" => Ok(FieldModifier::Initial),
+            "monogram" => Ok(FieldModifier::Monogram),
             _ => {
                 icu_provider::_internal::log::warn!(
                     "Invalid FieldModifier value matched [{}]",
-                    value.as_str()
+                    value
                 );
                 Err(PersonNamesFormatterError::InvalidCldrData)
             }
@@ -175,36 +169,37 @@ impl TryFrom<&Match<'_>> for FieldModifier {
     }
 }
 
-impl TryFrom<&Captures<'_>> for NameField {
-    type Error = PersonNamesFormatterError;
+impl FromStr for NameField {
+    type Err = PersonNamesFormatterError;
 
-    fn try_from(value: &Captures) -> Result<Self, Self::Error> {
-        let name_field_kind = value
-            .name("name_field_kind")
-            .map(NameFieldKind::try_from)
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        let mut value_iter = value.split('-');
+        let name_field_kind = value_iter
+            .next()
+            .map(NameFieldKind::from_str)
             .unwrap_or_else(|| {
                 icu_provider::_internal::log::warn!("unable to match");
                 Err(PersonNamesFormatterError::InvalidCldrData)
             })?;
 
-        let field_modifier_1 = value
-            .name("field_mod_1")
-            .map(|field| FieldModifier::try_from(&field))
+        let field_modifier_1 = value_iter
+        .next()
+            .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
-        let field_modifier_2 = value
-            .name("field_mod_2")
-            .map(|field| FieldModifier::try_from(&field))
+        let field_modifier_2 = value_iter
+        .next()
+            .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
-        let field_modifier_3 = value
-            .name("field_mod_3")
-            .map(|field| FieldModifier::try_from(&field))
+        let field_modifier_3 = value_iter
+        .next()
+            .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
-        let field_modifier_4 = value
-            .name("field_mod_4")
-            .map(|field| FieldModifier::try_from(&field))
+        let field_modifier_4 = value_iter
+        .next()
+            .map(|field| FieldModifier::from_str(field))
             .unwrap_or(Ok(FieldModifier::None))?
             .bit_value();
 
@@ -220,13 +215,36 @@ impl TryFrom<&Captures<'_>> for NameField {
 pub fn to_person_name_pattern<'pattern_lt>(
     value: &'pattern_lt str,
 ) -> Result<PersonNamePattern, PersonNamesFormatterError> {
-    let mut name_fields_map: Vec<(NameField, &'pattern_lt str)> = Vec::new();
-    let captures = person_name_pattern().captures_iter(value);
-    for capture in captures {
-        let name_field = NameField::try_from(&capture)?;
-        let trailing = capture.name("trailing").map_or("", |m| m.as_str());
+    let mut name_fields_map: Vec<(NameField, Cow<str>)> = Vec::new();
+
+    let parsed_pattern = MultiNamedPlaceholderPattern::try_from_str(value)?;
+
+    let mut current_name_field = None;
+    let mut current_literal = None;
+    for item in parsed_pattern.iter() {
+        match item {
+            PatternItem::Literal(s) => {
+                debug_assert!(current_literal.is_none());
+                current_literal = Some(s);
+            }
+            PatternItem::Placeholder(key) => {
+                if let Some(name_field) = current_name_field.take() {
+                    // TODO: This takes ownership because we can't borrow from the parsed pattern.
+                    // This should be fixed by using a Pattern in the data model.
+                    let trailing = Cow::Owned(current_literal.take().unwrap_or("").to_string());
+                    name_fields_map.push((name_field, trailing));
+                }
+                current_name_field = Some(NameField::from_str(key.0)?);
+            }
+        }
+    }
+    if let Some(name_field) = current_name_field.take() {
+        // TODO: This takes ownership because we can't borrow from the parsed pattern.
+        // This should be fixed by using a Pattern in the data model.
+        let trailing = Cow::Owned(current_literal.take().unwrap_or("").to_string());
         name_fields_map.push((name_field, trailing));
     }
+
     Ok(PersonNamePattern {
         name_fields: name_fields_map,
     })
