@@ -16,6 +16,7 @@ mod baked {
 
     mod icu {
         pub use icu_collections as collections;
+        pub use icu_experimental as experimental;
         pub use icu_locid_transform as locid_transform;
         pub use icu_properties as properties;
     }
