@@ -11,36 +11,42 @@ use litemap::LiteMap;
 use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct FormalityFormatting(pub LiteMap<String, String>);
+pub(in crate::provider) struct FormalityFormatting(pub(in crate::provider) LiteMap<String, String>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ReferringFormatting(pub LiteMap<String, FormalityFormatting>);
+pub(in crate::provider) struct ReferringFormatting(
+    pub(in crate::provider) LiteMap<String, FormalityFormatting>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct SizedFormatting(pub LiteMap<String, ReferringFormatting>);
+pub(in crate::provider) struct SizedFormatting(
+    pub(in crate::provider) LiteMap<String, ReferringFormatting>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct OrderFormatting(pub LiteMap<String, SizedFormatting>);
+pub(in crate::provider) struct OrderFormatting(
+    pub(in crate::provider) LiteMap<String, SizedFormatting>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct PersonNames {
+pub(in crate::provider) struct PersonNames {
     #[serde(rename = "givenFirst")]
-    pub given_first: Vec<String>,
+    pub(in crate::provider) given_first: Vec<String>,
     #[serde(rename = "surnameFirst")]
-    pub surname_first: Vec<String>,
+    pub(in crate::provider) surname_first: Vec<String>,
     #[serde(rename = "foreignSpaceReplacement")]
-    pub foreign_space_replacement: String,
-    pub initial: String,
+    pub(in crate::provider) foreign_space_replacement: String,
+    pub(in crate::provider) initial: String,
     #[serde(rename = "initialSequence")]
-    pub initial_sequence: String,
+    pub(in crate::provider) initial_sequence: String,
     #[serde(rename = "personName")]
-    pub formatting_pattern: OrderFormatting,
+    pub(in crate::provider) formatting_pattern: OrderFormatting,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CldrData {
+pub(in crate::provider) struct CldrData {
     #[serde(rename = "personNames")]
-    pub person_names: PersonNames,
+    pub(in crate::provider) person_names: PersonNames,
 }
 
-pub type Resource = super::super::LocaleResource<CldrData>;
+pub(in crate::provider) type Resource = super::super::LocaleResource<CldrData>;
