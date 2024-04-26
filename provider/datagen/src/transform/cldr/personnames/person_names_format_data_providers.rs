@@ -10,7 +10,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
-use crate::transform::cldr::cldr_serde::personnames::person_name_format_json_struct::Resource;
+use crate::provider::transform::cldr::cldr_serde::personnames::person_name_format_json_struct::Resource;
 
 impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
