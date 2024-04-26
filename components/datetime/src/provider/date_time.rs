@@ -262,7 +262,11 @@ where
         use crate::skeleton;
         let skeletons_data = self.skeleton_data_payload()?;
         // Not all skeletons are currently supported.
-        let requested_fields = components.to_vec_fields();
+        // TODO(#594) - This should default should be the locale default, which is
+        // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
+        // to load it as well as think about the best architecture for where that
+        // data loading code should reside.
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let patterns = match skeleton::create_best_pattern_for_fields(
             skeletons_data.get(),
             &self.date_patterns_data.get().length_combinations,

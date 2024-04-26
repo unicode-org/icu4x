@@ -57,6 +57,11 @@ class ICU4XLocaleExpander {
    * See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
    */
   ICU4XTransformResult minimize(ICU4XLocale& locale) const;
+
+  /**
+   * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+   */
+  ICU4XTransformResult minimize_favor_script(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleExpander* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleExpander* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XLocaleExpander(capi::ICU4XLocaleExpander* i) : inner(i) {}
@@ -95,5 +100,8 @@ inline ICU4XTransformResult ICU4XLocaleExpander::maximize(ICU4XLocale& locale) c
 }
 inline ICU4XTransformResult ICU4XLocaleExpander::minimize(ICU4XLocale& locale) const {
   return static_cast<ICU4XTransformResult>(capi::ICU4XLocaleExpander_minimize(this->inner.get(), locale.AsFFIMut()));
+}
+inline ICU4XTransformResult ICU4XLocaleExpander::minimize_favor_script(ICU4XLocale& locale) const {
+  return static_cast<ICU4XTransformResult>(capi::ICU4XLocaleExpander_minimize_favor_script(this->inner.get(), locale.AsFFIMut()));
 }
 #endif

@@ -32,4 +32,26 @@ export class ICU4XIanaToBcp47Mapper {
       }
     })();
   }
+
+  get(arg_value) {
+    const buf_arg_value = diplomatRuntime.DiplomatBuf.str8(wasm, arg_value);
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return (() => {
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        wasm.ICU4XIanaToBcp47Mapper_get(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, writeable);
+        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+        if (is_ok) {
+          const ok_value = {};
+          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+          return ok_value;
+        } else {
+          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+          throw new diplomatRuntime.FFIError(throw_value);
+        }
+      })();
+    });
+    buf_arg_value.free();
+    return diplomat_out;
+  }
 }

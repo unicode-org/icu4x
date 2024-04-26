@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
@@ -28,7 +29,7 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
-impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -39,7 +40,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
             parents: self
                 .cldr()?
                 .core()
-                .read_and_parse::<super::super::cldr::cldr_serde::parent_locales::Resource>(
+                .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
                     "supplemental/parentLocales.json",
                 )?
                 .supplemental
@@ -75,13 +76,13 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
     }
 }
 
-impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
     fn has_legacy_swedish_variants(&self) -> bool {
         self.icuexport()
@@ -168,7 +169,7 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
 macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider {
+            impl DataProvider<$marker> for DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let $toml_data: &collator_serde::$serde_struct = self
@@ -197,7 +198,7 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            impl IterableDataProviderInternal<$marker> for DatagenProvider {
                 fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     Ok(self
                         .icuexport()?

@@ -9,7 +9,7 @@ use serde::{Deserialize, Deserializer};
 
 #[derive(PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum Direction {
+pub(in crate::provider) enum Direction {
     Forward,
     Backward,
     Both,
@@ -17,14 +17,14 @@ pub enum Direction {
 
 #[derive(PartialEq, Debug, Default, Copy, Clone, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum Visibility {
+pub(in crate::provider) enum Visibility {
     Internal,
     #[default]
     External,
 }
 
 #[derive(PartialEq, Debug, Clone)]
-pub enum TransformAlias {
+pub(in crate::provider) enum TransformAlias {
     Bcp47(Locale),
     LegacyId(String),
 }
@@ -54,17 +54,17 @@ impl Display for TransformAlias {
 
 // cldr-transforms-full/main/<lang>/metadata.json
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub direction: Direction,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) direction: Direction,
     #[serde(default)]
-    pub visibility: Visibility,
-    pub source: String,
-    pub target: String,
+    pub(in crate::provider) visibility: Visibility,
+    pub(in crate::provider) source: String,
+    pub(in crate::provider) target: String,
     #[serde(default)]
-    pub variant: Option<String>,
+    pub(in crate::provider) variant: Option<String>,
     #[serde(default)]
-    pub alias: Vec<TransformAlias>,
+    pub(in crate::provider) alias: Vec<TransformAlias>,
     #[serde(default)]
     #[serde(rename = "backwardAlias")]
-    pub backward_alias: Vec<TransformAlias>,
+    pub(in crate::provider) backward_alias: Vec<TransformAlias>,
 }

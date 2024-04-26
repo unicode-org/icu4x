@@ -44,17 +44,17 @@ zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 zerofrom = { workspace = true }
 
-displaydoc = { version = "0.2.3", default-features = false }
-log = { version = "0.4", optional = true }
-num-bigint = { version = "0.4.1", default-features = false }
-num-rational = { version = "0.4.1", default-features = false }
-num-traits = { version = "0.2.17", default-features = false }
+displaydoc = { workspace = true }
+log = { workspace = true, optional = true }
+num-bigint = { workspace = true }
+num-rational = { workspace = true , features = ["num-bigint"]}
+num-traits = { workspace = true }
 once_cell = { version = "1", default-features = false, features = ["race", "alloc"] }
 # if pulling regex 1.9.x is pulling conflicting dependencies
 # regex-automata => ^0.3.8
 regex = "=1.8.4"
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-smallvec = "1.11.2"
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+smallvec = { workspace = true }
 
 icu_experimental_data = { workspace = true, optional = true }
 
@@ -62,9 +62,7 @@ icu_experimental_data = { workspace = true, optional = true }
 criterion = { workspace = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid" }
-#TODO: remove this once we are not using `BigRational` anymore.
-num-rational = "0.4.1"
+icu = { path = "../../components/icu", features = ["experimental"]}
 
 icu_experimental_data = { workspace = true }
 icu_locid_transform_data = { workspace = true }

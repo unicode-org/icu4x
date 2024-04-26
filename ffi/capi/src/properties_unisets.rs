@@ -52,6 +52,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::sets::basic_emoji, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_basic_emoji, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "basic_emoji")]
         pub fn load_basic_emoji(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
@@ -64,6 +65,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_main, Fn)]
         #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_main, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplars_main")]
         pub fn load_exemplars_main(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -83,6 +85,7 @@ pub mod ffi {
             Fn,
             hidden
         )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplars_auxiliary")]
         pub fn load_exemplars_auxiliary(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -102,6 +105,7 @@ pub mod ffi {
             Fn,
             hidden
         )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplars_punctuation")]
         pub fn load_exemplars_punctuation(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -117,6 +121,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_numbers, Fn)]
         #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_numbers, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplars_numbers")]
         pub fn load_exemplars_numbers(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -132,6 +137,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_index, Fn)]
         #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_index, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplars_index")]
         pub fn load_exemplars_index(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

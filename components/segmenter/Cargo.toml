@@ -20,27 +20,27 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-utf8_iter = "1.0.3"
+utf8_iter = { workspace = true }
 zerovec = { workspace = true, features = ["yoke"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
-core_maths = { version = "0.1", optional = true }
+core_maths = { workspace = true, optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
-serde = { version = "1.0", default-features = false, features = ["derive"] }
-serde_json = "1.0"
 icu = { path = "../../components/icu", default-features = false }
-itertools = "0.10"
 icu_properties = { workspace = true, features = ["compiled_data"] }
+itertools = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

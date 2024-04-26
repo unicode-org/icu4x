@@ -14,43 +14,43 @@ use tinystr::TinyAsciiStr;
 type ISOCode = TinyAsciiStr<3>;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct RoundingModes {
+pub(in crate::provider) struct RoundingModes {
     // TODO: Get `deserialize_option_number_from_string` to work
     //    HINT: #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")])
     #[serde(rename = "_rounding")]
-    pub rounding: Option<String>,
+    pub(in crate::provider) rounding: Option<String>,
 
     #[serde(rename = "_digits")]
-    pub digits: Option<String>,
+    pub(in crate::provider) digits: Option<String>,
 
     #[serde(rename = "_cashRounding")]
-    pub cash_rounding: Option<String>,
+    pub(in crate::provider) cash_rounding: Option<String>,
 
     #[serde(rename = "_cashDigits")]
-    pub cash_digits: Option<String>,
+    pub(in crate::provider) cash_digits: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Fractions {
+pub(in crate::provider) struct Fractions {
     #[serde(rename = "DEFAULT")]
     default: RoundingModes,
 
     #[serde(flatten)]
-    pub currencies: BTreeMap<ISOCode, RoundingModes>,
+    pub(in crate::provider) currencies: BTreeMap<ISOCode, RoundingModes>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct CurrencyData {
-    pub fractions: Fractions,
+pub(in crate::provider) struct CurrencyData {
+    pub(in crate::provider) fractions: Fractions,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "currencyData")]
-    pub currency_data: CurrencyData,
+    pub(in crate::provider) currency_data: CurrencyData,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

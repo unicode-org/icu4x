@@ -92,18 +92,18 @@ final class Bidi implements ffi.Finalizable {
   /// Get a basic RTL Level value
   ///
   /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
-  static final int levelRtl = () {
+  static int levelRtl() {
     final result = _ICU4XBidi_level_rtl();
     return result;
-  }();
+  }
 
   /// Get a simple LTR Level value
   ///
   /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
-  static final int levelLtr = () {
+  static int levelLtr() {
     final result = _ICU4XBidi_level_ltr();
     return result;
-  }();
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XBidi_destroy')

@@ -20,8 +20,8 @@ use zerovec::ule::UnvalidatedStr;
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames};
-/// use icu_locid::{locale, subtags::region};
+/// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames};
+/// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -93,8 +93,8 @@ impl RegionDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, ScriptDisplayNames};
-/// use icu_locid::{locale, subtags::script};
+/// use icu::experimental::displaynames::{DisplayNamesOptions, ScriptDisplayNames};
+/// use icu::locid::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -166,8 +166,8 @@ impl ScriptDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, VariantDisplayNames};
-/// use icu_locid::{locale, subtags::variant};
+/// use icu::experimental::displaynames::{DisplayNamesOptions, VariantDisplayNames};
+/// use icu::locid::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -234,8 +234,8 @@ impl VariantDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, LanguageDisplayNames};
-/// use icu_locid::{locale, subtags::language};
+/// use icu::experimental::displaynames::{DisplayNamesOptions, LanguageDisplayNames};
+/// use icu::locid::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -313,8 +313,8 @@ impl LanguageDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-/// use icu_locid::locale;
+/// use icu::experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
+/// use icu::locid::locale;
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
