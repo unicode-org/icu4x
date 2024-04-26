@@ -74,6 +74,7 @@ icu_codepointtrie_builder = { workspace = true, optional = true }
 icu_collections = { workspace = true, features = ["serde"], optional = true }
 icu_pattern = { workspace = true, features = ["alloc"], optional = true }
 icu_provider_adapters = { workspace = true, optional = true }
+litemap = { workspace = true, optional = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"], optional = true }
 zerotrie = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true, features = ["serde", "yoke"], optional = true }
@@ -89,7 +90,6 @@ num-traits = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 serde_json = { workspace = true, optional = true }
 serde-aux = { workspace = true, optional = true }
-serde-tuple-vec-map = { version = "1.0.1" }
 toml = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
 ureq = { workspace = true, features = ["tls"], optional = true }
@@ -130,6 +130,7 @@ provider = [
     "dep:icu_collections",
     "dep:icu_pattern",
     "dep:icu_provider_adapters",
+    "dep:litemap",
     "dep:tinystr",
     "dep:zerotrie",
     "dep:zerovec",

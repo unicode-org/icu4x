@@ -7,23 +7,22 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-person-names-full/main/en/personNames.json>
 
-extern crate tuple_vec_map;
-
 use serde::Deserialize;
+use litemap::LiteMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct FormalityFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, String)>);
+pub struct FormalityFormatting(pub LiteMap<String, String>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct ReferringFormatting(
-    #[serde(with = "tuple_vec_map")] pub Vec<(String, FormalityFormatting)>,
+    pub LiteMap<String, FormalityFormatting>,
 );
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct SizedFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, ReferringFormatting)>);
+pub struct SizedFormatting(pub LiteMap<String, ReferringFormatting>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct OrderFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, SizedFormatting)>);
+pub struct OrderFormatting(pub LiteMap<String, SizedFormatting>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct PersonNames {

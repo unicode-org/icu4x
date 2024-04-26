@@ -109,7 +109,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
                             |(referring, formality_formatting)| {
                                 let mut formal_pattern = vec![];
                                 let mut informal_pattern = vec![];
-                                for (formality, pattern) in &formality_formatting.0 {
+                                for (formality, pattern) in formality_formatting.0.iter() {
                                     if json_field_to_formatting_attribute(formality).unwrap()
                                         == PersonNamesFormattingAttributes::Formal.bit_value()
                                     {
