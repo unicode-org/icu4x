@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::*;
-use alloc::borrow::Cow;
 use core::fmt;
 
 macro_rules! impl_write_num {
