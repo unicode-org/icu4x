@@ -36,7 +36,7 @@ icu_properties = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 fixed_decimal = { workspace = true }
-icu_pattern = { workspace = true , features = ["yoke", "zerofrom"]}
+icu_pattern = { workspace = true , features = ["alloc", "yoke", "zerofrom"]}
 litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }

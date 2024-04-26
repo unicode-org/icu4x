@@ -116,7 +116,7 @@ impl PersonNamePattern<'_> {
                         initial_sequence_pattern,
                     )
                     .join(" ");
-                [p_name, v.to_string()]
+                [p_name, String::from(v.as_ref())]
             })
             .collect()
     }
@@ -231,7 +231,7 @@ pub fn to_person_name_pattern<'pattern_lt>(
                 if let Some(name_field) = current_name_field.take() {
                     // TODO: This takes ownership because we can't borrow from the parsed pattern.
                     // This should be fixed by using a Pattern in the data model.
-                    let trailing = Cow::Owned(current_literal.take().unwrap_or("").to_string());
+                    let trailing = Cow::Owned(String::from(current_literal.take().unwrap_or("")));
                     name_fields_map.push((name_field, trailing));
                 }
                 current_name_field = Some(NameField::from_str(key.0)?);
@@ -241,7 +241,7 @@ pub fn to_person_name_pattern<'pattern_lt>(
     if let Some(name_field) = current_name_field.take() {
         // TODO: This takes ownership because we can't borrow from the parsed pattern.
         // This should be fixed by using a Pattern in the data model.
-        let trailing = Cow::Owned(current_literal.take().unwrap_or("").to_string());
+        let trailing = Cow::Owned(String::from(current_literal.take().unwrap_or("")));
         name_fields_map.push((name_field, trailing));
     }
 
