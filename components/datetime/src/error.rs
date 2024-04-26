@@ -25,6 +25,9 @@ pub enum DateTimeError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]
     Pattern(PatternError),
+    /// An error originating from the [`Write`](std::fmt::Write) trait.
+    #[displaydoc("{0}")]
+    Format(core::fmt::Error),
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     Data(DataError),
@@ -106,6 +109,12 @@ impl From<PatternError> for DateTimeError {
 impl From<DataError> for DateTimeError {
     fn from(e: DataError) -> Self {
         DateTimeError::Data(e)
+    }
+}
+
+impl From<core::fmt::Error> for DateTimeError {
+    fn from(e: core::fmt::Error) -> Self {
+        DateTimeError::Format(e)
     }
 }
 
