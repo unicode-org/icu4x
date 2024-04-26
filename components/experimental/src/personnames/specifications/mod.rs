@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 pub use applicable_pattern::find_best_applicable_pattern;
 pub use derive_core_prefix::handle_field_modifier_core_prefix;
 pub use derive_locale::effective_locale;
