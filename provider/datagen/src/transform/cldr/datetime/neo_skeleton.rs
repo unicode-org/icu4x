@@ -15,81 +15,61 @@ use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
-    neo::{GregorianDateNeoSkeletonPatternsV1Marker, PackedSkeletonDataV1, SkeletonDataIndex},
+    neo::*,
 };
 use icu_locid::extensions::private::Subtag;
-use icu_locid::extensions::unicode::{key, value};
+use icu_locid::extensions::unicode::{key, value, Value};
+use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
+use tinystr::TinyAsciiStr;
 
 use super::supported_cals;
 
-impl DataProvider<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<GregorianDateNeoSkeletonPatternsV1Marker>, DataError> {
-        self.check_req::<GregorianDateNeoSkeletonPatternsV1Marker>(req)?;
-        let aux_subtag = req
-            .locale
-            .get_aux()
-            .and_then(|aux| aux.iter().next())
-            .expect("Skeleton data provider called without aux subtag");
-        let neo_components = NeoDateComponents::from_id_str(aux_subtag.into_tinystr())
-            .expect("Skeleton data provider called with unknown skeleton");
-        let mut locale_no_aux = req.locale.clone();
-        locale_no_aux.remove_aux();
-        let packed_skeleton_data = self.make_packed_skeleton_data(
-            DataRequest {
-                locale: &locale_no_aux,
-                metadata: Default::default(),
-            },
-            neo_components,
-            |length, neo_components| {
-                NeoDateSkeleton::for_length_and_components(length, *neo_components)
-                    .to_components_bag()
-            },
-        )?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
-        })
-    }
-}
-
-impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
-        self.check_req::<TimeNeoSkeletonPatternsV1Marker>(req)?;
-        let aux_subtag = req
-            .locale
-            .get_aux()
-            .and_then(|aux| aux.iter().next())
-            .expect("Skeleton data provider called without aux subtag");
-        let neo_components = NeoTimeComponents::from_id_str(aux_subtag.into_tinystr())
-            .expect("Skeleton data provider called with unknown skeleton");
-        let mut locale_no_aux = req.locale.clone();
-        locale_no_aux.remove_aux();
-        let packed_skeleton_data = self.make_packed_skeleton_data(
-            DataRequest {
-                locale: &locale_no_aux,
-                metadata: Default::default(),
-            },
-            neo_components,
-            |length, neo_components| {
-                NeoTimeSkeleton::for_length_and_components(length, *neo_components)
-                    .to_components_bag()
-            },
-        )?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
-        })
-    }
+fn make_data_locale_with_tinystr_subtag(
+    langid: &LanguageIdentifier,
+    subtag: TinyAsciiStr<8>,
+) -> DataLocale {
+    let mut data_locale = DataLocale::from(langid);
+    let subtag = Subtag::try_from_raw(*subtag.all_bytes()).unwrap();
+    data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+    data_locale
 }
 
 impl DatagenProvider {
+    fn load_neo_skeletons_key<M, C>(
+        &self,
+        req: DataRequest,
+        from_id_str: impl Fn(TinyAsciiStr<8>) -> Option<C>,
+        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> components::Bag,
+    ) -> Result<DataResponse<M>, DataError>
+    where
+        M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+        Self: icu_provider::datagen::IterableDataProvider<M>,
+    {
+        self.check_req::<M>(req)?;
+        let aux_subtag = req
+            .locale
+            .get_aux()
+            .and_then(|aux| aux.iter().next())
+            .expect("Skeleton data provider called without aux subtag");
+        let neo_components = from_id_str(aux_subtag.into_tinystr())
+            .expect("Skeleton data provider called with unknown skeleton");
+        let mut locale_no_aux = req.locale.clone();
+        locale_no_aux.remove_aux();
+        let packed_skeleton_data = self.make_packed_skeleton_data(
+            DataRequest {
+                locale: &locale_no_aux,
+                metadata: Default::default(),
+            },
+            neo_components,
+            to_components_bag,
+        )?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(packed_skeleton_data)),
+        })
+    }
+
     fn make_packed_skeleton_data<C>(
         &self,
         req: DataRequest,
@@ -184,43 +164,8 @@ impl DatagenProvider {
             patterns: (&patterns).into(),
         })
     }
-}
 
-impl IterableDataProviderInternal<GregorianDateNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        let calendar = value!("gregory");
-        let mut r = HashSet::new();
-
-        let cldr_cal = supported_cals()
-            .get(&calendar)
-            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(
-            self.cldr()?
-                .dates(cldr_cal)
-                .list_langs()?
-                .flat_map(|langid| {
-                    NeoDateComponents::VALUES
-                        .iter()
-                        .filter(|neo_components| {
-                            !matches!(neo_components, NeoDateComponents::Quarter)
-                                && !matches!(neo_components, NeoDateComponents::YearQuarter)
-                        })
-                        .map(move |neo_components| {
-                            let mut data_locale = DataLocale::from(&langid);
-                            let subtag =
-                                Subtag::try_from_raw(*neo_components.id_str().all_bytes()).unwrap();
-                            data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
-                            data_locale
-                        })
-                }),
-        );
-
-        Ok(r)
-    }
-}
-
-impl IterableDataProviderInternal<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+    fn neo_time_skeleton_supported_locales(&self) -> Result<HashSet<DataLocale>, DataError> {
         let mut r = HashSet::new();
 
         r.extend(
@@ -235,16 +180,139 @@ impl IterableDataProviderInternal<TimeNeoSkeletonPatternsV1Marker> for DatagenPr
                                 || matches!(neo_components, NeoTimeComponents::HourMinute)
                                 || matches!(neo_components, NeoTimeComponents::HourMinuteSecond)
                         })
-                        .map(move |neo_components| {
-                            let mut data_locale = DataLocale::from(&langid);
-                            let subtag =
-                                Subtag::try_from_raw(*neo_components.id_str().all_bytes()).unwrap();
-                            data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
-                            data_locale
+                        .copied()
+                        .map(NeoTimeComponents::id_str)
+                        .map(move |subtag| make_data_locale_with_tinystr_subtag(&langid, subtag))
+                }),
+        );
+
+        Ok(r)
+    }
+
+    fn neo_date_skeleton_supported_locales(
+        &self,
+        calendar: &Value,
+    ) -> Result<HashSet<DataLocale>, DataError> {
+        let mut r = HashSet::new();
+
+        let cldr_cal = supported_cals()
+            .get(calendar)
+            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+        r.extend(
+            self.cldr()?
+                .dates(cldr_cal)
+                .list_langs()?
+                .flat_map(|langid| {
+                    NeoDateComponents::VALUES
+                        .iter()
+                        .filter(|neo_components| {
+                            !matches!(neo_components, NeoDateComponents::Quarter)
+                                && !matches!(neo_components, NeoDateComponents::YearQuarter)
                         })
+                        .copied()
+                        .map(NeoDateComponents::id_str)
+                        .map(move |subtag| make_data_locale_with_tinystr_subtag(&langid, subtag))
                 }),
         );
 
         Ok(r)
     }
 }
+
+impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
+        self.load_neo_skeletons_key(
+            req,
+            NeoTimeComponents::from_id_str,
+            |length, neo_components| {
+                NeoTimeSkeleton::for_length_and_components(length, *neo_components)
+                    .to_components_bag()
+            },
+        )
+    }
+}
+
+impl IterableDataProviderInternal<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        self.neo_time_skeleton_supported_locales()
+    }
+}
+
+macro_rules! impl_neo_skeleton_datagen {
+    ($marker:ident, $calendar:expr) => {
+        impl DataProvider<$marker> for DatagenProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.load_neo_skeletons_key(
+                    req,
+                    |id_str| NeoDateComponents::from_id_str(id_str),
+                    |length, neo_components| {
+                        NeoDateSkeleton::for_length_and_components(length, *neo_components)
+                            .to_components_bag()
+                    },
+                )
+            }
+        }
+
+        impl IterableDataProviderInternal<$marker> for DatagenProvider {
+            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+                self.neo_date_skeleton_supported_locales(&value!($calendar))
+            }
+        }
+    };
+}
+
+impl_neo_skeleton_datagen!(
+    BuddhistDateNeoSkeletonPatternsV1Marker,
+    "buddhist"
+);
+impl_neo_skeleton_datagen!(
+    ChineseDateNeoSkeletonPatternsV1Marker,
+    "chinese"
+);
+impl_neo_skeleton_datagen!(
+    CopticDateNeoSkeletonPatternsV1Marker,
+    "coptic"
+);
+impl_neo_skeleton_datagen!(
+    DangiDateNeoSkeletonPatternsV1Marker,
+    "dangi"
+);
+impl_neo_skeleton_datagen!(
+    EthiopianDateNeoSkeletonPatternsV1Marker,
+    "ethiopic"
+);
+impl_neo_skeleton_datagen!(
+    GregorianDateNeoSkeletonPatternsV1Marker,
+    "gregory"
+);
+impl_neo_skeleton_datagen!(
+    HebrewDateNeoSkeletonPatternsV1Marker,
+    "hebrew"
+);
+impl_neo_skeleton_datagen!(
+    IndianDateNeoSkeletonPatternsV1Marker,
+    "indian"
+);
+impl_neo_skeleton_datagen!(
+    IslamicDateNeoSkeletonPatternsV1Marker,
+    "islamic"
+);
+impl_neo_skeleton_datagen!(
+    JapaneseDateNeoSkeletonPatternsV1Marker,
+    "japanese"
+);
+impl_neo_skeleton_datagen!(
+    JapaneseExtendedDateNeoSkeletonPatternsV1Marker,
+    "japanext"
+);
+impl_neo_skeleton_datagen!(
+    PersianDateNeoSkeletonPatternsV1Marker,
+    "persian"
+);
+impl_neo_skeleton_datagen!(
+    RocDateNeoSkeletonPatternsV1Marker,
+    "roc"
+);
