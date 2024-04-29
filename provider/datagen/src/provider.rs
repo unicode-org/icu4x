@@ -39,7 +39,25 @@ pub struct DatagenProvider {
     pub source: SourceData,
 }
 
-crate::registry::make_exportable_provider!(DatagenProvider);
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        icu_provider::make_exportable_provider!(
+            DatagenProvider,
+            [
+                icu_provider::hello_world::HelloWorldV1Marker,
+                $(
+                    $marker,
+                )+
+                $(
+                    #[cfg(feature = "experimental_components")]
+                    $emarker,
+                )+
+            ]
+        );
+    }
+}
+crate::registry!(cb);
+
 icu_provider::impl_data_provider_never_marker!(DatagenProvider);
 
 impl DatagenProvider {

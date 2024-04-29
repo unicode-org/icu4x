@@ -81,6 +81,14 @@ use core::fmt;
 
 pub use try_writeable::TryWriteable;
 
+/// Helper types for trait impls.
+pub mod adapters {
+    use super::*;
+
+    pub use try_writeable::TryWriteableInfallibleAsWriteable;
+    pub use try_writeable::WriteableAsTryWriteableInfallible;
+}
+
 #[doc(hidden)]
 pub mod _internal {
     pub use super::testing::try_writeable_to_parts_for_test;
@@ -302,15 +310,15 @@ pub trait Writeable {
     /// let message = WelcomeMessage { name: "Alice" };
     /// let message_str = message.write_to_string();
     ///
-    /// assert_eq!(Ordering::Equal, message.write_cmp_bytes(b"Hello, Alice!"));
+    /// assert_eq!(Ordering::Equal, message.writeable_cmp_bytes(b"Hello, Alice!"));
     ///
-    /// assert_eq!(Ordering::Greater, message.write_cmp_bytes(b"Alice!"));
+    /// assert_eq!(Ordering::Greater, message.writeable_cmp_bytes(b"Alice!"));
     /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
     ///
-    /// assert_eq!(Ordering::Less, message.write_cmp_bytes(b"Hello, Bob!"));
+    /// assert_eq!(Ordering::Less, message.writeable_cmp_bytes(b"Hello, Bob!"));
     /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
     /// ```
-    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         let mut wc = cmp::WriteComparator::new(other);
         let _ = self.write_to(&mut wc);
         wc.finish().reverse()
@@ -351,7 +359,7 @@ macro_rules! impl_display_with_writeable {
 /// - Equality of string content
 /// - Equality of parts ([`*_parts_eq`] only)
 /// - Validity of size hint
-/// - Reflexivity of `cmp_bytes`
+/// - Reflexivity of `cmp_bytes` and order against largest and smallest strings
 ///
 /// # Examples
 ///
@@ -426,8 +434,14 @@ macro_rules! assert_writeable_eq {
             );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
-        let ordering = $crate::Writeable::write_cmp_bytes(actual_writeable, $expected_str.as_bytes());
+        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, $expected_str.as_bytes());
         assert_eq!(ordering, core::cmp::Ordering::Equal, $($arg)*);
+        let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "\u{10FFFF}".as_bytes());
+        assert_eq!(ordering, core::cmp::Ordering::Less, $($arg)*);
+        if $expected_str != "" {
+            let ordering = $crate::Writeable::writeable_cmp_bytes(actual_writeable, "".as_bytes());
+            assert_eq!(ordering, core::cmp::Ordering::Greater, $($arg)*);
+        }
         actual_parts // return for assert_writeable_parts_eq
     }};
 }

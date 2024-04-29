@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::units::ratio::IcuRatio;
+use crate::units::convertible::Convertible;
 
 /// A converter for converting between two single or compound units.
 /// For example:
@@ -13,11 +13,17 @@ use crate::units::ratio::IcuRatio;
 /// NOTE:
 ///     This converter does not support conversions between mixed units,
 ///     for example, from "meter" to "foot-and-inch".
-pub struct UnitsConverter(pub(crate) UnitsConverterInner);
+#[derive(Debug, Clone)]
+pub struct UnitsConverter<N>(pub(crate) UnitsConverterInner<N>)
+where
+    N: Convertible;
 
-impl UnitsConverter {
+impl<N> UnitsConverter<N>
+where
+    N: Convertible,
+{
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
+    pub fn convert(&self, value: &N) -> N {
         self.0.convert(value)
     }
 }
@@ -26,16 +32,22 @@ impl UnitsConverter {
 ///    1 - Proportional: Converts between two units that are proportionally related (e.g. `meter` to `foot`).
 ///    2 - Reciprocal: Converts between two units that are reciprocal (e.g. `mile-per-gallon` to `liter-per-100-kilometer`).
 ///    3 - Offset: Converts between two units that require an offset (e.g. `celsius` to `fahrenheit`).
-#[derive(Debug)]
-pub(crate) enum UnitsConverterInner {
-    Proportional(ProportionalConverter),
-    Reciprocal(ReciprocalConverter),
-    Offset(OffsetConverter),
+#[derive(Debug, Clone)]
+pub(crate) enum UnitsConverterInner<N>
+where
+    N: Convertible,
+{
+    Proportional(ProportionalConverter<N>),
+    Reciprocal(ReciprocalConverter<N>),
+    Offset(OffsetConverter<N>),
 }
 
-impl UnitsConverterInner {
+impl<N> UnitsConverterInner<N>
+where
+    N: Convertible,
+{
     /// Converts the given value from the input unit to the output unit based on the inner converter type.
-    fn convert(&self, value: &IcuRatio) -> IcuRatio {
+    fn convert(&self, value: &N) -> N {
         match self {
             UnitsConverterInner::Proportional(converter) => converter.convert(value),
             UnitsConverterInner::Reciprocal(converter) => converter.convert(value),
@@ -48,32 +60,44 @@ impl UnitsConverterInner {
 /// For example:
 ///    1 - `meter-per-second` to `second-per-meter`.
 ///    2 - `mile-per-gallon` to `liter-per-100-kilometer`.
-#[derive(Debug)]
-pub(crate) struct ReciprocalConverter {
-    pub(crate) proportional: ProportionalConverter,
+#[derive(Debug, Clone)]
+pub(crate) struct ReciprocalConverter<N>
+where
+    N: Convertible,
+{
+    pub(crate) proportional: ProportionalConverter<N>,
 }
 
-impl ReciprocalConverter {
+impl<N> ReciprocalConverter<N>
+where
+    N: Convertible,
+{
     /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
-        self.proportional.convert(value).recip()
+    pub(crate) fn convert(&self, value: &N) -> N {
+        self.proportional.convert(value).reciprocal()
     }
 }
 
 /// A converter for converting between two units that require an offset.
-#[derive(Debug)]
-pub(crate) struct OffsetConverter {
+#[derive(Debug, Clone)]
+pub(crate) struct OffsetConverter<N>
+where
+    N: Convertible,
+{
     /// The proportional converter.
-    pub(crate) proportional: ProportionalConverter,
+    pub(crate) proportional: ProportionalConverter<N>,
 
     /// The offset value to be added to the result of the proportional converter.
-    pub(crate) offset: IcuRatio,
+    pub(crate) offset: N,
 }
 
-impl OffsetConverter {
+impl<N> OffsetConverter<N>
+where
+    N: Convertible,
+{
     /// Converts the given value from the input unit to the output unit.
-    pub(crate) fn convert(&self, value: &IcuRatio) -> IcuRatio {
-        &self.proportional.convert(value) + &self.offset
+    pub(crate) fn convert(&self, value: &N) -> N {
+        self.proportional.convert(value).add_refs(&self.offset)
     }
 }
 
@@ -85,15 +109,21 @@ impl OffsetConverter {
 /// such as `celsius` to `fahrenheit` and `mile-per-gallon` to `liter-per-100-kilometer`.
 ///
 /// Also, it cannot convert between two units that are not single, such as `meter` to `foot-and-inch`.
-#[derive(Debug)]
-pub(crate) struct ProportionalConverter {
+#[derive(Debug, Clone)]
+pub(crate) struct ProportionalConverter<N>
+where
+    N: Convertible,
+{
     /// The conversion rate between the input and output units.
-    pub(crate) conversion_rate: IcuRatio,
+    pub(crate) conversion_rate: N,
 }
 
-impl ProportionalConverter {
+impl<N> ProportionalConverter<N>
+where
+    N: Convertible,
+{
     /// Converts the given value from the input unit to the output unit.
-    pub fn convert(&self, value: &IcuRatio) -> IcuRatio {
-        &self.conversion_rate * value
+    pub fn convert(&self, value: &N) -> N {
+        value.mul_refs(&self.conversion_rate)
     }
 }

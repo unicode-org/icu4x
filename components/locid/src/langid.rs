@@ -200,7 +200,7 @@ impl LanguageIdentifier {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.write_cmp_bytes(other)
+        self.writeable_cmp_bytes(other)
     }
 
     pub(crate) fn as_tuple(

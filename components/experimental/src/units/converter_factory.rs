@@ -20,6 +20,8 @@ use litemap::LiteMap;
 use num_traits::Pow;
 use num_traits::{One, Zero};
 use zerovec::ZeroSlice;
+
+use super::convertible::Convertible;
 /// ConverterFactory is a factory for creating a converter.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
@@ -272,11 +274,11 @@ impl ConverterFactory {
     /// NOTE:
     ///    This converter does not support conversions between mixed units,
     ///    such as, from "meter" to "foot-and-inch".
-    pub fn converter(
+    pub fn converter<T: Convertible>(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
-    ) -> Option<UnitsConverter> {
+    ) -> Option<UnitsConverter<T>> {
         let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
 
         // Determine the sign of the powers of the units from root to unit2.
@@ -302,20 +304,22 @@ impl ConverterFactory {
             return None;
         }
 
+        let conversion_rate = T::from_ratio_bigint(conversion_rate.get_ratio())?;
+        let proportional = ProportionalConverter { conversion_rate };
+
         if is_reciprocal {
             Some(UnitsConverter(UnitsConverterInner::Reciprocal(
-                ReciprocalConverter {
-                    proportional: ProportionalConverter { conversion_rate },
-                },
+                ReciprocalConverter { proportional },
             )))
         } else if offset.is_zero() {
             Some(UnitsConverter(UnitsConverterInner::Proportional(
-                ProportionalConverter { conversion_rate },
+                proportional,
             )))
         } else {
+            let offset = T::from_ratio_bigint(offset.get_ratio())?;
             Some(UnitsConverter(UnitsConverterInner::Offset(
                 OffsetConverter {
-                    proportional: ProportionalConverter { conversion_rate },
+                    proportional,
                     offset,
                 },
             )))
