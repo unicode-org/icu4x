@@ -36,24 +36,63 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
         self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
 
-        let data = LocaleFallbackSupplementV1 {
-            parents: self
-                .cldr()?
-                .core()
-                .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
-                    "supplemental/parentLocales.json",
-                )?
-                .supplemental
-                .parent_locales
-                .collations
-                .iter()
-                .map(|(from, to)| {
-                    (
-                        <&UnvalidatedStr>::from(from.as_str()),
-                        <(Language, Option<Script>, Option<Region>)>::from(to),
+        let parent_locales = &self
+            .cldr()?
+            .core()
+            .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
+                "supplemental/parentLocales.json",
+            )?.supplemental.parent_locales;
+
+        let additional = if parent_locales
+            .rules
+            .collations
+            .as_ref()
+            .map(|c| &c.non_likely_scripts)
+            != Some(&String::from("root"))
+        {
+            let collation_locales = self
+                .icuexport()?
+                .list(&format!("collation/{}", self.collation_han_database()))?
+                .filter_map(|s| {
+                    Some(
+                        file_name_to_locale(
+                            s.rsplit_once('_')?.0,
+                            self.has_legacy_swedish_variants(),
+                        )?
+                        .id
+                        .language,
                     )
                 })
-                .collect(),
+                .collect::<HashSet<_>>();
+
+            parent_locales
+                .parent_locale
+                .iter()
+                .filter(|(k, _)| collation_locales.contains(&k.language))
+                .filter(|(from, to)| {
+                    // Script gets removed while language changes. For collation we want to insert the script-removal as its
+                    // own step.
+                    from.script.is_some() && to.script.is_none() && from.language != to.language
+                })
+                .map(|(from, _)| (from.to_string(), (from.language, None, from.region)))
+                .collect()
+        } else {
+            HashSet::new()
+        };
+
+        let parents = additional
+            .iter()
+            .map(|(k, v)| (UnvalidatedStr::from_str(k), *v))
+            .chain(parent_locales.collations.iter().map(|(from, to)| {
+                (
+                    <&UnvalidatedStr>::from(from.as_str()),
+                    <(Language, Option<Script>, Option<Region>)>::from(to),
+                )
+            }))
+            .collect();
+
+        let data = LocaleFallbackSupplementV1 {
+            parents,
             unicode_extension_defaults: [
                 (
                     key!("co"),
