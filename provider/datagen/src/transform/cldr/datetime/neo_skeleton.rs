@@ -264,55 +264,16 @@ macro_rules! impl_neo_skeleton_datagen {
     };
 }
 
-impl_neo_skeleton_datagen!(
-    BuddhistDateNeoSkeletonPatternsV1Marker,
-    "buddhist"
-);
-impl_neo_skeleton_datagen!(
-    ChineseDateNeoSkeletonPatternsV1Marker,
-    "chinese"
-);
-impl_neo_skeleton_datagen!(
-    CopticDateNeoSkeletonPatternsV1Marker,
-    "coptic"
-);
-impl_neo_skeleton_datagen!(
-    DangiDateNeoSkeletonPatternsV1Marker,
-    "dangi"
-);
-impl_neo_skeleton_datagen!(
-    EthiopianDateNeoSkeletonPatternsV1Marker,
-    "ethiopic"
-);
-impl_neo_skeleton_datagen!(
-    GregorianDateNeoSkeletonPatternsV1Marker,
-    "gregory"
-);
-impl_neo_skeleton_datagen!(
-    HebrewDateNeoSkeletonPatternsV1Marker,
-    "hebrew"
-);
-impl_neo_skeleton_datagen!(
-    IndianDateNeoSkeletonPatternsV1Marker,
-    "indian"
-);
-impl_neo_skeleton_datagen!(
-    IslamicDateNeoSkeletonPatternsV1Marker,
-    "islamic"
-);
-impl_neo_skeleton_datagen!(
-    JapaneseDateNeoSkeletonPatternsV1Marker,
-    "japanese"
-);
-impl_neo_skeleton_datagen!(
-    JapaneseExtendedDateNeoSkeletonPatternsV1Marker,
-    "japanext"
-);
-impl_neo_skeleton_datagen!(
-    PersianDateNeoSkeletonPatternsV1Marker,
-    "persian"
-);
-impl_neo_skeleton_datagen!(
-    RocDateNeoSkeletonPatternsV1Marker,
-    "roc"
-);
+impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1Marker, "buddhist");
+impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1Marker, "chinese");
+impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1Marker, "coptic");
+impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1Marker, "dangi");
+impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1Marker, "ethiopic");
+impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1Marker, "gregory");
+impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1Marker, "hebrew");
+impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1Marker, "indian");
+impl_neo_skeleton_datagen!(IslamicDateNeoSkeletonPatternsV1Marker, "islamic");
+impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1Marker, "japanese");
+impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "japanext");
+impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1Marker, "persian");
+impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1Marker, "roc");
