@@ -219,10 +219,7 @@ macro_rules! impl_data_provider {
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: Some(DataPayload::from_owned(($expr)(
-                        &data,
-                        &calendar.to_string(),
-                    ))),
+                    payload: DataPayload::from_owned(($expr)(&data, &calendar.to_string())),
                 })
             }
         }
@@ -403,34 +400,30 @@ mod test {
     fn test_basic_patterns() {
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
                 ..Default::default()
             })
-            .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .expect("Failed to load payload");
 
-        assert_eq!("d. M. y", cs_dates.get().date.medium.to_string());
+        assert_eq!("d. M. y", cs_dates.payload.get().date.medium.to_string());
     }
 
     #[test]
     fn test_with_numbering_system() {
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("haw").into(),
                 ..Default::default()
             })
-            .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .expect("Failed to load payload");
 
-        assert_eq!("d MMM y", cs_dates.get().date.medium.to_string());
+        assert_eq!("d MMM y", cs_dates.payload.get().date.medium.to_string());
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        assert_eq!("d/M/yy", cs_dates.get().date.short.to_string());
+        assert_eq!("d/M/yy", cs_dates.payload.get().date.short.to_string());
     }
 
     #[test]
@@ -441,15 +434,13 @@ mod test {
 
         let provider = DatagenProvider::new_testing();
 
-        let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
+        let skeletons: DataResponse<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
                 locale: &"fil-u-ca-gregory".parse().unwrap(),
                 ..Default::default()
             })
-            .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
-        let skeletons = &skeletons.get().0;
+            .expect("Failed to load payload");
+        let skeletons = &skeletons.payload.get().0;
 
         assert_eq!(
             Some(
@@ -484,18 +475,17 @@ mod test {
         use tinystr::tinystr;
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         assert_eq!(
             "srpna",
             cs_dates
+                .payload
                 .get()
                 .months
                 .format
@@ -506,7 +496,15 @@ mod test {
 
         assert_eq!(
             "po",
-            cs_dates.get().weekdays.format.short.as_ref().unwrap().0[1]
+            cs_dates
+                .payload
+                .get()
+                .weekdays
+                .format
+                .short
+                .as_ref()
+                .unwrap()
+                .0[1]
         );
     }
 
@@ -514,20 +512,19 @@ mod test {
     fn unalias_contexts() {
         let provider = DatagenProvider::new_testing();
 
-        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
+        let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
                 ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
         // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates.get().months.stand_alone.is_some());
+        assert!(cs_dates.payload.get().months.stand_alone.is_some());
 
         // Czech months are not unaliased because `wide` differs.
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -536,6 +533,7 @@ mod test {
             .abbreviated
             .is_none());
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -544,6 +542,7 @@ mod test {
             .short
             .is_none());
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -552,6 +551,7 @@ mod test {
             .narrow
             .is_none());
         assert!(cs_dates
+            .payload
             .get()
             .months
             .stand_alone
@@ -561,6 +561,6 @@ mod test {
             .is_some());
 
         // Czech weekdays are unaliased because they completely overlap.
-        assert!(cs_dates.get().weekdays.stand_alone.is_none());
+        assert!(cs_dates.payload.get().weekdays.stand_alone.is_none());
     }
 }

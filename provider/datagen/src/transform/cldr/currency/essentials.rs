@@ -97,7 +97,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result?)),
+            payload: DataPayload::from_owned(result?),
         })
     }
 }
@@ -311,7 +311,7 @@ fn extract_currency_essentials<'data>(
 fn test_basic() {
     fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
-        locale: &DataPayload<CurrencyEssentialsV1Marker>,
+        locale: &DataResponse<CurrencyEssentialsV1Marker>,
         placeholders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatternConfig {
@@ -320,7 +320,7 @@ fn test_basic() {
             short_placeholder_value: None,
             narrow_placeholder_value: None,
         };
-        let owned = locale.get().to_owned();
+        let owned = locale.payload.get().to_owned();
         let currency_pattern: CurrencyPatternConfig = owned
             .pattern_config_map
             .get_copied(&iso_code)
@@ -352,18 +352,16 @@ fn test_basic() {
 
     let provider = DatagenProvider::new_testing();
 
-    let en: DataPayload<CurrencyEssentialsV1Marker> = provider
+    let en: DataResponse<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    let en_placeholders = &en.get().to_owned().placeholders;
+    let en_placeholders = &en.payload.get().to_owned().placeholders;
     assert_eq!(
-        en.clone()
+        en.payload
             .get()
             .to_owned()
             .standard_pattern
@@ -372,7 +370,7 @@ fn test_basic() {
         "\u{3}\u{2}"
     );
     assert_eq!(
-        en.clone()
+        en.payload
             .get()
             .to_owned()
             .standard_alpha_next_to_number_pattern
@@ -391,20 +389,18 @@ fn test_basic() {
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
-    let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
+    let ar_eg: DataResponse<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
             ..Default::default()
         })
-        .unwrap()
-        .take_payload()
         .unwrap();
 
-    let ar_eg_placeholders = &ar_eg.get().to_owned().placeholders;
+    let ar_eg_placeholders = &ar_eg.payload.get().to_owned().placeholders;
 
     assert_eq!(
         ar_eg
-            .clone()
+            .payload
             .get()
             .to_owned()
             .standard_pattern
@@ -413,7 +409,7 @@ fn test_basic() {
         "\u{8}\r\u{200f}\u{a0}"
     );
     assert!(ar_eg
-        .clone()
+        .payload
         .get()
         .to_owned()
         .standard_alpha_next_to_number_pattern

@@ -145,13 +145,11 @@ impl<P> LocaleFallbackProvider<P> {
     /// );
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
-    /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
+    /// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
     ///     .load(req)
-    ///     .expect("Loading should succeed")
-    ///     .take_payload()
-    ///     .expect("Data should be present");
+    ///     .expect("Loading should succeed");
     ///
-    /// assert_eq!("Hallo Welt", german_hello_world.get().message);
+    /// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
     /// ```
     pub fn new_with_fallbacker(provider: P, fallbacker: LocaleFallbacker) -> Self {
         Self {

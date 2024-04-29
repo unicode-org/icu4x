@@ -23,7 +23,6 @@ typedef enum ICU4XError {
   ICU4XError_DataExtraneousLocaleError = 261,
   ICU4XError_DataFilteredResourceError = 262,
   ICU4XError_DataMismatchedTypeError = 263,
-  ICU4XError_DataMissingPayloadError = 264,
   ICU4XError_DataInvalidStateError = 265,
   ICU4XError_DataCustomError = 266,
   ICU4XError_DataIoError = 267,

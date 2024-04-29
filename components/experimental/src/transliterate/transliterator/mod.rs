@@ -411,7 +411,7 @@ impl Transliterator {
             marker_attributes,
             ..Default::default()
         };
-        let payload = provider.load(req)?.take_payload()?;
+        let payload = provider.load(req)?.payload;
         let rbt = payload.get();
         if rbt.id_group_list.len() != rbt.rule_group_list.len() {
             return Err(DataError::custom(

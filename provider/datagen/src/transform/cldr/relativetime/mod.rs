@@ -104,7 +104,7 @@ macro_rules! make_data_provider {
 
                     Ok(DataResponse {
             metadata: Default::default(),
-                        payload: Some(DataPayload::from_owned(data.try_into()?)),
+                        payload: DataPayload::from_owned(data.try_into()?),
                     })
                 }
             }
@@ -209,8 +209,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_eq!(data.get().past.one.as_ref().unwrap().pattern, " qtr. ago");
         assert_eq!(data.get().past.one.as_ref().unwrap().index, 0u8);
@@ -229,8 +228,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap()
-            .take_payload()
-            .unwrap();
+            .payload;
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.

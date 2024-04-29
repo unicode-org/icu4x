@@ -97,7 +97,7 @@ impl DatePatternSelectionData {
                 marker_attributes: &DataMarkerAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
-            .take_payload()?
+            .payload
             .cast();
         Ok(Self::SkeletonDate {
             skeleton: NeoDateSkeleton { length, components },
@@ -142,7 +142,7 @@ impl TimePatternSelectionData {
                 marker_attributes: &DataMarkerAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
-            .take_payload()?
+            .payload
             .cast();
         Ok(Self::SkeletonTime {
             skeleton: NeoTimeSkeleton { length, components },
@@ -235,7 +235,7 @@ impl DateTimeGluePatternSelectionData {
                 ),
                 ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { date, time, glue })
     }
 }

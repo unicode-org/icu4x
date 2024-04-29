@@ -89,7 +89,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(result)),
+            payload: DataPayload::from_owned(result),
         })
     }
 }

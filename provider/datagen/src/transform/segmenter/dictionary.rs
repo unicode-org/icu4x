@@ -44,8 +44,8 @@ macro_rules! implement {
                 self.check_req::<$marker>(req)?;
                 let data = self.load_dictionary_data(req)?;
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(data)),
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(data),
                 })
             }
         }

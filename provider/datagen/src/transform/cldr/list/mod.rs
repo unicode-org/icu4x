@@ -116,7 +116,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     let metadata = DataResponseMetadata::default();
     Ok(DataResponse {
         metadata,
-        payload: Some(DataPayload::from_owned(patterns)),
+        payload: DataPayload::from_owned(patterns),
     })
 }
 

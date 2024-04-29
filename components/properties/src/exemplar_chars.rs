@@ -52,27 +52,29 @@ macro_rules! make_exemplar_chars_unicode_set_property {
             provider: &(impl DataProvider<$data_marker> + ?Sized),
             locale: &DataLocale,
         ) -> Result<UnicodeSetData, DataError> {
-            provider.load(
-                DataRequest {
-                    locale,
-                    ..Default::default()
-                })
-                .and_then(DataResponse::take_payload)
-                .map(UnicodeSetData::from_data)
+            Ok(UnicodeSetData::from_data(
+                provider.load(
+                    DataRequest {
+                        locale,
+                        ..Default::default()
+                    })?
+                .payload
+            ))
         }
         $(#[$attr])*
         #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
             locale: &DataLocale,
         ) -> Result<UnicodeSetData, DataError> {
-            DataProvider::<$data_marker>::load(
-                &crate::provider::Baked,
-                DataRequest {
-                    locale,
-                    ..Default::default()
-                })
-                .and_then(DataResponse::take_payload)
-                .map(UnicodeSetData::from_data)
+            Ok(UnicodeSetData::from_data(
+                DataProvider::<$data_marker>::load(
+                    &crate::provider::Baked,
+                    DataRequest {
+                        locale,
+                        ..Default::default()
+                    })?
+                .payload
+            ))
         }
     }
 }
