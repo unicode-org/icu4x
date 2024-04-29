@@ -4,7 +4,9 @@
 
 //! Code for the [`SinglePlaceholder`] pattern backend.
 
+use core::convert::Infallible;
 use core::{cmp::Ordering, str::FromStr};
+use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -58,9 +60,14 @@ impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for (W,)
 where
     W: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
-    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
-        &self.0
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+    fn value_for(&self, _key: SinglePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+        (
+            WriteableAsTryWriteableInfallible(&self.0),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -68,10 +75,15 @@ impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for [W; 1]
 where
     W: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
-    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+    fn value_for(&self, _key: SinglePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
         let [value] = self;
-        value
+        (
+            WriteableAsTryWriteableInfallible(value),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -153,7 +165,10 @@ pub enum SinglePlaceholder {}
 impl crate::private::Sealed for SinglePlaceholder {}
 
 impl PatternBackend for SinglePlaceholder {
-    type PlaceholderKey = SinglePlaceholderKey;
+    type PlaceholderKey<'a> = SinglePlaceholderKey;
+    #[cfg(feature = "alloc")]
+    type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
+    type Error<'a> = Infallible;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
@@ -188,8 +203,9 @@ impl PatternBackend for SinglePlaceholder {
 
     #[cfg(feature = "alloc")]
     fn try_from_items<
-        'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
+        'cow,
+        'ph,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {

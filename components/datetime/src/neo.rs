@@ -28,7 +28,7 @@ use icu_calendar::provider::{
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::{prelude::*, NeverMarker};
-use writeable::Writeable;
+use writeable::TryWriteable;
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
@@ -143,7 +143,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use icu::datetime::neo::TypedNeoDateFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
     ///     &locale!("es-MX").into(),
@@ -151,7 +151,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// )
     /// .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
     ///     "miércoles, 20 de diciembre de 2023"
     /// );
@@ -254,7 +254,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use icu::datetime::neo::TypedNeoDateFormatter;
     /// use icu::datetime::neo_skeleton::{NeoSkeletonLength, YearMonthMarker};
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
     ///     &locale!("es-MX").into(),
@@ -262,7 +262,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// )
     /// .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
     ///     "diciembre de 2023"
     /// );
@@ -417,7 +417,7 @@ impl NeoDateFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
@@ -429,7 +429,7 @@ impl NeoDateFormatter {
     ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     df.format(&any_datetime).expect("Calendars should match"),
     ///     "Sep 1, 2020"
     /// );
@@ -646,21 +646,24 @@ pub struct FormattedNeoDate<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedNeoDate<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedNeoDate<'a> {
+    type Error = Error;
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         DateTimeWriter {
             datetime: &self.datetime,
             names: self.names,
             pattern_items: self.pattern.iter_items(),
             pattern_metadata: self.pattern.metadata(),
         }
-        .write_to(sink)
+        .try_write_to(sink)
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedNeoDate<'_>);
 
 impl<'a> FormattedNeoDate<'a> {
     /// Gets the pattern used in this formatted value.
@@ -698,7 +701,7 @@ impl NeoTimeFormatter {
     /// use icu::datetime::neo::NeoTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoTimeFormatter::try_new_with_length(
     ///     &locale!("es-MX").into(),
@@ -706,7 +709,7 @@ impl NeoTimeFormatter {
     /// )
     /// .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(&Time::try_new(14, 48, 58, 0).unwrap()),
     ///     "2:48:58 p.m."
     /// );
@@ -788,7 +791,7 @@ impl NeoTimeFormatter {
     /// use icu::datetime::neo::NeoTimeFormatter;
     /// use icu::datetime::neo_skeleton::{NeoSkeletonLength, HourMinuteMarker};
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoTimeFormatter::try_new_with_skeleton::<HourMinuteMarker>(
     ///     &locale!("es-MX").into(),
@@ -796,7 +799,7 @@ impl NeoTimeFormatter {
     /// )
     /// .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(&Time::try_new(14, 48, 58, 0).unwrap()),
     ///     "2:48 p.m."
     /// );
@@ -913,21 +916,24 @@ pub struct FormattedNeoTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedNeoTime<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedNeoTime<'a> {
+    type Error = Error;
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         DateTimeWriter {
             datetime: &self.datetime,
             names: self.names,
             pattern_items: self.pattern.iter_items(),
             pattern_metadata: self.pattern.metadata(),
         }
-        .write_to(sink)
+        .try_write_to(sink)
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedNeoTime<'_>);
 
 impl<'a> FormattedNeoTime<'a> {
     /// Gets the pattern used in this formatted value.
@@ -974,7 +980,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_date_length(
@@ -983,7 +989,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///     )
     ///     .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
@@ -1080,7 +1086,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_time_length(
@@ -1089,7 +1095,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///     )
     ///     .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
@@ -1172,7 +1178,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_lengths(
@@ -1182,7 +1188,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///     )
     ///     .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(
     ///         &DateTime::try_new_gregorian_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
@@ -1394,7 +1400,7 @@ impl NeoDateTimeFormatter {
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
     ///     NeoDateTimeFormatter::try_new_with_date_length(
@@ -1403,7 +1409,7 @@ impl NeoDateTimeFormatter {
     ///     )
     ///     .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(
     ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
@@ -1590,7 +1596,7 @@ impl NeoDateTimeFormatter {
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
     ///     NeoDateTimeFormatter::try_new_with_time_length(
@@ -1599,7 +1605,7 @@ impl NeoDateTimeFormatter {
     ///     )
     ///     .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(
     ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
@@ -1695,7 +1701,7 @@ impl NeoDateTimeFormatter {
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
     /// use icu::locid::locale;
-    /// use writeable::assert_writeable_eq;
+    /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
     ///     NeoDateTimeFormatter::try_new_with_lengths(
@@ -1705,7 +1711,7 @@ impl NeoDateTimeFormatter {
     ///     )
     ///     .unwrap();
     ///
-    /// assert_writeable_eq!(
+    /// assert_try_writeable_eq!(
     ///     formatter.format(
     ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
     ///             .unwrap()
@@ -1950,21 +1956,24 @@ pub struct FormattedNeoDateTime<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a> Writeable for FormattedNeoDateTime<'a> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
+    type Error = Error;
+
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
         DateTimeWriter {
             datetime: &self.datetime,
             names: self.names,
             pattern_items: self.pattern.iter_items(),
             pattern_metadata: self.pattern.metadata(),
         }
-        .write_to(sink)
+        .try_write_to(sink)
     }
 
     // TODO(#489): Implement writeable_length_hint
 }
-
-writeable::impl_display_with_writeable!(FormattedNeoDateTime<'_>);
 
 impl<'a> FormattedNeoDateTime<'a> {
     /// Gets the pattern used in this formatted value.

@@ -198,14 +198,14 @@ struct Cli {
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
     #[arg(
         hide = true,
-        help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback"
+        help = "Deprecated: use --deduplication, --runtime-fallback-location, or --without-fallback"
     )]
     fallback: Fallback,
 
     #[arg(long)]
     #[arg(
         help = "disables locale fallback, instead exporting exactly the locales specified in --locales. \
-                Cannot be used with --deduplication-strategy, --runtime-fallback-location"
+                Cannot be used with --deduplication, --runtime-fallback-location"
     )]
     without_fallback: bool,
 
@@ -223,7 +223,7 @@ struct Cli {
                 if internal fallback is enabled, a more aggressive deduplication strategy is used. \
                 Cannot be used with --without-fallback"
     )]
-    deduplication_strategy: Option<DeduplicationStrategy>,
+    deduplication: Option<Deduplication>,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -301,7 +301,7 @@ enum Fallback {
 
 // Mirrors crate::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum DeduplicationStrategy {
+enum Deduplication {
     Maximal,
     RetainBaseLanguages,
     None,
@@ -522,30 +522,27 @@ fn main() -> eyre::Result<()> {
                 .collect::<eyre::Result<Vec<_>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
-        options.deduplication_strategy = match (
-            cli.deduplication_strategy,
-            cli.fallback,
-            cli.without_fallback,
-        ) {
-            (None, _, true) => None,
-            (Some(_), _, true) => {
-                eyre::bail!("cannot combine --without-fallback and --deduplication-strategy")
-            }
-            (Some(x), _, false) => match x {
-                DeduplicationStrategy::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                DeduplicationStrategy::RetainBaseLanguages => {
-                    Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+        options.deduplication_strategy =
+            match (cli.deduplication, cli.fallback, cli.without_fallback) {
+                (None, _, true) => None,
+                (Some(_), _, true) => {
+                    eyre::bail!("cannot combine --without-fallback and --deduplication")
                 }
-                DeduplicationStrategy::None => Some(icu_datagen::DeduplicationStrategy::None),
-            },
-            (None, fallback_mode, false) => match fallback_mode {
-                Fallback::Auto => None,
-                Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
-                Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::Preresolved => None,
-            },
-        };
+                (Some(x), _, false) => match x {
+                    Deduplication::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Deduplication::RetainBaseLanguages => {
+                        Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+                    }
+                    Deduplication::None => Some(icu_datagen::DeduplicationStrategy::None),
+                },
+                (None, fallback_mode, false) => match fallback_mode {
+                    Fallback::Auto => None,
+                    Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
+                    Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Fallback::Preresolved => None,
+                },
+            };
         options.runtime_fallback_location = match (
             cli.runtime_fallback_location,
             cli.fallback,

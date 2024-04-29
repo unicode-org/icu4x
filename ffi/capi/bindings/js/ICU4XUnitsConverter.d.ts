@@ -14,7 +14,7 @@ export class ICU4XUnitsConverter {
 
    * Converts the input value in float from the input unit to the output unit (that have been used to create this converter). NOTE: The conversion using floating-point operations is not as accurate as the conversion using ratios.
 
-   * See the {@link https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert_f64 Rust documentation for `convert_f64`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert Rust documentation for `convert`} for more information.
    */
   convert_f64(value: f64): f64;
 
