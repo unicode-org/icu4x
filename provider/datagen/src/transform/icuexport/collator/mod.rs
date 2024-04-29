@@ -37,11 +37,11 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
         self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
 
         let parent_locales = &self
-        .cldr()?
-        .core()
-        .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
-            "supplemental/parentLocales.json",
-        )?.supplemental.parent_locales;
+            .cldr()?
+            .core()
+            .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
+                "supplemental/parentLocales.json",
+            )?.supplemental.parent_locales;
 
         let additional = if parent_locales
             .rules
