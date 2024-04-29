@@ -16,6 +16,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
+use std::hash::Hash;
 use std::str::FromStr;
 use std::time::Duration;
 use std::time::Instant;
@@ -75,12 +76,52 @@ pub enum DeduplicationStrategy {
     None,
 }
 
+/// Inner fields of a [`LocaleFamily`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub(crate) struct LocaleFamilyAnnotations {
+    include_ancestors: bool,
+    include_descendants: bool,
+}
+
+impl LocaleFamilyAnnotations {
+    #[inline]
+    pub(crate) const fn with_descendants() -> Self {
+        Self {
+            include_ancestors: true,
+            include_descendants: true,
+        }
+    }
+
+    #[inline]
+    pub(crate) const fn without_descendants() -> Self {
+        Self {
+            include_ancestors: true,
+            include_descendants: false,
+        }
+    }
+
+    #[inline]
+    pub(crate) const fn without_ancestors() -> Self {
+        Self {
+            include_ancestors: false,
+            include_descendants: true,
+        }
+    }
+
+    #[inline]
+    pub(crate) const fn single() -> Self {
+        Self {
+            include_ancestors: false,
+            include_descendants: false,
+        }
+    }
+}
+
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LocaleFamily {
     langid: Option<LanguageIdentifier>,
-    include_ancestors: bool,
-    include_descendants: bool,
+    annotations: LocaleFamilyAnnotations,
 }
 
 impl LocaleFamily {
@@ -98,8 +139,7 @@ impl LocaleFamily {
     pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
-            include_ancestors: true,
-            include_descendants: true,
+            annotations: LocaleFamilyAnnotations::with_descendants(),
         }
     }
 
@@ -117,8 +157,7 @@ impl LocaleFamily {
     pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
-            include_ancestors: true,
-            include_descendants: false,
+            annotations: LocaleFamilyAnnotations::without_descendants(),
         }
     }
 
@@ -137,8 +176,7 @@ impl LocaleFamily {
     pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
-            include_ancestors: false,
-            include_descendants: true,
+            annotations: LocaleFamilyAnnotations::without_ancestors(),
         }
     }
 
@@ -150,8 +188,7 @@ impl LocaleFamily {
     pub const fn single(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
-            include_ancestors: false,
-            include_descendants: false,
+            annotations: LocaleFamilyAnnotations::single(),
         }
     }
 
@@ -161,18 +198,62 @@ impl LocaleFamily {
     pub const fn full() -> Self {
         Self {
             langid: None,
-            include_ancestors: false,
-            include_descendants: true,
+            annotations: LocaleFamilyAnnotations {
+                include_ancestors: false,
+                include_descendants: true,
+            },
+        }
+    }
+
+    pub(crate) fn into_inner(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
+        (self.langid, self.annotations)
+    }
+
+    pub(crate) fn as_borrowed(&self) -> LocaleFamilyBorrowed {
+        LocaleFamilyBorrowed {
+            langid: self.langid.as_ref(),
+            annotations: self.annotations,
         }
     }
 }
 
 impl Writeable for LocaleFamily {
+    #[inline]
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        self.as_borrowed().write_to(sink)
+    }
+
+    #[inline]
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        self.as_borrowed().writeable_length_hint()
+    }
+}
+
+writeable::impl_display_with_writeable!(LocaleFamily);
+
+/// A [`LocaleFamily`] that does not own its [`LanguageIdentifier`].
+pub(crate) struct LocaleFamilyBorrowed<'a> {
+    langid: Option<&'a LanguageIdentifier>,
+    annotations: LocaleFamilyAnnotations,
+}
+
+impl<'a> LocaleFamilyBorrowed<'a> {
+    pub(crate) fn from_inner(
+        inner: (&'a Option<LanguageIdentifier>, &LocaleFamilyAnnotations),
+    ) -> Self {
+        Self {
+            langid: inner.0.as_ref(),
+            annotations: *inner.1,
+        }
+    }
+}
+
+impl Writeable for LocaleFamilyBorrowed<'_> {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         match (
             &self.langid,
-            self.include_ancestors,
-            self.include_descendants,
+            self.annotations.include_ancestors,
+            self.annotations.include_descendants,
         ) {
             (Some(langid), true, true) => langid.write_to(sink),
             (Some(langid), true, false) => {
@@ -194,8 +275,8 @@ impl Writeable for LocaleFamily {
     fn writeable_length_hint(&self) -> writeable::LengthHint {
         match (
             &self.langid,
-            self.include_ancestors,
-            self.include_descendants,
+            self.annotations.include_ancestors,
+            self.annotations.include_descendants,
         ) {
             (Some(langid), true, true) => langid.writeable_length_hint(),
             (Some(langid), true, false) => langid.writeable_length_hint() + 1,
@@ -205,8 +286,6 @@ impl Writeable for LocaleFamily {
         }
     }
 }
-
-writeable::impl_display_with_writeable!(LocaleFamily);
 
 /// An error while parsing a [`LocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
@@ -241,23 +320,31 @@ impl FromStr for LocaleFamily {
         match first {
             b'^' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
-                include_ancestors: true,
-                include_descendants: false,
+                annotations: LocaleFamilyAnnotations {
+                    include_ancestors: true,
+                    include_descendants: false,
+                },
             }),
             b'%' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
-                include_ancestors: false,
-                include_descendants: true,
+                annotations: LocaleFamilyAnnotations {
+                    include_ancestors: false,
+                    include_descendants: true,
+                },
             }),
             b'@' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
-                include_ancestors: false,
-                include_descendants: false,
+                annotations: LocaleFamilyAnnotations {
+                    include_ancestors: false,
+                    include_descendants: false,
+                },
             }),
             b if b.is_ascii_alphanumeric() => Ok(Self {
                 langid: Some(s.parse()?),
-                include_ancestors: true,
-                include_descendants: true,
+                annotations: LocaleFamilyAnnotations {
+                    include_ancestors: true,
+                    include_descendants: true,
+                },
             }),
             _ => Err(LocaleFamilyParseError::InvalidFamily),
         }
@@ -297,7 +384,7 @@ pub struct FallbackOptions {
 #[derive(Debug, Clone)]
 enum LocalesWithOrWithoutFallback {
     WithFallback {
-        families: HashSet<LocaleFamily>,
+        families: HashMap<Option<LanguageIdentifier>, LocaleFamilyAnnotations>,
         options: FallbackOptions,
     },
     WithoutFallback {
@@ -420,6 +507,9 @@ impl DatagenDriver {
     /// Use the [`langid!`] macro from the prelude to create an
     /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
     ///
+    /// If there are multiple [`LocaleFamily`]s for the same [`LanguageIdentifier`], the last entry
+    /// in the iterator takes precedence.
+    ///
     /// [`langid!`]: crate::prelude::langid
     /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales_and_fallback(
@@ -429,7 +519,7 @@ impl DatagenDriver {
     ) -> Self {
         Self {
             locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback {
-                families: locales.into_iter().collect(),
+                families: locales.into_iter().map(LocaleFamily::into_inner).collect(),
                 options,
             }),
             ..self
@@ -554,8 +644,15 @@ impl DatagenDriver {
 
         let map_legacy_locales_to_locales_with_expansion =
             |legacy_locales: Option<Vec<LanguageIdentifier>>| match legacy_locales {
-                Some(v) => v.into_iter().map(LocaleFamily::with_descendants).collect(),
-                None => [LocaleFamily::full()].into_iter().collect(),
+                Some(v) => v
+                    .into_iter()
+                    .map(LocaleFamily::with_descendants)
+                    .map(LocaleFamily::into_inner)
+                    .collect(),
+                None => [LocaleFamily::full()]
+                    .into_iter()
+                    .map(LocaleFamily::into_inner)
+                    .collect(),
             };
 
         let locales_fallback = match (locales_fallback, legacy_locales, legacy_fallback_mode) {
@@ -622,9 +719,11 @@ impl DatagenDriver {
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback { langids: locales } => {
-                let mut sorted_locales =
-                    locales.iter().map(ToString::to_string).collect::<Vec<_>>();
-                sorted_locales.sort();
+                let mut sorted_locales = locales
+                    .iter()
+                    .map(|x| x.write_to_string())
+                    .collect::<Vec<_>>();
+                sorted_locales.sort_unstable();
                 log::info!(
                     "Datagen configured without fallback with these locales: {:?}",
                     sorted_locales
@@ -648,15 +747,18 @@ impl DatagenDriver {
                     }
                     Some(x) => x,
                 };
-                let mut sorted_locales =
-                    families.iter().map(ToString::to_string).collect::<Vec<_>>();
-                sorted_locales.sort();
+                let mut sorted_locales = families
+                    .iter()
+                    .map(LocaleFamilyBorrowed::from_inner)
+                    .map(|family| family.write_to_string().into_owned())
+                    .collect::<Vec<_>>();
+                sorted_locales.sort_unstable();
                 log::info!(
                     "Datagen configured with {}, {}, and these locales: {:?}",
                     if uses_internal_fallback {
                         "internal fallback"
                     } else {
-                        "external fallback "
+                        "external fallback"
                     },
                     match deduplication_strategy {
                         DeduplicationStrategy::Maximal => "maximal deduplication",
@@ -869,24 +971,28 @@ fn select_locales_for_key(
         impl FnOnce() -> Result<LocaleFallbacker, DataError>,
     >,
 ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-    // A map from langid to data locales. Keys that have aux keys or extension keywords
-    // may have multiple data locales per langid.
+    /// Values for the map from langid to data locales. Keys that have aux keys or extension
+    /// keywords may have multiple data locales per langid.
     #[derive(Default)]
-    struct LocalesMapValue<'a> {
-        family: Option<&'a LocaleFamily>,
+    struct LocalesMapValue {
+        /// The [`LocaleFamilyAnnotations`] associated with this language identifier if it was
+        /// explicitly requested. If `None`, the langid is supported but not requested.
+        family: Option<LocaleFamilyAnnotations>,
+        /// Whether this language identifier should be included in the export.
         is_selected: bool,
+        /// The set of exportable [`DataLocale`]s associated with this language identifier.
         data_locales: HashSet<DataLocale>,
     }
-    let mut locales_map: HashMap<LanguageIdentifier, LocalesMapValue> = Default::default();
+    let mut locales_map = HashMap::<LanguageIdentifier, LocalesMapValue>::new();
     for locale in provider
         .supported_locales_for_key(key)
         .map_err(|e| e.with_key(key))?
     {
-        use std::collections::hash_map::Entry;
-        match locales_map.entry(locale.get_langid()) {
-            Entry::Occupied(mut entry) => entry.get_mut().data_locales.insert(locale),
-            Entry::Vacant(entry) => entry.insert(Default::default()).data_locales.insert(locale),
-        };
+        locales_map
+            .entry(locale.get_langid())
+            .or_default()
+            .data_locales
+            .insert(locale);
     }
 
     if key.path().get().starts_with("segmenter/dictionary/") {
@@ -944,16 +1050,16 @@ fn select_locales_for_key(
                 let value = locales_map.entry(LanguageIdentifier::UND).or_default();
                 value.is_selected = true;
             }
-            for family in families {
-                let Some(langid) = family.langid.as_ref() else {
-                    debug_assert_eq!(*family, LocaleFamily::full());
+            for (langid, annotations) in families {
+                let Some(langid) = langid.as_ref() else {
+                    debug_assert_eq!(annotations, &LocaleFamily::full().annotations);
                     include_full = true;
                     continue;
                 };
                 let value = locales_map.entry(langid.clone()).or_default();
                 value.is_selected = true;
                 if *langid != LanguageIdentifier::UND {
-                    value.family = Some(family);
+                    value.family = Some(*annotations);
                 }
             }
             if include_full && families.len() == 1 {
@@ -1224,4 +1330,34 @@ fn test_collation_filtering() {
             .collect::<BTreeSet<_>>();
         assert_eq!(resolved_locales, expected_locales, "{cas:?}");
     }
+}
+
+/// Test that the last option with multiple conflicting families wins.
+#[test]
+fn test_family_precedence() {
+    let driver = DatagenDriver::new().with_locales_and_fallback(
+        [
+            "en".parse().unwrap(),
+            "%en".parse().unwrap(),
+            "@en".parse().unwrap(),
+            "%zh-TW".parse().unwrap(),
+            "^zh-TW".parse().unwrap(),
+        ],
+        Default::default(),
+    );
+
+    let Some(LocalesWithOrWithoutFallback::WithFallback { families, .. }) = driver.locales_fallback
+    else {
+        panic!("expected locales with fallback")
+    };
+
+    assert_eq!(
+        families,
+        [
+            "@en".parse::<LocaleFamily>().unwrap().into_inner(),
+            "^zh-TW".parse::<LocaleFamily>().unwrap().into_inner()
+        ]
+        .into_iter()
+        .collect::<HashMap<_, _>>()
+    );
 }
