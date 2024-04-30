@@ -320,31 +320,19 @@ impl FromStr for LocaleFamily {
         match first {
             b'^' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
-                annotations: LocaleFamilyAnnotations {
-                    include_ancestors: true,
-                    include_descendants: false,
-                },
+                annotations: LocaleFamilyAnnotations::without_descendants(),
             }),
             b'%' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
-                annotations: LocaleFamilyAnnotations {
-                    include_ancestors: false,
-                    include_descendants: true,
-                },
+                annotations: LocaleFamilyAnnotations::without_ancestors(),
             }),
             b'@' => Ok(Self {
                 langid: Some(LanguageIdentifier::try_from_bytes(remainder)?),
-                annotations: LocaleFamilyAnnotations {
-                    include_ancestors: false,
-                    include_descendants: false,
-                },
+                annotations: LocaleFamilyAnnotations::single(),
             }),
             b if b.is_ascii_alphanumeric() => Ok(Self {
                 langid: Some(s.parse()?),
-                annotations: LocaleFamilyAnnotations {
-                    include_ancestors: true,
-                    include_descendants: true,
-                },
+                annotations: LocaleFamilyAnnotations::with_descendants(),
             }),
             _ => Err(LocaleFamilyParseError::InvalidFamily),
         }
