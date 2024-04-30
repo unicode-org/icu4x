@@ -205,7 +205,7 @@ impl LocaleFamily {
         }
     }
 
-    pub(crate) fn into_inner(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
+    pub(crate) fn into_parts(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
         (self.langid, self.annotations)
     }
 
@@ -238,7 +238,7 @@ pub(crate) struct LocaleFamilyBorrowed<'a> {
 }
 
 impl<'a> LocaleFamilyBorrowed<'a> {
-    pub(crate) fn from_inner(
+    pub(crate) fn from_parts(
         inner: (&'a Option<LanguageIdentifier>, &LocaleFamilyAnnotations),
     ) -> Self {
         Self {
@@ -507,7 +507,7 @@ impl DatagenDriver {
     ) -> Self {
         Self {
             locales_fallback: Some(LocalesWithOrWithoutFallback::WithFallback {
-                families: locales.into_iter().map(LocaleFamily::into_inner).collect(),
+                families: locales.into_iter().map(LocaleFamily::into_parts).collect(),
                 options,
             }),
             ..self
@@ -635,11 +635,11 @@ impl DatagenDriver {
                 Some(v) => v
                     .into_iter()
                     .map(LocaleFamily::with_descendants)
-                    .map(LocaleFamily::into_inner)
+                    .map(LocaleFamily::into_parts)
                     .collect(),
                 None => [LocaleFamily::full()]
                     .into_iter()
-                    .map(LocaleFamily::into_inner)
+                    .map(LocaleFamily::into_parts)
                     .collect(),
             };
 
@@ -737,7 +737,7 @@ impl DatagenDriver {
                 };
                 let mut sorted_locales = families
                     .iter()
-                    .map(LocaleFamilyBorrowed::from_inner)
+                    .map(LocaleFamilyBorrowed::from_parts)
                     .map(|family| family.write_to_string().into_owned())
                     .collect::<Vec<_>>();
                 sorted_locales.sort_unstable();
@@ -1341,8 +1341,8 @@ fn test_family_precedence() {
     assert_eq!(
         families,
         [
-            "@en".parse::<LocaleFamily>().unwrap().into_inner(),
-            "^zh-TW".parse::<LocaleFamily>().unwrap().into_inner()
+            "@en".parse::<LocaleFamily>().unwrap().into_parts(),
+            "^zh-TW".parse::<LocaleFamily>().unwrap().into_parts()
         ]
         .into_iter()
         .collect::<HashMap<_, _>>()
