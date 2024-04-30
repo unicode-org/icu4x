@@ -22,23 +22,25 @@ all-features = true
 
 [dependencies]
 either = { workspace = true }
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 writeable = { workspace = true, features = ["either"] }
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { version = "1.0", features = ["derive"], optional = true }
+litemap = { workspace = true, default-features = false, optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
 zerofrom = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["databake", "serde"] }
-serde_json = { version = "1.0" }
-postcard = { version = "1.0", features = ["use-std"] }
+serde_json = { workspace = true }
+postcard = { workspace = true, features = ["use-std"] }
 
 [features]
 alloc = []
 std = ["alloc"]
 databake = ["dep:databake"]
+litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]

@@ -50,6 +50,7 @@ pub mod provider {
         icu_experimental_data::impl_displaynames_scripts_v1!(Baked);
         icu_experimental_data::impl_displaynames_variants_v1!(Baked);
         icu_experimental_data::impl_percent_essentials_v1!(Baked);
+        icu_experimental_data::impl_personnames_personnames_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_day_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_hour_v1!(Baked);
         icu_experimental_data::impl_relativetime_long_minute_v1!(Baked);
@@ -94,6 +95,7 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1Marker::KEY,
         super::displaynames::provider::ScriptDisplayNamesV1Marker::KEY,
         super::displaynames::provider::VariantDisplayNamesV1Marker::KEY,
+        super::personnames::provider::PersonNamesFormatV1Marker::KEY,
         super::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::KEY,

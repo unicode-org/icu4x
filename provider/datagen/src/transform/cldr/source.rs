@@ -64,6 +64,10 @@ impl CldrCache {
         CldrDirNoLang(self, "cldr-bcp47/bcp47".to_string())
     }
 
+    pub(in crate::provider) fn personnames(&self) -> CldrDirLang<'_> {
+        CldrDirLang(self, "cldr-person-names".to_owned())
+    }
+
     pub(in crate::provider) fn displaynames(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }

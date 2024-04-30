@@ -102,80 +102,79 @@ impl From<bool> for Sign {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct UTCOffsetRecord {
-    /// The `Sign` value of the `UtcOffsetRecord`
+    /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
-    /// The hour value of the `UtcOffsetRecord`
+    /// The hour value of the `UtcOffsetRecord`.
     pub hour: u8,
     /// The minute value of the `UtcOffsetRecord`.
     pub minute: u8,
     /// The second value of the `UtcOffsetRecord`.
     pub second: u8,
-    /// Any nanosecond value of the `UTCOffsetRecord`
+    /// Any nanosecond value of the `UTCOffsetRecord`.
     pub nanosecond: u32,
 }
 
-/// The resulting record of a `Duration` parse.
-#[non_exhaustive]
+/// The resulting record of parsing a `Duration` string.
+#[allow(clippy::exhaustive_structs)]
+// A duration can only be a Sign, a DateDuration part, and a TimeDuration part that users need to match on.
 #[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DurationParseRecord {
     /// Duration Sign
     pub sign: Sign,
-    /// The `years` value.
-    pub years: u32,
-    /// The `months` value.
-    pub months: u32,
-    /// The `weeks` value.
-    pub weeks: u32,
-    /// The `days` value.
-    pub days: u32,
-    /// The `hours` value.
-    pub hours: u32,
-    /// The `minutes` value.
-    pub minutes: u32,
-    /// The `seconds` value.
-    pub seconds: u32,
-    /// Any fraction part of a duration.
-    pub fraction: Option<DurationFraction>,
+    /// The parsed `DateDurationRecord` if present.
+    pub date: Option<DateDurationRecord>,
+    /// The parsed `TimeDurationRecord` if present.
+    pub time: Option<TimeDurationRecord>,
 }
 
-/// An enum representing the fraction part of a duration.
-#[non_exhaustive]
+/// A `DateDurationRecord` represents the result of parsing the date component of a Duration string.
+#[allow(clippy::exhaustive_structs)]
+// A `DateDurationRecord` by spec can only be made up of years, months, weeks, and days parts that users need to match on.
+#[cfg(feature = "duration")]
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
+pub struct DateDurationRecord {
+    /// Years value.
+    pub years: u32,
+    /// Months value.
+    pub months: u32,
+    /// Weeks value.
+    pub weeks: u32,
+    /// Days value.
+    pub days: u32,
+}
+
+/// A `TimeDurationRecord` represents the result of parsing the time component of a Duration string.
+#[allow(clippy::exhaustive_enums)]
+// A `TimeDurationRecord` by spec can only be made up of the valid parts up to a present fraction that users need to match on.
 #[cfg(feature = "duration")]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum DurationFraction {
-    /// The fraction value applied to an hour.
-    Hours(u64),
-    /// The fraction value applied to the minutes field.
-    Minutes(u64),
-    /// The fraction value applied to the seconds field.
-    Seconds(u32),
-}
-
-/// A `DateDuration` Parse Node.
-#[cfg(feature = "duration")]
-#[derive(Default, Debug, Clone, Copy)]
-pub(crate) struct DateDurationRecord {
-    /// Years value.
-    pub(crate) years: u32,
-    /// Months value.
-    pub(crate) months: u32,
-    /// Weeks value.
-    pub(crate) weeks: u32,
-    /// Days value.
-    pub(crate) days: u32,
-}
-
-/// A `TimeDuration` Parse Node
-#[cfg(feature = "duration")]
-#[derive(Default, Debug, Clone, Copy)]
-pub(crate) struct TimeDurationRecord {
-    /// Hours value.
-    pub(crate) hours: u32,
-    /// Minutes value.
-    pub(crate) minutes: u32,
-    /// Seconds value.
-    pub(crate) seconds: u32,
-    /// Any parsed fraction value.
-    pub(crate) fraction: Option<DurationFraction>,
+pub enum TimeDurationRecord {
+    // An hours Time duration record.
+    Hours {
+        /// Hours value.
+        hours: u32,
+        /// The parsed fraction value in nanoseconds.
+        fraction: u64,
+    },
+    // A Minutes Time duration record.
+    Minutes {
+        /// Hours value.
+        hours: u32,
+        /// Minutes value.
+        minutes: u32,
+        /// The parsed fraction value in nanoseconds.
+        fraction: u64,
+    },
+    // A Seconds Time duration record.
+    Seconds {
+        /// Hours value.
+        hours: u32,
+        /// Minutes value.
+        minutes: u32,
+        /// Seconds value.
+        seconds: u32,
+        /// The parsed fraction value in nanoseconds.
+        fraction: u32,
+    },
 }

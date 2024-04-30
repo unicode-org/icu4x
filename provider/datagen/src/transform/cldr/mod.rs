@@ -18,6 +18,8 @@ pub(in crate::provider) mod list;
 pub(in crate::provider) mod locale_canonicalizer;
 #[cfg(feature = "experimental_components")]
 pub(in crate::provider) mod percent;
+#[cfg(feature = "experimental_components")]
+pub(in crate::provider) mod personnames;
 pub(in crate::provider) mod plurals;
 #[cfg(feature = "experimental_components")]
 pub(in crate::provider) mod relativetime;

@@ -5,16 +5,22 @@
 // If no exporter feature is enabled this all doesn't make sense
 #![cfg_attr(
     not(any(
-        feature = "provider_blob",
-        feature = "provider_fs",
-        feature = "provider_baked"
+        feature = "blob_exporter",
+        feature = "fs_exporter",
+        feature = "baked_exporter"
     )),
-    allow(unused_assignments, unreachable_code)
+    allow(unused_assignments, unreachable_code, unused_variables)
+)]
+// If no source feature is enabled this all doesn't make sense
+#![cfg_attr(
+    not(any(feature = "provider", feature = "blob_input",)),
+    allow(unused_assignments, unreachable_code, unused_variables)
 )]
 
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
+use icu_provider::datagen::ExportableProvider;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
@@ -58,6 +64,7 @@ struct Cli {
                     Ignored if '--cldr-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
                     Note that some keys do not support versions before 41.0.0."
     )]
+    #[cfg(feature = "provider")]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     cldr_tag: String,
 
@@ -66,6 +73,7 @@ struct Cli {
         help = "Path to a local cldr-{version}-json-full.zip directory (see https://github.com/unicode-org/cldr-json/releases).\n\
                   Note that some keys do not support versions before 41.0.0."
     )]
+    #[cfg(feature = "provider")]
     cldr_root: Option<PathBuf>,
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
@@ -76,6 +84,7 @@ struct Cli {
                   Note that some keys do not support versions before release-71-1."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
     icuexport_tag: String,
 
     #[arg(long, value_name = "PATH")]
@@ -83,6 +92,7 @@ struct Cli {
         help = "Path to a local icuexport directory (see https://github.com/unicode-org/icu/releases).\n\
                   Note that some keys do not support versions before release-71-1."
     )]
+    #[cfg(feature = "provider")]
     icuexport_root: Option<PathBuf>,
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
@@ -92,12 +102,14 @@ struct Cli {
                   Ignored if '--segmenter-lstm-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
     segmenter_lstm_tag: String,
 
     #[arg(long, value_name = "PATH")]
     #[arg(
         help = "Path to a local segmentation LSTM directory (see https://github.com/unicode-org/lstm_word_segmentation/releases)."
     )]
+    #[cfg(feature = "provider")]
     segmenter_lstm_root: Option<PathBuf>,
 
     #[arg(long, value_enum, default_value_t = TrieType::Small)]
@@ -106,10 +118,12 @@ struct Cli {
                   Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
                   information, see the TrieType enum."
     )]
+    #[cfg(feature = "provider")]
     trie_type: TrieType,
 
     #[arg(long, value_enum, default_value_t = CollationHanDatabase::Implicit)]
     #[arg(help = "Which collation han database to use.")]
+    #[cfg(feature = "provider")]
     collation_han_database: CollationHanDatabase,
 
     #[arg(long, value_enum, num_args = 1..)]
@@ -146,7 +160,8 @@ struct Cli {
     #[arg(help = "Deprecated: alias for --keys all")]
     all_keys: bool,
 
-    #[arg(long, short, num_args = 0.., default_value = "recommended")]
+    #[arg(long, short, num_args = 0..)]
+    #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
     #[arg(
         help = "Include this locale in the output. Accepts multiple arguments. \
                   Set to 'full' or 'modern' for the respective CLDR locale sets, 'none' for no locales, \
@@ -183,14 +198,14 @@ struct Cli {
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
     #[arg(
         hide = true,
-        help = "Deprecated: use --deduplication-strategy, --runtime-fallback-location, or --without-fallback"
+        help = "Deprecated: use --deduplication, --runtime-fallback-location, or --without-fallback"
     )]
     fallback: Fallback,
 
     #[arg(long)]
     #[arg(
         help = "disables locale fallback, instead exporting exactly the locales specified in --locales. \
-                Cannot be used with --deduplication-strategy, --runtime-fallback-location"
+                Cannot be used with --deduplication, --runtime-fallback-location"
     )]
     without_fallback: bool,
 
@@ -208,7 +223,7 @@ struct Cli {
                 if internal fallback is enabled, a more aggressive deduplication strategy is used. \
                 Cannot be used with --without-fallback"
     )]
-    deduplication_strategy: Option<DeduplicationStrategy>,
+    deduplication: Option<Deduplication>,
 
     #[arg(long, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -216,6 +231,11 @@ struct Cli {
                 Defaults to 'recommended' for the recommended set of models. Use 'none' for no models"
     )]
     segmenter_models: Vec<String>,
+
+    #[arg(long)]
+    #[arg(help = "Use data from this blob file instead of generating it from sources")]
+    #[cfg(feature = "blob_input")]
+    input_blob: Option<PathBuf>,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -281,8 +301,9 @@ enum Fallback {
 
 // Mirrors crate::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum DeduplicationStrategy {
+enum Deduplication {
     Maximal,
+    RetainBaseLanguages,
     None,
 }
 
@@ -311,55 +332,123 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let mut provider = DatagenProvider::new_custom();
-
-    provider = provider.with_collation_han_database(match cli.collation_han_database {
-        CollationHanDatabase::Unihan => icu_datagen::CollationHanDatabase::Unihan,
-        CollationHanDatabase::Implicit => icu_datagen::CollationHanDatabase::Implicit,
-    });
-
-    if cli.trie_type == TrieType::Fast {
-        provider = provider.with_fast_tries();
-    }
-
-    provider = match (cli.cldr_root, cli.cldr_tag.as_str()) {
-        (Some(path), _) => provider.with_cldr(path)?,
-        #[cfg(feature = "networking")]
-        (_, "latest") => provider.with_cldr_for_tag(DatagenProvider::LATEST_TESTED_CLDR_TAG),
-        #[cfg(feature = "networking")]
-        (_, tag) => provider.with_cldr_for_tag(tag),
-        #[cfg(not(feature = "networking"))]
-        (None, _) => {
-            eyre::bail!("Downloading data from tags requires the `networking` Cargo feature")
+    #[allow(unused_mut)]
+    let mut preprocessed_locales = if cli.locales.as_slice() == ["none"] {
+        Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
+    } else if cli.locales.as_slice() == ["full"] || cli.all_locales {
+        Some(PreprocessedLocales::All)
+    } else {
+        if cli.locales.as_slice() == ["all"] {
+            log::warn!(
+                "`--locales all` selects the Allar language. Use `--locales full` for all locales"
+            );
         }
+        None
     };
 
-    provider = match (cli.icuexport_root, cli.icuexport_tag.as_str()) {
-        (Some(path), _) => provider.with_icuexport(path)?,
-        #[cfg(feature = "networking")]
-        (_, "latest") => {
-            provider.with_icuexport_for_tag(DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG)
-        }
-        #[cfg(feature = "networking")]
-        (_, tag) => provider.with_icuexport_for_tag(tag),
-        #[cfg(not(feature = "networking"))]
-        (None, _) => {
-            eyre::bail!("Downloading data from tags requires the `networking` Cargo feature")
-        }
-    };
+    let provider: Box<dyn ExportableProvider> = match () {
+        #[cfg(feature = "blob_input")]
+        () if cli.input_blob.is_some() => Box::new(ReexportableBlobDataProvider(
+            icu_provider_blob::BlobDataProvider::try_new_from_blob(
+                std::fs::read(cli.input_blob.unwrap())?.into(),
+            )?,
+        )),
 
-    provider = match (cli.segmenter_lstm_root, cli.segmenter_lstm_tag.as_str()) {
-        (Some(path), _) => provider.with_segmenter_lstm(path)?,
-        #[cfg(feature = "networking")]
-        (_, "latest") => {
-            provider.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+        #[cfg(not(feature = "provider"))]
+        () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
+
+        #[cfg(feature = "provider")]
+        () => {
+            let mut p = DatagenProvider::new_custom();
+
+            p = p.with_collation_han_database(match cli.collation_han_database {
+                CollationHanDatabase::Unihan => icu_datagen::CollationHanDatabase::Unihan,
+                CollationHanDatabase::Implicit => icu_datagen::CollationHanDatabase::Implicit,
+            });
+
+            if cli.trie_type == TrieType::Fast {
+                p = p.with_fast_tries();
+            }
+
+            p = match (cli.cldr_root, cli.cldr_tag.as_str()) {
+                (Some(path), _) => p.with_cldr(path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => p.with_cldr_for_tag(DatagenProvider::LATEST_TESTED_CLDR_TAG),
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_cldr_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => {
+                    eyre::bail!(
+                        "Downloading data from tags requires the `networking` Cargo feature"
+                    )
+                }
+            };
+
+            p = match (cli.icuexport_root, cli.icuexport_tag.as_str()) {
+                (Some(path), _) => p.with_icuexport(path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => {
+                    p.with_icuexport_for_tag(DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG)
+                }
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_icuexport_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => {
+                    eyre::bail!(
+                        "Downloading data from tags requires the `networking` Cargo feature"
+                    )
+                }
+            };
+
+            p = match (cli.segmenter_lstm_root, cli.segmenter_lstm_tag.as_str()) {
+                (Some(path), _) => p.with_segmenter_lstm(path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => {
+                    p.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                }
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_segmenter_lstm_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => {
+                    eyre::bail!(
+                        "Downloading data from tags requires the `networking` Cargo feature"
+                    )
+                }
+            };
+
+            if cli.locales.as_slice() == ["recommended"] {
+                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                    p.locales_for_coverage_levels([
+                        CoverageLevel::Modern,
+                        CoverageLevel::Moderate,
+                        CoverageLevel::Basic,
+                    ])?
+                    .into_iter()
+                    .collect(),
+                ));
+            } else if let Some(locale_subsets) = cli
+                .locales
+                .iter()
+                .map(|s| match &**s {
+                    "basic" => Some(CoverageLevel::Basic),
+                    "moderate" => Some(CoverageLevel::Moderate),
+                    "modern" => Some(CoverageLevel::Modern),
+                    _ => None,
+                })
+                .collect::<Option<Vec<_>>>()
+            {
+                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                    p.locales_for_coverage_levels(locale_subsets.into_iter())?
+                        .into_iter()
+                        .collect(),
+                ));
+            }
+
+            Box::new(p)
         }
-        #[cfg(feature = "networking")]
-        (_, tag) => provider.with_segmenter_lstm_for_tag(tag),
-        #[cfg(not(feature = "networking"))]
-        (None, _) => {
-            eyre::bail!("Downloading data from tags requires the `networking` Cargo feature")
-        }
+
+        #[cfg(all(not(feature = "blob_input"), not(feature = "provider")))]
+        () => compile_error!("Feature `bin` requires either `blob_input` or `provider`"),
     };
 
     let mut driver = DatagenDriver::new();
@@ -404,47 +493,6 @@ fn main() -> eyre::Result<()> {
         All,
     }
 
-    let preprocessed_locales = if cli.locales.as_slice() == ["none"] {
-        Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
-    } else if cli.locales.as_slice() == ["recommended"] {
-        Some(PreprocessedLocales::LanguageIdentifiers(
-            provider
-                .locales_for_coverage_levels([
-                    CoverageLevel::Modern,
-                    CoverageLevel::Moderate,
-                    CoverageLevel::Basic,
-                ])?
-                .into_iter()
-                .collect(),
-        ))
-    } else if cli.locales.as_slice() == ["full"] || cli.all_locales {
-        Some(PreprocessedLocales::All)
-    } else if let Some(locale_subsets) = cli
-        .locales
-        .iter()
-        .map(|s| match &**s {
-            "basic" => Some(CoverageLevel::Basic),
-            "moderate" => Some(CoverageLevel::Moderate),
-            "modern" => Some(CoverageLevel::Modern),
-            _ => None,
-        })
-        .collect::<Option<Vec<_>>>()
-    {
-        Some(PreprocessedLocales::LanguageIdentifiers(
-            provider
-                .locales_for_coverage_levels(locale_subsets.into_iter())?
-                .into_iter()
-                .collect(),
-        ))
-    } else {
-        if cli.locales.as_slice() == ["all"] {
-            log::warn!(
-                "`--locales all` selects the Allar language. Use `--locales full` for all locales"
-            );
-        }
-        None
-    };
-
     if cli.without_fallback || matches!(cli.fallback, Fallback::Preresolved) {
         driver = driver.with_locales_no_fallback(
             match preprocessed_locales {
@@ -474,27 +522,27 @@ fn main() -> eyre::Result<()> {
                 .collect::<eyre::Result<Vec<_>>>()?,
         };
         let mut options: FallbackOptions = Default::default();
-        options.deduplication_strategy = match (
-            cli.deduplication_strategy,
-            cli.fallback,
-            cli.without_fallback,
-        ) {
-            (None, _, true) => None,
-            (Some(_), _, true) => {
-                eyre::bail!("cannot combine --without-fallback and --deduplication-strategy")
-            }
-            (Some(x), _, false) => match x {
-                DeduplicationStrategy::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                DeduplicationStrategy::None => Some(icu_datagen::DeduplicationStrategy::None),
-            },
-            (None, fallback_mode, false) => match fallback_mode {
-                Fallback::Auto => None,
-                Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
-                Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
-                Fallback::Preresolved => None,
-            },
-        };
+        options.deduplication_strategy =
+            match (cli.deduplication, cli.fallback, cli.without_fallback) {
+                (None, _, true) => None,
+                (Some(_), _, true) => {
+                    eyre::bail!("cannot combine --without-fallback and --deduplication")
+                }
+                (Some(x), _, false) => match x {
+                    Deduplication::Maximal => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Deduplication::RetainBaseLanguages => {
+                        Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
+                    }
+                    Deduplication::None => Some(icu_datagen::DeduplicationStrategy::None),
+                },
+                (None, fallback_mode, false) => match fallback_mode {
+                    Fallback::Auto => None,
+                    Fallback::Hybrid => Some(icu_datagen::DeduplicationStrategy::None),
+                    Fallback::Runtime => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Fallback::RuntimeManual => Some(icu_datagen::DeduplicationStrategy::Maximal),
+                    Fallback::Preresolved => None,
+                },
+            };
         options.runtime_fallback_location = match (
             cli.runtime_fallback_location,
             cli.fallback,
@@ -626,3 +674,40 @@ fn main() -> eyre::Result<()> {
 
     Ok(())
 }
+
+#[cfg(feature = "blob_input")]
+use icu_provider::datagen::*;
+#[cfg(feature = "blob_input")]
+use icu_provider::prelude::*;
+#[cfg(feature = "blob_input")]
+use icu_provider::serde::DeserializingBufferProvider;
+#[cfg(feature = "blob_input")]
+use icu_provider_blob::BlobDataProvider;
+
+#[cfg(feature = "blob_input")]
+struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
+
+#[cfg(feature = "blob_input")]
+impl<M: KeyedDataMarker> DataProvider<M> for ReexportableBlobDataProvider
+where
+    BlobDataProvider: AsDeserializingBufferProvider,
+    for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.0.as_deserializing().load(req)
+    }
+}
+
+#[cfg(feature = "blob_input")]
+impl<M: KeyedDataMarker> IterableDataProvider<M> for ReexportableBlobDataProvider
+where
+    BlobDataProvider: AsDeserializingBufferProvider,
+    for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
+{
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        self.0.supported_locales_for_key(M::KEY)
+    }
+}
+
+#[cfg(feature = "blob_input")]
+icu_datagen::make_exportable_provider!(ReexportableBlobDataProvider);

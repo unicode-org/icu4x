@@ -40,9 +40,9 @@ icu4c = []
 
 [dependencies]
 icu_collections = { workspace = true, features = ["serde"] }
-toml = "0.5"
+toml = { workspace = true }
 zerovec = { workspace = true }
-wasmi = { version = "0.31.2", optional = true }
+wasmi = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { workspace = true }

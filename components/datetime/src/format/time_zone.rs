@@ -4,7 +4,7 @@
 
 use core::fmt;
 
-use crate::error::DateTimeError as Error;
+use crate::Error;
 use crate::{
     input::TimeZoneInput,
     time_zone::{FormatTimeZone, TimeZoneFormatter, TimeZoneFormatterUnit},
@@ -28,29 +28,30 @@ where
 {
     /// Format time zone with fallbacks.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        match self.write_no_fallback(sink) {
+        let mut sink = writeable::adapters::CoreWriteAsPartsWrite(sink);
+        match self.write_no_fallback(&mut sink) {
             Ok(Ok(r)) => Ok(r),
             _ => match self.time_zone_format.fallback_unit {
                 TimeZoneFormatterUnit::LocalizedGmt(fallback) => {
                     match fallback.format(
-                        sink,
+                        &mut sink,
                         self.time_zone,
                         &self.time_zone_format.data_payloads,
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(e) => self.handle_last_resort_error(e, sink),
+                        Err(e) => self.handle_last_resort_error(e, &mut sink),
                     }
                 }
                 TimeZoneFormatterUnit::Iso8601(fallback) => {
                     match fallback.format(
-                        sink,
+                        &mut sink,
                         self.time_zone,
                         &self.time_zone_format.data_payloads,
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(e) => self.handle_last_resort_error(e, sink),
+                        Err(e) => self.handle_last_resort_error(e, &mut sink),
                     }
                 }
                 _ => Err(core::fmt::Error),
@@ -119,12 +120,16 @@ where
     /// // Use the `Writable` trait instead to enable infallible formatting:
     /// writeable::assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn write_no_fallback<W>(&self, w: &mut W) -> Result<fmt::Result, Error>
+    pub fn write_no_fallback<W>(&self, mut w: &mut W) -> Result<fmt::Result, Error>
     where
         W: core::fmt::Write + ?Sized,
     {
         for unit in self.time_zone_format.format_units.iter() {
-            match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
+            match unit.format(
+                &mut writeable::adapters::CoreWriteAsPartsWrite(&mut w),
+                self.time_zone,
+                &self.time_zone_format.data_payloads,
+            ) {
                 Ok(r) => return Ok(r),
                 Err(DateTimeError::UnsupportedOptions) => continue,
                 Err(e) => return Err(e),
