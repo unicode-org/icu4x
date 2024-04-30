@@ -12,9 +12,9 @@ authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
-license.workspace = true
+license = { workspace = true }
 categories.workspace = true
 include.workspace = true
 
 [dependencies]
-diplomat-tool.workspace = true
+diplomat-tool = { workspace = true }

@@ -13,8 +13,8 @@ use std::{
 use crate::bundle::{Key, Resource, ResourceBundle};
 
 use super::{
-    BinHeader, BinIndex, BinReprInfo, CharsetFamily, Endianness, FormatVersion, ResDescriptor,
-    ResourceReprType,
+    header::{BinHeader, BinReprInfo},
+    BinIndex, CharsetFamily, Endianness, FormatVersion, ResDescriptor, ResourceReprType,
 };
 
 const DATA_FORMAT: &[u8; 4] = b"ResB";

@@ -20,14 +20,14 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_decimal_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
@@ -36,10 +36,10 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_adapters = { path = "../../provider/adapters" }
-rand = "0.8"
-rand_pcg = "0.3"
-rand_distr = "0.4"
-getrandom = { version = "0.2", features = ["js"] }
+rand = { workspace = true }
+rand_pcg = { workspace = true }
+rand_distr = { workspace = true }
+getrandom = { workspace = true, features = ["js"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

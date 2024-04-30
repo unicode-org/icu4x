@@ -7,7 +7,8 @@ use std::collections::HashMap;
 
 // cldr-core/coverageLevels.json
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
+pub(in crate::provider) struct Resource {
     #[serde(rename = "coverageLevels")]
-    pub coverage_levels: HashMap<icu_locid::LanguageIdentifier, crate::CoverageLevel>,
+    pub(in crate::provider) coverage_levels:
+        HashMap<icu_locid::LanguageIdentifier, crate::CoverageLevel>,
 }

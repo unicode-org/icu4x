@@ -12,91 +12,93 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetazoneAliasData {
+pub(in crate::provider) struct MetazoneAliasData {
     #[serde(rename = "_longId")]
-    pub long_id: String,
+    pub(in crate::provider) long_id: String,
     #[serde(rename = "_since")]
-    pub since: String,
+    pub(in crate::provider) since: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct MetazoneIds(pub BTreeMap<MetazoneId, MetazoneAliasData>);
+pub(in crate::provider) struct MetazoneIds(
+    pub(in crate::provider) BTreeMap<MetazoneId, MetazoneAliasData>,
+);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct UsesMetazone {
+pub(in crate::provider) struct UsesMetazone {
     #[serde(rename = "_mzone")]
-    pub mzone: String,
+    pub(in crate::provider) mzone: String,
     #[serde(rename = "_from")]
-    pub from: Option<String>,
+    pub(in crate::provider) from: Option<String>,
     #[serde(rename = "_to")]
-    pub to: Option<String>,
+    pub(in crate::provider) to: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetazoneForPeriod {
+pub(in crate::provider) struct MetazoneForPeriod {
     #[serde(rename = "usesMetazone")]
-    pub uses_meta_zone: UsesMetazone,
+    pub(in crate::provider) uses_meta_zone: UsesMetazone,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
-pub enum MetaLocationOrSubRegion {
+pub(in crate::provider) enum MetaLocationOrSubRegion {
     Location(Vec<MetazoneForPeriod>),
     SubRegion(BTreeMap<String, Vec<MetazoneForPeriod>>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
-pub enum ZonePeriod {
+pub(in crate::provider) enum ZonePeriod {
     Region(Vec<MetazoneForPeriod>),
     LocationOrSubRegion(BTreeMap<String, MetaLocationOrSubRegion>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct TimeZonePeriod(pub BTreeMap<String, ZonePeriod>);
+pub(in crate::provider) struct TimeZonePeriod(pub(in crate::provider) BTreeMap<String, ZonePeriod>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetazoneInfo {
+pub(in crate::provider) struct MetazoneInfo {
     #[serde(rename = "timezone")]
-    pub time_zone: TimeZonePeriod,
+    pub(in crate::provider) time_zone: TimeZonePeriod,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MapZone {
+pub(in crate::provider) struct MapZone {
     #[serde(rename = "_other")]
-    pub other: String,
+    pub(in crate::provider) other: String,
     #[serde(rename = "_type")]
-    pub zone_type: String,
+    pub(in crate::provider) zone_type: String,
     #[serde(rename = "_territory")]
-    pub territory: String,
+    pub(in crate::provider) territory: String,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetazoneTerritory {
+pub(in crate::provider) struct MetazoneTerritory {
     #[serde(rename = "mapZone")]
-    pub map_zone: MapZone,
+    pub(in crate::provider) map_zone: MapZone,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetazonesTerritory(pub Vec<MetazoneTerritory>);
+pub(in crate::provider) struct MetazonesTerritory(pub(in crate::provider) Vec<MetazoneTerritory>);
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct Metazones {
+pub(in crate::provider) struct Metazones {
     #[serde(rename = "metazoneInfo")]
-    pub meta_zone_info: MetazoneInfo,
+    pub(in crate::provider) meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
-    pub meta_zones_territory: MetazonesTerritory,
+    pub(in crate::provider) _meta_zones_territory: MetazonesTerritory,
     #[serde(rename = "metazoneIds")]
-    pub meta_zone_ids: MetazoneIds,
+    pub(in crate::provider) meta_zone_ids: MetazoneIds,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "metaZones")]
-    pub meta_zones: Metazones,
+    pub(in crate::provider) meta_zones: Metazones,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

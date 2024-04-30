@@ -63,6 +63,18 @@ fn overview_bench(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
+    c.bench_function("cpt/get_range", |b| {
+        b.iter(|| {
+            black_box(&s)
+                .chars()
+                .map(|c| black_box(&cpt_small).get_range(c as u32).unwrap())
+                .fold(0u32, |acc, ele| {
+                    acc.wrapping_add(ele.range.end() - ele.range.start() + ele.value as u32)
+                })
+        });
+    });
+
+    #[cfg(feature = "bench")]
     {
         let cpt_fast = get_trie_fast();
         lang_bench(c, &cpt_small, "small/eng", sample_str_lng::ENG);

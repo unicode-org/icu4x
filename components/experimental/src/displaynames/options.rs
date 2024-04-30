@@ -9,8 +9,8 @@
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
-/// use icu_locid::{locale, subtags::region};
+/// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
+/// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();

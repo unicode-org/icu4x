@@ -43,6 +43,7 @@ pub mod ffi {
     impl ICU4XSentenceSegmenter {
         /// Construct an [`ICU4XSentenceSegmenter`].
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError> {

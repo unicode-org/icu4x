@@ -5,8 +5,9 @@
 use std::collections::HashSet;
 use std::marker::PhantomData;
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
 use icu_provider::prelude::*;
@@ -20,7 +21,7 @@ struct AnnotatedResource<'a, M: DataMarker>(
 
 macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
-        impl DataProvider<$data_marker_name> for crate::DatagenProvider {
+        impl DataProvider<$data_marker_name> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
                 self.check_req::<$data_marker_name>(req)?;
                 let langid = req.locale.get_langid();
@@ -46,7 +47,7 @@ macro_rules! exemplar_chars_impls {
             }
         }
 
-        impl IterableDataProviderInternal<$data_marker_name> for crate::DatagenProvider {
+        impl IterableDataProviderInternal<$data_marker_name> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                 Ok(self
                     .cldr()?
@@ -506,7 +507,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {

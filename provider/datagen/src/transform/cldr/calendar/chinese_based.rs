@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use calendrical_calculations::chinese_based::{Chinese, ChineseBased, Dangi};
 use icu_calendar::provider::chinese_based::*;
 use icu_provider::datagen::IterableDataProvider;
@@ -16,7 +17,7 @@ fn load<CB: ChineseBased>() -> ChineseBasedCacheV1<'static> {
     ChineseBasedCacheV1::compute_for::<CB>(extended_start..extended_end)
 }
 
-impl DataProvider<ChineseCacheV1Marker> for crate::DatagenProvider {
+impl DataProvider<ChineseCacheV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ChineseCacheV1Marker>, DataError> {
         self.check_req::<ChineseCacheV1Marker>(req)?;
         let cache = load::<Chinese>();
@@ -27,7 +28,7 @@ impl DataProvider<ChineseCacheV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl DataProvider<DangiCacheV1Marker> for crate::DatagenProvider {
+impl DataProvider<DangiCacheV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DangiCacheV1Marker>, DataError> {
         self.check_req::<DangiCacheV1Marker>(req)?;
         let cache = load::<Dangi>();
@@ -38,13 +39,13 @@ impl DataProvider<DangiCacheV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<ChineseCacheV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<ChineseCacheV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableDataProvider<DangiCacheV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<DangiCacheV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use icu_locid::{
@@ -16,7 +17,7 @@ use std::collections::BTreeMap;
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
 
-impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
+impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -32,7 +33,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
     }
 }
 
-impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
+impl DataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -51,13 +52,13 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableDataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LocaleFallbackParentsV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -167,7 +168,7 @@ fn test_basic() {
         subtags::{language, region, script},
     };
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
         .load(Default::default())
         .unwrap()

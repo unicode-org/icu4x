@@ -1,0 +1,27 @@
+// @generated
+/// Implement `DataProvider<TimeNeoSkeletonPatternsV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_patterns_time_skeleton_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker>, icu_provider::DataError> {
+                static UND_X_J: <icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::PackedSkeletonDataV1 { index_info: icu::datetime::provider::neo::SkeletonDataIndex { has_long: false, has_medium: false, has_plurals: false }, patterns: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x80r\x02") } };
+                static UND_X_JM: <icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::PackedSkeletonDataV1 { index_info: icu::datetime::provider::neo::SkeletonDataIndex { has_long: false, has_medium: false, has_plurals: false }, patterns: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x02\x80r\x02\0\0:\x80\x80\x02") } };
+                static UND_X_JMS: <icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::PackedSkeletonDataV1 { index_info: icu::datetime::provider::neo::SkeletonDataIndex { has_long: false, has_medium: false, has_plurals: false }, patterns: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x03\x80r\x02\0\0:\x80\x80\x02\0\0:\x80\x90\x02") } };
+                static VALUES: [&<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable; 3usize] = [&UND_X_J, &UND_X_JM, &UND_X_JMS];
+                static KEYS: [&str; 3usize] = ["und-x-j", "und-x-jm", "und-x-jms"];
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                }
+            }
+        }
+    };
+}

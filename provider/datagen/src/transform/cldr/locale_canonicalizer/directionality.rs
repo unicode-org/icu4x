@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use icu_locid_transform::provider::*;
 
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
-impl DataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
+impl DataProvider<ScriptDirectionV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1Marker>, DataError> {
         self.check_req::<ScriptDirectionV1Marker>(req)?;
         let data: &cldr_serde::directionality::Resource =
@@ -20,7 +21,7 @@ impl DataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<ScriptDirectionV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -51,7 +52,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 fn test_basic() {
     use icu_locid::subtags::script;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
     let data: DataPayload<ScriptDirectionV1Marker> = provider
         .load(Default::default())
         .unwrap()

@@ -29,16 +29,16 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
     fn convert_8<P: TrieValue>(data: maps::CodePointMapData<P>) -> Box<ICU4XCodePointMapData8> {
-        #[allow(clippy::expect_used)] // infallible for the chosen properties
+        #[allow(clippy::unwrap_used)] // infallible for the chosen properties
         Box::new(ICU4XCodePointMapData8(
-            data.try_into_converted()
-                .expect("try_into_converted to u8 must be infallible"),
+            data.try_into_converted().map_err(|_| ()).unwrap(),
         ))
     }
 
     impl ICU4XCodePointMapData8 {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32(cp)
         }
@@ -132,6 +132,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::general_category, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category")]
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -144,6 +145,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::bidi_class, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -156,6 +158,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::east_asian_width, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -168,6 +171,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::indic_syllabic_category, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_indic_syllabic_category, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -180,6 +184,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::line_break, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -204,6 +209,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::word_break, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -216,6 +222,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::sentence_break, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -228,6 +235,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::joining_type, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_joining_type, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "joining_type")]
         pub fn load_joining_type(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
@@ -251,6 +259,7 @@ pub mod ffi {
     impl ICU4XCodePointMapData16 {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u16 {
             self.0.as_borrowed().get32(cp)
         }
@@ -306,10 +315,11 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::script, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_script, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "script")]
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XError> {
-            #[allow(clippy::expect_used)] // script is a 16-bit property
+            #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(ICU4XCodePointMapData16(
                 call_constructor_unstable!(
                     maps::script [r => Ok(r.static_to_owned())],
@@ -317,7 +327,8 @@ pub mod ffi {
                     provider,
                 )?
                 .try_into_converted()
-                .expect("try_into_converted to u16 must be infallible"),
+                .map_err(|_| ())
+                .unwrap(),
             )))
         }
     }
