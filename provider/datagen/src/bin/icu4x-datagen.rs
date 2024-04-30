@@ -510,7 +510,7 @@ fn main() -> eyre::Result<()> {
         );
     } else {
         let locale_families = match preprocessed_locales {
-            Some(PreprocessedLocales::All) => vec![LocaleFamily::full()],
+            Some(PreprocessedLocales::All) => vec![LocaleFamily::FULL],
             Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
                 .into_iter()
                 .map(LocaleFamily::with_descendants)

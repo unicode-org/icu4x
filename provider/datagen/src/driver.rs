@@ -195,15 +195,13 @@ impl LocaleFamily {
     /// The family containing all locales.
     ///
     /// Stylized on the CLI as: "full"
-    pub const fn full() -> Self {
-        Self {
-            langid: None,
-            annotations: LocaleFamilyAnnotations {
-                include_ancestors: false,
-                include_descendants: true,
-            },
-        }
-    }
+    pub const FULL: Self = Self {
+        langid: None,
+        annotations: LocaleFamilyAnnotations {
+            include_ancestors: false,
+            include_descendants: true,
+        },
+    };
 
     pub(crate) fn into_parts(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
         (self.langid, self.annotations)
@@ -311,7 +309,7 @@ impl FromStr for LocaleFamily {
     type Err = LocaleFamilyParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "full" {
-            return Ok(Self::full());
+            return Ok(Self::FULL);
         }
         let (first, remainder) = s
             .as_bytes()
@@ -637,7 +635,7 @@ impl DatagenDriver {
                     .map(LocaleFamily::with_descendants)
                     .map(LocaleFamily::into_parts)
                     .collect(),
-                None => [LocaleFamily::full()]
+                None => [LocaleFamily::FULL]
                     .into_iter()
                     .map(LocaleFamily::into_parts)
                     .collect(),
@@ -1035,7 +1033,7 @@ fn select_locales_for_key(
                         }
                     } else {
                         // Full locale family: set the bit instead of adding to the set
-                        debug_assert_eq!(annotations, &LocaleFamily::full().annotations);
+                        debug_assert_eq!(annotations, &LocaleFamily::FULL.annotations);
                         include_full = true;
                         None
                     }
