@@ -30,7 +30,7 @@ impl CompactDecimal {
     pub fn from_significand_and_exponent(significand: FixedDecimal, exponent: u8) -> Self {
         Self {
             significand,
-            exponent: exponent.into(),
+            exponent,
         }
     }
 
