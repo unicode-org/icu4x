@@ -238,7 +238,7 @@ pub(super) fn try_write_field<'data, T, W, DS, TS>(
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
     datetime: &impl LocalizedDateTimeInput<T>,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    fdf: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), Error>, fmt::Error>
 where
@@ -268,7 +268,7 @@ where
                 Ok(s) => w.write_str(s)?,
                 Err(e) => {
                     r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    w.with_part(Part::ERROR, |w| "{era}".write_to(w))?
                 }
             };
         }
@@ -278,27 +278,20 @@ where
                     .datetime()
                     .year()
                     .ok_or(Error::MissingInputField(Some("year")))
-                    .map(|x| x.number)
-                    .map(FixedDecimal::from)
                 {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
+                    Ok(x) => r = r.and(try_write_number(w, fdf, x.number.into(), field.length)?),
                     Err(e) => {
                         r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                        w.with_part(Part::ERROR, |w| "{year}".write_to(w))?
                     }
                 };
             }
             Year::WeekOf => {
-                let () = match datetime
-                    .week_of_year()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.0.number)
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
+                let () = match datetime.week_of_year().map_err(Error::DateTimeInput) {
+                    Ok(x) => r = r.and(try_write_number(w, fdf, x.0.number.into(), field.length)?),
                     Err(e) => {
                         r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                        w.with_part(Part::ERROR, |w| "{week_of_year}".write_to(w))?
                     }
                 };
             }
@@ -334,7 +327,7 @@ where
                     Ok(cyclic_str) => w.write_str(cyclic_str)?,
                     Err(e) => {
                         r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                        w.with_part(Part::ERROR, |w| "{cycle}".write_to(w))?
                     }
                 };
             }
@@ -346,43 +339,34 @@ where
                     .and_then(|x| {
                         x.related_iso
                             .ok_or(Error::MissingInputField(Some("related_iso")))
-                    })
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
+                    }) {
+                    Ok(x) => r = r.and(try_write_number(w, fdf, x.into(), field.length)?),
                     Err(e) => {
                         r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                        w.with_part(Part::ERROR, |w| "{iso_year}".write_to(w))?
                     }
                 };
             }
         },
         FieldSymbol::Month(month) => {
+            let datetime = datetime.datetime();
+            let value = datetime
+                .month()
+                .ok_or(Error::MissingInputField(Some("month")));
             match field.length {
                 FieldLength::One | FieldLength::TwoDigit => {
-                    let () = match datetime
-                        .datetime()
-                        .month()
-                        .ok_or(Error::MissingInputField(Some("month")))
-                        .map(|x| x.ordinal)
-                        .map(FixedDecimal::from)
-                    {
+                    let () = match value {
                         Ok(x) => {
-                            r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?)
+                            r = r.and(try_write_number(w, fdf, x.ordinal.into(), field.length)?)
                         }
                         Err(e) => {
                             r = r.and(Err(e));
-                            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                            w.with_part(Part::ERROR, |w| "{month}".write_to(w))?
                         }
                     };
                 }
                 length => {
-                    let datetime = datetime.datetime();
-                    let formattable_month = datetime
-                        .month()
-                        .ok_or(Error::MissingInputField(Some("month")));
-
-                    let month_placeholder_value = formattable_month.and_then(|formattable_month| {
+                    let month_placeholder_value = value.and_then(|formattable_month| {
                         date_symbols.ok_or(Error::MissingDateSymbols).and_then(|x| {
                             x.get_symbol_for_month(month, length, formattable_month.code)
                         })
@@ -403,42 +387,55 @@ where
                             w.write_str(symbol)?;
                         }
                         #[cfg(feature = "experimental")]
-                        Ok(MonthPlaceholderValue::Numeric) => match formattable_month {
+                        Ok(MonthPlaceholderValue::Numeric) => match value {
                             Ok(x) => {
-                                r = r.and(try_write_number(
-                                    w,
-                                    fixed_decimal_format,
-                                    FixedDecimal::from(x.ordinal),
-                                    field.length,
-                                )?)
+                                r = r.and(try_write_number(w, fdf, x.ordinal.into(), field.length)?)
                             }
                             Err(e) => {
                                 r = r.and(Err(e));
-                                w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                                w.with_part(Part::ERROR, |w| {
+                                    value
+                                        .as_ref()
+                                        .map(|m| m.code.0.as_str())
+                                        .unwrap_or("{month}")
+                                        .write_to(w)
+                                })?
                             }
                         },
                         #[cfg(feature = "experimental")]
                         Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
-                            match formattable_month {
+                            match value {
                                 Ok(x) => {
                                     w.write_str(substitution_pattern.get_prefix())?;
                                     r = r.and(try_write_number(
                                         w,
-                                        fixed_decimal_format,
-                                        FixedDecimal::from(x.ordinal),
+                                        fdf,
+                                        x.ordinal.into(),
                                         field.length,
                                     )?);
                                     w.write_str(substitution_pattern.get_suffix())?;
                                 }
                                 Err(e) => {
                                     r = r.and(Err(e));
-                                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                                    w.with_part(Part::ERROR, |w| {
+                                        value
+                                            .as_ref()
+                                            .map(|m| m.code.0.as_str())
+                                            .unwrap_or("{month}")
+                                            .write_to(w)
+                                    })?
                                 }
                             }
                         }
                         Err(e) => {
                             r = r.and(Err(e));
-                            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                            w.with_part(Part::ERROR, |w| {
+                                value
+                                    .as_ref()
+                                    .map(|m| m.code.0.as_str())
+                                    .unwrap_or("{month}")
+                                    .write_to(w)
+                            })?
                         }
                     };
                 }
@@ -446,121 +443,109 @@ where
         }
         FieldSymbol::Week(week) => match week {
             Week::WeekOfYear => {
-                let () = match datetime
-                    .week_of_year()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.1 .0)
-                {
-                    Ok(x) => {
-                        r = r.and(try_write_number(
-                            w,
-                            fixed_decimal_format,
-                            FixedDecimal::from(x),
-                            field.length,
-                        )?)
-                    }
+                let () = match datetime.week_of_year().map_err(Error::DateTimeInput) {
+                    Ok(x) => r = r.and(try_write_number(w, fdf, x.1 .0.into(), field.length)?),
                     Err(e) => {
                         r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                        w.with_part(Part::ERROR, |w| "{week_of_year}".write_to(w))?
                     }
                 };
             }
             Week::WeekOfMonth => {
-                let () = match datetime
-                    .week_of_month()
-                    .map_err(Error::DateTimeInput)
-                    .map(|x| x.0)
-                    .map(FixedDecimal::from)
-                {
-                    Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
+                let () = match datetime.week_of_month().map_err(Error::DateTimeInput) {
+                    Ok(x) => r = r.and(try_write_number(w, fdf, x.0.into(), field.length)?),
                     Err(e) => {
                         r = r.and(Err(e));
-                        w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                        w.with_part(Part::ERROR, |w| "{week_of_month}".write_to(w))?
                     }
                 };
             }
         },
         FieldSymbol::Weekday(weekday) => {
-            let () = match date_symbols.ok_or(Error::MissingDateSymbols).and_then(|x| {
-                x.get_symbol_for_weekday(
-                    weekday,
-                    field.length,
-                    datetime
-                        .datetime()
-                        .iso_weekday()
-                        .ok_or(Error::MissingInputField(Some("iso_weekday")))?,
-                )
-            }) {
-                Ok(symbol) => w.write_str(symbol)?,
+            let wd = datetime
+                .datetime()
+                .iso_weekday()
+                .ok_or(Error::MissingInputField(Some("iso_weekday")));
+
+            let () = match date_symbols
+                .ok_or(Error::MissingDateSymbols)
+                .and_then(|x| x.get_symbol_for_weekday(weekday, field.length, wd?))
+            {
+                Ok(s) => w.write_str(s)?,
                 Err(e) => {
                     r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    w.with_part(Part::ERROR, |w| {
+                        if let Ok(wd) = wd {
+                            "WD".write_to(w)?;
+                            (wd as usize).write_to(w)
+                        } else {
+                            "{weekday}".write_to(w)
+                        }
+                    })?
                 }
             };
         }
-
-        symbol @ FieldSymbol::Day(day) => {
-            let x = match day {
-                fields::Day::DayOfMonth => datetime
+        FieldSymbol::Day(day) => {
+            let () = match day {
+                fields::Day::DayOfMonth => match datetime
                     .datetime()
                     .day_of_month()
                     .ok_or(Error::MissingInputField(Some("day_of_month")))
-                    .map(|x| x.0),
-                fields::Day::DayOfWeekInMonth => datetime
+                {
+                    Ok(d) => r = r.and(try_write_number(w, fdf, d.0.into(), field.length)?),
+                    Err(e) => {
+                        r = r.and(Err(e));
+                        w.with_part(Part::ERROR, |w| "{day_of_month}".write_to(w))?
+                    }
+                },
+                fields::Day::DayOfWeekInMonth => match datetime
                     .day_of_week_in_month()
                     .map_err(Error::DateTimeInput)
-                    .map(|x| x.0),
-                _ => Err(Error::UnsupportedField(symbol)),
-            }
-            .map(FixedDecimal::from);
-
-            let () = match x {
-                Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
-                Err(e) => {
-                    r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                {
+                    Ok(d) => r = r.and(try_write_number(w, fdf, d.0.into(), field.length)?),
+                    Err(e) => {
+                        r = r.and(Err(e));
+                        w.with_part(Part::ERROR, |w| "{day_of_week_in_month}".write_to(w))?
+                    }
+                },
+                _ => {
+                    r = r.and(Err(Error::UnsupportedField(field.symbol)));
+                    w.with_part(Part::ERROR, |w| "{day_field}".write_to(w))?
                 }
             };
         }
         FieldSymbol::Hour(hour) => {
-            let value = datetime
+            let () = match datetime
                 .datetime()
                 .hour()
                 .ok_or(Error::MissingInputField(Some("hour")))
-                .map(usize::from)
-                .map(|u| u as isize)
-                .map(|h| match hour {
-                    fields::Hour::H11 => h % 12,
-                    fields::Hour::H12 => {
-                        let v = h % 12;
-                        if v == 0 {
-                            12
-                        } else {
-                            v
+            {
+                Ok(h) => {
+                    let h = usize::from(h) as isize;
+                    let h = match hour {
+                        fields::Hour::H11 => h % 12,
+                        fields::Hour::H12 => {
+                            let v = h % 12;
+                            if v == 0 {
+                                12
+                            } else {
+                                v
+                            }
                         }
-                    }
-                    fields::Hour::H23 => h,
-                    fields::Hour::H24 => {
-                        if h == 0 {
-                            24
-                        } else {
-                            h
+                        fields::Hour::H23 => h,
+                        fields::Hour::H24 => {
+                            if h == 0 {
+                                24
+                            } else {
+                                h
+                            }
                         }
-                    }
-                });
-
-            let () = match value {
-                Ok(value) => {
-                    r = r.and(try_write_number(
-                        w,
-                        fixed_decimal_format,
-                        FixedDecimal::from(value),
-                        field.length,
-                    )?)
+                    };
+                    r = r.and(try_write_number(w, fdf, { h }.into(), field.length)?)
                 }
                 Err(e) => {
                     r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    w.with_part(Part::ERROR, |w| "{hour}".write_to(w))?
                 }
             };
         }
@@ -569,13 +554,18 @@ where
                 .datetime()
                 .minute()
                 .ok_or(Error::MissingInputField(Some("minute")))
-                .map(usize::from)
-                .map(FixedDecimal::from)
             {
-                Ok(x) => r = r.and(try_write_number(w, fixed_decimal_format, x, field.length)?),
+                Ok(x) => {
+                    r = r.and(try_write_number(
+                        w,
+                        fdf,
+                        usize::from(x).into(),
+                        field.length,
+                    )?)
+                }
                 Err(e) => {
                     r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    w.with_part(Part::ERROR, |w| "{minute}".write_to(w))?
                 }
             };
         }
@@ -583,48 +573,87 @@ where
             let seconds = datetime
                 .datetime()
                 .second()
-                .ok_or(Error::MissingInputField(Some("second")))
-                .map(usize::from)
-                .map(FixedDecimal::from)
-                .and_then(|mut seconds| {
-                    if let Some(PatternItem::Field(next_field)) = next_item {
-                        if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
-                            let mut fraction = FixedDecimal::from(usize::from(
-                                datetime
-                                    .datetime()
-                                    .nanosecond()
-                                    .ok_or(Error::MissingInputField(Some("nanosecond")))?,
-                            ));
-
-                            // We only support fixed field length for fractional seconds.
-                            let precision = match next_field.length {
-                                FieldLength::Fixed(p) => p,
-                                _ => {
-                                    return Err(Error::Pattern(
-                                        crate::pattern::PatternError::FieldLengthInvalid(
-                                            FieldSymbol::Second(Second::FractionalSecond),
-                                        ),
-                                    ))
-                                }
-                            };
-
-                            // We store fractional seconds as nanoseconds, convert to seconds.
-                            fraction.multiply_pow10(-9);
-
-                            seconds
-                                .concatenate_end(fraction)
-                                .map_err(|_| Error::FixedDecimal)?;
-                            seconds.pad_end(-(precision as i16));
-                        }
-                    }
-                    Ok(seconds)
-                });
+                .ok_or(Error::MissingInputField(Some("second")));
 
             let () = match seconds {
-                Ok(s) => r = r.and(try_write_number(w, fixed_decimal_format, s, field.length)?),
+                Ok(s) => {
+                    if let Some(PatternItem::Field(next_field)) = next_item {
+                        if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
+                            // We only support fixed field length for fractional seconds.
+                            if let FieldLength::Fixed(p) = next_field.length {
+                                match datetime
+                                    .datetime()
+                                    .nanosecond()
+                                    .ok_or(Error::MissingInputField(Some("nanosecond")))
+                                {
+                                    Ok(n) => {
+                                        r = r.and(try_write_number(
+                                            w,
+                                            fdf,
+                                            #[allow(clippy::unwrap_used)] // s is integer, n * 10^-9 is fractional
+                                            FixedDecimal::from(usize::from(s))
+                                                .concatenated_end(
+                                                    FixedDecimal::from(usize::from(n))
+                                                        .multiplied_pow10(-9),
+                                                )
+                                                .unwrap()
+                                                .padded_end(-(p as i16)),
+                                            field.length,
+                                        )?);
+                                    }
+                                    Err(e) => {
+                                        r = r.and(Err(e));
+                                        // Continue with 0
+                                        w.with_part(Part::ERROR, |w| {
+                                            try_write_number(
+                                                w,
+                                                fdf,
+                                                FixedDecimal::from(usize::from(s))
+                                                    .padded_end(-(p as i16)),
+                                                field.length,
+                                            )
+                                            .map(|_| ())
+                                        })?;
+                                    }
+                                }
+                            } else {
+                                r = r.and(Err(Error::Pattern(
+                                    crate::pattern::PatternError::FieldLengthInvalid(
+                                        FieldSymbol::Second(Second::FractionalSecond),
+                                    ),
+                                )));
+                                w.with_part(Part::ERROR, |w| {
+                                    try_write_number(
+                                        w,
+                                        fdf,
+                                        FixedDecimal::from(usize::from(s)),
+                                        field.length,
+                                    )
+                                    .map(|_| ())
+                                })?;
+                            }
+                        } else {
+                            r = r.and(try_write_number(
+                                w,
+                                fdf,
+                                FixedDecimal::from(usize::from(s)),
+                                field.length,
+                            )?)
+                        }
+                    } else {
+                        r = r.and(try_write_number(
+                            w,
+                            fdf,
+                            FixedDecimal::from(usize::from(s)),
+                            field.length,
+                        )?)
+                    }
+                }
                 Err(e) => {
                     r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    w.with_part(Part::ERROR, |w| {
+                        try_write_number(w, fdf, 0.into(), field.length).map(|_| ())
+                    })?
                 }
             };
         }
@@ -633,7 +662,9 @@ where
         }
         FieldSymbol::Second(Second::Millisecond) => {
             r = r.and(Err(Error::UnsupportedField(field.symbol)));
-            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+            w.with_part(Part::ERROR, |w| {
+                try_write_number(w, fdf, 0.into(), field.length).map(|_| ())
+            })?
         }
         FieldSymbol::DayPeriod(period) => {
             let symbol = time_symbols.ok_or(Error::MissingTimeSymbols).and_then(|x| {
@@ -656,13 +687,13 @@ where
                 Ok(symbol) => w.write_str(symbol)?,
                 Err(e) => {
                     r = r.and(Err(e));
-                    w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+                    w.with_part(Part::ERROR, |w| "{day_period}".write_to(w))?
                 }
             }
         }
         FieldSymbol::TimeZone(_) => {
             r = r.and(Err(Error::UnsupportedField(field.symbol)));
-            w.with_part(Part::ERROR, |w| "<ICU4X ERROR>".write_to(w))?
+            w.with_part(Part::ERROR, |w| "{tz}".write_to(w))?
         }
     };
 
