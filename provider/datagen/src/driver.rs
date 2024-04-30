@@ -1077,7 +1077,7 @@ fn select_locales_for_key(
                 log::trace!("Including {current_langid}: und variant: {key}");
                 selected_langids.insert(current_langid.clone());
             }
-            let include_ancestors: bool = requested_families
+            let include_ancestors = requested_families
                 .get(current_langid)
                 .map(|family| family.include_ancestors)
                 .unwrap_or(false);
