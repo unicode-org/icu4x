@@ -1067,21 +1067,20 @@ fn select_locales_for_key(
         };
 
     if include_full && requested_families.is_empty() {
-        // Special case: return now so we don't need the fallbacker
+        // Special case: return now so we don't need the fallbacker (and its requisite CLDR data)
         let selected_locales = supported_map.into_values().flatten().collect();
         return Ok(selected_locales);
     }
 
-    // Set of all selected language identifiers after resolving ancestors and descendants.
+    // Need the fallbacker now.
+    let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+
+    // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
+    // and extensions. Also resolve the ancestors and descendants while building this map.
     let mut selected_langids = requested_families.keys().cloned().collect::<HashSet<_>>();
-
-    // Map from LanguageIdentifiers to DataLocales, including auxiliary keys and extensions
-    // inherited from their parent locales.
-    let mut expansion_map = supported_map.clone();
-
-    // Fill in missing extensions and aux keys from parent locales,
-    // and calculate which langids are ancestors and descendants.
-    for current_langid in supported_map.keys().chain(requested_families.keys()) {
+    let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataLocale>> = supported_map.keys().chain(requested_families.keys()).map(|current_langid| {
+        let mut expansion = HashSet::new();
         if include_full && !selected_langids.contains(current_langid) {
             log::trace!("Including {current_langid}: the full locale family is present");
             selected_langids.insert(current_langid.clone());
@@ -1092,13 +1091,10 @@ fn select_locales_for_key(
                 selected_langids.insert(current_langid.clone());
             }
         }
-        let current_data_locales = expansion_map.entry(current_langid.clone()).or_default();
         let include_ancestors: bool = requested_families
             .get(current_langid)
             .map(|family| family.include_ancestors)
             .unwrap_or(false);
-        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-        let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
         let mut iter = fallbacker_with_config.fallback_for(current_langid.into());
         loop {
             // Inherit aux keys and extension keywords from parent locales
@@ -1122,7 +1118,7 @@ fn select_locales_for_key(
                         continue;
                     }
                     morphed_locale.set_langid(current_langid.clone());
-                    current_data_locales.insert(morphed_locale);
+                    expansion.insert(morphed_locale);
                 }
             }
             if iter.get().is_und() {
@@ -1130,7 +1126,8 @@ fn select_locales_for_key(
             }
             iter.step();
         }
-    }
+        (current_langid, expansion)
+    }).collect();
 
     let selected_locales = expansion_map
         .into_iter()
