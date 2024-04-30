@@ -706,8 +706,8 @@ impl DatagenDriver {
         }
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
-            LocalesWithOrWithoutFallback::WithoutFallback { langids: locales } => {
-                let mut sorted_locales = locales
+            LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
+                let mut sorted_locales = langids
                     .iter()
                     .map(|x| x.write_to_string())
                     .collect::<Vec<_>>();
