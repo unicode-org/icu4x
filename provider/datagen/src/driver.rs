@@ -1058,12 +1058,17 @@ fn select_locales_for_key(
     let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
+    // The "candidate" langids that could be exported is the union of requested and supported.
+    let all_candidate_langids = supported_map
+        .keys()
+        .chain(requested_families.keys())
+        .collect::<HashSet<_>>();
+
     // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
     // and extensions. Also resolve the ancestors and descendants while building this map.
     let mut selected_langids = requested_families.keys().cloned().collect::<HashSet<_>>();
-    let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataLocale>> = supported_map
-        .keys()
-        .chain(requested_families.keys())
+    let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataLocale>> = all_candidate_langids
+        .into_iter()
         .map(|current_langid| {
             let mut expansion = supported_map
                 .get(current_langid)
