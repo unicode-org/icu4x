@@ -136,11 +136,65 @@ impl LocaleFamily {
     /// - Descendants: "en-GB", "en-ZA", ...
     ///
     /// Stylized on the CLI as: "en-US"
+    #[inline]
     pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
             annotations: LocaleFamilyAnnotations::with_descendants(),
         }
+    }
+
+    /// Alias for [`LocaleFamily::with_descendants`] that works with more types,
+    /// such as [`Locale`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use icu_datagen::LocaleFamily;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let locale = "en-US-u-hc-h23".parse::<Locale>().unwrap();
+    /// let family = LocaleFamily::auto(locale);
+    ///
+    /// assert_writeable_eq!(family, "en-US");
+    /// ```
+    ///
+    /// [`Locale`]: icu_locid::Locale
+    #[inline]
+    pub fn auto(langid: impl Into<LanguageIdentifier>) -> Self {
+        Self::with_descendants(langid.into())
+    }
+
+    /// Convenience function to turn an iterator of language identifiers into
+    /// an iterator of [`LocaleFamily`] using the [`auto()`] constructor.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu_datagen::blob_exporter::*;
+    /// use icu_datagen::prelude::*;
+    ///
+    /// DatagenDriver::new()
+    ///     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+    ///     .with_locales_and_fallback(
+    ///         LocaleFamily::auto_iter([locale!("en-US"), locale!("de-CH")]),
+    ///         Default::default(),
+    ///     )
+    ///     .export(
+    ///         &DatagenProvider::new_latest_tested(),
+    ///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
+    ///     )
+    ///     .unwrap();
+    /// ```
+    ///
+    /// [`auto()`]: Self::auto
+    #[inline]
+    pub fn auto_iter<L: Into<LanguageIdentifier>>(
+        langids: impl IntoIterator<Item = L>,
+    ) -> impl IntoIterator<Item = LocaleFamily> {
+        langids.into_iter().map(Into::into).map(Self::auto)
     }
 
     /// The family containing all ancestors of the selected locale.
@@ -154,6 +208,7 @@ impl LocaleFamily {
     /// - Ancestors: "und", "en"
     ///
     /// Stylized on the CLI as: "^en-US"
+    #[inline]
     pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
@@ -173,6 +228,7 @@ impl LocaleFamily {
     /// but it does _not_ contain the ancestors "en" and "und".
     ///
     /// Stylized on the CLI as: "%en-US"
+    #[inline]
     pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
@@ -185,6 +241,7 @@ impl LocaleFamily {
     /// For example, the family `::single("en-001")` contains only "en-001".
     ///
     /// Stylized on the CLI as: "@en-US"
+    #[inline]
     pub const fn single(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),

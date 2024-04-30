@@ -135,12 +135,6 @@ make_exportable_provider!(
     ]
 );
 
-fn families(
-    langids: impl IntoIterator<Item = LanguageIdentifier>,
-) -> impl IntoIterator<Item = LocaleFamily> {
-    langids.into_iter().map(LocaleFamily::with_descendants)
-}
-
 #[derive(Default)]
 struct TestingExporter(FrozenMap<DataLocale, String>);
 
@@ -430,7 +424,10 @@ fn explicit_preferred() {
             .with_fallback_mode(FallbackMode::PreferredForExporter),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), Default::default()),
+            .with_locales_and_fallback(
+                LocaleFamily::auto_iter(SELECTED_LOCALES),
+                Default::default(),
+            ),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -479,7 +476,7 @@ fn explicit_hybrid() {
             .with_fallback_mode(FallbackMode::Hybrid),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), {
+            .with_locales_and_fallback(LocaleFamily::auto_iter(SELECTED_LOCALES), {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::None);
                 options
@@ -532,7 +529,7 @@ fn explicit_runtime() {
             .with_fallback_mode(FallbackMode::RuntimeManual),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), {
+            .with_locales_and_fallback(LocaleFamily::auto_iter(SELECTED_LOCALES), {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
                 options
@@ -580,7 +577,7 @@ fn explicit_runtime_retain_base() {
     let exported = export_to_map_1_5(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback(families(SELECTED_LOCALES), {
+            .with_locales_and_fallback(LocaleFamily::auto_iter(SELECTED_LOCALES), {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::RetainBaseLanguages);
                 options

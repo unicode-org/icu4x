@@ -78,7 +78,7 @@ fn make_testdata() {
     DatagenDriver::new()
         .with_keys(crate::all_keys())
         .with_locales_and_fallback(
-            LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+            LocaleFamily::auto_iter(LOCALES.iter().cloned()),
             Default::default(),
         )
         .with_segmenter_models([
