@@ -4,7 +4,6 @@
 
 //! A collection of code for formatting DateTimes with time zones.
 
-use crate::error::DateTimeError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, ExtractedTimeZoneInput,
@@ -12,6 +11,7 @@ use crate::input::{
 };
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::PatternItem;
+use crate::Error;
 use crate::{raw, FormattedTimeZone};
 use core::fmt;
 use writeable::Writeable;
@@ -32,13 +32,14 @@ pub struct FormattedZonedDateTime<'l> {
 
 impl<'l> Writeable for FormattedZonedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(
+        let _lossy = try_write_pattern(
             self.zoned_datetime_format,
             &self.datetime,
             &self.time_zone,
-            sink,
-        )
-        .map_err(|_| core::fmt::Error)
+            &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
+        )?;
+        debug_assert!(matches!(_lossy, Ok(())));
+        Ok(())
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -46,58 +47,63 @@ impl<'l> Writeable for FormattedZonedDateTime<'l> {
 
 impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(
-            self.zoned_datetime_format,
-            &self.datetime,
-            &self.time_zone,
-            f,
-        )
-        .map_err(|_| core::fmt::Error)
+        self.write_to(f)
     }
 }
 
-pub(crate) fn write_pattern<D, Z, W>(
+pub(crate) fn try_write_pattern<D, Z, W>(
     zoned_datetime_format: &raw::ZonedDateTimeFormatter,
     datetime: &D,
     time_zone: &Z,
     w: &mut W,
-) -> Result<(), Error>
+) -> Result<Result<(), Error>, fmt::Error>
 where
     D: DateTimeInput,
     Z: TimeZoneInput,
-    W: fmt::Write + ?Sized,
+    W: writeable::PartsWrite + ?Sized,
 {
+    let mut r = Ok(());
+
     let patterns = &zoned_datetime_format.datetime_format.patterns;
     let loc_datetime = DateTimeInputWithWeekConfig::new(
         datetime,
         zoned_datetime_format.datetime_format.week_data.as_ref(),
     );
 
-    let pattern = patterns.get().0.select(
-        &loc_datetime,
-        zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
-    )?;
+    let pattern = patterns
+        .get()
+        .0
+        .select(
+            &loc_datetime,
+            zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
+        )
+        .unwrap_or_else(|e| {
+            r = Err(e);
+            todo!("fallback pattern")
+        });
 
     let mut iter = pattern.items.iter().peekable();
     loop {
         match iter.next() {
-            Some(PatternItem::Field(field)) => write_field(
-                pattern.metadata,
-                field,
-                iter.peek(),
-                zoned_datetime_format,
-                &loc_datetime,
-                time_zone,
-                w,
-            )?,
+            Some(PatternItem::Field(field)) => {
+                r = r.and(try_write_field(
+                    pattern.metadata,
+                    field,
+                    iter.peek(),
+                    zoned_datetime_format,
+                    &loc_datetime,
+                    time_zone,
+                    w,
+                )?)
+            }
             Some(PatternItem::Literal(ch)) => w.write_char(ch)?,
             None => break,
         }
     }
-    Ok(())
+    Ok(r)
 }
 
-fn write_field<D, Z, W>(
+fn try_write_field<D, Z, W>(
     pattern_metadata: PatternMetadata,
     field: fields::Field,
     next_item: Option<&PatternItem>,
@@ -105,11 +111,11 @@ fn write_field<D, Z, W>(
     loc_datetime: &impl LocalizedDateTimeInput<D>,
     time_zone: &Z,
     w: &mut W,
-) -> Result<(), Error>
+) -> Result<Result<(), Error>, fmt::Error>
 where
     D: DateTimeInput,
     Z: TimeZoneInput,
-    W: fmt::Write + ?Sized,
+    W: writeable::PartsWrite + ?Sized,
 {
     let date_symbols = zoned_datetime_format
         .datetime_format
@@ -123,22 +129,23 @@ where
         .as_ref()
         .map(|s| s.get());
 
-    match field.symbol {
-        FieldSymbol::TimeZone(_time_zone) => FormattedTimeZone {
+    if let FieldSymbol::TimeZone(..) = field.symbol {
+        FormattedTimeZone {
             time_zone_format: &zoned_datetime_format.time_zone_format,
             time_zone,
         }
-        .write_to(w)?,
-        _ => datetime::write_field(
+        .write_to(w)
+        .map(Ok)
+    } else {
+        datetime::try_write_field(
             pattern_metadata,
             field,
             next_item,
             date_symbols,
             time_symbols,
             loc_datetime,
-            &zoned_datetime_format.datetime_format.fixed_decimal_format,
+            Some(&zoned_datetime_format.datetime_format.fixed_decimal_format),
             w,
-        )?,
+        )
     }
-    Ok(())
 }

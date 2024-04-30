@@ -7,7 +7,7 @@ use icu_datetime::neo::TypedNeoDateTimeFormatter;
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
 use icu_locid::langid;
-use writeable::assert_writeable_eq;
+use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 const EXPECTED_DATETIME: &[&str] = &[
     "Friday, December 22, 2023, 9:22:53 PM",
@@ -83,9 +83,10 @@ fn neo_datetime_lengths() {
                 .unwrap();
                 let formatted = formatter.format(&datetime);
                 let expected = expected_iter.next().unwrap();
-                assert_writeable_eq!(
+                assert_try_writeable_eq!(
                     formatted,
                     *expected,
+                    Ok(()),
                     "{date_length:?} {time_length:?} {langid:?}"
                 );
             }
@@ -109,7 +110,7 @@ fn neo_date_lengths() {
                     .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_writeable_eq!(formatted, *expected, "{date_length:?} {langid:?}");
+            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_length:?} {langid:?}");
         }
     }
 }

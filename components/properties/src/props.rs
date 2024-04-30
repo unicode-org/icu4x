@@ -80,7 +80,7 @@ pub struct PropertyValueNameToEnumMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     markers: PhantomData<fn() -> T>,
@@ -298,7 +298,7 @@ pub struct PropertyEnumToValueNameSparseMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyEnumToValueNameSparseMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyEnumToValueNameSparseMapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameSparseMapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
@@ -411,7 +411,7 @@ pub struct PropertyEnumToValueNameLinearMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyEnumToValueNameLinearMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyEnumToValueNameLinearMapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameLinearMapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
@@ -511,7 +511,7 @@ pub struct PropertyEnumToValueNameLinearTiny4Mapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyEnumToValueNameLinearTiny4MapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameLinearTiny4MapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,

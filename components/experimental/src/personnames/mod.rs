@@ -5,6 +5,8 @@
 pub use formatter::PersonNamesFormatter;
 
 pub mod api;
-mod formatter;
+pub mod formatter;
 pub mod provided_struct;
 pub mod provider;
+
+mod specifications;
