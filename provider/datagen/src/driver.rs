@@ -1031,42 +1031,45 @@ fn select_locales_for_key(
     }
 
     // The explicitly requested families, except for the `full` family.
-    // In without-fallback mode, langids are mapped to `single`.
-    let mut requested_families = HashMap::<LanguageIdentifier, LocaleFamilyAnnotations>::new();
-
-    // Add the explicit langids to the map
     let mut include_full = false;
-    match locales_fallback {
-        LocalesWithOrWithoutFallback::WithFallback { families, .. } => {
-            if families.is_empty() {
+    let requested_families: HashMap<LanguageIdentifier, LocaleFamilyAnnotations> =
+        match locales_fallback {
+            LocalesWithOrWithoutFallback::WithFallback { families, .. } if families.is_empty() => {
                 // If no locales are selected but fallback is enabled, select the root locale
-                requested_families
-                    .insert(LanguageIdentifier::UND, LocaleFamilyAnnotations::single());
+                [(LanguageIdentifier::UND, LocaleFamilyAnnotations::single())]
+                    .into_iter()
+                    .collect()
             }
-            for (langid, annotations) in families {
-                let Some(langid) = langid.as_ref() else {
-                    debug_assert_eq!(annotations, &LocaleFamily::full().annotations);
-                    include_full = true;
-                    continue;
-                };
-                if *langid != LanguageIdentifier::UND {
-                    requested_families.insert(langid.clone(), *annotations);
-                } else {
-                    requested_families
-                        .insert(LanguageIdentifier::UND, LocaleFamilyAnnotations::single());
-                }
-            }
-            if include_full && families.len() == 1 {
-                // Special case: return now so we don't need the fallbacker
-                let selected_locales = supported_map.into_values().flatten().collect();
-                return Ok(selected_locales);
-            }
-        }
-        LocalesWithOrWithoutFallback::WithoutFallback { langids: locales } => {
-            for langid in locales {
-                requested_families.insert(langid.clone(), LocaleFamilyAnnotations::single());
-            }
-        }
+            LocalesWithOrWithoutFallback::WithFallback { families, .. } => families
+                .iter()
+                .filter_map(|(langid, annotations)| {
+                    if let Some(langid) = langid.as_ref() {
+                        if *langid == LanguageIdentifier::UND {
+                            // Root locale: do not include descendants (use `full` for that)
+                            Some((LanguageIdentifier::UND, LocaleFamilyAnnotations::single()))
+                        } else {
+                            // All other locales: copy the requested annotations
+                            Some((langid.clone(), *annotations))
+                        }
+                    } else {
+                        // Full locale family: set the bit instead of adding to the set
+                        debug_assert_eq!(annotations, &LocaleFamily::full().annotations);
+                        include_full = true;
+                        None
+                    }
+                })
+                .collect(),
+            LocalesWithOrWithoutFallback::WithoutFallback { langids } => langids
+                .iter()
+                // Map langids without fallback to the `single` family
+                .map(|langid| (langid.clone(), LocaleFamilyAnnotations::single()))
+                .collect(),
+        };
+
+    if include_full && requested_families.is_empty() {
+        // Special case: return now so we don't need the fallbacker
+        let selected_locales = supported_map.into_values().flatten().collect();
+        return Ok(selected_locales);
     }
 
     // Set of all selected language identifiers after resolving ancestors and descendants.
