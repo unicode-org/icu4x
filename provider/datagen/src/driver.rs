@@ -1080,6 +1080,7 @@ fn select_locales_for_key(
             let include_ancestors = requested_families
                 .get(current_langid)
                 .map(|family| family.include_ancestors)
+                // default to `false` if the langid was not requested
                 .unwrap_or(false);
             let mut iter = fallbacker_with_config.fallback_for(current_langid.into());
             loop {
@@ -1089,6 +1090,7 @@ fn select_locales_for_key(
                 let include_descendants = requested_families
                     .get(&parent_langid)
                     .map(|family| family.include_descendants)
+                    // default to `false` if the langid was not requested
                     .unwrap_or(false);
                 if include_descendants && !selected_langids.contains(current_langid) {
                     log::trace!("Including {current_langid}: descendant of {parent_langid}: {key}");
