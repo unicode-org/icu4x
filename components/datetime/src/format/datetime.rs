@@ -590,7 +590,8 @@ where
                                         r = r.and(try_write_number(
                                             w,
                                             fdf,
-                                            #[allow(clippy::unwrap_used)] // s is integer, n * 10^-9 is fractional
+                                            // s is integer, n * 10^-9 is fractional
+                                            #[allow(clippy::unwrap_used)]
                                             FixedDecimal::from(usize::from(s))
                                                 .concatenated_end(
                                                     FixedDecimal::from(usize::from(n))
