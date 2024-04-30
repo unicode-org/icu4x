@@ -1066,7 +1066,7 @@ fn select_locales_for_key(
         .chain(requested_families.keys())
         .map(|current_langid| {
             let mut expansion = supported_map
-                .get(&current_langid)
+                .get(current_langid)
                 .cloned()
                 .unwrap_or_default();
             if include_full && !selected_langids.contains(current_langid) {
