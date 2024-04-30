@@ -707,14 +707,14 @@ impl DatagenDriver {
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
-                let mut sorted_locales = langids
+                let mut sorted_locale_strs = langids
                     .iter()
                     .map(|x| x.write_to_string())
                     .collect::<Vec<_>>();
-                sorted_locales.sort_unstable();
+                sorted_locale_strs.sort_unstable();
                 log::info!(
                     "Datagen configured without fallback with these locales: {:?}",
-                    sorted_locales
+                    sorted_locale_strs
                 );
                 (false, DeduplicationStrategy::None)
             }
@@ -735,12 +735,12 @@ impl DatagenDriver {
                     }
                     Some(x) => x,
                 };
-                let mut sorted_locales = families
+                let mut sorted_locale_strs = families
                     .iter()
                     .map(LocaleFamilyBorrowed::from_parts)
                     .map(|family| family.write_to_string().into_owned())
                     .collect::<Vec<_>>();
-                sorted_locales.sort_unstable();
+                sorted_locale_strs.sort_unstable();
                 log::info!(
                     "Datagen configured with {}, {}, and these locales: {:?}",
                     if uses_internal_fallback {
@@ -754,7 +754,7 @@ impl DatagenDriver {
                             "deduplication retaining base languages",
                         DeduplicationStrategy::None => "no deduplication",
                     },
-                    sorted_locales
+                    sorted_locale_strs
                 );
                 (uses_internal_fallback, deduplication_strategy)
             }
