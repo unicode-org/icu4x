@@ -55,6 +55,7 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
 ///
 /// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) types.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index16;
 
@@ -62,6 +63,7 @@ pub struct Index16;
 /// Will have a larger data size, but will support large arrays without
 /// problems.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index32;
 
