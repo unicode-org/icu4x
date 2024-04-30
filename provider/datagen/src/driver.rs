@@ -1065,7 +1065,10 @@ fn select_locales_for_key(
         .keys()
         .chain(requested_families.keys())
         .map(|current_langid| {
-            let mut expansion = HashSet::new();
+            let mut expansion = supported_map
+                .get(&current_langid)
+                .cloned()
+                .unwrap_or_default();
             if include_full && !selected_langids.contains(current_langid) {
                 log::trace!("Including {current_langid}: the full locale family is present");
                 selected_langids.insert(current_langid.clone());
@@ -1282,6 +1285,11 @@ fn test_collation_filtering() {
             include_collations: &["search*", "big5han"],
             language: langid!("ko"),
             expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &[],
+            language: langid!("und"),
+            expected: &["und", "und-u-co-emoji", "und-u-co-eor"],
         },
     ];
     for cas in cases {
