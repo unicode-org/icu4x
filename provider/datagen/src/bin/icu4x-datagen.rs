@@ -336,7 +336,7 @@ fn main() -> eyre::Result<()> {
     let mut preprocessed_locales = if cli.locales.as_slice() == ["none"] {
         Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
     } else if cli.locales.as_slice() == ["full"] || cli.all_locales {
-        Some(PreprocessedLocales::All)
+        Some(PreprocessedLocales::Full)
     } else {
         if cli.locales.as_slice() == ["all"] {
             log::warn!(
@@ -490,13 +490,13 @@ fn main() -> eyre::Result<()> {
 
     enum PreprocessedLocales {
         LanguageIdentifiers(Vec<LanguageIdentifier>),
-        All,
+        Full,
     }
 
     if cli.without_fallback || matches!(cli.fallback, Fallback::Preresolved) {
         driver = driver.with_locales_no_fallback(
             match preprocessed_locales {
-                Some(PreprocessedLocales::All) => {
+                Some(PreprocessedLocales::Full) => {
                     eyre::bail!("--without-fallback needs an explicit locale list")
                 }
                 Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids,
@@ -510,7 +510,7 @@ fn main() -> eyre::Result<()> {
         );
     } else {
         let locale_families = match preprocessed_locales {
-            Some(PreprocessedLocales::All) => vec![LocaleFamily::FULL],
+            Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
             Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
                 .into_iter()
                 .map(LocaleFamily::with_descendants)
