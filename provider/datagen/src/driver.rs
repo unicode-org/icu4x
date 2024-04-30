@@ -1070,11 +1070,11 @@ fn select_locales_for_key(
                 .cloned()
                 .unwrap_or_default();
             if include_full && !selected_langids.contains(current_langid) {
-                log::trace!("Including {current_langid}: the full locale family is present");
+                log::trace!("Including {current_langid}: full locale family: {key}");
                 selected_langids.insert(current_langid.clone());
             }
             if current_langid.language.is_empty() && current_langid != &LanguageIdentifier::UND {
-                log::trace!("Including {current_langid}: variants of und are always included");
+                log::trace!("Including {current_langid}: und variant: {key}");
                 selected_langids.insert(current_langid.clone());
             }
             let include_ancestors: bool = requested_families
@@ -1085,24 +1085,26 @@ fn select_locales_for_key(
             loop {
                 // Inherit aux keys and extension keywords from parent locales
                 let parent_langid: LanguageIdentifier = iter.get().get_langid();
-                if let Some(parent_locales) = supported_map.get(&parent_langid) {
-                    let include_descendants = requested_families
-                        .get(&parent_langid)
-                        .map(|family| family.include_descendants)
-                        .unwrap_or(false);
-                    if include_descendants && !selected_langids.contains(current_langid) {
-                        log::trace!("Including {current_langid}: descendant of {parent_langid}");
-                        selected_langids.insert(current_langid.clone());
-                    }
-                    if include_ancestors && !selected_langids.contains(&parent_langid) {
-                        log::trace!("Including {parent_langid}: ancestor of {current_langid}");
-                        selected_langids.insert(parent_langid);
-                    }
-                    for mut morphed_locale in parent_locales.iter().cloned() {
+                let maybe_parent_locales = supported_map.get(&parent_langid);
+                let include_descendants = requested_families
+                    .get(&parent_langid)
+                    .map(|family| family.include_descendants)
+                    .unwrap_or(false);
+                if include_descendants && !selected_langids.contains(current_langid) {
+                    log::trace!("Including {current_langid}: descendant of {parent_langid}: {key}");
+                    selected_langids.insert(current_langid.clone());
+                }
+                if include_ancestors && !selected_langids.contains(&parent_langid) {
+                    log::trace!("Including {parent_langid}: ancestor of {current_langid}: {key}");
+                    selected_langids.insert(parent_langid);
+                }
+                if let Some(parent_locales) = maybe_parent_locales {
+                    for morphed_locale in parent_locales.iter() {
                         // Special case: don't pull extensions or aux keys up from the root.
                         if morphed_locale.is_langid_und() && !morphed_locale.is_empty() {
                             continue;
                         }
+                        let mut morphed_locale = morphed_locale.clone();
                         morphed_locale.set_langid(current_langid.clone());
                         expansion.insert(morphed_locale);
                     }
