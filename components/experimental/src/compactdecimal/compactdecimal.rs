@@ -629,7 +629,8 @@ impl CompactDecimalFormatter {
         &'l self,
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, CompactDecimalError> {
-        let log10_type = value.significand().nonzero_magnitude_start() + i16::from(value.exponent());
+        let log10_type =
+            value.significand().nonzero_magnitude_start() + i16::from(value.exponent());
 
         let (plural_map, expected_exponent) =
             self.plural_map_and_exponent_for_magnitude(log10_type);
