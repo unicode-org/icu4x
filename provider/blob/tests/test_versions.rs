@@ -63,7 +63,7 @@ fn test_v2() {
     assert_eq!(BLOB_V2, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
-        assert!(
+    assert!(
         !blob_provider.internal_is_using_v2_bigger_format(),
         "Should have exported to smaller V2 format"
     );
@@ -91,7 +91,7 @@ fn test_v2_bigger() {
     let hash = hasher.finish();
 
     assert_eq!(
-        hash, 14439540243812422383,
+        hash, 11911648880836574343,
         "V2Bigger format appears to have changed!"
     );
 
@@ -103,7 +103,14 @@ fn test_v2_bigger() {
     );
     let blob_provider = blob_provider.as_deserializing();
 
-    for loc in &["ab-CD", "pq-JK", "zl-RL", "qf-RV", "ty-ZS", "ua-FL"] {
+    for loc in &[
+        "abc-Latn-001",
+        "pqj-Latn-001",
+        "zlr-Latn-001",
+        "qfr-Latn-001",
+        "tyz-Latn-001",
+        "uaf-Latn-001",
+    ] {
         let locale = Locale::try_from_bytes(loc.as_bytes()).expect("locale must parse");
         let blob_result = DataProvider::<HelloWorldV1Marker>::load(
             &blob_provider,
@@ -133,23 +140,21 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 }
 
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
-const UPPERCASE: core::ops::RangeInclusive<u8> = b'A'..=b'Z';
 
 impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         let mut vec = Vec::new();
-        let mut bytes = [b'a', b'a', b'-', b'A', b'A'];
+        let mut bytes = [
+            b'a', b'a', b'a', b'-', b'L', b'a', b't', b'n', b'-', b'0', b'0', b'1',
+        ];
         for i0 in LOWERCASE {
             bytes[0] = i0;
             for i1 in LOWERCASE {
                 bytes[1] = i1;
-                for i3 in UPPERCASE {
-                    bytes[3] = i3;
-                    for i4 in UPPERCASE {
-                        bytes[4] = i4;
-                        let locale = Locale::try_from_bytes(&bytes).expect("locale must parse");
-                        vec.push(locale.into())
-                    }
+                for i2 in LOWERCASE {
+                    bytes[2] = i2;
+                    let locale = Locale::try_from_bytes(&bytes).expect("locale must parse");
+                    vec.push(locale.into())
                 }
             }
         }
