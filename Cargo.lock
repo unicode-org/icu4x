@@ -1472,6 +1472,7 @@ dependencies = [
  "log",
  "postcard",
  "serde",
+ "twox-hash",
  "writeable",
  "zerotrie",
  "zerovec",

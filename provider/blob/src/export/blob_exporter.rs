@@ -14,6 +14,7 @@ use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::VarULE;
 use zerovec::vecs::Index32;
+use zerovec::vecs::VarZeroVecOwned;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap2d;
 use zerovec::ZeroVec;
@@ -230,19 +231,36 @@ impl BlobExporter<'_> {
             })
             .collect();
 
-        let locales_vzv: VarZeroVec<[u8]> = locales_vec.as_slice().into();
-
         if !keys.is_empty() {
-            let blob = BlobSchema::V002(BlobSchemaV2 {
-                keys: &keys,
-                locales: &locales_vzv,
-                buffers: &vzv,
-            });
-            log::info!("Serializing blob to output stream...");
+            if let Ok(locales_vzv) =
+                VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
+            {
+                let blob = BlobSchema::V002(BlobSchemaV2 {
+                    keys: &keys,
+                    locales: &locales_vzv,
+                    buffers: &vzv,
+                });
+                log::info!("Serializing blob to output stream...");
 
-            let output = postcard::to_allocvec(&blob)?;
-            self.sink.write_all(&output)?;
+                let output = postcard::to_allocvec(&blob)?;
+                self.sink.write_all(&output)?;
+            } else {
+                log::info!("Upgrading to BlobSchemaV2 (bigger)...");
+                let locales_vzv =
+                    VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
+                        .expect("Locales vector does not fit in Index32 buffer!");
+                let blob = BlobSchema::V002Bigger(BlobSchemaV2 {
+                    keys: &keys,
+                    locales: &locales_vzv,
+                    buffers: &vzv,
+                });
+                log::info!("Serializing blob to output stream...");
+
+                let output = postcard::to_allocvec(&blob)?;
+                self.sink.write_all(&output)?;
+            }
         }
+
         Ok(())
     }
 }
