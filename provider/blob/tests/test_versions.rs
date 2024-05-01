@@ -63,6 +63,10 @@ fn test_v2() {
     assert_eq!(BLOB_V2, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
+        assert!(
+        !blob_provider.internal_is_using_v2_bigger_format(),
+        "Should have exported to smaller V2 format"
+    );
     check_hello_world(blob_provider.as_deserializing());
 }
 
