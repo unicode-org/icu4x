@@ -147,7 +147,19 @@ const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
 
 /// Marker that a complex decomposition isn't round-trippable
 /// under re-composition.
+///
+/// TODO: When taking a data format break, swap this and
+/// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
+/// to make backward-combiningness use the same bit in all
+/// cases.
 const NON_ROUND_TRIP_MARKER: u16 = 1;
+
+/// Marker that a complex decomposition starts with a starter
+/// that can combine backwards.
+const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 2;
+
+/// Values above this are treated as a BMP character.
+const HIGHEST_MARKER: u16 = 3;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
@@ -366,6 +378,7 @@ impl CharacterAndTrieValue {
     pub fn can_combine_backwards(&self) -> bool {
         decomposition_starts_with_non_starter(self.trie_val)
             || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
+            || (((self.trie_val as u16)) & !1 == BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER && (self.trie_val >> 16) != 0) // Combine with the previous condition when taking a data format break
             || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
     }
     #[inline(always)]
@@ -394,7 +407,7 @@ impl CharacterAndTrieValue {
         if lead == 0 {
             return true;
         }
-        if lead == NON_ROUND_TRIP_MARKER {
+        if lead <= BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER {
             return false;
         }
         if (trail_or_complex & 0x7F) == 0x3C
@@ -757,14 +770,14 @@ where
                 } else {
                     let trail_or_complex = (decomposition >> 16) as u16;
                     let lead = decomposition as u16;
-                    if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
+                    if lead > HIGHEST_MARKER && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         let starter = char_from_u16(lead);
                         let combining = char_from_u16(trail_or_complex);
                         self.buffer
                             .push(CharacterAndClass::new_with_placeholder(combining));
                         (starter, 0)
-                    } else if lead > NON_ROUND_TRIP_MARKER {
+                    } else if trail_or_complex == 0 {
                         if lead != FDFA_MARKER {
                             debug_assert_ne!(
                                 lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
