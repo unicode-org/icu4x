@@ -577,69 +577,65 @@ where
 
             let () = match seconds {
                 Ok(s) => {
-                    if let Some(PatternItem::Field(next_field)) = next_item {
-                        if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
-                            // We only support fixed field length for fractional seconds.
-                            if let FieldLength::Fixed(p) = next_field.length {
-                                match datetime
-                                    .datetime()
-                                    .nanosecond()
-                                    .ok_or(Error::MissingInputField(Some("nanosecond")))
-                                {
-                                    Ok(n) => {
-                                        r = r.and(try_write_number(
-                                            w,
-                                            fdf,
-                                            // s is integer, n * 10^-9 is fractional
-                                            #[allow(clippy::unwrap_used)]
-                                            FixedDecimal::from(usize::from(s))
-                                                .concatenated_end(
-                                                    FixedDecimal::from(usize::from(n))
-                                                        .multiplied_pow10(-9),
-                                                )
-                                                .unwrap()
-                                                .padded_end(-(p as i16)),
-                                            field.length,
-                                        )?);
-                                    }
-                                    Err(e) => {
-                                        r = r.and(Err(e));
-                                        // Continue with 0
-                                        w.with_part(Part::ERROR, |w| {
-                                            try_write_number(
-                                                w,
-                                                fdf,
-                                                FixedDecimal::from(usize::from(s))
-                                                    .padded_end(-(p as i16)),
-                                                field.length,
-                                            )
-                                            .map(|_| ())
-                                        })?;
-                                    }
-                                }
-                            } else {
-                                r = r.and(Err(Error::Pattern(
-                                    crate::pattern::PatternError::FieldLengthInvalid(
-                                        FieldSymbol::Second(Second::FractionalSecond),
-                                    ),
-                                )));
-                                w.with_part(Part::ERROR, |w| {
-                                    try_write_number(
+                    if let Some(PatternItem::Field(Field {
+                        symbol: FieldSymbol::Second(Second::FractionalSecond),
+                        length,
+                    })) = next_item
+                    {
+                        // We only support fixed field length for fractional seconds.
+                        if let &FieldLength::Fixed(p) = length {
+                            match datetime
+                                .datetime()
+                                .nanosecond()
+                                .ok_or(Error::MissingInputField(Some("nanosecond")))
+                            {
+                                Ok(n) => {
+                                    r = r.and(try_write_number(
                                         w,
                                         fdf,
-                                        FixedDecimal::from(usize::from(s)),
+                                        {
+                                            let mut s = FixedDecimal::from(usize::from(s));
+                                            // s is integer, n * 10^-9 is fractional
+                                            let _infallible = s.concatenate_end(
+                                                FixedDecimal::from(usize::from(n))
+                                                    .multiplied_pow10(-9),
+                                            );
+                                            debug_assert!(_infallible.is_ok());
+                                            s.padded_end(-(p as i16))
+                                        },
                                         field.length,
-                                    )
-                                    .map(|_| ())
-                                })?;
+                                    )?);
+                                }
+                                Err(e) => {
+                                    r = r.and(Err(e));
+                                    // Continue with 0
+                                    w.with_part(Part::ERROR, |w| {
+                                        try_write_number(
+                                            w,
+                                            fdf,
+                                            FixedDecimal::from(usize::from(s))
+                                                .padded_end(-(p as i16)),
+                                            field.length,
+                                        )
+                                        .map(|_| ())
+                                    })?;
+                                }
                             }
                         } else {
-                            r = r.and(try_write_number(
-                                w,
-                                fdf,
-                                FixedDecimal::from(usize::from(s)),
-                                field.length,
-                            )?)
+                            r = r.and(Err(Error::Pattern(
+                                crate::pattern::PatternError::FieldLengthInvalid(
+                                    FieldSymbol::Second(Second::FractionalSecond),
+                                ),
+                            )));
+                            w.with_part(Part::ERROR, |w| {
+                                try_write_number(
+                                    w,
+                                    fdf,
+                                    FixedDecimal::from(usize::from(s)),
+                                    field.length,
+                                )
+                                .map(|_| ())
+                            })?;
                         }
                     } else {
                         r = r.and(try_write_number(
