@@ -17,7 +17,7 @@ const BLOB_V2: &[u8] = include_bytes!("data/v2.postcard");
 fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
     DatagenDriver::new()
         .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-        .with_locales_and_fallback([LocaleFamily::full()], Default::default())
+        .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 }
 

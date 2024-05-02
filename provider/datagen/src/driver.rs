@@ -195,15 +195,13 @@ impl LocaleFamily {
     /// The family containing all locales.
     ///
     /// Stylized on the CLI as: "full"
-    pub const fn full() -> Self {
-        Self {
-            langid: None,
-            annotations: LocaleFamilyAnnotations {
-                include_ancestors: false,
-                include_descendants: true,
-            },
-        }
-    }
+    pub const FULL: Self = Self {
+        langid: None,
+        annotations: LocaleFamilyAnnotations {
+            include_ancestors: false,
+            include_descendants: true,
+        },
+    };
 
     pub(crate) fn into_parts(self) -> (Option<LanguageIdentifier>, LocaleFamilyAnnotations) {
         (self.langid, self.annotations)
@@ -311,7 +309,7 @@ impl FromStr for LocaleFamily {
     type Err = LocaleFamilyParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "full" {
-            return Ok(Self::full());
+            return Ok(Self::FULL);
         }
         let (first, remainder) = s
             .as_bytes()
@@ -637,7 +635,7 @@ impl DatagenDriver {
                     .map(LocaleFamily::with_descendants)
                     .map(LocaleFamily::into_parts)
                     .collect(),
-                None => [LocaleFamily::full()]
+                None => [LocaleFamily::FULL]
                     .into_iter()
                     .map(LocaleFamily::into_parts)
                     .collect(),
@@ -707,14 +705,14 @@ impl DatagenDriver {
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
-                let mut sorted_locales = langids
+                let mut sorted_locale_strs = langids
                     .iter()
                     .map(|x| x.write_to_string())
                     .collect::<Vec<_>>();
-                sorted_locales.sort_unstable();
+                sorted_locale_strs.sort_unstable();
                 log::info!(
                     "Datagen configured without fallback with these locales: {:?}",
-                    sorted_locales
+                    sorted_locale_strs
                 );
                 (false, DeduplicationStrategy::None)
             }
@@ -735,12 +733,12 @@ impl DatagenDriver {
                     }
                     Some(x) => x,
                 };
-                let mut sorted_locales = families
+                let mut sorted_locale_strs = families
                     .iter()
                     .map(LocaleFamilyBorrowed::from_parts)
                     .map(|family| family.write_to_string().into_owned())
                     .collect::<Vec<_>>();
-                sorted_locales.sort_unstable();
+                sorted_locale_strs.sort_unstable();
                 log::info!(
                     "Datagen configured with {}, {}, and these locales: {:?}",
                     if uses_internal_fallback {
@@ -754,7 +752,7 @@ impl DatagenDriver {
                             "deduplication retaining base languages",
                         DeduplicationStrategy::None => "no deduplication",
                     },
-                    sorted_locales
+                    sorted_locale_strs
                 );
                 (uses_internal_fallback, deduplication_strategy)
             }
@@ -1035,7 +1033,7 @@ fn select_locales_for_key(
                         }
                     } else {
                         // Full locale family: set the bit instead of adding to the set
-                        debug_assert_eq!(annotations, &LocaleFamily::full().annotations);
+                        debug_assert_eq!(annotations, &LocaleFamily::FULL.annotations);
                         include_full = true;
                         None
                     }

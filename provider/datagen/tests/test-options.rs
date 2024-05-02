@@ -235,7 +235,7 @@ fn all_preferred() {
             .with_fallback_mode(FallbackMode::PreferredForExporter),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleFamily::full()], Default::default()),
+            .with_locales_and_fallback([LocaleFamily::FULL], Default::default()),
         &TestingProvider::with_decimal_symbol_like_data(),
     );
 
@@ -280,7 +280,7 @@ fn all_hybrid() {
             .with_fallback_mode(FallbackMode::Hybrid),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleFamily::full()], {
+            .with_locales_and_fallback([LocaleFamily::FULL], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::None);
                 options
@@ -329,7 +329,7 @@ fn all_runtime() {
             .with_fallback_mode(FallbackMode::RuntimeManual),
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleFamily::full()], {
+            .with_locales_and_fallback([LocaleFamily::FULL], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::Maximal);
                 options
@@ -373,7 +373,7 @@ fn all_runtime_retain_base() {
     let exported = export_to_map_1_5(
         DatagenDriver::new()
             .with_keys([HelloWorldV1Marker::KEY])
-            .with_locales_and_fallback([LocaleFamily::full()], {
+            .with_locales_and_fallback([LocaleFamily::FULL], {
                 let mut options = FallbackOptions::default();
                 options.deduplication_strategy = Some(DeduplicationStrategy::RetainBaseLanguages);
                 options
