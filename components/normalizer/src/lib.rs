@@ -378,7 +378,7 @@ impl CharacterAndTrieValue {
     pub fn can_combine_backwards(&self) -> bool {
         decomposition_starts_with_non_starter(self.trie_val)
             || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
-            || (((self.trie_val as u16)) & !1 == BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER && (self.trie_val >> 16) != 0) // Combine with the previous condition when taking a data format break
+            || (((self.trie_val as u16) & !1) == BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER && (self.trie_val >> 16) != 0) // Combine with the previous condition when taking a data format break
             || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
     }
     #[inline(always)]
