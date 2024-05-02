@@ -194,7 +194,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_eq!(
 ///     names.with_pattern(&pattern).format(&datetime),
-///     "It is: WD1 M11 20 2023 at 11:35 {day_period}",
+///     "It is: WD1 M11 20 2023 at 11:35 {a}",
 ///     Err(Error::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
 /// );
 /// ```
