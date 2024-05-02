@@ -66,17 +66,27 @@ pub struct FormattedDateTime<'l> {
 
 impl<'l> Writeable for FormattedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let _lossy = write_pattern_plurals(
-            &self.patterns.get().0,
+        let mut r = Ok(());
+
+        let loc_datetime = DateTimeInputWithWeekConfig::new(&self.datetime, self.week_data);
+        let (pattern, pattern_err) =
+            self.patterns.get().0.select_lossy(&loc_datetime, self.ordinal_rules);
+
+        if let Some(e) = pattern_err {
+            r = Err(e);
+        }
+
+        r = r.and(try_write_pattern(
+            pattern.items.iter(),
+            pattern.metadata,
             self.date_symbols,
             self.time_symbols,
-            &self.datetime,
-            self.week_data,
-            self.ordinal_rules,
+            &loc_datetime,
             Some(self.fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
-        )?;
-        debug_assert!(matches!(_lossy, Ok(())));
+        )?);
+
+        debug_assert!(r.is_ok());
         Ok(())
     }
 
@@ -167,44 +177,6 @@ where
             None => break,
         }
     }
-    Ok(r)
-}
-
-#[allow(clippy::too_many_arguments)]
-pub fn write_pattern_plurals<T, W>(
-    patterns: &PatternPlurals,
-    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
-    datetime: &T,
-    week_data: Option<&WeekCalculator>,
-    ordinal_rules: Option<&PluralRules>,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
-    w: &mut W,
-) -> Result<Result<(), Error>, fmt::Error>
-where
-    T: DateTimeInput,
-    W: writeable::PartsWrite + ?Sized,
-{
-    let mut r = Ok(());
-
-    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data);
-    let pattern = patterns
-        .select(&loc_datetime, ordinal_rules)
-        .unwrap_or_else(|e| {
-            r = Err(e);
-            todo!("fallback pattern")
-        });
-
-    r = r.and(try_write_pattern(
-        pattern.items.iter(),
-        pattern.metadata,
-        date_symbols,
-        time_symbols,
-        &loc_datetime,
-        fixed_decimal_format,
-        w,
-    )?);
-
     Ok(r)
 }
 
@@ -582,7 +554,7 @@ where
                 }
                 (Err(e), h) => {
                     w.with_part(Part::ERROR, |w| {
-                        w.write_str(if h.map(|h| usize::from(h)).unwrap_or_default() < 12 {
+                        w.write_str(if h.map(usize::from).unwrap_or_default() < 12 {
                             "AM"
                         } else {
                             "PM"
