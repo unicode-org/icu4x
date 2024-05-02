@@ -19,7 +19,7 @@ use crate::Error;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
-use icu_calendar::types::IsoHour;
+use icu_calendar::types::{IsoHour, IsoWeekday};
 use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
@@ -420,8 +420,15 @@ where
                     Ok(s) => Ok(w.write_str(s)?),
                     Err(e) => {
                         w.with_part(Part::ERROR, |w| {
-                            w.write_str("WD")?;
-                            (wd as usize).write_to(w)
+                            w.write_str(match wd {
+                                IsoWeekday::Monday => "mon",
+                                IsoWeekday::Tuesday => "tue",
+                                IsoWeekday::Wednesday => "wed",
+                                IsoWeekday::Thursday => "thu",
+                                IsoWeekday::Friday => "fri",
+                                IsoWeekday::Saturday => "sat",
+                                IsoWeekday::Sunday => "sun",
+                            })
                         })?;
                         Err(e)
                     }
@@ -573,8 +580,14 @@ where
                     w.write_str(symbol)?;
                     Err(Error::MissingInputField(Some("hour")))
                 }
-                (Err(e), _) => {
-                    write_value_missing(w)?;
+                (Err(e), h) => {
+                    w.with_part(Part::ERROR, |w| {
+                        w.write_str(if h.map(|h| usize::from(h)).unwrap_or_default() < 12 {
+                            "AM"
+                        } else {
+                            "PM"
+                        })
+                    })?;
                     Err(e)
                 }
             }
