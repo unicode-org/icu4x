@@ -135,7 +135,7 @@ pub trait TimeZoneInput {
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
-/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:s.SSS a";
+/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:sSSS a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // The pattern string contains lots of symbols, but our DateTimeInput is empty!
@@ -143,7 +143,7 @@ pub trait TimeZoneInput {
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_eq!(
 ///     names.with_pattern(&pattern).format(&Empty),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:0. AM",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} AM",
 ///     Err(Error::MissingInputField(Some("iso_weekday")))
 /// );
 /// ```
