@@ -69,8 +69,11 @@ impl<'l> Writeable for FormattedDateTime<'l> {
         let mut r = Ok(());
 
         let loc_datetime = DateTimeInputWithWeekConfig::new(&self.datetime, self.week_data);
-        let (pattern, pattern_err) =
-            self.patterns.get().0.select_lossy(&loc_datetime, self.ordinal_rules);
+        let (pattern, pattern_err) = self
+            .patterns
+            .get()
+            .0
+            .select_lossy(&loc_datetime, self.ordinal_rules);
 
         if let Some(e) = pattern_err {
             r = Err(e);

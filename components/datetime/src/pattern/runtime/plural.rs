@@ -164,26 +164,23 @@ impl<'data> PatternPlurals<'data> {
         let pattern = match self {
             PatternPlurals::SinglePattern(pattern) => pattern,
             PatternPlurals::MultipleVariants(plural_pattern) => {
-                let week_number = match plural_pattern.pivot_field() {
-                    Week::WeekOfMonth => {
-                        loc_datetime
+                let week_number =
+                    match plural_pattern.pivot_field() {
+                        Week::WeekOfMonth => loc_datetime
                             .week_of_month()
                             .map(|w| w.0)
                             .unwrap_or_else(|e| {
                                 err.get_or_insert(DateTimeError::DateTimeInput(e));
                                 0
-                            })
-                    }
-                    Week::WeekOfYear => {
-                        loc_datetime
+                            }),
+                        Week::WeekOfYear => loc_datetime
                             .week_of_year()
-                            .map(|w| w.1.0)
+                            .map(|w| w.1 .0)
                             .unwrap_or_else(|e| {
                                 err.get_or_insert(DateTimeError::DateTimeInput(e));
                                 0
-                            })
-                    }
-                };
+                            }),
+                    };
                 let category = ordinal_rules
                     .map(|p| p.category_for(week_number))
                     .unwrap_or_else(|| {
