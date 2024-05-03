@@ -135,7 +135,7 @@ pub trait TimeZoneInput {
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
-/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:sSSS a";
+/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // The pattern string contains lots of symbols, but our DateTimeInput is empty!

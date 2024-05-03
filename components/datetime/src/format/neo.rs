@@ -185,7 +185,7 @@ size_test!(
 ///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
-/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:s.SSS a";
+/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
@@ -194,7 +194,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_eq!(
 ///     names.with_pattern(&pattern).format(&datetime),
-///     "It is: mon M11 20 2023 ce at 11:35:3. AM",
+///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM",
 ///     Err(Error::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
 /// );
 /// ```
