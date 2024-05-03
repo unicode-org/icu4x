@@ -19,7 +19,7 @@ use crate::Error;
 
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
-use icu_calendar::types::{IsoHour, IsoWeekday};
+use icu_calendar::types::IsoWeekday;
 use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
@@ -513,39 +513,22 @@ where
                 datetime.datetime().second().map(u8::from).unwrap_or(0),
                 datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
             );
-
-            let hour = datetime.datetime().hour();
-
-            match (
-                time_symbols
+            if let Some(hour) = datetime.datetime().hour() {
+                match time_symbols
                     .ok_or(Error::MissingTimeSymbols)
-                    .and_then(|ts| {
-                        ts.get_symbol_for_day_period(
-                            period,
-                            l,
-                            // Hour falls back to 0, so the day period should be calculated for that
-                            #[allow(clippy::unwrap_used)]
-                            hour.unwrap_or(IsoHour::try_from(0u8).unwrap()),
-                            is_top_of_hour,
-                        )
-                    }),
-                hour,
-            ) {
-                (Ok(symbol), Some(_)) => Ok(w.write_str(symbol)?),
-                (Ok(symbol), None) => {
-                    w.write_str(symbol)?;
-                    Err(Error::MissingInputField(Some("hour")))
+                    .and_then(|ts| ts.get_symbol_for_day_period(period, l, hour, is_top_of_hour))
+                {
+                    Ok(s) => Ok(w.write_str(s)?),
+                    Err(e) => {
+                        w.with_part(Part::ERROR, |w| {
+                            w.write_str(if usize::from(hour) < 12 { "AM" } else { "PM" })
+                        })?;
+                        Err(e)
+                    }
                 }
-                (Err(e), h) => {
-                    w.with_part(Part::ERROR, |w| {
-                        w.write_str(if h.map(usize::from).unwrap_or_default() < 12 {
-                            "AM"
-                        } else {
-                            "PM"
-                        })
-                    })?;
-                    Err(e)
-                }
+            } else {
+                write_value_missing(w)?;
+                Err(Error::MissingInputField(Some("hour")))
             }
         }
         (
