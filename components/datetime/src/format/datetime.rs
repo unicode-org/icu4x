@@ -89,7 +89,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
         )?);
 
-        debug_assert!(r.is_ok());
+        debug_assert!(r.is_ok(), "{r:?}");
         Ok(())
     }
 
