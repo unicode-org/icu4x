@@ -143,7 +143,7 @@ pub trait TimeZoneInput {
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_eq!(
 ///     names.with_pattern(&pattern).format(&Empty),
-///     "It is: {E} {M} {d} {y} {G} at 0:00:0. AM",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:0. AM",
 ///     Err(Error::MissingInputField(Some("iso_weekday")))
 /// );
 /// ```

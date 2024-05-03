@@ -454,9 +454,7 @@ where
                 };
                 try_write_number(w, fdf, h.into(), l)?
             } else {
-                w.with_part(Part::ERROR, |w| {
-                    try_write_number(w, fdf, 0.into(), l).map(|_| ())
-                })?;
+                write_value_missing(w)?;
                 Err(Error::MissingInputField(Some("hour")))
             }
         }
@@ -464,9 +462,7 @@ where
             if let Some(iso_minute) = datetime.datetime().minute() {
                 try_write_number(w, fdf, usize::from(iso_minute).into(), l)?
             } else {
-                w.with_part(Part::ERROR, |w| {
-                    try_write_number(w, fdf, 0.into(), l).map(|_| ())
-                })?;
+                write_value_missing(w)?;
                 Err(Error::MissingInputField(Some("minute")))
             }
         }
