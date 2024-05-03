@@ -238,8 +238,8 @@ where
                 match date_symbols
                     .ok_or(Error::MissingDateSymbols)
                     .and_then(|ds| {
-                        ds.get_symbol_for_era(l, &year.era)
-                            .map(|e| e.unwrap_or(&year.era.0))
+                        ds.get_symbol_for_era(l, &year.era)?
+                            .ok_or(Error::MissingDateSymbols)
                     }) {
                     Ok(era) => Ok(w.write_str(era)?),
                     Err(e) => {
