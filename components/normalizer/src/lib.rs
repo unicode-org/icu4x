@@ -152,14 +152,14 @@ const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
 /// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
 /// to make backward-combiningness use the same bit in all
 /// cases.
-const NON_ROUND_TRIP_MARKER: u16 = 1;
+const NON_ROUND_TRIP_MARKER: u16 = 0b1;
 
 /// Marker that a complex decomposition starts with a starter
 /// that can combine backwards.
-const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 2;
+const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 0b10;
 
 /// Values above this are treated as a BMP character.
-const HIGHEST_MARKER: u16 = 3;
+const HIGHEST_MARKER: u16 = NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
@@ -407,7 +407,7 @@ impl CharacterAndTrieValue {
         if lead == 0 {
             return true;
         }
-        if lead <= BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER {
+        if lead <= HIGHEST_MARKER {
             return false;
         }
         if (trail_or_complex & 0x7F) == 0x3C
