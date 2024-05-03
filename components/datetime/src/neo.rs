@@ -6,6 +6,7 @@
 
 use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
+use crate::format::datetime::DateTimeWriteError;
 use crate::format::datetime::{try_write_field, try_write_pattern};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
@@ -648,7 +649,7 @@ pub struct FormattedNeoDate<'a> {
 }
 
 impl<'a> TryWriteable for FormattedNeoDate<'a> {
-    type Error = Error;
+    type Error = DateTimeWriteError;
 
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
@@ -920,7 +921,7 @@ pub struct FormattedNeoTime<'a> {
 }
 
 impl<'a> TryWriteable for FormattedNeoTime<'a> {
-    type Error = Error;
+    type Error = DateTimeWriteError;
 
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
@@ -1962,7 +1963,7 @@ pub struct FormattedNeoDateTime<'a> {
 }
 
 impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
-    type Error = Error;
+    type Error = DateTimeWriteError;
 
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,

@@ -4,7 +4,6 @@
 
 use core::fmt;
 
-use crate::Error;
 use crate::{
     input::TimeZoneInput,
     time_zone::{FormatTimeZone, FormatTimeZoneWithFallback, TimeZoneFormatter},
@@ -107,7 +106,7 @@ where
     /// // Use the `Writable` trait instead to enable infallible formatting:
     /// writeable::assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn write_no_fallback<W>(&self, mut w: &mut W) -> Result<fmt::Result, Error>
+    pub fn write_no_fallback<W>(&self, mut w: &mut W) -> Result<fmt::Result, DateTimeError>
     where
         W: core::fmt::Write + ?Sized,
     {

@@ -165,6 +165,8 @@ pub use calendar::{InternalCldrCalendar, NeverCalendar};
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use error::MismatchedCalendarError;
+#[cfg(feature = "experimental")]
+pub use format::datetime::DateTimeWriteError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, TypedDateTimeNames};

@@ -86,8 +86,6 @@ pub enum DateTimeError {
     /// The same field occurs multiple times in a pattern or was loaded multiple times
     #[displaydoc("Duplicate field: {0:?}")]
     DuplicateField(Field),
-    /// Missing week calculator
-    MissingWeekCalculator,
 }
 
 /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)

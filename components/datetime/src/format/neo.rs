@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::datetime::try_write_pattern;
+use super::datetime::{try_write_pattern, DateTimeWriteError};
 use crate::calendar::{
     CldrCalendar, DayPeriodNamesV1Provider, MonthNamesV1Provider, WeekdayNamesV1Provider,
     YearNamesV1Provider,
@@ -17,7 +17,10 @@ use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::pattern::PatternItem;
-use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
+use crate::provider::date_time::{
+    DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
+    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols,
+};
 use crate::provider::neo::*;
 use crate::Error;
 use core::fmt;
@@ -173,7 +176,7 @@ size_test!(
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
-/// use icu::datetime::{Error, TypedDateTimeNames};
+/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::locid::locale;
@@ -194,7 +197,7 @@ size_test!(
 /// assert_try_writeable_eq!(
 ///     names.with_pattern(&pattern).format(&datetime),
 ///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM",
-///     Err(Error::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
+///     Err(DateTimeWriteError::MissingNames(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }))
 /// );
 /// ```
 #[derive(Debug)]
@@ -1176,7 +1179,7 @@ pub struct FormattedDateTimePattern<'a> {
 }
 
 impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
-    type Error = Error;
+    type Error = DateTimeWriteError;
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
@@ -1201,7 +1204,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         field_symbol: fields::Month,
         field_length: FieldLength,
         code: MonthCode,
-    ) -> Result<MonthPlaceholderValue, Error> {
+    ) -> Result<MonthPlaceholderValue, GetSymbolForMonthError> {
         let field = fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
             length: field_length,
@@ -1209,12 +1212,12 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         let month_symbols = self
             .month_names
             .get_with_length(field_symbol, field_length)
-            .ok_or(Error::MissingNames(field))?;
+            .ok_or(GetSymbolForMonthError::MissingNames(field))?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(Error::MissingMonthSymbol(code));
+            return Err(GetSymbolForMonthError::Missing);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(Error::MissingMonthSymbol(code));
+            return Err(GetSymbolForMonthError::Missing);
         };
         let month_index = usize::from(month_index);
         let symbol = match month_symbols {
@@ -1247,7 +1250,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         // knows how to handle leap months and we don't need the fallback logic
         symbol
             .map(MonthPlaceholderValue::PlainString)
-            .ok_or(Error::MissingMonthSymbol(code))
+            .ok_or(GetSymbolForMonthError::Missing)
     }
 
     fn get_symbol_for_weekday(
@@ -1255,7 +1258,7 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         field_symbol: fields::Weekday,
         field_length: FieldLength,
         day: input::IsoWeekday,
-    ) -> Result<&str, Error> {
+    ) -> Result<&str, GetSymbolForWeekdayError> {
         let field = fields::Field {
             symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
@@ -1272,19 +1275,18 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         let weekday_symbols = self
             .weekday_names
             .get_with_length(field_symbol, field_length)
-            .ok_or(Error::MissingNames(field))?;
-        let day_usize = (day as usize) % 7;
+            .ok_or(GetSymbolForWeekdayError::MissingNames(field))?;
         weekday_symbols
             .symbols
-            .get(day_usize)
-            .ok_or(Error::MissingWeekdaySymbol(day_usize))
+            .get((day as usize) % 7)
+            .ok_or(GetSymbolForWeekdayError::Missing)
     }
 
     fn get_symbol_for_era<'a>(
         &'a self,
         field_length: FieldLength,
         era_code: &'a Era,
-    ) -> Result<Option<&str>, Error> {
+    ) -> Result<&str, GetSymbolForEraError> {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
             length: field_length,
@@ -1294,11 +1296,13 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         let year_symbols = self
             .year_names
             .get_with_length((), field_length)
-            .ok_or(Error::MissingNames(field))?;
+            .ok_or(GetSymbolForEraError::MissingNames(field))?;
         let YearNamesV1::Eras(era_symbols) = year_symbols else {
-            return Err(Error::MissingNames(field));
+            return Err(GetSymbolForEraError::MissingNames(field));
         };
-        Ok(era_symbols.get(era_code.0.as_str().into()))
+        era_symbols
+            .get(era_code.0.as_str().into())
+            .ok_or(GetSymbolForEraError::Missing)
     }
 }
 
@@ -1309,7 +1313,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
         field_length: FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
-    ) -> Result<&str, Error> {
+    ) -> Result<&str, GetSymbolForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
         let field = fields::Field {
             symbol: FieldSymbol::DayPeriod(field_symbol),
@@ -1320,7 +1324,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
         let dayperiod_symbols = self
             .dayperiod_names
             .get_with_length((), field_length)
-            .ok_or(Error::MissingNames(field))?;
+            .ok_or(GetSymbolForDayPeriodError::MissingNames(field))?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_symbols
                 .midnight()
@@ -1329,7 +1333,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
             (_, hour, _) if hour < 12 => dayperiod_symbols.am(),
             _ => dayperiod_symbols.pm(),
         };
-        option_value.ok_or(Error::MissingNames(field))
+        option_value.ok_or(GetSymbolForDayPeriodError::MissingNames(field))
     }
 }
 
