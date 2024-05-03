@@ -641,11 +641,12 @@ mod tests {
     fn test_mixed_calendar_eras() {
         use icu::calendar::japanese::JapaneseExtended;
         use icu::calendar::Date;
+        use icu::datetime::neo::NeoDateFormatter;
         use icu::datetime::options::length;
-        use icu::datetime::DateFormatter;
+        use icu::datetime::DateTimeError;
 
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+        let dtf = NeoDateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -654,7 +655,11 @@ mod tests {
             .into_japanese_date()
             .to_any();
 
-        writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
+        writeable::assert_try_writeable_eq!(
+            dtf.format(&date).unwrap(),
+            "Sep 1, 12 kansei-1789",
+            Err(DateTimeError::MissingDateSymbols)
+        );
     }
 
     #[test]
