@@ -282,21 +282,30 @@ impl BakedExporter {
         }
     }
 
-    fn write_impl_macro(
+    fn write_impl_macros(
         &self,
         body: TokenStream,
+        iterable_body: TokenStream,
         key: DataKey,
         marker: TokenStream,
     ) -> Result<(), DataError> {
         let marker_string = marker.to_string();
+        let marker_last = marker.into_iter().last().unwrap();
         let doc = format!(
             " Implement `DataProvider<{}>` on the given struct using the data",
-            marker.into_iter().last().unwrap()
+            marker_last
+        );
+        let doc_iterable = format!(
+            " Implement `IterableDataProvider<{}>` on the given struct using the data",
+            marker_last
         );
 
         let ident = Self::ident(key);
 
         let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
+        let prefixed_macro_ident_iterable = format!("__impliterable_{ident}")
+            .parse::<TokenStream>()
+            .unwrap();
 
         let maybe_msrv = maybe_msrv();
 
@@ -313,6 +322,16 @@ impl BakedExporter {
                         #maybe_msrv
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
+                    }
+                }
+                #[doc = #doc_iterable]
+                /// hardcoded in this file. This allows the struct to be used with
+                /// `DatagenDriver` for this key.
+                #[doc(hidden)]
+                #[macro_export]
+                macro_rules! #prefixed_macro_ident_iterable {
+                    ($provider:ty) => {
+                        #iterable_body
                     }
                 }
             },
@@ -369,7 +388,7 @@ impl DataExporter for BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
-        self.write_impl_macro(quote! {
+        self.write_impl_macros(quote! {
             #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
@@ -391,6 +410,13 @@ impl DataExporter for BakedExporter {
                     } else {
                         Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
                     }
+                }
+            }
+        }, quote! {
+            #maybe_msrv
+            impl icu_provider::datagen::IterableDataProvider<#marker> for $provider {
+                fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
+                    Ok([icu_provider::DataLocale::default()].into())
                 }
             }
         }, key, marker)
@@ -466,8 +492,11 @@ impl BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
-        let body = if values.is_empty() {
-            quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req)))
+        let (load_body, iterable_body) = if values.is_empty() {
+            (
+                quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))),
+                quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))),
+            )
         } else {
             let mut map = BTreeMap::new();
             let mut statics = Vec::new();
@@ -506,7 +535,7 @@ impl BakedExporter {
                 }
             };
 
-            match fallback_mode {
+            let load_body = match fallback_mode {
                 None => {
                     let search = search(quote!(req.locale));
                     quote! {
@@ -560,10 +589,14 @@ impl BakedExporter {
                     return Err(DataError::custom("Unknown fallback mode")
                         .with_display_context(&format!("{f:?}")))
                 }
-            }
+            };
+
+            let iterable_body = quote!(Ok([#(icu_provider::DataLocale::from(icu_locale::locale!(#keys))),*].into()));
+
+            (load_body, iterable_body)
         };
 
-        self.write_impl_macro(
+        self.write_impl_macros(
             quote! {
                 #maybe_msrv
                 impl icu_provider::DataProvider<#marker> for $provider {
@@ -571,7 +604,15 @@ impl BakedExporter {
                         &self,
                         req: icu_provider::DataRequest,
                     ) -> Result<icu_provider::DataResponse<#marker>, icu_provider::DataError> {
-                        #body
+                        #load_body
+                    }
+                }
+            },
+            quote! {
+                #maybe_msrv
+                impl icu_provider::datagen::IterableDataProvider<#marker> for $provider {
+                    fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
+                        #iterable_body
                     }
                 }
             },
@@ -612,23 +653,32 @@ impl BakedExporter {
             .map(|marker| marker.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
 
-        let (macro_idents, prefixed_macro_idents, mod_idents, file_paths): (
-            Vec<_>,
-            Vec<_>,
-            Vec<_>,
-            Vec<_>,
-        ) = itertools::multiunzip(data.keys().map(|&key| {
-            let ident = Self::ident(key);
-            (
-                format!("impl_{}", ident).parse::<TokenStream>().unwrap(),
-                // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
-                // for crates that include the data but don't want it to be public. We then reexport them as items that use
-                // normal scoping that clients can control.
-                format!("__impl_{}", ident).parse::<TokenStream>().unwrap(),
-                ident.parse::<TokenStream>().unwrap(),
-                format!("macros/{}.rs.data", ident),
-            )
-        }));
+        let (
+            macro_idents,
+            prefixed_macro_idents,
+            macro_idents_iterable,
+            prefixed_macro_idents_iterable,
+            mod_idents,
+            file_paths,
+        ): (Vec<_>, Vec<_>, Vec<_>, Vec<_>, Vec<_>, Vec<_>) =
+            itertools::multiunzip(data.keys().map(|&key| {
+                let ident = Self::ident(key);
+                (
+                    format!("impl_{}", ident).parse::<TokenStream>().unwrap(),
+                    // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
+                    // for crates that include the data but don't want it to be public. We then reexport them as items that use
+                    // normal scoping that clients can control.
+                    format!("__impl_{}", ident).parse::<TokenStream>().unwrap(),
+                    format!("impliterable_{}", ident)
+                        .parse::<TokenStream>()
+                        .unwrap(),
+                    format!("__impliterable_{}", ident)
+                        .parse::<TokenStream>()
+                        .unwrap(),
+                    ident.parse::<TokenStream>().unwrap(),
+                    format!("macros/{}.rs.data", ident),
+                )
+            }));
 
         let maybe_msrv = maybe_msrv();
 
@@ -668,6 +718,8 @@ impl BakedExporter {
                     mod #mod_idents;
                     #[doc(inline)]
                     pub use #prefixed_macro_idents as #macro_idents;
+                    #[doc(inline)]
+                    pub use #prefixed_macro_idents_iterable as #macro_idents_iterable;
                 )*
             },
         )?;
