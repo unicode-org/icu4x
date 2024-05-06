@@ -4,20 +4,21 @@
 
 #![allow(deprecated)] // remove in 2.0
 
+mod testutil {
+    include!("testutil.rs");
+}
+
 use std::collections::BTreeMap;
 
-use elsa::sync::FrozenMap;
 use icu_datagen::prelude::*;
 use icu_datagen::DeduplicationStrategy;
 use icu_datagen::FallbackOptions;
 use icu_locid_transform::provider::*;
-use icu_provider::datagen::ExportMarker;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
 use icu_provider::make_exportable_provider;
 use icu_provider::prelude::*;
-use postcard::ser_flavors::{AllocVec, Flavor};
-use writeable::Writeable;
+use testutil::TestingExporter;
 
 struct TestingProvider(BTreeMap<&'static str, &'static str>);
 
@@ -141,41 +142,11 @@ fn families(
     langids.into_iter().map(LocaleFamily::with_descendants)
 }
 
-#[derive(Default)]
-struct TestingExporter(FrozenMap<DataLocale, String>);
-
-impl DataExporter for &mut TestingExporter {
-    fn put_payload(
-        &self,
-        key: DataKey,
-        locale: &DataLocale,
-        payload: &DataPayload<ExportMarker>,
-    ) -> Result<(), DataError> {
-        let mut serializer = postcard::Serializer {
-            output: AllocVec::new(),
-        };
-        payload.serialize(&mut serializer)?;
-        let output = serializer
-            .output
-            .finalize()
-            .expect("Failed to finalize serializer output");
-        println!("Putting: {key}/{locale}");
-        self.0.insert(
-            locale.clone(),
-            postcard::from_bytes::<HelloWorldV1>(&output)
-                .unwrap()
-                .message
-                .to_string(),
-        );
-        Ok(())
-    }
-}
-
 fn export_to_map(
     driver_1_4: DatagenDriver,
     driver_1_5: DatagenDriver,
     provider: &TestingProvider,
-) -> BTreeMap<String, String> {
+) -> BTreeMap<String, Vec<u8>> {
     let _ = simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Trace)
@@ -184,22 +155,12 @@ fn export_to_map(
     let mut exporter_1_4 = TestingExporter::default();
     driver_1_4.export(provider, &mut exporter_1_4).unwrap();
 
-    let results_1_4 = exporter_1_4
-        .0
-        .into_tuple_vec()
-        .into_iter()
-        .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
-        .collect();
+    let results_1_4 = exporter_1_4.finish();
 
     let mut exporter_1_5 = TestingExporter::default();
     driver_1_5.export(provider, &mut exporter_1_5).unwrap();
 
-    let results_1_5 = exporter_1_5
-        .0
-        .into_tuple_vec()
-        .into_iter()
-        .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
-        .collect();
+    let results_1_5 = exporter_1_5.finish();
 
     assert_eq!(results_1_4, results_1_5);
 
@@ -209,7 +170,7 @@ fn export_to_map(
 fn export_to_map_1_5(
     driver: DatagenDriver,
     provider: &TestingProvider,
-) -> BTreeMap<String, String> {
+) -> BTreeMap<String, Vec<u8>> {
     let _ = simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Trace)
@@ -218,12 +179,7 @@ fn export_to_map_1_5(
     let mut exporter = TestingExporter::default();
     driver.export(provider, &mut exporter).unwrap();
 
-    exporter
-        .0
-        .into_tuple_vec()
-        .into_iter()
-        .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
-        .collect()
+    exporter.finish()
 }
 
 #[test]
