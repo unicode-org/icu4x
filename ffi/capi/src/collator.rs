@@ -141,7 +141,7 @@ pub mod ffi {
 
         /// Compare two strings.
         #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(*, disable)]
         pub fn compare_valid_utf8(&self, left: &str, right: &str) -> ICU4XOrdering {
             self.0.compare(left, right).into()
         }
