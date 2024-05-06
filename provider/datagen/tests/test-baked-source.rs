@@ -4,10 +4,6 @@
 
 extern crate alloc;
 
-#[allow(unused_imports)]
-#[path = "data/baked/mod.rs"]
-mod baked_data;
-
 #[path = "testutil.rs"]
 mod testutil;
 
@@ -18,7 +14,10 @@ use icu_provider::make_exportable_provider;
 struct Baked;
 
 const _: () = {
-    pub mod icu {
+    #[allow(unused_imports)]
+    #[path = "data/baked/mod.rs"]
+    mod baked_data;
+    mod icu {
         pub use icu_datetime as datetime;
     }
     baked_data::make_provider!(Baked);
