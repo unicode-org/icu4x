@@ -6,6 +6,7 @@ extern crate alloc;
 
 use std::collections::BTreeMap;
 
+use icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker;
 use elsa::sync::FrozenMap;
 use icu_datagen::prelude::*;
 use icu_datagen::DeduplicationStrategy;
@@ -19,7 +20,7 @@ use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 use writeable::Writeable;
 
-/*
+
 
 struct Baked;
 
@@ -37,8 +38,16 @@ const _: () = {
     baked_data::impliterable_datetime_patterns_gregory_skeleton_v1!(Baked);
 };
 
+make_exportable_provider!(
+    Baked,
+    [
+        GregorianDateNeoSkeletonPatternsV1Marker,
+    ]
+);
+
+
 #[derive(Default)]
-struct TestingExporter(FrozenMap<DataLocale, String>);
+struct TestingExporter(FrozenMap<DataLocale, Vec<u8>>);
 
 impl DataExporter for &mut TestingExporter {
     fn put_payload(
@@ -58,13 +67,28 @@ impl DataExporter for &mut TestingExporter {
         println!("Putting: {key}/{locale}");
         self.0.insert(
             locale.clone(),
-            postcard::from_bytes::<HelloWorldV1>(&output)
-                .unwrap()
-                .message
-                .to_string(),
+            output,
         );
         Ok(())
     }
 }
 
-*/
+#[test]
+fn test() {
+    let mut exporter = TestingExporter::default();
+    DatagenDriver::new()
+        .with_keys([GregorianDateNeoSkeletonPatternsV1Marker::KEY])
+        .with_all_locales()
+        .export(&Baked, &mut exporter)
+        .unwrap();
+
+    let results = exporter
+        .0
+        .into_tuple_vec()
+        .into_iter()
+        .map(|(data_locale, buffer)| (data_locale.write_to_string().into_owned(), buffer))
+        .collect::<BTreeMap<_, _>>();
+
+    println!("{results:?}");
+}
+
