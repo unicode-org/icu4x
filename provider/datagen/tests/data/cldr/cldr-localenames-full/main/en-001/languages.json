@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "en",
         "territory": "001"
@@ -12,7 +12,7 @@
         "languages": {
           "aa": "Afar",
           "ab": "Abkhazian",
-          "ace": "Achinese",
+          "ace": "Acehnese",
           "ach": "Acoli",
           "ada": "Adangme",
           "ady": "Adyghe",

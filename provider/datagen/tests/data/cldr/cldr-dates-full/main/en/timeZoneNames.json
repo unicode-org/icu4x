@@ -3,7 +3,7 @@
     "en": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "en"
       },
@@ -127,9 +127,6 @@
                 "long": {
                   "daylight": "British Summer Time"
                 }
-              },
-              "Uzhgorod": {
-                "exemplarCity": "Uzhhorod"
               }
             },
             "Africa": {
@@ -630,6 +627,13 @@
                 "standard": "GMT"
               }
             },
+            "Greenland": {
+              "long": {
+                "generic": "Greenland Time",
+                "standard": "Greenland Standard Time",
+                "daylight": "Greenland Summer Time"
+              }
+            },
             "Greenland_Eastern": {
               "long": {
                 "generic": "East Greenland Time",
@@ -808,11 +812,6 @@
                 "daylight": "Macao Summer Time"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "Macquarie Island Time"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "Magadan Time",
@@ -850,13 +849,6 @@
             "Mawson": {
               "long": {
                 "standard": "Mawson Time"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "Northwest Mexico Time",
-                "standard": "Northwest Mexico Standard Time",
-                "daylight": "Northwest Mexico Daylight Time"
               }
             },
             "Mexico_Pacific": {

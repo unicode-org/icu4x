@@ -3,7 +3,7 @@
     "fr": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "fr"
       },
@@ -149,9 +149,6 @@
               "Puerto_Rico": {
                 "exemplarCity": "Porto Rico"
               },
-              "Santa_Isabel": {
-                "exemplarCity": "Santa Isabel"
-              },
               "Santarem": {
                 "exemplarCity": "Santarém"
               },
@@ -269,9 +266,6 @@
               "Ulyanovsk": {
                 "exemplarCity": "Oulianovsk"
               },
-              "Uzhgorod": {
-                "exemplarCity": "Oujgorod"
-              },
               "Vatican": {
                 "exemplarCity": "Le Vatican"
               },
@@ -280,9 +274,6 @@
               },
               "Warsaw": {
                 "exemplarCity": "Varsovie"
-              },
-              "Zaporozhye": {
-                "exemplarCity": "Zaporojie"
               }
             },
             "Africa": {
@@ -483,9 +474,6 @@
             "Australia": {
               "Adelaide": {
                 "exemplarCity": "Adélaïde"
-              },
-              "Currie": {
-                "exemplarCity": "Currie"
               }
             },
             "Pacific": {
@@ -1102,11 +1090,6 @@
                 "daylight": "heure d’été de Lord Howe"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "heure de l’île Macquarie"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "heure de Magadan",
@@ -1144,13 +1127,6 @@
             "Mawson": {
               "long": {
                 "standard": "heure de Mawson"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "heure du Nord-Ouest du Mexique",
-                "standard": "heure normale du Nord-Ouest du Mexique",
-                "daylight": "heure d’été du Nord-Ouest du Mexique"
               }
             },
             "Mexico_Pacific": {

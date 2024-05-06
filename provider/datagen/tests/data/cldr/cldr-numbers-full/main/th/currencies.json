@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "th"
       },
@@ -943,6 +943,9 @@
             "displayName": "ดอลลาร์แคริบเบียนตะวันออก",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "สิทธิถอนเงินพิเศษ"
