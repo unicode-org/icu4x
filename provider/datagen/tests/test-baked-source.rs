@@ -4,14 +4,12 @@
 
 extern crate alloc;
 
-mod testutil {
-    include!("testutil.rs");
-}
-
 #[allow(unused_imports)]
-mod baked_data {
-    include!("data/baked/mod.rs");
-}
+#[path = "data/baked/mod.rs"]
+mod baked_data;
+
+#[path = "testutil.rs"]
+mod testutil;
 
 use icu_datagen::prelude::*;
 use icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker;

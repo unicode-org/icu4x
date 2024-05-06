@@ -4,9 +4,8 @@
 
 #![allow(deprecated)] // remove in 2.0
 
-mod testutil {
-    include!("testutil.rs");
-}
+#[path = "testutil.rs"]
+mod testutil;
 
 use std::collections::BTreeMap;
 
