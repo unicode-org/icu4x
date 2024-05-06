@@ -273,3 +273,18 @@ macro_rules! __impl_props_exemplarchars_numbers_v1 {
         }
     };
 }
+/// Implement `IterableDataProvider<ExemplarCharactersNumbersV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `DatagenDriver` for this key.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impliterable_props_exemplarchars_numbers_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::datagen::IterableDataProvider<icu::properties::provider::ExemplarCharactersNumbersV1Marker> for $provider {
+            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
+                Ok(["af", "ar", "ar-DZ", "ar-LB", "ar-LY", "ar-MA", "ar-MR", "ar-SA", "ar-SO", "ar-TN", "as", "be", "bg", "bgc", "bho", "blo", "bn", "br", "cs", "cv", "de-AT", "de-CH", "de-LI", "en-FI", "en-SE", "en-ZA", "eo", "es-CR", "et", "eu", "fa", "ff-Adlm", "fi", "fo", "fr", "fr-LU", "fr-MA", "gu", "he", "hi", "hu", "hy", "ie", "it-CH", "ka", "kea", "kk", "kn", "kok", "ks", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lij", "lt", "lv", "ml", "mni", "mr", "my", "ne", "no", "nqo", "or", "pa", "pl", "prg", "ps", "pt-PT", "raj", "rm", "ru", "sa", "sah", "sat", "sk", "sl", "sq", "sv", "syr", "szl", "ta", "te", "tk", "tok", "uk", "und", "ur", "uz", "uz-Cyrl", "xnr", "yue", "yue-Hans", "zh", "zh-Hant"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            }
+        }
+    };
+}

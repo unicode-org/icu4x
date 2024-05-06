@@ -30,8 +30,12 @@ pub use __make_provider as make_provider;
 mod props_casemap_v1;
 #[doc(inline)]
 pub use __impl_props_casemap_v1 as impl_props_casemap_v1;
+#[doc(inline)]
+pub use __impliterable_props_casemap_v1 as impliterable_props_casemap_v1;
 #[macro_use]
 #[path = "macros/props_casemap_unfold_v1.rs.data"]
 mod props_casemap_unfold_v1;
 #[doc(inline)]
 pub use __impl_props_casemap_unfold_v1 as impl_props_casemap_unfold_v1;
+#[doc(inline)]
+pub use __impliterable_props_casemap_unfold_v1 as impliterable_props_casemap_unfold_v1;
