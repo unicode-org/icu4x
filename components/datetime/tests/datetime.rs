@@ -555,7 +555,7 @@ fn test_time_zone_format_configs() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = "using last-resort time zone fallback")]
+#[should_panic(expected = "MissingInputField(Some(\"gmt_offset\"))")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let time_zone = CustomTimeZone {
         gmt_offset: None,
