@@ -30,8 +30,8 @@ zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 log = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid", features = ["serde"] }
-icu_datagen = { path = "../../provider/datagen", default-features = false, features = ["networking"] }
+icu_locid = { path = "../../components/locid", default-features = false, features = ["serde"] }
+icu_datagen = { path = "../../provider/datagen", default-features = false }
 twox-hash = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
