@@ -33,11 +33,11 @@ postcard = { workspace = true, features = ["alloc"], optional = true }
 serde_json = { workspace = true, features = ["std"], optional = true }
 
 [dev-dependencies]
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid", features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
-icu_datagen = { path = "../../provider/datagen", features = ["networking"] }
-writeable = { path = "../../utils/writeable" }
+icu_benchmark_macros = { workspace = true }
+icu_locid = { workspace = true, features = ["serde"] }
+icu_provider = { workspace = true, features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
+icu_datagen = { workspace = true, default-features = false }
+writeable = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
