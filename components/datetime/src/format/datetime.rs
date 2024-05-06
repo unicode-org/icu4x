@@ -467,38 +467,48 @@ where
             }
         }
         (FieldSymbol::Second(Second::Second), l) => {
-            if let Some(seconds) = datetime.datetime().second() {
+            if let Some(second) = datetime.datetime().second() {
+                let mut s = FixedDecimal::from(usize::from(second));
+
                 if let Some(PatternItem::Field(Field {
                     symbol: FieldSymbol::Second(Second::FractionalSecond),
                     length,
                 })) = next_item
                 {
-                    // We only support fixed field length for fractional seconds.
-                    if let &FieldLength::Fixed(p) = length {
-                        if let Some(nanoseconds) = datetime.datetime().nanosecond() {
-                            // Assemble the seconds and nanoseconds into a FixedDecimal
-                            let mut fd = FixedDecimal::from(usize::from(seconds));
-                            // n * 10^-9 is fractional
-                            let _infallible = fd.concatenate_end(
-                                FixedDecimal::from(usize::from(nanoseconds)).multiplied_pow10(-9),
+                    let r = datetime
+                        .datetime()
+                        .nanosecond()
+                        .ok_or(Error::MissingInputField(Some("nanosecond")))
+                        .and_then(|ns| {
+                            // We only support fixed field length for fractional seconds.
+                            let &FieldLength::Fixed(p) = length else {
+                                return Err(Error::Pattern(
+                                    crate::pattern::PatternError::FieldLengthInvalid(
+                                        FieldSymbol::Second(Second::FractionalSecond),
+                                    ),
+                                ));
+                            };
+                            Ok((ns, p))
+                        });
+
+                    match r {
+                        Ok((ns, p)) => {
+                            let _infallible = s.concatenate_end(
+                                FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
                             );
                             debug_assert!(_infallible.is_ok());
-                            fd.pad_end(-(p as i16));
-                            try_write_number(w, fdf, fd, l)?
-                        } else {
-                            write_value_missing(w)?;
-                            Err(Error::MissingInputField(Some("nanosecond")))
+                            s.pad_end(-(p as i16));
+                            try_write_number(w, fdf, s, l)?
                         }
-                    } else {
-                        Err(Error::Pattern(
-                            crate::pattern::PatternError::FieldLengthInvalid(FieldSymbol::Second(
-                                Second::FractionalSecond,
-                            )),
-                        ))
+                        Err(e) => {
+                            let seconds_result = try_write_number(w, fdf, s, l)?;
+                            write_value_missing(w)?;
+                            // Return the earlier error
+                            seconds_result.and(Err(e))
+                        }
                     }
                 } else {
-                    // No fractional seconds
-                    try_write_number(w, fdf, usize::from(seconds).into(), l)?
+                    try_write_number(w, fdf, s, l)?
                 }
             } else {
                 write_value_missing(w)?;
