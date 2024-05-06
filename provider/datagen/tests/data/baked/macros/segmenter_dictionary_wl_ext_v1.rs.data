@@ -16,3 +16,18 @@ macro_rules! __impl_segmenter_dictionary_wl_ext_v1 {
         }
     };
 }
+/// Implement `IterableDataProvider<DictionaryForWordLineExtendedV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `DatagenDriver` for this key.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impliterable_segmenter_dictionary_wl_ext_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::datagen::IterableDataProvider<icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker> for $provider {
+            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
+                Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+            }
+        }
+    };
+}
