@@ -495,7 +495,7 @@ impl BakedExporter {
         let (load_body, iterable_body) = if values.is_empty() {
             (
                 quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))),
-                quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))),
+                quote!(Ok(vec![])),
             )
         } else {
             let mut map = BTreeMap::new();
