@@ -26,7 +26,7 @@ macro_rules! __impliterable_segmenter_dictionary_w_auto_v1 {
         #[clippy::msrv = "1.67"]
         impl icu_provider::datagen::IterableDataProvider<icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
+                Ok(vec![])
             }
         }
     };
