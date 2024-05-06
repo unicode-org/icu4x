@@ -3,7 +3,7 @@
     "tr": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "tr"
       },
@@ -95,9 +95,6 @@
               },
               "Puerto_Rico": {
                 "exemplarCity": "Porto Riko"
-              },
-              "Santa_Isabel": {
-                "exemplarCity": "Santa Isabel"
               },
               "Scoresbysund": {
                 "exemplarCity": "Ittoqqortoormiit"
@@ -225,9 +222,6 @@
               "Tirane": {
                 "exemplarCity": "Tiran"
               },
-              "Uzhgorod": {
-                "exemplarCity": "Ujgorod"
-              },
               "Vatican": {
                 "exemplarCity": "Vatikan"
               },
@@ -236,9 +230,6 @@
               },
               "Warsaw": {
                 "exemplarCity": "Varşova"
-              },
-              "Zaporozhye": {
-                "exemplarCity": "Zaporojye"
               },
               "Zurich": {
                 "exemplarCity": "Zürih"
@@ -470,9 +461,6 @@
               }
             },
             "Australia": {
-              "Currie": {
-                "exemplarCity": "Currie"
-              },
               "Sydney": {
                 "exemplarCity": "Sidney"
               }
@@ -1090,11 +1078,6 @@
                 "daylight": "Makao Yaz Saati"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "Macquarie Adası Saati"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "Magadan Saati",
@@ -1132,13 +1115,6 @@
             "Mawson": {
               "long": {
                 "standard": "Mawson Saati"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "Kuzeybatı Meksika Saati",
-                "standard": "Kuzeybatı Meksika Standart Saati",
-                "daylight": "Kuzeybatı Meksika Yaz Saati"
               }
             },
             "Mexico_Pacific": {

@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "ar",
         "territory": "EG"
@@ -959,6 +959,9 @@
             "displayName": "دولار شرق الكاريبي",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "حقوق السحب الخاصة"

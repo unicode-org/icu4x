@@ -472,7 +472,7 @@ jobs:
       with:
         path: |
           tutorials/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
+        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install

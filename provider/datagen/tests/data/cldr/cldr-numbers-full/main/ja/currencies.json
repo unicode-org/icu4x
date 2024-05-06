@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "ja"
       },
@@ -955,6 +955,9 @@
             "displayName": "東カリブ ドル",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "特別引き出し権"
