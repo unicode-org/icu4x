@@ -591,7 +591,12 @@ impl BakedExporter {
                 }
             };
 
-            let iterable_body = quote!(Ok([#(#keys),*].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect()));
+            let iterable_body = quote!(Ok(
+                [#(#keys),*]
+                .into_iter()
+                .map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap())
+                .collect()
+            ));
 
             (load_body, iterable_body)
         };
