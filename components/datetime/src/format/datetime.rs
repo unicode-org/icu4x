@@ -236,54 +236,52 @@ where
     }
 
     Ok(match (field.symbol, field.length) {
-        (FieldSymbol::Era, l) => {
-            if let Some(year) = datetime.datetime().year() {
-                match date_symbols
-                    .ok_or(Error::MissingDateSymbols)
-                    .and_then(|ds| {
-                        ds.get_symbol_for_era(l, &year.era)?
-                            .ok_or(Error::MissingDateSymbols)
-                    }) {
-                    Ok(era) => Ok(w.write_str(era)?),
-                    Err(e) => {
-                        w.with_part(Part::ERROR, |w| w.write_str(&year.era.0))?;
-                        Err(e)
-                    }
-                }
-            } else {
+        (FieldSymbol::Era, l) => match datetime.datetime().year() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(Error::MissingInputField(Some("year")))
+            }
+            Some(year) => match date_symbols
+                .ok_or(Error::MissingDateSymbols)
+                .and_then(|ds| {
+                    ds.get_symbol_for_era(l, &year.era)?
+                        .ok_or(Error::MissingDateSymbols)
+                }) {
+                Ok(era) => Ok(w.write_str(era)?),
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| w.write_str(&year.era.0))?;
+                    Err(e)
+                }
             }
         }
-        (FieldSymbol::Year(Year::Calendar), l) => {
-            if let Some(year) = datetime.datetime().year() {
-                try_write_number(w, fdf, year.number.into(), l)?
-            } else {
+        (FieldSymbol::Year(Year::Calendar), l) => match datetime.datetime().year() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(Error::MissingInputField(Some("year")))
             }
+            Some(year) => try_write_number(w, fdf, year.number.into(), l)?,
         }
         (FieldSymbol::Year(Year::WeekOf), l) => match datetime.week_of_year() {
-            Ok((year, _)) => try_write_number(w, fdf, year.number.into(), l)?,
             Err(e) => {
                 write_value_missing(w, field)?;
                 Err(Error::DateTimeInput(e))
             }
-        },
-        (FieldSymbol::Year(Year::Cyclic), l) => {
-            let datetime = datetime.datetime();
-
-            // TODO(#3761): This is a hack, we should use actual data for cyclic years
-            let cyclics = match datetime.any_calendar_kind() {
-                Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
-                _ => &CHINESE_CYCLIC_YEARS, /* for now assume all other calendars use the stem-branch model */
-            };
-
-            if let Some(year) = datetime.year() {
-                match year
+            Ok((year, _)) => try_write_number(w, fdf, year.number.into(), l)?
+        }
+        (FieldSymbol::Year(Year::Cyclic), l) => match datetime.datetime().year() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(Error::MissingInputField(Some("year")))
+            }
+            Some(year) => match year
                     .cyclic
                     .ok_or(Error::MissingInputField(Some("cyclic")))
                     .and_then(|cyclic| {
+                        // TODO(#3761): This is a hack, we should use actual data for cyclic years
+                        let cyclics = match datetime.datetime().any_calendar_kind() {
+                            Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
+                            _ => &CHINESE_CYCLIC_YEARS, /* for now assume all other calendars use the stem-branch model */
+                        };
                         cyclics
                             .get((cyclic.get() - 1) as usize)
                             .ok_or(Error::DateTimeInput(
@@ -301,10 +299,6 @@ where
                         Err(e)
                     }
                 }
-            } else {
-                write_value_missing(w, field)?;
-                Err(Error::MissingInputField(Some("year")))
-            }
         }
         (FieldSymbol::Year(Year::RelatedIso), l) => {
             match datetime
@@ -315,87 +309,84 @@ where
                     year.related_iso
                         .ok_or(Error::MissingInputField(Some("related_iso")))
                 }) {
-                Ok(iso) => try_write_number(w, fdf, iso.into(), l)?,
                 Err(e) => {
                     write_value_missing(w, field)?;
                     Err(e)
                 }
+                Ok(iso) => try_write_number(w, fdf, iso.into(), l)?,
             }
         }
-        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::TwoDigit)) => {
-            if let Some(month) = datetime.datetime().month() {
-                try_write_number(w, fdf, month.ordinal.into(), l)?
-            } else {
+        (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::TwoDigit)) => match datetime.datetime().month() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(Error::MissingInputField(Some("month")))
             }
+            Some(month) => try_write_number(w, fdf, month.ordinal.into(), l)?,
         }
-        (FieldSymbol::Month(month), l) => {
-            let datetime = datetime.datetime();
-            if let Some(formattable_month) = datetime.month() {
-                match date_symbols
-                    .ok_or(Error::MissingDateSymbols)
-                    .and_then(|ds| ds.get_symbol_for_month(month, l, formattable_month.code))
-                {
-                    Ok(MonthPlaceholderValue::PlainString(symbol)) => {
-                        w.write_str(symbol)?;
-                        Ok(())
-                    }
-                    Ok(MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)) => {
-                        // FIXME (#3766) this should be using actual data for leap months
-                        let leap_str = match datetime.any_calendar_kind() {
-                            Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
-                            Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
-                            _ => PLACEHOLDER_LEAP_PREFIX,
-                        };
-                        w.write_str(leap_str)?;
-                        w.write_str(symbol)?;
-                        Ok(())
-                    }
-                    #[cfg(feature = "experimental")]
-                    Ok(MonthPlaceholderValue::Numeric) => {
-                        try_write_number(w, fdf, formattable_month.ordinal.into(), l)?
-                    }
-                    #[cfg(feature = "experimental")]
-                    Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
-                        w.write_str(substitution_pattern.get_prefix())?;
-                        let r = try_write_number(w, fdf, formattable_month.ordinal.into(), l)?;
-                        w.write_str(substitution_pattern.get_suffix())?;
-                        r
-                    }
-                    Err(e) => {
-                        w.with_part(Part::ERROR, |w| w.write_str(&formattable_month.code.0))?;
-                        Err(e)
-                    }
+        (FieldSymbol::Month(month), l) => match datetime.datetime().month() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(Error::MissingInputField(Some("month")))
+            }
+            Some(formattable_month) => match date_symbols
+                .ok_or(Error::MissingDateSymbols)
+                .and_then(|ds| ds.get_symbol_for_month(month, l, formattable_month.code))
+            {
+                Err(e) => {
+                    w.with_part(Part::ERROR, |w| w.write_str(&formattable_month.code.0))?;
+                    Err(e)
                 }
-            } else {
-                write_value_missing(w, field)?;
-                Err(Error::MissingInputField(Some("month")))
+                Ok(MonthPlaceholderValue::PlainString(symbol)) => {
+                    w.write_str(symbol)?;
+                    Ok(())
+                }
+                Ok(MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)) => {
+                    // FIXME (#3766) this should be using actual data for leap months
+                    let leap_str = match datetime.datetime().any_calendar_kind() {
+                        Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
+                        Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
+                        _ => PLACEHOLDER_LEAP_PREFIX,
+                    };
+                    w.write_str(leap_str)?;
+                    w.write_str(symbol)?;
+                    Ok(())
+                }
+                #[cfg(feature = "experimental")]
+                Ok(MonthPlaceholderValue::Numeric) => try_write_number(w, fdf, formattable_month.ordinal.into(), l)?,
+                #[cfg(feature = "experimental")]
+                Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
+                    w.write_str(substitution_pattern.get_prefix())?;
+                    let r = try_write_number(w, fdf, formattable_month.ordinal.into(), l)?;
+                    w.write_str(substitution_pattern.get_suffix())?;
+                    r
+                }
             }
         }
         (FieldSymbol::Week(week), l) => match week {
             Week::WeekOfYear => match datetime.week_of_year() {
-                Ok((_, week_of_year)) => try_write_number(w, fdf, week_of_year.0.into(), l)?,
                 Err(e) => {
                     write_value_missing(w, field)?;
                     Err(Error::DateTimeInput(e))
                 }
+                Ok((_, week_of_year)) => try_write_number(w, fdf, week_of_year.0.into(), l)?,
             },
             Week::WeekOfMonth => match datetime.week_of_month() {
-                Ok(week_of_month) => try_write_number(w, fdf, week_of_month.0.into(), l)?,
                 Err(e) => {
                     write_value_missing(w, field)?;
                     Err(Error::DateTimeInput(e))
                 }
+                Ok(week_of_month) => try_write_number(w, fdf, week_of_month.0.into(), l)?,
             },
         },
-        (FieldSymbol::Weekday(weekday), l) => {
-            if let Some(wd) = datetime.datetime().iso_weekday() {
-                match date_symbols
+        (FieldSymbol::Weekday(weekday), l) => match datetime.datetime().iso_weekday() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(Error::MissingInputField(Some("iso_weekday")))
+            }
+            Some(wd) => match date_symbols
                     .ok_or(Error::MissingDateSymbols)
                     .and_then(|ds| ds.get_symbol_for_weekday(weekday, l, wd))
                 {
-                    Ok(s) => Ok(w.write_str(s)?),
                     Err(e) => {
                         w.with_part(Part::ERROR, |w| {
                             w.write_str(match wd {
@@ -410,31 +401,29 @@ where
                         })?;
                         Err(e)
                     }
+                    Ok(s) => Ok(w.write_str(s)?),
                 }
-            } else {
-                write_value_missing(w, field)?;
-                Err(Error::MissingInputField(Some("iso_weekday")))
-            }
         }
-        (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
-            if let Some(d) = datetime.datetime().day_of_month() {
-                try_write_number(w, fdf, d.0.into(), l)?
-            } else {
+        (FieldSymbol::Day(fields::Day::DayOfMonth), l) => match datetime.datetime().day_of_month() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(Error::MissingInputField(Some("day_of_month")))
             }
+            Some(d) => try_write_number(w, fdf, d.0.into(), l)?,
         }
-        (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => {
-            match datetime.day_of_week_in_month() {
-                Ok(d) => try_write_number(w, fdf, d.0.into(), l)?,
-                Err(e) => {
-                    write_value_missing(w, field)?;
-                    Err(Error::DateTimeInput(e))
-                }
+        (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => match datetime.day_of_week_in_month() {
+            Err(e) => {
+                write_value_missing(w, field)?;
+                Err(Error::DateTimeInput(e))
             }
+            Ok(d) => try_write_number(w, fdf, d.0.into(), l)?,
         }
-        (FieldSymbol::Hour(hour), l) => {
-            if let Some(h) = datetime.datetime().hour() {
+        (FieldSymbol::Hour(hour), l) => match datetime.datetime().hour() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(Error::MissingInputField(Some("hour")))
+            }
+            Some(h) => {
                 let h = usize::from(h) as isize;
                 let h = match hour {
                     fields::Hour::H11 => h % 12,
@@ -456,82 +445,85 @@ where
                     }
                 };
                 try_write_number(w, fdf, h.into(), l)?
-            } else {
-                write_value_missing(w, field)?;
-                Err(Error::MissingInputField(Some("hour")))
             }
         }
-        (FieldSymbol::Minute, l) => {
-            if let Some(iso_minute) = datetime.datetime().minute() {
-                try_write_number(w, fdf, usize::from(iso_minute).into(), l)?
-            } else {
+        (FieldSymbol::Minute, l) => match datetime.datetime().minute() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(Error::MissingInputField(Some("minute")))
             }
+            Some(iso_minute) => try_write_number(w, fdf, usize::from(iso_minute).into(), l)?,
         }
-        (FieldSymbol::Second(Second::Second), l) => {
-            if let Some(second) = datetime.datetime().second() {
-                let mut s = FixedDecimal::from(usize::from(second));
-
-                if let Some(&PatternItem::Field(
-                    next_field @ Field {
-                        symbol: FieldSymbol::Second(Second::FractionalSecond),
-                        length,
-                    },
-                )) = next_item
-                {
-                    let r = datetime
-                        .datetime()
-                        .nanosecond()
-                        .ok_or(Error::MissingInputField(Some("nanosecond")))
-                        .and_then(|ns| {
-                            // We only support fixed field length for fractional seconds.
-                            let FieldLength::Fixed(p) = length else {
-                                return Err(Error::Pattern(
-                                    crate::pattern::PatternError::FieldLengthInvalid(
-                                        FieldSymbol::Second(Second::FractionalSecond),
-                                    ),
-                                ));
-                            };
-                            Ok((ns, p))
-                        });
-
-                    match r {
-                        Ok((ns, p)) => {
-                            let _infallible = s.concatenate_end(
-                                FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
-                            );
-                            debug_assert!(_infallible.is_ok());
-                            s.pad_end(-(p as i16));
-                            try_write_number(w, fdf, s, l)?
-                        }
-                        Err(e) => {
-                            let seconds_result = try_write_number(w, fdf, s, l)?;
-                            write_value_missing(w, next_field)?;
-                            // Return the earlier error
-                            seconds_result.and(Err(e))
-                        }
-                    }
-                } else {
-                    try_write_number(w, fdf, s, l)?
-                }
-            } else {
+        (FieldSymbol::Second(Second::Second), l) => match (datetime.datetime().second(), next_item) {
+            (None, Some(&PatternItem::Field(
+                next_field @ Field {
+                    symbol: FieldSymbol::Second(Second::FractionalSecond),
+                    ..
+                },
+            ))) => {
+                write_value_missing(w, field)?;
+                // Write error value for nanos even if we have them
+                write_value_missing(w, next_field)?;
+                Err(Error::MissingInputField(Some("second")))
+            }
+            (None, _) => {
                 write_value_missing(w, field)?;
                 Err(Error::MissingInputField(Some("second")))
             }
+            (Some(second), Some(&PatternItem::Field(
+                next_field @ Field {
+                    symbol: FieldSymbol::Second(Second::FractionalSecond),
+                    length,
+                },
+            ))) => match datetime
+                .datetime()
+                .nanosecond()
+                .ok_or(Error::MissingInputField(Some("nanosecond")))
+                .and_then(|ns| {
+                    // We only support fixed field length for fractional seconds.
+                    let FieldLength::Fixed(p) = length else {
+                        return Err(Error::Pattern(
+                            crate::pattern::PatternError::FieldLengthInvalid(
+                                FieldSymbol::Second(Second::FractionalSecond),
+                            ),
+                        ));
+                    };
+                    Ok((ns, p))
+                }) {
+                    Err(e) => {
+                        let seconds_result = try_write_number(w, fdf, FixedDecimal::from(usize::from(second)), l)?;
+                        write_value_missing(w, next_field)?;
+                        // Return the earlier error
+                        seconds_result.and(Err(e))
+                    }
+                    Ok((ns, p)) => {
+                        let mut s = FixedDecimal::from(usize::from(second));
+                        let _infallible = s.concatenate_end(
+                            FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
+                        );
+                        debug_assert!(_infallible.is_ok());
+                        s.pad_end(-(p as i16));
+                        try_write_number(w, fdf, s, l)?
+                    }
+            }
+            (Some(second), _) => try_write_number(w, fdf, FixedDecimal::from(usize::from(second)), l)?,
         }
         // Formatting of fractional seconds is handled when formatting seconds.
         (FieldSymbol::Second(Second::FractionalSecond), _) => Ok(()),
-        (FieldSymbol::DayPeriod(period), l) => {
-            let is_top_of_hour = pattern_metadata.time_granularity().is_top_of_hour(
-                datetime.datetime().minute().map(u8::from).unwrap_or(0),
-                datetime.datetime().second().map(u8::from).unwrap_or(0),
-                datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
-            );
-            if let Some(hour) = datetime.datetime().hour() {
+        (FieldSymbol::DayPeriod(period), l) => match datetime.datetime().hour() {
+            None => {
+                write_value_missing(w, field)?;
+                Err(Error::MissingInputField(Some("hour")))
+            }
+            Some(hour) => {
                 match time_symbols
                     .ok_or(Error::MissingTimeSymbols)
-                    .and_then(|ts| ts.get_symbol_for_day_period(period, l, hour, is_top_of_hour))
+                    .and_then(|ts| ts.get_symbol_for_day_period(period, l, hour,
+                        pattern_metadata.time_granularity().is_top_of_hour(
+                            datetime.datetime().minute().map(u8::from).unwrap_or(0),
+                            datetime.datetime().second().map(u8::from).unwrap_or(0),
+                            datetime.datetime().nanosecond().map(u32::from).unwrap_or(0),
+                        )))
                 {
                     Ok(s) => Ok(w.write_str(s)?),
                     Err(e) => {
@@ -541,9 +533,6 @@ where
                         Err(e)
                     }
                 }
-            } else {
-                write_value_missing(w, field)?;
-                Err(Error::MissingInputField(Some("hour")))
             }
         }
         (
