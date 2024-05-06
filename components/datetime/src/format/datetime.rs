@@ -223,8 +223,11 @@ where
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
-    // Writes an error string for the current symbol
-    fn write_value_missing(w: &mut (impl writeable::PartsWrite + ?Sized), field: fields::Field) -> Result<(), fmt::Error> {
+    // Writes an error string for the given symbol
+    fn write_value_missing(
+        w: &mut (impl writeable::PartsWrite + ?Sized),
+        field: fields::Field,
+    ) -> Result<(), fmt::Error> {
         w.with_part(Part::ERROR, |w| {
             "{".write_to(w)?;
             char::from(field.symbol).write_to(w)?;
@@ -470,10 +473,12 @@ where
             if let Some(second) = datetime.datetime().second() {
                 let mut s = FixedDecimal::from(usize::from(second));
 
-                if let Some(&PatternItem::Field(next_field @ Field {
-                    symbol: FieldSymbol::Second(Second::FractionalSecond),
-                    length,
-                })) = next_item
+                if let Some(&PatternItem::Field(
+                    next_field @ Field {
+                        symbol: FieldSymbol::Second(Second::FractionalSecond),
+                        length,
+                    },
+                )) = next_item
                 {
                     let r = datetime
                         .datetime()
