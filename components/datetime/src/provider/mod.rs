@@ -237,8 +237,6 @@ pub const KEYS: &[DataKey] = &[
     #[cfg(feature = "experimental")]
     neo::TimeNeoSkeletonPatternsV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::GregorianDateNeoSkeletonPatternsV1Marker::KEY,
-    #[cfg(feature = "experimental")]
     neo::BuddhistYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::ChineseYearNamesV1Marker::KEY,
@@ -316,4 +314,30 @@ pub const KEYS: &[DataKey] = &[
     neo::PersianDatePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::RocDatePatternV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::BuddhistDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::ChineseDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::CopticDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::DangiDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::EthiopianDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::GregorianDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::HebrewDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::IndianDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::IslamicDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::JapaneseDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::PersianDateNeoSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::RocDateNeoSkeletonPatternsV1Marker::KEY,
 ];
