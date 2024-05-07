@@ -19,7 +19,7 @@
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
 
-use crate::parser::ParserError;
+use crate::parser::ParseError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::Subtag;
@@ -80,7 +80,7 @@ impl Other {
         Self { ext, keys }
     }
 
-    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         debug_assert!(ext.is_ascii_alphabetic());
 
         let mut keys = ShortBoxSlice::new();

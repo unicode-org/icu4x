@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit};
+use crate::error::DateError;
+use crate::{types, Calendar, DateDuration, DateDurationUnit};
 use core::cmp::Ordering;
 use core::convert::TryInto;
 use core::fmt::Debug;
@@ -340,35 +341,31 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub fn new_from_codes<C2: Calendar>(
         // Separate type since the debug_name() impl may differ when DateInner types
         // are nested (e.g. in GregorianDateInner)
-        cal: &C2,
+        _cal: &C2,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self, CalendarError>
+    ) -> Result<Self, DateError>
     where
         C: CalendarArithmetic<YearInfo = ()>,
     {
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
         } else {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                cal.debug_name(),
-            ));
+            return Err(DateError::UnknownMonthCode(month_code));
         };
 
         if month > C::months_for_every_year(year, ()) {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                cal.debug_name(),
-            ));
+            return Err(DateError::UnknownMonthCode(month_code));
         }
 
         let max_day = C::month_days(year, month, ());
         if day > max_day {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "day",
-                max: max_day as usize,
+                value: day as i32,
+                min: 1,
+                max: max_day as i32,
             });
         }
 
@@ -378,7 +375,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
     /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
-    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError>
+    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, DateError>
     where
         C: CalendarArithmetic<YearInfo = ()>,
     {
@@ -392,19 +389,23 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         month: u8,
         day: u8,
         info: C::YearInfo,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DateError> {
         let max_month = C::months_for_every_year(year, info);
         if month > max_month {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "month",
-                max: max_month as usize,
+                value: month as i32,
+                min: 1,
+                max: max_month as i32,
             });
         }
         let max_day = C::month_days(year, month, info);
         if day > max_day {
-            return Err(CalendarError::Overflow {
+            return Err(DateError::Range {
                 field: "day",
-                max: max_day as usize,
+                value: day as i32,
+                min: 1,
+                max: max_day as i32,
             });
         }
 

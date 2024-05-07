@@ -33,8 +33,9 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::ArithmeticDate;
+use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -72,9 +73,9 @@ impl Calendar for Buddhist {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         if era.0 != tinystr!(16, "be") {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         }
         let year = year - BUDDHIST_ERA_OFFSET;
 
@@ -177,7 +178,7 @@ impl Date<Buddhist> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Buddhist>, CalendarError> {
+    ) -> Result<Date<Buddhist>, DateError> {
         Date::try_new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
@@ -209,7 +210,7 @@ impl DateTime<Buddhist> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Buddhist>, CalendarError> {
+    ) -> Result<DateTime<Buddhist>, DateError> {
         Ok(DateTime {
             date: Date::try_new_buddhist_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

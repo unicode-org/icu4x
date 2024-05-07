@@ -13,7 +13,6 @@
 use crate::provider::bidi_data::{
     BidiAuxiliaryPropertiesV1, BidiAuxiliaryPropertiesV1Marker, CheckedBidiPairedBracketType,
 };
-use crate::PropertiesError;
 
 use icu_provider::prelude::*;
 
@@ -198,7 +197,7 @@ pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'sta
 icu_provider::gen_any_buffer_data_constructors!(
     locale: skip,
     options: skip,
-    result: Result<BidiAuxiliaryProperties, PropertiesError>,
+    result: Result<BidiAuxiliaryProperties, DataError>,
     #[cfg(skip)]
     functions: [
         bidi_auxiliary_properties,
@@ -211,9 +210,9 @@ icu_provider::gen_any_buffer_data_constructors!(
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, bidi_auxiliary_properties)]
 pub fn load_bidi_auxiliary_properties_unstable(
     provider: &(impl DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized),
-) -> Result<BidiAuxiliaryProperties, PropertiesError> {
-    Ok(provider
+) -> Result<BidiAuxiliaryProperties, DataError> {
+    provider
         .load(Default::default())
         .and_then(DataResponse::take_payload)
-        .map(BidiAuxiliaryProperties::from_data)?)
+        .map(BidiAuxiliaryProperties::from_data)
 }

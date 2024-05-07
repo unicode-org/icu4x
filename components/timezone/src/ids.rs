@@ -12,7 +12,7 @@ use crate::{
     provider::names::{
         Bcp47ToIanaMapV1, Bcp47ToIanaMapV1Marker, IanaToBcp47MapV2, IanaToBcp47MapV2Marker,
     },
-    TimeZoneBcp47Id, TimeZoneError,
+    TimeZoneBcp47Id,
 };
 
 /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
@@ -481,7 +481,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -493,7 +493,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
@@ -515,7 +515,7 @@ where
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_mapper(mapper: I) -> Result<Self, TimeZoneError> {
+    pub fn try_new_with_mapper(mapper: I) -> Result<Self, DataError> {
         Self {
             inner: mapper,
             data: DataPayload::from_static_ref(
@@ -525,7 +525,7 @@ where
         .validated()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, mapper: I, error: TimeZoneError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, mapper: I, error: DataError,
         #[cfg(skip)]
         functions: [
             try_new_with_mapper,
@@ -537,7 +537,7 @@ where
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_with_mapper_unstable<P>(provider: &P, mapper: I) -> Result<Self, TimeZoneError>
+    pub fn try_new_with_mapper_unstable<P>(provider: &P, mapper: I) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV2Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
@@ -549,9 +549,10 @@ where
         .validated()
     }
 
-    fn validated(self) -> Result<Self, TimeZoneError> {
+    fn validated(self) -> Result<Self, DataError> {
         if self.inner.as_ref().data.get().bcp47_ids_checksum != self.data.get().bcp47_ids_checksum {
-            return Err(TimeZoneError::MismatchedChecksums);
+            return Err(DataErrorKind::InconsistentData(IanaToBcp47MapV2Marker::KEY)
+                .with_key(Bcp47ToIanaMapV1Marker::KEY));
         }
         Ok(self)
     }

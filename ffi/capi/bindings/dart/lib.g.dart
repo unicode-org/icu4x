@@ -617,20 +617,6 @@ final class _ResultVoidVoid extends ffi.Struct {
   external bool isOk;
 }
 
-final class _ResultWeekOfFfiInt32Union extends ffi.Union {
-  external _WeekOfFfi ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultWeekOfFfiInt32 extends ffi.Struct {
-  external _ResultWeekOfFfiInt32Union union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
 final class _SliceUsize extends ffi.Struct {
   external ffi.Pointer<ffi.Size> _data;
 

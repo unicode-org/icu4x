@@ -9,7 +9,7 @@ use alloc::string::String;
 use icu_locale_core::LanguageIdentifier;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};
+use icu_properties::{GeneralCategory, GeneralCategoryGroup};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -241,12 +241,7 @@ impl TitlecaseMapper<CaseMapper> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
-        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        })?;
+        let gc = icu_properties::maps::load_general_category(provider)?;
         Ok(Self { cm, gc })
     }
 }
@@ -283,12 +278,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     where
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        })?;
+        let gc = icu_properties::maps::load_general_category(provider)?;
         Ok(Self { cm: casemapper, gc })
     }
 

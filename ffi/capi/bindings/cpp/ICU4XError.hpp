@@ -18,7 +18,7 @@
  * 
  * The error names are stable and can be checked against as strings in the JS API
  * 
- * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locale/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locale/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html), [16](https://docs.rs/icu_experimental/latest/icu_experimental/units/enum.ConversionError.html)
+ * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html), [2](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html), [3](https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html), [4](https://docs.rs/icu/latest/icu/calendar/enum.DateError.html), [5](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [6](https://docs.rs/icu/latest/icu/locale/enum.ParseError.html), [7](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [8](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [9](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html), [10](https://docs.rs/icu_experimental/latest/icu_experimental/units/struct.InvalidUnitError.html)
  */
 enum struct ICU4XError {
 
@@ -63,21 +63,13 @@ enum struct ICU4XError {
    * Attempted to construct an invalid data struct
    */
   DataStructValidityError = 768,
-  PropertyUnknownScriptIdError = 1024,
-  PropertyUnknownGeneralCategoryGroupError = 1025,
   PropertyUnexpectedPropertyNameError = 1026,
   FixedDecimalLimitError = 1280,
   FixedDecimalSyntaxError = 1281,
-  PluralsParserError = 1536,
-  CalendarParseError = 1792,
-  CalendarOverflowError = 1793,
-  CalendarUnderflowError = 1794,
+  PluralsParseError = 1536,
   CalendarOutOfRangeError = 1795,
   CalendarUnknownEraError = 1796,
   CalendarUnknownMonthCodeError = 1797,
-  CalendarMissingInputError = 1798,
-  CalendarUnknownKindError = 1799,
-  CalendarMissingError = 1800,
   DateTimePatternError = 2048,
   DateTimeMissingInputFieldError = 2049,
   DateTimeSkeletonError = 2050,
@@ -87,15 +79,9 @@ enum struct ICU4XError {
   DateTimeMissingMonthSymbolError = 2054,
   DateTimeFixedDecimalError = 2055,
   DateTimeMismatchedCalendarError = 2056,
-  TinyStrTooLargeError = 2304,
-  TinyStrContainsNullError = 2305,
-  TinyStrNonAsciiError = 2306,
-  TimeZoneOffsetOutOfBoundsError = 2560,
   TimeZoneInvalidOffsetError = 2561,
   TimeZoneMissingInputError = 2562,
   TimeZoneInvalidIdError = 2563,
-  NormalizerFutureExtensionError = 2816,
-  NormalizerValidationError = 2817,
   InvalidCldrUnitIdentifierError = 3072,
 };
 

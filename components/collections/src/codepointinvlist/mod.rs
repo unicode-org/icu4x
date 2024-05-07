@@ -68,21 +68,12 @@ pub use cpinvlist::CodePointInversionList;
 pub use cpinvlist::CodePointInversionListULE;
 use displaydoc::Display;
 
-/// Custom Errors for [`CodePointInversionList`].
-///
-/// Re-exported as [`Error`].
 #[derive(Display, Debug)]
-pub enum CodePointInversionListError {
-    /// A CodePointInversionList was constructed with an invalid inversion list
-    #[displaydoc("Invalid set: {0:?}")]
-    InvalidSet(Vec<u32>),
-    /// A CodePointInversionList was constructed containing an invalid range
-    #[displaydoc("Invalid range: {0}..{1}")]
-    InvalidRange(u32, u32),
-}
+/// A CodePointInversionList was constructed with an invalid inversion list
+#[displaydoc("Invalid set: {0:?}")]
+pub struct InvalidSetError(pub Vec<u32>);
 
-#[cfg(feature = "std")]
-impl std::error::Error for CodePointInversionListError {}
-
-#[doc(no_inline)]
-pub use CodePointInversionListError as Error;
+/// A CodePointInversionList was constructed from an invalid range
+#[derive(Display, Debug)]
+#[displaydoc("Invalid range: {0}..{1}")]
+pub struct RangeError(pub u32, pub u32);

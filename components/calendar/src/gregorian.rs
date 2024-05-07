@@ -33,8 +33,9 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::ArithmeticDate;
+use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
@@ -64,19 +65,29 @@ impl Calendar for Gregorian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "ce") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             year
         } else if era.0 == tinystr!(16, "bce") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             1 - year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
@@ -182,7 +193,7 @@ impl Date<Gregorian> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Gregorian>, CalendarError> {
+    ) -> Result<Date<Gregorian>, DateError> {
         Date::try_new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }
@@ -213,7 +224,7 @@ impl DateTime<Gregorian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Gregorian>, CalendarError> {
+    ) -> Result<DateTime<Gregorian>, DateError> {
         Ok(DateTime {
             date: Date::try_new_gregorian_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

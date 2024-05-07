@@ -932,13 +932,15 @@ pub mod ffi {
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::sets::for_ecma262, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262, Fn, hidden)]
+        #[diplomat::rust_link(icu::properties::UnexpectedPropertyNameError, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::UnexpectedPropertyNameOrDataError, Enum, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
             provider: &ICU4XDataProvider,
             property_name: &str,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
-                sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned())],
+                sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
                 sets::load_for_ecma262_unstable,
                 provider,
                 property_name

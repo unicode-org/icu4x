@@ -32,11 +32,12 @@
 
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::types::FormattableMonth;
 use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 
@@ -155,11 +156,11 @@ impl Calendar for Hebrew {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         let year_info = HebrewYearInfo::compute(year);
@@ -185,10 +186,7 @@ impl Calendar for Hebrew {
                 "M11" => 12,
                 "M12" => 13,
                 _ => {
-                    return Err(CalendarError::UnknownMonthCode(
-                        month_code.0,
-                        self.debug_name(),
-                    ))
+                    return Err(DateError::UnknownMonthCode(month_code));
                 }
             }
         } else {
@@ -206,10 +204,7 @@ impl Calendar for Hebrew {
                 "M11" => 11,
                 "M12" => 12,
                 _ => {
-                    return Err(CalendarError::UnknownMonthCode(
-                        month_code.0,
-                        self.debug_name(),
-                    ))
+                    return Err(DateError::UnknownMonthCode(month_code));
                 }
             }
         };
@@ -373,11 +368,7 @@ impl Date<Hebrew> {
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
-    pub fn try_new_hebrew_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Hebrew>, CalendarError> {
+    pub fn try_new_hebrew_date(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, DateError> {
         let year_info = HebrewYearInfo::compute(year);
 
         ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
@@ -397,7 +388,7 @@ impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
+    ) -> Result<Date<A>, DateError> {
         let year_info = HebrewYearInfo::compute(year);
 
         ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
@@ -430,7 +421,7 @@ impl DateTime<Hebrew> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Hebrew>, CalendarError> {
+    ) -> Result<DateTime<Hebrew>, DateError> {
         Ok(DateTime {
             date: Date::try_new_hebrew_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
@@ -452,7 +443,7 @@ impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
         minute: u8,
         second: u8,
         calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
+    ) -> Result<DateTime<A>, DateError> {
         #[allow(deprecated)]
         Ok(DateTime {
             date: Date::try_new_hebrew_date_with_calendar(year, month, day, calendar)?,

@@ -32,8 +32,8 @@
 //! ```
 
 use crate::{
-    calendar_arithmetic::ArithmeticDate, iso::IsoDateInner, types, AnyCalendarKind, Calendar,
-    CalendarError, Date, DateTime, Iso, Time,
+    calendar_arithmetic::ArithmeticDate, error::DateError, iso::IsoDateInner, types,
+    AnyCalendarKind, Calendar, Date, DateTime, Iso, Time,
 };
 use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
@@ -82,19 +82,29 @@ impl Calendar for Roc {
         year: i32,
         month_code: crate::types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, crate::Error> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "roc") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             year + ROC_ERA_OFFSET
         } else if era.0 == tinystr!(16, "roc-inverse") {
             if year <= 0 {
-                return Err(CalendarError::OutOfRange);
+                return Err(DateError::Range {
+                    field: "year",
+                    value: year,
+                    min: 1,
+                    max: i32::MAX,
+                });
             }
             1 - year + ROC_ERA_OFFSET
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
@@ -203,7 +213,7 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.year().number, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
-    pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, CalendarError> {
+    pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, DateError> {
         let iso_year = year.saturating_add(ROC_ERA_OFFSET);
         Date::try_new_iso_date(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
     }
@@ -245,7 +255,7 @@ impl DateTime<Roc> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Roc>, CalendarError> {
+    ) -> Result<DateTime<Roc>, DateError> {
         Ok(DateTime {
             date: Date::try_new_roc_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

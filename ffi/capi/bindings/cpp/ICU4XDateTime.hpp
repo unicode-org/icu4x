@@ -152,7 +152,7 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
    */
-  diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const;
+  ICU4XWeekOf week_of_year(const ICU4XWeekCalculator& calculator) const;
 
   /**
    * Returns 1-indexed number of the month of this date in its year
@@ -305,16 +305,9 @@ inline ICU4XIsoWeekday ICU4XDateTime::day_of_week() const {
 inline uint32_t ICU4XDateTime::week_of_month(ICU4XIsoWeekday first_weekday) const {
   return capi::ICU4XDateTime_week_of_month(this->inner.get(), static_cast<capi::ICU4XIsoWeekday>(first_weekday));
 }
-inline diplomat::result<ICU4XWeekOf, ICU4XError> ICU4XDateTime::week_of_year(const ICU4XWeekCalculator& calculator) const {
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_week_of_year(this->inner.get(), calculator.AsFFI());
-  diplomat::result<ICU4XWeekOf, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-  capi::ICU4XWeekOf diplomat_raw_struct_out_value = diplomat_result_raw_out_value.ok;
-    diplomat_result_out_value = diplomat::Ok<ICU4XWeekOf>(ICU4XWeekOf{ .week = std::move(diplomat_raw_struct_out_value.week), .unit = std::move(static_cast<ICU4XWeekRelativeUnit>(diplomat_raw_struct_out_value.unit)) });
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+inline ICU4XWeekOf ICU4XDateTime::week_of_year(const ICU4XWeekCalculator& calculator) const {
+  capi::ICU4XWeekOf diplomat_raw_struct_out_value = capi::ICU4XDateTime_week_of_year(this->inner.get(), calculator.AsFFI());
+  return ICU4XWeekOf{ .week = std::move(diplomat_raw_struct_out_value.week), .unit = std::move(static_cast<ICU4XWeekRelativeUnit>(diplomat_raw_struct_out_value.unit)) };
 }
 inline uint32_t ICU4XDateTime::ordinal_month() const {
   return capi::ICU4XDateTime_ordinal_month(this->inner.get());

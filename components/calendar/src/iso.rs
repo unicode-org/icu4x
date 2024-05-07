@@ -31,7 +31,8 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::error::DateError;
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -101,9 +102,9 @@ impl Calendar for Iso {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         if era.0 != tinystr!(16, "default") {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
@@ -246,7 +247,7 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
-    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
+    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, DateError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))
@@ -281,7 +282,7 @@ impl DateTime<Iso> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Iso>, CalendarError> {
+    ) -> Result<DateTime<Iso>, DateError> {
         Ok(DateTime {
             date: Date::try_new_iso_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

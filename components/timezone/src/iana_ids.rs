@@ -4,7 +4,6 @@
 
 #![allow(deprecated)] // all APIS in here are deprecated
 
-use crate::error::TimeZoneError;
 use crate::provider::names::*;
 use crate::TimeZoneBcp47Id;
 use icu_provider::prelude::*;
@@ -68,7 +67,7 @@ impl IanaToBcp47Mapper {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -80,7 +79,7 @@ impl IanaToBcp47Mapper {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV1Marker> + ?Sized,
     {
@@ -209,7 +208,7 @@ impl IanaBcp47RoundTripMapper {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -221,7 +220,7 @@ impl IanaBcp47RoundTripMapper {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV1Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
@@ -229,7 +228,11 @@ impl IanaBcp47RoundTripMapper {
         let data2 = provider.load(Default::default())?.take_payload()?;
         let obj = Self { data1, data2 };
         if obj.data1.get().bcp47_ids_checksum != obj.data2.get().bcp47_ids_checksum {
-            return Err(TimeZoneError::MismatchedChecksums);
+            Err(DataErrorKind::InconsistentData(Bcp47ToIanaMapV1Marker::KEY)
+                .with_key(IanaToBcp47MapV1Marker::KEY)
+                .with_display_context(
+                    "The data checksums do not match (data from different sources?)",
+                ))?;
         }
         Ok(obj)
     }

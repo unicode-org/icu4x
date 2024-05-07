@@ -98,7 +98,7 @@ impl Subtag {
 }
 
 impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
-    type Error = crate::parser::errors::ParserError;
+    type Error = crate::parser::errors::ParseError;
 
     fn try_from(value: tinystr::TinyAsciiStr<N>) -> Result<Self, Self::Error> {
         Self::try_from_bytes(value.as_bytes())

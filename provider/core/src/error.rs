@@ -72,6 +72,9 @@ pub enum DataErrorKind {
     /// means that a required Cargo feature was not enabled
     #[displaydoc("Unavailable buffer format: {0:?} (does icu_provider need to be compiled with an additional Cargo feature?)")]
     UnavailableBufferFormat(BufferFormat),
+
+    /// The values for two [`DataKey`]s are not consistent.
+    InconsistentData(DataKey),
 }
 
 /// The error type for ICU4X data provider operations.

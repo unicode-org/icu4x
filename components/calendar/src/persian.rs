@@ -32,8 +32,9 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -109,11 +110,11 @@ impl Calendar for Persian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year = if era.0 == tinystr!(16, "ah") || era.0 == tinystr!(16, "persian") {
             year
         } else {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
@@ -247,11 +248,7 @@ impl Date<Persian> {
     /// assert_eq!(date_persian.month().ordinal, 4);
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
-    pub fn try_new_persian_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Persian>, CalendarError> {
+    pub fn try_new_persian_date(year: i32, month: u8, day: u8) -> Result<Date<Persian>, DateError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
@@ -282,7 +279,7 @@ impl DateTime<Persian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Persian>, CalendarError> {
+    ) -> Result<DateTime<Persian>, DateError> {
         Ok(DateTime {
             date: Date::try_new_persian_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

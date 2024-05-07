@@ -16,10 +16,9 @@ use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
-    IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
+    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
-pub(crate) use icu_calendar::CalendarError;
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
 /// solar days indexed by an era, year, month, and day.
@@ -152,31 +151,6 @@ pub trait TimeZoneInput {
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
-
-/// A formattable calendar date and ISO time that takes the locale into account.
-#[deprecated(since = "1.5.0", note = "not used in any ICU4X APIs")]
-pub trait LocalizedDateTimeInput<T: DateTimeInput> {
-    /// A reference to this instance's [`DateTimeInput`].
-    fn datetime(&self) -> &T;
-
-    /// The week of the month.
-    ///
-    /// For example, January 1, 2021 is part of the first week of January.
-    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError>;
-
-    /// The week number of the year and the corresponding year.
-    ///
-    /// For example, December 31, 2020 is part of the first week of 2021.
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError>;
-
-    /// The day of week in this month.
-    ///
-    /// For example, July 8, 2020 is the 2nd Wednesday of July.
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError>;
-
-    /// TODO(#487): Implement flexible day periods.
-    fn flexible_day_period(&self);
-}
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
@@ -337,54 +311,26 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     }
 }
 
-pub(crate) enum ExtractedDateTimeInputWeekCalculatorError {
-    Missing(&'static str),
-}
-
 impl ExtractedDateTimeInput {
     pub(crate) fn week_of_month(
         &self,
         calculator: &WeekCalculator,
-    ) -> Result<WeekOfMonth, ExtractedDateTimeInputWeekCalculatorError> {
-        let day_of_month =
-            self.day_of_month()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "day_of_month",
-                ))?;
-        let iso_weekday =
-            self.iso_weekday()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "iso_weekday",
-                ))?;
+    ) -> Result<WeekOfMonth, &'static str> {
+        let day_of_month = self.day_of_month().ok_or("day_of_month")?;
+        let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
         Ok(calculator.week_of_month(day_of_month, iso_weekday))
     }
 
     pub(crate) fn week_of_year(
         &self,
         calculator: &WeekCalculator,
-    ) -> Result<(FormattableYear, WeekOfYear), ExtractedDateTimeInputWeekCalculatorError> {
-        let day_of_year_info =
-            self.day_of_year_info()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "day_of_year_info",
-                ))?;
-        let iso_weekday =
-            self.iso_weekday()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
-                    "iso_weekday",
-                ))?;
-        // We don't have any calendars with < 14 days per year, and it's unlikely we'll add one
-        debug_assert!(day_of_year_info.day_of_year >= icu_calendar::week::MIN_UNIT_DAYS);
-        debug_assert!(day_of_year_info.days_in_prev_year >= icu_calendar::week::MIN_UNIT_DAYS);
-        #[allow(clippy::unwrap_used)]
-        let week_of = calculator
-            .week_of_year(day_of_year_info, iso_weekday)
-            .unwrap();
+    ) -> Result<(FormattableYear, WeekOfYear), &'static str> {
+        let day_of_year_info = self.day_of_year_info().ok_or("day_of_year_info")?;
+        let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
+        let week_of = calculator.week_of_year(day_of_year_info, iso_weekday);
         let year = match week_of.unit {
             RelativeUnit::Previous => day_of_year_info.prev_year,
-            RelativeUnit::Current => self
-                .year()
-                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing("year"))?,
+            RelativeUnit::Current => self.year().ok_or("year")?,
             RelativeUnit::Next => day_of_year_info.next_year,
         };
         Ok((year, WeekOfYear(week_of.week as u32)))

@@ -158,12 +158,9 @@ pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
 #[doc(hidden)]
 pub use duration::{DateDuration, DateDurationUnit};
-pub use error::CalendarError;
+pub use error::{DateError, RangeError};
 #[doc(no_inline)]
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
 pub use types::Time;
-
-#[doc(no_inline)]
-pub use CalendarError as Error;

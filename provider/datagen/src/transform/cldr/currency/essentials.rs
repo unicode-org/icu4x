@@ -54,11 +54,7 @@ fn currency_pattern_selection(
     let first_num_index = pattern.find(['0', '#']).unwrap();
     let last_num_index = pattern.rfind(['0', '#']).unwrap();
 
-    let letters_set = load_for_general_category_group(provider, GeneralCategoryGroup::Letter)
-        .map_err(|e| match e {
-            icu_properties::PropertiesError::PropDataLoad(e) => e,
-            _ => unreachable!("load_for_general_category_group should only return PropDataLoad"),
-        })?;
+    let letters_set = load_for_general_category_group(provider, GeneralCategoryGroup::Letter)?;
 
     let char_closer_to_number = if currency_sign_index < first_num_index {
         placeholder_value.chars().next_back().unwrap()

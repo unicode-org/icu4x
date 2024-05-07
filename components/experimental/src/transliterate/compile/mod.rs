@@ -11,7 +11,7 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
-use icu_properties::{provider::*, sets, PropertiesError};
+use icu_properties::{provider::*, sets};
 use icu_provider::prelude::*;
 
 mod parse;
@@ -214,23 +214,13 @@ impl RuleCollection {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>,
     {
-        let unwrap_props_data_error = |e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        };
-
         Ok(RuleCollectionProvider {
             collection: self,
             properties_provider,
             normalizer_provider,
-            xid_start: sets::load_xid_start(properties_provider)
-                .map_err(unwrap_props_data_error)?,
-            xid_continue: sets::load_xid_continue(properties_provider)
-                .map_err(unwrap_props_data_error)?,
-            pat_ws: sets::load_pattern_white_space(properties_provider)
-                .map_err(unwrap_props_data_error)?,
+            xid_start: sets::load_xid_start(properties_provider)?,
+            xid_continue: sets::load_xid_continue(properties_provider)?,
+            pat_ws: sets::load_pattern_white_space(properties_provider)?,
         })
     }
 }

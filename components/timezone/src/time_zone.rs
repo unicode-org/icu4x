@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::InvalidOffsetError;
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
-use crate::{GmtOffset, TimeZoneError, ZoneVariant};
+use crate::{GmtOffset, ZoneVariant};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
@@ -103,7 +104,7 @@ impl CustomTimeZone {
     /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
     /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
     /// ```
-    pub fn try_from_bytes(bytes: &[u8]) -> Result<Self, TimeZoneError> {
+    pub fn try_from_bytes(bytes: &[u8]) -> Result<Self, InvalidOffsetError> {
         let gmt_offset = GmtOffset::try_from_bytes(bytes)?;
         Ok(Self {
             gmt_offset: Some(gmt_offset),
@@ -151,7 +152,7 @@ impl CustomTimeZone {
 }
 
 impl FromStr for CustomTimeZone {
-    type Err = TimeZoneError;
+    type Err = InvalidOffsetError;
 
     /// Parse a [`CustomTimeZone`] from a string.
     ///

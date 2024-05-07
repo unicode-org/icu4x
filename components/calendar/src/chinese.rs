@@ -46,11 +46,12 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedDateInner,
     ChineseBasedPrecomputedData, ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
+use crate::error::DateError;
 use crate::iso::Iso;
 use crate::provider::chinese_based::ChineseCacheV1Marker;
 use crate::types::{Era, FormattableYear};
 use crate::AsCalendar;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -159,7 +160,7 @@ impl Chinese {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: CalendarError,
+    icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: DataError,
         #[cfg(skip)]
         functions: [
             new,
@@ -172,7 +173,7 @@ impl Chinese {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<ChineseCacheV1Marker> + ?Sized>(
         provider: &D,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DataError> {
         Ok(Self {
             data: Some(provider.load(Default::default())?.take_payload()?),
         })
@@ -196,7 +197,7 @@ impl Calendar for Chinese {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         let year_info = self.get_precomputed_data().load_or_compute_info(year);
 
         let month = if let Some(ordinal) =
@@ -204,18 +205,16 @@ impl Calendar for Chinese {
         {
             ordinal
         } else {
-            return Err(CalendarError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
+            return Err(DateError::UnknownMonthCode(month_code));
         };
 
         if era.0 != tinystr!(16, "chinese") {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         }
 
-        let arithmetic = Inner::new_from_ordinals(year, month, day, year_info);
-        Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?)))
+        Inner::new_from_ordinals(year, month, day, year_info)
+            .map(ChineseBasedDateInner)
+            .map(ChineseDateInner)
     }
 
     // Construct the date from an ISO date
@@ -345,7 +344,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, CalendarError> {
+    ) -> Result<Date<A>, DateError> {
         let year_info = calendar
             .as_calendar()
             .get_precomputed_data()
@@ -392,7 +391,7 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
         minute: u8,
         second: u8,
         calendar: A,
-    ) -> Result<DateTime<A>, CalendarError> {
+    ) -> Result<DateTime<A>, DateError> {
         Ok(DateTime {
             date: Date::try_new_chinese_date_with_calendar(year, month, day, calendar)?,
             time: Time::try_new(hour, minute, second, 0)?,

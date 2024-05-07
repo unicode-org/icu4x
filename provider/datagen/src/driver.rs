@@ -9,7 +9,7 @@ use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_locale_core::extensions::unicode::key;
 use icu_locale_core::LanguageIdentifier;
-use icu_locale_core::ParserError;
+use icu_locale_core::ParseError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -291,14 +291,14 @@ impl Writeable for LocaleFamilyBorrowed<'_> {
 pub enum LocaleFamilyParseError {
     /// An error bubbled up from parsing a [`LanguageIdentifier`].
     #[displaydoc("{0}")]
-    LanguageIdentifier(ParserError),
+    LanguageIdentifier(ParseError),
     /// Some other error specific to parsing the family, such as an invalid lead byte.
     #[displaydoc("Invalid locale family")]
     InvalidFamily,
 }
 
-impl From<ParserError> for LocaleFamilyParseError {
-    fn from(err: ParserError) -> Self {
+impl From<ParseError> for LocaleFamilyParseError {
+    fn from(err: ParseError) -> Self {
         Self::LanguageIdentifier(err)
     }
 }

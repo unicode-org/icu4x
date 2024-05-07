@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParserError, SubtagIterator};
+use crate::parser::{ParseError, SubtagIterator};
 use crate::shortvec::ShortBoxSlice;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
@@ -43,24 +43,23 @@ impl Value {
     ///
     /// let value = Value::try_from_bytes(b"hybrid").expect("Parsing failed.");
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::default();
         let mut has_value = false;
 
         for subtag in SubtagIterator::new(input) {
             if !Self::is_type_subtag(subtag) {
-                return Err(ParserError::InvalidExtension);
+                return Err(ParseError::InvalidExtension);
             }
             has_value = true;
-            let val =
-                TinyAsciiStr::from_bytes(subtag).map_err(|_| ParserError::InvalidExtension)?;
+            let val = TinyAsciiStr::from_bytes(subtag).map_err(|_| ParseError::InvalidExtension)?;
             if val != TRUE_TVALUE {
                 v.push(val);
             }
         }
 
         if !has_value {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
         Ok(Self(v))
     }
@@ -77,10 +76,10 @@ impl Value {
 
     pub(crate) fn parse_subtag(
         t: &[u8],
-    ) -> Result<Option<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>, ParserError> {
-        let s = TinyAsciiStr::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
+    ) -> Result<Option<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>, ParseError> {
+        let s = TinyAsciiStr::from_bytes(t).map_err(|_| ParseError::InvalidSubtag)?;
         if !TYPE_LENGTH.contains(&t.len()) || !s.is_ascii_alphanumeric() {
-            return Err(ParserError::InvalidExtension);
+            return Err(ParseError::InvalidExtension);
         }
 
         let s = s.to_ascii_lowercase();
@@ -106,7 +105,7 @@ impl Value {
 }
 
 impl FromStr for Value {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         Self::try_from_bytes(source.as_bytes())
