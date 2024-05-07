@@ -363,7 +363,7 @@ impl LocaleDisplayNamesFormatter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D: ?Sized>(
+    pub fn try_new_unstable<D>(
         provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -373,7 +373,8 @@ impl LocaleDisplayNamesFormatter {
             + DataProvider<LanguageDisplayNamesV1Marker>
             + DataProvider<ScriptDisplayNamesV1Marker>
             + DataProvider<RegionDisplayNamesV1Marker>
-            + DataProvider<VariantDisplayNamesV1Marker>,
+            + DataProvider<VariantDisplayNamesV1Marker>
+            + ?Sized,
     {
         let req = DataRequest {
             locale,
