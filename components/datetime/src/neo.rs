@@ -110,7 +110,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
 size_test!(
     TypedNeoDateFormatter<icu_calendar::Gregorian>,
     typed_neo_date_formatter_size,
-    496
+    456
 );
 
 /// [`TypedNeoDateFormatter`] can format dates from a calendar selected at compile time.
@@ -381,7 +381,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 }
 
-size_test!(NeoDateFormatter, neo_date_formatter_size, 552);
+size_test!(NeoDateFormatter, neo_date_formatter_size, 512);
 
 /// [`NeoDateFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the

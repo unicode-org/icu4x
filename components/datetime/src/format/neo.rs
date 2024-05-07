@@ -211,6 +211,7 @@ pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTime
 
 pub trait DateTimeNamesMarker {
     type WeekdayNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
+    type DayPeriodNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
 }
 
 pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
@@ -256,6 +257,7 @@ pub struct DateMarker {}
 
 impl DateTimeNamesMarker for DateMarker {
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
+    type DayPeriodNames = ();
 }
 
 #[derive(Debug)]
@@ -263,6 +265,7 @@ pub struct TimeMarker {}
 
 impl DateTimeNamesMarker for TimeMarker {
     type WeekdayNames = ();
+    type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
 }
 
 #[derive(Debug)]
@@ -270,6 +273,7 @@ pub struct DateTimeMarker {}
 
 impl DateTimeNamesMarker for DateTimeMarker {
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
+    type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
 }
 
 impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
@@ -278,7 +282,7 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
             year_symbols: other.year_symbols,
             month_symbols: other.month_symbols,
             weekday_symbols: other.weekday_symbols,
-            dayperiod_symbols: other.dayperiod_symbols,
+            dayperiod_symbols: OptionalNames::None,
             fixed_decimal_formatter: other.fixed_decimal_formatter,
             week_calculator: other.week_calculator,
             _marker: PhantomData,
@@ -305,7 +309,7 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     year_symbols: OptionalNames<(), DataPayload<ErasedYearNamesV1Marker>>,
     month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthNamesV1Marker>>,
     weekday_symbols: OptionalNames<fields::Weekday, R::WeekdayNames>,
-    dayperiod_symbols: OptionalNames<(), DataPayload<DayPeriodNamesV1Marker>>,
+    dayperiod_symbols: OptionalNames<(), R::DayPeriodNames>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     week_calculator: Option<WeekCalculator>,
@@ -963,9 +967,9 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 metadata: Default::default(),
             })
             .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?
-            .cast();
-        self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
+            .map_err(SingleLoadError::Data)?;
+        self.dayperiod_symbols =
+            OptionalNames::SingleLength((), field_length, R::DayPeriodNames::from_payload(payload));
         Ok(())
     }
 
