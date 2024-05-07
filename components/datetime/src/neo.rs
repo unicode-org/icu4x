@@ -129,7 +129,7 @@ size_test!(
 #[derive(Debug)]
 pub struct TypedNeoDateFormatter<C: CldrCalendar> {
     selection: DatePatternSelectionData,
-    names: RawDateTimeNames,
+    names: RawDateTimeNames<DateMarker>,
     _calendar: PhantomData<C>,
 }
 
@@ -398,7 +398,7 @@ size_test!(NeoDateFormatter, neo_date_formatter_size, 552);
 #[derive(Debug)]
 pub struct NeoDateFormatter {
     selection: DatePatternSelectionData,
-    names: RawDateTimeNames,
+    names: RawDateTimeNames<DateMarker>,
     calendar: AnyCalendar,
 }
 
@@ -697,7 +697,7 @@ size_test!(NeoTimeFormatter, neo_time_formatter_size, 456);
 #[derive(Debug)]
 pub struct NeoTimeFormatter {
     selection: TimePatternSelectionData,
-    names: RawDateTimeNames,
+    names: RawDateTimeNames<TimeMarker>,
 }
 
 impl NeoTimeFormatter {
@@ -981,7 +981,7 @@ size_test!(
 #[derive(Debug)]
 pub struct TypedNeoDateTimeFormatter<C: CldrCalendar> {
     selection: DateTimePatternSelectionData,
-    names: RawDateTimeNames,
+    names: RawDateTimeNames<DateTimeMarker>,
     _calendar: PhantomData<C>,
 }
 
@@ -1087,7 +1087,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         )?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Date(date_formatter.selection),
-            names: date_formatter.names,
+            names: date_formatter.names.into(),
             _calendar: PhantomData,
         })
     }
@@ -1179,7 +1179,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
             NeoTimeFormatter::try_new_with_length_internal(provider, loader, locale, length)?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Time(time_formatter.selection),
-            names: time_formatter.names,
+            names: time_formatter.names.into(),
             _calendar: PhantomData,
         })
     }
@@ -1396,7 +1396,7 @@ size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 632);
 #[derive(Debug)]
 pub struct NeoDateTimeFormatter {
     selection: DateTimePatternSelectionData,
-    names: RawDateTimeNames,
+    names: RawDateTimeNames<DateTimeMarker>,
     calendar: AnyCalendar,
 }
 
@@ -1592,7 +1592,7 @@ impl NeoDateTimeFormatter {
             NeoDateFormatter::try_new_with_length_internal(provider, loader, locale, length)?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Date(date_formatter.selection),
-            names: date_formatter.names,
+            names: date_formatter.names.into(),
             calendar: date_formatter.calendar,
         })
     }
@@ -1704,7 +1704,7 @@ impl NeoDateTimeFormatter {
             NeoTimeFormatter::try_new_with_length_internal(provider, loader, locale, length)?;
         Ok(Self {
             selection: DateTimePatternSelectionData::Time(time_formatter.selection),
-            names: time_formatter.names,
+            names: time_formatter.names.into(),
             calendar,
         })
     }

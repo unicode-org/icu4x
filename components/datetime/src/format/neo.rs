@@ -121,7 +121,7 @@ impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
 }
 
 size_test!(
-    TypedDateTimeNames<icu_calendar::Gregorian>,
+    TypedDateTimeNames<icu_calendar::Gregorian, DateTimeMarker>,
     typed_date_time_names_size,
     488
 );
@@ -200,14 +200,59 @@ size_test!(
 /// );
 /// ```
 #[derive(Debug)]
-pub struct TypedDateTimeNames<C: CldrCalendar> {
+pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTimeMarker> {
     locale: DataLocale,
-    inner: RawDateTimeNames,
+    inner: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
 }
 
+pub trait DateTimeNamesMarker {}
+
 #[derive(Debug)]
-pub(crate) struct RawDateTimeNames {
+pub struct DateMarker {}
+
+impl DateTimeNamesMarker for DateMarker {}
+
+#[derive(Debug)]
+pub struct TimeMarker {}
+
+impl DateTimeNamesMarker for TimeMarker {}
+
+#[derive(Debug)]
+pub struct DateTimeMarker {}
+
+impl DateTimeNamesMarker for DateTimeMarker {}
+
+impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
+    fn from(other: RawDateTimeNames<DateMarker>) -> Self {
+        Self {
+            year_symbols: other.year_symbols,
+            month_symbols: other.month_symbols,
+            weekday_symbols: other.weekday_symbols,
+            dayperiod_symbols: other.dayperiod_symbols,
+            fixed_decimal_formatter: other.fixed_decimal_formatter,
+            week_calculator: other.week_calculator,
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
+    fn from(other: RawDateTimeNames<TimeMarker>) -> Self {
+        Self {
+            year_symbols: other.year_symbols,
+            month_symbols: other.month_symbols,
+            weekday_symbols: other.weekday_symbols,
+            dayperiod_symbols: other.dayperiod_symbols,
+            fixed_decimal_formatter: other.fixed_decimal_formatter,
+            week_calculator: other.week_calculator,
+            _marker: PhantomData,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     year_symbols: OptionalNames<(), DataPayload<ErasedYearNamesV1Marker>>,
     month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthNamesV1Marker>>,
     weekday_symbols: OptionalNames<fields::Weekday, DataPayload<WeekdayNamesV1Marker>>,
@@ -215,6 +260,7 @@ pub(crate) struct RawDateTimeNames {
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
     week_calculator: Option<WeekCalculator>,
+    _marker: PhantomData<R>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -227,7 +273,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     pub(crate) week_calculator: Option<&'l WeekCalculator>,
 }
 
-impl<C: CldrCalendar> TypedDateTimeNames<C> {
+impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// Constructor that takes a selected locale and creates an empty instance.
     ///
     /// For an example, see [`TypedDateTimeNames`].
@@ -714,7 +760,7 @@ impl From<SingleLoadError> for LoadError {
     }
 }
 
-impl RawDateTimeNames {
+impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn new_without_fixed_decimal_formatter() -> Self {
         Self {
             year_symbols: OptionalNames::None,
@@ -723,6 +769,7 @@ impl RawDateTimeNames {
             dayperiod_symbols: OptionalNames::None,
             fixed_decimal_formatter: None,
             week_calculator: None,
+            _marker: PhantomData,
         }
     }
 
