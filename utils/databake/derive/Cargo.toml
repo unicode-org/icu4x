@@ -20,7 +20,7 @@ rust-version.workspace = true
 independent = true
 
 [lib]
-proc_macro = true
+proc-macro = true
 path = "src/lib.rs"
 
 [dependencies]

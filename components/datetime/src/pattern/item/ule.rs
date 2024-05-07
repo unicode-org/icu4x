@@ -236,7 +236,7 @@ impl GenericPatternItemULE {
             }
             // Safety: when a Literal, the two ULEs have the same repr,
             // as shown in the above assertion (and the class docs).
-            Ok(unsafe { core::mem::transmute(self) })
+            Ok(unsafe { core::mem::transmute::<&GenericPatternItemULE, &PatternItemULE>(self) })
         }
     }
 }
