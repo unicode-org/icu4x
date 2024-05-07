@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "ar",
         "territory": "EG"
@@ -331,9 +331,6 @@
               "New_York": {
                 "exemplarCity": "نيويورك"
               },
-              "Nipigon": {
-                "exemplarCity": "نيبيجون"
-              },
               "Nome": {
                 "exemplarCity": "نوم"
               },
@@ -357,9 +354,6 @@
               "Panama": {
                 "exemplarCity": "بنما"
               },
-              "Pangnirtung": {
-                "exemplarCity": "بانجينتينج"
-              },
               "Paramaribo": {
                 "exemplarCity": "باراماريبو"
               },
@@ -381,9 +375,6 @@
               "Punta_Arenas": {
                 "exemplarCity": "بونتا أريناز"
               },
-              "Rainy_River": {
-                "exemplarCity": "راني ريفر"
-              },
               "Rankin_Inlet": {
                 "exemplarCity": "رانكن انلت"
               },
@@ -398,9 +389,6 @@
               },
               "Rio_Branco": {
                 "exemplarCity": "ريوبرانكو"
-              },
-              "Santa_Isabel": {
-                "exemplarCity": "سانتا إيزابيل"
               },
               "Santarem": {
                 "exemplarCity": "سانتاريم"
@@ -447,9 +435,6 @@
               "Thule": {
                 "exemplarCity": "ثيل"
               },
-              "Thunder_Bay": {
-                "exemplarCity": "ثندر باي"
-              },
               "Tijuana": {
                 "exemplarCity": "تيخوانا"
               },
@@ -470,9 +455,6 @@
               },
               "Yakutat": {
                 "exemplarCity": "ياكوتات"
-              },
-              "Yellowknife": {
-                "exemplarCity": "يلونيف"
               }
             },
             "Atlantic": {
@@ -664,9 +646,6 @@
               "Ulyanovsk": {
                 "exemplarCity": "أوليانوفسك"
               },
-              "Uzhgorod": {
-                "exemplarCity": "أوزجرود"
-              },
               "Vaduz": {
                 "exemplarCity": "فادوز"
               },
@@ -687,9 +666,6 @@
               },
               "Zagreb": {
                 "exemplarCity": "زغرب"
-              },
-              "Zaporozhye": {
-                "exemplarCity": "زابوروزي"
               },
               "Zurich": {
                 "exemplarCity": "زيورخ"
@@ -1149,9 +1125,6 @@
               "Broken_Hill": {
                 "exemplarCity": "بروكن هيل"
               },
-              "Currie": {
-                "exemplarCity": "كوري"
-              },
               "Darwin": {
                 "exemplarCity": "دارون"
               },
@@ -1222,9 +1195,6 @@
               },
               "Honolulu": {
                 "exemplarCity": "هونولولو"
-              },
-              "Johnston": {
-                "exemplarCity": "جونستون"
               },
               "Kanton": {
                 "exemplarCity": "كانتون"
@@ -1882,11 +1852,6 @@
                 "daylight": "التوقيت الصيفي للورد هاو"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "توقيت ماكواري"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "توقيت ماغادان",
@@ -1924,13 +1889,6 @@
             "Mawson": {
               "long": {
                 "standard": "توقيت ماوسون"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "توقيت شمال غرب المكسيك",
-                "standard": "التوقيت الرسمي لشمال غرب المكسيك",
-                "daylight": "التوقيت الصيفي لشمال غرب المكسيك"
               }
             },
             "Mexico_Pacific": {

@@ -231,6 +231,10 @@
       "dt": "East Greenland Summer Time",
       "st": "East Greenland Standard Time"
     },
+    "gree": {
+      "dt": "Greenland Summer Time",
+      "st": "Greenland Standard Time"
+    },
     "grwe": {
       "dt": "West Greenland Summer Time",
       "st": "West Greenland Standard Time"
@@ -328,9 +332,6 @@
       "dt": "Macao Summer Time",
       "st": "Macao Standard Time"
     },
-    "macq": {
-      "st": "Macquarie Island Time"
-    },
     "maga": {
       "dt": "Magadan Summer Time",
       "st": "Magadan Standard Time"
@@ -353,10 +354,6 @@
     },
     "maws": {
       "st": "Mawson Time"
-    },
-    "meno": {
-      "dt": "Northwest Mexico Daylight Time",
-      "st": "Northwest Mexico Standard Time"
     },
     "mepa": {
       "dt": "Mexican Pacific Daylight Time",

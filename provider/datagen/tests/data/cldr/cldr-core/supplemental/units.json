@@ -2,7 +2,137 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "44.1"
+      "_cldrVersion": "45"
+    },
+    "unitPrefixes": {
+      "atto": {
+        "_symbol": "a",
+        "_power10": "-18"
+      },
+      "centi": {
+        "_symbol": "c",
+        "_power10": "-2"
+      },
+      "deci": {
+        "_symbol": "d",
+        "_power10": "-1"
+      },
+      "deka": {
+        "_symbol": "da",
+        "_power10": "1"
+      },
+      "exa": {
+        "_symbol": "E",
+        "_power10": "18"
+      },
+      "exbi": {
+        "_symbol": "Ei",
+        "_power2": "60"
+      },
+      "femto": {
+        "_symbol": "f",
+        "_power10": "-15"
+      },
+      "gibi": {
+        "_symbol": "Gi",
+        "_power2": "30"
+      },
+      "giga": {
+        "_symbol": "G",
+        "_power10": "9"
+      },
+      "hecto": {
+        "_symbol": "h",
+        "_power10": "2"
+      },
+      "kibi": {
+        "_symbol": "Ki",
+        "_power2": "10"
+      },
+      "kilo": {
+        "_symbol": "k",
+        "_power10": "3"
+      },
+      "mebi": {
+        "_symbol": "Mi",
+        "_power2": "20"
+      },
+      "mega": {
+        "_symbol": "M",
+        "_power10": "6"
+      },
+      "micro": {
+        "_symbol": "μ",
+        "_power10": "-6"
+      },
+      "milli": {
+        "_symbol": "m",
+        "_power10": "-3"
+      },
+      "nano": {
+        "_symbol": "n",
+        "_power10": "-9"
+      },
+      "pebi": {
+        "_symbol": "Pi",
+        "_power2": "50"
+      },
+      "peta": {
+        "_symbol": "P",
+        "_power10": "15"
+      },
+      "pico": {
+        "_symbol": "p",
+        "_power10": "-12"
+      },
+      "quecto": {
+        "_symbol": "q",
+        "_power10": "-30"
+      },
+      "quetta": {
+        "_symbol": "Q",
+        "_power10": "30"
+      },
+      "ronna": {
+        "_symbol": "R",
+        "_power10": "27"
+      },
+      "ronto": {
+        "_symbol": "r",
+        "_power10": "-27"
+      },
+      "tebi": {
+        "_symbol": "Ti",
+        "_power2": "40"
+      },
+      "tera": {
+        "_symbol": "T",
+        "_power10": "12"
+      },
+      "yobi": {
+        "_symbol": "Yi",
+        "_power2": "80"
+      },
+      "yocto": {
+        "_symbol": "y",
+        "_power10": "-24"
+      },
+      "yotta": {
+        "_symbol": "Y",
+        "_power10": "24"
+      },
+      "zebi": {
+        "_symbol": "Zi",
+        "_power2": "70"
+      },
+      "zepto": {
+        "_symbol": "z",
+        "_power10": "-21"
+      },
+      "zetta": {
+        "_symbol": "Z",
+        "_power10": "21"
+      }
     },
     "unitConstants": {
       "AMU": {
@@ -307,6 +437,13 @@
           "ussystem"
         ],
         "_factor": "42*gal_to_m3"
+      },
+      "beaufort": {
+        "_special": "beaufort",
+        "_baseUnit": "meter-per-second",
+        "_systems": [
+          "metric_adjacent"
+        ]
       },
       "becquerel": {
         "_baseUnit": "per-second",

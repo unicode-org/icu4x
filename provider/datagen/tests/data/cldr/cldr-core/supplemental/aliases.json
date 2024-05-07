@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "44.1"
+      "_cldrVersion": "45"
     },
     "metadata": {
       "alias": {
@@ -38,6 +38,10 @@
           "ais": {
             "_reason": "deprecated",
             "_replacement": "ami"
+          },
+          "ajp": {
+            "_reason": "deprecated",
+            "_replacement": "apc"
           },
           "ajt": {
             "_reason": "deprecated",
@@ -827,6 +831,10 @@
             "_reason": "deprecated",
             "_replacement": "kml"
           },
+          "kgm": {
+            "_reason": "deprecated",
+            "_replacement": "plu"
+          },
           "khk": {
             "_reason": "macrolanguage",
             "_replacement": "mn"
@@ -1187,6 +1195,10 @@
             "_reason": "overlong",
             "_replacement": "nb"
           },
+          "nom": {
+            "_reason": "deprecated",
+            "_replacement": "cbr"
+          },
           "noo": {
             "_reason": "deprecated",
             "_replacement": "dtd"
@@ -1279,6 +1291,10 @@
             "_reason": "deprecated",
             "_replacement": "huw"
           },
+          "pmk": {
+            "_reason": "deprecated",
+            "_replacement": "crr"
+          },
           "pmu": {
             "_reason": "deprecated",
             "_replacement": "phr"
@@ -1302,6 +1318,10 @@
           "ppr": {
             "_reason": "deprecated",
             "_replacement": "lcq"
+          },
+          "prp": {
+            "_reason": "deprecated",
+            "_replacement": "gu"
           },
           "prs": {
             "_reason": "overlong",
@@ -1583,6 +1603,10 @@
             "_reason": "macrolanguage",
             "_replacement": "sw"
           },
+          "szd": {
+            "_reason": "deprecated",
+            "_replacement": "umi"
+          },
           "tah": {
             "_reason": "overlong",
             "_replacement": "ty"
@@ -1659,6 +1683,10 @@
             "_reason": "deprecated",
             "_replacement": "weo"
           },
+          "tmk": {
+            "_reason": "deprecated",
+            "_replacement": "tdg"
+          },
           "tmp": {
             "_reason": "deprecated",
             "_replacement": "tyj"
@@ -1674,6 +1702,10 @@
           "ton": {
             "_reason": "overlong",
             "_replacement": "to"
+          },
+          "tpw": {
+            "_reason": "deprecated",
+            "_replacement": "tpn"
           },
           "tsf": {
             "_reason": "deprecated",
@@ -1847,6 +1879,10 @@
             "_reason": "macrolanguage",
             "_replacement": "den"
           },
+          "xss": {
+            "_reason": "deprecated",
+            "_replacement": "zko"
+          },
           "ybd": {
             "_reason": "deprecated",
             "_replacement": "rki"
@@ -1946,6 +1982,10 @@
           "zir": {
             "_reason": "deprecated",
             "_replacement": "scv"
+          },
+          "zkb": {
+            "_reason": "deprecated",
+            "_replacement": "kjh"
           },
           "zsm": {
             "_reason": "macrolanguage",
@@ -5128,9 +5168,33 @@
               "_reason": "deprecated",
               "_replacement": "America/Toronto"
             },
+            "Nipigon": {
+              "_reason": "deprecated",
+              "_replacement": "America/Toronto"
+            },
+            "Pangnirtung": {
+              "_reason": "deprecated",
+              "_replacement": "America/Iqaluit"
+            },
+            "Rainy_River": {
+              "_reason": "deprecated",
+              "_replacement": "America/Winnipeg"
+            },
+            "Santa_Isabel": {
+              "_reason": "deprecated",
+              "_replacement": "America/Tijuana"
+            },
             "Shiprock": {
               "_reason": "deprecated",
               "_replacement": "America/Denver"
+            },
+            "Thunder_Bay": {
+              "_reason": "deprecated",
+              "_replacement": "America/Toronto"
+            },
+            "Yellowknife": {
+              "_reason": "deprecated",
+              "_replacement": "America/Edmonton"
             }
           },
           "Antarctica": {
@@ -5159,6 +5223,12 @@
               "_replacement": "Europe/Oslo"
             }
           },
+          "Australia": {
+            "Currie": {
+              "_reason": "deprecated",
+              "_replacement": "Australia/Hobart"
+            }
+          },
           "EST": {
             "_reason": "deprecated",
             "_replacement": "America/Indianapolis"
@@ -5167,6 +5237,14 @@
             "Belfast": {
               "_reason": "deprecated",
               "_replacement": "Europe/London"
+            },
+            "Uzhgorod": {
+              "_reason": "deprecated",
+              "_replacement": "Europe/Kiev"
+            },
+            "Zaporozhye": {
+              "_reason": "deprecated",
+              "_replacement": "Europe/Kiev"
             }
           },
           "HST": {
@@ -5178,6 +5256,10 @@
             "_replacement": "America/Phoenix"
           },
           "Pacific": {
+            "Johnston": {
+              "_reason": "deprecated",
+              "_replacement": "Pacific/Honolulu"
+            },
             "Yap": {
               "_reason": "deprecated",
               "_replacement": "Pacific/Truk"

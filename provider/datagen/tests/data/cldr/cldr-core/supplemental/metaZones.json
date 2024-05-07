@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "44.1"
+      "_cldrVersion": "45"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -1257,7 +1257,14 @@
             "Godthab": [
               {
                 "usesMetazone": {
-                  "_mzone": "Greenland_Western"
+                  "_mzone": "Greenland_Western",
+                  "_to": "2024-03-26 01:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Greenland",
+                  "_from": "2024-03-26 01:00"
                 }
               }
             ],
@@ -1902,13 +1909,6 @@
                 }
               }
             ],
-            "Nipigon": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Eastern"
-                }
-              }
-            ],
             "Nome": [
               {
                 "usesMetazone": {
@@ -2002,27 +2002,6 @@
                 }
               }
             ],
-            "Pangnirtung": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Eastern",
-                  "_to": "1999-10-31 06:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Central",
-                  "_from": "1999-10-31 06:00",
-                  "_to": "2000-10-29 07:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Eastern",
-                  "_from": "2000-10-29 07:00"
-                }
-              }
-            ],
             "Paramaribo": [
               {
                 "usesMetazone": {
@@ -2077,13 +2056,6 @@
                 "usesMetazone": {
                   "_mzone": "Chile",
                   "_to": "2016-12-03 23:00"
-                }
-              }
-            ],
-            "Rainy_River": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Central"
                 }
               }
             ],
@@ -2178,13 +2150,6 @@
                 }
               }
             ],
-            "Santa_Isabel": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Mexico_Northwest"
-                }
-              }
-            ],
             "Santarem": [
               {
                 "usesMetazone": {
@@ -2251,7 +2216,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Greenland_Eastern",
-                  "_from": "1981-03-29 02:00"
+                  "_from": "1981-03-29 02:00",
+                  "_to": "2024-03-31 01:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Greenland",
+                  "_from": "2024-03-31 01:00"
                 }
               }
             ],
@@ -2339,13 +2311,6 @@
                 }
               }
             ],
-            "Thunder_Bay": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Eastern"
-                }
-              }
-            ],
             "Tijuana": [
               {
                 "usesMetazone": {
@@ -2400,13 +2365,6 @@
                 "usesMetazone": {
                   "_mzone": "Alaska",
                   "_from": "1983-11-30 09:00"
-                }
-              }
-            ],
-            "Yellowknife": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Mountain"
                 }
               }
             ]
@@ -2492,7 +2450,42 @@
               {
                 "usesMetazone": {
                   "_mzone": "Casey",
-                  "_from": "2020-10-03 16:01"
+                  "_from": "2020-10-03 16:01",
+                  "_to": "2021-03-13 13:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Australia_Western",
+                  "_from": "2021-03-13 13:00",
+                  "_to": "2021-10-02 16:01"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Casey",
+                  "_from": "2021-10-02 16:01",
+                  "_to": "2022-03-12 13:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Australia_Western",
+                  "_from": "2022-03-12 13:00",
+                  "_to": "2022-10-01 16:01"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Casey",
+                  "_from": "2022-10-01 16:01",
+                  "_to": "2023-03-08 16:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Australia_Western",
+                  "_from": "2023-03-08 16:00"
                 }
               }
             ],
@@ -2602,7 +2595,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Eastern",
-                  "_from": "2004-10-30 20:00"
+                  "_from": "2004-10-30 20:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan_Western",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -3244,7 +3244,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Eastern",
-                  "_from": "2004-10-30 21:00"
+                  "_from": "2004-10-30 21:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan_Western",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -3615,13 +3622,6 @@
               {
                 "usesMetazone": {
                   "_mzone": "Australia_Central"
-                }
-              }
-            ],
-            "Currie": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Australia_Eastern"
                 }
               }
             ],
@@ -4272,20 +4272,6 @@
                 }
               }
             ],
-            "Uzhgorod": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Moscow",
-                  "_to": "1990-06-30 22:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Eastern",
-                  "_from": "1990-06-30 22:00"
-                }
-              }
-            ],
             "Vaduz": [
               {
                 "usesMetazone": {
@@ -4353,20 +4339,6 @@
               {
                 "usesMetazone": {
                   "_mzone": "Europe_Central"
-                }
-              }
-            ],
-            "Zaporozhye": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Moscow",
-                  "_to": "1990-06-30 22:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Eastern",
-                  "_from": "1990-06-30 22:00"
                 }
               }
             ],
@@ -4579,20 +4551,6 @@
               }
             ],
             "Honolulu": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Alaska_Hawaii",
-                  "_to": "1983-10-30 11:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Hawaii_Aleutian",
-                  "_from": "1983-10-30 11:00"
-                }
-              }
-            ],
-            "Johnston": [
               {
                 "usesMetazone": {
                   "_mzone": "Alaska_Hawaii",
@@ -5203,13 +5161,6 @@
             "_other": "America_Mountain",
             "_type": "America/Edmonton",
             "_territory": "CA"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "America_Mountain",
-            "_type": "America/Hermosillo",
-            "_territory": "MX"
           }
         },
         {
@@ -6236,6 +6187,13 @@
         },
         {
           "mapZone": {
+            "_other": "Greenland",
+            "_type": "America/Godthab",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
             "_other": "Greenland_Central",
             "_type": "America/Scoresbysund",
             "_territory": "001"
@@ -6516,13 +6474,6 @@
         },
         {
           "mapZone": {
-            "_other": "Macquarie",
-            "_type": "Antarctica/Macquarie",
-            "_territory": "001"
-          }
-        },
-        {
-          "mapZone": {
             "_other": "Magadan",
             "_type": "Asia/Magadan",
             "_territory": "001"
@@ -6574,13 +6525,6 @@
           "mapZone": {
             "_other": "Mawson",
             "_type": "Antarctica/Mawson",
-            "_territory": "001"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "Mexico_Northwest",
-            "_type": "America/Santa_Isabel",
             "_territory": "001"
           }
         },
@@ -7321,6 +7265,10 @@
           "_longId": "Greenland_Eastern",
           "_since": "40"
         },
+        "gree": {
+          "_longId": "Greenland",
+          "_since": "40"
+        },
         "grwe": {
           "_longId": "Greenland_Western",
           "_since": "40"
@@ -7433,10 +7381,6 @@
           "_longId": "Macau",
           "_since": "40"
         },
-        "macq": {
-          "_longId": "Macquarie",
-          "_since": "40"
-        },
         "maga": {
           "_longId": "Magadan",
           "_since": "40"
@@ -7463,10 +7407,6 @@
         },
         "maws": {
           "_longId": "Mawson",
-          "_since": "40"
-        },
-        "meno": {
-          "_longId": "Mexico_Northwest",
           "_since": "40"
         },
         "mepa": {

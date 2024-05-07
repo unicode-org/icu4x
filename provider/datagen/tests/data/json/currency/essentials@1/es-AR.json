@@ -812,6 +812,14 @@
         "Index": 3
       }
     },
+    "XCG": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 62
+      },
+      "narrow_placeholder_value": null
+    },
     "XOF": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
@@ -822,7 +830,7 @@
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 62
+        "Index": 63
       },
       "narrow_placeholder_value": null
     },
@@ -830,7 +838,7 @@
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
-        "Index": 63
+        "Index": 64
       },
       "narrow_placeholder_value": null
     },
@@ -839,7 +847,7 @@
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 64
+        "Index": 65
       }
     },
     "ZMW": {
@@ -847,7 +855,7 @@
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 65
+        "Index": 66
       }
     }
   },
@@ -926,6 +934,7 @@
     "US$",
     "BsF",
     "₫",
+    "Cg.",
     "CFPF",
     "¤",
     "R",

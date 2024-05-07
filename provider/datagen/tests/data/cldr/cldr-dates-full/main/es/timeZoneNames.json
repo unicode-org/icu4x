@@ -3,7 +3,7 @@
     "es": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "es"
       },
@@ -176,9 +176,6 @@
               "Rio_Branco": {
                 "exemplarCity": "Río Branco"
               },
-              "Santa_Isabel": {
-                "exemplarCity": "Santa Isabel"
-              },
               "Santarem": {
                 "exemplarCity": "Santarém"
               },
@@ -342,9 +339,6 @@
               "Ulyanovsk": {
                 "exemplarCity": "Uliánovsk"
               },
-              "Uzhgorod": {
-                "exemplarCity": "Úzhgorod"
-              },
               "Vatican": {
                 "exemplarCity": "El Vaticano"
               },
@@ -359,9 +353,6 @@
               },
               "Warsaw": {
                 "exemplarCity": "Varsovia"
-              },
-              "Zaporozhye": {
-                "exemplarCity": "Zaporiyia"
               },
               "Zurich": {
                 "exemplarCity": "Zúrich"
@@ -610,9 +601,6 @@
             "Australia": {
               "Adelaide": {
                 "exemplarCity": "Adelaida"
-              },
-              "Currie": {
-                "exemplarCity": "Currie"
               },
               "Sydney": {
                 "exemplarCity": "Sídney"
@@ -1249,11 +1237,6 @@
                 "daylight": "Hora de verano de Macao"
               }
             },
-            "Macquarie": {
-              "long": {
-                "standard": "hora de la isla Macquarie"
-              }
-            },
             "Magadan": {
               "long": {
                 "generic": "hora de Magadán",
@@ -1291,13 +1274,6 @@
             "Mawson": {
               "long": {
                 "standard": "hora de Mawson"
-              }
-            },
-            "Mexico_Northwest": {
-              "long": {
-                "generic": "hora del noroeste de México",
-                "standard": "hora estándar del noroeste de México",
-                "daylight": "hora de verano del noroeste de México"
               }
             },
             "Mexico_Pacific": {
