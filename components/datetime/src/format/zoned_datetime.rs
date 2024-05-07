@@ -5,19 +5,17 @@
 //! A collection of code for formatting DateTimes with time zones.
 
 use crate::fields::{Field, FieldSymbol};
+use crate::format::datetime::{self, DateTimeWriteError};
 use crate::input::{ExtractedDateTimeInput, ExtractedTimeZoneInput};
 use crate::pattern::runtime::PatternBorrowed;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
 use crate::time_zone::TimeZoneFormatter;
-use crate::FormattedTimeZone;
-use crate::{Error, FormattedDateTime};
+use crate::{FormattedDateTime, FormattedTimeZone};
 use core::fmt;
 use icu_calendar::week::WeekCalculator;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::Writeable;
-
-use super::datetime;
 
 #[cfg(doc)]
 use crate::ZonedDateTimeFormatter;
@@ -71,7 +69,7 @@ fn try_write_pattern<'data, W, DS, TS>(
     time_zone: &ExtractedTimeZoneInput,
     time_zone_format: &TimeZoneFormatter,
     w: &mut W,
-) -> Result<Result<(), Error>, fmt::Error>
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,

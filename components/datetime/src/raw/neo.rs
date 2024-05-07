@@ -178,7 +178,7 @@ impl<'a> DatePatternDataBorrowed<'a> {
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        DateTimePattern::from_runtime_pattern(self.as_borrowed().to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(self.as_borrowed().as_pattern().into_owned())
     }
 }
 
@@ -280,7 +280,7 @@ impl<'a> TimePatternDataBorrowed<'a> {
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        DateTimePattern::from_runtime_pattern(self.as_borrowed().to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(self.as_borrowed().as_pattern().into_owned())
     }
 }
 
@@ -430,6 +430,6 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
             Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb,
             Self::DateTimeGlue { .. } => todo!(),
         };
-        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(pb.as_pattern().into_owned())
     }
 }
