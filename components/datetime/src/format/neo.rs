@@ -217,9 +217,10 @@ pub trait DateTimeNamesMarker {
 }
 
 pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
-    fn from_payload<M>(payload: DataPayload<M>) -> Self
+    fn maybe_from_payload<M>(payload: DataPayload<M>) -> Option<Self>
     where
-        M: DataMarker<Yokeable = Y>;
+        M: DataMarker<Yokeable = Y>,
+        Self: Sized;
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output>;
 }
 
@@ -228,11 +229,11 @@ where
     M0: DataMarker<Yokeable = Y>,
 {
     #[inline]
-    fn from_payload<M>(payload: DataPayload<M>) -> Self
+    fn maybe_from_payload<M>(payload: DataPayload<M>) -> Option<Self>
     where
         M: DataMarker<Yokeable = Y>,
     {
-        payload.cast()
+        Some(payload.cast())
     }
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
@@ -242,11 +243,11 @@ where
 
 impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
     #[inline]
-    fn from_payload<M>(_payload: DataPayload<M>) -> Self
+    fn maybe_from_payload<M>(_payload: DataPayload<M>) -> Option<Self>
     where
         M: DataMarker<Yokeable = Y>,
     {
-        ()
+        None
     }
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output> {
@@ -791,9 +792,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
 pub enum SingleLoadError {
     /// Duplicate field in pattern
     DuplicateField(Field),
-    /// UnsupportedField
+    /// ICU4X does not support this field
     UnsupportedField(Field),
-    /// Data
+    /// The specific type does not support this field
+    TypeTooNarrow(Field),
+    /// An error arising from the [`DataProvider`]
     Data(DataError),
 }
 
@@ -803,9 +806,11 @@ pub enum SingleLoadError {
 pub enum LoadError {
     /// DuplicateField
     DuplicateField(Field),
-    /// UnsupportedField
+    /// ICU4X does not support this field
     UnsupportedField(Field),
-    /// Data
+    /// The specific type does not support this field
+    TypeTooNarrow(Field),
+    /// An error arising from the [`DataProvider`]
     Data(DataError),
     /// MissingNames
     MissingNames(Field),
@@ -816,6 +821,7 @@ impl From<SingleLoadError> for LoadError {
         match value {
             SingleLoadError::Data(e) => LoadError::Data(e),
             SingleLoadError::UnsupportedField(f) => LoadError::UnsupportedField(f),
+            SingleLoadError::TypeTooNarrow(f) => LoadError::TypeTooNarrow(f),
             SingleLoadError::DuplicateField(f) => LoadError::DuplicateField(f),
         }
     }
@@ -883,8 +889,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             })
             .and_then(DataResponse::take_payload)
             .map_err(SingleLoadError::Data)?;
-        self.year_symbols =
-            OptionalNames::SingleLength((), field_length, R::YearNames::from_payload(payload));
+        self.year_symbols = OptionalNames::SingleLength(
+            (),
+            field_length,
+            R::YearNames::maybe_from_payload(payload)
+                .ok_or(SingleLoadError::TypeTooNarrow(field))?,
+        );
         Ok(())
     }
 
@@ -935,7 +945,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         self.month_symbols = OptionalNames::SingleLength(
             field_symbol,
             field_length,
-            R::MonthNames::from_payload(payload),
+            R::MonthNames::maybe_from_payload(payload)
+                .ok_or(SingleLoadError::TypeTooNarrow(field))?,
         );
         Ok(())
     }
@@ -979,8 +990,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             })
             .and_then(DataResponse::take_payload)
             .map_err(SingleLoadError::Data)?;
-        self.dayperiod_symbols =
-            OptionalNames::SingleLength((), field_length, R::DayPeriodNames::from_payload(payload));
+        self.dayperiod_symbols = OptionalNames::SingleLength(
+            (),
+            field_length,
+            R::DayPeriodNames::maybe_from_payload(payload)
+                .ok_or(SingleLoadError::TypeTooNarrow(field))?,
+        );
         Ok(())
     }
 
@@ -1039,7 +1054,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         self.weekday_symbols = OptionalNames::SingleLength(
             field_symbol,
             field_length,
-            R::WeekdayNames::from_payload(payload),
+            R::WeekdayNames::maybe_from_payload(payload)
+                .ok_or(SingleLoadError::TypeTooNarrow(field))?,
         );
         Ok(())
     }
