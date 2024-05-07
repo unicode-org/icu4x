@@ -148,9 +148,9 @@ fn from_string_benches(c: &mut Criterion) {
         "0.000000001",
         "1000000001",
         &{
-            let mut x = format!("{:0fill$}", 0, fill = 32768);
+            let mut x = format!("{:0fill$}", 0, fill = i16::MAX as usize + 1);
             x.push('.');
-            x.push_str(&format!("{:0fill$}", 0, fill = 32768));
+            x.push_str(&format!("{:0fill$}", 0, fill = i16::MAX as usize + 1));
             x
         },
     ];

@@ -350,9 +350,3 @@ pub enum LstmDataV1<'data> {
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
-
-pub(crate) struct LstmDataV1Marker;
-
-impl DataMarker for LstmDataV1Marker {
-    type Yokeable = LstmDataV1<'static>;
-}

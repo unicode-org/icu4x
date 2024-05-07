@@ -38,6 +38,13 @@ pub struct LocaleDirectionality {
     expander: LocaleExpander,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for LocaleDirectionality {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocaleDirectionality {
     /// Creates a [`LocaleDirectionality`] from compiled data.
     ///

@@ -279,7 +279,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     ///
     /// `bytes` need to be an output from [`VarZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
-        Self::Borrowed(core::mem::transmute(bytes))
+        Self::Borrowed(core::mem::transmute::<&[u8], &VarZeroSlice<T, F>>(bytes))
     }
 
     /// Convert this into a mutable vector of the owned `T` type, cloning if necessary.
