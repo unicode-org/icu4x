@@ -681,7 +681,7 @@ impl<'a> FormattedNeoDate<'a> {
     }
 }
 
-size_test!(NeoTimeFormatter, neo_time_formatter_size, 456);
+size_test!(NeoTimeFormatter, neo_time_formatter_size, 416);
 
 /// [`NeoTimeFormatter`] can format times of day.
 /// It supports both 12-hour and 24-hour formats.
