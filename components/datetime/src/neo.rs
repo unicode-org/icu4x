@@ -19,7 +19,6 @@ use crate::options::length;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
-use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::{
@@ -40,7 +39,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             $($arg: $ty),+
-        ) -> Result<Self, Error>
+        ) -> Result<Self, LoadError>
         where
             P: AnyProvider + ?Sized,
         {
@@ -57,7 +56,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             $($arg: $ty),+
-        ) -> Result<Self, Error>
+        ) -> Result<Self, LoadError>
         where
             P: BufferProvider + ?Sized,
         {
@@ -75,7 +74,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             $($arg: $ty),+
-        ) -> Result<Self, Error>
+        ) -> Result<Self, LoadError>
         where
             S: ?Sized + $skel,
             P: AnyProvider + ?Sized,
@@ -93,7 +92,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             provider: &P,
             locale: &DataLocale,
             $($arg: $ty),+
-        ) -> Result<Self, Error>
+        ) -> Result<Self, LoadError>
         where
             S: ?Sized + $skel,
             P: BufferProvider + ?Sized,
@@ -159,7 +158,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error>
+    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Calendar-specific date formatting keys
@@ -188,7 +187,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Date formatting keys
@@ -214,7 +213,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         loader: &L,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Date formatting keys
@@ -226,7 +225,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         let selection = DatePatternSelectionData::try_new_with_length::<C::DatePatternV1Marker>(
             provider, locale, length,
-        )?;
+        )
+        .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names
             .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker, NeverMarker<LinearNamesV1<'static>>>(
@@ -273,7 +273,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     pub fn try_new_with_skeleton<S>(
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         S: ?Sized + TypedNeoDateSkeletonComponents<C>,
         crate::provider::Baked: Sized
@@ -305,7 +305,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         provider: &P,
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         S: ?Sized + TypedNeoDateSkeletonComponents<C>,
         P: ?Sized
@@ -332,7 +332,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         loader: &L,
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         S: ?Sized + TypedNeoDateSkeletonComponents<C>,
         P: ?Sized
@@ -345,7 +345,8 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     {
         let selection = DatePatternSelectionData::try_new_with_skeleton::<
             S::DateSkeletonPatternsV1Marker,
-        >(provider, locale, length, S::COMPONENTS)?;
+        >(provider, locale, length, S::COMPONENTS)
+        .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker, S::WeekdayNamesV1Marker, NeverMarker<LinearNamesV1<'static>>>(
             Some(provider),           // year
@@ -440,7 +441,10 @@ impl NeoDateFormatter {
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, Error> {
+    pub fn try_new_with_length(
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, LoadError> {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -462,7 +466,7 @@ impl NeoDateFormatter {
         provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // DatePattern, YearNames, and MonthNames keys
@@ -535,7 +539,7 @@ impl NeoDateFormatter {
         loader: &L,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // DatePattern, YearNames, and MonthNames keys
@@ -585,14 +589,15 @@ impl NeoDateFormatter {
             + DataProvider<WeekdayNamesV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
-        let calendar = AnyCalendarLoader::load(loader, locale)?;
+        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
         let any_calendar_provider = AnyCalendarProvider { provider, kind };
         let selection = DatePatternSelectionData::try_new_with_length::<ErasedDatePatternV1Marker>(
             &any_calendar_provider,
             locale,
             length,
-        )?;
+        )
+        .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker, WeekdayNamesV1Marker, NeverMarker<LinearNamesV1<'static>>>(
             Some(&any_calendar_provider), // year
@@ -719,7 +724,10 @@ impl NeoTimeFormatter {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(locale: &DataLocale, length: length::Time) -> Result<Self, Error> {
+    pub fn try_new_with_length(
+        locale: &DataLocale,
+        length: length::Time,
+    ) -> Result<Self, LoadError> {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -741,7 +749,7 @@ impl NeoTimeFormatter {
         provider: &P,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Time formatting keys
@@ -763,7 +771,7 @@ impl NeoTimeFormatter {
         loader: &L,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Time formatting keys
@@ -771,7 +779,8 @@ impl NeoTimeFormatter {
             + DataProvider<DayPeriodNamesV1Marker>,
         L: FixedDecimalFormatterLoader,
     {
-        let selection = TimePatternSelectionData::try_new_with_length(provider, locale, length)?;
+        let selection = TimePatternSelectionData::try_new_with_length(provider, locale, length)
+            .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<NeverMarker<YearNamesV1>, NeverMarker<MonthNamesV1>, NeverMarker<LinearNamesV1>, DayPeriodNamesV1Marker>(
             None::<&PhantomProvider>, // year
@@ -812,7 +821,7 @@ impl NeoTimeFormatter {
     pub fn try_new_with_skeleton<S>(
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         S: ?Sized + TypedNeoTimeSkeletonComponents,
         crate::provider::Baked: Sized
@@ -842,7 +851,7 @@ impl NeoTimeFormatter {
         provider: &P,
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         S: ?Sized + TypedNeoTimeSkeletonComponents,
         P: ?Sized
@@ -865,7 +874,7 @@ impl NeoTimeFormatter {
         loader: &L,
         locale: &DataLocale,
         length: NeoSkeletonLength,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         S: ?Sized + TypedNeoTimeSkeletonComponents,
         P: ?Sized
@@ -876,7 +885,8 @@ impl NeoTimeFormatter {
     {
         let selection = TimePatternSelectionData::try_new_with_skeleton::<
             S::TimeSkeletonPatternsV1Marker,
-        >(provider, locale, length, S::COMPONENTS)?;
+        >(provider, locale, length, S::COMPONENTS)
+        .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker, S::WeekdayNamesV1Marker, S::DayPeriodNamesV1Marker>(
             None::<&PhantomProvider>, // year
@@ -1007,7 +1017,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     pub fn try_new_with_date_length(
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Calendar-specific date formatting keys
@@ -1036,7 +1046,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Date formatting keys
@@ -1062,7 +1072,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         loader: &L,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Date formatting keys
@@ -1113,7 +1123,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     pub fn try_new_with_time_length(
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, LoadError> {
         Self::try_new_with_time_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -1135,7 +1145,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         provider: &P,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Time formatting keys
@@ -1157,7 +1167,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         loader: &L,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Time formatting keys
@@ -1207,7 +1217,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Calendar-specific date formatting keys
@@ -1239,7 +1249,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Date formatting keys
@@ -1272,7 +1282,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Date formatting keys
@@ -1290,7 +1300,8 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
         let selection = DateTimeGluePatternSelectionData::try_new_with_lengths::<
             C::DatePatternV1Marker,
             _,
-        >(provider, provider, locale, date_length, time_length)?;
+        >(provider, provider, locale, date_length, time_length)
+        .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names
             .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker, DayPeriodNamesV1Marker>(
@@ -1326,7 +1337,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     pub fn try_new(
         locale: &DataLocale,
         options: crate::DateTimeFormatterOptions,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Calendar-specific date formatting keys
@@ -1348,7 +1359,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
                 date: None,
                 time: Some(time),
             }) => Self::try_new_with_time_length(locale, time),
-            _ => Err(Error::UnsupportedOptions),
+            _ => todo!(), // Err(LoadError::UnsupportedOptions),
         }
     }
 
@@ -1432,7 +1443,7 @@ impl NeoDateTimeFormatter {
     pub fn try_new_with_date_length(
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, LoadError> {
         Self::try_new_with_date_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -1454,7 +1465,7 @@ impl NeoDateTimeFormatter {
         provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // DatePattern, YearNames, and MonthNames keys
@@ -1527,7 +1538,7 @@ impl NeoDateTimeFormatter {
         loader: &L,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // DatePattern, YearNames, and MonthNames keys
@@ -1628,7 +1639,7 @@ impl NeoDateTimeFormatter {
     pub fn try_new_with_time_length(
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, LoadError> {
         Self::try_new_with_time_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -1650,7 +1661,7 @@ impl NeoDateTimeFormatter {
         provider: &P,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Time formatting keys
@@ -1679,7 +1690,7 @@ impl NeoDateTimeFormatter {
         loader: &L,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // Time formatting keys
@@ -1688,7 +1699,7 @@ impl NeoDateTimeFormatter {
         L: FixedDecimalFormatterLoader + AnyCalendarLoader,
     {
         // Need to compute the calendar ourselves since it is not in NeoTimeFormatter
-        let calendar = AnyCalendarLoader::load(loader, locale)?;
+        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let time_formatter =
             NeoTimeFormatter::try_new_with_length_internal(provider, loader, locale, length)?;
         Ok(Self {
@@ -1732,7 +1743,7 @@ impl NeoDateTimeFormatter {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, LoadError> {
         Self::try_new_with_lengths_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -1757,7 +1768,7 @@ impl NeoDateTimeFormatter {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // DatePattern, YearNames, and MonthNames keys
@@ -1837,7 +1848,7 @@ impl NeoDateTimeFormatter {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, LoadError>
     where
         P: ?Sized
             // DatePattern, YearNames, and MonthNames keys
@@ -1892,7 +1903,7 @@ impl NeoDateTimeFormatter {
             + DataProvider<DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
-        let calendar = AnyCalendarLoader::load(loader, locale)?;
+        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
         let any_calendar_provider = AnyCalendarProvider { provider, kind };
         let selection =
@@ -1902,7 +1913,8 @@ impl NeoDateTimeFormatter {
                 locale,
                 date_length,
                 time_length,
-            )?;
+            )
+            .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern::<ErasedYearNamesV1Marker, ErasedMonthNamesV1Marker, WeekdayNamesV1Marker, DayPeriodNamesV1Marker>(
             Some(&any_calendar_provider), // year

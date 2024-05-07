@@ -12,7 +12,6 @@ use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
-use crate::Error;
 use icu_locid::extensions::private::Subtag;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
@@ -82,7 +81,7 @@ impl DatePatternSelectionData {
         provider: &(impl DatePatternV1Provider<M> + ?Sized),
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         M: DataMarker<Yokeable = DatePatternV1<'static>>,
     {
@@ -111,7 +110,7 @@ impl DatePatternSelectionData {
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoDateComponents,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
@@ -123,7 +122,7 @@ impl DatePatternSelectionData {
                     false,
                     "invalid neo skeleton components: {components:?}: {e:?}"
                 );
-                return Err(Error::UnsupportedOptions);
+                return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
         locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
@@ -187,7 +186,7 @@ impl TimePatternSelectionData {
         provider: &P,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<TimePatternV1Marker> + ?Sized,
     {
@@ -216,7 +215,7 @@ impl TimePatternSelectionData {
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
@@ -228,7 +227,7 @@ impl TimePatternSelectionData {
                     false,
                     "invalid neo skeleton components: {components:?}: {e:?}"
                 );
-                return Err(Error::UnsupportedOptions);
+                return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
         locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
@@ -291,7 +290,7 @@ impl DateTimeGluePatternSelectionData {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<TimePatternV1Marker> + DataProvider<DateTimePatternV1Marker> + ?Sized,
         M: DataMarker<Yokeable = DatePatternV1<'static>>,

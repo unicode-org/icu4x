@@ -8,7 +8,7 @@ use crate::calendar::{
     YearNamesV1Provider,
 };
 use crate::external_loaders::*;
-use crate::fields::{self, FieldLength, FieldSymbol};
+use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
 use crate::input;
 use crate::input::DateInput;
@@ -22,7 +22,6 @@ use crate::provider::date_time::{
     GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols,
 };
 use crate::provider::neo::*;
-use crate::Error;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::provider::WeekDataV2Marker;
@@ -237,7 +236,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, Error> {
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         let mut names = Self {
             locale: locale.clone(),
             inner: RawDateTimeNames::new_without_fixed_decimal_formatter(),
@@ -248,7 +247,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, Error>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
@@ -268,7 +267,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         &mut self,
         provider: &P,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         P: DataProvider<C::YearNamesV1Marker> + ?Sized,
     {
@@ -286,7 +285,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
     ///
@@ -303,11 +302,14 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// // But loading a new length fails:
     /// assert!(matches!(
     ///     names.include_year_names(FieldLength::Abbreviated),
-    ///     Err(DateTimeError::DuplicateField(_))
+    ///     Err(SingleLoadError::DuplicateField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_year_names(&mut self, field_length: FieldLength) -> Result<&mut Self, Error>
+    pub fn include_year_names(
+        &mut self,
+        field_length: FieldLength,
+    ) -> Result<&mut Self, SingleLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
     {
@@ -322,7 +324,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         provider: &P,
         field_symbol: fields::Month,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         P: DataProvider<C::MonthNamesV1Marker> + ?Sized,
     {
@@ -340,7 +342,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
     ///
@@ -363,11 +365,11 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
     ///     names.include_month_names(alt_field_symbol, FieldLength::Wide),
-    ///     Err(DateTimeError::DuplicateField(_))
+    ///     Err(SingleLoadError::DuplicateField(_))
     /// ));
     /// assert!(matches!(
     ///     names.include_month_names(field_symbol, FieldLength::Abbreviated),
-    ///     Err(DateTimeError::DuplicateField(_))
+    ///     Err(SingleLoadError::DuplicateField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -375,7 +377,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         &mut self,
         field_symbol: fields::Month,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
     {
@@ -389,7 +391,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         &mut self,
         provider: &P,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
@@ -407,7 +409,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
     ///
@@ -424,14 +426,14 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// // But loading a new length fails:
     /// assert!(matches!(
     ///     names.include_day_period_names(FieldLength::Abbreviated),
-    ///     Err(DateTimeError::DuplicateField(_))
+    ///     Err(SingleLoadError::DuplicateField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
         &mut self,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<DayPeriodNamesV1Marker>,
     {
@@ -446,7 +448,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         provider: &P,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         P: DataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
@@ -464,7 +466,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
-    /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
     /// use icu::locid::locale;
     ///
@@ -487,11 +489,11 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
     ///     names.include_weekday_names(alt_field_symbol, FieldLength::Wide),
-    ///     Err(DateTimeError::DuplicateField(_))
+    ///     Err(SingleLoadError::DuplicateField(_))
     /// ));
     /// assert!(matches!(
     ///     names.include_weekday_names(field_symbol, FieldLength::Abbreviated),
-    ///     Err(DateTimeError::DuplicateField(_))
+    ///     Err(SingleLoadError::DuplicateField(_))
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -499,7 +501,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         &mut self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-    ) -> Result<&mut Self, Error>
+    ) -> Result<&mut Self, SingleLoadError>
     where
         crate::provider::Baked: icu_provider::DataProvider<WeekdayNamesV1Marker>,
     {
@@ -545,7 +547,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
 
     // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
     #[inline]
-    fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, Error>
+    fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
@@ -557,7 +559,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     // TODO(#4340): Make this fn public when FixedDecimalFormatter is fully optional
     #[cfg(feature = "compiled_data")]
     #[inline]
-    fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, Error> {
+    fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
         self.inner
             .load_fixed_decimal_formatter(&ExternalLoaderCompiledData, &self.locale)?;
         Ok(self)
@@ -584,7 +586,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         &'l mut self,
         provider: &P,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    ) -> Result<DateTimePatternFormatter<'l, C>, LoadError>
     where
         P: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -650,7 +652,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     pub fn include_for_pattern<'l>(
         &'l mut self,
         pattern: &'l DateTimePattern,
-    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    ) -> Result<DateTimePatternFormatter<'l, C>, LoadError>
     where
         crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
             + DataProvider<C::MonthNamesV1Marker>
@@ -673,6 +675,42 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
         })
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
+#[non_exhaustive]
+/// Error returned from [`TypedDateTimeNames`]'s load methods.
+pub enum SingleLoadError {
+    /// Duplicate field in pattern
+    DuplicateField(Field),
+    /// UnsupportedField
+    UnsupportedField(Field),
+    /// Data
+    Data(DataError),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
+/// Error returned from [`TypedDateTimeNames`]'s pattern load methods.
+#[non_exhaustive]
+pub enum LoadError {
+    /// DuplicateField
+    DuplicateField(Field),
+    /// UnsupportedField
+    UnsupportedField(Field),
+    /// Data
+    Data(DataError),
+    /// MissingNames
+    MissingNames(Field),
+}
+
+impl From<SingleLoadError> for LoadError {
+    fn from(value: SingleLoadError) -> Self {
+        match value {
+            SingleLoadError::Data(e) => LoadError::Data(e),
+            SingleLoadError::UnsupportedField(f) => LoadError::UnsupportedField(f),
+            SingleLoadError::DuplicateField(f) => LoadError::DuplicateField(f),
+        }
     }
 }
 
@@ -704,7 +742,7 @@ impl RawDateTimeNames {
         provider: &P,
         locale: &DataLocale,
         field_length: FieldLength,
-    ) -> Result<(), Error>
+    ) -> Result<(), SingleLoadError>
     where
         P: YearNamesV1Provider<M> + ?Sized,
         M: DataMarker<Yokeable = YearNamesV1<'static>>,
@@ -718,7 +756,7 @@ impl RawDateTimeNames {
         match self.year_symbols.check_with_length((), field_length) {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+            NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
@@ -727,15 +765,16 @@ impl RawDateTimeNames {
                 FieldLength::Abbreviated => aux::Length::Abbr,
                 FieldLength::Narrow => aux::Length::Narrow,
                 FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
+                _ => return Err(SingleLoadError::UnsupportedField(field)),
             },
         )));
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
-            })?
-            .take_payload()?
+            })
+            .and_then(DataResponse::take_payload)
+            .map_err(SingleLoadError::Data)?
             .cast();
         self.year_symbols = OptionalNames::SingleLength((), field_length, payload);
         Ok(())
@@ -747,7 +786,7 @@ impl RawDateTimeNames {
         locale: &DataLocale,
         field_symbol: fields::Month,
         field_length: FieldLength,
-    ) -> Result<(), Error>
+    ) -> Result<(), SingleLoadError>
     where
         P: MonthNamesV1Provider<M> + ?Sized,
         M: DataMarker<Yokeable = MonthNamesV1<'static>>,
@@ -763,7 +802,7 @@ impl RawDateTimeNames {
         {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+            NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
@@ -775,15 +814,16 @@ impl RawDateTimeNames {
                 FieldLength::Abbreviated => aux::Length::Abbr,
                 FieldLength::Narrow => aux::Length::Narrow,
                 FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
+                _ => return Err(SingleLoadError::UnsupportedField(field)),
             },
         )));
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
-            })?
-            .take_payload()?
+            })
+            .and_then(DataResponse::take_payload)
+            .map_err(SingleLoadError::Data)?
             .cast();
         self.month_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
         Ok(())
@@ -794,7 +834,7 @@ impl RawDateTimeNames {
         provider: &P,
         locale: &DataLocale,
         field_length: FieldLength,
-    ) -> Result<(), Error>
+    ) -> Result<(), SingleLoadError>
     where
         P: DayPeriodNamesV1Provider<M> + ?Sized,
         M: DataMarker<Yokeable = LinearNamesV1<'static>>,
@@ -809,7 +849,7 @@ impl RawDateTimeNames {
         match self.dayperiod_symbols.check_with_length((), field_length) {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+            NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
@@ -818,15 +858,16 @@ impl RawDateTimeNames {
                 FieldLength::Abbreviated => aux::Length::Abbr,
                 FieldLength::Narrow => aux::Length::Narrow,
                 FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
+                _ => return Err(SingleLoadError::UnsupportedField(field)),
             },
         )));
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
-            })?
-            .take_payload()?
+            })
+            .and_then(DataResponse::take_payload)
+            .map_err(SingleLoadError::Data)?
             .cast();
         self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
         Ok(())
@@ -838,7 +879,7 @@ impl RawDateTimeNames {
         locale: &DataLocale,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-    ) -> Result<(), Error>
+    ) -> Result<(), SingleLoadError>
     where
         P: WeekdayNamesV1Provider<M> + ?Sized,
         M: DataMarker<Yokeable = LinearNamesV1<'static>>,
@@ -860,7 +901,7 @@ impl RawDateTimeNames {
         {
             NamePresence::Loaded => return Ok(()),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+            NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
@@ -874,15 +915,16 @@ impl RawDateTimeNames {
                 FieldLength::Narrow => aux::Length::Narrow,
                 FieldLength::Wide => aux::Length::Wide,
                 FieldLength::Six => aux::Length::Short,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
+                _ => return Err(SingleLoadError::UnsupportedField(field)),
             },
         )));
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
-            })?
-            .take_payload()?
+            })
+            .and_then(DataResponse::take_payload)
+            .map_err(SingleLoadError::Data)?
             .cast();
         self.weekday_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
         Ok(())
@@ -897,7 +939,7 @@ impl RawDateTimeNames {
         &mut self,
         loader: &impl FixedDecimalFormatterLoader,
         locale: &DataLocale,
-    ) -> Result<(), Error> {
+    ) -> Result<(), DataError> {
         let mut options = FixedDecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
         self.fixed_decimal_formatter =
@@ -933,7 +975,7 @@ impl RawDateTimeNames {
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = PatternItem>,
-    ) -> Result<(), Error>
+    ) -> Result<(), LoadError>
     where
         YearMarker: DataMarker<Yokeable = YearNamesV1<'static>>,
         MonthMarker: DataMarker<Yokeable = MonthNamesV1<'static>>,
@@ -952,7 +994,7 @@ impl RawDateTimeNames {
                 ///// Textual symbols /////
                 FieldSymbol::Era => {
                     self.load_year_names(
-                        year_provider.ok_or(Error::MissingNames(field))?,
+                        year_provider.ok_or(LoadError::MissingNames(field))?,
                         locale,
                         field.length,
                     )?;
@@ -962,7 +1004,7 @@ impl RawDateTimeNames {
                     FieldLength::TwoDigit => numeric_field = Some(field),
                     _ => {
                         self.load_month_names(
-                            month_provider.ok_or(Error::MissingNames(field))?,
+                            month_provider.ok_or(LoadError::MissingNames(field))?,
                             locale,
                             symbol,
                             field.length,
@@ -979,7 +1021,7 @@ impl RawDateTimeNames {
                     }
                     _ => {
                         self.load_weekday_names(
-                            weekday_provider.ok_or(Error::MissingNames(field))?,
+                            weekday_provider.ok_or(LoadError::MissingNames(field))?,
                             locale,
                             symbol,
                             field.length,
@@ -988,7 +1030,7 @@ impl RawDateTimeNames {
                 },
                 FieldSymbol::DayPeriod(_) => {
                     self.load_day_period_names(
-                        dayperiod_provider.ok_or(Error::MissingNames(field))?,
+                        dayperiod_provider.ok_or(LoadError::MissingNames(field))?,
                         locale,
                         field.length,
                     )?;
@@ -1004,23 +1046,27 @@ impl RawDateTimeNames {
                 FieldSymbol::Second(_) => numeric_field = Some(field),
                 FieldSymbol::TimeZone(_) => {
                     // TODO: Consider whether time zones are supported here.
-                    return Err(Error::UnsupportedField(field.symbol));
+                    return Err(LoadError::UnsupportedField(field));
                 }
             };
         }
 
         if let Some(field) = week_field {
-            self.set_week_calculator(WeekCalculatorLoader::load(
-                week_calculator_loader.ok_or(Error::MissingNames(field))?,
-                locale,
-            )?);
+            self.set_week_calculator(
+                WeekCalculatorLoader::load(
+                    week_calculator_loader.ok_or(LoadError::MissingNames(field))?,
+                    locale,
+                )
+                .map_err(LoadError::Data)?,
+            );
         }
 
         if let Some(field) = numeric_field.or(week_field) {
             self.load_fixed_decimal_formatter(
-                fixed_decimal_formatter_loader.ok_or(Error::MissingNames(field))?,
+                fixed_decimal_formatter_loader.ok_or(LoadError::MissingNames(field))?,
                 locale,
-            )?;
+            )
+            .map_err(LoadError::Data)?;
         }
 
         Ok(())
