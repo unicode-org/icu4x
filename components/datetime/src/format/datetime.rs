@@ -7,7 +7,6 @@ use crate::input::{
     DateInput, ExtractedDateTimeInput, ExtractedDateTimeInputWeekCalculatorError, IsoTimeInput,
 };
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
-use crate::pattern::PatternError;
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -284,10 +283,7 @@ pub enum DateTimeWriteError {
     },
     /// Unsupported field
     #[displaydoc("Unsupported field {0:?}")]
-    UnsupportedField(FieldSymbol),
-    /// Invalid pattern
-    #[displaydoc("{0}")]
-    Pattern(PatternError),
+    UnsupportedField(Field),
 }
 
 // This function assumes that the correct decision has been
@@ -656,11 +652,7 @@ where
                     .and_then(|ns| {
                         // We only support fixed field length for fractional seconds.
                         let FieldLength::Fixed(p) = length else {
-                            return Err(DateTimeWriteError::Pattern(
-                                crate::pattern::PatternError::FieldLengthInvalid(
-                                    FieldSymbol::Second(Second::FractionalSecond),
-                                ),
-                            ));
+                            return Err(DateTimeWriteError::UnsupportedField(next_field));
                         };
                         Ok((ns, p))
                     });
@@ -688,7 +680,7 @@ where
         (FieldSymbol::Second(Second::FractionalSecond), _) => {
             // Fractional second not following second
             write_value_missing(w, field)?;
-            Err(DateTimeWriteError::UnsupportedField(field.symbol))
+            Err(DateTimeWriteError::UnsupportedField(field))
         }
         (FieldSymbol::DayPeriod(period), l) => match datetime.hour() {
             None => {
@@ -737,7 +729,7 @@ where
                 w.write_char(char::from(field.symbol))?;
                 w.write_str("}")
             })?;
-            Err(DateTimeWriteError::UnsupportedField(field.symbol))
+            Err(DateTimeWriteError::UnsupportedField(field))
         }
     })
 }
