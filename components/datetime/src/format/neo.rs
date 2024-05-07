@@ -680,7 +680,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
 
 #[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
 #[non_exhaustive]
-/// Error returned from [`DateTimeFormatter`]'s load methods.
+/// Error returned from [`TypedDateTimeNames`]'s load methods.
 pub enum SingleLoadError {
     /// Duplicate field in pattern
     DuplicateField(Field),
@@ -691,7 +691,7 @@ pub enum SingleLoadError {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
-/// Error returned from [`DateTimeFormatter`]'s pattern load methods.
+/// Error returned from [`TypedDateTimeNames`]'s pattern load methods.
 #[non_exhaustive]
 pub enum LoadError {
     /// DuplicateField
