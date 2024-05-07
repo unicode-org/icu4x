@@ -210,6 +210,8 @@ pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTime
 }
 
 pub trait DateTimeNamesMarker {
+    type YearNames: MaybePayload<YearNamesV1<'static>> + fmt::Debug;
+    type MonthNames: MaybePayload<MonthNamesV1<'static>> + fmt::Debug;
     type WeekdayNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
     type DayPeriodNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
 }
@@ -256,6 +258,8 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
 pub struct DateMarker {}
 
 impl DateTimeNamesMarker for DateMarker {
+    type YearNames = DataPayload<ErasedYearNamesV1Marker>;
+    type MonthNames = DataPayload<ErasedMonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = ();
 }
@@ -264,6 +268,8 @@ impl DateTimeNamesMarker for DateMarker {
 pub struct TimeMarker {}
 
 impl DateTimeNamesMarker for TimeMarker {
+    type YearNames = ();
+    type MonthNames = ();
     type WeekdayNames = ();
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
 }
@@ -272,6 +278,8 @@ impl DateTimeNamesMarker for TimeMarker {
 pub struct DateTimeMarker {}
 
 impl DateTimeNamesMarker for DateTimeMarker {
+    type YearNames = DataPayload<ErasedYearNamesV1Marker>;
+    type MonthNames = DataPayload<ErasedMonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
 }
@@ -293,8 +301,8 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
 impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
     fn from(other: RawDateTimeNames<TimeMarker>) -> Self {
         Self {
-            year_symbols: other.year_symbols,
-            month_symbols: other.month_symbols,
+            year_symbols: OptionalNames::None,
+            month_symbols: OptionalNames::None,
             weekday_symbols: OptionalNames::None,
             dayperiod_symbols: other.dayperiod_symbols,
             fixed_decimal_formatter: other.fixed_decimal_formatter,
@@ -306,8 +314,8 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
 
 #[derive(Debug)]
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
-    year_symbols: OptionalNames<(), DataPayload<ErasedYearNamesV1Marker>>,
-    month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthNamesV1Marker>>,
+    year_symbols: OptionalNames<(), R::YearNames>,
+    month_symbols: OptionalNames<fields::Month, R::MonthNames>,
     weekday_symbols: OptionalNames<fields::Weekday, R::WeekdayNames>,
     dayperiod_symbols: OptionalNames<(), R::DayPeriodNames>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
@@ -874,9 +882,9 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 metadata: Default::default(),
             })
             .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?
-            .cast();
-        self.year_symbols = OptionalNames::SingleLength((), field_length, payload);
+            .map_err(SingleLoadError::Data)?;
+        self.year_symbols =
+            OptionalNames::SingleLength((), field_length, R::YearNames::from_payload(payload));
         Ok(())
     }
 
@@ -923,9 +931,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 metadata: Default::default(),
             })
             .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?
-            .cast();
-        self.month_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
+            .map_err(SingleLoadError::Data)?;
+        self.month_symbols = OptionalNames::SingleLength(
+            field_symbol,
+            field_length,
+            R::MonthNames::from_payload(payload),
+        );
         Ok(())
     }
 
