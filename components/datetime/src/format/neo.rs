@@ -96,10 +96,10 @@ impl<S, T> OptionalNames<S, T>
 where
     S: Copy,
 {
-    pub(crate) fn as_borrowed<'a, Y>(&'a self) -> OptionalNames<S, &'a Y::Output>
+    pub(crate) fn as_borrowed<'a, Y>(&'a self) -> OptionalNames<S, &'a <Y as Yokeable<'a>>::Output>
     where
-        T: MaybePayload<'a, Y>,
-        Y: Yokeable<'a>,
+        T: MaybePayload<Y>,
+        Y: for<'y> Yokeable<'y>,
     {
         match self {
             Self::None => OptionalNames::None,
@@ -210,17 +210,17 @@ pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTime
 }
 
 pub trait DateTimeNamesMarker {
-    type WeekdayNames: for<'a> MaybePayload<'a, LinearNamesV1<'static>> + fmt::Debug;
+    type WeekdayNames: MaybePayload<LinearNamesV1<'static>> + fmt::Debug;
 }
 
-pub trait MaybePayload<'a, Y: Yokeable<'a>> {
+pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
     fn from_payload<M>(payload: DataPayload<M>) -> Self
     where
         M: DataMarker<Yokeable = Y>;
-    fn maybe_get(&'a self) -> Option<&'a Y::Output>;
+    fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output>;
 }
 
-impl<'a, M0, Y: Yokeable<'a>> MaybePayload<'a, Y> for DataPayload<M0>
+impl<M0, Y: for<'a> Yokeable<'a>> MaybePayload<Y> for DataPayload<M0>
 where
     M0: DataMarker<Yokeable = Y>,
 {
@@ -232,12 +232,12 @@ where
         payload.cast()
     }
     #[inline]
-    fn maybe_get(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
+    fn maybe_get<'a>(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
         Some(self.get())
     }
 }
 
-impl<'a, Y: Yokeable<'a>> MaybePayload<'a, Y> for () {
+impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
     #[inline]
     fn from_payload<M>(_payload: DataPayload<M>) -> Self
     where
@@ -246,7 +246,7 @@ impl<'a, Y: Yokeable<'a>> MaybePayload<'a, Y> for () {
         ()
     }
     #[inline]
-    fn maybe_get(&'a self) -> Option<&'a Y::Output> {
+    fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output> {
         None
     }
 }
