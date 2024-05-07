@@ -3,7 +3,7 @@
     "sr": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "sr"
       },
@@ -1683,6 +1683,9 @@
             "displayName-count-other": "источнокарипскиx доларa",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "Посебна цртаћа права",

@@ -3,7 +3,7 @@
     "es": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "es"
       },
@@ -1375,6 +1375,12 @@
             "displayName-count-other": "dólares del Caribe Oriental",
             "symbol": "XCD",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "displayName": "florín caribeño",
+            "displayName-count-one": "florín caribeño",
+            "displayName-count-other": "florines caribeños",
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "derechos especiales de giro"

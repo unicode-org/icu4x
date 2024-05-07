@@ -3,7 +3,7 @@
     "ru": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "ru"
       },
@@ -1526,6 +1526,9 @@
             "displayName-count-other": "восточно-карибского доллара",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "СДР (специальные права заимствования)"

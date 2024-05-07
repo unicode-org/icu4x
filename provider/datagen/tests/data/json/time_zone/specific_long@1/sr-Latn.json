@@ -325,9 +325,6 @@
       "dt": "Makao letnje računanje vremena",
       "st": "Makao standardno vreme"
     },
-    "macq": {
-      "st": "Ostrvo Makveri vreme"
-    },
     "maga": {
       "dt": "Magadan, letnje vreme",
       "st": "Magadan, standardno vreme"
@@ -350,10 +347,6 @@
     },
     "maws": {
       "st": "Moson vreme"
-    },
-    "meno": {
-      "dt": "Severozapadni Meksiko, letnje vreme",
-      "st": "Severozapadni Meksiko, standardno vreme"
     },
     "mepa": {
       "dt": "Meksički Pacifik, letnje vreme",

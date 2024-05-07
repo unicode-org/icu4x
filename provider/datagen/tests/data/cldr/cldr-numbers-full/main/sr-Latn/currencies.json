@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "sr",
         "script": "Latn"
@@ -1684,6 +1684,9 @@
             "displayName-count-other": "istočnokaripskix dolara",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XDR": {
             "displayName": "Posebna crtaća prava",

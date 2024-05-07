@@ -3353,10 +3353,6 @@
       "Latn",
       "AU"
     ],
-    "ajp": [
-      "Arab",
-      "JO"
-    ],
     "ajw": [
       "Latn",
       "NG"
@@ -13341,10 +13337,6 @@
       "Latn",
       "AU"
     ],
-    "kgm": [
-      "Latn",
-      "BR"
-    ],
     "kgo": [
       "Latn",
       "SD"
@@ -14416,10 +14408,6 @@
     "krz": [
       "Latn",
       "ID"
-    ],
-    "ksa": [
-      "Latn",
-      "NG"
     ],
     "ksb": [
       "Latn",
@@ -19957,10 +19945,6 @@
       "Latn",
       "US"
     ],
-    "nom": [
-      "Latn",
-      "PE"
-    ],
     "non": [
       "Runr",
       "SE"
@@ -21741,10 +21725,6 @@
       "Latn",
       "ID"
     ],
-    "plj": [
-      "Latn",
-      "NG"
-    ],
     "plk": [
       "Arab",
       "PK"
@@ -22113,10 +22093,6 @@
       "Latn",
       "FR"
     ],
-    "prp": [
-      "Gujr",
-      "IN"
-    ],
     "prq": [
       "Latn",
       "PE"
@@ -22356,6 +22332,10 @@
     "pyy": [
       "Latn",
       "MM"
+    ],
+    "pze": [
+      "Latn",
+      "NG"
     ],
     "pzh": [
       "Latn",
@@ -23012,6 +22992,10 @@
     "rsk": [
       "Cyrl",
       "RS"
+    ],
+    "rsw": [
+      "Latn",
+      "NG"
     ],
     "rtc": [
       "Latn",
@@ -23977,10 +23961,6 @@
       "Latn",
       "ID"
     ],
-    "slq": [
-      "Arab",
-      "IR"
-    ],
     "slr": [
       "Latn",
       "CN"
@@ -24862,10 +24842,6 @@
       "ID"
     ],
     "szc": [
-      "Latn",
-      "MY"
-    ],
-    "szd": [
       "Latn",
       "MY"
     ],
@@ -25821,10 +25797,6 @@
       "Latn",
       "ID"
     ],
-    "tmk": [
-      "Deva",
-      "NP"
-    ],
     "tml": [
       "Latn",
       "ID"
@@ -25992,6 +25964,10 @@
     "toj": [
       "Latn",
       "MX"
+    ],
+    "tok": [
+      "Latn",
+      "001"
     ],
     "tol": [
       "Latn",
@@ -26504,6 +26480,10 @@
     "tve": [
       "Latn",
       "ID"
+    ],
+    "tvi": [
+      "Latn",
+      "NG"
     ],
     "tvk": [
       "Latn",
@@ -29073,10 +29053,6 @@
       "Deva",
       "NP"
     ],
-    "xss": [
-      "Cyrl",
-      "RU"
-    ],
     "xsu": [
       "Latn",
       "VE"
@@ -30209,10 +30185,6 @@
       "Latn",
       "ID"
     ],
-    "zkb": [
-      "Cyrl",
-      "RU"
-    ],
     "zkd": [
       "Latn",
       "MM"
@@ -30592,10 +30564,6 @@
     "zty": [
       "Latn",
       "MX"
-    ],
-    "zua": [
-      "Latn",
-      "NG"
     ],
     "zuh": [
       "Latn",
