@@ -8,15 +8,13 @@
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_provider::prelude::*;
-use icu_provider_blob::BlobDataProvider;
 use icu_datagen::prelude::*;
-use icu_provider_blob::export::BlobExporter;
 use icu_datetime::provider::neo::*;
-use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_locid_transform::LocaleFallbacker;
-use icu_locid::langid;
 use icu_provider::prelude::*;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_blob::export::BlobExporter;
+use icu_provider_blob::BlobDataProvider;
 
 struct Baked;
 
@@ -114,7 +112,6 @@ fn make_blob_v2() -> Vec<u8> {
     blob
 }
 
-
 fn auxkey_bench(c: &mut Criterion) {
     let blob_v1 = make_blob_v1();
     let blob_v1 = blob_v1.as_slice();
@@ -128,22 +125,48 @@ fn auxkey_bench(c: &mut Criterion) {
         b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob_v2).into()).unwrap());
     });
 
-    let provider_v1 = LocaleFallbackProvider::new_with_fallbacker(BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(), LocaleFallbacker::new().static_to_owned());
+    let provider_v1 = LocaleFallbackProvider::new_with_fallbacker(
+        BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(),
+        LocaleFallbacker::new().static_to_owned(),
+    );
 
-    let provider_v2 = LocaleFallbackProvider::new_with_fallbacker(BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(), LocaleFallbacker::new().static_to_owned());
+    let provider_v2 = LocaleFallbackProvider::new_with_fallbacker(
+        BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(),
+        LocaleFallbacker::new().static_to_owned(),
+    );
 
-    c.bench_function("provider/auxkey/fallback_sr_ME/ym0d/v1", |b| {
-        b.iter(|| DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(&provider_v1.as_deserializing(), DataRequest {
-            locale: &langid!("sr-ME").into(),
-            metadata: Default::default()
-        }));
-    });
-    c.bench_function("provider/auxkey/construct/v2", |b| {
-        b.iter(|| DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(&provider_v2.as_deserializing(), DataRequest {
-            locale: &langid!("sr-ME").into(),
-            metadata: Default::default()
-        }));
-    });
+    for locale_str in ["sr-Latn-x-ym0d", "sr-ME-x-ym0d"] {
+        let locale = locale_str.parse::<DataLocale>().unwrap();
+
+        c.bench_function(&format!("provider/auxkey/fallback/{locale_str}/v1"), |b| {
+            b.iter(|| {
+                assert!(
+                    DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
+                        &provider_v1.as_deserializing(),
+                        DataRequest {
+                            locale: black_box(&locale),
+                            metadata: Default::default()
+                        }
+                    )
+                    .is_ok()
+                )
+            });
+        });
+        c.bench_function(&format!("provider/auxkey/fallback/{locale_str}/v2"), |b| {
+            b.iter(|| {
+                assert!(
+                    DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
+                        &provider_v2.as_deserializing(),
+                        DataRequest {
+                            locale: black_box(&locale),
+                            metadata: Default::default()
+                        }
+                    )
+                    .is_ok()
+                )
+            });
+        });
+    }
 }
 
 criterion_group!(benches, auxkey_bench,);
