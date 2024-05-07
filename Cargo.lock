@@ -1472,6 +1472,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
+ "icu_provider_adapters",
  "log",
  "postcard",
  "serde",

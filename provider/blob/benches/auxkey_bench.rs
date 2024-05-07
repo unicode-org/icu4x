@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// TODO(review): write macro in a way that doesn't raise this warning
+#![allow(semicolon_in_expressions_from_macros)]
+
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -9,7 +12,11 @@ use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 use icu_datagen::prelude::*;
 use icu_provider_blob::export::BlobExporter;
-use icu_datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker;
+use icu_datetime::provider::neo::*;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_locid_transform::LocaleFallbacker;
+use icu_locid::langid;
+use icu_provider::prelude::*;
 
 struct Baked;
 
@@ -19,17 +26,75 @@ const _: () = {
         pub use icu_locid_transform as locid_transform;
     }
     icu_datetime_data::make_provider!(Baked);
+
+    icu_datetime_data::impl_datetime_patterns_buddhist_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_chinese_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_coptic_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_dangi_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_ethiopic_skeleton_v1!(Baked);
     icu_datetime_data::impl_datetime_patterns_gregory_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_hebrew_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_indian_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_islamic_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_japanese_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_japanext_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_persian_skeleton_v1!(Baked);
+    icu_datetime_data::impl_datetime_patterns_roc_skeleton_v1!(Baked);
+
+    icu_datetime_data::impliterable_datetime_patterns_buddhist_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_chinese_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_coptic_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_dangi_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_ethiopic_skeleton_v1!(Baked);
     icu_datetime_data::impliterable_datetime_patterns_gregory_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_hebrew_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_indian_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_islamic_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_japanese_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_japanext_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_persian_skeleton_v1!(Baked);
+    icu_datetime_data::impliterable_datetime_patterns_roc_skeleton_v1!(Baked);
 };
 
-icu_provider::make_exportable_provider!(Baked, [GregorianDateNeoSkeletonPatternsV1Marker,]);
+macro_rules! skeleton_markers {
+    ($cb:ident) => {
+        $cb!([
+            BuddhistDateNeoSkeletonPatternsV1Marker,
+            ChineseDateNeoSkeletonPatternsV1Marker,
+            CopticDateNeoSkeletonPatternsV1Marker,
+            DangiDateNeoSkeletonPatternsV1Marker,
+            EthiopianDateNeoSkeletonPatternsV1Marker,
+            GregorianDateNeoSkeletonPatternsV1Marker,
+            HebrewDateNeoSkeletonPatternsV1Marker,
+            IndianDateNeoSkeletonPatternsV1Marker,
+            IslamicDateNeoSkeletonPatternsV1Marker,
+            JapaneseDateNeoSkeletonPatternsV1Marker,
+            JapaneseExtendedDateNeoSkeletonPatternsV1Marker,
+            PersianDateNeoSkeletonPatternsV1Marker,
+            RocDateNeoSkeletonPatternsV1Marker,
+        ]);
+    };
+}
+
+macro_rules! make_exportable_provider_cb {
+    ([$($marker:path,)+]) => {
+        icu_provider::make_exportable_provider!(Baked, [$($marker,)+]);
+    };
+}
+
+macro_rules! key_array_cb {
+    ([$($marker:path,)+]) => {
+        [$(<$marker>::KEY,)+]
+    };
+}
+
+skeleton_markers!(make_exportable_provider_cb);
 
 fn make_blob_v1() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
-        .with_keys([GregorianDateNeoSkeletonPatternsV1Marker::KEY])
+        .with_keys(skeleton_markers!(key_array_cb))
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
@@ -41,7 +106,7 @@ fn make_blob_v2() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     DatagenDriver::new()
-        .with_keys([GregorianDateNeoSkeletonPatternsV1Marker::KEY])
+        .with_keys(skeleton_markers!(key_array_cb))
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
@@ -61,6 +126,23 @@ fn auxkey_bench(c: &mut Criterion) {
     });
     c.bench_function("provider/auxkey/construct/v2", |b| {
         b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob_v2).into()).unwrap());
+    });
+
+    let provider_v1 = LocaleFallbackProvider::new_with_fallbacker(BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(), LocaleFallbacker::new().static_to_owned());
+
+    let provider_v2 = LocaleFallbackProvider::new_with_fallbacker(BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(), LocaleFallbacker::new().static_to_owned());
+
+    c.bench_function("provider/auxkey/fallback_sr_ME/ym0d/v1", |b| {
+        b.iter(|| DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(&provider_v1.as_deserializing(), DataRequest {
+            locale: &langid!("sr-ME").into(),
+            metadata: Default::default()
+        }));
+    });
+    c.bench_function("provider/auxkey/construct/v2", |b| {
+        b.iter(|| DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(&provider_v2.as_deserializing(), DataRequest {
+            locale: &langid!("sr-ME").into(),
+            metadata: Default::default()
+        }));
     });
 }
 
