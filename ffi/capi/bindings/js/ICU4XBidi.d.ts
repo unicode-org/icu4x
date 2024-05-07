@@ -28,9 +28,11 @@ export class ICU4XBidi {
 
    * Takes in a Level for the default level, if it is an invalid value it will default to LTR
 
+   * Returns nothing if `text` is invalid UTF-8.
+
    * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source Rust documentation for `new_with_data_source`} for more information.
    */
-  for_text(text: string, default_level: u8): ICU4XBidiInfo;
+  for_text(text: string, default_level: u8): ICU4XBidiInfo | undefined;
 
   /**
 
