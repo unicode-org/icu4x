@@ -34,6 +34,7 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
+use yoke::Yokeable;
 
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
@@ -91,19 +92,21 @@ where
     }
 }
 
-impl<S, M> OptionalNames<S, DataPayload<M>>
+impl<S, T> OptionalNames<S, T>
 where
     S: Copy,
-    M: DataMarker,
 {
-    pub(crate) fn as_borrowed(
-        &self,
-    ) -> OptionalNames<S, &<M::Yokeable as icu_provider::yoke::Yokeable>::Output> {
+    pub(crate) fn as_borrowed<'a, Y>(&'a self) -> OptionalNames<S, &'a Y::Output>
+    where
+        T: MaybePayload<'a, Y>,
+        Y: Yokeable<'a>,
+    {
         match self {
             Self::None => OptionalNames::None,
-            Self::SingleLength(field_symbol, field_length, payload) => {
-                OptionalNames::SingleLength(*field_symbol, *field_length, payload.get())
-            }
+            Self::SingleLength(field_symbol, field_length, payload) => match payload.maybe_get() {
+                Some(data) => OptionalNames::SingleLength(*field_symbol, *field_length, data),
+                None => OptionalNames::None,
+            },
         }
     }
 }
@@ -206,22 +209,68 @@ pub struct TypedDateTimeNames<C: CldrCalendar, R: DateTimeNamesMarker = DateTime
     _calendar: PhantomData<C>,
 }
 
-pub trait DateTimeNamesMarker {}
+pub trait DateTimeNamesMarker {
+    type WeekdayNames: for<'a> MaybePayload<'a, LinearNamesV1<'static>> + fmt::Debug;
+}
+
+pub trait MaybePayload<'a, Y: Yokeable<'a>> {
+    fn from_payload<M>(payload: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = Y>;
+    fn maybe_get(&'a self) -> Option<&'a Y::Output>;
+}
+
+impl<'a, M0, Y: Yokeable<'a>> MaybePayload<'a, Y> for DataPayload<M0>
+where
+    M0: DataMarker<Yokeable = Y>,
+{
+    #[inline]
+    fn from_payload<M>(payload: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = Y>,
+    {
+        payload.cast()
+    }
+    #[inline]
+    fn maybe_get(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
+        Some(self.get())
+    }
+}
+
+impl<'a, Y: Yokeable<'a>> MaybePayload<'a, Y> for () {
+    #[inline]
+    fn from_payload<M>(_payload: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = Y>,
+    {
+        ()
+    }
+    #[inline]
+    fn maybe_get(&'a self) -> Option<&'a Y::Output> {
+        None
+    }
+}
 
 #[derive(Debug)]
 pub struct DateMarker {}
 
-impl DateTimeNamesMarker for DateMarker {}
+impl DateTimeNamesMarker for DateMarker {
+    type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
+}
 
 #[derive(Debug)]
 pub struct TimeMarker {}
 
-impl DateTimeNamesMarker for TimeMarker {}
+impl DateTimeNamesMarker for TimeMarker {
+    type WeekdayNames = ();
+}
 
 #[derive(Debug)]
 pub struct DateTimeMarker {}
 
-impl DateTimeNamesMarker for DateTimeMarker {}
+impl DateTimeNamesMarker for DateTimeMarker {
+    type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
+}
 
 impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
     fn from(other: RawDateTimeNames<DateMarker>) -> Self {
@@ -242,7 +291,7 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
         Self {
             year_symbols: other.year_symbols,
             month_symbols: other.month_symbols,
-            weekday_symbols: other.weekday_symbols,
+            weekday_symbols: OptionalNames::None,
             dayperiod_symbols: other.dayperiod_symbols,
             fixed_decimal_formatter: other.fixed_decimal_formatter,
             week_calculator: other.week_calculator,
@@ -255,7 +304,7 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
     year_symbols: OptionalNames<(), DataPayload<ErasedYearNamesV1Marker>>,
     month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthNamesV1Marker>>,
-    weekday_symbols: OptionalNames<fields::Weekday, DataPayload<WeekdayNamesV1Marker>>,
+    weekday_symbols: OptionalNames<fields::Weekday, R::WeekdayNames>,
     dayperiod_symbols: OptionalNames<(), DataPayload<DayPeriodNamesV1Marker>>,
     // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: Option<FixedDecimalFormatter>,
@@ -971,9 +1020,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 metadata: Default::default(),
             })
             .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?
-            .cast();
-        self.weekday_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
+            .map_err(SingleLoadError::Data)?;
+        self.weekday_symbols = OptionalNames::SingleLength(
+            field_symbol,
+            field_length,
+            R::WeekdayNames::from_payload(payload),
+        );
         Ok(())
     }
 
