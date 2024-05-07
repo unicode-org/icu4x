@@ -2,18 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::fmt;
-
 use crate::calendar::DatePatternV1Provider;
-use crate::format::datetime::try_write_pattern;
-use crate::format::neo::*;
-use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
+use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
 use crate::options::length;
-use crate::pattern::runtime::PatternMetadata;
+use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
 use crate::Error;
@@ -79,18 +75,6 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
         time: TimePatternDataBorrowed<'a>,
         glue: &'a DateTimePatternV1<'a>,
     },
-}
-
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct DateTimeWriter<'a, 'b, I>
-where
-    I: Iterator<Item = PatternItem> + 'b,
-    'a: 'b,
-{
-    pub(crate) datetime: &'b ExtractedDateTimeInput,
-    pub(crate) names: RawDateTimeNamesBorrowed<'a>,
-    pub(crate) pattern_items: I,
-    pub(crate) pattern_metadata: PatternMetadata,
 }
 
 impl DatePatternSelectionData {
@@ -186,25 +170,15 @@ impl DatePatternSelectionData {
 
 impl<'a> DatePatternDataBorrowed<'a> {
     #[inline]
-    pub(crate) fn metadata(self) -> PatternMetadata {
+    pub(crate) fn as_borrowed(self) -> PatternBorrowed<'a> {
         match self {
-            Self::Resolved(pb) => pb.metadata,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
-        match self {
-            Self::Resolved(pb) => pb.items.iter(),
+            Self::Resolved(pb) => pb,
         }
     }
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pb = match self {
-            Self::Resolved(pb) => pb,
-        };
-        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(self.as_borrowed().to_pattern().into_owned())
     }
 }
 
@@ -298,25 +272,15 @@ impl TimePatternSelectionData {
 
 impl<'a> TimePatternDataBorrowed<'a> {
     #[inline]
-    pub(crate) fn metadata(self) -> PatternMetadata {
+    pub(crate) fn as_borrowed(self) -> PatternBorrowed<'a> {
         match self {
-            Self::Resolved(pb) => pb.metadata,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
-        match self {
-            Self::Resolved(pb) => pb.items.iter(),
+            Self::Resolved(pb) => pb,
         }
     }
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pb = match self {
-            Self::Resolved(pb) => pb,
-        };
-        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(self.as_borrowed().to_pattern().into_owned())
     }
 }
 
@@ -467,28 +431,5 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
             Self::DateTimeGlue { .. } => todo!(),
         };
         DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
-    }
-}
-
-impl<'a, 'b, I> DateTimeWriter<'a, 'b, I>
-where
-    I: Iterator<Item = PatternItem> + 'b,
-    'a: 'b,
-{
-    pub(crate) fn try_write_to<W: writeable::PartsWrite + ?Sized>(
-        self,
-        sink: &mut W,
-    ) -> Result<Result<(), Error>, fmt::Error> {
-        let loc_datetime =
-            DateTimeInputWithWeekConfig::new(self.datetime, self.names.week_calculator);
-        try_write_pattern(
-            self.pattern_items,
-            self.pattern_metadata,
-            Some(&self.names),
-            Some(&self.names),
-            &loc_datetime,
-            self.names.fixed_decimal_formatter,
-            sink,
-        )
     }
 }

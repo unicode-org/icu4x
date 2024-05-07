@@ -5,16 +5,15 @@
 //! A collection of code for formatting DateTimes with time zones.
 
 use crate::fields::{Field, FieldSymbol};
-use crate::input::{
-    DateTimeInput, DateTimeInputWithWeekConfig, ExtractedTimeZoneInput, LocalizedDateTimeInput,
-};
-use crate::pattern::runtime::PatternMetadata;
+use crate::input::{ExtractedDateTimeInput, ExtractedTimeZoneInput};
+use crate::pattern::runtime::PatternBorrowed;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
 use crate::time_zone::TimeZoneFormatter;
 use crate::FormattedTimeZone;
 use crate::{Error, FormattedDateTime};
 use core::fmt;
+use icu_calendar::week::WeekCalculator;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::Writeable;
 
@@ -34,33 +33,17 @@ pub struct FormattedZonedDateTime<'l> {
 
 impl<'l> Writeable for FormattedZonedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let mut r = Ok(());
-
-        let loc_datetime = DateTimeInputWithWeekConfig::new(
-            &self.formatted_datetime.datetime,
-            self.formatted_datetime.week_data,
-        );
-
-        let (pattern, pattern_err) = self
-            .formatted_datetime
-            .patterns
-            .get()
-            .0
-            .select_lossy(&loc_datetime, self.formatted_datetime.ordinal_rules);
-
-        if let Some(e) = pattern_err {
-            r = Err(e);
-        }
+        let (pattern, mut r) = self.formatted_datetime.select_pattern_lossy();
 
         r = r.and(try_write_pattern(
-            pattern.items.iter(),
-            pattern.metadata,
+            pattern.as_borrowed(),
+            &self.formatted_datetime.datetime,
             self.formatted_datetime.date_symbols,
             self.formatted_datetime.time_symbols,
-            &loc_datetime,
+            self.formatted_datetime.week_data,
+            Some(self.formatted_datetime.fixed_decimal_format),
             &self.time_zone,
             self.time_zone_format,
-            Some(self.formatted_datetime.fixed_decimal_format),
             &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
         )?);
 
@@ -78,49 +61,48 @@ impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn try_write_pattern<'data, T, W, DS, TS>(
-    pattern_items: impl Iterator<Item = PatternItem>,
-    pattern_metadata: PatternMetadata,
+fn try_write_pattern<'data, W, DS, TS>(
+    pattern: PatternBorrowed<'data>,
+    datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
-    loc_datetime: &impl LocalizedDateTimeInput<T>,
+    week_data: Option<&'data WeekCalculator>,
+    fixed_decimal_format: Option<&FixedDecimalFormatter>,
     time_zone: &ExtractedTimeZoneInput,
     time_zone_format: &TimeZoneFormatter,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), Error>, fmt::Error>
 where
-    T: DateTimeInput,
     W: writeable::PartsWrite + ?Sized,
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
     let mut r = Ok(());
-    let mut iter = pattern_items.peekable();
-    loop {
-        match iter.next() {
-            Some(PatternItem::Field(Field {
+    let mut iter = pattern.items.iter().peekable();
+    while let Some(item) = iter.next() {
+        match item {
+            PatternItem::Literal(ch) => w.write_char(ch)?,
+            PatternItem::Field(Field {
                 symbol: FieldSymbol::TimeZone(..),
                 ..
-            })) => FormattedTimeZone {
+            }) => FormattedTimeZone {
                 time_zone_format,
                 time_zone,
             }
             .write_to(w)?,
-            Some(PatternItem::Field(field)) => {
+            PatternItem::Field(field) => {
                 r = r.and(datetime::try_write_field(
-                    pattern_metadata,
                     field,
-                    iter.peek(),
+                    &mut iter,
+                    pattern.metadata,
+                    datetime,
                     date_symbols,
                     time_symbols,
-                    loc_datetime,
+                    week_data,
                     fixed_decimal_format,
                     w,
                 )?);
             }
-            Some(PatternItem::Literal(ch)) => w.write_char(ch)?,
-            None => break,
         }
     }
     Ok(r)
