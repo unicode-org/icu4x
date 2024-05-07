@@ -59,14 +59,14 @@ mod cached_owned;
 pub use cached_owned::PerfectByteHashMapCacheOwned;
 
 /// The cutoff for the fast version of [`f1`].
-const P_FAST_MAX: u8 = 11;
+const P_FAST_MAX: u8 = 95;
 
 /// The cutoff for the fast version of [`f2`].
 const Q_FAST_MAX: u8 = 95;
 
 /// The maximum allowable value of `p`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
-const P_REAL_MAX: u8 = 15;
+const P_REAL_MAX: u8 = 127;
 
 /// The maximum allowable value of `q`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
@@ -357,6 +357,16 @@ mod tests {
         std::println!("fastq/slowq: {count_fastq}/{count_slowq}");
         // Assert that 99% of cases resolve to the fast hash
         assert!(count_fastq >= count_slowq * 100);
+    }
+
+    #[test]
+    fn test_hard_cases() {
+        let keys = [0u8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 195, 196];
+
+        let computed = PerfectByteHashMap::try_new(&keys).unwrap();
+        let (p, qmax) = computed.p_qmax().unwrap();
+        assert_eq!(p, 69);
+        assert_eq!(qmax, 67);
     }
 
     #[test]
