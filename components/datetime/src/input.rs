@@ -6,6 +6,7 @@
 //! formatting operations.
 
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
+use crate::Error;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
@@ -175,11 +176,6 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn flexible_day_period(&self);
 }
 
-pub(crate) struct DateTimeInputWithWeekConfig<'data, T: DateTimeInput> {
-    data: &'data T,
-    calendar: Option<&'data WeekCalculator>,
-}
-
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
@@ -317,64 +313,34 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     }
 }
 
-impl<'data, T: DateTimeInput> DateTimeInputWithWeekConfig<'data, T> {
-    pub(crate) fn new(data: &'data T, calendar: Option<&'data WeekCalculator>) -> Self {
-        Self { data, calendar }
-    }
-}
-
-impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWeekConfig<'data, T> {
-    fn datetime(&self) -> &T {
-        self.data
-    }
-
-    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError> {
-        let config = self.calendar.ok_or(CalendarError::MissingCalendar)?;
+impl ExtractedDateTimeInput {
+    pub(crate) fn week_of_month(&self, calculator: &WeekCalculator) -> Result<WeekOfMonth, Error> {
         let day_of_month = self
-            .data
             .day_of_month()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::day_of_month"))?;
+            .ok_or(Error::MissingInputField(Some("day_of_month")))?;
         let iso_weekday = self
-            .data
             .iso_weekday()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::iso_weekday"))?;
-        Ok(config.week_of_month(day_of_month, iso_weekday))
+            .ok_or(Error::MissingInputField(Some("iso_weekday")))?;
+        Ok(calculator.week_of_month(day_of_month, iso_weekday))
     }
 
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError> {
-        let config = self.calendar.ok_or(CalendarError::MissingCalendar)?;
+    pub(crate) fn week_of_year(
+        &self,
+        calculator: &WeekCalculator,
+    ) -> Result<(FormattableYear, WeekOfYear), Error> {
         let day_of_year_info = self
-            .data
             .day_of_year_info()
-            .ok_or(CalendarError::MissingInput(
-                "DateTimeInput::day_of_year_info",
-            ))?;
+            .ok_or(Error::MissingInputField(Some("day_of_year_info")))?;
         let iso_weekday = self
-            .data
             .iso_weekday()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::iso_weekday"))?;
-        let week_of = config.week_of_year(day_of_year_info, iso_weekday)?;
+            .ok_or(Error::MissingInputField(Some("iso_weekday")))?;
+        let week_of = calculator.week_of_year(day_of_year_info, iso_weekday)?;
         let year = match week_of.unit {
             RelativeUnit::Previous => day_of_year_info.prev_year,
-            RelativeUnit::Current => self
-                .data
-                .year()
-                .ok_or(CalendarError::MissingInput("DateTimeInput::year"))?,
+            RelativeUnit::Current => self.year().ok_or(Error::MissingInputField(Some("year")))?,
             RelativeUnit::Next => day_of_year_info.next_year,
         };
         Ok((year, WeekOfYear(week_of.week as u32)))
-    }
-
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError> {
-        let day_of_month = self
-            .data
-            .day_of_month()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::day_of_month"))?;
-        Ok(day_of_month.into())
-    }
-
-    fn flexible_day_period(&self) {
-        todo!("#487")
     }
 }
 

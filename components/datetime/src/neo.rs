@@ -6,6 +6,7 @@
 
 use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
+use crate::format::datetime::{try_write_field, try_write_pattern};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
@@ -653,13 +654,15 @@ impl<'a> TryWriteable for FormattedNeoDate<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        DateTimeWriter {
-            datetime: &self.datetime,
-            names: self.names,
-            pattern_items: self.pattern.iter_items(),
-            pattern_metadata: self.pattern.metadata(),
-        }
-        .try_write_to(sink)
+        try_write_pattern(
+            self.pattern.as_borrowed(),
+            &self.datetime,
+            Some(&self.names),
+            Some(&self.names),
+            self.names.week_calculator,
+            self.names.fixed_decimal_formatter,
+            sink,
+        )
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -923,13 +926,15 @@ impl<'a> TryWriteable for FormattedNeoTime<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        DateTimeWriter {
-            datetime: &self.datetime,
-            names: self.names,
-            pattern_items: self.pattern.iter_items(),
-            pattern_metadata: self.pattern.metadata(),
-        }
-        .try_write_to(sink)
+        try_write_pattern(
+            self.pattern.as_borrowed(),
+            &self.datetime,
+            Some(&self.names),
+            Some(&self.names),
+            self.names.week_calculator,
+            self.names.fixed_decimal_formatter,
+            sink,
+        )
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -1963,13 +1968,30 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        DateTimeWriter {
-            datetime: &self.datetime,
-            names: self.names,
-            pattern_items: self.pattern.iter_items(),
-            pattern_metadata: self.pattern.metadata(),
+        {
+            let mut r = Ok(());
+            let mut iter = self.pattern.iter_items().peekable();
+            let metadata = self.pattern.metadata();
+            while let Some(item) = iter.next() {
+                match item {
+                    crate::pattern::PatternItem::Literal(ch) => sink.write_char(ch)?,
+                    crate::pattern::PatternItem::Field(field) => {
+                        r = r.and(try_write_field(
+                            field,
+                            &mut iter,
+                            metadata,
+                            &self.datetime,
+                            Some(&self.names),
+                            Some(&self.names),
+                            self.names.week_calculator,
+                            self.names.fixed_decimal_formatter,
+                            sink,
+                        )?)
+                    }
+                }
+            }
+            Ok(r)
         }
-        .try_write_to(sink)
     }
 
     // TODO(#489): Implement writeable_length_hint

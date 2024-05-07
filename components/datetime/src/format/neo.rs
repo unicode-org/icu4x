@@ -13,7 +13,6 @@ use crate::helpers::size_test;
 use crate::input;
 use crate::input::DateInput;
 use crate::input::DateTimeInput;
-use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
@@ -1182,14 +1181,12 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        let loc_datetime =
-            DateTimeInputWithWeekConfig::new(&self.datetime, self.names.week_calculator);
         try_write_pattern(
-            self.pattern.0.items.iter(),
-            self.pattern.0.metadata,
+            self.pattern.0.as_borrowed(),
+            &self.datetime,
             Some(&self.names),
             Some(&self.names),
-            &loc_datetime,
+            self.names.week_calculator,
             self.names.fixed_decimal_formatter,
             sink,
         )
