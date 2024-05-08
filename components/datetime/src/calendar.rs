@@ -201,7 +201,7 @@ impl CldrCalendar for Buddhist {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = BuddhistDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Chinese {
@@ -215,7 +215,7 @@ impl CldrCalendar for Chinese {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = ChineseDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = ChineseDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Coptic {
@@ -229,7 +229,7 @@ impl CldrCalendar for Coptic {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = CopticDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = CopticDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Dangi {
@@ -243,7 +243,7 @@ impl CldrCalendar for Dangi {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = DangiDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = DangiDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Ethiopian {
@@ -257,7 +257,7 @@ impl CldrCalendar for Ethiopian {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = EthiopianDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = EthiopianDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
@@ -288,7 +288,7 @@ impl CldrCalendar for Hebrew {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = HebrewDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = HebrewDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Indian {
@@ -302,7 +302,7 @@ impl CldrCalendar for Indian {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = IndianDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = IndianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for IslamicCivil {
@@ -319,7 +319,7 @@ impl CldrCalendar for IslamicCivil {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
     }
@@ -336,7 +336,7 @@ impl CldrCalendar for IslamicObservational {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
@@ -353,7 +353,7 @@ impl CldrCalendar for IslamicTabular {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, tinystr!(8, "tbla"))
     }
@@ -373,7 +373,7 @@ impl CldrCalendar for IslamicUmmAlQura {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, tinystr!(8, "umalqura"))
     }
@@ -390,7 +390,7 @@ impl CldrCalendar for Japanese {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = JapaneseDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = JapaneseDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for JapaneseExtended {
@@ -404,7 +404,7 @@ impl CldrCalendar for JapaneseExtended {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = JapaneseExtendedDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = JapaneseExtendedDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Persian {
@@ -418,7 +418,7 @@ impl CldrCalendar for Persian {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = PersianDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = PersianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Roc {
@@ -432,7 +432,7 @@ impl CldrCalendar for Roc {
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type DatePatternV1Marker = RocDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>; // TODO
+    type DateSkeletonPatternsV1Marker = RocDateNeoSkeletonPatternsV1Marker;
 }
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]

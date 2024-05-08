@@ -2,21 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::fmt;
-
 use crate::calendar::DatePatternV1Provider;
-use crate::format::datetime::write_pattern;
-use crate::format::neo::*;
-use crate::input::{DateTimeInputWithWeekConfig, ExtractedDateTimeInput};
+use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
 use crate::options::length;
-use crate::pattern::runtime::PatternMetadata;
+use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
-use crate::Error;
 use icu_locid::extensions::private::Subtag;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
@@ -81,24 +76,12 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
     },
 }
 
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct DateTimeWriter<'a, 'b, I>
-where
-    I: Iterator<Item = PatternItem> + 'b,
-    'a: 'b,
-{
-    pub(crate) datetime: &'b ExtractedDateTimeInput,
-    pub(crate) names: RawDateTimeNamesBorrowed<'a>,
-    pub(crate) pattern_items: I,
-    pub(crate) pattern_metadata: PatternMetadata,
-}
-
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_length<M>(
         provider: &(impl DatePatternV1Provider<M> + ?Sized),
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         M: DataMarker<Yokeable = DatePatternV1<'static>>,
     {
@@ -127,7 +110,7 @@ impl DatePatternSelectionData {
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoDateComponents,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
@@ -139,7 +122,7 @@ impl DatePatternSelectionData {
                     false,
                     "invalid neo skeleton components: {components:?}: {e:?}"
                 );
-                return Err(Error::UnsupportedOptions);
+                return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
         locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
@@ -186,25 +169,15 @@ impl DatePatternSelectionData {
 
 impl<'a> DatePatternDataBorrowed<'a> {
     #[inline]
-    pub(crate) fn metadata(self) -> PatternMetadata {
+    pub(crate) fn as_borrowed(self) -> PatternBorrowed<'a> {
         match self {
-            Self::Resolved(pb) => pb.metadata,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
-        match self {
-            Self::Resolved(pb) => pb.items.iter(),
+            Self::Resolved(pb) => pb,
         }
     }
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pb = match self {
-            Self::Resolved(pb) => pb,
-        };
-        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(self.as_borrowed().as_pattern().into_owned())
     }
 }
 
@@ -213,7 +186,7 @@ impl TimePatternSelectionData {
         provider: &P,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<TimePatternV1Marker> + ?Sized,
     {
@@ -242,7 +215,7 @@ impl TimePatternSelectionData {
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
@@ -254,7 +227,7 @@ impl TimePatternSelectionData {
                     false,
                     "invalid neo skeleton components: {components:?}: {e:?}"
                 );
-                return Err(Error::UnsupportedOptions);
+                return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
         locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
@@ -298,25 +271,15 @@ impl TimePatternSelectionData {
 
 impl<'a> TimePatternDataBorrowed<'a> {
     #[inline]
-    pub(crate) fn metadata(self) -> PatternMetadata {
+    pub(crate) fn as_borrowed(self) -> PatternBorrowed<'a> {
         match self {
-            Self::Resolved(pb) => pb.metadata,
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
-        match self {
-            Self::Resolved(pb) => pb.items.iter(),
+            Self::Resolved(pb) => pb,
         }
     }
 
     #[inline]
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pb = match self {
-            Self::Resolved(pb) => pb,
-        };
-        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
+        DateTimePattern::from_runtime_pattern(self.as_borrowed().as_pattern().into_owned())
     }
 }
 
@@ -327,7 +290,7 @@ impl DateTimeGluePatternSelectionData {
         locale: &DataLocale,
         date_length: length::Date,
         time_length: length::Time,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<TimePatternV1Marker> + DataProvider<DateTimePatternV1Marker> + ?Sized,
         M: DataMarker<Yokeable = DatePatternV1<'static>>,
@@ -466,35 +429,6 @@ impl<'a> DateTimePatternDataBorrowed<'a> {
             Self::Time(TimePatternDataBorrowed::Resolved(pb)) => pb,
             Self::DateTimeGlue { .. } => todo!(),
         };
-        DateTimePattern::from_runtime_pattern(pb.to_pattern().into_owned())
-    }
-}
-
-impl<'a, 'b, I> DateTimeWriter<'a, 'b, I>
-where
-    I: Iterator<Item = PatternItem> + 'b,
-    'a: 'b,
-{
-    pub(crate) fn write_to<W: fmt::Write + ?Sized>(self, sink: &mut W) -> fmt::Result {
-        let loc_datetime =
-            DateTimeInputWithWeekConfig::new(self.datetime, self.names.week_calculator);
-        let Some(fixed_decimal_formatter) = self.names.fixed_decimal_formatter else {
-            // TODO(#4340): Make the FixedDecimalFormatter optional
-            icu_provider::_internal::log::warn!("FixedDecimalFormatter not loaded");
-            return Err(core::fmt::Error);
-        };
-        write_pattern(
-            self.pattern_items,
-            self.pattern_metadata,
-            Some(&self.names),
-            Some(&self.names),
-            &loc_datetime,
-            fixed_decimal_formatter,
-            sink,
-        )
-        .map_err(|_e| {
-            icu_provider::_internal::log::warn!("{_e:?}");
-            core::fmt::Error
-        })
+        DateTimePattern::from_runtime_pattern(pb.as_pattern().into_owned())
     }
 }

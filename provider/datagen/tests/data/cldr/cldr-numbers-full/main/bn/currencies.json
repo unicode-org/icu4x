@@ -3,7 +3,7 @@
     "bn": {
       "identity": {
         "version": {
-          "_cldrVersion": "44.1"
+          "_cldrVersion": "45"
         },
         "language": "bn"
       },
@@ -897,6 +897,9 @@
             "displayName": "পূর্ব ক্যারাবিয়ান ডলার",
             "symbol": "EC$",
             "symbol-alt-narrow": "$"
+          },
+          "XCG": {
+            "symbol": "Cg."
           },
           "XEU": {
             "displayName": "ইউরোপীয় মুদ্রা একক"

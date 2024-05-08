@@ -211,6 +211,13 @@ fn update_langid_minimize(
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for LocaleExpander {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocaleExpander {
     /// Creates a [`LocaleExpander`] with compiled data for commonly-used locales
     /// (locales with *Basic* or higher [CLDR coverage]).

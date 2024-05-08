@@ -95,6 +95,58 @@ pub trait TimeZoneInput {
 }
 
 /// A combination of a formattable calendar date and ISO time.
+///
+/// # Examples
+///
+/// If the trait does not return all required fields, an error output will occur:
+///
+/// ```
+/// use icu::calendar::*;
+/// use icu::calendar::types::*;
+/// use icu::datetime::input::*;
+/// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
+/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
+/// use icu::datetime::neo_pattern::DateTimePattern;
+/// use icu::locid::locale;
+/// use writeable::assert_try_writeable_eq;
+///
+/// struct Empty;
+///
+/// impl DateInput for Empty {
+///     type Calendar = Gregorian;
+///     fn year(&self) -> Option<FormattableYear> { None }
+///     fn month(&self) -> Option<FormattableMonth> { None }
+///     fn day_of_month(&self) -> Option<DayOfMonth> { None }
+///     fn iso_weekday(&self) -> Option<IsoWeekday> { None }
+///     fn day_of_year_info(&self) -> Option<DayOfYearInfo> { None }
+///     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> { None }
+///     fn to_iso(&self) -> icu::calendar::Date<Iso> { todo!() }
+/// }
+///
+/// impl IsoTimeInput for Empty {
+///     fn hour(&self) -> Option<IsoHour> { None }
+///     fn minute(&self) -> Option<IsoMinute> { None }
+///     fn second(&self) -> Option<IsoSecond> { None }
+///     fn nanosecond(&self) -> Option<NanoSecond> { None }
+/// }
+///
+/// // Create an instance that can format abbreviated month, weekday, and day period names:
+/// let mut names: TypedDateTimeNames<Gregorian> =
+///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+///
+/// // Create a pattern from a pattern string:
+/// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
+/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+///
+/// // The pattern string contains lots of symbols, but our DateTimeInput is empty!
+/// let mut buffer = String::new();
+/// // Missing data is filled in on a best-effort basis, and an error is signaled.
+/// assert_try_writeable_eq!(
+///     names.with_pattern(&pattern).format(&Empty),
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a}",
+///     Err(DateTimeWriteError::MissingInputField("iso_weekday"))
+/// );
+/// ```
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
@@ -121,11 +173,6 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
     /// TODO(#487): Implement flexible day periods.
     fn flexible_day_period(&self);
-}
-
-pub(crate) struct DateTimeInputWithWeekConfig<'data, T: DateTimeInput> {
-    data: &'data T,
-    calendar: Option<&'data WeekCalculator>,
 }
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
@@ -265,64 +312,57 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     }
 }
 
-impl<'data, T: DateTimeInput> DateTimeInputWithWeekConfig<'data, T> {
-    pub(crate) fn new(data: &'data T, calendar: Option<&'data WeekCalculator>) -> Self {
-        Self { data, calendar }
-    }
+pub(crate) enum ExtractedDateTimeInputWeekCalculatorError {
+    Missing(&'static str),
 }
 
-impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWeekConfig<'data, T> {
-    fn datetime(&self) -> &T {
-        self.data
+impl ExtractedDateTimeInput {
+    pub(crate) fn week_of_month(
+        &self,
+        calculator: &WeekCalculator,
+    ) -> Result<WeekOfMonth, ExtractedDateTimeInputWeekCalculatorError> {
+        let day_of_month =
+            self.day_of_month()
+                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
+                    "day_of_month",
+                ))?;
+        let iso_weekday =
+            self.iso_weekday()
+                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
+                    "iso_weekday",
+                ))?;
+        Ok(calculator.week_of_month(day_of_month, iso_weekday))
     }
 
-    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError> {
-        let config = self.calendar.ok_or(CalendarError::MissingCalendar)?;
-        let day_of_month = self
-            .data
-            .day_of_month()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::day_of_month"))?;
-        let iso_weekday = self
-            .data
-            .iso_weekday()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::iso_weekday"))?;
-        Ok(config.week_of_month(day_of_month, iso_weekday))
-    }
-
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError> {
-        let config = self.calendar.ok_or(CalendarError::MissingCalendar)?;
-        let day_of_year_info = self
-            .data
-            .day_of_year_info()
-            .ok_or(CalendarError::MissingInput(
-                "DateTimeInput::day_of_year_info",
-            ))?;
-        let iso_weekday = self
-            .data
-            .iso_weekday()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::iso_weekday"))?;
-        let week_of = config.week_of_year(day_of_year_info, iso_weekday)?;
+    pub(crate) fn week_of_year(
+        &self,
+        calculator: &WeekCalculator,
+    ) -> Result<(FormattableYear, WeekOfYear), ExtractedDateTimeInputWeekCalculatorError> {
+        let day_of_year_info =
+            self.day_of_year_info()
+                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
+                    "day_of_year_info",
+                ))?;
+        let iso_weekday =
+            self.iso_weekday()
+                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing(
+                    "iso_weekday",
+                ))?;
+        // We don't have any calendars with < 14 days per year, and it's unlikely we'll add one
+        debug_assert!(day_of_year_info.day_of_year >= icu_calendar::week::MIN_UNIT_DAYS);
+        debug_assert!(day_of_year_info.days_in_prev_year >= icu_calendar::week::MIN_UNIT_DAYS);
+        #[allow(clippy::unwrap_used)]
+        let week_of = calculator
+            .week_of_year(day_of_year_info, iso_weekday)
+            .unwrap();
         let year = match week_of.unit {
             RelativeUnit::Previous => day_of_year_info.prev_year,
             RelativeUnit::Current => self
-                .data
                 .year()
-                .ok_or(CalendarError::MissingInput("DateTimeInput::year"))?,
+                .ok_or(ExtractedDateTimeInputWeekCalculatorError::Missing("year"))?,
             RelativeUnit::Next => day_of_year_info.next_year,
         };
         Ok((year, WeekOfYear(week_of.week as u32)))
-    }
-
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError> {
-        let day_of_month = self
-            .data
-            .day_of_month()
-            .ok_or(CalendarError::MissingInput("DateTimeInput::day_of_month"))?;
-        Ok(day_of_month.into())
-    }
-
-    fn flexible_day_period(&self) {
-        todo!("#487")
     }
 }
 

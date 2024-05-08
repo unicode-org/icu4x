@@ -160,12 +160,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
-
     - name: Install harfbuzz
       run: sudo apt install libharfbuzz-dev
 
@@ -195,11 +189,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -226,11 +215,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install cargo-binstall 
       uses: taiki-e/install-action@cargo-binstall
     - name: Install cargo-all-features
@@ -258,11 +242,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -311,11 +290,6 @@ jobs:
     - name: Install jq
       run: |
         apt-get install -y jq
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
 
     # Actual job
     - name: Run `cargo make ci-job-test-c`
@@ -472,7 +446,7 @@ jobs:
       with:
         path: |
           tutorials/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
+        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install

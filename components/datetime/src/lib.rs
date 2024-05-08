@@ -165,9 +165,11 @@ pub use calendar::{InternalCldrCalendar, NeverCalendar};
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use error::MismatchedCalendarError;
+#[cfg(feature = "experimental")]
+pub use format::datetime::DateTimeWriteError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
-pub use format::neo::{FormattedDateTimePattern, TypedDateTimeNames};
+pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;

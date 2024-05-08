@@ -145,6 +145,8 @@ pub mod week {
     pub use week_of::RelativeUnit;
     pub use week_of::WeekCalculator;
     pub use week_of::WeekOf;
+    #[doc(hidden)]
+    pub use week_of::MIN_UNIT_DAYS;
 }
 
 #[doc(no_inline)]

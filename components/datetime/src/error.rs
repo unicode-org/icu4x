@@ -62,8 +62,8 @@ pub enum DateTimeError {
     /// An error originating from a missing month symbol in the data.
     #[displaydoc("Data file missing month symbol for month code {0}")]
     MissingMonthSymbol(MonthCode),
-    /// An error while attempting to format the input as a FixedDecimal
-    #[displaydoc("FixedDecimal")]
+    /// The FixedDecimalFormatter is not loaded
+    #[displaydoc("Missing FixedDecimalFormatter")]
     FixedDecimal,
     /// An error originating from FixedDecimalFormatter
     #[displaydoc("{0}")]
