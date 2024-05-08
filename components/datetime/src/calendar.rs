@@ -146,22 +146,6 @@ where
 }
 
 #[cfg(feature = "experimental")]
-pub(crate) trait DayPeriodNamesV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> DayPeriodNamesV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
 pub(crate) trait DatePatternV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }

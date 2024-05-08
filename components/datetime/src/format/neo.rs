@@ -4,7 +4,7 @@
 
 use super::datetime::{try_write_pattern, DateTimeWriteError};
 use crate::calendar::{
-    CldrCalendar, DayPeriodNamesV1Provider, MonthNamesV1Provider, WeekdayNamesV1Provider,
+    CldrCalendar, MonthNamesV1Provider, WeekdayNamesV1Provider,
     YearNamesV1Provider,
 };
 use crate::external_loaders::*;
@@ -32,7 +32,7 @@ use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
-use icu_provider::prelude::*;
+use icu_provider::{prelude::*, NeverMarker};
 use writeable::TryWriteable;
 use yoke::Yokeable;
 
@@ -112,14 +112,26 @@ where
 }
 
 /// Helper for type resolution with optional DataProvider arguments
-pub(crate) struct PhantomProvider {
-    _not_constructible: core::convert::Infallible,
-}
+pub(crate) struct PhantomProvider;
 
 impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
     #[inline]
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        unreachable!() // not constructible
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        debug_assert!(false);
+        Err(DataErrorKind::MissingDataKey.with_req(M::KEY, req))
+    }
+}
+
+impl<M: DataMarker> ResolvedDataProvider<M> for PhantomProvider {
+    #[inline]
+    fn load_resolved(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        debug_assert!(false);
+        let key = ResolvedDataProvider::<M>::key(self);
+        Err(DataErrorKind::MissingDataKey.into_error().with_req(key, req))
+    }
+    #[inline]
+    fn key(&self) -> DataKey {
+        NeverMarker::<M::Yokeable>::KEY
     }
 }
 
@@ -221,6 +233,11 @@ pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
     where
         M: DataMarker<Yokeable = Y>,
         Self: Sized;
+    fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
+    where
+        M: DataMarker<Yokeable = Y>,
+        P: ResolvedDataProvider<M> + ?Sized,
+        Self: Sized;
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output>;
 }
 
@@ -234,6 +251,14 @@ where
         M: DataMarker<Yokeable = Y>,
     {
         Some(payload.cast())
+    }
+    #[inline]
+    fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
+        where
+            M: DataMarker<Yokeable = Y>,
+            P: ResolvedDataProvider<M> + ?Sized,
+            Self: Sized {
+        Some(provider.load_resolved(req).and_then(DataResponse::take_payload).map(DataPayload::cast))
     }
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
@@ -250,8 +275,58 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
         None
     }
     #[inline]
+    fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
+        where
+            M: DataMarker<Yokeable = Y>,
+            P: ResolvedDataProvider<M> + ?Sized,
+            Self: Sized {
+        None
+        // Err(DataError::custom("cannot load into this type").with_req(provider.key(), req))
+    }
+    #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output> {
         None
+    }
+}
+
+pub(crate) trait ResolvedDataProvider<M> where M: DataMarker {
+    fn load_resolved(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+    fn key(&self) -> DataKey;
+}
+
+pub(crate) struct DataProviderAsResolvedDataProvider<M, P>
+{
+    inner: P,
+    _marker: PhantomData<M>,
+}
+
+impl<M, P> DataProviderAsResolvedDataProvider<M, P>
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M>
+{
+    pub(crate) fn new(inner: P) -> Self {
+        Self {
+            inner,
+            _marker: PhantomData
+        }
+    }
+}
+
+impl<M, M0, Y, P> ResolvedDataProvider<M0> for DataProviderAsResolvedDataProvider<M, P>
+where
+    M: KeyedDataMarker<Yokeable = Y>,
+    M0: DataMarker<Yokeable = Y>,
+    Y: for<'a> Yokeable<'a>,
+    P: DataProvider<M>
+{
+    #[inline]
+    fn load_resolved(&self, req: DataRequest) -> Result<DataResponse<M0>, DataError> {
+        self.inner.load(req).map(DataResponse::cast)
+    }
+    #[inline]
+    fn key(&self) -> DataKey {
+        M::KEY
     }
 }
 
@@ -503,8 +578,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     where
         P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
+        let provider = DataProviderAsResolvedDataProvider::new(provider);
         self.inner
-            .load_day_period_names(provider, &self.locale, field_length)?;
+            .load_day_period_names(&provider, &self.locale, field_length)?;
         Ok(self)
     }
 
@@ -706,11 +782,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     {
         let locale = &self.locale;
         self.inner
-            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker, DayPeriodNamesV1Marker>(
+            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
                 Some(provider),
                 Some(provider),
                 Some(provider),
-                Some(provider),
+                &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(provider),
                 Some(&ExternalLoaderUnstable(provider)),
                 Some(&ExternalLoaderUnstable(provider)),
                 locale,
@@ -769,11 +845,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     {
         let locale = &self.locale;
         self.inner
-            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker, DayPeriodNamesV1Marker>(
+            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
-                Some(&crate::provider::Baked),
+                &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(&crate::provider::Baked),
                 Some(&ExternalLoaderCompiledData),
                 Some(&ExternalLoaderCompiledData),
                 locale,
@@ -951,15 +1027,14 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         Ok(())
     }
 
-    pub(crate) fn load_day_period_names<P, M>(
+    pub(crate) fn load_day_period_names<P>(
         &mut self,
         provider: &P,
         locale: &DataLocale,
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: DayPeriodNamesV1Provider<M> + ?Sized,
-        M: DataMarker<Yokeable = LinearNamesV1<'static>>,
+        P: ResolvedDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             // Names for 'a' and 'b' are stored in the same data key
@@ -983,18 +1058,16 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 _ => return Err(SingleLoadError::UnsupportedField(field)),
             },
         )));
-        let payload = provider
-            .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            })
-            .and_then(DataResponse::take_payload)
-            .map_err(SingleLoadError::Data)?;
+        let payload = R::DayPeriodNames::load_from(provider, DataRequest {
+            locale: &locale,
+            metadata: Default::default(),
+        })
+        .ok_or(SingleLoadError::TypeTooNarrow(field))?
+        .map_err(SingleLoadError::Data)?;
         self.dayperiod_symbols = OptionalNames::SingleLength(
             (),
             field_length,
-            R::DayPeriodNames::maybe_from_payload(payload)
-                .ok_or(SingleLoadError::TypeTooNarrow(field))?,
+            payload,
         );
         Ok(())
     }
@@ -1095,12 +1168,12 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     /// This function has a lot of arguments because many of the arguments are generic,
     /// and pulling them out to an options struct would be cumbersome.
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn load_for_pattern<YearMarker, MonthMarker, WeekdayMarker, DayPeriodMarker>(
+    pub(crate) fn load_for_pattern<YearMarker, MonthMarker, WeekdayMarker>(
         &mut self,
         year_provider: Option<&(impl YearNamesV1Provider<YearMarker> + ?Sized)>,
         month_provider: Option<&(impl MonthNamesV1Provider<MonthMarker> + ?Sized)>,
         weekday_provider: Option<&(impl WeekdayNamesV1Provider<WeekdayMarker> + ?Sized)>,
-        dayperiod_provider: Option<&(impl DayPeriodNamesV1Provider<DayPeriodMarker> + ?Sized)>,
+        dayperiod_provider: &(impl ResolvedDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
@@ -1110,7 +1183,6 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         YearMarker: DataMarker<Yokeable = YearNamesV1<'static>>,
         MonthMarker: DataMarker<Yokeable = MonthNamesV1<'static>>,
         WeekdayMarker: DataMarker<Yokeable = LinearNamesV1<'static>>,
-        DayPeriodMarker: DataMarker<Yokeable = LinearNamesV1<'static>>,
     {
         let fields = pattern_items.filter_map(|p| match p {
             PatternItem::Field(field) => Some(field),
@@ -1160,7 +1232,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 },
                 FieldSymbol::DayPeriod(_) => {
                     self.load_day_period_names(
-                        dayperiod_provider.ok_or(LoadError::MissingNames(field))?,
+                        dayperiod_provider,
                         locale,
                         field.length,
                     )?;
