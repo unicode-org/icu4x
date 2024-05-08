@@ -24,7 +24,11 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
+//!     .with_locales_and_fallback([LocaleFamily::FULL], {
+//!         let mut options = FallbackOptions::default();
+//!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
+//!         options
+//!     })
 //!     .with_fallback_mode(FallbackMode::Hybrid)
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
