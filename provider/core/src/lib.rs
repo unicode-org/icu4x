@@ -153,7 +153,9 @@ pub mod marker;
 pub mod serde;
 
 // Types from private modules
+pub use crate::data_provider::BoundDataProvider;
 pub use crate::data_provider::DataProvider;
+pub use crate::data_provider::DataProviderWithKey;
 pub use crate::data_provider::DynamicDataProvider;
 pub use crate::error::DataError;
 pub use crate::error::DataErrorKind;
@@ -212,6 +214,8 @@ pub mod prelude {
     #[doc(no_inline)]
     #[cfg(feature = "experimental")]
     pub use crate::AuxiliaryKeys;
+    #[doc(no_inline)]
+    pub use crate::BoundDataProvider;
     #[doc(no_inline)]
     pub use crate::BufferMarker;
     #[doc(no_inline)]
