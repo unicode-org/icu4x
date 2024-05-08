@@ -13,7 +13,7 @@ use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoSkeletonLength, TypedNeoDateSkeletonComponents, TypedNeoTimeSkeletonComponents,
+    NeoSkeletonLength, TypedNeoDateSkeletonComponents, TypedNeoSkeletonData, TypedNeoTimeSkeletonComponents
 };
 use crate::options::length;
 use crate::provider::neo::*;
@@ -358,6 +358,156 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
+        Ok(Self {
+            selection,
+            names,
+            _calendar: PhantomData,
+        })
+    }
+
+    /// Formats a date.
+    ///
+    /// For an example, see [`TypedNeoDateFormatter`].
+    pub fn format<T>(&self, date: &T) -> FormattedNeoDate
+    where
+        T: DateInput<Calendar = C>,
+    {
+        let datetime = ExtractedDateTimeInput::extract_from_date(date);
+        FormattedNeoDate {
+            pattern: self.selection.select(&datetime),
+            datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
+}
+
+pub trait NeoFormatterMarker<C: CldrCalendar> {
+    type DateTimeNamesMarker: DateTimeNamesMarker;
+    type Data: TypedNeoDateSkeletonComponents<C>;
+}
+
+#[derive(Debug)]
+pub struct TypedNeoFormatter<C: CldrCalendar, R: NeoFormatterMarker<C>> {
+    selection: DatePatternSelectionData,
+    names: RawDateTimeNames<R::DateTimeNamesMarker>,
+    _calendar: PhantomData<C>,
+}
+
+impl<C: CldrCalendar, R: NeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
+    /// Creates a [`TypedNeoFormatter`] for a date skeleton.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::locid::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = TypedNeoFormatter::<Gregorian, YearMonthMarker>::try_new(
+    ///     &locale!("es-MX").into(),
+    ///     NeoSkeletonLength::Long
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+    ///     "diciembre de 2023"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    where
+        crate::provider::Baked: Sized
+            // Date formatting keys
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateTimePatternV1Marker>
+    {
+        Self::try_new_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            length,
+        )
+    }
+
+    gen_any_buffer_constructors_with_external_loader!(
+        try_new,
+        try_new_with_any_provider,
+        try_new_with_buffer_provider,
+        try_new_internal,
+        length: NeoSkeletonLength
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    pub fn try_new_with_length_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        length: NeoSkeletonLength,
+    ) -> Result<Self, LoadError>
+    where
+        P: ?Sized
+            // Date formatting keys
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateTimePatternV1Marker>
+            // FixedDecimalFormatter keys
+            + DataProvider<DecimalSymbolsV1Marker>
+            // WeekCalculator keys
+            + DataProvider<WeekDataV2Marker>,
+    {
+        Self::try_new_internal(
+            provider,
+            &ExternalLoaderUnstable(provider),
+            locale,
+            length,
+        )
+    }
+
+    fn try_new_internal<P, L>(
+        provider: &P,
+        loader: &L,
+        locale: &DataLocale,
+        length: NeoSkeletonLength,
+    ) -> Result<Self, LoadError>
+    where
+        P: ?Sized
+            // Date formatting keys
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateTimePatternV1Marker>,
+        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
+    {
+        let selection = DatePatternSelectionData::try_new_with_skeleton::<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>(
+            provider, locale, length, <R::Data as TypedNeoDateSkeletonComponents<C>>::COMPONENTS
+        )
+        .map_err(LoadError::Data)?;
+        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
+        names
+            .load_for_pattern::<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>(
+                Some(provider),           // year
+                Some(provider),           // month
+                Some(provider),           // weekday
+                Some(provider),           // day period
+                Some(loader),             // fixed decimal formatter
+                Some(loader),             // week calculator
+                locale,
+                selection.pattern_items_for_data_loading(),
+            )?;
         Ok(Self {
             selection,
             names,
