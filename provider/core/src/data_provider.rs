@@ -8,6 +8,63 @@ use crate::marker::{DataMarker, KeyedDataMarker};
 use crate::request::DataRequest;
 use crate::response::DataResponse;
 
+/// A data provider that loads data for a specific [`DataKey`].
+pub trait DataProvider<M>
+where
+    M: KeyedDataMarker,
+{
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+impl<'a, M, P> DataProvider<M> for &'a P
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (*self).load(req)
+    }
+}
+
+impl<M, P> DataProvider<M> for alloc::boxed::Box<P>
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load(req)
+    }
+}
+
+impl<M, P> DataProvider<M> for alloc::rc::Rc<P>
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load(req)
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> DataProvider<M> for alloc::sync::Arc<P>
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load(req)
+    }
+}
+
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`DataProvider`], there may be multiple keys corresponding to the same data type.
@@ -25,16 +82,15 @@ where
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
-/// A data provider that loads data for a specific [`DataKey`].
-pub trait DataProvider<M>
+impl<'a, M, P> DynamicDataProvider<M> for &'a P
 where
-    M: KeyedDataMarker,
+    M: DataMarker,
+    P: DynamicDataProvider<M> + ?Sized,
 {
-    /// Query the provider for data, returning the result.
-    ///
-    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
-    /// Error with more information.
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+    #[inline]
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (*self).load_data(key, req)
+    }
 }
 
 impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
@@ -42,6 +98,30 @@ where
     M: DataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
+    #[inline]
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(key, req)
+    }
+}
+
+impl<M, P> DynamicDataProvider<M> for alloc::rc::Rc<P>
+where
+    M: DataMarker,
+    P: DynamicDataProvider<M> + ?Sized,
+{
+    #[inline]
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(key, req)
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<M, P> DynamicDataProvider<M> for alloc::sync::Arc<P>
+where
+    M: DataMarker,
+    P: DynamicDataProvider<M> + ?Sized,
+{
+    #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         (**self).load_data(key, req)
     }
