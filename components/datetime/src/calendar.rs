@@ -659,7 +659,7 @@ pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
     pub(crate) kind: AnyCalendarKind,
 }
 
-pub(crate) trait AnyCalendarProviderHelper<M>
+pub trait CalTyp<M>
 where
     M: DataMarker,
 {
@@ -681,9 +681,9 @@ where
     type Roc: KeyedDataMarker<Yokeable = M::Yokeable>;
 }
 
-pub(crate) struct AnyCalendarProviderWithDataHelper;
+pub(crate) struct FullDataAnyCalendarHelper;
 
-impl AnyCalendarProviderHelper<ErasedDatePatternV1Marker> for AnyCalendarProviderWithDataHelper {
+impl CalTyp<ErasedDatePatternV1Marker> for FullDataAnyCalendarHelper {
     type Buddhist = <Buddhist as CldrCalendar>::DatePatternV1Marker;
     type Chinese = <Chinese as CldrCalendar>::DatePatternV1Marker;
     type Coptic = <Coptic as CldrCalendar>::DatePatternV1Marker;
@@ -700,6 +700,46 @@ impl AnyCalendarProviderHelper<ErasedDatePatternV1Marker> for AnyCalendarProvide
     type JapaneseExtended = <JapaneseExtended as CldrCalendar>::DatePatternV1Marker;
     type Persian = <Persian as CldrCalendar>::DatePatternV1Marker;
     type Roc = <Roc as CldrCalendar>::DatePatternV1Marker;
+}
+
+impl CalTyp<YearNamesV1Marker> for FullDataAnyCalendarHelper {
+    type Buddhist = <Buddhist as CldrCalendar>::YearNamesV1Marker;
+    type Chinese = <Chinese as CldrCalendar>::YearNamesV1Marker;
+    type Coptic = <Coptic as CldrCalendar>::YearNamesV1Marker;
+    type Dangi = <Dangi as CldrCalendar>::YearNamesV1Marker;
+    type Ethiopian = <Ethiopian as CldrCalendar>::YearNamesV1Marker;
+    type Gregorian = <Gregorian as CldrCalendar>::YearNamesV1Marker;
+    type Hebrew = <Hebrew as CldrCalendar>::YearNamesV1Marker;
+    type Indian = <Indian as CldrCalendar>::YearNamesV1Marker;
+    type IslamicCivil = <IslamicCivil as CldrCalendar>::YearNamesV1Marker;
+    type IslamicObservational = <IslamicObservational as CldrCalendar>::YearNamesV1Marker;
+    type IslamicTabular = <IslamicTabular as CldrCalendar>::YearNamesV1Marker;
+    type IslamicUmmAlQura = <IslamicUmmAlQura as CldrCalendar>::YearNamesV1Marker;
+    type Japanese = <Japanese as CldrCalendar>::YearNamesV1Marker;
+    type JapaneseExtended = <JapaneseExtended as CldrCalendar>::YearNamesV1Marker;
+    type Persian = <Persian as CldrCalendar>::YearNamesV1Marker;
+    type Roc = <Roc as CldrCalendar>::YearNamesV1Marker;
+}
+
+pub(crate) struct NoDataAnyCalendarHelper;
+
+impl CalTyp<YearNamesV1Marker> for NoDataAnyCalendarHelper {
+    type Buddhist = NeverMarker<YearNamesV1<'static>>;
+    type Chinese = NeverMarker<YearNamesV1<'static>>;
+    type Coptic = NeverMarker<YearNamesV1<'static>>;
+    type Dangi = NeverMarker<YearNamesV1<'static>>;
+    type Ethiopian = NeverMarker<YearNamesV1<'static>>;
+    type Gregorian = NeverMarker<YearNamesV1<'static>>;
+    type Hebrew = NeverMarker<YearNamesV1<'static>>;
+    type Indian = NeverMarker<YearNamesV1<'static>>;
+    type IslamicCivil = NeverMarker<YearNamesV1<'static>>;
+    type IslamicObservational = NeverMarker<YearNamesV1<'static>>;
+    type IslamicTabular = NeverMarker<YearNamesV1<'static>>;
+    type IslamicUmmAlQura = NeverMarker<YearNamesV1<'static>>;
+    type Japanese = NeverMarker<YearNamesV1<'static>>;
+    type JapaneseExtended = NeverMarker<YearNamesV1<'static>>;
+    type Persian = NeverMarker<YearNamesV1<'static>>;
+    type Roc = NeverMarker<YearNamesV1<'static>>;
 }
 
 pub(crate) struct AnyCalendarProvider4<H, P> {
@@ -721,7 +761,7 @@ impl<H, P> AnyCalendarProvider4<H, P> {
 impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider4<H, P>
 where
     M: DataMarker,
-    H: AnyCalendarProviderHelper<M>,
+    H: CalTyp<M>,
     P: Sized
         + DataProvider<H::Buddhist>
         + DataProvider<H::Chinese>
@@ -1245,7 +1285,7 @@ macro_rules! impl_load_any_calendar {
 #[cfg(feature = "experimental")]
 impl_load_any_calendar!([
     (ErasedDatePatternV1Marker, DatePatternV1Marker),
-    (ErasedYearNamesV1Marker, YearNamesV1Marker),
+    (YearNamesV1Marker, YearNamesV1Marker),
     (ErasedMonthNamesV1Marker, MonthNamesV1Marker),
     (ErasedPackedSkeletonDataV1Marker, DateSkeletonPatternsV1Marker)
 ], [

@@ -301,7 +301,7 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
 pub struct DateMarker {}
 
 impl DateTimeNamesMarker for DateMarker {
-    type YearNames = DataPayload<ErasedYearNamesV1Marker>;
+    type YearNames = DataPayload<YearNamesV1Marker>;
     type MonthNames = DataPayload<ErasedMonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = ();
@@ -321,7 +321,7 @@ impl DateTimeNamesMarker for TimeMarker {
 pub struct DateTimeMarker {}
 
 impl DateTimeNamesMarker for DateTimeMarker {
-    type YearNames = DataPayload<ErasedYearNamesV1Marker>;
+    type YearNames = DataPayload<YearNamesV1Marker>;
     type MonthNames = DataPayload<ErasedMonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
@@ -910,7 +910,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: BoundDataProvider<ErasedYearNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
@@ -1142,7 +1142,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn load_for_pattern(
         &mut self,
-        year_provider: &(impl BoundDataProvider<ErasedYearNamesV1Marker> + ?Sized),
+        year_provider: &(impl BoundDataProvider<YearNamesV1Marker> + ?Sized),
         month_provider: &(impl BoundDataProvider<ErasedMonthNamesV1Marker> + ?Sized),
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),

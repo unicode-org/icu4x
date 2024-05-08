@@ -695,8 +695,8 @@ pub struct DateTimeSkeletonsV1<'data> {
 
 /// Calendar-agnostic year name data marker
 #[derive(Debug)]
-pub struct ErasedYearNamesV1Marker;
-impl DataMarker for ErasedYearNamesV1Marker {
+pub struct YearNamesV1Marker;
+impl DataMarker for YearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
 }
 

@@ -5,8 +5,8 @@
 //! High-level entrypoints for Neo DateTime Formatter
 
 use crate::calendar::{
-    AnyCalendarProvider, AnyCalendarProvider2, AnyCalendarProvider3, AnyCalendarProvider4,
-    AnyCalendarProviderWithDataHelper,
+    AnyCalendarProvider, AnyCalendarProvider2, AnyCalendarProvider3, AnyCalendarProvider4, CalTyp,
+    FullDataAnyCalendarHelper,
 };
 use crate::external_loaders::*;
 use crate::format::datetime::DateTimeWriteError;
@@ -623,12 +623,23 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     where
         crate::provider::Baked: Sized
             // Date formatting keys
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistYearNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistMonthNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistDateNeoSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianYearNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianMonthNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianDateNeoSkeletonPatternsV1Marker>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Roc>
+
             + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
@@ -659,12 +670,6 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     where
         P: ?Sized
             // Date formatting keys
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistYearNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistMonthNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistDateNeoSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianYearNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianMonthNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianDateNeoSkeletonPatternsV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
@@ -693,12 +698,6 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     where
         P: ?Sized
             // Date formatting keys
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistYearNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistMonthNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::BuddhistDateNeoSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianYearNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianMonthNamesV1Marker>
-            + DataProvider<<R::Data as NeoSkeletonData>::GregorianDateNeoSkeletonPatternsV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
@@ -968,7 +967,7 @@ impl NeoDateFormatter {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
         let any_calendar_provider =
-            AnyCalendarProvider4::<AnyCalendarProviderWithDataHelper, _>::new(provider, kind);
+            AnyCalendarProvider4::<FullDataAnyCalendarHelper, _>::new(provider, kind);
         let selection =
             DatePatternSelectionData::try_new_with_length(&any_calendar_provider, locale, length)
                 .map_err(LoadError::Data)?;
