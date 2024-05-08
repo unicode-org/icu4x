@@ -4,13 +4,13 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-use icu_calendar::any_calendar::CalM;
 use crate::calendar::FullDataCalM;
 use crate::calendar::NeverCalendar;
 use crate::calendar::NoDataCalM;
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
+use icu_calendar::any_calendar::CalM;
 use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
 use tinystr::tinystr;

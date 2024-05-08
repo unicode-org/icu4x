@@ -749,7 +749,10 @@ impl CalM<SkeletaV1Marker> for FullDataCalM {
 #[derive(Debug)]
 pub struct NoDataCalM;
 
-impl<M> CalM<M> for NoDataCalM where M: DataMarker {
+impl<M> CalM<M> for NoDataCalM
+where
+    M: DataMarker,
+{
     type Buddhist = NeverMarker<M::Yokeable>;
     type Chinese = NeverMarker<M::Yokeable>;
     type Coptic = NeverMarker<M::Yokeable>;

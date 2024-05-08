@@ -101,7 +101,31 @@ const _: () = {
     icu_datetime_data::impl_datetime_patterns_time_skeleton_v1!(Baked);
 
     #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_buddhist_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_chinese_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_coptic_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_dangi_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_ethiopic_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_patterns_gregory_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_hebrew_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_indian_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_islamic_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_japanese_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_japanext_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_persian_skeleton_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_roc_skeleton_v1!(Baked);
 
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_buddhist_months_v1!(Baked);
