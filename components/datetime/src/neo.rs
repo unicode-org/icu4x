@@ -539,7 +539,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
                 Some(provider),           // year
                 Some(provider),           // month
                 Some(provider),           // weekday
-                &DataProviderAsResolvedDataProvider::<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker, _>::new(provider), // day period
+                &<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker::bind(provider), // day period
                 Some(loader),             // fixed decimal formatter
                 Some(loader),             // week calculator
                 locale,
@@ -1165,7 +1165,7 @@ impl NeoTimeFormatter {
             None::<&PhantomProvider>, // year
             None::<&PhantomProvider>, // month
             None::<&PhantomProvider>, // weekday
-            &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(provider), // day period
+            &DayPeriodNamesV1Marker::bind(provider), // day period
             Some(loader),             // fixed decimal formatter
             None::<&PhantomLoader>,   // week calculator
             locale,
@@ -1271,7 +1271,7 @@ impl NeoTimeFormatter {
             None::<&PhantomProvider>, // year
             None::<&PhantomProvider>, // month
             None::<&PhantomProvider>, // weekday
-            &DataProviderAsResolvedDataProvider::<S::DayPeriodNamesV1Marker, _>::new(provider), // day period
+            &S::DayPeriodNamesV1Marker::bind(provider), // day period
             Some(loader),             // fixed decimal formatter
             None::<&PhantomLoader>,   // week calculator
             locale,
@@ -1687,7 +1687,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
                 Some(provider), // year
                 Some(provider), // month
                 Some(provider), // weekday
-                &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(provider), // day period
+                &DayPeriodNamesV1Marker::bind(provider), // day period
                 Some(loader),   // fixed decimal formatter
                 Some(loader),   // week calculator
                 locale,
@@ -2299,7 +2299,7 @@ impl NeoDateTimeFormatter {
             Some(&any_calendar_provider), // year
             Some(&any_calendar_provider), // month
             Some(provider),               // weekday
-            &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(provider), // day period
+            &DayPeriodNamesV1Marker::bind(provider), // day period
             Some(loader),                 // fixed decimal formatter
             Some(loader),                 // week calculator
             locale,

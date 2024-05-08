@@ -122,15 +122,15 @@ impl<M: KeyedDataMarker> DataProvider<M> for PhantomProvider {
     }
 }
 
-impl<M: DataMarker> ResolvedDataProvider<M> for PhantomProvider {
+impl<M: DataMarker> BoundDataProvider<M> for PhantomProvider {
     #[inline]
-    fn load_resolved(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         debug_assert!(false);
-        let key = ResolvedDataProvider::<M>::key(self);
+        let key = BoundDataProvider::<M>::bound_key(self);
         Err(DataErrorKind::MissingDataKey.into_error().with_req(key, req))
     }
     #[inline]
-    fn key(&self) -> DataKey {
+    fn bound_key(&self) -> DataKey {
         NeverMarker::<M::Yokeable>::KEY
     }
 }
@@ -236,7 +236,7 @@ pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
     where
         M: DataMarker<Yokeable = Y>,
-        P: ResolvedDataProvider<M> + ?Sized,
+        P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output>;
 }
@@ -256,9 +256,9 @@ where
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
         where
             M: DataMarker<Yokeable = Y>,
-            P: ResolvedDataProvider<M> + ?Sized,
+            P: BoundDataProvider<M> + ?Sized,
             Self: Sized {
-        Some(provider.load_resolved(req).and_then(DataResponse::take_payload).map(DataPayload::cast))
+        Some(provider.load_bound(req).and_then(DataResponse::take_payload).map(DataPayload::cast))
     }
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
@@ -278,7 +278,7 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
         where
             M: DataMarker<Yokeable = Y>,
-            P: ResolvedDataProvider<M> + ?Sized,
+            P: BoundDataProvider<M> + ?Sized,
             Self: Sized {
         None
         // Err(DataError::custom("cannot load into this type").with_req(provider.key(), req))
@@ -286,47 +286,6 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output> {
         None
-    }
-}
-
-pub(crate) trait ResolvedDataProvider<M> where M: DataMarker {
-    fn load_resolved(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-    fn key(&self) -> DataKey;
-}
-
-pub(crate) struct DataProviderAsResolvedDataProvider<M, P>
-{
-    inner: P,
-    _marker: PhantomData<M>,
-}
-
-impl<M, P> DataProviderAsResolvedDataProvider<M, P>
-where
-    M: KeyedDataMarker,
-    P: DataProvider<M>
-{
-    pub(crate) fn new(inner: P) -> Self {
-        Self {
-            inner,
-            _marker: PhantomData
-        }
-    }
-}
-
-impl<M, M0, Y, P> ResolvedDataProvider<M0> for DataProviderAsResolvedDataProvider<M, P>
-where
-    M: KeyedDataMarker<Yokeable = Y>,
-    M0: DataMarker<Yokeable = Y>,
-    Y: for<'a> Yokeable<'a>,
-    P: DataProvider<M>
-{
-    #[inline]
-    fn load_resolved(&self, req: DataRequest) -> Result<DataResponse<M0>, DataError> {
-        self.inner.load(req).map(DataResponse::cast)
-    }
-    #[inline]
-    fn key(&self) -> DataKey {
-        M::KEY
     }
 }
 
@@ -578,7 +537,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     where
         P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
-        let provider = DataProviderAsResolvedDataProvider::new(provider);
+        let provider = DayPeriodNamesV1Marker::bind(provider);
         self.inner
             .load_day_period_names(&provider, &self.locale, field_length)?;
         Ok(self)
@@ -786,7 +745,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
                 Some(provider),
                 Some(provider),
                 Some(provider),
-                &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(provider),
+                &DayPeriodNamesV1Marker::bind(provider),
                 Some(&ExternalLoaderUnstable(provider)),
                 Some(&ExternalLoaderUnstable(provider)),
                 locale,
@@ -849,7 +808,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
                 Some(&crate::provider::Baked),
-                &DataProviderAsResolvedDataProvider::<DayPeriodNamesV1Marker, _>::new(&crate::provider::Baked),
+                &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
                 Some(&ExternalLoaderCompiledData),
                 Some(&ExternalLoaderCompiledData),
                 locale,
@@ -1034,7 +993,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: ResolvedDataProvider<DayPeriodNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             // Names for 'a' and 'b' are stored in the same data key
@@ -1173,7 +1132,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         year_provider: Option<&(impl YearNamesV1Provider<YearMarker> + ?Sized)>,
         month_provider: Option<&(impl MonthNamesV1Provider<MonthMarker> + ?Sized)>,
         weekday_provider: Option<&(impl WeekdayNamesV1Provider<WeekdayMarker> + ?Sized)>,
-        dayperiod_provider: &(impl ResolvedDataProvider<DayPeriodNamesV1Marker> + ?Sized),
+        dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
