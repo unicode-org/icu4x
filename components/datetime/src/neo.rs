@@ -4,7 +4,10 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::calendar::{AnyCalendarProvider, AnyCalendarProvider2, AnyCalendarProvider3};
+use crate::calendar::{
+    AnyCalendarProvider, AnyCalendarProvider2, AnyCalendarProvider3, AnyCalendarProvider4,
+    AnyCalendarProviderWithDataHelper,
+};
 use crate::external_loaders::*;
 use crate::format::datetime::DateTimeWriteError;
 use crate::format::datetime::{try_write_field, try_write_pattern};
@@ -964,25 +967,8 @@ impl NeoDateFormatter {
     {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
-        let any_calendar_provider = AnyCalendarProvider3::<
-            BuddhistDatePatternV1Marker,
-            ChineseDatePatternV1Marker,
-            CopticDatePatternV1Marker,
-            DangiDatePatternV1Marker,
-            EthiopianDatePatternV1Marker,
-            GregorianDatePatternV1Marker,
-            HebrewDatePatternV1Marker,
-            IndianDatePatternV1Marker,
-            IslamicDatePatternV1Marker,
-            IslamicDatePatternV1Marker,
-            IslamicDatePatternV1Marker,
-            IslamicDatePatternV1Marker,
-            JapaneseDatePatternV1Marker,
-            JapaneseExtendedDatePatternV1Marker,
-            PersianDatePatternV1Marker,
-            RocDatePatternV1Marker,
-            _
-        >::new(provider, kind);
+        let any_calendar_provider =
+            AnyCalendarProvider4::<AnyCalendarProviderWithDataHelper, _>::new(provider, kind);
         let selection =
             DatePatternSelectionData::try_new_with_length(&any_calendar_provider, locale, length)
                 .map_err(LoadError::Data)?;

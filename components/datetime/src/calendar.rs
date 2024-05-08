@@ -18,6 +18,7 @@ use icu_calendar::{
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
+use yoke::Yokeable;
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::provider::neo::*;
@@ -658,6 +659,137 @@ pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
     pub(crate) kind: AnyCalendarKind,
 }
 
+pub(crate) trait AnyCalendarProviderHelper<M>
+where
+    M: DataMarker,
+{
+    type Buddhist: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Chinese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Coptic: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Dangi: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Ethiopian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Gregorian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Hebrew: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Indian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicCivil: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicObservational: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicTabular: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type IslamicUmmAlQura: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Japanese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type JapaneseExtended: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Persian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    type Roc: KeyedDataMarker<Yokeable = M::Yokeable>;
+}
+
+pub(crate) struct AnyCalendarProviderWithDataHelper;
+
+impl AnyCalendarProviderHelper<ErasedDatePatternV1Marker> for AnyCalendarProviderWithDataHelper {
+    type Buddhist = <Buddhist as CldrCalendar>::DatePatternV1Marker;
+    type Chinese = <Chinese as CldrCalendar>::DatePatternV1Marker;
+    type Coptic = <Coptic as CldrCalendar>::DatePatternV1Marker;
+    type Dangi = <Dangi as CldrCalendar>::DatePatternV1Marker;
+    type Ethiopian = <Ethiopian as CldrCalendar>::DatePatternV1Marker;
+    type Gregorian = <Gregorian as CldrCalendar>::DatePatternV1Marker;
+    type Hebrew = <Hebrew as CldrCalendar>::DatePatternV1Marker;
+    type Indian = <Indian as CldrCalendar>::DatePatternV1Marker;
+    type IslamicCivil = <IslamicCivil as CldrCalendar>::DatePatternV1Marker;
+    type IslamicObservational = <IslamicObservational as CldrCalendar>::DatePatternV1Marker;
+    type IslamicTabular = <IslamicTabular as CldrCalendar>::DatePatternV1Marker;
+    type IslamicUmmAlQura = <IslamicUmmAlQura as CldrCalendar>::DatePatternV1Marker;
+    type Japanese = <Japanese as CldrCalendar>::DatePatternV1Marker;
+    type JapaneseExtended = <JapaneseExtended as CldrCalendar>::DatePatternV1Marker;
+    type Persian = <Persian as CldrCalendar>::DatePatternV1Marker;
+    type Roc = <Roc as CldrCalendar>::DatePatternV1Marker;
+}
+
+pub(crate) struct AnyCalendarProvider4<H, P> {
+    provider: P,
+    kind: AnyCalendarKind,
+    _helper: PhantomData<H>,
+}
+
+impl<H, P> AnyCalendarProvider4<H, P> {
+    pub(crate) fn new(provider: P, kind: AnyCalendarKind) -> Self {
+        Self {
+            provider,
+            kind,
+            _helper: PhantomData,
+        }
+    }
+}
+
+impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider4<H, P>
+where
+    M: DataMarker,
+    H: AnyCalendarProviderHelper<M>,
+    P: Sized
+        + DataProvider<H::Buddhist>
+        + DataProvider<H::Chinese>
+        + DataProvider<H::Coptic>
+        + DataProvider<H::Dangi>
+        + DataProvider<H::Ethiopian>
+        + DataProvider<H::Gregorian>
+        + DataProvider<H::Hebrew>
+        + DataProvider<H::Indian>
+        + DataProvider<H::IslamicCivil>
+        + DataProvider<H::IslamicObservational>
+        + DataProvider<H::IslamicTabular>
+        + DataProvider<H::IslamicUmmAlQura>
+        + DataProvider<H::Japanese>
+        + DataProvider<H::JapaneseExtended>
+        + DataProvider<H::Persian>
+        + DataProvider<H::Roc>,
+{
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        use AnyCalendarKind::*;
+        let p = &self.provider;
+        match self.kind {
+            Buddhist => H::Buddhist::bind(p).load_bound(req),
+            Chinese => H::Chinese::bind(p).load_bound(req),
+            Coptic => H::Coptic::bind(p).load_bound(req),
+            Dangi => H::Dangi::bind(p).load_bound(req),
+            Ethiopian => H::Ethiopian::bind(p).load_bound(req),
+            Gregorian => H::Gregorian::bind(p).load_bound(req),
+            Hebrew => H::Hebrew::bind(p).load_bound(req),
+            Indian => H::Indian::bind(p).load_bound(req),
+            IslamicCivil => H::IslamicCivil::bind(p).load_bound(req),
+            IslamicObservational => H::IslamicObservational::bind(p).load_bound(req),
+            IslamicTabular => H::IslamicTabular::bind(p).load_bound(req),
+            IslamicUmmAlQura => H::IslamicUmmAlQura::bind(p).load_bound(req),
+            Japanese => H::Japanese::bind(p).load_bound(req),
+            JapaneseExtended => H::JapaneseExtended::bind(p).load_bound(req),
+            Persian => H::Persian::bind(p).load_bound(req),
+            Roc => H::Roc::bind(p).load_bound(req),
+            _ => Err(
+                DataError::custom("Don't know how to load data for specified calendar")
+                    .with_debug_context(&self.kind),
+            ),
+        }
+    }
+    fn bound_key(&self) -> DataKey {
+        use AnyCalendarKind::*;
+        match self.kind {
+            Buddhist => H::Buddhist::KEY,
+            Chinese => H::Chinese::KEY,
+            Coptic => H::Coptic::KEY,
+            Dangi => H::Dangi::KEY,
+            Ethiopian => H::Ethiopian::KEY,
+            Gregorian => H::Gregorian::KEY,
+            Hebrew => H::Hebrew::KEY,
+            Indian => H::Indian::KEY,
+            IslamicCivil => H::IslamicCivil::KEY,
+            IslamicObservational => H::IslamicObservational::KEY,
+            IslamicTabular => H::IslamicTabular::KEY,
+            IslamicUmmAlQura => H::IslamicUmmAlQura::KEY,
+            Japanese => H::Japanese::KEY,
+            JapaneseExtended => H::JapaneseExtended::KEY,
+            Persian => H::Persian::KEY,
+            Roc => H::Roc::KEY,
+            _ => NeverMarker::<M::Yokeable>::KEY,
+        }
+    }
+}
+
 #[cfg(feature = "experimental")]
 pub(crate) struct AnyCalendarProvider3<
     BuddhistMarker,
@@ -716,7 +848,8 @@ impl<
         PersianMarker,
         RocMarker,
         P,
-    > AnyCalendarProvider3<
+    >
+    AnyCalendarProvider3<
         BuddhistMarker,
         ChineseMarker,
         CopticMarker,
