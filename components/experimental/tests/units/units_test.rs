@@ -69,13 +69,13 @@ fn test_cldr_unit_tests() {
             );
         }
 
-        let test_result_f64 = test.result.clone().get_ratio().to_f64().unwrap();
+        let test_result_f64 = test.result.get_ratio().to_f64().unwrap();
         let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
 
         if diff_ratio_f64 > 0.000001 {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
-                test.category, test.input_unit, test.output_unit, result_f64, test.result
+                test.category, test.input_unit, test.output_unit, result_f64, test_result_f64
             );
         }
     }
