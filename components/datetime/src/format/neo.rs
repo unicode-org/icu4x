@@ -3,10 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::datetime::{try_write_pattern, DateTimeWriteError};
-use crate::calendar::{
-    CldrCalendar, MonthNamesV1Provider, WeekdayNamesV1Provider,
-    YearNamesV1Provider,
-};
+use crate::calendar::CldrCalendar;
 use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
@@ -127,7 +124,9 @@ impl<M: DataMarker> BoundDataProvider<M> for PhantomProvider {
     fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         debug_assert!(false);
         let key = BoundDataProvider::<M>::bound_key(self);
-        Err(DataErrorKind::MissingDataKey.into_error().with_req(key, req))
+        Err(DataErrorKind::MissingDataKey
+            .into_error()
+            .with_req(key, req))
     }
     #[inline]
     fn bound_key(&self) -> DataKey {
@@ -254,11 +253,17 @@ where
     }
     #[inline]
     fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
-        where
-            M: DataMarker<Yokeable = Y>,
-            P: BoundDataProvider<M> + ?Sized,
-            Self: Sized {
-        Some(provider.load_bound(req).and_then(DataResponse::take_payload).map(DataPayload::cast))
+    where
+        M: DataMarker<Yokeable = Y>,
+        P: BoundDataProvider<M> + ?Sized,
+        Self: Sized,
+    {
+        Some(
+            provider
+                .load_bound(req)
+                .and_then(DataResponse::take_payload)
+                .map(DataPayload::cast),
+        )
     }
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
@@ -275,11 +280,14 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
         None
     }
     #[inline]
-    fn load_from<P, M>(provider: &P, req: DataRequest) -> Option<Result<Self, DataError>>
-        where
-            M: DataMarker<Yokeable = Y>,
-            P: BoundDataProvider<M> + ?Sized,
-            Self: Sized {
+    fn load_from<P, M>(_provider: &P, _req: DataRequest) -> Option<Result<Self, DataError>>
+    where
+        M: DataMarker<Yokeable = Y>,
+        P: BoundDataProvider<M> + ?Sized,
+        Self: Sized,
+    {
+        // TODO: Is it better to return DataError or SingleLoadError?
+        // SingleLoadError needs to be from the caller because it needs `field`.
         None
         // Err(DataError::custom("cannot load into this type").with_req(provider.key(), req))
     }
@@ -413,8 +421,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     where
         P: DataProvider<C::YearNamesV1Marker> + ?Sized,
     {
-        self.inner
-            .load_year_names(provider, &self.locale, field_length)?;
+        self.inner.load_year_names(
+            &C::YearNamesV1Marker::bind(provider),
+            &self.locale,
+            field_length,
+        )?;
         Ok(self)
     }
 
@@ -470,8 +481,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     where
         P: DataProvider<C::MonthNamesV1Marker> + ?Sized,
     {
-        self.inner
-            .load_month_names(provider, &self.locale, field_symbol, field_length)?;
+        self.inner.load_month_names(
+            &C::MonthNamesV1Marker::bind(provider),
+            &self.locale,
+            field_symbol,
+            field_length,
+        )?;
         Ok(self)
     }
 
@@ -595,8 +610,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     where
         P: DataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
-        self.inner
-            .load_weekday_names(provider, &self.locale, field_symbol, field_length)?;
+        self.inner.load_weekday_names(
+            &WeekdayNamesV1Marker::bind(provider),
+            &self.locale,
+            field_symbol,
+            field_length,
+        )?;
         Ok(self)
     }
 
@@ -740,17 +759,16 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + ?Sized,
     {
         let locale = &self.locale;
-        self.inner
-            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
-                Some(provider),
-                Some(provider),
-                Some(provider),
-                &DayPeriodNamesV1Marker::bind(provider),
-                Some(&ExternalLoaderUnstable(provider)),
-                Some(&ExternalLoaderUnstable(provider)),
-                locale,
-                pattern.iter_items(),
-            )?;
+        self.inner.load_for_pattern(
+            &C::YearNamesV1Marker::bind(provider),
+            &C::MonthNamesV1Marker::bind(provider),
+            &WeekdayNamesV1Marker::bind(provider),
+            &DayPeriodNamesV1Marker::bind(provider),
+            Some(&ExternalLoaderUnstable(provider)),
+            Some(&ExternalLoaderUnstable(provider)),
+            locale,
+            pattern.iter_items(),
+        )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
@@ -803,17 +821,16 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             + DataProvider<DayPeriodNamesV1Marker>,
     {
         let locale = &self.locale;
-        self.inner
-            .load_for_pattern::<C::YearNamesV1Marker, C::MonthNamesV1Marker, WeekdayNamesV1Marker>(
-                Some(&crate::provider::Baked),
-                Some(&crate::provider::Baked),
-                Some(&crate::provider::Baked),
-                &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
-                Some(&ExternalLoaderCompiledData),
-                Some(&ExternalLoaderCompiledData),
-                locale,
-                pattern.iter_items(),
-            )?;
+        self.inner.load_for_pattern(
+            &C::YearNamesV1Marker::bind(&crate::provider::Baked),
+            &C::MonthNamesV1Marker::bind(&crate::provider::Baked),
+            &WeekdayNamesV1Marker::bind(&crate::provider::Baked),
+            &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
+            Some(&ExternalLoaderCompiledData),
+            Some(&ExternalLoaderCompiledData),
+            locale,
+            pattern.iter_items(),
+        )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
             _calendar: PhantomData,
@@ -886,15 +903,14 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         }
     }
 
-    pub(crate) fn load_year_names<P, M>(
+    pub(crate) fn load_year_names<P>(
         &mut self,
         provider: &P,
         locale: &DataLocale,
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: YearNamesV1Provider<M> + ?Sized,
-        M: DataMarker<Yokeable = YearNamesV1<'static>>,
+        P: BoundDataProvider<ErasedYearNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
@@ -918,7 +934,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             },
         )));
         let payload = provider
-            .load(DataRequest {
+            .load_bound(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
             })
@@ -933,7 +949,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         Ok(())
     }
 
-    pub(crate) fn load_month_names<P, M>(
+    pub(crate) fn load_month_names<P>(
         &mut self,
         provider: &P,
         locale: &DataLocale,
@@ -941,8 +957,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: MonthNamesV1Provider<M> + ?Sized,
-        M: DataMarker<Yokeable = MonthNamesV1<'static>>,
+        P: BoundDataProvider<ErasedMonthNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
@@ -971,7 +986,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             },
         )));
         let payload = provider
-            .load(DataRequest {
+            .load_bound(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
             })
@@ -1017,21 +1032,20 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 _ => return Err(SingleLoadError::UnsupportedField(field)),
             },
         )));
-        let payload = R::DayPeriodNames::load_from(provider, DataRequest {
-            locale: &locale,
-            metadata: Default::default(),
-        })
+        let payload = R::DayPeriodNames::load_from(
+            provider,
+            DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            },
+        )
         .ok_or(SingleLoadError::TypeTooNarrow(field))?
         .map_err(SingleLoadError::Data)?;
-        self.dayperiod_symbols = OptionalNames::SingleLength(
-            (),
-            field_length,
-            payload,
-        );
+        self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
         Ok(())
     }
 
-    pub(crate) fn load_weekday_names<P, M>(
+    pub(crate) fn load_weekday_names<P>(
         &mut self,
         provider: &P,
         locale: &DataLocale,
@@ -1039,8 +1053,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: WeekdayNamesV1Provider<M> + ?Sized,
-        M: DataMarker<Yokeable = LinearNamesV1<'static>>,
+        P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Weekday(field_symbol),
@@ -1077,7 +1090,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             },
         )));
         let payload = provider
-            .load(DataRequest {
+            .load_bound(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
             })
@@ -1127,22 +1140,17 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     /// This function has a lot of arguments because many of the arguments are generic,
     /// and pulling them out to an options struct would be cumbersome.
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn load_for_pattern<YearMarker, MonthMarker, WeekdayMarker>(
+    pub(crate) fn load_for_pattern(
         &mut self,
-        year_provider: Option<&(impl YearNamesV1Provider<YearMarker> + ?Sized)>,
-        month_provider: Option<&(impl MonthNamesV1Provider<MonthMarker> + ?Sized)>,
-        weekday_provider: Option<&(impl WeekdayNamesV1Provider<WeekdayMarker> + ?Sized)>,
+        year_provider: &(impl BoundDataProvider<ErasedYearNamesV1Marker> + ?Sized),
+        month_provider: &(impl BoundDataProvider<ErasedMonthNamesV1Marker> + ?Sized),
+        weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
         pattern_items: impl Iterator<Item = PatternItem>,
-    ) -> Result<(), LoadError>
-    where
-        YearMarker: DataMarker<Yokeable = YearNamesV1<'static>>,
-        MonthMarker: DataMarker<Yokeable = MonthNamesV1<'static>>,
-        WeekdayMarker: DataMarker<Yokeable = LinearNamesV1<'static>>,
-    {
+    ) -> Result<(), LoadError> {
         let fields = pattern_items.filter_map(|p| match p {
             PatternItem::Field(field) => Some(field),
             _ => None,
@@ -1154,22 +1162,13 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             match field.symbol {
                 ///// Textual symbols /////
                 FieldSymbol::Era => {
-                    self.load_year_names(
-                        year_provider.ok_or(LoadError::MissingNames(field))?,
-                        locale,
-                        field.length,
-                    )?;
+                    self.load_year_names(year_provider, locale, field.length)?;
                 }
                 FieldSymbol::Month(symbol) => match field.length {
                     FieldLength::One => numeric_field = Some(field),
                     FieldLength::TwoDigit => numeric_field = Some(field),
                     _ => {
-                        self.load_month_names(
-                            month_provider.ok_or(LoadError::MissingNames(field))?,
-                            locale,
-                            symbol,
-                            field.length,
-                        )?;
+                        self.load_month_names(month_provider, locale, symbol, field.length)?;
                     }
                 },
                 // 'E' is always text
@@ -1181,20 +1180,11 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         numeric_field = Some(field)
                     }
                     _ => {
-                        self.load_weekday_names(
-                            weekday_provider.ok_or(LoadError::MissingNames(field))?,
-                            locale,
-                            symbol,
-                            field.length,
-                        )?;
+                        self.load_weekday_names(weekday_provider, locale, symbol, field.length)?;
                     }
                 },
                 FieldSymbol::DayPeriod(_) => {
-                    self.load_day_period_names(
-                        dayperiod_provider,
-                        locale,
-                        field.length,
-                    )?;
+                    self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
 
                 ///// Numeric symbols /////

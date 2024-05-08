@@ -49,10 +49,14 @@ where
 pub trait NeoSkeletonData: NeoSkeletonCommonData {
     type BuddhistYearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
     type BuddhistMonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
-    type BuddhistDateNeoSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type BuddhistDateNeoSkeletonPatternsV1Marker: KeyedDataMarker<
+        Yokeable = PackedSkeletonDataV1<'static>,
+    >;
     type GregorianYearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
     type GregorianMonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
-    type GregorianDateNeoSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type GregorianDateNeoSkeletonPatternsV1Marker: KeyedDataMarker<
+        Yokeable = PackedSkeletonDataV1<'static>,
+    >;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
@@ -154,8 +158,7 @@ impl NeoSkeletonData for YearMonthMarker {
     type GregorianDateNeoSkeletonPatternsV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
 }
 
-impl NeoSkeletonComponents for YearMonthMarker
-{
+impl NeoSkeletonComponents for YearMonthMarker {
     const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::YearMonth);
 }
 
@@ -195,9 +198,9 @@ impl NeoSkeletonData for YearMonthDayMarker {
     type GregorianDateNeoSkeletonPatternsV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
 }
 
-impl NeoSkeletonComponents for YearMonthDayMarker
-{
-    const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay));
+impl NeoSkeletonComponents for YearMonthDayMarker {
+    const COMPONENTS: NeoComponents =
+        NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay));
 }
 
 /// Marker for an hour and minute (12-hour or 24-hour chosen by locale), as in

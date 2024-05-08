@@ -2,12 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar::{DatePatternV1Provider, DateSkeletaV1Provider};
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{
-    NeoComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeSkeleton
-};
+use crate::neo_skeleton::{NeoComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeSkeleton};
 use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
@@ -77,14 +74,11 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
 }
 
 impl DatePatternSelectionData {
-    pub(crate) fn try_new_with_length<M>(
-        provider: &(impl DatePatternV1Provider<M> + ?Sized),
+    pub(crate) fn try_new_with_length(
+        provider: &(impl BoundDataProvider<ErasedDatePatternV1Marker> + ?Sized),
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DataError>
-    where
-        M: DataMarker<Yokeable = DatePatternV1<'static>>,
-    {
+    ) -> Result<Self, DataError> {
         let mut locale = locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
             match length {
@@ -96,7 +90,7 @@ impl DatePatternSelectionData {
             None, // no hour cycle for date patterns
         )));
         let payload = provider
-            .load(DataRequest {
+            .load_bound(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
             })?
@@ -105,15 +99,12 @@ impl DatePatternSelectionData {
         Ok(Self::SingleDate(payload))
     }
 
-    pub(crate) fn try_new_with_skeleton<M>(
-        provider: &(impl DateSkeletaV1Provider<M> + ?Sized),
+    pub(crate) fn try_new_with_skeleton(
+        provider: &(impl BoundDataProvider<ErasedPackedSkeletonDataV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoComponents,
-    ) -> Result<Self, DataError>
-    where
-        M: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
-    {
+    ) -> Result<Self, DataError> {
         let NeoComponents::Date(components) = components else {
             // TODO: Refactor to eliminate the unreachable
             unreachable!()
@@ -131,7 +122,7 @@ impl DatePatternSelectionData {
         };
         locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
-            .load(DataRequest {
+            .load_bound(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
             })?
@@ -292,8 +283,8 @@ impl<'a> TimePatternDataBorrowed<'a> {
 }
 
 impl DateTimeGluePatternSelectionData {
-    pub(crate) fn try_new_with_lengths<M, P>(
-        date_pattern_provider: &(impl DatePatternV1Provider<M> + ?Sized),
+    pub(crate) fn try_new_with_lengths<P>(
+        date_pattern_provider: &(impl BoundDataProvider<ErasedDatePatternV1Marker> + ?Sized),
         provider: &P,
         locale: &DataLocale,
         date_length: length::Date,
@@ -301,9 +292,8 @@ impl DateTimeGluePatternSelectionData {
     ) -> Result<Self, DataError>
     where
         P: DataProvider<TimePatternV1Marker> + DataProvider<DateTimePatternV1Marker> + ?Sized,
-        M: DataMarker<Yokeable = DatePatternV1<'static>>,
     {
-        let date = DatePatternSelectionData::try_new_with_length::<M>(
+        let date = DatePatternSelectionData::try_new_with_length(
             date_pattern_provider,
             locale,
             date_length,

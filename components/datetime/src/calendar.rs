@@ -81,86 +81,6 @@ pub trait CldrCalendar: InternalCldrCalendar {
     }
 }
 
-#[cfg(feature = "experimental")]
-pub(crate) trait YearNamesV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> YearNamesV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
-pub(crate) trait MonthNamesV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> MonthNamesV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
-pub(crate) trait DateSkeletaV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> DateSkeletaV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
-pub(crate) trait WeekdayNamesV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> WeekdayNamesV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
-pub(crate) trait DatePatternV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> DatePatternV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
 /// Check if the provided value is of the form `islamic-{subcal}`
 fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
     if let &[first, second] = value.as_tinystr_slice() {
@@ -738,18 +658,18 @@ pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
 
 #[cfg(feature = "experimental")]
 macro_rules! impl_load_any_calendar {
-    ([$(($trait:ident, $erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
-        impl_load_any_calendar!(@expand [$(($trait, $erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
+    ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
     };
-    (@expand [$(($trait:ident, $erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
-        $(impl_load_any_calendar!(@single_impl $trait, $erased, $marker, $tail1, $tail2);)+
+    (@expand [$(($erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
+        $(impl_load_any_calendar!(@single_impl $erased, $marker, $tail1, $tail2);)+
     };
-    (@single_impl $trait:ident, $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
-        impl<P> $trait<$erased> for AnyCalendarProvider<'_, P>
+    (@single_impl $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl<P> BoundDataProvider<$erased> for AnyCalendarProvider<'_, P>
         where
             P: ?Sized + $(DataProvider::<<$kind_cal as CldrCalendar>::$marker> +)+
         {
-            fn load(
+            fn load_bound(
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<$erased>, DataError> {
@@ -771,16 +691,27 @@ macro_rules! impl_load_any_calendar {
                             .with_debug_context(&self.kind)),
                 }
             }
+            fn bound_key(&self) -> DataKey {
+                match self.kind {
+                    $(
+                        AnyCalendarKind::$kind_cal => <$kind_cal as CldrCalendar>::$marker::KEY,
+                    )+
+                    $(
+                        AnyCalendarKind::$kind => <$cal as CldrCalendar>::$marker::KEY,
+                    )+
+                    _ => NeverMarker::<<$erased as DataMarker>::Yokeable>::KEY,
+                }
+            }
         }
     };
 }
 
 #[cfg(feature = "experimental")]
 impl_load_any_calendar!([
-    (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
-    (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
-    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker),
-    (DateSkeletaV1Provider, ErasedPackedSkeletonDataV1Marker, DateSkeletonPatternsV1Marker)
+    (ErasedDatePatternV1Marker, DatePatternV1Marker),
+    (ErasedYearNamesV1Marker, YearNamesV1Marker),
+    (ErasedMonthNamesV1Marker, MonthNamesV1Marker),
+    (ErasedPackedSkeletonDataV1Marker, DateSkeletonPatternsV1Marker)
 ], [
     Buddhist,
     Chinese,
