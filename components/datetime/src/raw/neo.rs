@@ -16,15 +16,15 @@ use zerovec::ZeroSlice;
 
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
-    SingleDate(DataPayload<ErasedDatePatternV1Marker>),
+    SingleDate(DataPayload<DatePatternV1Marker>),
     SkeletonDate {
         skeleton: NeoDateSkeleton,
-        payload: DataPayload<ErasedPackedSkeletonDataV1Marker>,
+        payload: DataPayload<SkeletaV1Marker>,
     },
     #[allow(dead_code)] // TODO(#4478)
     OptionalEra {
-        with_era: DataPayload<ErasedDatePatternV1Marker>,
-        without_era: DataPayload<ErasedDatePatternV1Marker>,
+        with_era: DataPayload<DatePatternV1Marker>,
+        without_era: DataPayload<DatePatternV1Marker>,
     },
 }
 
@@ -39,7 +39,7 @@ pub(crate) enum TimePatternSelectionData {
     #[allow(dead_code)] // TODO
     SkeletonTime {
         skeleton: NeoTimeSkeleton,
-        payload: DataPayload<ErasedPackedSkeletonDataV1Marker>,
+        payload: DataPayload<SkeletaV1Marker>,
     },
 }
 
@@ -75,7 +75,7 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
 
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_length(
-        provider: &(impl BoundDataProvider<ErasedDatePatternV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
         locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DataError> {
@@ -100,7 +100,7 @@ impl DatePatternSelectionData {
     }
 
     pub(crate) fn try_new_with_skeleton(
-        provider: &(impl BoundDataProvider<ErasedPackedSkeletonDataV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoComponents,
@@ -284,7 +284,7 @@ impl<'a> TimePatternDataBorrowed<'a> {
 
 impl DateTimeGluePatternSelectionData {
     pub(crate) fn try_new_with_lengths<P>(
-        date_pattern_provider: &(impl BoundDataProvider<ErasedDatePatternV1Marker> + ?Sized),
+        date_pattern_provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
         provider: &P,
         locale: &DataLocale,
         date_length: length::Date,

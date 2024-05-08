@@ -5,8 +5,8 @@
 //! High-level entrypoints for Neo DateTime Formatter
 
 use crate::calendar::{
-    AnyCalendarProvider, AnyCalendarProvider2, AnyCalendarProvider3, AnyCalendarProvider4, CalTyp,
-    FullDataAnyCalendarHelper,
+    AnyCalendarProvider, AnyCalendarProvider4,
+    FullDataCalM,
 };
 use crate::external_loaders::*;
 use crate::format::datetime::DateTimeWriteError;
@@ -31,6 +31,7 @@ use icu_calendar::provider::{
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV2Marker,
 };
+use icu_calendar::any_calendar::CalM;
 use icu_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
@@ -623,22 +624,56 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     where
         crate::provider::Baked: Sized
             // Date formatting keys
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Buddhist>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Chinese>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Coptic>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Dangi>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Ethiopian>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Gregorian>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Hebrew>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Indian>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Japanese>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Persian>
-            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalTyp<YearNamesV1Marker>>::Roc>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Roc>
+
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Roc>
+
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Roc>
 
             + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
@@ -670,6 +705,57 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     where
         P: ?Sized
             // Date formatting keys
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Roc>
+
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Roc>
+
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Roc>
+
             + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
@@ -698,6 +784,57 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     where
         P: ?Sized
             // Date formatting keys
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Year as CalM<YearNamesV1Marker>>::Roc>
+
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Month as CalM<MonthNamesV1Marker>>::Roc>
+
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<R::Data as NeoSkeletonData>::Skel as CalM<SkeletaV1Marker>>::Roc>
+
             + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
@@ -967,7 +1104,7 @@ impl NeoDateFormatter {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
         let any_calendar_provider =
-            AnyCalendarProvider4::<FullDataAnyCalendarHelper, _>::new(provider, kind);
+            AnyCalendarProvider4::<FullDataCalM, _>::new(provider, kind);
         let selection =
             DatePatternSelectionData::try_new_with_length(&any_calendar_provider, locale, length)
                 .map_err(LoadError::Data)?;

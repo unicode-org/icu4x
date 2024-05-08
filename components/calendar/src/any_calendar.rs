@@ -1109,6 +1109,54 @@ impl fmt::Display for AnyCalendarKind {
     }
 }
 
+/// A collection of marker types associated with all calendars.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Use with caution.
+/// </div>
+pub trait CalM<M>
+where
+    M: DataMarker,
+{
+    /// The type for a [`Buddhist`] calendar
+    type Buddhist: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Chinese`] calendar
+    type Chinese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Coptic`] calendar
+    type Coptic: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Dangi`] calendar
+    type Dangi: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`Ethiopian`] calendar, with Amete Mihret era
+    type Ethiopian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`Ethiopian`] calendar, with Amete Alem era
+    type EthiopianAmeteAlem: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Gregorian`] calendar
+    type Gregorian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Hebrew`] calendar
+    type Hebrew: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Indian`] calendar
+    type Indian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`IslamicCivil`] calendar
+    type IslamicCivil: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`IslamicObservational`] calendar
+    type IslamicObservational: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`IslamicTabular`] calendar
+    type IslamicTabular: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`IslamicUmmAlQura`] calendar
+    type IslamicUmmAlQura: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for an [`Iso`] calendar
+    type Iso: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Japanese`] calendar
+    type Japanese: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`JapaneseExtended`] calendar
+    type JapaneseExtended: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Persian`] calendar
+    type Persian: KeyedDataMarker<Yokeable = M::Yokeable>;
+    /// The type for a [`Roc`] calendar
+    type Roc: KeyedDataMarker<Yokeable = M::Yokeable>;
+}
+
 impl<C: IntoAnyCalendar> From<C> for AnyCalendar {
     fn from(c: C) -> AnyCalendar {
         c.to_any()

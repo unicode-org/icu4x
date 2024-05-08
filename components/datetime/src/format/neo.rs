@@ -302,7 +302,7 @@ pub struct DateMarker {}
 
 impl DateTimeNamesMarker for DateMarker {
     type YearNames = DataPayload<YearNamesV1Marker>;
-    type MonthNames = DataPayload<ErasedMonthNamesV1Marker>;
+    type MonthNames = DataPayload<MonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = ();
 }
@@ -322,7 +322,7 @@ pub struct DateTimeMarker {}
 
 impl DateTimeNamesMarker for DateTimeMarker {
     type YearNames = DataPayload<YearNamesV1Marker>;
-    type MonthNames = DataPayload<ErasedMonthNamesV1Marker>;
+    type MonthNames = DataPayload<MonthNamesV1Marker>;
     type WeekdayNames = DataPayload<WeekdayNamesV1Marker>;
     type DayPeriodNames = DataPayload<DayPeriodNamesV1Marker>;
 }
@@ -957,7 +957,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         field_length: FieldLength,
     ) -> Result<(), SingleLoadError>
     where
-        P: BoundDataProvider<ErasedMonthNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
     {
         let field = fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
@@ -1143,7 +1143,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn load_for_pattern(
         &mut self,
         year_provider: &(impl BoundDataProvider<YearNamesV1Marker> + ?Sized),
-        month_provider: &(impl BoundDataProvider<ErasedMonthNamesV1Marker> + ?Sized),
+        month_provider: &(impl BoundDataProvider<MonthNamesV1Marker> + ?Sized),
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,

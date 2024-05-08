@@ -702,17 +702,21 @@ impl DataMarker for YearNamesV1Marker {
 
 /// Calendar-agnostic month name data marker
 #[derive(Debug)]
-pub struct ErasedMonthNamesV1Marker;
-impl DataMarker for ErasedMonthNamesV1Marker {
+pub struct MonthNamesV1Marker;
+impl DataMarker for MonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 
-pub(crate) struct ErasedDatePatternV1Marker;
-impl DataMarker for ErasedDatePatternV1Marker {
+/// Calendar-agnostic date pattern data marker
+#[derive(Debug)]
+pub struct DatePatternV1Marker;
+impl DataMarker for DatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
 }
 
-pub(crate) struct ErasedPackedSkeletonDataV1Marker;
-impl DataMarker for ErasedPackedSkeletonDataV1Marker {
+/// Calendar-agnostic date skeleta data marker
+#[derive(Debug)]
+pub struct SkeletaV1Marker;
+impl DataMarker for SkeletaV1Marker {
     type Yokeable = PackedSkeletonDataV1<'static>;
 }

@@ -4,10 +4,10 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-use crate::calendar::CalTyp;
-use crate::calendar::FullDataAnyCalendarHelper;
+use icu_calendar::any_calendar::CalM;
+use crate::calendar::FullDataCalM;
 use crate::calendar::NeverCalendar;
-use crate::calendar::NoDataAnyCalendarHelper;
+use crate::calendar::NoDataCalM;
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
@@ -50,7 +50,12 @@ where
 
 /// Sealed trait implemented by neo skeleton marker types.
 pub trait NeoSkeletonData: NeoSkeletonCommonData {
-    type Year: CalTyp<YearNamesV1Marker>;
+    /// Cross-calendar data markers for year names.
+    type Year: CalM<YearNamesV1Marker>;
+    /// Cross-calendar data markers for month names.
+    type Month: CalM<MonthNamesV1Marker>;
+    /// Cross-calendar data markers for date skeleta.
+    type Skel: CalM<SkeletaV1Marker>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
@@ -139,12 +144,14 @@ where
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
-    type DateSkeletonPatternsV1Marker = C::DateSkeletonPatternsV1Marker;
+    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
 }
 
 impl NeoSkeletonData for YearMonthMarker {
     // Data to include
-    type Year = FullDataAnyCalendarHelper;
+    type Year = FullDataCalM;
+    type Month = FullDataCalM;
+    type Skel = FullDataCalM;
 }
 
 impl NeoSkeletonComponents for YearMonthMarker {
@@ -174,12 +181,14 @@ where
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
-    type DateSkeletonPatternsV1Marker = C::DateSkeletonPatternsV1Marker;
+    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
 }
 
 impl NeoSkeletonData for YearMonthDayMarker {
     // Data to include
-    type Year = FullDataAnyCalendarHelper;
+    type Year = FullDataCalM;
+    type Month = FullDataCalM;
+    type Skel = FullDataCalM;
 }
 
 impl NeoSkeletonComponents for YearMonthDayMarker {
@@ -212,7 +221,9 @@ impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
 
 impl NeoSkeletonData for HourMinuteMarker {
     // Data to exclude
-    type Year = NoDataAnyCalendarHelper;
+    type Year = NoDataCalM;
+    type Month = NoDataCalM;
+    type Skel = NoDataCalM;
 }
 
 impl NeoSkeletonComponents for HourMinuteMarker {
