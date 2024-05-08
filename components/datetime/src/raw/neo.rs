@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar::DatePatternV1Provider;
+use crate::calendar::{DatePatternV1Provider, DateSkeletaV1Provider};
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
@@ -106,13 +106,13 @@ impl DatePatternSelectionData {
     }
 
     pub(crate) fn try_new_with_skeleton<M>(
-        provider: &(impl DataProvider<M> + ?Sized),
+        provider: &(impl DateSkeletaV1Provider<M> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
         components: NeoComponents,
     ) -> Result<Self, DataError>
     where
-        M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+        M: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
         let NeoComponents::Date(components) = components else {
             // TODO: Refactor to eliminate the unreachable

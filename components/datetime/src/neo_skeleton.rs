@@ -47,6 +47,9 @@ where
 
 /// Sealed trait implemented by neo skeleton marker types.
 pub trait NeoSkeletonData: NeoSkeletonCommonData {
+    type BuddhistYearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type BuddhistMonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type BuddhistDateNeoSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     type GregorianYearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
     type GregorianMonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
     type GregorianDateNeoSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
@@ -143,6 +146,9 @@ where
 
 impl NeoSkeletonData for YearMonthMarker {
     // Data to include
+    type BuddhistYearNamesV1Marker = BuddhistYearNamesV1Marker;
+    type BuddhistMonthNamesV1Marker = BuddhistMonthNamesV1Marker;
+    type BuddhistDateNeoSkeletonPatternsV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
     type GregorianYearNamesV1Marker = GregorianYearNamesV1Marker;
     type GregorianMonthNamesV1Marker = GregorianMonthNamesV1Marker;
     type GregorianDateNeoSkeletonPatternsV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
@@ -181,6 +187,9 @@ where
 
 impl NeoSkeletonData for YearMonthDayMarker {
     // Data to include
+    type BuddhistYearNamesV1Marker = BuddhistYearNamesV1Marker;
+    type BuddhistMonthNamesV1Marker = BuddhistMonthNamesV1Marker;
+    type BuddhistDateNeoSkeletonPatternsV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
     type GregorianYearNamesV1Marker = GregorianYearNamesV1Marker;
     type GregorianMonthNamesV1Marker = GregorianMonthNamesV1Marker;
     type GregorianDateNeoSkeletonPatternsV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
@@ -216,6 +225,9 @@ impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
 
 impl NeoSkeletonData for HourMinuteMarker {
     // Data to exclude
+    type BuddhistYearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    type BuddhistMonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    type BuddhistDateNeoSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type GregorianYearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type GregorianMonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type GregorianDateNeoSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;

@@ -114,6 +114,22 @@ where
 }
 
 #[cfg(feature = "experimental")]
+pub(crate) trait DateSkeletaV1Provider<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+#[cfg(feature = "experimental")]
+impl<M, P> DateSkeletaV1Provider<M> for P
+where
+    M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        DataProvider::<M>::load(self, req)
+    }
+}
+
+#[cfg(feature = "experimental")]
 pub(crate) trait WeekdayNamesV1Provider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
@@ -779,7 +795,8 @@ macro_rules! impl_load_any_calendar {
 impl_load_any_calendar!([
     (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
     (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
-    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker)
+    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker),
+    (DateSkeletaV1Provider, ErasedPackedSkeletonDataV1Marker, DateSkeletonPatternsV1Marker)
 ], [
     Buddhist,
     Chinese,
