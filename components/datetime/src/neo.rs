@@ -387,6 +387,30 @@ pub trait NeoFormatterMarker<C: CldrCalendar> {
 }
 
 #[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NeoYearMonthDayMarker {}
+
+impl<C: CldrCalendar> NeoFormatterMarker<C> for NeoYearMonthDayMarker {
+    type DateTimeNamesMarker = DateMarker;
+    type Data = crate::neo_skeleton::YearMonthDayMarker;
+}
+
+size_test!(TypedNeoFormatter<icu_calendar::Gregorian, NeoYearMonthDayMarker>, neo_year_month_day_formatter_size, 456);
+
+/// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
+/// a calendar selected at compile time.
+///
+/// For more details, please read the [crate root docs][crate].
+///
+#[doc = neo_year_month_day_formatter_size!()]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
+/// </div>
+#[derive(Debug)]
 pub struct TypedNeoFormatter<C: CldrCalendar, R: NeoFormatterMarker<C>> {
     selection: DatePatternSelectionData,
     names: RawDateTimeNames<R::DateTimeNamesMarker>,
@@ -402,10 +426,12 @@ impl<C: CldrCalendar, R: NeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = TypedNeoFormatter::<Gregorian, YearMonthMarker>::try_new(
+    /// let formatter = TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
     ///     &locale!("es-MX").into(),
     ///     NeoSkeletonLength::Long
     /// )
@@ -413,7 +439,7 @@ impl<C: CldrCalendar, R: NeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-    ///     "diciembre de 2023"
+    ///     "20 de diciembre de 2023"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]

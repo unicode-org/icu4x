@@ -157,6 +157,36 @@ where
     const COMPONENTS: NeoDateComponents = NeoDateComponents::YearMonth;
 }
 
+/// Marker for a day, month, and year, as in
+/// “January 1, 2000”.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum YearMonthDayMarker {}
+
+impl<C> TypedNeoSkeletonData<C> for YearMonthDayMarker
+where
+    C: CldrCalendar,
+{
+    // Data to include
+    type YearNamesV1Marker = C::YearNamesV1Marker;
+    type MonthNamesV1Marker = C::MonthNamesV1Marker;
+    type WeekdayNamesV1Marker = WeekdayNamesV1Marker;
+    type DateSkeletonPatternsV1Marker = C::DateSkeletonPatternsV1Marker;
+
+    // Data to exclude
+    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
+}
+
+impl<C> TypedNeoDateSkeletonComponents<C> for YearMonthDayMarker
+where
+    C: CldrCalendar,
+{
+    const COMPONENTS: NeoDateComponents = NeoDateComponents::Day(NeoDayComponents::YearMonthDay);
+}
+
 /// Marker for an hour and minute (12-hour or 24-hour chosen by locale), as in
 /// "4:03 pm" or "16:03"
 #[derive(Debug)]
