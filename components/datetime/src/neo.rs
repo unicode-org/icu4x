@@ -13,7 +13,7 @@ use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoSkeletonLength, TypedNeoDateSkeletonComponents, TypedNeoSkeletonData, TypedNeoTimeSkeletonComponents
+    NeoSkeletonLength, TypedNeoSkeletonData, NeoSkeletonComponents, NeoSkeletonCommonData
 };
 use crate::options::length;
 use crate::provider::neo::*;
@@ -68,7 +68,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
     };
-    (S: $skel:path, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
+    (S: $skel:path | $compts:path, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident, $($arg:ident: $ty:path),+) => {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<S, P>(
             provider: &P,
@@ -76,7 +76,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             $($arg: $ty),+
         ) -> Result<Self, LoadError>
         where
-            S: ?Sized + $skel,
+            S: ?Sized + $skel + $compts,
             P: AnyProvider + ?Sized,
         {
             Self::$internal_fn::<S, _, _>(
@@ -94,7 +94,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             $($arg: $ty),+
         ) -> Result<Self, LoadError>
         where
-            S: ?Sized + $skel,
+            S: ?Sized + $skel + $compts,
             P: BufferProvider + ?Sized,
         {
             Self::$internal_fn::<S, _, _>(
@@ -275,7 +275,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
-        S: ?Sized + TypedNeoDateSkeletonComponents<C>,
+        S: ?Sized + TypedNeoSkeletonData<C> + NeoSkeletonComponents,
         crate::provider::Baked: Sized
             // Date formatting keys
             + DataProvider<S::DateSkeletonPatternsV1Marker>
@@ -292,7 +292,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 
     gen_any_buffer_constructors_with_external_loader!(
-        S: TypedNeoDateSkeletonComponents<C>,
+        S: TypedNeoSkeletonData<C> | NeoSkeletonComponents,
         try_new_with_skeleton,
         try_new_with_skeleton_with_any_provider,
         try_new_with_skeleton_with_buffer_provider,
@@ -307,7 +307,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
-        S: ?Sized + TypedNeoDateSkeletonComponents<C>,
+        S: ?Sized + TypedNeoSkeletonData<C> + NeoSkeletonComponents,
         P: ?Sized
             // Date formatting keys
             + DataProvider<S::DateSkeletonPatternsV1Marker>
@@ -334,7 +334,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
-        S: ?Sized + TypedNeoDateSkeletonComponents<C>,
+        S: ?Sized + TypedNeoSkeletonData<C> + NeoSkeletonComponents,
         P: ?Sized
             // Date formatting keys
             + DataProvider<S::DateSkeletonPatternsV1Marker>
@@ -383,7 +383,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
 
 pub trait NeoFormatterMarker<C: CldrCalendar> {
     type DateTimeNamesMarker: DateTimeNamesMarker;
-    type Data: TypedNeoDateSkeletonComponents<C>;
+    type Data: TypedNeoSkeletonData<C> + NeoSkeletonComponents;
 }
 
 #[derive(Debug)]
@@ -449,11 +449,11 @@ impl<C: CldrCalendar, R: NeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             // Date formatting keys
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker>
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateTimePatternV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::DateTimePatternV1Marker>
     {
         Self::try_new_internal(
             &crate::provider::Baked,
@@ -482,11 +482,11 @@ impl<C: CldrCalendar, R: NeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             // Date formatting keys
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker>
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateTimePatternV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::DateTimePatternV1Marker>
             // FixedDecimalFormatter keys
             + DataProvider<DecimalSymbolsV1Marker>
             // WeekCalculator keys
@@ -511,20 +511,20 @@ impl<C: CldrCalendar, R: NeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             // Date formatting keys
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker>
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>
             + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::TimeSkeletonPatternsV1Marker>
-            + DataProvider<<R::Data as TypedNeoSkeletonData<C>>::DateTimePatternV1Marker>,
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::Data as NeoSkeletonCommonData>::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
         let selection = DatePatternSelectionData::try_new_with_skeleton::<<R::Data as TypedNeoSkeletonData<C>>::DateSkeletonPatternsV1Marker>(
-            provider, locale, length, <R::Data as TypedNeoDateSkeletonComponents<C>>::COMPONENTS
+            provider, locale, length, <R::Data as NeoSkeletonComponents>::COMPONENTS
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names
-            .load_for_pattern::<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::WeekdayNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::DayPeriodNamesV1Marker>(
+            .load_for_pattern::<<R::Data as TypedNeoSkeletonData<C>>::YearNamesV1Marker, <R::Data as TypedNeoSkeletonData<C>>::MonthNamesV1Marker, <R::Data as NeoSkeletonCommonData>::WeekdayNamesV1Marker, <R::Data as NeoSkeletonCommonData>::DayPeriodNamesV1Marker>(
                 Some(provider),           // year
                 Some(provider),           // month
                 Some(provider),           // weekday
@@ -999,7 +999,7 @@ impl NeoTimeFormatter {
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
-        S: ?Sized + TypedNeoTimeSkeletonComponents,
+        S: ?Sized + NeoSkeletonCommonData + NeoSkeletonComponents,
         crate::provider::Baked: Sized
             // Time formatting keys
             + DataProvider<S::TimeSkeletonPatternsV1Marker>
@@ -1014,7 +1014,7 @@ impl NeoTimeFormatter {
     }
 
     gen_any_buffer_constructors_with_external_loader!(
-        S: TypedNeoTimeSkeletonComponents,
+        S: NeoSkeletonCommonData | NeoSkeletonComponents,
         try_new_with_skeleton,
         try_new_with_skeleton_with_any_provider,
         try_new_with_skeleton_with_buffer_provider,
@@ -1029,7 +1029,7 @@ impl NeoTimeFormatter {
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
-        S: ?Sized + TypedNeoTimeSkeletonComponents,
+        S: ?Sized + NeoSkeletonCommonData + NeoSkeletonComponents,
         P: ?Sized
             // Time formatting keys
             + DataProvider<S::TimeSkeletonPatternsV1Marker>
@@ -1052,7 +1052,7 @@ impl NeoTimeFormatter {
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
-        S: ?Sized + TypedNeoTimeSkeletonComponents,
+        S: ?Sized + NeoSkeletonCommonData + NeoSkeletonComponents,
         P: ?Sized
             // Date formatting keys
             + DataProvider<S::TimeSkeletonPatternsV1Marker>
@@ -1061,10 +1061,10 @@ impl NeoTimeFormatter {
     {
         let selection = TimePatternSelectionData::try_new_with_skeleton::<
             S::TimeSkeletonPatternsV1Marker,
-        >(provider, locale, length, S::COMPONENTS)
+        >(provider, locale, length, <S as NeoSkeletonComponents>::COMPONENTS)
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern::<S::YearNamesV1Marker, S::MonthNamesV1Marker, S::WeekdayNamesV1Marker, S::DayPeriodNamesV1Marker>(
+        names.load_for_pattern::<NeverMarker<YearNamesV1>, NeverMarker<MonthNamesV1>, S::WeekdayNamesV1Marker, S::DayPeriodNamesV1Marker>(
             None::<&PhantomProvider>, // year
             None::<&PhantomProvider>, // month
             None::<&PhantomProvider>, // weekday

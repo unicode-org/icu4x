@@ -6,7 +6,7 @@ use crate::calendar::DatePatternV1Provider;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
+    NeoComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeSkeleton
 };
 use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
@@ -109,11 +109,15 @@ impl DatePatternSelectionData {
         provider: &(impl DataProvider<M> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
-        components: NeoDateComponents,
+        components: NeoComponents,
     ) -> Result<Self, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
+        let NeoComponents::Date(components) = components else {
+            // TODO: Refactor to eliminate the unreachable
+            unreachable!()
+        };
         let mut locale = locale.clone();
         let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
@@ -214,11 +218,15 @@ impl TimePatternSelectionData {
         provider: &(impl DataProvider<M> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
-        components: NeoTimeComponents,
+        components: NeoComponents,
     ) -> Result<Self, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
     {
+        let NeoComponents::Time(components) = components else {
+            // TODO: Refactor to eliminate the unreachable
+            unreachable!()
+        };
         let mut locale = locale.clone();
         let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
