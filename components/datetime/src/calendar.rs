@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::marker::PhantomData;
+
 use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
@@ -654,6 +656,407 @@ where
 pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
     pub(crate) provider: &'a P,
     pub(crate) kind: AnyCalendarKind,
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) struct AnyCalendarProvider3<
+    BuddhistMarker,
+    ChineseMarker,
+    CopticMarker,
+    DangiMarker,
+    EthiopianMarker,
+    GregorianMarker,
+    HebrewMarker,
+    IndianMarker,
+    IslamicCivilMarker,
+    IslamicObservationalMarker,
+    IslamicTabularMarker,
+    IslamicUmmAlQuraMarker,
+    JapaneseMarker,
+    JapaneseExtendedMarker,
+    PersianMarker,
+    RocMarker,
+    P,
+> {
+    pub(crate) provider: P,
+    pub(crate) kind: AnyCalendarKind,
+    _buddhist_marker: PhantomData<BuddhistMarker>,
+    _chinese_marker: PhantomData<ChineseMarker>,
+    _coptic_marker: PhantomData<CopticMarker>,
+    _dangi_marker: PhantomData<DangiMarker>,
+    _ethiopian_marker: PhantomData<EthiopianMarker>,
+    _gregorian_marker: PhantomData<GregorianMarker>,
+    _hebrew_marker: PhantomData<HebrewMarker>,
+    _indian_marker: PhantomData<IndianMarker>,
+    _islamic_civil_marker: PhantomData<IslamicCivilMarker>,
+    _islamic_observational_marker: PhantomData<IslamicObservationalMarker>,
+    _islamic_tabular_marker: PhantomData<IslamicTabularMarker>,
+    _islamic_umm_al_qura_marker: PhantomData<IslamicUmmAlQuraMarker>,
+    _japanese_marker: PhantomData<JapaneseMarker>,
+    _japanese_extended_marker: PhantomData<JapaneseExtendedMarker>,
+    _persian_marker: PhantomData<PersianMarker>,
+    _roc_marker: PhantomData<RocMarker>,
+}
+
+impl<
+        BuddhistMarker,
+        ChineseMarker,
+        CopticMarker,
+        DangiMarker,
+        EthiopianMarker,
+        GregorianMarker,
+        HebrewMarker,
+        IndianMarker,
+        IslamicCivilMarker,
+        IslamicObservationalMarker,
+        IslamicTabularMarker,
+        IslamicUmmAlQuraMarker,
+        JapaneseMarker,
+        JapaneseExtendedMarker,
+        PersianMarker,
+        RocMarker,
+        P,
+    > AnyCalendarProvider3<
+        BuddhistMarker,
+        ChineseMarker,
+        CopticMarker,
+        DangiMarker,
+        EthiopianMarker,
+        GregorianMarker,
+        HebrewMarker,
+        IndianMarker,
+        IslamicCivilMarker,
+        IslamicObservationalMarker,
+        IslamicTabularMarker,
+        IslamicUmmAlQuraMarker,
+        JapaneseMarker,
+        JapaneseExtendedMarker,
+        PersianMarker,
+        RocMarker,
+        P,
+    >
+{
+    pub(crate) fn new(provider: P, kind: AnyCalendarKind) -> Self {
+        Self {
+            provider,
+            kind,
+            _buddhist_marker: PhantomData,
+            _chinese_marker: PhantomData,
+            _coptic_marker: PhantomData,
+            _dangi_marker: PhantomData,
+            _ethiopian_marker: PhantomData,
+            _gregorian_marker: PhantomData,
+            _hebrew_marker: PhantomData,
+            _indian_marker: PhantomData,
+            _islamic_civil_marker: PhantomData,
+            _islamic_observational_marker: PhantomData,
+            _islamic_tabular_marker: PhantomData,
+            _islamic_umm_al_qura_marker: PhantomData,
+            _japanese_marker: PhantomData,
+            _japanese_extended_marker: PhantomData,
+            _persian_marker: PhantomData,
+            _roc_marker: PhantomData,
+        }
+    }
+}
+
+impl<
+        BuddhistMarker,
+        ChineseMarker,
+        CopticMarker,
+        DangiMarker,
+        EthiopianMarker,
+        GregorianMarker,
+        HebrewMarker,
+        IndianMarker,
+        IslamicCivilMarker,
+        IslamicObservationalMarker,
+        IslamicTabularMarker,
+        IslamicUmmAlQuraMarker,
+        JapaneseMarker,
+        JapaneseExtendedMarker,
+        PersianMarker,
+        RocMarker,
+        P,
+        M,
+    > BoundDataProvider<M>
+    for AnyCalendarProvider3<
+        BuddhistMarker,
+        ChineseMarker,
+        CopticMarker,
+        DangiMarker,
+        EthiopianMarker,
+        GregorianMarker,
+        HebrewMarker,
+        IndianMarker,
+        IslamicCivilMarker,
+        IslamicObservationalMarker,
+        IslamicTabularMarker,
+        IslamicUmmAlQuraMarker,
+        JapaneseMarker,
+        JapaneseExtendedMarker,
+        PersianMarker,
+        RocMarker,
+        P,
+    >
+where
+    BuddhistMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    ChineseMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    CopticMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    DangiMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    EthiopianMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    GregorianMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    HebrewMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    IndianMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    IslamicCivilMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    IslamicObservationalMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    IslamicTabularMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    IslamicUmmAlQuraMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    JapaneseMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    JapaneseExtendedMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    PersianMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    RocMarker: KeyedDataMarker<Yokeable = M::Yokeable>,
+    P: DataProvider<BuddhistMarker>
+        + DataProvider<ChineseMarker>
+        + DataProvider<CopticMarker>
+        + DataProvider<DangiMarker>
+        + DataProvider<EthiopianMarker>
+        + DataProvider<GregorianMarker>
+        + DataProvider<HebrewMarker>
+        + DataProvider<IndianMarker>
+        + DataProvider<IslamicCivilMarker>
+        + DataProvider<IslamicObservationalMarker>
+        + DataProvider<IslamicTabularMarker>
+        + DataProvider<IslamicUmmAlQuraMarker>
+        + DataProvider<JapaneseMarker>
+        + DataProvider<JapaneseExtendedMarker>
+        + DataProvider<PersianMarker>
+        + DataProvider<RocMarker>,
+    M: DataMarker,
+{
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        use AnyCalendarKind::*;
+        let p = &self.provider;
+        match self.kind {
+            Buddhist => BuddhistMarker::bind(p).load_bound(req),
+            Chinese => ChineseMarker::bind(p).load_bound(req),
+            Coptic => CopticMarker::bind(p).load_bound(req),
+            Dangi => DangiMarker::bind(p).load_bound(req),
+            Ethiopian => EthiopianMarker::bind(p).load_bound(req),
+            Gregorian => GregorianMarker::bind(p).load_bound(req),
+            Hebrew => HebrewMarker::bind(p).load_bound(req),
+            Indian => IndianMarker::bind(p).load_bound(req),
+            IslamicCivil => IslamicCivilMarker::bind(p).load_bound(req),
+            IslamicObservational => IslamicObservationalMarker::bind(p).load_bound(req),
+            IslamicTabular => IslamicTabularMarker::bind(p).load_bound(req),
+            IslamicUmmAlQura => IslamicUmmAlQuraMarker::bind(p).load_bound(req),
+            Japanese => JapaneseMarker::bind(p).load_bound(req),
+            JapaneseExtended => JapaneseExtendedMarker::bind(p).load_bound(req),
+            Persian => PersianMarker::bind(p).load_bound(req),
+            Roc => RocMarker::bind(p).load_bound(req),
+            _ => Err(
+                DataError::custom("Don't know how to load data for specified calendar")
+                    .with_debug_context(&self.kind),
+            ),
+        }
+    }
+    fn bound_key(&self) -> DataKey {
+        use AnyCalendarKind::*;
+        match self.kind {
+            Buddhist => BuddhistMarker::KEY,
+            Chinese => ChineseMarker::KEY,
+            Coptic => CopticMarker::KEY,
+            Dangi => DangiMarker::KEY,
+            Ethiopian => EthiopianMarker::KEY,
+            Gregorian => GregorianMarker::KEY,
+            Hebrew => HebrewMarker::KEY,
+            Indian => IndianMarker::KEY,
+            IslamicCivil => IslamicCivilMarker::KEY,
+            IslamicObservational => IslamicObservationalMarker::KEY,
+            IslamicTabular => IslamicTabularMarker::KEY,
+            IslamicUmmAlQura => IslamicUmmAlQuraMarker::KEY,
+            Japanese => JapaneseMarker::KEY,
+            JapaneseExtended => JapaneseExtendedMarker::KEY,
+            Persian => PersianMarker::KEY,
+            Roc => RocMarker::KEY,
+            _ => NeverMarker::<M::Yokeable>::KEY,
+        }
+    }
+}
+
+pub(crate) enum AnyCalendarProvider2<
+    Buddhist,
+    Chinese,
+    Coptic,
+    Dangi,
+    Ethiopian,
+    Gregorian,
+    Hebrew,
+    Indian,
+    IslamicCivil,
+    IslamicObservational,
+    IslamicTabular,
+    IslamicUmmAlQura,
+    Japanese,
+    JapaneseExtended,
+    Persian,
+    Roc,
+> {
+    Buddhist(Buddhist),
+    Chinese(Chinese),
+    Coptic(Coptic),
+    Dangi(Dangi),
+    Ethiopian(Ethiopian),
+    Gregorian(Gregorian),
+    Hebrew(Hebrew),
+    Indian(Indian),
+    IslamicCivil(IslamicCivil),
+    IslamicObservational(IslamicObservational),
+    IslamicTabular(IslamicTabular),
+    IslamicUmmAlQura(IslamicUmmAlQura),
+    Japanese(Japanese),
+    JapaneseExtended(JapaneseExtended),
+    Persian(Persian),
+    Roc(Roc),
+}
+
+impl<
+        M,
+        Buddhist,
+        Chinese,
+        Coptic,
+        Dangi,
+        Ethiopian,
+        Gregorian,
+        Hebrew,
+        Indian,
+        IslamicCivil,
+        IslamicObservational,
+        IslamicTabular,
+        IslamicUmmAlQura,
+        Japanese,
+        JapaneseExtended,
+        Persian,
+        Roc,
+    > BoundDataProvider<M>
+    for AnyCalendarProvider2<
+        Buddhist,
+        Chinese,
+        Coptic,
+        Dangi,
+        Ethiopian,
+        Gregorian,
+        Hebrew,
+        Indian,
+        IslamicCivil,
+        IslamicObservational,
+        IslamicTabular,
+        IslamicUmmAlQura,
+        Japanese,
+        JapaneseExtended,
+        Persian,
+        Roc,
+    >
+where
+    M: DataMarker,
+    Buddhist: BoundDataProvider<M>,
+    Chinese: BoundDataProvider<M>,
+    Coptic: BoundDataProvider<M>,
+    Dangi: BoundDataProvider<M>,
+    Ethiopian: BoundDataProvider<M>,
+    Gregorian: BoundDataProvider<M>,
+    Hebrew: BoundDataProvider<M>,
+    Indian: BoundDataProvider<M>,
+    IslamicCivil: BoundDataProvider<M>,
+    IslamicObservational: BoundDataProvider<M>,
+    IslamicTabular: BoundDataProvider<M>,
+    IslamicUmmAlQura: BoundDataProvider<M>,
+    Japanese: BoundDataProvider<M>,
+    JapaneseExtended: BoundDataProvider<M>,
+    Persian: BoundDataProvider<M>,
+    Roc: BoundDataProvider<M>,
+{
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        use AnyCalendarProvider2::*;
+        match self {
+            Buddhist(p) => p.load_bound(req),
+            Chinese(p) => p.load_bound(req),
+            Coptic(p) => p.load_bound(req),
+            Dangi(p) => p.load_bound(req),
+            Ethiopian(p) => p.load_bound(req),
+            Gregorian(p) => p.load_bound(req),
+            Hebrew(p) => p.load_bound(req),
+            Indian(p) => p.load_bound(req),
+            IslamicCivil(p) => p.load_bound(req),
+            IslamicObservational(p) => p.load_bound(req),
+            IslamicTabular(p) => p.load_bound(req),
+            IslamicUmmAlQura(p) => p.load_bound(req),
+            Japanese(p) => p.load_bound(req),
+            JapaneseExtended(p) => p.load_bound(req),
+            Persian(p) => p.load_bound(req),
+            Roc(p) => p.load_bound(req),
+        }
+    }
+    fn bound_key(&self) -> DataKey {
+        use AnyCalendarProvider2::*;
+        match self {
+            Buddhist(p) => p.bound_key(),
+            Chinese(p) => p.bound_key(),
+            Coptic(p) => p.bound_key(),
+            Dangi(p) => p.bound_key(),
+            Ethiopian(p) => p.bound_key(),
+            Gregorian(p) => p.bound_key(),
+            Hebrew(p) => p.bound_key(),
+            Indian(p) => p.bound_key(),
+            IslamicCivil(p) => p.bound_key(),
+            IslamicObservational(p) => p.bound_key(),
+            IslamicTabular(p) => p.bound_key(),
+            IslamicUmmAlQura(p) => p.bound_key(),
+            Japanese(p) => p.bound_key(),
+            JapaneseExtended(p) => p.bound_key(),
+            Persian(p) => p.bound_key(),
+            Roc(p) => p.bound_key(),
+        }
+    }
+}
+
+impl<
+        Buddhist,
+        Chinese,
+        Coptic,
+        Dangi,
+        Ethiopian,
+        Gregorian,
+        Hebrew,
+        Indian,
+        IslamicCivil,
+        IslamicObservational,
+        IslamicTabular,
+        IslamicUmmAlQura,
+        Japanese,
+        JapaneseExtended,
+        Persian,
+        Roc,
+    >
+    AnyCalendarProvider2<
+        Buddhist,
+        Chinese,
+        Coptic,
+        Dangi,
+        Ethiopian,
+        Gregorian,
+        Hebrew,
+        Indian,
+        IslamicCivil,
+        IslamicObservational,
+        IslamicTabular,
+        IslamicUmmAlQura,
+        Japanese,
+        JapaneseExtended,
+        Persian,
+        Roc,
+    >
+{
 }
 
 #[cfg(feature = "experimental")]
