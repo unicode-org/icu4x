@@ -134,6 +134,11 @@ where
 ///
 /// Unlike [`DataProvider`], the provider is bound to a specific key ahead of time.
 ///
+/// This crate provides [`DataProviderWithKey`] which implements this trait on a single provider
+/// with a single key. However, this trait can also be implemented on providers that fork between
+/// multiple keys that all return the same data type. For example, it can abstract over many
+/// calendar systems in the datetime formatter.
+///
 /// [`AnyMarker`]: crate::any::AnyMarker
 pub trait BoundDataProvider<M>
 where
