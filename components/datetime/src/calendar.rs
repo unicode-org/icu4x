@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
-
 use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
@@ -23,6 +21,8 @@ use tinystr::{tinystr, TinyAsciiStr};
 use crate::provider::neo::*;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 use icu_provider::NeverMarker;
+#[cfg(any(feature = "experimental"))]
+use core::marker::PhantomData;
 
 /// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
 /// feature is enabled. If implementing `CldrCalendar`, you must also
@@ -652,10 +652,12 @@ where
     Ok(payload)
 }
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 trait Sealed {}
 
 /// A collection of marker types associated with all calendars.
 #[allow(private_bounds)] // sealed
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub trait CalMarkers<M>: Sealed
 where
     M: DataMarker,
@@ -698,16 +700,21 @@ where
 
 /// Implementation of [`CalMarkers`] that includes data for all calendars.
 #[derive(Debug)]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub struct FullDataCalMarkers;
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl Sealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub struct NoDataCalMarkers;
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl Sealed for NoDataCalMarkers {}
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where
     M: DataMarker,
@@ -731,12 +738,14 @@ where
     type Roc = NeverMarker<M::Yokeable>;
 }
 
+#[cfg(feature = "experimental")]
 pub(crate) struct AnyCalendarProvider<H, P> {
     provider: P,
     kind: AnyCalendarKind,
     _helper: PhantomData<H>,
 }
 
+#[cfg(feature = "experimental")]
 impl<H, P> AnyCalendarProvider<H, P> {
     pub(crate) fn new(provider: P, kind: AnyCalendarKind) -> Self {
         Self {
@@ -747,6 +756,7 @@ impl<H, P> AnyCalendarProvider<H, P> {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider<H, P>
 where
     M: DataMarker,
@@ -822,7 +832,7 @@ where
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 macro_rules! impl_load_any_calendar {
     ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
         impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
@@ -842,7 +852,7 @@ macro_rules! impl_load_any_calendar {
     };
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl_load_any_calendar!([
     (DatePatternV1Marker, DatePatternV1Marker),
     (YearNamesV1Marker, YearNamesV1Marker),

@@ -134,6 +134,7 @@ mod any;
 mod calendar;
 mod datetime;
 mod error;
+#[cfg(feature = "experimental")]
 mod external_loaders;
 pub mod fields;
 mod format;
