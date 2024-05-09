@@ -841,6 +841,16 @@ expand!(
             Script
         ),
         (
+            HangulSyllableTypeV1Marker,
+            HangulSyllableTypeNameToValueV1Marker,
+            (
+                linear: HangulSyllableTypeValueToShortNameV1Marker,
+                HangulSyllableTypeValueToLongNameV1Marker
+            ),
+            "hst",
+            HangulSyllableType
+        ),
+        (
             EastAsianWidthV1Marker,
             EastAsianWidthNameToValueV1Marker,
             (

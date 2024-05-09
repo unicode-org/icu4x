@@ -1578,6 +1578,108 @@ impl_value_getter! {
     }
 }
 
+/// Enumerated property Hangul_Syllable_Type
+///
+/// The Unicode standard provides both precomposed Hangul syllables and conjoining Jamo to compose
+/// arbitrary Hangul syllables. This property provies that ontology of Hangul code points.
+///
+/// For more information, see the [Unicode Korean FAQ](https://www.unicode.org/faq/korean.html).
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(HangulSyllableTypeULE)]
+pub struct HangulSyllableType(pub u8);
+
+create_const_array! {
+#[allow(non_upper_case_globals)]
+impl HangulSyllableType {
+    /// (`NA`) not applicable (e.g. not a Hangul code point).
+    pub const NotApplicable: HangulSyllableType = HangulSyllableType(0);
+    /// (`L`) a conjoining leading consonant Jamo.
+    pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1);
+    /// (`V`) a conjoining vowel Jamo.
+    pub const VowelJamo: HangulSyllableType = HangulSyllableType(2);
+    /// (`T`) a conjoining trailing consonent Jamo.
+    pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3);
+    /// (`LV`) a precomposed syllable with a leading consonant and a vowel.
+    pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4);
+    /// (`LVT`) a precomposed syllable with a leading consonant, a vowel, and a trailing consonant.
+    pub const LeadingVowelTrailingSyllable: HangulSyllableType = HangulSyllableType(5);
+}
+}
+
+/*
+impl_value_getter! {
+    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_HST_V1, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1;
+    impl HangulSyllableType {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `Bidi_Class` enumerated property
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::HangulSyllableType;
+        ///
+        /// let lookup = HangulSyllableType::name_to_enum_mapper();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("AN"), Some(HangulSyllableType::ArabicNumber));
+        /// assert_eq!(lookup.get_strict("NSM"), Some(HangulSyllableType::NonspacingMark));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Arabic_Number"), Some(HangulSyllableType::ArabicNumber));
+        /// assert_eq!(lookup.get_strict("Nonspacing_Mark"), Some(HangulSyllableType::NonspacingMark));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("arabicnumber"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("arabicnumber"), Some(HangulSyllableType::ArabicNumber));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
+        /// for values of the `Bidi_Class` enumerated property
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::HangulSyllableType;
+        ///
+        /// let lookup = HangulSyllableType::enum_to_short_name_mapper();
+        /// assert_eq!(lookup.get(HangulSyllableType::ArabicNumber), Some("AN"));
+        /// assert_eq!(lookup.get(HangulSyllableType::NonspacingMark), Some("NSM"));
+        /// ```
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
+        /// for values of the `Bidi_Class` enumerated property
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::HangulSyllableType;
+        ///
+        /// let lookup = HangulSyllableType::enum_to_long_name_mapper();
+        /// assert_eq!(lookup.get(HangulSyllableType::ArabicNumber), Some("Arabic_Number"));
+        /// assert_eq!(lookup.get(HangulSyllableType::NonspacingMark), Some("Nonspacing_Mark"));
+        /// ```
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+    }
+}
+*/
+
 /// Enumerated property East_Asian_Width.
 ///
 /// See "Definition" in UAX #11 for the summary of each property value:

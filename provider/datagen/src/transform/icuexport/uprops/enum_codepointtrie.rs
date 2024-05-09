@@ -464,6 +464,15 @@ expand!(
         "sc"
     ),
     (
+        HangulSyllableTypeV1Marker,
+        HangulSyllableTypeNameToValueV1Marker,
+        (
+            linear: HangulSyllableTypeValueToShortNameV1Marker,
+            HangulSyllableTypeValueToLongNameV1Marker
+        ),
+        "hst"
+    ),
+    (
         EastAsianWidthV1Marker,
         EastAsianWidthNameToValueV1Marker,
         (
