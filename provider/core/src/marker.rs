@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{data_key, key::DataKey};
+use crate::{data_key, DataKey, DataProvider, DataProviderWithKey};
 use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -84,6 +84,15 @@ pub trait DataMarker: 'static {
 pub trait KeyedDataMarker: DataMarker {
     /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
+
+    /// Binds this [`KeyedDataMarker`] to a provider supporting it.
+    fn bind<P>(provider: P) -> DataProviderWithKey<Self, P>
+    where
+        P: DataProvider<Self>,
+        Self: Sized,
+    {
+        DataProviderWithKey::new(provider)
+    }
 }
 
 /// A [`DataMarker`] that never returns data.
