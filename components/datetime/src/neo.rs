@@ -406,7 +406,7 @@ mod private {
 pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoComponents;
-    /// Fields for [`DateTimeNames`].
+    /// Fields for [`TypedDateTimeNames`].
     type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading year names.
     type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
@@ -436,7 +436,7 @@ pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
 pub trait NeoFormatterMarker {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoComponents;
-    /// Fields for [`DateTimeNames`].
+    /// Fields for [`TypedDateTimeNames`].
     type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Cross-calendar data markers for year names.
     type Year: CalMarkers<YearNamesV1Marker>;
@@ -572,7 +572,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
         length: NeoSkeletonLength
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_length_unstable<P>(
         provider: &P,
         locale: &DataLocale,
