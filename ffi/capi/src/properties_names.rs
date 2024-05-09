@@ -8,8 +8,8 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
         names::PropertyValueNameToEnumMapper, BidiClass, EastAsianWidth, GeneralCategory,
-        GeneralCategoryGroup, GraphemeClusterBreak, IndicSyllabicCategory, LineBreak, Script,
-        SentenceBreak, WordBreak,
+        GeneralCategoryGroup, GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory,
+        LineBreak, Script, SentenceBreak, WordBreak,
     };
 
     use crate::errors::ffi::ICU4XError;
@@ -88,15 +88,15 @@ pub mod ffi {
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::BidiClass::name_to_enum_mapper, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
-        pub fn load_bidi_class(
+        #[diplomat::rust_link(icu::properties::HangulSyllableType::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
+        pub fn load_hangul_syllable_type(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
             Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    BidiClass::get_name_to_enum_mapper,
+                    HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    HangulSyllableType::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -112,6 +112,21 @@ pub mod ffi {
                 call_constructor_unstable!(
                     EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
                     EastAsianWidth::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
+        }
+
+        #[diplomat::rust_link(icu::properties::BidiClass::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
+        pub fn load_bidi_class(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    BidiClass::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),

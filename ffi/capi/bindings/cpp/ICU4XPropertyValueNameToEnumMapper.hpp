@@ -58,14 +58,19 @@ class ICU4XPropertyValueNameToEnumMapper {
   static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_general_category(const ICU4XDataProvider& provider);
 
   /**
-   * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
+   * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.HangulSyllableType.html#method.name_to_enum_mapper) for more information.
    */
-  static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_hangul_syllable_type(const ICU4XDataProvider& provider);
 
   /**
    * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
    */
   static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_east_asian_width(const ICU4XDataProvider& provider);
+
+  /**
+   * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
+   */
+  static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider);
 
   /**
    * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
@@ -124,8 +129,8 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPropertyValueNameToEnumMapper::load_bidi_class(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_bidi_class(provider.AsFFI());
+inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPropertyValueNameToEnumMapper::load_hangul_syllable_type(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
@@ -136,6 +141,16 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
 }
 inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPropertyValueNameToEnumMapper::load_east_asian_width(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(provider.AsFFI());
+  diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPropertyValueNameToEnumMapper::load_bidi_class(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_bidi_class(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
