@@ -1611,7 +1611,6 @@ impl HangulSyllableType {
 }
 }
 
-/*
 impl_value_getter! {
     markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_HST_V1, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1;
     impl HangulSyllableType {
@@ -1629,17 +1628,17 @@ impl_value_getter! {
         ///
         /// let lookup = HangulSyllableType::name_to_enum_mapper();
         /// // short name for value
-        /// assert_eq!(lookup.get_strict("AN"), Some(HangulSyllableType::ArabicNumber));
-        /// assert_eq!(lookup.get_strict("NSM"), Some(HangulSyllableType::NonspacingMark));
+        /// assert_eq!(lookup.get_strict("L"), Some(HangulSyllableType::LeadingJamo));
+        /// assert_eq!(lookup.get_strict("LV"), Some(HangulSyllableType::LeadingVowelSyllable));
         /// // long name for value
-        /// assert_eq!(lookup.get_strict("Arabic_Number"), Some(HangulSyllableType::ArabicNumber));
-        /// assert_eq!(lookup.get_strict("Nonspacing_Mark"), Some(HangulSyllableType::NonspacingMark));
+        /// assert_eq!(lookup.get_strict("Leading_Jamo"), Some(HangulSyllableType::LeadingJamo));
+        /// assert_eq!(lookup.get_strict("LV_Syllable"), Some(HangulSyllableType::LeadingVowelSyllable));
         /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("arabicnumber"), None);
+        /// assert_eq!(lookup.get_strict("lv"), None);
         /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("arabicnumber"), Some(HangulSyllableType::ArabicNumber));
+        /// assert_eq!(lookup.get_loose("lv"), Some(HangulSyllableType::LeadingVowelSyllable));
         /// // fake property
-        /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
+        /// assert_eq!(lookup.get_strict("LT_Syllable"), None);
         /// ```
         pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
@@ -1655,8 +1654,8 @@ impl_value_getter! {
         /// use icu::properties::HangulSyllableType;
         ///
         /// let lookup = HangulSyllableType::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(HangulSyllableType::ArabicNumber), Some("AN"));
-        /// assert_eq!(lookup.get(HangulSyllableType::NonspacingMark), Some("NSM"));
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("L"));
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV"));
         /// ```
         pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
@@ -1672,13 +1671,12 @@ impl_value_getter! {
         /// use icu::properties::HangulSyllableType;
         ///
         /// let lookup = HangulSyllableType::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(HangulSyllableType::ArabicNumber), Some("Arabic_Number"));
-        /// assert_eq!(lookup.get(HangulSyllableType::NonspacingMark), Some("Nonspacing_Mark"));
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("Leading_Jamo"));
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV_Syllable"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }
 }
-*/
 
 /// Enumerated property East_Asian_Width.
 ///
@@ -2716,6 +2714,14 @@ mod test_enumerated_property_completeness {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
             BidiClass::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_hst() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_HST_V1,
+            HangulSyllableType::ALL_CONSTS,
         );
     }
 }

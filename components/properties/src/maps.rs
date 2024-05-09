@@ -416,7 +416,6 @@ make_map_property! {
     pub fn load_script();
 }
 
-/*
 make_map_property! {
     property: "Hangul_Syllable_Type";
     marker: HangulSyllableTypeProperty;
@@ -442,7 +441,6 @@ make_map_property! {
     pub const hangul_syllable_type => SINGLETON_PROPS_HST_V1;
     pub fn load_hangul_syllable_type();
 }
-*/
 
 make_map_property! {
     property: "East_Asian_Width";

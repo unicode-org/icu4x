@@ -8,8 +8,8 @@ use crate::provider::bidi_data::{
 use crate::script::ScriptWithExt;
 use crate::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
-    WordBreak,
+    GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak,
+    Script, SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
