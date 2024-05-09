@@ -421,6 +421,7 @@ pub trait TypedNeoFormatterMarker<C: CldrCalendar>: Sealed {
     type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 }
 
 /// A collection of types and constants for specific variants of [`NeoFormatter`].
@@ -450,6 +451,7 @@ pub trait NeoFormatterMarker {
     type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    // TODO: Add WeekCalculator, FixedDecimalFormatter, and AnyCalendar optional bindings here
 }
 
 /// Marker for a Year/Month/Day format, like "January 1, 2000"
