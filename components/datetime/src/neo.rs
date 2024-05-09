@@ -396,13 +396,14 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 }
 
-trait Sealed {}
+mod private {
+    pub trait Sealed {}
+}
 
 /// A collection of types and constants for specific variants of [`TypedNeoFormatter`].
 /// 
 /// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
-#[allow(private_bounds)] // sealed
-pub trait TypedNeoFormatterMarker<C: CldrCalendar>: Sealed {
+pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoComponents;
     /// Fields for [`DateTimeNames`].
@@ -459,7 +460,7 @@ pub trait NeoFormatterMarker {
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NeoYearMonthDayMarker {}
 
-impl Sealed for NeoYearMonthDayMarker {}
+impl private::Sealed for NeoYearMonthDayMarker {}
 
 impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for NeoYearMonthDayMarker {
     const COMPONENTS: NeoComponents =

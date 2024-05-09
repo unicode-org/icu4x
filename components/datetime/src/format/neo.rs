@@ -237,6 +237,7 @@ pub trait MaybePayload<Y: for<'a> Yokeable<'a>> {
         M: DataMarker<Yokeable = Y>,
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
+    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output>;
 }
 
@@ -265,6 +266,7 @@ where
                 .map(DataPayload::cast),
         )
     }
+    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <M0::Yokeable as Yokeable<'a>>::Output> {
         Some(self.get())
@@ -291,6 +293,7 @@ impl<Y: for<'a> Yokeable<'a>> MaybePayload<Y> for () {
         None
         // Err(DataError::custom("cannot load into this type").with_req(provider.key(), req))
     }
+    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     fn maybe_get<'a>(&'a self) -> Option<&'a <Y as Yokeable<'a>>::Output> {
         None

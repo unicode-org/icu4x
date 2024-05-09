@@ -21,7 +21,7 @@ use tinystr::{tinystr, TinyAsciiStr};
 use crate::provider::neo::*;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 use icu_provider::NeverMarker;
-#[cfg(any(feature = "experimental"))]
+#[cfg(feature = "experimental")]
 use core::marker::PhantomData;
 
 /// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
@@ -653,12 +653,18 @@ where
 }
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-trait Sealed {}
+mod private {
+    pub trait Sealed {}
+}
 
 /// A collection of marker types associated with all calendars.
-#[allow(private_bounds)] // sealed
+///
+/// This is used to group together the calendar-specific marker types that produce a common
+/// [`DataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
+///
+/// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-pub trait CalMarkers<M>: Sealed
+pub trait CalMarkers<M>: private::Sealed
 where
     M: DataMarker,
 {
@@ -701,18 +707,20 @@ where
 /// Implementation of [`CalMarkers`] that includes data for all calendars.
 #[derive(Debug)]
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-pub struct FullDataCalMarkers;
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum FullDataCalMarkers {}
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-impl Sealed for FullDataCalMarkers {}
+impl private::Sealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-pub struct NoDataCalMarkers;
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NoDataCalMarkers {}
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
-impl Sealed for NoDataCalMarkers {}
+impl private::Sealed for NoDataCalMarkers {}
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 impl<M> CalMarkers<M> for NoDataCalMarkers
