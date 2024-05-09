@@ -53,7 +53,7 @@ class ICU4XPropertyValueNameToEnumMapper {
   int16_t get_loose(const std::string_view name) const;
 
   /**
-   * See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
+   * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.name_to_enum_mapper) for more information.
    */
   static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_general_category(const ICU4XDataProvider& provider);
 
@@ -83,7 +83,7 @@ class ICU4XPropertyValueNameToEnumMapper {
   static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_line_break(const ICU4XDataProvider& provider);
 
   /**
-   * See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
+   * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.name_to_enum_mapper) for more information.
    */
   static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_grapheme_cluster_break(const ICU4XDataProvider& provider);
 

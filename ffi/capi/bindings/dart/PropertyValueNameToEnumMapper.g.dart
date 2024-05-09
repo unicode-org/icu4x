@@ -52,7 +52,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
+  /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.generalCategory(DataProvider provider) {
@@ -118,7 +118,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
+  /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.graphemeClusterBreak(DataProvider provider) {

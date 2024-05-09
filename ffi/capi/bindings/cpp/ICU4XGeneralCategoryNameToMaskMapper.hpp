@@ -27,7 +27,7 @@ struct ICU4XGeneralCategoryNameToMaskMapperDeleter {
 /**
  * A type capable of looking up General Category mask values from a string name.
  * 
- * See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
+ * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
  * 
  * See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
  */
@@ -49,7 +49,7 @@ class ICU4XGeneralCategoryNameToMaskMapper {
   uint32_t get_loose(const std::string_view name) const;
 
   /**
-   * See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
+   * See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
    */
   static diplomat::result<ICU4XGeneralCategoryNameToMaskMapper, ICU4XError> load(const ICU4XDataProvider& provider);
   inline const capi::ICU4XGeneralCategoryNameToMaskMapper* AsFFI() const { return this->inner.get(); }

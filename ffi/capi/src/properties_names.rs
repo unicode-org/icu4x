@@ -70,9 +70,11 @@ pub mod ffi {
             .unwrap_or(-1)
         }
 
+        #[diplomat::rust_link(icu::properties::GeneralCategory::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::GeneralCategory::get_name_to_enum_mapper,
-            FnInStruct
+            FnInStruct,
+            hidden
         )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category")]
         pub fn load_general_category(
@@ -89,6 +91,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::HangulSyllableType::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::HangulSyllableType::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
         pub fn load_hangul_syllable_type(
             provider: &ICU4XDataProvider,
@@ -104,6 +111,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::EastAsianWidth::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::EastAsianWidth::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
@@ -119,6 +131,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::BidiClass::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::BidiClass::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
@@ -137,6 +154,11 @@ pub mod ffi {
             icu::properties::IndicSyllabicCategory::name_to_enum_mapper,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::properties::IndicSyllabicCategory::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &ICU4XDataProvider,
@@ -152,6 +174,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::LineBreak::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::LineBreak::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
@@ -167,8 +194,13 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::properties::GraphemeClusterBreak::get_name_to_enum_mapper,
+            icu::properties::GraphemeClusterBreak::name_to_enum_mapper,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::properties::GraphemeClusterBreak::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
         )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_cluster_break")]
         pub fn load_grapheme_cluster_break(
@@ -185,6 +217,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::WordBreak::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::WordBreak::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
@@ -200,6 +237,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::SentenceBreak::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::SentenceBreak::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
@@ -215,6 +257,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::Script::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::Script::get_name_to_enum_mapper, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "script")]
         pub fn load_script(
             provider: &ICU4XDataProvider,
@@ -232,9 +275,11 @@ pub mod ffi {
 
     /// A type capable of looking up General Category mask values from a string name.
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::properties::GeneralCategoryGroup::name_to_enum_mapper, FnInStruct)]
     #[diplomat::rust_link(
         icu::properties::GeneralCategoryGroup::get_name_to_enum_mapper,
-        FnInStruct
+        FnInStruct,
+        hidden
     )]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     pub struct ICU4XGeneralCategoryNameToMaskMapper(
@@ -273,8 +318,13 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::properties::GeneralCategoryGroup::get_name_to_enum_mapper,
+            icu::properties::GeneralCategoryGroup::name_to_enum_mapper,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::properties::GeneralCategoryGroup::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
         )]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn load(
