@@ -4,9 +4,9 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
+use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
 use crate::format::datetime::DateTimeWriteError;
-use crate::calendar::AnyCalendarProvider;
 use crate::format::datetime::{try_write_field, try_write_pattern};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
@@ -401,7 +401,7 @@ mod private {
 }
 
 /// A collection of types and constants for specific variants of [`TypedNeoFormatter`].
-/// 
+///
 /// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
 pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
     /// Components in the neo skeleton.
@@ -426,11 +426,11 @@ pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
 }
 
 /// A collection of types and constants for specific variants of [`NeoFormatter`].
-/// 
+///
 /// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
-/// 
+///
 /// The cross-calendar fields should be either [`FullDataCalMarkers`] or [`NoDataCalMarkers`].
-/// 
+///
 /// [`FullDataCalMarkers`]: _internal::FullDataCalMarkers
 /// [`NoDataCalMarkers`]: _internal::NoDataCalMarkers
 pub trait NeoFormatterMarker {
@@ -655,7 +655,11 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     }
 }
 
-size_test!(NeoFormatter<NeoYearMonthDayMarker>, neo_year_month_day_formatter_size, 512);
+size_test!(
+    NeoFormatter<NeoYearMonthDayMarker>,
+    neo_year_month_day_formatter_size,
+    512
+);
 
 /// [`NeoFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at runtime.
@@ -951,10 +955,10 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
         names.load_for_pattern(
             &AnyCalendarProvider::<R::Year, _>::new(provider, kind), // year
             &AnyCalendarProvider::<R::Month, _>::new(provider, kind), // month
-            &R::WeekdayNamesV1Marker::bind(provider),                 // weekday
-            &R::DayPeriodNamesV1Marker::bind(provider),               // day period
-            Some(loader),                                             // fixed decimal formatter
-            Some(loader),                                             // week calculator
+            &R::WeekdayNamesV1Marker::bind(provider),                // weekday
+            &R::DayPeriodNamesV1Marker::bind(provider),              // day period
+            Some(loader),                                            // fixed decimal formatter
+            Some(loader),                                            // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -1227,10 +1231,10 @@ impl NeoDateFormatter {
         names.load_for_pattern(
             &AnyCalendarProvider::<FullData, _>::new(provider, kind), // year
             &AnyCalendarProvider::<FullData, _>::new(provider, kind), // month
-            &WeekdayNamesV1Marker::bind(provider),                         // weekday
-            &PhantomProvider,                                              // day period
-            Some(loader), // fixed decimal formatter
-            Some(loader), // week calculator
+            &WeekdayNamesV1Marker::bind(provider),                    // weekday
+            &PhantomProvider,                                         // day period
+            Some(loader),                                             // fixed decimal formatter
+            Some(loader),                                             // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -2584,10 +2588,10 @@ impl NeoDateTimeFormatter {
         names.load_for_pattern(
             &AnyCalendarProvider::<FullData, _>::new(provider, kind), // year
             &AnyCalendarProvider::<FullData, _>::new(provider, kind), // month
-            &WeekdayNamesV1Marker::bind(provider),                         // weekday
-            &DayPeriodNamesV1Marker::bind(provider),                       // day period
-            Some(loader), // fixed decimal formatter
-            Some(loader), // week calculator
+            &WeekdayNamesV1Marker::bind(provider),                    // weekday
+            &DayPeriodNamesV1Marker::bind(provider),                  // day period
+            Some(loader),                                             // fixed decimal formatter
+            Some(loader),                                             // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
