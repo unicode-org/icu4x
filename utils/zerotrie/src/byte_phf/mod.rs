@@ -59,14 +59,16 @@ mod cached_owned;
 pub use cached_owned::PerfectByteHashMapCacheOwned;
 
 /// The cutoff for the fast version of [`f1`].
+#[cfg(feature = "alloc")] // used in the builder code
 const P_FAST_MAX: u8 = 95;
 
 /// The cutoff for the fast version of [`f2`].
 const Q_FAST_MAX: u8 = 95;
 
 /// The maximum allowable value of `p`. This could be raised if found to be necessary.
+/// Values exceeding P_FAST_MAX could use a different `p` algorithm by modifying [`f1`].
 #[cfg(feature = "alloc")] // used in the builder code
-const P_REAL_MAX: u8 = 127;
+const P_REAL_MAX: u8 = P_FAST_MAX;
 
 /// The maximum allowable value of `q`. This could be raised if found to be necessary.
 #[cfg(feature = "alloc")] // used in the builder code
@@ -118,13 +120,10 @@ pub fn f1(byte: u8, p: u8, n: usize) -> usize {
     if p == 0 {
         byte as usize % n
     } else {
-        let mut result = byte ^ p ^ byte.wrapping_shr(p as u32);
-        // In almost all cases, the PHF works with the above constant-time operation.
-        // However, to crack a few difficult cases, we fall back to the linear-time
-        // operation shown below.
-        for _ in P_FAST_MAX..p {
-            result = result ^ (result << 1) ^ (result >> 1);
-        }
+        // `p` always uses the below constant-time operation. If needed, we
+        // could add some other operation here with `p > P_FAST_MAX` to solve
+        // difficult cases if the need arises.
+        let result = byte ^ p ^ byte.wrapping_shr(p as u32);
         result as usize % n
     }
 }
