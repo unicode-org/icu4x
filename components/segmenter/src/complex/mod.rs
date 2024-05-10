@@ -24,10 +24,12 @@ type DictOrLstmBorrowed<'a> =
 
 #[cfg(feature = "lstm")]
 type DictOrLstm =
-    Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataPayload<LstmDataV1Marker>>;
+    Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataPayload<LstmForWordLineAutoV1Marker>>;
 #[cfg(feature = "lstm")]
-type DictOrLstmBorrowed<'a> =
-    Result<&'a DataPayload<UCharDictionaryBreakDataV1Marker>, &'a DataPayload<LstmDataV1Marker>>;
+type DictOrLstmBorrowed<'a> = Result<
+    &'a DataPayload<UCharDictionaryBreakDataV1Marker>,
+    &'a DataPayload<LstmForWordLineAutoV1Marker>,
+>;
 
 #[derive(Debug)]
 pub(crate) struct ComplexPayloads {

@@ -170,11 +170,7 @@ fn saudi_criterion(date: RataDie) -> Option<bool> {
 }
 
 pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
-    if let Some(x) = saudi_criterion(date) {
-        x
-    } else {
-        false
-    }
+    saudi_criterion(date).unwrap_or_default()
 }
 
 // Closest fixed date on or before date when Saudi visibility criterion is held.

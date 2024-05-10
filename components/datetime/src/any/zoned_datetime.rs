@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::date_time::PatternForLengthError;
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::{calendar, options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
@@ -196,7 +199,14 @@ impl ZonedDateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -281,7 +291,14 @@ impl ZonedDateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(
@@ -354,7 +371,11 @@ impl ZonedDateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -436,7 +457,11 @@ impl ZonedDateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(

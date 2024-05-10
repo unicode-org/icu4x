@@ -7,7 +7,6 @@ use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
 use std::char;
-use std::u32;
 
 struct TestContentIterator(core::str::Split<'static, char>);
 

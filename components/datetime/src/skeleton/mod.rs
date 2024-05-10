@@ -34,11 +34,6 @@ mod test {
     use core::str::FromStr;
     use litemap::LiteMap;
 
-    use ::serde::{
-        ser::{self, SerializeSeq},
-        Serialize,
-    };
-
     fn get_data_payload() -> (
         DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
@@ -377,25 +372,6 @@ mod test {
             }
             best => panic!("Unexpected {best:?}"),
         };
-    }
-
-    /// Skeletons are represented in bincode as a vec of field, but bincode shouldn't be completely
-    /// trusted, test that the bincode gets validated correctly.
-    struct TestInvalidSkeleton(Vec<Field>);
-
-    #[cfg(feature = "serde")]
-    impl Serialize for TestInvalidSkeleton {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: ser::Serializer,
-        {
-            let fields = &self.0;
-            let mut seq = serializer.serialize_seq(Some(fields.len()))?;
-            for item in fields.iter() {
-                seq.serialize_element(item)?;
-            }
-            seq.end()
-        }
     }
 
     #[cfg(feature = "datagen")]

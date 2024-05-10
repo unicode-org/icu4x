@@ -417,6 +417,32 @@ make_map_property! {
 }
 
 make_map_property! {
+    property: "Hangul_Syllable_Type";
+    marker: HangulSyllableTypeProperty;
+    value: crate::HangulSyllableType;
+    keyed_data_marker: HangulSyllableTypeV1Marker;
+    func:
+    /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
+    /// Unicode enumerated property. See [`HangulSyllableType`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, HangulSyllableType};
+    ///
+    /// assert_eq!(maps::hangul_syllable_type().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
+    /// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
+    /// ```
+
+    pub const hangul_syllable_type => SINGLETON_PROPS_HST_V1;
+    pub fn load_hangul_syllable_type();
+}
+
+make_map_property! {
     property: "East_Asian_Width";
     marker: EastAsianWidthProperty;
     value: crate::EastAsianWidth;

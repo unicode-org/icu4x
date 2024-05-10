@@ -126,6 +126,17 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `hangul_syllable_type`](https://docs.rs/icu/latest/icu/properties/maps/fn.hangul_syllable_type.html) for more information.
+  ///
+  /// Throws [Error] on failure.
+  factory CodePointMapData8.hangulSyllableType(DataProvider provider) {
+    final result = _ICU4XCodePointMapData8_load_hangul_syllable_type(provider._ffi);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return CodePointMapData8._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
   ///
   /// Throws [Error] on failure.
@@ -242,6 +253,11 @@ external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_bidi_class(ffi.Pointer<
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_east_asian_width')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_east_asian_width(ffi.Pointer<ffi.Opaque> provider);
+
+@meta.ResourceIdentifier('ICU4XCodePointMapData8_load_hangul_syllable_type')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_hangul_syllable_type')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_hangul_syllable_type(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('ICU4XCodePointMapData8_load_indic_syllabic_category')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_indic_syllabic_category')

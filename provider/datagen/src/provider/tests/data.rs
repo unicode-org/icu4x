@@ -608,6 +608,7 @@ impl DatagenProvider {
                             ("uprops/small/Gr_Link.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/Gr_Link.toml").as_slice()),
                             ("uprops/small/graph.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/graph.toml").as_slice()),
                             ("uprops/small/Hex.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/Hex.toml").as_slice()),
+                            ("uprops/small/hst.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/hst.toml").as_slice()),
                             ("uprops/small/Hyphen.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/Hyphen.toml").as_slice()),
                             ("uprops/small/IDC.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/IDC.toml").as_slice()),
                             ("uprops/small/Ideo.toml", include_bytes!("../../../tests/data/icuexport/uprops/small/Ideo.toml").as_slice()),

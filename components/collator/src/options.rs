@@ -357,7 +357,7 @@ pub enum BackwardSecondLevel {
 /// Due to the very limited utility, ICU4X data does not include search collations
 /// by default.
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct CollatorOptions {
     /// User-specified strength collation option.
     pub strength: Option<Strength>,
