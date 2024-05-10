@@ -96,6 +96,7 @@ fn make_blob_v1() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
+    assert_eq!(blob.len(), 567405);
     assert!(blob.len() > 100);
     blob
 }
@@ -108,64 +109,48 @@ fn make_blob_v2() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
+    assert_eq!(blob.len(), 218376);
     assert!(blob.len() > 100);
     blob
 }
 
 fn auxkey_bench(c: &mut Criterion) {
     let blob_v1 = make_blob_v1();
-    let blob_v1 = blob_v1.as_slice();
+    auxkey_bench_for_version(c, &blob_v1, "v1");
     let blob_v2 = make_blob_v2();
-    let blob_v2 = blob_v2.as_slice();
+    auxkey_bench_for_version(c, &blob_v2, "v2");
+}
 
-    c.bench_function("provider/auxkey/construct/v1", |b| {
-        b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap());
+fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
+    c.bench_function(&format!("provider/auxkey/construct/{version_id}"), |b| {
+        b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob).into()).unwrap());
     });
-    c.bench_function("provider/auxkey/construct/v2", |b| {
-        b.iter(|| BlobDataProvider::try_new_from_blob(black_box(blob_v2).into()).unwrap());
-    });
 
-    let provider_v1 = LocaleFallbackProvider::new_with_fallbacker(
-        BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(),
-        LocaleFallbacker::new().static_to_owned(),
-    );
-
-    let provider_v2 = LocaleFallbackProvider::new_with_fallbacker(
-        BlobDataProvider::try_new_from_blob(black_box(blob_v1).into()).unwrap(),
+    let provider = LocaleFallbackProvider::new_with_fallbacker(
+        BlobDataProvider::try_new_from_blob(black_box(blob).into()).unwrap(),
         LocaleFallbacker::new().static_to_owned(),
     );
 
     for locale_str in ["sr-Latn-x-ym0d", "sr-ME-x-ym0d"] {
         let locale = locale_str.parse::<DataLocale>().unwrap();
 
-        c.bench_function(&format!("provider/auxkey/fallback/{locale_str}/v1"), |b| {
-            b.iter(|| {
-                assert!(
-                    DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
-                        &provider_v1.as_deserializing(),
-                        DataRequest {
-                            locale: black_box(&locale),
-                            metadata: Default::default()
-                        }
+        c.bench_function(
+            &format!("provider/auxkey/fallback/{locale_str}/{version_id}"),
+            |b| {
+                b.iter(|| {
+                    assert!(
+                        DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
+                            &provider.as_deserializing(),
+                            DataRequest {
+                                locale: black_box(&locale),
+                                metadata: Default::default()
+                            }
+                        )
+                        .is_ok()
                     )
-                    .is_ok()
-                )
-            });
-        });
-        c.bench_function(&format!("provider/auxkey/fallback/{locale_str}/v2"), |b| {
-            b.iter(|| {
-                assert!(
-                    DataProvider::<GregorianDateNeoSkeletonPatternsV1Marker>::load(
-                        &provider_v2.as_deserializing(),
-                        DataRequest {
-                            locale: black_box(&locale),
-                            metadata: Default::default()
-                        }
-                    )
-                    .is_ok()
-                )
-            });
-        });
+                });
+            },
+        );
     }
 }
 
