@@ -20,6 +20,7 @@
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
     - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
     - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
+    - Implement Hangul_Syllable_Type property (https://github.com/unicode-org/icu4x/pull/4885)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
 - Data model and providers
