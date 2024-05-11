@@ -1467,8 +1467,12 @@ version = "1.4.0"
 dependencies = [
  "criterion",
  "icu_datagen",
+ "icu_datetime",
+ "icu_datetime_data",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
+ "icu_provider_adapters",
  "log",
  "postcard",
  "serde",
