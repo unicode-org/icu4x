@@ -65,7 +65,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the year for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn day_of_year(&self) -> u32 {
+        pub fn day_of_year(&self) -> u16 {
             self.0.day_of_year_info().day_of_year
         }
 
@@ -211,7 +211,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the year for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn day_of_year(&self) -> u32 {
+        pub fn day_of_year(&self) -> u16 {
             self.0.day_of_year_info().day_of_year
         }
 
