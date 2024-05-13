@@ -52,7 +52,7 @@ export class ICU4XIsoDate {
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info Rust documentation for `day_of_year_info`} for more information.
    */
-  day_of_year(): u32;
+  day_of_year(): u16;
 
   /**
 

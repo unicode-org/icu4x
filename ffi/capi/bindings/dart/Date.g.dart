@@ -229,7 +229,7 @@ external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_calendar(ffi.Pointer<ffi.Opaque> 
 external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_iso(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XDate_day_of_year')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_year')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_day_of_year(ffi.Pointer<ffi.Opaque> self);
 

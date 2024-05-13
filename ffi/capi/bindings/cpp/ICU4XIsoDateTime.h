@@ -53,7 +53,7 @@ uint8_t ICU4XIsoDateTime_second(const ICU4XIsoDateTime* self);
 
 uint32_t ICU4XIsoDateTime_nanosecond(const ICU4XIsoDateTime* self);
 
-uint32_t ICU4XIsoDateTime_day_of_year(const ICU4XIsoDateTime* self);
+uint16_t ICU4XIsoDateTime_day_of_year(const ICU4XIsoDateTime* self);
 
 uint32_t ICU4XIsoDateTime_day_of_month(const ICU4XIsoDateTime* self);
 

@@ -318,7 +318,7 @@ external int _ICU4XDateTime_second(ffi.Pointer<ffi.Opaque> self);
 external int _ICU4XDateTime_nanosecond(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XDateTime_day_of_year')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_day_of_year')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTime_day_of_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XDateTime_day_of_year(ffi.Pointer<ffi.Opaque> self);
 
