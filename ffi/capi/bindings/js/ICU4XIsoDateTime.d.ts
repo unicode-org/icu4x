@@ -124,6 +124,14 @@ export class ICU4XIsoDateTime {
 
   /**
 
+   * Returns the 1-indexed day in the year for this date
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info Rust documentation for `day_of_year_info`} for more information.
+   */
+  day_of_year(): u32;
+
+  /**
+
    * Returns the 1-indexed day in the month for this date
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month Rust documentation for `day_of_month`} for more information.

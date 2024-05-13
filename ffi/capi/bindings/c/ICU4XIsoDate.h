@@ -33,6 +33,8 @@ ICU4XDate* ICU4XIsoDate_to_calendar(const ICU4XIsoDate* self, const ICU4XCalenda
 
 ICU4XDate* ICU4XIsoDate_to_any(const ICU4XIsoDate* self);
 
+uint32_t ICU4XIsoDate_day_of_year(const ICU4XIsoDate* self);
+
 uint32_t ICU4XIsoDate_day_of_month(const ICU4XIsoDate* self);
 
 ICU4XIsoWeekday ICU4XIsoDate_day_of_week(const ICU4XIsoDate* self);

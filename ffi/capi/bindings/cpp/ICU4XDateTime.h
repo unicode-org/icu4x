@@ -50,6 +50,8 @@ uint8_t ICU4XDateTime_second(const ICU4XDateTime* self);
 
 uint32_t ICU4XDateTime_nanosecond(const ICU4XDateTime* self);
 
+uint32_t ICU4XDateTime_day_of_year(const ICU4XDateTime* self);
+
 uint32_t ICU4XDateTime_day_of_month(const ICU4XDateTime* self);
 
 ICU4XIsoWeekday ICU4XDateTime_day_of_week(const ICU4XDateTime* self);
