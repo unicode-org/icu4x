@@ -48,7 +48,7 @@ export default {
   // mode: "development",
   output: {
     filename: 'bundle.js',
-    path: new URL('dist', import.meta.url).pathname,
+    path: new URL('dist', import.meta.url).href.replace("file:///", ""),
   },
   devServer: {
     static: '.',
