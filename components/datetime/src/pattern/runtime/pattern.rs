@@ -116,7 +116,7 @@ impl<'data> PatternBorrowed<'data> {
         metadata: PatternMetadata::DEFAULT,
     };
 
-    pub fn to_pattern(&self) -> Pattern<'data> {
+    pub fn as_pattern(&self) -> Pattern<'data> {
         Pattern {
             items: self.items.as_zerovec(),
             metadata: self.metadata,

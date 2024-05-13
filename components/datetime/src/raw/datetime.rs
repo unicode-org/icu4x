@@ -5,6 +5,7 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`DateTimeFormatter`].
 
+use crate::format::datetime::FormattedDateTime;
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
@@ -18,7 +19,7 @@ use crate::{
             TimeSymbolsV1Marker,
         },
     },
-    DateTimeError, FormattedDateTime,
+    DateTimeError,
 };
 
 use icu_calendar::provider::WeekDataV1Marker;

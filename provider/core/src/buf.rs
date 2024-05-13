@@ -94,6 +94,7 @@ pub trait BufferProvider {
 }
 
 impl<'a, T: BufferProvider + ?Sized> BufferProvider for &'a T {
+    #[inline]
     fn load_buffer(
         &self,
         key: DataKey,
@@ -104,6 +105,7 @@ impl<'a, T: BufferProvider + ?Sized> BufferProvider for &'a T {
 }
 
 impl<T: BufferProvider + ?Sized> BufferProvider for alloc::boxed::Box<T> {
+    #[inline]
     fn load_buffer(
         &self,
         key: DataKey,
@@ -114,6 +116,7 @@ impl<T: BufferProvider + ?Sized> BufferProvider for alloc::boxed::Box<T> {
 }
 
 impl<T: BufferProvider + ?Sized> BufferProvider for alloc::rc::Rc<T> {
+    #[inline]
     fn load_buffer(
         &self,
         key: DataKey,
@@ -125,6 +128,7 @@ impl<T: BufferProvider + ?Sized> BufferProvider for alloc::rc::Rc<T> {
 
 #[cfg(target_has_atomic = "ptr")]
 impl<T: BufferProvider + ?Sized> BufferProvider for alloc::sync::Arc<T> {
+    #[inline]
     fn load_buffer(
         &self,
         key: DataKey,
