@@ -290,8 +290,8 @@ impl FixedDecimal {
         let mut trailing_zeros: usize = 0;
         let mut i: usize = 0;
         for (x, d) in digits_iter.enumerate() {
-            // Take only up to core::i16::MAX values so that we have enough capacity
-            if x > core::i16::MAX as usize {
+            // Take only up to i16::MAX values so that we have enough capacity
+            if x > i16::MAX as usize {
                 return Err(Error::Limit);
             }
             // TODO: Should we check here that `d` is between 0 and 9?
@@ -311,7 +311,7 @@ impl FixedDecimal {
         let mut result: Self = Default::default();
         if i != 0 {
             let magnitude = trailing_zeros + i - 1;
-            debug_assert!(magnitude <= core::i16::MAX as usize);
+            debug_assert!(magnitude <= i16::MAX as usize);
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
             debug_assert!(i <= X);
@@ -3091,7 +3091,6 @@ impl TryFrom<&[u8]> for FixedDecimal {
         dec.upper_magnitude = temp_upper_magnitude as i16;
 
         // Computing DecimalFixed.lower_magnitude
-        // Note: ((i16::MIN as u16) as usize) == 32768
         let temp_lower_magnitude = no_dot_str_len - dot_index;
         if temp_lower_magnitude > (i16::MIN as u16) as usize {
             return Err(Error::Limit);
@@ -3786,7 +3785,7 @@ fn test_from_str_scientific() {
 
 #[test]
 fn test_isize_limits() {
-    for num in &[core::isize::MAX, core::isize::MIN] {
+    for num in &[isize::MAX, isize::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
@@ -3797,14 +3796,14 @@ fn test_isize_limits() {
 
 #[test]
 fn test_ui128_limits() {
-    for num in &[core::i128::MAX, core::i128::MIN] {
+    for num in &[i128::MAX, i128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
         writeable::assert_writeable_eq!(dec, dec_str);
     }
-    for num in &[core::u128::MAX, core::u128::MIN] {
+    for num in &[u128::MAX, u128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
@@ -3817,9 +3816,9 @@ fn test_ui128_limits() {
 fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
-    dec.multiply_pow10(32763);
-    assert_eq!(dec.upper_magnitude, core::i16::MAX);
-    assert_eq!(dec.nonzero_magnitude_start(), core::i16::MAX);
+    dec.multiply_pow10(i16::MAX - 4);
+    assert_eq!(dec.upper_magnitude, i16::MAX);
+    assert_eq!(dec.nonzero_magnitude_start(), i16::MAX);
     let dec_backup = dec.clone();
     dec.multiply_pow10(1);
     assert!(dec.is_zero());
@@ -3834,9 +3833,9 @@ fn test_upper_magnitude_bounds() {
 fn test_lower_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.lower_magnitude, 0);
-    dec.multiply_pow10(-32768);
-    assert_eq!(dec.lower_magnitude, core::i16::MIN);
-    assert_eq!(dec.nonzero_magnitude_end(), core::i16::MIN);
+    dec.multiply_pow10(i16::MIN);
+    assert_eq!(dec.lower_magnitude, i16::MIN);
+    assert_eq!(dec.nonzero_magnitude_end(), i16::MIN);
     let dec_backup = dec.clone();
     dec.multiply_pow10(-1);
     assert!(dec.is_zero());
@@ -3855,56 +3854,55 @@ fn test_zero_str_bounds() {
         pub zeros_after_dot: usize,
         pub expected_err: Option<Error>,
     }
-    // Note that core::i16::MAX = 32768
     let cases = [
         TestCase {
-            zeros_before_dot: 32768,
+            zeros_before_dot: i16::MAX as usize + 1,
             zeros_after_dot: 0,
             expected_err: None,
         },
         TestCase {
-            zeros_before_dot: 32767,
+            zeros_before_dot: i16::MAX as usize,
             zeros_after_dot: 0,
             expected_err: None,
         },
         TestCase {
-            zeros_before_dot: 32769,
+            zeros_before_dot: i16::MAX as usize + 2,
             zeros_after_dot: 0,
             expected_err: Some(Error::Limit),
         },
         TestCase {
             zeros_before_dot: 0,
-            zeros_after_dot: 32769,
+            zeros_after_dot: i16::MAX as usize + 2,
             expected_err: Some(Error::Limit),
         },
         TestCase {
-            zeros_before_dot: 32768,
-            zeros_after_dot: 32768,
+            zeros_before_dot: i16::MAX as usize + 1,
+            zeros_after_dot: i16::MAX as usize + 1,
             expected_err: None,
         },
         TestCase {
-            zeros_before_dot: 32769,
-            zeros_after_dot: 32768,
+            zeros_before_dot: i16::MAX as usize + 2,
+            zeros_after_dot: i16::MAX as usize + 1,
             expected_err: Some(Error::Limit),
         },
         TestCase {
-            zeros_before_dot: 32768,
-            zeros_after_dot: 32769,
+            zeros_before_dot: i16::MAX as usize + 1,
+            zeros_after_dot: i16::MAX as usize + 2,
             expected_err: Some(Error::Limit),
         },
         TestCase {
-            zeros_before_dot: 32767,
-            zeros_after_dot: 32769,
+            zeros_before_dot: i16::MAX as usize,
+            zeros_after_dot: i16::MAX as usize + 2,
             expected_err: Some(Error::Limit),
         },
         TestCase {
-            zeros_before_dot: 32767,
-            zeros_after_dot: 32767,
+            zeros_before_dot: i16::MAX as usize,
+            zeros_after_dot: i16::MAX as usize,
             expected_err: None,
         },
         TestCase {
-            zeros_before_dot: 32768,
-            zeros_after_dot: 32767,
+            zeros_before_dot: i16::MAX as usize + 1,
+            zeros_after_dot: i16::MAX as usize,
             expected_err: None,
         },
     ];
@@ -4162,15 +4160,15 @@ fn test_set_max_position() {
 #[test]
 fn test_pad_start_bounds() {
     let mut dec = FixedDecimal::from_str("299792.458").unwrap();
-    let max_integer_digits = core::i16::MAX as usize + 1;
+    let max_integer_digits = i16::MAX as usize + 1;
 
-    dec.pad_start(core::i16::MAX - 1);
+    dec.pad_start(i16::MAX - 1);
     assert_eq!(
         max_integer_digits - 2,
         dec.to_string().split_once('.').unwrap().0.len()
     );
 
-    dec.pad_start(core::i16::MAX);
+    dec.pad_start(i16::MAX);
     assert_eq!(
         max_integer_digits - 1,
         dec.to_string().split_once('.').unwrap().0.len()
@@ -4180,15 +4178,15 @@ fn test_pad_start_bounds() {
 #[test]
 fn test_pad_end_bounds() {
     let mut dec = FixedDecimal::from_str("299792.458").unwrap();
-    let max_fractional_digits = -(core::i16::MIN as isize) as usize;
+    let max_fractional_digits = -(i16::MIN as isize) as usize;
 
-    dec.pad_end(core::i16::MIN + 1);
+    dec.pad_end(i16::MIN + 1);
     assert_eq!(
         max_fractional_digits - 1,
         dec.to_string().split_once('.').unwrap().1.len()
     );
 
-    dec.pad_end(core::i16::MIN);
+    dec.pad_end(i16::MIN);
     assert_eq!(
         max_fractional_digits,
         dec.to_string().split_once('.').unwrap().1.len()

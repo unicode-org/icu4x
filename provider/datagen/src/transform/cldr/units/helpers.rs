@@ -193,7 +193,7 @@ pub(in crate::provider) fn process_constants<'a>(
         if constant.is_free_of_non_scientific() {
             clean_constants_map.insert(cons_name, constant);
         } else {
-            constants_with_non_scientific.push_back((&cons_name, constant));
+            constants_with_non_scientific.push_back((cons_name, constant));
         }
     }
     let mut no_update_count = 0;

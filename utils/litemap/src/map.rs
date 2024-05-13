@@ -256,10 +256,10 @@ where
     /// assert_eq!(map.get(&1), Some(&"one"));
     /// assert_eq!(map.get(&3), None);
     /// ```
-    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V>
+    pub fn get<Q>(&self, key: &Q) -> Option<&V>
     where
         K: Borrow<Q>,
-        Q: Ord,
+        Q: Ord + ?Sized,
     {
         match self.find_index(key) {
             #[allow(clippy::unwrap_used)] // find_index returns a valid index
@@ -285,10 +285,10 @@ where
     /// assert!(map.contains_key(&1));
     /// assert!(!map.contains_key(&3));
     /// ```
-    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool
+    pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
         K: Borrow<Q>,
-        Q: Ord,
+        Q: Ord + ?Sized,
     {
         self.find_index(key).is_ok()
     }
@@ -301,10 +301,10 @@ where
     /// The indices returned can be used with [`Self::get_indexed()`]. Prefer using
     /// [`Self::get()`] directly where possible.
     #[inline]
-    pub fn find_index<Q: ?Sized>(&self, key: &Q) -> Result<usize, usize>
+    pub fn find_index<Q>(&self, key: &Q) -> Result<usize, usize>
     where
         K: Borrow<Q>,
-        Q: Ord,
+        Q: Ord + ?Sized,
     {
         self.values.lm_binary_search_by(|k| k.borrow().cmp(key))
     }
@@ -548,10 +548,10 @@ where
     /// }
     /// assert_eq!(map.get(&1), Some(&"uno"));
     /// ```
-    pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
+    pub fn get_mut<Q>(&mut self, key: &Q) -> Option<&mut V>
     where
         K: Borrow<Q>,
-        Q: Ord,
+        Q: Ord + ?Sized,
     {
         match self.find_index(key) {
             #[allow(clippy::unwrap_used)] // find_index returns a valid index
@@ -732,10 +732,10 @@ where
     /// assert_eq!(map.remove(&1), Some("one"));
     /// assert_eq!(map.get(&1), None);
     /// ```
-    pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<V>
+    pub fn remove<Q>(&mut self, key: &Q) -> Option<V>
     where
         K: Borrow<Q>,
-        Q: Ord,
+        Q: Ord + ?Sized,
     {
         match self.values.lm_binary_search_by(|k| k.borrow().cmp(key)) {
             Ok(found) => Some(self.values.lm_remove(found).1),

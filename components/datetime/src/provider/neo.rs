@@ -693,22 +693,30 @@ pub struct DateTimeSkeletonsV1<'data> {
     pub map: ZeroMap<'data, str, PatternULE>,
 }
 
-pub(crate) struct ErasedYearNamesV1Marker;
-impl DataMarker for ErasedYearNamesV1Marker {
+/// Calendar-agnostic year name data marker
+#[derive(Debug)]
+pub struct YearNamesV1Marker;
+impl DataMarker for YearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
 }
 
-pub(crate) struct ErasedMonthNamesV1Marker;
-impl DataMarker for ErasedMonthNamesV1Marker {
+/// Calendar-agnostic month name data marker
+#[derive(Debug)]
+pub struct MonthNamesV1Marker;
+impl DataMarker for MonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 
-pub(crate) struct ErasedDatePatternV1Marker;
-impl DataMarker for ErasedDatePatternV1Marker {
+/// Calendar-agnostic date pattern data marker
+#[derive(Debug)]
+pub struct DatePatternV1Marker;
+impl DataMarker for DatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
 }
 
-pub(crate) struct ErasedPackedSkeletonDataV1Marker;
-impl DataMarker for ErasedPackedSkeletonDataV1Marker {
+/// Calendar-agnostic date skeleta data marker
+#[derive(Debug)]
+pub struct SkeletaV1Marker;
+impl DataMarker for SkeletaV1Marker {
     type Yokeable = PackedSkeletonDataV1<'static>;
 }

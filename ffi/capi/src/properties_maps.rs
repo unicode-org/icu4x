@@ -169,6 +169,19 @@ pub mod ffi {
             )?))
         }
 
+        #[diplomat::rust_link(icu::properties::maps::hangul_syllable_type, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_hangul_syllable_type, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
+        pub fn load_hangul_syllable_type(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+            Ok(convert_8(call_constructor_unstable!(
+                maps::hangul_syllable_type [r => Ok(r.static_to_owned())],
+                maps::load_hangul_syllable_type,
+                provider,
+            )?))
+        }
+
         #[diplomat::rust_link(icu::properties::maps::indic_syllabic_category, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_indic_syllabic_category, Fn, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category")]

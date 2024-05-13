@@ -242,7 +242,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert(&mut self, key: String, value: VariableValue<'a>) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -265,7 +265,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -280,7 +280,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -301,7 +301,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -326,7 +326,7 @@ impl<'a> VariableMap<'a> {
         set: CodePointInversionListAndStringList<'a>,
     ) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);

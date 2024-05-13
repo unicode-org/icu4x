@@ -147,6 +147,13 @@ pub struct CanonicalDecomposition {
     non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker>,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for CanonicalDecomposition {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CanonicalDecomposition {
     /// Performs non-recursive canonical decomposition (including for Hangul).
     ///
@@ -434,6 +441,13 @@ impl CanonicalDecomposition {
 pub struct CanonicalCombiningClassMap {
     /// The data trie
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for CanonicalCombiningClassMap {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl CanonicalCombiningClassMap {

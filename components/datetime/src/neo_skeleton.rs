@@ -4,7 +4,10 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
+use crate::calendar::CalMarkers;
+use crate::calendar::FullDataCalMarkers;
 use crate::calendar::NeverCalendar;
+use crate::calendar::NoDataCalMarkers;
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
@@ -14,7 +17,23 @@ use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoSkeletonData<C>
+pub trait NeoSkeletonCommonData {
+    /// Marker for loading weekday names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    /// Marker for loading day period names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    /// Marker for loading time skeleton patterns.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    /// Marker for loading the date/time glue pattern.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+}
+
+/// Sealed trait implemented by neo skeleton marker types.
+pub trait TypedNeoSkeletonData<C>: NeoSkeletonCommonData
 where
     C: CldrCalendar + ?Sized,
 {
@@ -24,46 +43,23 @@ where
     /// Marker for loading month names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
     type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
-    /// Marker for loading weekday names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading day period names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
     /// Marker for loading date skeleton patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading time skeleton patterns.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading the date/time glue pattern.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
-    /// Marker for loading date/time combined patterns.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = DateTimeSkeletonsV1<'static>>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoDateSkeletonComponents<C>: TypedNeoSkeletonData<C>
-where
-    C: CldrCalendar + ?Sized,
-{
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoDateComponents;
+pub trait NeoSkeletonData: NeoSkeletonCommonData {
+    /// Cross-calendar data markers for year names.
+    type Year: CalMarkers<YearNamesV1Marker>;
+    /// Cross-calendar data markers for month names.
+    type Month: CalMarkers<MonthNamesV1Marker>;
+    /// Cross-calendar data markers for date skeleta.
+    type Skel: CalMarkers<SkeletaV1Marker>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoTimeSkeletonComponents: TypedNeoSkeletonData<NeverCalendar> {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoTimeComponents;
-}
-
-/// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoSkeletonComponents<C>: TypedNeoSkeletonData<C>
-where
-    C: CldrCalendar + ?Sized,
-{
+pub trait NeoSkeletonComponents {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoComponents;
 }
@@ -133,6 +129,14 @@ impl NeoSkeletonLength {
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum YearMonthMarker {}
 
+impl NeoSkeletonCommonData for YearMonthMarker {
+    // Data to exclude
+    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+}
+
 impl<C> TypedNeoSkeletonData<C> for YearMonthMarker
 where
     C: CldrCalendar,
@@ -140,21 +144,56 @@ where
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
-    type DateSkeletonPatternsV1Marker = C::DateSkeletonPatternsV1Marker;
+    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
+}
+
+impl NeoSkeletonData for YearMonthMarker {
+    // Data to include
+    type Year = FullDataCalMarkers;
+    type Month = FullDataCalMarkers;
+    type Skel = FullDataCalMarkers;
+}
+
+impl NeoSkeletonComponents for YearMonthMarker {
+    const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::YearMonth);
+}
+
+/// Marker for a day, month, and year, as in
+/// “January 1, 2000”.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum YearMonthDayMarker {}
+
+impl NeoSkeletonCommonData for YearMonthDayMarker {
+    // Data to include
+    type WeekdayNamesV1Marker = WeekdayNamesV1Marker;
 
     // Data to exclude
-    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
     type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
-    type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
-impl<C> TypedNeoDateSkeletonComponents<C> for YearMonthMarker
+impl<C> TypedNeoSkeletonData<C> for YearMonthDayMarker
 where
     C: CldrCalendar,
 {
-    const COMPONENTS: NeoDateComponents = NeoDateComponents::YearMonth;
+    // Data to include
+    type YearNamesV1Marker = C::YearNamesV1Marker;
+    type MonthNamesV1Marker = C::MonthNamesV1Marker;
+    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
+}
+
+impl NeoSkeletonData for YearMonthDayMarker {
+    // Data to include
+    type Year = FullDataCalMarkers;
+    type Month = FullDataCalMarkers;
+    type Skel = FullDataCalMarkers;
+}
+
+impl NeoSkeletonComponents for YearMonthDayMarker {
+    const COMPONENTS: NeoComponents =
+        NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay));
 }
 
 /// Marker for an hour and minute (12-hour or 24-hour chosen by locale), as in
@@ -163,22 +202,32 @@ where
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum HourMinuteMarker {}
 
-impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
+impl NeoSkeletonCommonData for HourMinuteMarker {
     // Data to include
     type DayPeriodNamesV1Marker = DayPeriodNamesV1Marker;
     type TimeSkeletonPatternsV1Marker = TimeNeoSkeletonPatternsV1Marker;
 
     // Data to exclude
-    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
-    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
-impl TypedNeoTimeSkeletonComponents for HourMinuteMarker {
-    const COMPONENTS: NeoTimeComponents = NeoTimeComponents::HourMinute;
+impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
+    // Data to exclude
+    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+}
+
+impl NeoSkeletonData for HourMinuteMarker {
+    // Data to exclude
+    type Year = NoDataCalMarkers;
+    type Month = NoDataCalMarkers;
+    type Skel = NoDataCalMarkers;
+}
+
+impl NeoSkeletonComponents for HourMinuteMarker {
+    const COMPONENTS: NeoComponents = NeoComponents::Time(NeoTimeComponents::HourMinute);
 }
 
 // TODO: Add more of these TypedNeoSkeletonData marker types.
