@@ -39,6 +39,8 @@ pub mod provider {
             pub use crate as experimental;
             #[allow(unused_imports)] // baked data may or may not need this
             pub use icu_locid_transform as locid_transform;
+            pub use icu_collections as collections;
+            pub use icu_normalizer as normalizer;
         }
         icu_experimental_data::make_provider!(Baked);
         icu_experimental_data::impl_compactdecimal_long_v1!(Baked);
@@ -75,7 +77,16 @@ pub mod provider {
         icu_experimental_data::impl_relativetime_short_second_v1!(Baked);
         icu_experimental_data::impl_relativetime_short_week_v1!(Baked);
         icu_experimental_data::impl_relativetime_short_year_v1!(Baked);
+        icu_experimental_data::impl_transliterator_rules_v1!(Baked);
         icu_experimental_data::impl_units_info_v1!(Baked);
+
+        // TODO(#4897): Use an external loader.
+        icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
+        icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
+        icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);
+        icu_normalizer_data::impl_normalizer_nfdex_v1!(Baked);
+        icu_normalizer_data::impl_normalizer_nfkd_v1!(Baked);
+        icu_normalizer_data::impl_normalizer_nfkdex_v1!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -120,6 +131,7 @@ pub mod provider {
         super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY,
         super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY,
+        super::transliterate::provider::TransliteratorRulesV1Marker::KEY,
         super::units::provider::UnitsInfoV1Marker::KEY,
     ];
 }

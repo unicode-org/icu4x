@@ -162,21 +162,40 @@ pub struct Transliterator {
 }
 
 impl Transliterator {
-    /// Construct a [`Transliterator`] from the given [`Locale`].
-    ///
-    /// # Examples
-    /// ```ignore
-    /// use icu::experimental::transliterate::Transliterator;
-    /// // BCP-47-T ID for Bengali to Arabic transliteration
-    /// let locale = "und-Arab-t-und-beng".parse().unwrap();
-    /// let t = Transliterator::try_new_unstable(locale, provider).unwrap();
-    /// let output = t.transliterate("অকার্যতানাযা".to_string());
-    ///
-    /// assert_eq!(output, "اكاريتانايا");
-    /// ```
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: Locale,
+        error: TransliteratorError,
+        /// Construct a [`Transliterator`] from the given [`Locale`].
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        /// 
+        /// # Examples
+        /// 
+        /// ```
+        /// use icu::experimental::transliterate::Transliterator;
+        /// // BCP-47-T ID for Bengali to Arabic transliteration
+        /// let locale = "und-Arab-t-und-beng".parse().unwrap();
+        /// let t = Transliterator::try_new(locale).unwrap();
+        /// let output = t.transliterate("অকার্যতানাযা".to_string());
+        ///
+        /// assert_eq!(output, "اكاريتانايا");
+        /// ```
+        functions: [
+            try_new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
-        locale: Locale,
         provider: &P,
+        locale: Locale,
     ) -> Result<Transliterator, TransliteratorError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>
@@ -204,8 +223,10 @@ impl Transliterator {
     /// See [`CustomTransliterator`].
     ///
     /// # Example
+    ///
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
-    /// ```ignore
+    ///
+    /// ```
     /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
     /// use icu::locid::Locale;
     /// use core::ops::Range;
@@ -224,6 +245,7 @@ impl Transliterator {
     /// };
     ///
     /// let locale = "de-t-de-d0-ascii".parse().unwrap();
+    /// let provider = icu::experimental::provider::Baked;
     /// let t = Transliterator::try_new_with_override_unstable(locale, lookup, provider).unwrap();
     /// let output = t.transliterate("This is an överride example".to_string());
     ///
@@ -1277,8 +1299,8 @@ mod tests {
         ];
 
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
         )
         .unwrap();
 
@@ -1290,8 +1312,8 @@ mod tests {
     #[test]
     fn test_recursive_suite() {
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
         )
         .unwrap();
 
@@ -1303,8 +1325,8 @@ mod tests {
     #[test]
     fn test_cursor_placeholders_filters() {
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
         )
         .unwrap();
 
@@ -1316,8 +1338,8 @@ mod tests {
     #[test]
     fn test_functionality() {
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
         )
         .unwrap();
 
@@ -1329,8 +1351,8 @@ mod tests {
     #[test]
     fn test_de_ascii() {
         let t = Transliterator::try_new_unstable(
-            "de-t-de-d0-ascii".parse().unwrap(),
             &BakedDataProvider,
+            "de-t-de-d0-ascii".parse().unwrap(),
         )
         .unwrap();
         let input =
@@ -1367,8 +1389,8 @@ mod tests {
     #[test]
     fn test_nfc_nfd() {
         let t = Transliterator::try_new_unstable(
-            "und-t-und-latn-d0-ascii".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-latn-d0-ascii".parse().unwrap(),
         )
         .unwrap();
         let input = "äa\u{0308}";
@@ -1379,8 +1401,8 @@ mod tests {
     #[test]
     fn test_hex_rust() {
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
@@ -1391,8 +1413,8 @@ mod tests {
     #[test]
     fn test_hex_unicode() {
         let t = Transliterator::try_new_unstable(
-            "und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
             &BakedDataProvider,
+            "und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";

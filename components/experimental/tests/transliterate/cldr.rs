@@ -37,7 +37,7 @@ fn test_all_cldr() {
         ),
     ] {
         let t =
-            Transliterator::try_new_unstable(locale.parse().unwrap(), &BakedDataProvider).unwrap();
+            Transliterator::try_new_unstable(&BakedDataProvider, locale.parse().unwrap()).unwrap();
         let test_cases = data
             .lines()
             .filter(|x| !x.starts_with('#'))

@@ -1211,6 +1211,7 @@ dependencies = [
  "icu_locid_transform",
  "icu_locid_transform_data",
  "icu_normalizer",
+ "icu_normalizer_data",
  "icu_pattern",
  "icu_plurals",
  "icu_properties",

@@ -264,6 +264,13 @@ pub use __impl_relativetime_short_year_v1 as impl_relativetime_short_year_v1;
 #[doc(inline)]
 pub use __impliterable_relativetime_short_year_v1 as impliterable_relativetime_short_year_v1;
 #[macro_use]
+#[path = "macros/transliterator_rules_v1.rs.data"]
+mod transliterator_rules_v1;
+#[doc(inline)]
+pub use __impl_transliterator_rules_v1 as impl_transliterator_rules_v1;
+#[doc(inline)]
+pub use __impliterable_transliterator_rules_v1 as impliterable_transliterator_rules_v1;
+#[macro_use]
 #[path = "macros/units_info_v1.rs.data"]
 mod units_info_v1;
 #[doc(inline)]
