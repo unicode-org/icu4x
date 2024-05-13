@@ -134,6 +134,13 @@ pub mod ffi {
             self.0.time.nanosecond.into()
         }
 
+        /// Returns the 1-indexed day in the year for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
+        pub fn day_of_year(&self) -> u32 {
+            self.0.day_of_year_info().day_of_year
+        }
+
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
@@ -335,6 +342,13 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
+        }
+
+        /// Returns the 1-indexed day in the year for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
+        pub fn day_of_year(&self) -> u32 {
+            self.0.day_of_year_info().day_of_year
         }
 
         /// Returns the 1-indexed day in the month for this date
