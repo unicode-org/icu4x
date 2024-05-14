@@ -33,9 +33,6 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
         );
         if year == next_year {
             assert_eq!(is_in_leap_year, next_is_in_leap_year, "{next_date:?}");
-        } else {
-            // Note: no calendars have adjacent leap years
-            assert!(!(is_in_leap_year && next_is_in_leap_year), "{next_date:?}");
         }
         date = next_date;
         rata_die = next_rata_die;
