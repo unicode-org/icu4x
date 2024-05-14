@@ -42,10 +42,35 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
     }
 }
 
+fn check_every_250_days<A: AsCalendar>(mut date: Date<A>) {
+    let one_thousand_days_duration = DateDuration::<A::Calendar> {
+        years: 0,
+        months: 0,
+        weeks: 0,
+        days: 250,
+        marker: PhantomData,
+    };
+
+    let mut rata_die = date.to_fixed();
+
+    for _ in 0..2000 {
+        let next_date = date.added(one_thousand_days_duration);
+        let next_iso = next_date.to_iso();
+        let next_rata_die = next_iso.to_fixed();
+        assert_eq!(next_rata_die, rata_die + 250, "{next_date:?}");
+        let next_date_roundtrip = next_iso.to_calendar(Ref(next_date.calendar()));
+        assert_eq!(next_date, next_date_roundtrip, "{next_date:?}");
+        date = next_date;
+        rata_die = next_rata_die;
+    }
+}
+
 #[test]
 fn test_buddhist_continuity() {
     let date = Date::try_new_buddhist_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_buddhist_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -54,12 +79,18 @@ fn test_chinese_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_chinese_date_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_chinese_date_with_calendar(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
+    let date = Date::try_new_chinese_date_with_calendar(-10000, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_coptic_continuity() {
     let date = Date::try_new_coptic_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_coptic_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -68,6 +99,8 @@ fn test_dangi_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_dangi_date_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_dangi_date_with_calendar(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -75,6 +108,8 @@ fn test_ethiopian_continuity() {
     use crate::ethiopian::EthiopianEraStyle::*;
     let date = Date::try_new_ethiopian_date(AmeteMihret, -10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_ethiopian_date(AmeteMihret, -300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -82,24 +117,32 @@ fn test_ethiopian_amete_alem_continuity() {
     use crate::ethiopian::EthiopianEraStyle::*;
     let date = Date::try_new_ethiopian_date(AmeteAlem, -10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_ethiopian_date(AmeteAlem, -300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_gregorian_continuity() {
     let date = Date::try_new_gregorian_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_gregorian_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_hebrew_continuity() {
     let date = Date::try_new_hebrew_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_hebrew_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_indian_continuity() {
     let date = Date::try_new_indian_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_indian_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -108,6 +151,8 @@ fn test_islamic_civil_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_islamic_civil_date_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_islamic_civil_date_with_calendar(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -116,6 +161,8 @@ fn test_islamic_observational_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_observational_islamic_date(-10, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_observational_islamic_date(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -124,6 +171,8 @@ fn test_islamic_tabular_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_islamic_tabular_date_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_islamic_tabular_date_with_calendar(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -132,12 +181,16 @@ fn test_islamic_umm_al_qura_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_ummalqura_date(-10, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_ummalqura_date(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_iso_continuity() {
     let date = Date::try_new_iso_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_iso_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -148,6 +201,8 @@ fn test_japanese_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_japanese_date(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_japanese_date(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
@@ -158,16 +213,22 @@ fn test_japanese_extended_continuity() {
     let cal = Ref(&cal);
     let date = Date::try_new_japanese_extended_date(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
     check_continuity(date.unwrap());
+    let date = Date::try_new_japanese_extended_date(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_persian_continuity() {
     let date = Date::try_new_persian_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_persian_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_roc_continuity() {
     let date = Date::try_new_roc_date(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_roc_date(-300, 1, 1);
+    check_every_250_days(date.unwrap());
 }
