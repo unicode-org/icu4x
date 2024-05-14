@@ -11,7 +11,6 @@ use alloc::borrow::Cow;
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
-use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
 use super::provider::{Base, SiPrefix};
@@ -67,12 +66,6 @@ impl IcuRatio {
     /// For example, the reciprocal of 2/3 is 3/2.
     pub(crate) fn recip(&self) -> Self {
         Self(self.0.recip())
-    }
-
-    // TODO: Make the function private after fixing the need for it in the tests.
-    /// Returns the value of the ratio as a `f64`.
-    pub fn to_f64(&self) -> Option<f64> {
-        Some(self.0.numer().to_f64()? / self.0.denom().to_f64()?)
     }
 
     /// Returns the absolute value of the ratio.
