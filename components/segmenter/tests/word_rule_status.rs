@@ -87,6 +87,14 @@ fn rule_status_th() {
     assert_eq!(iter.next(), Some(21), "after 2nd word");
     assert_eq!(iter.word_type(), WordType::Letter, "letter");
     assert!(iter.is_word_like(), "Letter(Thai) is true");
+
+    assert_eq!(iter.next(), Some(33), "after 3rd word");
+    assert_eq!(iter.word_type(), WordType::Letter, "letter");
+    assert!(iter.is_word_like(), "Letter(Thai) is true");
+
+    assert_eq!(iter.next(), Some(42), "after 4th word and next is EOT");
+    assert_eq!(iter.word_type(), WordType::Letter, "letter");
+    assert!(iter.is_word_like(), "Letter(Thai) is true");
 }
 
 /* The rule status functions are no longer public to non word break iterators.

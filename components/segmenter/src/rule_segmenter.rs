@@ -63,6 +63,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 self.advance_iter();
                 if self.is_eof() {
                     self.result_cache.clear();
+                    self.boundary_property = self.data.complex_property;
                     return Some(self.len);
                 }
             }
