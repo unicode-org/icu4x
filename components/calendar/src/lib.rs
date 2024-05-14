@@ -136,6 +136,8 @@ pub mod julian;
 pub mod persian;
 pub mod provider;
 pub mod roc;
+#[cfg(test)]
+mod tests;
 pub mod types;
 mod week_of;
 
