@@ -227,7 +227,7 @@ impl FromStr for IcuRatio {
     /// Converts a string representation of a ratio into an `IcuRatio`.
     /// Supported string formats include:
     /// ```
-    /// use icu_experimental::units::ratio::IcuRatio;
+    /// use icu::experimental::units::ratio::IcuRatio;
     /// use num_bigint::BigInt;
     /// use core::str::FromStr;
     /// use num_traits::identities::Zero;

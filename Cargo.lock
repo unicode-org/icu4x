@@ -1564,7 +1564,6 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_calendar",
- "icu_locid",
  "icu_provider",
  "icu_timezone_data",
  "serde",

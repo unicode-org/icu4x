@@ -50,7 +50,7 @@ pub enum DateTimeError {
     /// An error due to there being no patterns for the given options.
     #[displaydoc("Unsupported options")]
     UnsupportedOptions,
-    /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
+    /// An error originating from [`PluralRules`][icu::plurals::PluralRules].
     #[displaydoc("{0}")]
     PluralRules(PluralsError),
     /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].

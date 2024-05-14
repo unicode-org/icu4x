@@ -27,7 +27,7 @@ pub enum Strength {
     /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Primary);
@@ -41,7 +41,7 @@ pub enum Strength {
     /// to the ECMA-402 sensitivity "accent".
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Secondary);
@@ -65,7 +65,7 @@ pub enum Strength {
     /// sensitivity "variant".
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Tertiary);
@@ -85,7 +85,7 @@ pub enum Strength {
     /// assert_eq!(collator.compare("e", "ｅ"), // Full-width e
     ///            core::cmp::Ordering::Less);
     ///
-    /// let locale = icu_locid::locale!("ja");
+    /// let locale = icu::locid::locale!("ja");
     /// let ja_collator =
     ///   Collator::try_new(&locale.into(),
     ///                     options).unwrap();
@@ -111,12 +111,12 @@ pub enum Strength {
     /// level.
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Quaternary);
     ///
-    /// let ja_locale = icu_locid::locale!("ja");
+    /// let ja_locale = icu::locid::locale!("ja");
     /// let ja_collator =
     ///   Collator::try_new(&ja_locale.into(),
     ///                     options).unwrap();
@@ -148,12 +148,12 @@ pub enum Strength {
     /// distinguishing full-width and half-width forms.
     ///
     /// ```
-    /// use icu_collator::*;
+    /// use icu::collator::*;
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Identical);
     ///
-    /// let ja_locale = icu_locid::locale!("ja");
+    /// let ja_locale = icu::locid::locale!("ja");
     /// let ja_collator =
     ///   Collator::try_new(&ja_locale.into(),
     ///                     options).unwrap();

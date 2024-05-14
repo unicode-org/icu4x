@@ -31,7 +31,7 @@ use crate::{
 
 size_test!(TimeFormatter, time_formatter_size, 1200);
 
-/// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
+/// [`TimeFormatter`] is a structure of the [`icu::datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
 ///
@@ -40,7 +40,7 @@ size_test!(TimeFormatter, time_formatter_size, 1200);
 ///
 #[doc = time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TimeFormatter
 ///
 /// # Examples
@@ -205,7 +205,7 @@ size_test!(
 ///
 #[doc = typed_date_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
@@ -425,7 +425,7 @@ size_test!(
 ///
 #[doc = typed_date_time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateTimeFormatter
 ///
 /// # Examples

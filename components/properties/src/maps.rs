@@ -588,7 +588,7 @@ make_map_property! {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
-    /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
     /// to look up the Canonical_Combining_Class property by scalar value.
     ///
     /// # Example

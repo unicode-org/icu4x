@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 /// # Examples
 ///
 /// ```rust
-/// use icu_casemap::CaseMapCloser;
+/// use icu::casemap::CaseMapCloser;
 /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 ///
 /// let cm = CaseMapCloser::new();
@@ -54,7 +54,7 @@ impl CaseMapCloser<CaseMapper> {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapCloser;
+    /// use icu::casemap::CaseMapCloser;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapCloser::new();
@@ -169,7 +169,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapCloser;
+    /// use icu::casemap::CaseMapCloser;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapCloser::new();
@@ -199,7 +199,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapCloser;
+    /// use icu::casemap::CaseMapCloser;
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapCloser::new();

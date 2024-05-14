@@ -142,7 +142,7 @@ where
 /// ```
 ///
 /// [data provider]: icu_provider
-/// [`CustomTimeZone`]: icu_timezone::CustomTimeZone
+/// [`CustomTimeZone`]: icu::timezone::CustomTimeZone
 #[derive(Debug)]
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,

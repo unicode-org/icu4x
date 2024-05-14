@@ -26,8 +26,8 @@ mod algorithms;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
-/// use icu_locid_transform::fallback::LocaleFallbacker;
+/// use icu::locid::locale;
+/// use icu::locid_transform::fallback::LocaleFallbacker;
 ///
 /// // Set up a LocaleFallbacker with data.
 /// let fallbacker = LocaleFallbacker::new();
@@ -54,7 +54,7 @@ mod algorithms;
 ///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
-/// [language identifier]: icu_locid::LanguageIdentifier
+/// [language identifier]: icu::locid::LanguageIdentifier
 #[doc(hidden)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
@@ -234,7 +234,7 @@ impl LocaleFallbackerBorrowed<'static> {
 impl<'a> LocaleFallbackerWithConfig<'a> {
     /// Creates an iterator based on a [`DataLocale`].
     ///
-    /// If you have a [`Locale`](icu_locid::Locale), call `.into()` to get a [`DataLocale`].
+    /// If you have a [`Locale`](icu::locid::Locale), call `.into()` to get a [`DataLocale`].
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {

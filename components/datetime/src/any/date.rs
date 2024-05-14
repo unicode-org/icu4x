@@ -29,11 +29,11 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
+/// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTime`](icu::calendar::DateTime) data using the instance.
 ///
 #[doc = date_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
@@ -101,7 +101,7 @@ impl DateFormatter {
     /// );
     /// ```
     ///
-    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
+    /// [`AnyCalendarKind`]: icu::calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(

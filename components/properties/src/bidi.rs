@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //!```
-//! use icu_properties::bidi::BidiClassAdapter;
-//! use icu_properties::maps;
+//! use icu::properties::bidi::BidiClassAdapter;
+//! use icu::properties::maps;
 //! use unicode_bidi::BidiInfo;
 //! // This example text is defined using `concat!` because some browsers
 //! // and text editors have trouble displaying bidi strings.
@@ -65,8 +65,8 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 ///
 /// ```
 /// use icu_collections::codepointtrie::CodePointTrie;
-/// use icu_properties::bidi::BidiClassAdapter;
-/// use icu_properties::{maps, BidiClass};
+/// use icu::properties::bidi::BidiClassAdapter;
+/// use icu::properties::{maps, BidiClass};
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiDataSource;
 ///
@@ -93,8 +93,8 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     ///
     /// ```
     /// use icu_collections::codepointtrie::CodePointTrie;
-    /// use icu_properties::bidi::BidiClassAdapter;
-    /// use icu_properties::{maps, BidiClass};
+    /// use icu::properties::bidi::BidiClassAdapter;
+    /// use icu::properties::{maps, BidiClass};
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
     /// use unicode_bidi::BidiDataSource;
     ///
