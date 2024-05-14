@@ -1864,6 +1864,88 @@ impl DecomposingNormalizer {
 
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
+    ///
+    /// # Examples
+    ///
+    /// Use a cursor to keep track of indices in the source string:
+    ///
+    /// ```
+    /// use icu_normalizer::DecomposingNormalizer;
+    /// use std::cell::RefCell;
+    /// use std::str::Chars;
+    ///
+    /// /// Struct with information on the source character being processed.
+    /// #[derive(Default)]
+    /// struct DecompositionCursorStatus {
+    ///     peeked_char: Option<char>,
+    ///     current_char: Option<char>,
+    ///     offset: usize,
+    /// }
+    ///
+    /// /// Struct implementing `Iterator<char>` with a RefCell reference
+    /// /// to the DecompositionCursorStatus
+    /// struct DecompositionCursor<'a>(
+    ///     Chars<'a>,
+    ///     &'a RefCell<DecompositionCursorStatus>,
+    /// );
+    ///
+    /// impl Iterator for DecompositionCursor<'_> {
+    ///     type Item = char;
+    ///     #[inline]
+    ///     fn next(&mut self) -> Option<char> {
+    ///         let mut cell = self.1.borrow_mut();
+    ///         if let Some(ch) = cell.current_char {
+    ///             cell.offset += ch.len_utf8();
+    ///         }
+    ///         cell.current_char = cell.peeked_char;
+    ///         cell.peeked_char = self.0.next();
+    ///         cell.peeked_char
+    ///     }
+    /// }
+    ///
+    /// // Set up the DecomposingNormalizer
+    /// let normalizer = DecomposingNormalizer::new_nfd();
+    /// let input = "Šéårçĥ réšûļţš";
+    /// let cell = RefCell::new(Default::default());
+    /// let cursor = DecompositionCursor(input.chars(), &cell);
+    /// let mut iter = normalizer.normalize_iter(cursor);
+    ///
+    /// // Test the output. get_next() is a helper function that
+    /// // fetches the next decomposed char when invoked.
+    /// let mut get_next = || {
+    ///     (
+    ///         iter.next().unwrap(),
+    ///         cell.borrow().current_char.unwrap(),
+    ///         cell.borrow().offset,
+    ///     )
+    /// };
+    ///
+    /// assert_eq!(get_next(), ('S', 'Š', 0));
+    /// assert_eq!(get_next(), ('\u{30C}', 'Š', 0));
+    /// assert_eq!(get_next(), ('e', 'é', 2));
+    /// assert_eq!(get_next(), ('\u{301}', 'é', 2));
+    /// assert_eq!(get_next(), ('a', 'å', 4));
+    /// assert_eq!(get_next(), ('\u{30A}', 'å', 4));
+    /// assert_eq!(get_next(), ('r', 'r', 6));
+    /// assert_eq!(get_next(), ('c', 'ç', 7));
+    /// assert_eq!(get_next(), ('\u{327}', 'ç', 7));
+    /// assert_eq!(get_next(), ('h', 'ĥ', 9));
+    /// assert_eq!(get_next(), ('\u{302}', 'ĥ', 9));
+    /// assert_eq!(get_next(), (' ', ' ', 11));
+    /// assert_eq!(get_next(), ('r', 'r', 12));
+    /// assert_eq!(get_next(), ('e', 'é', 13));
+    /// assert_eq!(get_next(), ('\u{301}', 'é', 13));
+    /// assert_eq!(get_next(), ('s', 'š', 15));
+    /// assert_eq!(get_next(), ('\u{30C}', 'š', 15));
+    /// assert_eq!(get_next(), ('u', 'û', 17));
+    /// assert_eq!(get_next(), ('\u{302}', 'û', 17));
+    /// assert_eq!(get_next(), ('l', 'ļ', 19));
+    /// assert_eq!(get_next(), ('\u{327}', 'ļ', 19));
+    /// assert_eq!(get_next(), ('t', 'ţ', 21));
+    /// assert_eq!(get_next(), ('\u{327}', 'ţ', 21));
+    /// assert_eq!(get_next(), ('s', 'š', 23));
+    /// assert_eq!(get_next(), ('\u{30C}', 'š', 23));
+    /// ```
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
         Decomposition::new_with_supplements(
             iter,
