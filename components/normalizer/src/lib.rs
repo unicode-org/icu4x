@@ -1865,6 +1865,10 @@ impl DecomposingNormalizer {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     ///
+    /// The [`Decomposition`] iterator will peek exactly one character
+    /// ahead of the character being decomposed, allowing the caller
+    /// to track the source character in the input string.
+    ///
     /// # Examples
     ///
     /// Use a cursor to keep track of indices in the source string:
