@@ -106,7 +106,10 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     let ny_offset = if let Ok(ny_offset) = u8::try_from(ny_offset) {
         ny_offset
     } else {
-        debug_assert!(false, "Expected small new years offset, got {ny_offset}");
+        debug_assert!(
+            false,
+            "Expected small new years offset, got {ny_offset} in ISO year {related_iso}"
+        );
         0
     };
     PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset)

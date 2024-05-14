@@ -261,7 +261,18 @@ pub(crate) fn midnight<C: ChineseBased>(moment: Moment) -> Moment {
 pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (RataDie, RataDie) {
     // s1 is prior_solstice
     // Using 370 here since solstices are ~365 days apart
+    // Both solstices should fall in December
     let following_solstice = winter_solstice_on_or_before::<C>(prior_solstice + 370); // s2
+    debug_assert_eq!(
+        crate::iso::iso_from_fixed(prior_solstice).unwrap().1,
+        12,
+        "Winter solstice not in December! {prior_solstice:?}"
+    );
+    debug_assert_eq!(
+        crate::iso::iso_from_fixed(following_solstice).unwrap().1,
+        12,
+        "Winter solstice not in December! {following_solstice:?}"
+    );
     let month_after_eleventh = new_moon_on_or_after::<C>((prior_solstice + 1).as_moment()); // m12
     let month_after_twelfth = new_moon_on_or_after::<C>((month_after_eleventh + 1).as_moment()); // m13
     let month_after_thirteenth = new_moon_on_or_after::<C>((month_after_twelfth + 1).as_moment());
