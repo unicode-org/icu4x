@@ -15,7 +15,7 @@ use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::sets::CodePointSetData;
 #[cfg(doc)]
-use crate::*;
+use super::*;
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};

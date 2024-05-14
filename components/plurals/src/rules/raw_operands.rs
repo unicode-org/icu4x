@@ -13,9 +13,6 @@
 
 use crate::PluralOperands;
 
-#[cfg(doc)]
-use crate::PluralRules;
-
 /// 🚧 \[Experimental\] A struct for low-level users who want to construct a [`PluralOperands`]
 /// directly based on the LDML Plural Operand definitions. This may be useful
 /// for people with experimental rules parsing.
@@ -24,7 +21,7 @@ use crate::PluralRules;
 /// changes (ex: a new Plural Operand needs to be supported).
 ///
 /// Most users with numerical data inputs for places where [`PluralOperands`] is
-/// accepted, like [`PluralRules::category_for`], should convert to [`PluralOperands`].
+/// accepted, like [`PluralRules::category_for`](super::super::PluralRules::category_for), should convert to [`PluralOperands`].
 /// See [`PluralOperands`] for details.
 ///
 /// <div class="stab unstable">
