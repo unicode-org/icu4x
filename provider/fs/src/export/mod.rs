@@ -28,11 +28,7 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([HelloWorldV1Marker::KEY])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], {
-//!         let mut options = FallbackOptions::default();
-//!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
-//!         options
-//!     })
+//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

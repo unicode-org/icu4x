@@ -26,6 +26,7 @@
 //!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
 //!     .with_locales_and_fallback([LocaleFamily::FULL], {
 //!         let mut options = FallbackOptions::default();
+//!         // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
 //!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
 //!         options
 //!     })
