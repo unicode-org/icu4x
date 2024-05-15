@@ -109,12 +109,12 @@ pub mod versions {
 /// # Examples
 ///
 /// ```
-/// # use icu_provider::prelude::*;
+/// # use icu_locid::langid;
 /// assert!(icu_testdata::locales().contains(&langid!("es-AR")));
 /// assert!(icu_testdata::locales().len() > 10);
 /// ```
 #[deprecated(since = "1.3.0")]
-pub fn locales() -> alloc::vec::Vec<LanguageIdentifier> {
+pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
     alloc::vec::Vec::from(metadata::LOCALES)
 }
 

@@ -941,7 +941,7 @@ impl AuxiliaryKeys {
     /// # Example
     ///
     /// ```
-    /// use icu_provider::AuxiliaryKeys;
+    /// use icu_provider::prelude::*;
     ///
     /// let aux: AuxiliaryKeys = "abc-defg".parse().unwrap();
     /// assert_eq!(

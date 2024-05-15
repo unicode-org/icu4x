@@ -232,6 +232,7 @@ icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,
 /// # Examples
 ///
 /// ```
+/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 /// use writeable::assert_writeable_eq;
 ///

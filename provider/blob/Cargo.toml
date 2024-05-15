@@ -30,6 +30,7 @@ zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 log = { workspace = true, optional = true }
 
 [dev-dependencies]
+icu = { path = "../../components/icu" }
 icu_datetime = { path = "../../components/datetime", default-features = false, features = ["datagen", "experimental"] }
 icu_datetime_data = { path = "../../provider/baked/datetime" }
 icu_locid_transform = { path = "../../components/locid_transform", default-features = false, features = ["compiled_data"] }

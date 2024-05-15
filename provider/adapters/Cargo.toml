@@ -26,6 +26,7 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]
+icu = { path = "../../components/icu" }
 icu_provider = { path = "../../provider/core", features = ["macros", "deserialize_json"] }
 icu_provider_fs = { path = "../../provider/fs" }
 icu_provider_blob = { path = "../../provider/blob" }

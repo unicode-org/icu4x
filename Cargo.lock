@@ -1451,6 +1451,7 @@ name = "icu_provider_adapters"
 version = "1.4.0"
 dependencies = [
  "databake",
+ "icu",
  "icu_locid_transform",
  "icu_provider",
  "icu_provider_blob",
@@ -1466,6 +1467,7 @@ name = "icu_provider_blob"
 version = "1.4.0"
 dependencies = [
  "criterion",
+ "icu",
  "icu_datagen",
  "icu_datetime",
  "icu_datetime_data",
