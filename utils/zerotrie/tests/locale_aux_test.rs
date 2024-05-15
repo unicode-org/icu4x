@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::extensions::private::Private;
-use icu_locid::Locale;
+use icu_locale_core::extensions::private::Private;
+use icu_locale_core::Locale;
 use litemap::LiteMap;
 use std::collections::BTreeSet;
 use writeable::Writeable;

@@ -225,6 +225,7 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 pub struct UnstableDataProvider;
 
 mod baked {
+    use icu_locid as icu_locale_core;
     include!("../data/baked/mod.rs");
     impl_data_provider!(super::UnstableDataProvider);
     impl_any_provider!(super::UnstableDataProvider);

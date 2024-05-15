@@ -208,7 +208,7 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "strum",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -751,7 +751,7 @@ dependencies = [
  "rand_pcg",
  "ryu",
  "smallvec",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -882,8 +882,7 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -892,7 +891,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_segmenter",
  "icu_timezone",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -902,7 +901,7 @@ dependencies = [
  "ecma402_traits",
  "icu",
  "icu_provider",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -937,12 +936,12 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_calendar_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "serde",
  "serde_json",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
  "zerovec",
 ]
 
@@ -965,8 +964,8 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -980,9 +979,9 @@ dependencies = [
  "log",
  "serde",
  "simple_logger",
- "tinystr",
+ "tinystr 0.7.5",
  "unicode-bidi",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -1000,7 +999,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "serde",
- "writeable",
+ "writeable 0.5.4",
  "zerovec",
 ]
 
@@ -1031,7 +1030,7 @@ dependencies = [
  "icu",
  "icu_collator_data",
  "icu_collections",
- "icu_locid_transform",
+ "icu_locale",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -1088,8 +1087,7 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -1101,7 +1099,7 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "itertools",
- "litemap",
+ "litemap 0.7.2",
  "log",
  "memchr",
  "ndarray",
@@ -1116,11 +1114,11 @@ dependencies = [
  "serde-aux",
  "serde_json",
  "simple_logger",
- "tinystr",
+ "tinystr 0.7.5",
  "toml",
  "twox-hash",
  "ureq",
- "writeable",
+ "writeable 0.5.4",
  "zerotrie",
  "zerovec",
  "zip",
@@ -1141,18 +1139,18 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locid_transform",
+ "icu_locale",
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_timezone",
- "litemap",
+ "litemap 0.7.2",
  "serde",
  "serde_json",
  "smallvec",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
  "zerovec",
 ]
 
@@ -1172,14 +1170,14 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_decimal_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "icu_provider_adapters",
  "rand",
  "rand_distr",
  "rand_pcg",
  "serde",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -1202,24 +1200,24 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
- "icu_locid",
- "icu_locid_transform",
- "icu_locid_transform_data",
+ "icu_locale",
+ "icu_locale_core",
+ "icu_locale_data",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
  "icu_properties",
  "icu_properties_data",
  "icu_provider",
- "litemap",
+ "litemap 0.7.2",
  "log",
  "num-bigint",
  "num-rational",
  "num-traits",
  "serde",
  "smallvec",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
  "zerofrom",
  "zerotrie",
  "zerovec",
@@ -1260,7 +1258,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "tinystr",
+ "tinystr 0.7.5",
 ]
 
 [[package]]
@@ -1273,13 +1271,13 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_list_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "postcard",
  "regex-automata",
  "serde",
  "serde_json",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -1287,7 +1285,25 @@ name = "icu_list_data"
 version = "1.4.0"
 
 [[package]]
-name = "icu_locid"
+name = "icu_locale"
+version = "1.4.0"
+dependencies = [
+ "criterion",
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_locale_core",
+ "icu_locale_data",
+ "icu_provider",
+ "serde",
+ "serde_json",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_core"
 version = "1.4.0"
 dependencies = [
  "criterion",
@@ -1296,36 +1312,44 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
- "litemap",
+ "litemap 0.7.2",
  "postcard",
  "serde",
  "serde_json",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
  "zerovec",
+]
+
+[[package]]
+name = "icu_locale_data"
+version = "1.4.0"
+
+[[package]]
+name = "icu_locid"
+version = "1.4.0"
+dependencies = [
+ "icu_locale_core",
+]
+
+[[package]]
+name = "icu_locid"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c0aa2536adc14c07e2a521e95512b75ed8ef832f0fdf9299d4a0a45d2be2a9d"
+dependencies = [
+ "displaydoc",
+ "litemap 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tinystr 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "writeable 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "icu_locid_transform"
 version = "1.4.0"
 dependencies = [
- "criterion",
- "databake",
- "displaydoc",
- "icu",
- "icu_locid",
- "icu_locid_transform_data",
- "icu_provider",
- "serde",
- "serde_json",
- "tinystr",
- "writeable",
- "zerovec",
+ "icu_locale",
 ]
-
-[[package]]
-name = "icu_locid_transform_data"
-version = "1.4.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1362,11 +1386,11 @@ dependencies = [
  "databake",
  "displaydoc",
  "either",
- "litemap",
+ "litemap 0.7.2",
  "postcard",
  "serde",
  "serde_json",
- "writeable",
+ "writeable 0.5.4",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1382,7 +1406,7 @@ dependencies = [
  "fixed_decimal",
  "icu",
  "icu_benchmark_macros",
- "icu_locid_transform",
+ "icu_locale",
  "icu_plurals_data",
  "icu_provider",
  "serde",
@@ -1402,11 +1426,11 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
- "icu_locid_transform",
+ "icu_locale",
  "icu_properties_data",
  "icu_provider",
  "serde",
- "tinystr",
+ "tinystr 0.7.5",
  "unicode-bidi",
  "zerovec",
 ]
@@ -1425,8 +1449,8 @@ dependencies = [
  "displaydoc",
  "erased-serde",
  "icu",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider_adapters",
  "icu_provider_macros",
  "log",
@@ -1434,8 +1458,8 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1447,13 +1471,13 @@ version = "1.4.0"
 dependencies = [
  "databake",
  "icu",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_fs",
  "serde",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
  "zerovec",
 ]
 
@@ -1466,14 +1490,14 @@ dependencies = [
  "icu_datagen",
  "icu_datetime",
  "icu_datetime_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "icu_provider_adapters",
  "log",
  "postcard",
  "serde",
  "twox-hash",
- "writeable",
+ "writeable 0.5.4",
  "zerotrie",
  "zerovec",
 ]
@@ -1494,7 +1518,7 @@ dependencies = [
  "serde",
  "serde-json-core",
  "serde_json",
- "writeable",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -1544,7 +1568,7 @@ dependencies = [
  "databake",
  "eyre",
  "icu_datagen",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "log",
  "quote",
@@ -1564,7 +1588,7 @@ dependencies = [
  "icu_provider",
  "icu_timezone_data",
  "serde",
- "tinystr",
+ "tinystr 0.7.5",
  "zerotrie",
  "zerovec",
 ]
@@ -1687,13 +1711,19 @@ dependencies = [
  "criterion",
  "databake",
  "icu_benchmark_macros",
- "icu_locid",
+ "icu_locid 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "postcard",
  "rkyv",
  "serde",
  "serde_json",
  "yoke",
 ]
+
+[[package]]
+name = "litemap"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f9d642685b028806386b2b6e75685faadd3eb65a85fff7df711ce18446a422da"
 
 [[package]]
 name = "lock_api"
@@ -1743,13 +1773,13 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_fs",
  "itertools",
- "litemap",
+ "litemap 0.7.2",
  "lru",
  "serde",
  "serde-aux",
  "time",
- "tinystr",
- "writeable",
+ "tinystr 0.7.5",
+ "writeable 0.5.4",
 ]
 
 [[package]]
@@ -2620,6 +2650,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tinystr"
+version = "0.7.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83c02bf3c538ab32ba913408224323915f4ef9a6d61c0e85d493f355921c0ece"
+dependencies = [
+ "displaydoc",
+]
+
+[[package]]
 name = "tinytemplate"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3196,6 +3235,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "writeable"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dad7bb64b8ef9c0aa27b6da38b452b0ee9fd82beaf276a87dd796fb55cbae14e"
+
+[[package]]
 name = "wyz"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3261,14 +3306,14 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_benchmark_macros",
- "icu_locid",
- "litemap",
+ "icu_locale_core",
+ "litemap 0.7.2",
  "postcard",
  "rand",
  "rand_pcg",
  "serde",
  "serde_json",
- "writeable",
+ "writeable 0.5.4",
  "yoke",
  "zerofrom",
  "zerovec",

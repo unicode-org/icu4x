@@ -5,8 +5,8 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::CoverageLevel;
 use crate::provider::DatagenProvider;
-use icu_locid::subtags::Language;
-use icu_locid_transform::provider::*;
+use icu_locale::provider::*;
+use icu_locale::subtags::Language;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
@@ -257,16 +257,16 @@ pub(in crate::provider) fn transform<'x>(
             .map(|(k, v)| (k.to_unvalidated(), v))
             .collect(),
         und: und.unwrap_or((
-            icu_locid::subtags::language!("und"),
-            icu_locid::subtags::script!("Zzzz"),
-            icu_locid::subtags::region!("ZZ"),
+            icu_locale::subtags::language!("und"),
+            icu_locale::subtags::script!("Zzzz"),
+            icu_locale::subtags::region!("ZZ"),
         )),
     }
 }
 
 #[test]
 fn test_basic() {
-    use icu_locid::subtags::{language, region, script};
+    use icu_locale::subtags::{language, region, script};
 
     let provider = DatagenProvider::new_testing();
     let result_common: DataPayload<LikelySubtagsV1Marker> = provider

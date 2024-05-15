@@ -4,7 +4,7 @@
 
 mod fixtures;
 
-use icu::locid::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
 use icu::plurals::{PluralCategory, PluralRules};
 use std::str::FromStr;
 

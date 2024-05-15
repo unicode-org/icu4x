@@ -6,7 +6,7 @@ use icu::calendar::DateTime;
 use icu::datetime::neo::TypedNeoDateTimeFormatter;
 use icu::datetime::options::length;
 use icu::datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
-use icu::locid::langid;
+use icu::locale::langid;
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 const EXPECTED_DATETIME: &[&str] = &[

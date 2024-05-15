@@ -165,6 +165,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
+      if: ${{ matrix.behavior }} != 'cratesio' # icu_locale not published
       run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
 
 

@@ -11,7 +11,7 @@ use icu::calendar::{DateTime, Gregorian};
 use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::datetime::time_zone::TimeZoneFormatterOptions;
 use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
-use icu::locid::langid;
+use icu::locale::langid;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
 use std::env;

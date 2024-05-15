@@ -5,9 +5,9 @@
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use displaydoc::Display;
-use icu_locid::ParserError;
-use icu_locid_transform::fallback::LocaleFallbackIterator;
-use icu_locid_transform::LocaleFallbacker;
+use icu_locale::fallback::LocaleFallbackIterator;
+use icu_locale::LocaleFallbacker;
+use icu_locale::ParserError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use once_cell::sync::Lazy;

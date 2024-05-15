@@ -38,7 +38,7 @@ icu = "1.3.0"
 ```rust
 use icu::calendar::DateTime;
 use icu::datetime::{options::length, DateTimeFormatter};
-use icu::locid::locale;
+use icu::locale::locale;
 
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();

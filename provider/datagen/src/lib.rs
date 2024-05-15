@@ -132,7 +132,7 @@ pub mod prelude {
         NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
-    pub use icu_locid::{langid, LanguageIdentifier};
+    pub use icu_locale::{langid, LanguageIdentifier};
     #[doc(no_inline)]
     pub use icu_provider::{datagen::DataExporter, DataKey, KeyedDataMarker};
 

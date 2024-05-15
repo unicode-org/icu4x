@@ -33,7 +33,7 @@
 //! The resulting blob can now be used like this:
 //!
 //! ```
-//! use icu::locid::langid;
+//! use icu::locale::langid;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_blob::BlobDataProvider;

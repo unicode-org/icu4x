@@ -6,7 +6,7 @@ use fixed_decimal::FixedDecimal;
 use icu::experimental::relativetime::{
     options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
 };
-use icu::locid::locale;
+use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
 macro_rules! generate_test {

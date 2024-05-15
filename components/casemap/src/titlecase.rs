@@ -20,7 +20,7 @@ use writeable::Writeable;
 /// ```rust
 /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
 /// use icu::casemap::TitlecaseMapper;
-/// use icu::locid::langid;
+/// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -65,7 +65,7 @@ pub enum TrailingCase {
 /// ```rust
 /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
 /// use icu::casemap::TitlecaseMapper;
-/// use icu::locid::langid;
+/// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -173,7 +173,7 @@ pub struct TitlecaseOptions {
 ///
 /// ```rust
 /// use icu::casemap::TitlecaseMapper;
-/// use icu::locid::langid;
+/// use icu::locale::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -347,7 +347,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// ```rust
     /// use icu::casemap::TitlecaseMapper;
-    /// use icu::locid::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
@@ -377,7 +377,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// ```rust
     /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
     /// use icu::casemap::TitlecaseMapper;
-    /// use icu::locid::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
@@ -417,7 +417,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// ```rust
     /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
     /// use icu::casemap::TitlecaseMapper;
-    /// use icu::locid::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");

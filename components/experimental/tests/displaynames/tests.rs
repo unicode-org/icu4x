@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu::experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-use icu::locid::locale;
-use icu::locid::Locale;
+use icu::locale::locale;
+use icu::locale::Locale;
 use std::borrow::Cow;
 
 #[test]

@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid_transform::provider::*;
+use icu_locale::provider::*;
 
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -50,7 +50,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::subtags::script;
+    use icu_locale::subtags::script;
 
     let provider = DatagenProvider::new_testing();
     let data: DataPayload<ScriptDirectionV1Marker> = provider

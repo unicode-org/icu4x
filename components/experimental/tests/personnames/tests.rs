@@ -7,7 +7,7 @@ extern crate alloc;
 use icu::experimental::personnames::api::*;
 use icu::experimental::personnames::provided_struct::DefaultPersonName;
 use icu::experimental::personnames::PersonNamesFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 
@@ -16,9 +16,9 @@ mod baked {
 
     icu_experimental_data::make_provider!(Baked);
     icu_experimental_data::impl_personnames_personnames_v1!(Baked);
-    icu_locid_transform_data::impl_fallback_supplement_co_v1!(Baked);
-    icu_locid_transform_data::impl_fallback_parents_v1!(Baked);
-    icu_locid_transform_data::impl_fallback_likelysubtags_v1!(Baked);
+    icu_locale_data::impl_fallback_supplement_co_v1!(Baked);
+    icu_locale_data::impl_fallback_parents_v1!(Baked);
+    icu_locale_data::impl_fallback_likelysubtags_v1!(Baked);
     icu_properties_data::impl_propnames_to_short_linear4_sc_v1!(Baked);
     icu_properties_data::impl_props_scx_v1!(Baked);
 }

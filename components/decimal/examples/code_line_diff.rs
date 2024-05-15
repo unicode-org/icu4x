@@ -8,7 +8,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::decimal::FixedDecimalFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 
 icu_benchmark_macros::static_setup!();
 

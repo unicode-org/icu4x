@@ -59,7 +59,7 @@ pub fn derive_missing_initials(
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use litemap::LiteMap;
 
     use crate::personnames::api::NameFieldKind::Given;

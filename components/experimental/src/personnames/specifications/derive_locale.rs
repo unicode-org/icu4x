@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::subtags::script;
-use icu_locid::{subtags, Locale};
+use icu_locale_core::subtags::script;
+use icu_locale_core::{subtags, Locale};
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed;
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 
@@ -57,7 +57,7 @@ where
     }
     let name_script = found_name_script.unwrap_or(icu_properties::Script::Unknown);
 
-    let locid_script = scripts
+    let locale_script = scripts
         .get(name_script)
         .unwrap()
         .as_str()
@@ -66,12 +66,12 @@ where
     person_name.name_locale().map_or_else(
         || {
             let mut effective_locale = Locale::UND;
-            effective_locale.id.script = Some(locid_script);
+            effective_locale.id.script = Some(locale_script);
             Ok(effective_locale)
         },
         |locale| {
             let mut effective_locale = locale.clone();
-            effective_locale.id.script = Some(locid_script);
+            effective_locale.id.script = Some(locale_script);
             Ok(effective_locale)
         },
     )
@@ -104,8 +104,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
-    use icu_locid_transform::LocaleExpander;
+    use icu_locale::LocaleExpander;
+    use icu_locale_core::locale;
     use litemap::LiteMap;
 
     use super::{effective_locale, likely_person_name_locale};

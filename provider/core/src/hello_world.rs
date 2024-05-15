@@ -323,7 +323,7 @@ writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 #[test]
 fn test_iter() {
     use crate::datagen::IterableDataProvider;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     assert_eq!(
         HelloWorldProvider.supported_locales().unwrap(),

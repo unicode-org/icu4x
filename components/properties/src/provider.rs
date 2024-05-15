@@ -47,7 +47,7 @@ const _: () = {
     pub mod icu {
         pub use crate as properties;
         pub use icu_collections as collections;
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_properties_data::make_provider!(Baked);
     icu_properties_data::impl_propnames_from_gcb_v1!(Baked);

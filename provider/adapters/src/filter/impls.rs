@@ -22,8 +22,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::LanguageIdentifier;
-    /// use icu::locid::{langid, locale, subtags::language};
+    /// use icu::locale::LanguageIdentifier;
+    /// use icu::locale::{langid, locale, subtags::language};
     /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
@@ -99,7 +99,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{langid, locale};
+    /// use icu::locale::{langid, locale};
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
@@ -162,7 +162,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;

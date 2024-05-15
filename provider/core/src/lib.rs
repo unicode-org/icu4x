@@ -250,21 +250,21 @@ pub mod prelude {
     pub use crate::KeyedDataMarker;
     #[doc(no_inline)]
     #[doc(no_inline)]
-    pub use icu_locid::extensions::unicode::{
+    pub use icu_locale_core::extensions::unicode::{
         key as unicode_extension_key, Key as UnicodeExtensionKey,
     };
     #[doc(no_inline)]
-    pub use icu_locid::extensions::unicode::{
+    pub use icu_locale_core::extensions::unicode::{
         value as unicode_extension_value, Value as UnicodeExtensionValue,
     };
     #[doc(no_inline)]
-    pub use icu_locid::{langid, LanguageIdentifier};
+    pub use icu_locale_core::{langid, LanguageIdentifier};
 
     #[cfg(feature = "experimental")]
-    pub use icu_locid::extensions::private::{subtag as aux_key, Subtag as AuxiliaryKey};
+    pub use icu_locale_core::extensions::private::{subtag as aux_key, Subtag as AuxiliaryKey};
 
     #[doc(hidden)]
-    pub use icu_locid;
+    pub use icu_locale_core;
     #[doc(hidden)]
     pub use yoke;
     #[doc(hidden)]
@@ -285,7 +285,7 @@ pub use zerofrom;
 #[doc(hidden)]
 pub mod _internal {
     pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
-    pub use icu_locid as locid;
+    pub use icu_locale_core as locale_core;
 
     #[cfg(feature = "logging")]
     pub use log;

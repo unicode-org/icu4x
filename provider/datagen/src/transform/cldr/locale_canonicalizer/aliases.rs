@@ -4,8 +4,8 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid::subtags::{language, Region, Script, Variant};
-use icu_locid_transform::provider::*;
+use icu_locale::provider::*;
+use icu_locale::subtags::{language, Region, Script, Variant};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -292,7 +292,7 @@ fn test_appendix_c_cmp() {
 
 #[test]
 fn test_basic() {
-    use icu_locid::subtags::{language, region, script};
+    use icu_locale::subtags::{language, region, script};
 
     let provider = DatagenProvider::new_testing();
     let data: DataPayload<AliasesV2Marker> = provider

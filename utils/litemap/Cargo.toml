@@ -30,7 +30,7 @@ yoke = { workspace = true, features = ["derive"], optional = true }
 [dev-dependencies]
 bincode = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid" }
+icu_locid = "1.4"
 postcard = { workspace = true, features = ["use-std"] }
 rkyv = { workspace = true, features = ["validation"] }
 serde = { workspace = true }

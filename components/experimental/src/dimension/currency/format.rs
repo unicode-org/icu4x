@@ -67,7 +67,7 @@ impl<'l> Writeable for FormattedCurrency<'l> {
 // TODO: add more tests for this module to cover more locales & currencies.
 #[cfg(test)]
 mod tests {
-    use icu::locid::langid;
+    use icu::locale::langid;
     use tinystr::*;
     use writeable::Writeable;
 

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu::casemap::CaseMapper;
-use icu::locid::langid;
+use icu::locale::langid;
 
 #[test]
 fn test_simple_mappings() {

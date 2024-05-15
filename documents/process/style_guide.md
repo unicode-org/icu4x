@@ -128,7 +128,7 @@ their type.
 
 | Package | Crate | Standalone Import | ICU Meta-package |
 |----|----|----|----|
-| locale | `icu_locid` | `use icu_locid::Locale` | `use icu::Locale` |
+| locale | `icu_locale_core` | `use icu_locale_core::Locale` | `use icu::Locale` |
 | plurals | `icu_plurals` | `use icu_plurals::PluralRules` | `use icu::PluralRules` |
 | datetime | `icu_datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
 | datetime | `icu_datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
@@ -136,7 +136,7 @@ their type.
 While the scheme may feel repetitive when looking at the import lines, it pays off in being unambiguous without aliasing when multiple structs from different components get used together:
 
 ```rust
-use icu_locid::Locale;
+use icu_locale::Locale;
 use icu_datetime::{DateTimeFormat, DateTimeLength, skeleton::{Skeleton, SkeletonField}};
 use icu_list::ListFormat;
 

@@ -30,7 +30,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob loaded at runtime:
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -58,7 +58,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob statically linked at compile time:
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;

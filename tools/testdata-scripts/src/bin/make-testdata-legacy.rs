@@ -77,7 +77,7 @@ fn main() {
     metadata
         .write_all(
             quote::quote! {
-                pub const LOCALES: &[icu_locid::LanguageIdentifier] = &#locales;
+                pub const LOCALES: &[icu_locale_core::LanguageIdentifier] = &#locales;
                 pub const CLDR_TAG: &str = #cldr_tag;
                 pub const ICUEXPORT_TAG: &str = #icu_tag;
             }

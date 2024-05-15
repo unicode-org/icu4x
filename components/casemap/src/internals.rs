@@ -16,8 +16,8 @@ use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSink;
 use crate::titlecase::TrailingCase;
 use core::fmt;
-use icu_locid::subtags::{language, Language};
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::subtags::{language, Language};
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 

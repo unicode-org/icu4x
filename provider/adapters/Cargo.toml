@@ -17,7 +17,7 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-icu_locid_transform = { workspace = true }
+icu_locale = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 tinystr = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true, features = ["yoke"] }
@@ -30,10 +30,10 @@ icu = { path = "../../components/icu" }
 icu_provider = { path = "../../provider/core", features = ["macros", "deserialize_json"] }
 icu_provider_fs = { path = "../../provider/fs" }
 icu_provider_blob = { path = "../../provider/blob" }
-icu_locid_transform = { path = "../../components/locid_transform" }
+icu_locale = { path = "../../components/locale" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
 std = ["icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_locid_transform/serde", "icu_provider/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_locale/serde", "icu_provider/serde"]
 datagen = ["std", "serde", "icu_provider/datagen"]

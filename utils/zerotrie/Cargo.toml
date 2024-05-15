@@ -42,7 +42,7 @@ rand_pcg = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
-icu_locid = { path = "../../components/locid" }
+icu_locale_core = { workspace = true }
 writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

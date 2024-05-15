@@ -41,14 +41,14 @@ $ cargo add icu
 
 Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrillic script) or `ar-EG-u-nu-latn` (Egyptian Arabic with ASCII numerals).
 
-In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added a dependency on `icu`, we can refer to it via `icu::locid`.
+In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locale_core` crate as a dependency, but since here we already added a dependency on `icu`, we can refer to it via `icu::locid`.
 
 Let's use this in our application.
 
 Open `src/main.rs` and edit it to:
 
 ```rust
-use icu::locid::Locale;
+use icu::locale::Locale;
 
 fn main() {
     let loc: Locale = "ES-AR".parse()
@@ -82,7 +82,7 @@ It's a bit unergonomic to have to parse them at runtime and handle a parser erro
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
-use icu::locid::{Locale, locale};
+use icu::locale::{Locale, locale};
 
 const LOCALE: Locale = locale!("ES-AR");
 
@@ -105,7 +105,7 @@ We're going to extend our app to use the `icu::datetime` component to format a d
 which is exposed through constructors such as `try_new`.
 
 ```rust
-use icu::locid::{Locale, locale};
+use icu::locale::{Locale, locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 

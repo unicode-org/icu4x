@@ -61,7 +61,7 @@ impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
 ///
 /// ```
 /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let short_french = CompactDecimalFormatter::try_new_short(
@@ -110,7 +110,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_short(
     ///     &locale!("sv").into(),
@@ -197,7 +197,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_long(
     ///     &locale!("sv").into(),
@@ -283,7 +283,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
@@ -306,7 +306,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// # use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// # use icu::locid::locale;
+    /// # use icu::locale::locale;
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
@@ -338,7 +338,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
@@ -361,7 +361,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// # use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// # use icu::locid::locale;
+    /// # use icu::locale::locale;
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
@@ -403,7 +403,7 @@ impl CompactDecimalFormatter {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
@@ -456,7 +456,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// # use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// # use icu::locid::locale;
+    /// # use icu::locale::locale;
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
@@ -550,7 +550,7 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// # use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// # use icu::locid::locale;
+    /// # use icu::locale::locale;
     /// # use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     /// use fixed_decimal::CompactDecimal;
@@ -654,7 +654,7 @@ impl CompactDecimalFormatter {
     /// # Examples
     /// ```
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let [long_french, long_japanese, long_bangla] =
     ///     [locale!("fr"), locale!("ja"), locale!("bn")].map(|locale| {

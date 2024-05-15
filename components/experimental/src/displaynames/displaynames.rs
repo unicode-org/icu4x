@@ -8,8 +8,8 @@ use crate::displaynames::options::*;
 use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use icu_locid::subtags::{Language, Region, Script, Variant};
-use icu_locid::Locale;
+use icu_locale_core::subtags::{Language, Region, Script, Variant};
+use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 
@@ -19,7 +19,7 @@ use zerovec::ule::UnvalidatedStr;
 ///
 /// ```
 /// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames};
-/// use icu::locid::{locale, subtags::region};
+/// use icu::locale::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -92,7 +92,7 @@ impl RegionDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{DisplayNamesOptions, ScriptDisplayNames};
-/// use icu::locid::{locale, subtags::script};
+/// use icu::locale::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -165,7 +165,7 @@ impl ScriptDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{DisplayNamesOptions, VariantDisplayNames};
-/// use icu::locid::{locale, subtags::variant};
+/// use icu::locale::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -233,7 +233,7 @@ impl VariantDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{DisplayNamesOptions, LanguageDisplayNames};
-/// use icu::locid::{locale, subtags::language};
+/// use icu::locale::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -312,7 +312,7 @@ impl LanguageDisplayNames {
 ///
 /// ```
 /// use icu::experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -527,7 +527,7 @@ impl LocaleDisplayNamesFormatter {
 
 #[test]
 fn test_language_display() {
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     let dialect = LocaleDisplayNamesFormatter::try_new(
         &locale!("en").into(),

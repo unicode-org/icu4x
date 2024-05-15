@@ -30,7 +30,7 @@ fn pluralrules(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         use criterion::black_box;
-        use icu::locid::locale;
+        use icu::locale::locale;
 
         c.bench_function("plurals/pluralrules/construct/fs", |b| {
             b.iter(|| {

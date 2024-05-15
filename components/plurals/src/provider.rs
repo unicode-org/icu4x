@@ -34,7 +34,7 @@ pub struct Baked;
 const _: () = {
     pub mod icu {
         pub use crate as plurals;
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_plurals_data::make_provider!(Baked);
     icu_plurals_data::impl_plurals_ordinal_v1!(Baked);

@@ -10,7 +10,7 @@ extern crate alloc;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_datagen::prelude::*;
 use icu_datetime::provider::neo::*;
-use icu_locid_transform::LocaleFallbacker;
+use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::export::BlobExporter;
@@ -21,7 +21,7 @@ struct Baked;
 const _: () = {
     pub mod icu {
         pub use icu_datetime as datetime;
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_datetime_data::make_provider!(Baked);
 

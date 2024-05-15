@@ -45,7 +45,7 @@ use writeable::{Part, Writeable};
 /// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::TypedDateTimeFormatter;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 ///     &locale!("en").into(),
 ///     Default::default(),

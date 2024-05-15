@@ -21,7 +21,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::subtags::language;
+//! use icu::locale::subtags::language;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_adapters::filter::Filterable;

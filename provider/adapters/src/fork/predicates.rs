@@ -73,7 +73,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// use icu_provider_fs::FsDataProvider;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::HelloWorldV1Marker;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 ///
 /// // The `tests` directory contains two separate "language packs" for Hello World data.
 /// let provider_de = FsDataProvider::try_new("tests/data/langtest/de").unwrap();

@@ -16,68 +16,12 @@ repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
 
-[package.metadata.docs.rs]
-all-features = true
-
 [dependencies]
-displaydoc = { workspace = true }
-litemap = { workspace = true, features = ["alloc"] }
-tinystr = { workspace = true, features = ["alloc"] }
-writeable = { workspace = true }
-
-databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["alloc", "derive"], optional = true }
-zerovec = { workspace = true, optional = true }
-
-[dev-dependencies]
-iai = { workspace = true }
-icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-litemap = { path = "../../utils/litemap", features = ["testing"]}
-postcard = { workspace = true, features = ["use-std"] }
-serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
-
-
-[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = { workspace = true }
+icu_locale_core = { workspace = true }
 
 [features]
-std = []
-databake = ["dep:databake"]
-serde = ["dep:serde", "tinystr/serde"]
-zerovec = ["dep:zerovec"]
-bench = ["serde"]
-
-[lib]
-bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
-[[bench]]
-name = "subtags"
-harness = false
-required-features = ["bench"]
-
-[[bench]]
-name = "langid"
-harness = false
-
-[[bench]]
-name = "locale"
-harness = false
-
-[[bench]]
-name = "iai_langid"
-harness = false
-required-features = ["bench"]
-
-[[example]]
-name = "filter_langids"
-test = true
-
-[[example]]
-name = "syntatically_canonicalize_locales"
-test = true
+std = ["icu_locale_core/std"] 
+databake = ["icu_locale_core/databake"] 
+serde = ["icu_locale_core/serde"] 
+zerovec = ["icu_locale_core/zerovec"] 
+bench = ["icu_locale_core/bench"] 

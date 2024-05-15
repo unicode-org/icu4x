@@ -41,7 +41,7 @@
 //! ```
 //! use core::cmp::Ordering;
 //! use icu::collator::*;
-//! use icu::locid::{locale, Locale};
+//! use icu::locale::{locale, Locale};
 //!
 //! let locale_es: Locale = locale!("es-u-co-trad");
 //! let mut options = CollatorOptions::new();

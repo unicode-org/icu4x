@@ -10,9 +10,9 @@ use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
 use core::str::FromStr;
-use icu_locid::extensions::unicode::Keywords as UnicodeKeywords;
-use icu_locid::subtags::{Language, Region, Script, Variants};
-use icu_locid::Locale;
+use icu_locale_core::extensions::unicode::Keywords as UnicodeKeywords;
+use icu_locale_core::subtags::{Language, Region, Script, Variants};
+use icu_locale_core::Locale;
 use writeable::{LengthHint, Writeable};
 
 #[cfg(feature = "experimental")]
@@ -21,7 +21,7 @@ use core::ops::Deref;
 use tinystr::TinyAsciiStr;
 
 #[cfg(doc)]
-use icu_locid::subtags::Variant;
+use icu_locale_core::subtags::Variant;
 
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
@@ -62,7 +62,7 @@ pub struct DataRequestMetadata {
 /// Convert a [`Locale`] to a [`DataLocale`] and back:
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu_provider::DataLocale;
 ///
 /// let locale = locale!("en-u-ca-buddhist");
@@ -77,7 +77,7 @@ pub struct DataRequestMetadata {
 /// [`Locale`]:
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use icu_provider::DataLocale;
 ///
 /// let locale1 = locale!("en-u-ca-buddhist");
@@ -90,7 +90,7 @@ pub struct DataRequestMetadata {
 /// If you are sure that you have no Unicode keywords, start with [`LanguageIdentifier`]:
 ///
 /// ```
-/// use icu::locid::langid;
+/// use icu::locale::langid;
 /// use icu_provider::DataLocale;
 ///
 /// let langid = langid!("es-CA-valencia");
@@ -104,7 +104,7 @@ pub struct DataRequestMetadata {
 /// lookup and fallback. This may change in the future.
 ///
 /// ```
-/// use icu::locid::{locale, Locale};
+/// use icu::locale::{locale, Locale};
 /// use icu_provider::DataLocale;
 ///
 /// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist"
@@ -482,7 +482,7 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{
+    /// use icu::locale::{
     ///     langid, locale,
     ///     subtags::{language, region},
     /// };
@@ -520,7 +520,9 @@ impl DataLocale {
         #[cfg(feature = "experimental")]
         if let Some(aux) = self.aux {
             loc.extensions.private =
-                icu_locid::extensions::private::Private::from_vec_unchecked(aux.iter().collect());
+                icu_locale_core::extensions::private::Private::from_vec_unchecked(
+                    aux.iter().collect(),
+                );
         }
         loc
     }

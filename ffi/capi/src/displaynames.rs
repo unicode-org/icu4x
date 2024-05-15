@@ -11,7 +11,7 @@ pub mod ffi {
     #[allow(unused_imports)] // feature-specific
     use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
     use icu_experimental::displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
-    use icu_locid::subtags::Region;
+    use icu_locale_core::subtags::Region;
     use writeable::Writeable;
 
     #[diplomat::opaque]

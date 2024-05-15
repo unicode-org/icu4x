@@ -38,7 +38,7 @@ pub struct Baked;
 const _: () = {
     pub mod icu {
         pub use crate as list;
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_list_data::make_provider!(Baked);
     icu_list_data::impl_list_and_v1!(Baked);

@@ -29,7 +29,7 @@ deduplicating_array = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_list_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -45,7 +45,7 @@ serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
 serde_human = ["serde", "regex-automata/alloc"]
 datagen = ["serde", "std", "dep:databake", "regex-automata/alloc"]
 bench = []
-compiled_data = ["dep:icu_list_data", "dep:icu_locid_transform"]
+compiled_data = ["dep:icu_list_data", "dep:icu_locale"]
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI
