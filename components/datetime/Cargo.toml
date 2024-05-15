@@ -45,7 +45,6 @@ litemap = { workspace = true, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 litemap = { path = "../../utils/litemap" }

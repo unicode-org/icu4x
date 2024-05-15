@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::LanguageIdentifier;
-use icu_plurals::PluralCategory;
+use icu::locid::LanguageIdentifier;
+use icu::plurals::PluralCategory;
 
 use serde::Deserialize;
 

@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::Gregorian;
-use icu_datetime::{
+use icu::calendar::Gregorian;
+use icu::datetime::{
     options::{components, length, preferences},
     DateTimeFormatterOptions, TypedDateTimeFormatter,
 };
-use icu_locid::locale;
-use icu_locid::Locale;
+use icu::locid::locale;
+use icu::locid::Locale;
 
 fn assert_resolved_components(
     options: DateTimeFormatterOptions,
@@ -49,7 +49,7 @@ fn test_length_time() {
     assert_resolved_components(
         DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
-        "en-u-hc-h12".parse::<Locale>().unwrap(),
+        "en-u-hc-h12".parse().unwrap(),
     );
 }
 
@@ -68,7 +68,7 @@ fn test_length_time_preferences() {
     assert_resolved_components(
         DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
-        "en-u-hc-h24".parse::<Locale>().unwrap(),
+        "en-u-hc-h24".parse().unwrap(),
     );
 }
 
@@ -94,6 +94,6 @@ fn test_components_bag() {
     assert_resolved_components(
         DateTimeFormatterOptions::Components(input_bag),
         &output_bag,
-        "en-u-hc-h23".parse::<Locale>().unwrap(),
+        "en-u-hc-h23".parse().unwrap(),
     );
 }

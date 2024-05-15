@@ -4,22 +4,15 @@
 
 extern crate alloc;
 
-use icu_experimental::personnames::api::*;
-use icu_experimental::personnames::provided_struct::DefaultPersonName;
-use icu_experimental::personnames::PersonNamesFormatter;
-use icu_locid::locale;
+use icu::experimental::personnames::api::*;
+use icu::experimental::personnames::provided_struct::DefaultPersonName;
+use icu::experimental::personnames::PersonNamesFormatter;
+use icu::locid::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 
 mod baked {
     pub struct Baked;
-
-    mod icu {
-        pub use icu_collections as collections;
-        pub use icu_experimental as experimental;
-        pub use icu_locid_transform as locid_transform;
-        pub use icu_properties as properties;
-    }
 
     icu_experimental_data::make_provider!(Baked);
     icu_experimental_data::impl_personnames_personnames_v1!(Baked);

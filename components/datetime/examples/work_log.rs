@@ -2,16 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// An example application which uses icu_datetime to format entries
+// An example application which uses icu::datetime to format entries
 // from a work log into human readable dates and times.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 icu_benchmark_macros::static_setup!();
 
-use icu_calendar::{DateTime, Gregorian};
-use icu_datetime::{options::length, TypedDateTimeFormatter};
-use icu_locid::locale;
+use icu::calendar::{DateTime, Gregorian};
+use icu::datetime::{options::length, TypedDateTimeFormatter};
+use icu::locid::locale;
 
 const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
     (2001, 9, 8, 18, 46, 40),

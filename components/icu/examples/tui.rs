@@ -8,12 +8,12 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::calendar::{DateTime, Gregorian};
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 use icu::datetime::time_zone::TimeZoneFormatterOptions;
 use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
-use icu::locid::{locale, Locale};
+use icu::locid::langid;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
 use std::str::FromStr;
 
@@ -26,10 +26,10 @@ fn print<T: AsRef<str>>(_input: T) {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let args: Vec<String> = env::args().collect();
 
-    let locale: Locale = args
+    let locale = args
         .get(1)
         .map(|s| s.parse().expect("Failed to parse locale"))
-        .unwrap_or_else(|| locale!("en"));
+        .unwrap_or_else(|| langid!("en").into());
 
     let user_name = args.as_slice().get(2).map(String::as_str).unwrap_or("John");
 
@@ -47,7 +47,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-            &locale.into(),
+            &locale,
             DateTimeFormatterOptions::default(),
             TimeZoneFormatterOptions::default(),
         )
@@ -76,7 +76,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(&locale!("en").into())
+        let pr = PluralRules::try_new_cardinal(&langid!("en").into())
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {

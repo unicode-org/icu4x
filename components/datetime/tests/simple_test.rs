@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::DateTime;
-use icu_datetime::neo::TypedNeoDateTimeFormatter;
-use icu_datetime::options::length;
-use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
-use icu_locid::langid;
+use icu::calendar::DateTime;
+use icu::datetime::neo::TypedNeoDateTimeFormatter;
+use icu::datetime::options::length;
+use icu::datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
+use icu::locid::langid;
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 const EXPECTED_DATETIME: &[&str] = &[

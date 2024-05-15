@@ -4,7 +4,7 @@
 
 use criterion::{black_box, BenchmarkId, Criterion};
 
-use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
+use icu::normalizer::{ComposingNormalizer, DecomposingNormalizer};
 
 struct BenchDataContent {
     pub file_name: String,

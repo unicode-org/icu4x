@@ -6,7 +6,7 @@ mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use icu_plurals::{PluralRuleType, PluralRules};
+use icu::plurals::{PluralRuleType, PluralRules};
 
 fn pluralrules(c: &mut Criterion) {
     let plurals_data =
@@ -30,7 +30,7 @@ fn pluralrules(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         use criterion::black_box;
-        use icu_locid::locale;
+        use icu::locid::locale;
 
         c.bench_function("plurals/pluralrules/construct/fs", |b| {
             b.iter(|| {

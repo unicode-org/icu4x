@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_locid::Locale;
-use icu_locid_transform::LocaleCanonicalizer;
-use icu_locid_transform::LocaleExpander;
+use icu::locid::Locale;
+use icu::locid_transform::LocaleCanonicalizer;
+use icu::locid_transform::LocaleExpander;
 
 fn canonicalize_bench(c: &mut Criterion) {
     let lc = LocaleCanonicalizer::new();

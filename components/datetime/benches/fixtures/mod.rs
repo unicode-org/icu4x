@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options;
-use icu_datetime::options::DateTimeFormatterOptions;
+use icu::datetime::options;
+use icu::datetime::options::DateTimeFormatterOptions;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_calendar::{DateTime, Iso};
+use icu::calendar::{DateTime, Iso};
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("iso/from_minutes_since_local_unix_epoch", |b| {

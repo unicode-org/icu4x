@@ -9,7 +9,7 @@ icu_benchmark_macros::static_setup!();
 
 use std::env;
 
-use icu_locid::Locale;
+use icu::locid::Locale;
 
 const DEFAULT_INPUT: &str = "sr-cyrL-rS, es-mx, und-arab-u-ca-Buddhist";
 

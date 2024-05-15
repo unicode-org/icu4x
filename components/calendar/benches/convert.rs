@@ -7,7 +7,7 @@ mod fixtures;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{Calendar, Date, Ref};
+use icu::calendar::{Calendar, Date, Ref};
 
 fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,

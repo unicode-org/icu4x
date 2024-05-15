@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// An example application which uses icu_uniset to test what blocks of
+// An example application which uses icu::collections::codepointinvlist to test what blocks of
 // Basic Multilingual Plane a character belongs to.
 //
 // In this example we use `CodePointInversionListBuilder` to construct just the first
@@ -16,7 +16,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 
 fn get_basic_latin_block() -> CodePointInversionList<'static> {
     let mut builder = CodePointInversionListBuilder::new();

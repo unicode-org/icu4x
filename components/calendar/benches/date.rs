@@ -8,7 +8,7 @@ use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
 use fixtures::DateFixture;
-use icu_calendar::{AsCalendar, Calendar, Date, DateDuration};
+use icu::calendar::{AsCalendar, Calendar, Date, DateDuration};
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     // black_box used to avoid compiler optimization.

@@ -6,7 +6,7 @@ mod fixtures;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
-use icu_plurals::PluralOperands;
+use icu::plurals::PluralOperands;
 
 fn operands(c: &mut Criterion) {
     let data =

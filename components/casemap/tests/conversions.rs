@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_casemap::CaseMapper;
-use icu_locid::langid;
+use icu::casemap::CaseMapper;
+use icu::locid::langid;
 
 #[test]
 fn test_simple_mappings() {

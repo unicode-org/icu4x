@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::FixedDecimal;
-use icu_experimental::relativetime::{
+use icu::experimental::relativetime::{
     options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
 };
-use icu_locid::locale;
+use icu::locid::locale;
 use writeable::assert_writeable_eq;
 
 macro_rules! generate_test {

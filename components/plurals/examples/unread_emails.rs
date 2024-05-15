@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// An example application which uses icu_plurals to construct a correct
+// An example application which uses icu::plurals to construct a correct
 // sentence for English based on the numerical value in Cardinal category.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 icu_benchmark_macros::static_setup!();
 
-use icu_locid::locale;
-use icu_plurals::{PluralCategory, PluralRules};
+use icu::locid::locale;
+use icu::plurals::{PluralCategory, PluralRules};
 
 const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
 

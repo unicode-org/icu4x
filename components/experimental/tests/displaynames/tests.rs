@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
-use icu_locid::locale;
-use icu_locid::Locale;
+use icu::experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
+use icu::locid::locale;
+use icu::locid::Locale;
 use std::borrow::Cow;
 
 #[test]

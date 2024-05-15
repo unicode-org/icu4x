@@ -4,9 +4,8 @@
 
 use criterion::{black_box, BenchmarkId, Criterion};
 use criterion::{criterion_group, criterion_main};
-use icu_locid::Locale;
 
-use icu_experimental::transliterate::Transliterator;
+use icu::experimental::transliterate::Transliterator;
 
 include!("../../tests/transliterate/data/baked/mod.rs");
 
@@ -26,7 +25,6 @@ fn owned_inputs(content: &str) -> Vec<String> {
 }
 
 fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataContent> {
-    let locale: Locale = locale_str.parse().unwrap();
     let inputs = owned_inputs(source);
     inputs
         .into_iter()
@@ -34,7 +32,11 @@ fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataConte
         .map(|(idx, input)| BenchDataContent {
             num: idx + 1,
             name: locale_str.to_string(),
-            translit: Transliterator::try_new_unstable(locale.clone(), &BakedDataProvider).unwrap(),
+            translit: Transliterator::try_new_unstable(
+                locale_str.parse().unwrap(),
+                &BakedDataProvider,
+            )
+            .unwrap(),
             input,
         })
         .collect()

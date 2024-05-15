@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_casemap::CaseMapper;
-use icu_locid::langid;
-use icu_normalizer::DecomposingNormalizer;
+use icu::casemap::CaseMapper;
+use icu::locid::langid;
+use icu::normalizer::DecomposingNormalizer;
 
 const TEST_STRING_EN: &str = "One of the key design principles of ICU4X is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application.  This document explains how that goal can be achieved.";
 

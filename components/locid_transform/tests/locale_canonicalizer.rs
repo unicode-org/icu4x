@@ -4,8 +4,8 @@
 
 mod fixtures;
 
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleCanonicalizer, LocaleExpander, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleCanonicalizer, LocaleExpander, TransformResult};
 use writeable::assert_writeable_eq;
 
 #[test]

@@ -7,7 +7,7 @@
 icu_benchmark_macros::static_setup!();
 
 use icu::casemap::CaseMapper;
-use icu_locid::langid;
+use icu::locid::langid;
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {

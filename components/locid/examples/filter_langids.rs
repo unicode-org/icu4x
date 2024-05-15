@@ -15,7 +15,7 @@ icu_benchmark_macros::static_setup!();
 
 use std::env;
 
-use icu_locid::{subtags, LanguageIdentifier};
+use icu::locid::{subtags, LanguageIdentifier};
 use writeable::Writeable;
 
 const DEFAULT_INPUT: &str =
