@@ -209,7 +209,18 @@ diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev 
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
 diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "3167e39e89ae612233706f1ade3d9e8a5c6ad358" }
 
-# External deps from crates.io with no default features (library deps). Keep in sync with allowlist.rs:
+# EXTERNAL DEPENDENCIES
+#
+# Due to semver-related constraints, we generally want to consume crates.io dependencies with
+# default features, with some notable exceptions:
+#
+# 1. Dependencies of core library crates need to be `no_std`
+# 2. Some crates have a lot of default features that pull in undesirable transitive deps
+#
+# We therefore have three groups for our crates.io dependencies.
+
+## External Deps Group 1: Library deps except datagen. No default features.
+# Keep in sync with allowlist.rs:
 # BASIC_RUNTIME_DEPS
 # EXTRA_SERDE_DEPS
 # EXTRA_EXPERIMENTAL_DEPS
@@ -222,6 +233,9 @@ core_maths = { version = "0.1.0", default-features = false }
 either = { version = "1.9.0", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }
+num-bigint = { version = "0.4.3", default-features = false }
+num-rational = { version = "0.4.0", default-features = false }
+num-traits = { version = "0.2.0", default-features = false }
 postcard = { version = "1.0.1", default-features = false }
 regex-automata = { version = "0.2.0", default-features = false }
 ryu = { version = "1.0.5", default-features = false }
@@ -234,13 +248,11 @@ utf16_iter = { version = "1.0.2", default-features = false }
 utf8_iter = { version = "1.0.2", default-features = false }
 write16 = { version = "1.0.0", default-features = false }
 
-# External deps from crates.io with no default features that could have default features, but which
-# we have specifically researched and choose to disable default features, mostly in order to reduce
-# transitive dependencies.
+## External Deps Group 2: Heavy Build, Dev, and Datagen deps. No default features.
 zip = { version = "0.6.0", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 
-# External deps from crates.io with default features (build, dev, and datagen deps).
+## External Deps Group 3: Build, Dev, and Datagen deps. Include default features.
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
 atoi = "1.0.0"
@@ -260,9 +272,6 @@ itertools = "0.10.3"
 libc_alloc = "1.0.6"
 ndarray = "0.15.0"
 nom = "7.0.0"
-num-bigint = "0.4.3"
-num-rational = "0.4.0"
-num-traits = "0.2.0"
 once_cell = {version = "1.15.0"}
 proc-macro2 = "1.0.61"
 quote = "1.0.28"
