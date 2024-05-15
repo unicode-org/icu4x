@@ -7,7 +7,7 @@
 //! These options are consumed by the `LocaleFallbacker` in the `icu_locid_transforms` crate
 //! (or the `icu::locid_transforms` module), but are defined here because they are used by `DataKey`.
 
-use icu_locid::extensions::unicode::Key;
+use crate::prelude::*;
 
 /// Hint for which subtag to prioritize during fallback.
 ///
@@ -143,7 +143,7 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
     /// ```
-    pub extension_key: Option<Key>,
+    pub extension_key: Option<UnicodeExtensionKey>,
     /// Fallback supplement data key to customize fallback rules.
     ///
     /// For example, most data keys for collation add additional parent locales, such as

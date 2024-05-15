@@ -6,7 +6,6 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::CoverageLevel;
 use crate::provider::DatagenProvider;
 use icu_locid::subtags::Language;
-use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;

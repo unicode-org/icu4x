@@ -13,7 +13,6 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
 };
-use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
 
@@ -51,7 +50,7 @@ pub trait CldrCalendar: InternalCldrCalendar {
     /// the default one when no others are provided
     ///
     /// If `is_identifier_allowed_for_calendar()` is set, this only is used for loading skeletons data
-    const DEFAULT_BCP_47_IDENTIFIER: Value;
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue;
 
     /// The data marker for loading symbols for this calendar.
     type DateSymbolsV1Marker: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>;
@@ -78,13 +77,13 @@ pub trait CldrCalendar: InternalCldrCalendar {
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
     /// By default, just checks against DEFAULT_BCP_47_IDENTIFIER
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+    fn is_identifier_allowed_for_calendar(value: &UnicodeExtensionValue) -> bool {
         *value == Self::DEFAULT_BCP_47_IDENTIFIER
     }
 }
 
 /// Check if the provided value is of the form `islamic-{subcal}`
-fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
+fn is_islamic_subcal(value: &UnicodeExtensionValue, subcal: TinyAsciiStr<8>) -> bool {
     if let &[first, second] = value.as_tinystr_slice() {
         first == "islamic" && second == subcal
     } else {
@@ -103,7 +102,7 @@ pub enum NeverCalendar {}
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 impl CldrCalendar for NeverCalendar {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("never");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("never");
     type DateSymbolsV1Marker = NeverMarker<DateSymbolsV1<'static>>;
     type DateLengthsV1Marker = NeverMarker<DateLengthsV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
@@ -113,7 +112,7 @@ impl CldrCalendar for NeverCalendar {
 }
 
 impl CldrCalendar for Buddhist {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("buddhist");
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
     type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -127,7 +126,7 @@ impl CldrCalendar for Buddhist {
 }
 
 impl CldrCalendar for Chinese {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("chinese");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("chinese");
     type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
     type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -141,7 +140,7 @@ impl CldrCalendar for Chinese {
 }
 
 impl CldrCalendar for Coptic {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("coptic");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("coptic");
     type DateSymbolsV1Marker = CopticDateSymbolsV1Marker;
     type DateLengthsV1Marker = CopticDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -155,7 +154,7 @@ impl CldrCalendar for Coptic {
 }
 
 impl CldrCalendar for Dangi {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("dangi");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("dangi");
     type DateSymbolsV1Marker = DangiDateSymbolsV1Marker;
     type DateLengthsV1Marker = DangiDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -169,7 +168,7 @@ impl CldrCalendar for Dangi {
 }
 
 impl CldrCalendar for Ethiopian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
     type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -180,13 +179,14 @@ impl CldrCalendar for Ethiopian {
     type DatePatternV1Marker = EthiopianDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = EthiopianDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("ethiopic") || *value == value!("ethioaa")
+    fn is_identifier_allowed_for_calendar(value: &UnicodeExtensionValue) -> bool {
+        *value == unicode_extension_value!("ethiopic")
+            || *value == unicode_extension_value!("ethioaa")
     }
 }
 
 impl CldrCalendar for Gregorian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("gregory");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("gregory");
     type DateSymbolsV1Marker = GregorianDateSymbolsV1Marker;
     type DateLengthsV1Marker = GregorianDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -200,7 +200,7 @@ impl CldrCalendar for Gregorian {
 }
 
 impl CldrCalendar for Hebrew {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("hebrew");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("hebrew");
     type DateSymbolsV1Marker = HebrewDateSymbolsV1Marker;
     type DateLengthsV1Marker = HebrewDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -214,7 +214,7 @@ impl CldrCalendar for Hebrew {
 }
 
 impl CldrCalendar for Indian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("indian");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("indian");
     type DateSymbolsV1Marker = IndianDateSymbolsV1Marker;
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -231,7 +231,7 @@ impl CldrCalendar for IslamicCivil {
     // this value is not actually a valid identifier for this calendar,
     // however since we are overriding is_identifier_allowed_for_calendar we are using
     // this solely for its effects on skeleton data loading
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -242,13 +242,14 @@ impl CldrCalendar for IslamicCivil {
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
+    fn is_identifier_allowed_for_calendar(value: &UnicodeExtensionValue) -> bool {
+        *value == unicode_extension_value!("islamicc")
+            || is_islamic_subcal(value, tinystr!(8, "civil"))
     }
 }
 
 impl CldrCalendar for IslamicObservational {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -265,7 +266,7 @@ impl CldrCalendar for IslamicTabular {
     // this value is not actually a valid identifier for this calendar,
     // however since we are overriding is_identifier_allowed_for_calendar we are using
     // this solely for its effects on skeleton data loading
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -276,7 +277,7 @@ impl CldrCalendar for IslamicTabular {
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+    fn is_identifier_allowed_for_calendar(value: &UnicodeExtensionValue) -> bool {
         is_islamic_subcal(value, tinystr!(8, "tbla"))
     }
 }
@@ -285,7 +286,7 @@ impl CldrCalendar for IslamicUmmAlQura {
     // this value is not actually a valid identifier for this calendar,
     // however since we are overriding is_identifier_allowed_for_calendar we are using
     // this solely for its effects on skeleton data loading
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -296,13 +297,13 @@ impl CldrCalendar for IslamicUmmAlQura {
     type DatePatternV1Marker = IslamicDatePatternV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+    fn is_identifier_allowed_for_calendar(value: &UnicodeExtensionValue) -> bool {
         is_islamic_subcal(value, tinystr!(8, "umalqura"))
     }
 }
 
 impl CldrCalendar for Japanese {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("japanese");
     type DateSymbolsV1Marker = JapaneseDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -316,7 +317,7 @@ impl CldrCalendar for Japanese {
 }
 
 impl CldrCalendar for JapaneseExtended {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanext");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("japanext");
     type DateSymbolsV1Marker = JapaneseExtendedDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseExtendedDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -330,7 +331,7 @@ impl CldrCalendar for JapaneseExtended {
 }
 
 impl CldrCalendar for Persian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("persian");
     type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
     type DateLengthsV1Marker = PersianDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]
@@ -344,7 +345,7 @@ impl CldrCalendar for Persian {
 }
 
 impl CldrCalendar for Roc {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
+    const DEFAULT_BCP_47_IDENTIFIER: UnicodeExtensionValue = unicode_extension_value!("roc");
     type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
     type DateLengthsV1Marker = RocDateLengthsV1Marker;
     #[cfg(any(feature = "datagen", feature = "experimental"))]

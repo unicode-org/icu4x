@@ -320,7 +320,6 @@ fn compute_hc<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
 
@@ -349,7 +348,7 @@ mod tests {
     fn segment_file_by_lstm() {
         let lstm: DataPayload<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("th").into(),
+                locale: &langid!("th").into(),
                 metadata: Default::default(),
             })
             .unwrap()

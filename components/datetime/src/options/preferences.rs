@@ -38,8 +38,7 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use icu_locid::extensions::unicode::key;
-use icu_provider::DataLocale;
+use icu_provider::prelude::*;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
 
@@ -86,7 +85,7 @@ impl Bag {
         const H23: TinyAsciiStr<8> = tinystr!(8, "h23");
         const H24: TinyAsciiStr<8> = tinystr!(8, "h24");
         let hour_cycle = match data_locale
-            .get_unicode_ext(&key!("hc"))
+            .get_unicode_ext(&unicode_extension_key!("hc"))
             .and_then(|v| v.as_single_subtag().copied())
         {
             Some(H11) => Some(HourCycle::H11),

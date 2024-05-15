@@ -4,7 +4,6 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_locid::langid;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;

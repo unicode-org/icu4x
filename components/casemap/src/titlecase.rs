@@ -6,7 +6,6 @@
 use crate::provider::CaseMapV1Marker;
 use crate::CaseMapper;
 use alloc::string::String;
-use icu_locid::LanguageIdentifier;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::GeneralCategoryV1Marker;
 use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};

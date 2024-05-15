@@ -128,7 +128,7 @@ impl WeekCalculator {
     /// use icu::calendar::week::WeekCalculator;
     ///
     /// let week_calculator =
-    ///     WeekCalculator::try_new(&icu::locid::locale!("und-GB").into())
+    ///     WeekCalculator::try_new(&icu::locid::langid!("und-GB").into())
     ///         .expect("locale should be present");
     ///
     /// // Wednesday the 10th is in week 2:
@@ -153,7 +153,7 @@ impl WeekCalculator {
     /// use icu::calendar::Date;
     ///
     /// let week_calculator =
-    ///     WeekCalculator::try_new(&icu::locid::locale!("und-GB").into())
+    ///     WeekCalculator::try_new(&icu::locid::langid!("und-GB").into())
     ///         .expect("locale should be present");
     ///
     /// let iso_date = Date::try_new_iso_date(2022, 8, 26).unwrap();
@@ -711,8 +711,6 @@ fn test_simple_week_of() {
 
 #[test]
 fn test_weekend() {
-    use icu_locid::langid;
-
     assert_eq!(
         WeekCalculator::try_new(&langid!("und").into())
             .unwrap()

@@ -22,7 +22,6 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
-icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 utf8_iter = { workspace = true }
 zerovec = { workspace = true, features = ["yoke"] }
@@ -33,7 +32,6 @@ serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 core_maths = { workspace = true, optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -47,7 +45,7 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data", "auto"]
-std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
+std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["dep:core_maths"]

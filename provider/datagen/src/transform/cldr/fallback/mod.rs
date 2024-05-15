@@ -6,10 +6,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
-use icu_locid::{
-    subtags::{Language, Region, Script},
-    LanguageIdentifier,
-};
+use icu_locid::subtags::{Language, Region, Script};
 use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -163,10 +160,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::{
-        langid,
-        subtags::{language, region, script},
-    };
+    use icu_locid::subtags::{language, region, script};
 
     let provider = DatagenProvider::new_testing();
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider

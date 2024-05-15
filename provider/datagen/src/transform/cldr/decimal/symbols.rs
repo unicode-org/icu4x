@@ -6,7 +6,6 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_decimal::provider::*;
-use icu_locid::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -25,7 +24,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
+        let nsname = match req.locale.get_unicode_ext(&unicode_extension_key!("nu")) {
             Some(v) => *v
                 .as_tinystr_slice()
                 .first()
@@ -98,13 +97,11 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::locale;
-
     let provider = DatagenProvider::new_testing();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("ar-EG").into(),
+            locale: &langid!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

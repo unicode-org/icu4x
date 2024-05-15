@@ -170,8 +170,6 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::langid;
-
     let provider = DatagenProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
@@ -202,8 +200,6 @@ fn test_basic() {
 
 #[test]
 fn test_ranges() {
-    use icu_locid::langid;
-
     let provider = DatagenProvider::new_testing();
 
     // locale 'sl' seems to have a lot of interesting cases.

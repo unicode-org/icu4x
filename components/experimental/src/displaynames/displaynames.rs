@@ -8,10 +8,8 @@ use crate::displaynames::options::*;
 use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use icu_locid::{
-    subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
-    Locale,
-};
+use icu_locid::subtags::{Language, Region, Script, Variant};
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 

@@ -25,7 +25,6 @@ either = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
-icu_locid = { workspace = true }
 icu_plurals = { workspace = true }
 icu_provider = { workspace = true, features = ["macros", "experimental"] }
 icu_timezone = { workspace = true }
@@ -46,6 +45,7 @@ litemap = { workspace = true, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_locid = { path = "../../components/locid" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 litemap = { path = "../../utils/litemap" }
@@ -63,7 +63,6 @@ default = ["compiled_data"]
 std = [
     "icu_calendar/std",
     "icu_decimal/std",
-    "icu_locid/std",
     "icu_plurals/std",
     "icu_provider/std",
     "icu_timezone/std",

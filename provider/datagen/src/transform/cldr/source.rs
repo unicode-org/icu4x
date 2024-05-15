@@ -7,7 +7,6 @@
 use crate::provider::source::SerdeCache;
 use crate::provider::CoverageLevel;
 use icu_calendar::provider::EraStartDate;
-use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::{
     LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
     LikelySubtagsForScriptRegionV1Marker,
@@ -86,7 +85,7 @@ impl CldrCache {
     pub(in crate::provider) fn locales(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+    ) -> Result<Vec<LanguageIdentifier>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache

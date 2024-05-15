@@ -594,7 +594,7 @@ impl core::fmt::Debug for Out {
 ///   or [`is_missing_icuexport_error`] will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
-    locales: Option<&[icu_locid::LanguageIdentifier]>,
+    locales: Option<&[LanguageIdentifier]>,
     keys: &[DataKey],
     source: &SourceData,
     outs: Vec<Out>,
@@ -605,12 +605,7 @@ pub fn datagen(
         .with_additional_collations(source.collations.clone());
     match locales {
         Some(locales) => exporter
-            .with_locales(
-                locales
-                    .iter()
-                    .cloned()
-                    .chain([icu_locid::LanguageIdentifier::UND]),
-            )
+            .with_locales(locales.iter().cloned().chain([LanguageIdentifier::UND]))
             .with_segmenter_models({
                 let mut models = vec![];
                 for locale in locales {
@@ -687,8 +682,6 @@ pub fn datagen(
         ),
     )
 }
-
-use icu_locid::langid;
 
 #[cfg(feature = "provider")]
 fn lstm_model_name_to_data_locale(name: &str) -> Option<DataLocale> {

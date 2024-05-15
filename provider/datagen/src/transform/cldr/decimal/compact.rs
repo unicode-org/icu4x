@@ -6,7 +6,6 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_experimental::compactdecimal::provider::*;
-use icu_locid::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -26,7 +25,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
+        let nsname = match req.locale.get_unicode_ext(&unicode_extension_key!("nu")) {
             Some(v) => *v
                 .as_tinystr_slice()
                 .first()
@@ -74,7 +73,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
+        let nsname = match req.locale.get_unicode_ext(&unicode_extension_key!("nu")) {
             Some(v) => *v
                 .as_tinystr_slice()
                 .first()
@@ -123,7 +122,6 @@ impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for Data
 
 mod tests {
     use super::*;
-    use icu_locid::locale;
     use std::borrow::Cow;
     use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
@@ -135,7 +133,7 @@ mod tests {
 
         let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -201,7 +199,7 @@ mod tests {
 
         let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("ja").into(),
+                locale: &langid!("ja").into(),
                 metadata: Default::default(),
             })
             .unwrap()

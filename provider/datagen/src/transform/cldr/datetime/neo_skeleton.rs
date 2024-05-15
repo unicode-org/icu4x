@@ -17,9 +17,6 @@ use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
     neo::*,
 };
-use icu_locid::extensions::private::Subtag;
-use icu_locid::extensions::unicode::{key, value, Value};
-use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
@@ -30,8 +27,8 @@ fn make_data_locale_with_tinystr_subtag(
     subtag: TinyAsciiStr<8>,
 ) -> DataLocale {
     let mut data_locale = DataLocale::from(langid);
-    let subtag = Subtag::try_from_raw(*subtag.all_bytes()).unwrap();
-    data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+    let subtag = AuxiliaryKey::try_from_raw(*subtag.all_bytes()).unwrap();
+    data_locale.set_aux(subtag.into());
     data_locale
 }
 
@@ -77,7 +74,10 @@ impl DatagenProvider {
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> components::Bag,
     ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
         let mut skeletons_data_locale = req.locale.clone();
-        skeletons_data_locale.set_unicode_ext(key!("ca"), value!("gregory"));
+        skeletons_data_locale.set_unicode_ext(
+            unicode_extension_key!("ca"),
+            unicode_extension_value!("gregory"),
+        );
         let skeletons_data: DataPayload<DateSkeletonPatternsV1Marker> = self
             .load(DataRequest {
                 locale: &skeletons_data_locale,
@@ -191,7 +191,7 @@ impl DatagenProvider {
 
     fn neo_date_skeleton_supported_locales(
         &self,
-        calendar: &Value,
+        calendar: &UnicodeExtensionValue,
     ) -> Result<HashSet<DataLocale>, DataError> {
         let mut r = HashSet::new();
 
@@ -258,7 +258,7 @@ macro_rules! impl_neo_skeleton_datagen {
 
         impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-                self.neo_date_skeleton_supported_locales(&value!($calendar))
+                self.neo_date_skeleton_supported_locales(&unicode_extension_value!($calendar))
             }
         }
     };

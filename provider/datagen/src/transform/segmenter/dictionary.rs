@@ -4,7 +4,6 @@
 
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;

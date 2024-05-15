@@ -4,10 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid::{
-    subtags::{self, language},
-    LanguageIdentifier,
-};
+use icu_locid::subtags::{language, Region, Script, Variant};
 use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -160,11 +157,11 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
         for (from, to) in other.supplemental.metadata.alias.script_aliases.iter() {
             // Don't store data for invalid script codes, we only canonicalize valid locales, so we
             // would never see these anyways.
-            if from.parse::<subtags::Script>().is_err() {
+            if from.parse::<Script>().is_err() {
                 continue;
             }
 
-            if let Ok(to) = to.replacement.parse::<subtags::Script>() {
+            if let Ok(to) = to.replacement.parse::<Script>() {
                 script.insert(from, to);
             }
         }
@@ -172,11 +169,11 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
         for (from, to) in other.supplemental.metadata.alias.region_aliases.iter() {
             // Don't store data for invalid region codes, we only canonicalize valid locales, so we
             // would never see these anyways.
-            if from.parse::<subtags::Region>().is_err() {
+            if from.parse::<Region>().is_err() {
                 continue;
             }
 
-            if let Ok(replacement) = to.replacement.parse::<subtags::Region>() {
+            if let Ok(replacement) = to.replacement.parse::<Region>() {
                 if from.is_ascii_alphabetic() {
                     region_alpha.insert(from.resize(), replacement);
                 } else {
@@ -187,14 +184,14 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                     from,
                     to.replacement
                         .split(' ')
-                        .filter_map(|r| r.parse::<subtags::Region>().ok())
+                        .filter_map(|r| r.parse::<Region>().ok())
                         .collect::<Box<[_]>>(),
                 );
             }
         }
 
         for (from, to) in other.supplemental.metadata.alias.variant_aliases.iter() {
-            if let Ok(to) = to.replacement.parse::<subtags::Variant>() {
+            if let Ok(to) = to.replacement.parse::<Variant>() {
                 variant.insert(from, to);
             }
         }
@@ -282,10 +279,10 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
 
 #[test]
 fn test_appendix_c_cmp() {
-    let en = icu_locid::langid!("en-GB");
-    let ca = icu_locid::langid!("ca");
+    let en = langid!("en-GB");
+    let ca = langid!("ca");
     let und = "und-hepburn-heploc".parse::<LanguageIdentifier>().unwrap();
-    let fr = icu_locid::langid!("fr-CA");
+    let fr = langid!("fr-CA");
 
     let mut rules = vec![&en, &ca, &und, &fr];
     rules.sort_unstable_by_key(|&l| appendix_c_cmp(l));

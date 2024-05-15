@@ -5,7 +5,6 @@
 //! This module contains provider implementations backed by LSTM segmentation data.
 
 use crate::provider::DatagenProvider;
-use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;

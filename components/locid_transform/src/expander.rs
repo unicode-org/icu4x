@@ -5,7 +5,6 @@
 use crate::{provider::*, LocaleTransformError};
 
 use icu_locid::subtags::{Language, Region, Script};
-use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 use crate::TransformResult;

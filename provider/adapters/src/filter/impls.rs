@@ -6,8 +6,6 @@ use super::*;
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
 
-use icu_locid::LanguageIdentifier;
-
 type RequestFilterDataProviderOutput<'a, D> =
     RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>;
 
@@ -24,8 +22,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{langid, locale, subtags::language};
+    /// use icu::locid::LanguageIdentifier;
+    /// use icu::locid::{langid, locale, subtags::language};
     /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
@@ -101,7 +99,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{langid, locale};
+    /// use icu::locid::{langid, locale};
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
@@ -164,7 +162,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
+    /// use icu::locid::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;

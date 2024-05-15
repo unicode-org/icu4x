@@ -248,7 +248,23 @@ pub mod prelude {
     pub use crate::DynamicDataProvider;
     #[doc(no_inline)]
     pub use crate::KeyedDataMarker;
+    #[doc(no_inline)]
+    #[doc(no_inline)]
+    pub use icu_locid::extensions::unicode::{
+        key as unicode_extension_key, Key as UnicodeExtensionKey,
+    };
+    #[doc(no_inline)]
+    pub use icu_locid::extensions::unicode::{
+        value as unicode_extension_value, Value as UnicodeExtensionValue,
+    };
+    #[doc(no_inline)]
+    pub use icu_locid::{langid, LanguageIdentifier};
 
+    #[cfg(feature = "experimental")]
+    pub use icu_locid::extensions::private::{subtag as aux_key, Subtag as AuxiliaryKey};
+
+    #[doc(hidden)]
+    pub use icu_locid;
     #[doc(hidden)]
     pub use yoke;
     #[doc(hidden)]

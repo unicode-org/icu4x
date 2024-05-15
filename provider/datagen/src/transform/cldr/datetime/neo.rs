@@ -11,11 +11,6 @@ use icu_datetime::pattern::{self, CoarseHourCycle};
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
 use icu_datetime::provider::neo::aux::{self, Context, Length, PatternLength};
 use icu_datetime::provider::neo::*;
-use icu_locid::{
-    extensions::private::Subtag,
-    extensions::unicode::{value, Value},
-    LanguageIdentifier, Locale,
-};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -26,7 +21,7 @@ use zerovec::ule::UnvalidatedStr;
 /// Most keys don't have short symbols (except weekdays)
 ///
 /// We may further investigate and kick out standalone for some keys
-const NORMAL_KEY_LENGTHS: &[Subtag] = &[
+const NORMAL_KEY_LENGTHS: &[AuxiliaryKey] = &[
     aux::ABBR,
     aux::NARROW,
     aux::WIDE,
@@ -36,7 +31,7 @@ const NORMAL_KEY_LENGTHS: &[Subtag] = &[
 ];
 
 /// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
-const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
+const NUMERIC_MONTHS_KEY_LENGTHS: &[AuxiliaryKey] = &[
     aux::ABBR,
     aux::NARROW,
     aux::WIDE,
@@ -47,10 +42,10 @@ const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
 ];
 
 /// Lengths for year data (does not do standalone formatting)
-const YEARS_KEY_LENGTHS: &[Subtag] = &[aux::ABBR, aux::NARROW, aux::WIDE];
+const YEARS_KEY_LENGTHS: &[AuxiliaryKey] = &[aux::ABBR, aux::NARROW, aux::WIDE];
 
 /// All possible non-numeric lengths
-const FULL_KEY_LENGTHS: &[Subtag] = &[
+const FULL_KEY_LENGTHS: &[AuxiliaryKey] = &[
     aux::ABBR,
     aux::NARROW,
     aux::WIDE,
@@ -62,7 +57,7 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
 ];
 
 /// Lengths for normal patterns (not counting hour cycle stuff)
-const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] = &[
+const NORMAL_PATTERN_KEY_LENGTHS: &[AuxiliaryKey] = &[
     aux::PATTERN_FULL,
     aux::PATTERN_LONG,
     aux::PATTERN_MEDIUM,
@@ -73,7 +68,7 @@ impl DatagenProvider {
     fn load_calendar_dates(
         &self,
         langid: &LanguageIdentifier,
-        calendar: &Value,
+        calendar: &UnicodeExtensionValue,
     ) -> Result<&ca::Dates, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
@@ -97,11 +92,11 @@ impl DatagenProvider {
     fn load_neo_key<M: KeyedDataMarker>(
         &self,
         req: DataRequest,
-        calendar: &Value,
+        calendar: &UnicodeExtensionValue,
         conversion: impl FnOnce(
             &LanguageIdentifier,
             &ca::Dates,
-            Subtag,
+            AuxiliaryKey,
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -136,12 +131,12 @@ impl DatagenProvider {
     fn load_neo_symbols_key<M: KeyedDataMarker>(
         &self,
         req: DataRequest,
-        calendar: Value,
+        calendar: UnicodeExtensionValue,
         conversion: impl FnOnce(
             &DatagenProvider,
             &LanguageIdentifier,
             &ca::Dates,
-            &Value,
+            &UnicodeExtensionValue,
             Context,
             Length,
         ) -> Result<M::Yokeable, DataError>,
@@ -160,7 +155,7 @@ impl DatagenProvider {
     fn load_neo_patterns_key<M: KeyedDataMarker>(
         &self,
         req: DataRequest,
-        calendar: Value,
+        calendar: UnicodeExtensionValue,
         conversion: impl FnOnce(
             &ca::Dates,
             PatternLength,
@@ -180,8 +175,8 @@ impl DatagenProvider {
 
     fn supported_locales_neo(
         &self,
-        calendar: Value,
-        keylengths: &'static [Subtag],
+        calendar: UnicodeExtensionValue,
+        keylengths: &'static [AuxiliaryKey],
     ) -> Result<HashSet<DataLocale>, DataError> {
         let mut r = HashSet::new();
 
@@ -190,9 +185,7 @@ impl DatagenProvider {
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
             keylengths.iter().map(move |length| {
-                let locale: Locale = lid.clone().into();
-
-                let mut locale = DataLocale::from(locale);
+                let mut locale = DataLocale::from(lid.clone());
 
                 locale.set_aux((*length).into());
                 locale
@@ -207,7 +200,7 @@ fn weekday_convert(
     _datagen: &DatagenProvider,
     _langid: &LanguageIdentifier,
     data: &ca::Dates,
-    _calendar: &Value,
+    _calendar: &UnicodeExtensionValue,
     context: Context,
     length: Length,
 ) -> Result<LinearNamesV1<'static>, DataError> {
@@ -232,7 +225,7 @@ fn dayperiods_convert(
     _datagen: &DatagenProvider,
     _langid: &LanguageIdentifier,
     data: &ca::Dates,
-    _calendar: &Value,
+    _calendar: &UnicodeExtensionValue,
     context: Context,
     length: Length,
 ) -> Result<LinearNamesV1<'static>, DataError> {
@@ -259,11 +252,11 @@ fn eras_convert(
     datagen: &DatagenProvider,
     langid: &LanguageIdentifier,
     eras: &ca::Eras,
-    calendar: &Value,
+    calendar: &UnicodeExtensionValue,
     length: Length,
 ) -> Result<YearNamesV1<'static>, DataError> {
     let eras = eras.load(length);
-    // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
+    // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use UnicodeExtensionValue
     let calendar_str = calendar.to_string();
     let map = super::symbols::get_era_code_map(&calendar_str);
     let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
@@ -271,7 +264,7 @@ fn eras_convert(
     // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
     // ethiopian.
-    let extra_ethiopic = if *calendar == value!("ethiopic") {
+    let extra_ethiopic = if *calendar == unicode_extension_value!("ethiopic") {
         let ethioaa: &ca::Resource = datagen
             .cldr()?
             .dates("ethiopic")
@@ -298,13 +291,15 @@ fn eras_convert(
         None
     };
 
-    let modern_japanese_eras = if *calendar == value!("japanese") {
+    let modern_japanese_eras = if *calendar == unicode_extension_value!("japanese") {
         Some(datagen.cldr()?.modern_japanese_eras()?)
     } else {
         None
     };
 
-    let extra_japanese = if *calendar == value!("japanese") || *calendar == value!("japanext") {
+    let extra_japanese = if *calendar == unicode_extension_value!("japanese")
+        || *calendar == unicode_extension_value!("japanext")
+    {
         let greg: &ca::Resource = datagen
             .cldr()?
             .dates("gregorian")
@@ -371,7 +366,7 @@ fn years_convert(
     datagen: &DatagenProvider,
     langid: &LanguageIdentifier,
     data: &ca::Dates,
-    calendar: &Value,
+    calendar: &UnicodeExtensionValue,
     context: Context,
     length: Length,
 ) -> Result<YearNamesV1<'static>, DataError> {
@@ -406,22 +401,27 @@ fn years_convert(
 
 /// Returns the number of regular months in a calendar, as well as whether it is
 /// has leap months
-fn calendar_months(cal: &Value) -> (usize, bool) {
-    if *cal == value!("hebrew") || *cal == value!("chinese") || *cal == value!("dangi") {
+fn calendar_months(cal: &UnicodeExtensionValue) -> (usize, bool) {
+    if *cal == unicode_extension_value!("hebrew")
+        || *cal == unicode_extension_value!("chinese")
+        || *cal == unicode_extension_value!("dangi")
+    {
         (24, true)
-    } else if *cal == value!("coptic") || *cal == value!("ethiopic") {
+    } else if *cal == unicode_extension_value!("coptic")
+        || *cal == unicode_extension_value!("ethiopic")
+    {
         (13, false)
-    } else if *cal == value!("gregory")
-        || *cal == value!("buddhist")
-        || *cal == value!("japanese")
-        || *cal == value!("japanext")
-        || *cal == value!("indian")
-        || *cal == value!("persian")
-        || *cal == value!("roc")
-        || *cal == value!("islamic")
-        || *cal == value!("islamicc")
-        || *cal == value!("umalqura")
-        || *cal == value!("tbla")
+    } else if *cal == unicode_extension_value!("gregory")
+        || *cal == unicode_extension_value!("buddhist")
+        || *cal == unicode_extension_value!("japanese")
+        || *cal == unicode_extension_value!("japanext")
+        || *cal == unicode_extension_value!("indian")
+        || *cal == unicode_extension_value!("persian")
+        || *cal == unicode_extension_value!("roc")
+        || *cal == unicode_extension_value!("islamic")
+        || *cal == unicode_extension_value!("islamicc")
+        || *cal == unicode_extension_value!("umalqura")
+        || *cal == unicode_extension_value!("tbla")
     {
         (12, false)
     } else {
@@ -433,7 +433,7 @@ fn months_convert(
     _datagen: &DatagenProvider,
     langid: &LanguageIdentifier,
     data: &ca::Dates,
-    calendar: &Value,
+    calendar: &UnicodeExtensionValue,
     context: Context,
     length: Length,
 ) -> Result<MonthNamesV1<'static>, DataError> {
@@ -464,7 +464,7 @@ fn months_convert(
     let (month_count, has_leap) = calendar_months(calendar);
     let mut symbols = vec![Cow::Borrowed(""); month_count];
 
-    if *calendar == value!("hebrew") {
+    if *calendar == unicode_extension_value!("hebrew") {
         for (k, v) in months.0.iter() {
             // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
             //
@@ -520,7 +520,7 @@ fn months_convert(
             // This branch is only for chinese-like calendars with N regular months and N potential leap months
             // rather than hebrew-like where there's one or two special leap months
             debug_assert!(
-                *calendar != value!("hebrew"),
+                *calendar != unicode_extension_value!("hebrew"),
                 "Hebrew calendar should have been handled in the branch above"
             );
             let patterns = data
@@ -648,9 +648,9 @@ fn timepattern_convert(
 /// non-default one
 fn nondefault_subtag(
     time_pattern: &ca::LengthPattern,
-    subtag12: Subtag,
-    subtag24: Subtag,
-) -> Subtag {
+    subtag12: AuxiliaryKey,
+    subtag24: AuxiliaryKey,
+) -> AuxiliaryKey {
     let pattern = time_pattern.get_pattern();
 
     let pattern = pattern
@@ -671,7 +671,7 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimePatternV1Marker>, DataError> {
         self.load_neo_patterns_key::<TimePatternV1Marker>(
             req,
-            value!("gregory"),
+            unicode_extension_value!("gregory"),
             timepattern_convert,
         )
     }
@@ -684,7 +684,7 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // in timepattern_convert
 impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        let calendar = value!("gregory");
+        let calendar = unicode_extension_value!("gregory");
         let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
@@ -707,9 +707,7 @@ impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
                 nondefault_subtag(&tp.short, aux::PATTERN_SHORT12, aux::PATTERN_SHORT24),
             ];
             keylengths.into_iter().map(move |length| {
-                let locale: Locale = lid.clone().into();
-
-                let mut locale = DataLocale::from(locale);
+                let mut locale = DataLocale::from(lid.clone());
 
                 locale.set_aux(length.into());
                 locale
@@ -724,13 +722,17 @@ macro_rules! impl_symbols_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_symbols_key::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_symbols_key::<$marker>(
+                    req,
+                    unicode_extension_value!($calendar),
+                    $convert,
+                )
             }
         }
 
         impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-                self.supported_locales_neo(value!($calendar), $lengths)
+                self.supported_locales_neo(unicode_extension_value!($calendar), $lengths)
             }
         }
     };
@@ -740,13 +742,17 @@ macro_rules! impl_pattern_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_patterns_key::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_patterns_key::<$marker>(
+                    req,
+                    unicode_extension_value!($calendar),
+                    $convert,
+                )
             }
         }
 
         impl IterableDataProviderInternal<$marker> for DatagenProvider {
             fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-                self.supported_locales_neo(value!($calendar), $lengths)
+                self.supported_locales_neo(unicode_extension_value!($calendar), $lengths)
             }
         }
     };

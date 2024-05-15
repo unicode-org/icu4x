@@ -67,14 +67,14 @@ writeable::impl_display_with_writeable!(FormattedFixedDecimal<'_>);
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
     use crate::FixedDecimalFormatter;
+    use icu_provider::prelude::*;
 
     #[test]
     pub fn test_es_mx() {
-        let locale = locale!("es-MX").into();
+        let locale = langid!("es-MX").into();
         let fmt = FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
         let fd = "12345.67".parse().unwrap();
         assert_writeable_eq!(fmt.format(&fd), "12,345.67");

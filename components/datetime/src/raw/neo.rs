@@ -9,7 +9,6 @@ use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
-use icu_locid::extensions::private::Subtag;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
@@ -80,15 +79,18 @@ impl DatePatternSelectionData {
         length: length::Date,
     ) -> Result<Self, DataError> {
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            match length {
-                length::Date::Full => aux::PatternLength::Full,
-                length::Date::Long => aux::PatternLength::Long,
-                length::Date::Medium => aux::PatternLength::Medium,
-                length::Date::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
+        locale.set_aux(
+            aux::pattern_subtag_for(
+                match length {
+                    length::Date::Full => aux::PatternLength::Full,
+                    length::Date::Long => aux::PatternLength::Long,
+                    length::Date::Medium => aux::PatternLength::Medium,
+                    length::Date::Short => aux::PatternLength::Short,
+                },
+                None, // no hour cycle for date patterns
+            )
+            .into(),
+        );
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -110,7 +112,7 @@ impl DatePatternSelectionData {
             unreachable!()
         };
         let mut locale = locale.clone();
-        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
+        let subtag = match AuxiliaryKey::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
             Err(e) => {
                 debug_assert!(
@@ -120,7 +122,7 @@ impl DatePatternSelectionData {
                 return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+        locale.set_aux(subtag.into());
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -186,15 +188,18 @@ impl TimePatternSelectionData {
         P: DataProvider<TimePatternV1Marker> + ?Sized,
     {
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            match length {
-                length::Time::Full => aux::PatternLength::Full,
-                length::Time::Long => aux::PatternLength::Long,
-                length::Time::Medium => aux::PatternLength::Medium,
-                length::Time::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
+        locale.set_aux(
+            aux::pattern_subtag_for(
+                match length {
+                    length::Time::Full => aux::PatternLength::Full,
+                    length::Time::Long => aux::PatternLength::Long,
+                    length::Time::Medium => aux::PatternLength::Medium,
+                    length::Time::Short => aux::PatternLength::Short,
+                },
+                None, // no hour cycle for date patterns
+            )
+            .into(),
+        );
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
@@ -219,7 +224,7 @@ impl TimePatternSelectionData {
             unreachable!()
         };
         let mut locale = locale.clone();
-        let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
+        let subtag = match AuxiliaryKey::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
             Err(e) => {
                 debug_assert!(
@@ -229,7 +234,7 @@ impl TimePatternSelectionData {
                 return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+        locale.set_aux(subtag.into());
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
@@ -300,17 +305,20 @@ impl DateTimeGluePatternSelectionData {
         )?;
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
-            // According to UTS 35, use the date length here: use the glue
-            // pattern "whose type matches the type of the date pattern"
-            match date_length {
-                length::Date::Full => aux::PatternLength::Full,
-                length::Date::Long => aux::PatternLength::Long,
-                length::Date::Medium => aux::PatternLength::Medium,
-                length::Date::Short => aux::PatternLength::Short,
-            },
-            None, // no hour cycle for date patterns
-        )));
+        locale.set_aux(
+            aux::pattern_subtag_for(
+                // According to UTS 35, use the date length here: use the glue
+                // pattern "whose type matches the type of the date pattern"
+                match date_length {
+                    length::Date::Full => aux::PatternLength::Full,
+                    length::Date::Long => aux::PatternLength::Long,
+                    length::Date::Medium => aux::PatternLength::Medium,
+                    length::Date::Short => aux::PatternLength::Short,
+                },
+                None, // no hour cycle for date patterns
+            )
+            .into(),
+        );
         let glue = provider
             .load(DataRequest {
                 locale: &locale,

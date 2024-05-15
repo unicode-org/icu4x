@@ -37,7 +37,6 @@ impl DataMarker for BufferMarker {
 ///
 /// ```
 /// # #[cfg(feature = "deserialize_json")] {
-/// use icu_locid::locale;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
@@ -45,7 +44,7 @@ impl DataMarker for BufferMarker {
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
 /// let req = DataRequest {
-///     locale: &locale!("de").into(),
+///     locale: &langid!("de").into(),
 ///     metadata: Default::default(),
 /// };
 ///

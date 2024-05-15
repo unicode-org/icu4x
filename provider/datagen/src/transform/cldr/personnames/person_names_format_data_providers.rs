@@ -153,7 +153,6 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
     use zerofrom::ZeroFrom;
 
     use super::*;
@@ -164,7 +163,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("en-001")),
+                locale: &DataLocale::from(&langid!("en-001")),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -187,7 +186,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("en-001")),
+                locale: &DataLocale::from(&langid!("en-001")),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -235,7 +234,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("es")),
+                locale: &DataLocale::from(&langid!("es")),
                 metadata: Default::default(),
             })?
             .take_payload()?;

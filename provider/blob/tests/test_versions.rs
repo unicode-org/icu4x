@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datagen::prelude::*;
-use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
@@ -111,11 +110,10 @@ fn test_v2_bigger() {
         "tyz-Latn-001",
         "uaf-Latn-001",
     ] {
-        let locale = Locale::try_from_bytes(loc.as_bytes()).expect("locale must parse");
         let blob_result = DataProvider::<HelloWorldV1Marker>::load(
             &blob_provider,
             DataRequest {
-                locale: &locale.into(),
+                locale: &loc.parse().expect("locale must parse"),
                 metadata: Default::default(),
             },
         )
@@ -153,7 +151,8 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
                 bytes[1] = i1;
                 for i2 in LOWERCASE {
                     bytes[2] = i2;
-                    let locale = Locale::try_from_bytes(&bytes).expect("locale must parse");
+                    let locale =
+                        LanguageIdentifier::try_from_bytes(&bytes).expect("locale must parse");
                     vec.push(locale.into())
                 }
             }

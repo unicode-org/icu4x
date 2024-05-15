@@ -26,33 +26,33 @@ use core::ops::Range;
 /// </div>
 #[allow(missing_docs)]
 pub mod aux {
+    use super::*;
     use crate::pattern::CoarseHourCycle;
-    use icu_locid::extensions::private::{subtag, Subtag};
 
-    pub const NUMERIC: Subtag = subtag!("1");
-    pub const ABBR: Subtag = subtag!("3");
-    pub const NARROW: Subtag = subtag!("4");
-    pub const WIDE: Subtag = subtag!("5");
-    pub const SHORT: Subtag = subtag!("6");
-    pub const ABBR_STANDALONE: Subtag = subtag!("3s");
-    pub const NARROW_STANDALONE: Subtag = subtag!("4s");
-    pub const WIDE_STANDALONE: Subtag = subtag!("5s");
-    pub const SHORT_STANDALONE: Subtag = subtag!("6s");
+    pub const NUMERIC: AuxiliaryKey = aux_key!("1");
+    pub const ABBR: AuxiliaryKey = aux_key!("3");
+    pub const NARROW: AuxiliaryKey = aux_key!("4");
+    pub const WIDE: AuxiliaryKey = aux_key!("5");
+    pub const SHORT: AuxiliaryKey = aux_key!("6");
+    pub const ABBR_STANDALONE: AuxiliaryKey = aux_key!("3s");
+    pub const NARROW_STANDALONE: AuxiliaryKey = aux_key!("4s");
+    pub const WIDE_STANDALONE: AuxiliaryKey = aux_key!("5s");
+    pub const SHORT_STANDALONE: AuxiliaryKey = aux_key!("6s");
 
-    pub const PATTERN_FULL: Subtag = subtag!("f");
-    pub const PATTERN_LONG: Subtag = subtag!("l");
-    pub const PATTERN_MEDIUM: Subtag = subtag!("m");
-    pub const PATTERN_SHORT: Subtag = subtag!("s");
+    pub const PATTERN_FULL: AuxiliaryKey = aux_key!("f");
+    pub const PATTERN_LONG: AuxiliaryKey = aux_key!("l");
+    pub const PATTERN_MEDIUM: AuxiliaryKey = aux_key!("m");
+    pub const PATTERN_SHORT: AuxiliaryKey = aux_key!("s");
 
-    pub const PATTERN_FULL12: Subtag = subtag!("f12");
-    pub const PATTERN_LONG12: Subtag = subtag!("l12");
-    pub const PATTERN_MEDIUM12: Subtag = subtag!("m12");
-    pub const PATTERN_SHORT12: Subtag = subtag!("s12");
+    pub const PATTERN_FULL12: AuxiliaryKey = aux_key!("f12");
+    pub const PATTERN_LONG12: AuxiliaryKey = aux_key!("l12");
+    pub const PATTERN_MEDIUM12: AuxiliaryKey = aux_key!("m12");
+    pub const PATTERN_SHORT12: AuxiliaryKey = aux_key!("s12");
 
-    pub const PATTERN_FULL24: Subtag = subtag!("f24");
-    pub const PATTERN_LONG24: Subtag = subtag!("l24");
-    pub const PATTERN_MEDIUM24: Subtag = subtag!("m24");
-    pub const PATTERN_SHORT24: Subtag = subtag!("s24");
+    pub const PATTERN_FULL24: AuxiliaryKey = aux_key!("f24");
+    pub const PATTERN_LONG24: AuxiliaryKey = aux_key!("l24");
+    pub const PATTERN_MEDIUM24: AuxiliaryKey = aux_key!("m24");
+    pub const PATTERN_SHORT24: AuxiliaryKey = aux_key!("s24");
 
     /// Field lengths supported in auxiliary subtags.
     ///
@@ -120,7 +120,7 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+    pub fn symbol_subtag_info(subtag: AuxiliaryKey) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
         match subtag {
             NUMERIC => Some((Format, Numeric)),
@@ -143,7 +143,9 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_subtag_info(subtag: Subtag) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
+    pub fn pattern_subtag_info(
+        subtag: AuxiliaryKey,
+    ) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
         use {CoarseHourCycle::*, PatternLength::*};
         match subtag {
             PATTERN_FULL => Some((Full, None)),
@@ -171,7 +173,7 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_for(context: Context, length: Length) -> Subtag {
+    pub fn symbol_subtag_for(context: Context, length: Length) -> AuxiliaryKey {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -197,7 +199,7 @@ pub mod aux {
     pub fn pattern_subtag_for(
         length: PatternLength,
         hour_cycle: Option<CoarseHourCycle>,
-    ) -> Subtag {
+    ) -> AuxiliaryKey {
         use {CoarseHourCycle::*, PatternLength::*};
         match (length, hour_cycle) {
             (Full, None) => PATTERN_FULL,

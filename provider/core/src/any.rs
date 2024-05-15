@@ -309,7 +309,7 @@ where
 /// let any_provider = HelloWorldProvider.as_any_provider();
 ///
 /// let req = DataRequest {
-///     locale: &icu_locid::locale!("de").into(),
+///     locale: &langid!("de").into(),
 ///     metadata: Default::default(),
 /// };
 ///

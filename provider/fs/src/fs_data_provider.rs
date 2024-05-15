@@ -18,7 +18,7 @@ use std::path::PathBuf;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_fs::FsDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -30,7 +30,7 @@ use std::path::PathBuf;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into(),
+///     &langid!("la").into(),
 /// )
 /// .expect("locale exists");
 ///

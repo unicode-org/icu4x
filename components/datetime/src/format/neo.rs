@@ -161,12 +161,12 @@ size_test!(
 /// use icu::datetime::fields::FieldLength;
 /// use icu::datetime::fields;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locid::locale;
+/// use icu::locid::langid;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("uk").into()).unwrap();
+///     TypedDateTimeNames::try_new(&langid!("uk").into()).unwrap();
 /// names
 ///     .include_month_names(fields::Month::Format, FieldLength::Abbreviated)
 ///     .unwrap()
@@ -192,12 +192,12 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locid::locale;
+/// use icu::locid::langid;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+///     TypedDateTimeNames::try_new(&langid!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
@@ -443,10 +443,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&langid!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -504,10 +504,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&langid!("und").into())
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Month::Format;
     /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
@@ -572,10 +572,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&langid!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -633,10 +633,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&langid!("und").into())
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Weekday::Format;
     /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
@@ -683,16 +683,16 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&langid!("en").into())
     ///         .unwrap();
     ///
     /// // Load the week calculator and set it here:
     /// let mut week_calculator =
-    ///     WeekCalculator::try_new(&locale!("en").into()).unwrap();
+    ///     WeekCalculator::try_new(&langid!("en").into()).unwrap();
     /// names.set_week_calculator(week_calculator);
     ///
     /// // Format a pattern needing week data:
@@ -790,11 +790,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&langid!("en").into())
     ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -927,15 +927,18 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
-            aux::Context::Format,
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(SingleLoadError::UnsupportedField(field)),
-            },
-        )));
+        locale.set_aux(
+            aux::symbol_subtag_for(
+                aux::Context::Format,
+                match field_length {
+                    FieldLength::Abbreviated => aux::Length::Abbr,
+                    FieldLength::Narrow => aux::Length::Narrow,
+                    FieldLength::Wide => aux::Length::Wide,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )
+            .into(),
+        );
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -976,18 +979,21 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
-            match field_symbol {
-                fields::Month::Format => aux::Context::Format,
-                fields::Month::StandAlone => aux::Context::Standalone,
-            },
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(SingleLoadError::UnsupportedField(field)),
-            },
-        )));
+        locale.set_aux(
+            aux::symbol_subtag_for(
+                match field_symbol {
+                    fields::Month::Format => aux::Context::Format,
+                    fields::Month::StandAlone => aux::Context::Standalone,
+                },
+                match field_length {
+                    FieldLength::Abbreviated => aux::Length::Abbr,
+                    FieldLength::Narrow => aux::Length::Narrow,
+                    FieldLength::Wide => aux::Length::Wide,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )
+            .into(),
+        );
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -1026,15 +1032,18 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
-            aux::Context::Format,
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(SingleLoadError::UnsupportedField(field)),
-            },
-        )));
+        locale.set_aux(
+            aux::symbol_subtag_for(
+                aux::Context::Format,
+                match field_length {
+                    FieldLength::Abbreviated => aux::Length::Abbr,
+                    FieldLength::Narrow => aux::Length::Narrow,
+                    FieldLength::Wide => aux::Length::Wide,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )
+            .into(),
+        );
         let payload = R::DayPeriodNames::load_from(
             provider,
             DataRequest {
@@ -1078,20 +1087,23 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             NamePresence::Mismatched => return Err(SingleLoadError::DuplicateField(field)),
         };
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
-            match field_symbol {
-                // UTS 35 says that "e" and "E" have the same non-numeric names
-                fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,
-                fields::Weekday::StandAlone => aux::Context::Standalone,
-            },
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                FieldLength::Six => aux::Length::Short,
-                _ => return Err(SingleLoadError::UnsupportedField(field)),
-            },
-        )));
+        locale.set_aux(
+            aux::symbol_subtag_for(
+                match field_symbol {
+                    // UTS 35 says that "e" and "E" have the same non-numeric names
+                    fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,
+                    fields::Weekday::StandAlone => aux::Context::Standalone,
+                },
+                match field_length {
+                    FieldLength::Abbreviated => aux::Length::Abbr,
+                    FieldLength::Narrow => aux::Length::Narrow,
+                    FieldLength::Wide => aux::Length::Wide,
+                    FieldLength::Six => aux::Length::Short,
+                    _ => return Err(SingleLoadError::UnsupportedField(field)),
+                },
+            )
+            .into(),
+        );
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -1265,12 +1277,12 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(&langid!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
@@ -1315,12 +1327,12 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locid::langid;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(&langid!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();
@@ -1542,12 +1554,11 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
 mod tests {
     use super::*;
     use icu_calendar::{DateTime, Gregorian};
-    use icu_locid::locale;
     use writeable::assert_try_writeable_eq;
 
     #[test]
     fn test_basic_pattern_formatting() {
-        let locale = locale!("en").into();
+        let locale = langid!("en").into();
         let mut names: TypedDateTimeNames<Gregorian> =
             TypedDateTimeNames::try_new(&locale).unwrap();
         names
@@ -1582,7 +1593,7 @@ mod tests {
 
     #[test]
     fn test_era_coverage() {
-        let locale = locale!("uk").into();
+        let locale = langid!("uk").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
@@ -1638,7 +1649,7 @@ mod tests {
     #[test]
     fn test_month_coverage() {
         // Ukrainian has different values for format and standalone
-        let locale = locale!("uk").into();
+        let locale = langid!("uk").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
@@ -1708,7 +1719,7 @@ mod tests {
 
     #[test]
     fn test_weekday_coverage() {
-        let locale = locale!("uk").into();
+        let locale = langid!("uk").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
@@ -1828,7 +1839,7 @@ mod tests {
     fn test_dayperiod_coverage() {
         // Thai has different values for different lengths of day periods
         // TODO(#487): Support flexible day periods, too
-        let locale = locale!("th").into();
+        let locale = langid!("th").into();
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,

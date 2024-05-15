@@ -91,7 +91,7 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags::region};
+    use icu_locid::subtags::region;
 
     #[test]
     fn test_basic() {
@@ -99,7 +99,7 @@ mod tests {
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -121,7 +121,7 @@ mod tests {
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()

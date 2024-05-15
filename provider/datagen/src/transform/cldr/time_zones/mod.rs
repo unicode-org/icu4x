@@ -109,8 +109,6 @@ mod tests {
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu_locid::langid;
-
         let provider = DatagenProvider::new_testing();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider

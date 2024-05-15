@@ -109,7 +109,6 @@ impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
 #[test]
 fn test_basic() {
     use icu_experimental::units::provider::*;
-    use icu_locid::locale;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
@@ -121,7 +120,7 @@ fn test_basic() {
 
     let und: DataPayload<UnitsInfoV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("und").into(),
+            locale: &langid!("und").into(),
             metadata: Default::default(),
         })
         .unwrap()

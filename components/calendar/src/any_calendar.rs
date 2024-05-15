@@ -21,7 +21,6 @@ use crate::{
     types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
 };
 
-use icu_locid::extensions::unicode::{key, value, Value};
 use icu_locid::subtags::language;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -947,11 +946,11 @@ impl AnyCalendarKind {
             }
         })
     }
-    /// Construct from a BCP-47 [`Value`]
+    /// Construct from a BCP-47 [`UnicodeExtensionValue`]
     ///
     /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
-    pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
+    pub fn get_for_bcp47_value(x: &UnicodeExtensionValue) -> Option<Self> {
         match *x.as_tinystr_slice() {
             [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
             [first] if first == "chinese" => Some(AnyCalendarKind::Chinese),
@@ -1011,30 +1010,28 @@ impl AnyCalendarKind {
         }
     }
 
-    /// Convert to a BCP-47 `Value`
+    /// Convert to a BCP-47 `UnicodeExtensionValue`
     #[allow(clippy::unwrap_used)] // these are known-good BCP47 unicode extension values
-    pub fn as_bcp47_value(self) -> Value {
+    pub fn as_bcp47_value(self) -> UnicodeExtensionValue {
         match self {
-            AnyCalendarKind::Buddhist => value!("buddhist"),
-            AnyCalendarKind::Chinese => value!("chinese"),
-            AnyCalendarKind::Coptic => value!("coptic"),
-            AnyCalendarKind::Dangi => value!("dangi"),
-            AnyCalendarKind::Ethiopian => value!("ethiopic"),
-            AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
-            AnyCalendarKind::Gregorian => value!("gregory"),
-            AnyCalendarKind::Hebrew => value!("hebrew"),
-            AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::IslamicCivil => Value::try_from_bytes(b"islamic-civil").unwrap(),
-            AnyCalendarKind::IslamicObservational => value!("islamic"),
-            AnyCalendarKind::IslamicTabular => Value::try_from_bytes(b"islamic-tbla").unwrap(),
-            AnyCalendarKind::IslamicUmmAlQura => {
-                Value::try_from_bytes(b"islamic-umalqura").unwrap()
-            }
-            AnyCalendarKind::Iso => value!("iso"),
-            AnyCalendarKind::Japanese => value!("japanese"),
-            AnyCalendarKind::JapaneseExtended => value!("japanext"),
-            AnyCalendarKind::Persian => value!("persian"),
-            AnyCalendarKind::Roc => value!("roc"),
+            AnyCalendarKind::Buddhist => unicode_extension_value!("buddhist"),
+            AnyCalendarKind::Chinese => unicode_extension_value!("chinese"),
+            AnyCalendarKind::Coptic => unicode_extension_value!("coptic"),
+            AnyCalendarKind::Dangi => unicode_extension_value!("dangi"),
+            AnyCalendarKind::Ethiopian => unicode_extension_value!("ethiopic"),
+            AnyCalendarKind::EthiopianAmeteAlem => unicode_extension_value!("ethioaa"),
+            AnyCalendarKind::Gregorian => unicode_extension_value!("gregory"),
+            AnyCalendarKind::Hebrew => unicode_extension_value!("hebrew"),
+            AnyCalendarKind::Indian => unicode_extension_value!("indian"),
+            AnyCalendarKind::IslamicCivil => "islamic-civil".parse().unwrap(),
+            AnyCalendarKind::IslamicObservational => unicode_extension_value!("islamic"),
+            AnyCalendarKind::IslamicTabular => "islamic-tbla".parse().unwrap(),
+            AnyCalendarKind::IslamicUmmAlQura => "islamic-umalqura".parse().unwrap(),
+            AnyCalendarKind::Iso => unicode_extension_value!("iso"),
+            AnyCalendarKind::Japanese => unicode_extension_value!("japanese"),
+            AnyCalendarKind::JapaneseExtended => unicode_extension_value!("japanext"),
+            AnyCalendarKind::Persian => unicode_extension_value!("persian"),
+            AnyCalendarKind::Roc => unicode_extension_value!("roc"),
         }
     }
 
@@ -1069,7 +1066,7 @@ impl AnyCalendarKind {
         l.extensions
             .unicode
             .keywords
-            .get(&key!("ca"))
+            .get(&unicode_extension_key!("ca"))
             .and_then(Self::get_for_bcp47_value)
     }
 
@@ -1078,7 +1075,7 @@ impl AnyCalendarKind {
     /// Returns `None` if the calendar is not specified or unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
-        l.get_unicode_ext(&key!("ca"))
+        l.get_unicode_ext(&unicode_extension_key!("ca"))
             .and_then(|v| Self::get_for_bcp47_value(&v))
     }
 

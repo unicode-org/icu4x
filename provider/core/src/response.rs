@@ -743,7 +743,6 @@ where
     /// Change the results of a particular request based on key:
     ///
     /// ```
-    /// use icu_locid::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///
@@ -777,7 +776,7 @@ where
     ///     inner: HelloWorldProvider,
     /// };
     /// let formatter =
-    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///     HelloWorldFormatter::try_new_unstable(&provider, &langid!("de").into())
     ///         .unwrap();
     ///
     /// assert_eq!(formatter.format_to_string(), "✨ Hallo Welt");

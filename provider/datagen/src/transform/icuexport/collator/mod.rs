@@ -9,20 +9,12 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_locid::extensions::unicode::key;
-use icu_locid::extensions::unicode::Value;
 use icu_locid::subtags::language;
-use icu_locid::subtags::Language;
-use icu_locid::subtags::Region;
-use icu_locid::subtags::Script;
-use icu_locid::LanguageIdentifier;
-use icu_locid::Locale;
 use icu_locid_transform::provider::CollationFallbackSupplementV1Marker;
 use icu_locid_transform::provider::LocaleFallbackSupplementV1;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use std::str::FromStr;
 use writeable::Writeable;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
@@ -59,8 +51,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
                             s.rsplit_once('_')?.0,
                             self.has_legacy_swedish_variants(),
                         )?
-                        .id
-                        .language,
+                        .language(),
                     )
                 })
                 .collect::<HashSet<_>>();
@@ -86,7 +77,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
             .chain(parent_locales.collations.iter().map(|(from, to)| {
                 (
                     <&UnvalidatedStr>::from(from.as_str()),
-                    <(Language, Option<Script>, Option<Region>)>::from(to),
+                    <(_, _, _)>::from(to),
                 )
             }))
             .collect();
@@ -95,12 +86,12 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
             parents,
             unicode_extension_defaults: [
                 (
-                    key!("co"),
+                    unicode_extension_key!("co"),
                     <&UnvalidatedStr>::from("zh"),
                     <&UnvalidatedStr>::from("pinyin"),
                 ),
                 (
-                    key!("co"),
+                    unicode_extension_key!("co"),
                     <&UnvalidatedStr>::from("zh-Hant"),
                     <&UnvalidatedStr>::from("stroke"),
                 ),
@@ -145,7 +136,7 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if let Some(extension) = &locale.get_unicode_ext(&key!("co")) {
+    if let Some(extension) = &locale.get_unicode_ext(&unicode_extension_key!("co")) {
         s.push('_');
         s.push_str(match extension.to_string().as_str() {
             "trad" => "traditional",
@@ -168,14 +159,14 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
     s
 }
 
-fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<Locale> {
+fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<DataLocale> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
     let langid = if language == "root" {
         LanguageIdentifier::UND
     } else {
         language.parse().ok()?
     };
-    let mut locale = Locale::from(langid);
+    let mut locale = DataLocale::from(langid);
 
     // See above for the two special cases.
     if language == "zh" {
@@ -191,17 +182,17 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
         return Some(locale);
     }
 
-    let shortened = match variant {
-        "traditional" => "trad",
-        "phonebook" => "phonebk",
-        "dictionary" => "dict",
-        "gb2312han" => "gb2312",
-        _ => variant,
-    };
-    locale.extensions.unicode.keywords.set(
-        key!("co"),
-        Value::from_str(shortened).expect("valid extension subtag"),
+    locale.set_unicode_ext(
+        unicode_extension_key!("co"),
+        match variant {
+            "traditional" => unicode_extension_value!("trad"),
+            "phonebook" => unicode_extension_value!("phonebk"),
+            "dictionary" => unicode_extension_value!("dict"),
+            "gb2312han" => unicode_extension_value!("gb2312"),
+            _ => variant.parse().unwrap(),
+        },
     );
+
     Some(locale)
 }
 

@@ -34,7 +34,6 @@ serde_json = { workspace = true, features = ["std"], optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid", default-features = false, features = ["serde"] }
 icu_provider = { path = "../../provider/core", default-features = false, features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
 icu_datagen = { path = "../../provider/datagen", default-features = false }
 writeable = { path = "../../utils/writeable" }

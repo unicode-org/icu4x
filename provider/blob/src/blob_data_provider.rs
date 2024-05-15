@@ -30,7 +30,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob loaded at runtime:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu::locid::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -58,7 +58,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob statically linked at compile time:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu::locid::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -204,7 +204,7 @@ mod test {
                     provider.load_buffer(
                         HelloSingletonV1Marker::KEY,
                         DataRequest {
-                            locale: &icu_locid::locale!("de").into(),
+                            locale: &langid!("de").into(),
                             metadata: Default::default()
                         }
                     ),

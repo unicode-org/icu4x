@@ -30,7 +30,7 @@ use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
-use icu_provider::DataPayload;
+use icu_provider::prelude::*;
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -822,7 +822,6 @@ mod tests {
     use super::*;
     use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
-    use icu_locid::Locale;
     use tinystr::tinystr;
 
     #[test]
@@ -832,8 +831,8 @@ mod tests {
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
-        let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoDateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+        let locale = "en-u-ca-japanese".parse().unwrap();
+        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -859,7 +858,7 @@ mod tests {
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
             locale: &locale,
             metadata: Default::default(),
@@ -909,11 +908,9 @@ mod tests {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locid::locale!("en").into(),
-            fixed_decimal_format_options,
-        )
-        .unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&langid!("en").into(), fixed_decimal_format_options)
+                .unwrap();
 
         for (length, expected) in samples {
             for (value, expected) in values.iter().zip(expected) {

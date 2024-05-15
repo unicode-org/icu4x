@@ -214,9 +214,9 @@ dependencies = [
 
 [[package]]
 name = "either"
-version = "1.8.1"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
+checksum = "a47c1c47d2f5964e29c61246e81db715514cd532db6b5116a25ea3c03d6780a2"
 
 [[package]]
 name = "fixed_decimal"
@@ -352,6 +352,7 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -364,6 +365,7 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "zerofrom",
  "zerotrie",
  "zerovec",
 ]
@@ -656,6 +658,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
+ "num-bigint",
  "num-integer",
  "num-traits",
 ]

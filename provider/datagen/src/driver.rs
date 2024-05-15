@@ -5,8 +5,6 @@
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use displaydoc::Display;
-use icu_locid::extensions::unicode::key;
-use icu_locid::LanguageIdentifier;
 use icu_locid::ParserError;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
 use icu_locid_transform::LocaleFallbacker;
@@ -994,7 +992,7 @@ fn select_locales_for_key(
         supported_map.retain(|_, locales| {
             locales.retain(|locale| {
                 let Some(collation) = locale
-                    .get_unicode_ext(&key!("co"))
+                    .get_unicode_ext(&unicode_extension_key!("co"))
                     .and_then(|co| co.as_single_subtag().copied())
                 else {
                     return true;
@@ -1220,7 +1218,6 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu_locid::langid;
     use std::collections::BTreeSet;
 
     #[derive(Debug)]

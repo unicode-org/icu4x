@@ -287,7 +287,7 @@ impl DatagenProvider {
     pub fn locales_for_coverage_levels(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<impl IntoIterator<Item = icu_locid::LanguageIdentifier>, DataError> {
+    ) -> Result<impl IntoIterator<Item = LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
 
@@ -589,10 +589,7 @@ impl SourceData {
     }
 
     /// List the locales for the given CLDR coverage levels
-    pub fn locales(
-        &self,
-        levels: &[CoverageLevel],
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+    pub fn locales(&self, levels: &[CoverageLevel]) -> Result<Vec<LanguageIdentifier>, DataError> {
         self.cldr_paths
             .as_deref()
             .ok_or(DatagenProvider::MISSING_CLDR_ERROR)?

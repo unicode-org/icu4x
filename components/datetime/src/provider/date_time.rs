@@ -24,7 +24,6 @@ use crate::provider::neo::SimpleSubstitutionPattern;
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
-use icu_locid::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
 pub(crate) enum GetSymbolForMonthError {
@@ -161,7 +160,7 @@ pub struct PatternSelector<'a, D: ?Sized> {
     date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
     locale: &'a DataLocale,
     #[allow(dead_code)] // non-experimental mode
-    cal_val: Option<&'a Value>,
+    cal_val: Option<&'a UnicodeExtensionValue>,
 }
 
 pub(crate) enum PatternForLengthError {
@@ -273,7 +272,7 @@ where
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         locale: &'a DataLocale,
-        cal_val: &'a Value,
+        cal_val: &'a UnicodeExtensionValue,
         options: &DateTimeFormatterOptions,
     ) -> Result<
         DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -346,22 +345,27 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locid::extensions::unicode::{key, value};
         use tinystr::tinystr;
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
         // Skeleton data for ethioaa is stored under ethiopic
-        if cal_val == &value!("ethioaa") {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        } else if cal_val == &value!("islamic")
-            || cal_val == &value!("islamicc")
+        if cal_val == &unicode_extension_value!("ethioaa") {
+            locale.set_unicode_ext(
+                unicode_extension_key!("ca"),
+                unicode_extension_value!("ethiopic"),
+            );
+        } else if cal_val == &unicode_extension_value!("islamic")
+            || cal_val == &unicode_extension_value!("islamicc")
             || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
-            locale.set_unicode_ext(key!("ca"), value!("islamic"));
+            locale.set_unicode_ext(
+                unicode_extension_key!("ca"),
+                unicode_extension_value!("islamic"),
+            );
         } else {
-            locale.set_unicode_ext(key!("ca"), cal_val.clone());
+            locale.set_unicode_ext(unicode_extension_key!("ca"), cal_val.clone());
         };
 
         self.data_provider

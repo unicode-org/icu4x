@@ -702,7 +702,6 @@ impl CompactDecimalFormatter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
     #[allow(non_snake_case)]
@@ -756,9 +755,9 @@ mod tests {
         ];
         for case in cases {
             let formatter = if case.short {
-                CompactDecimalFormatter::try_new_short(&locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_short(&langid!("en").into(), case.options.clone())
             } else {
-                CompactDecimalFormatter::try_new_long(&locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_long(&langid!("en").into(), case.options.clone())
             }
             .unwrap();
             let result1T = formatter.format_i64(1_000_000_000_000_000);
