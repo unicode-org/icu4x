@@ -718,7 +718,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// );
     /// ```
     ///
-    /// [`AnyCalendarKind`]: icu::calendar::AnyCalendarKind
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
@@ -1050,7 +1050,7 @@ impl NeoDateFormatter {
     /// );
     /// ```
     ///
-    /// [`AnyCalendarKind`]: icu::calendar::AnyCalendarKind
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
@@ -2072,7 +2072,7 @@ impl NeoDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// [`AnyCalendarKind`]: icu::calendar::AnyCalendarKind
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_date_length(
@@ -2286,7 +2286,7 @@ impl NeoDateTimeFormatter {
     /// );
     /// ```
     ///
-    /// [`AnyCalendarKind`]: icu::calendar::AnyCalendarKind
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_time_length(

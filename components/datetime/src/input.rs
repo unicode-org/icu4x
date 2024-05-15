@@ -47,7 +47,7 @@ pub trait DateInput {
     /// Gets the kind of calendar this date is for, if associated with [`AnyCalendar`]
     /// In most cases you'll probably want to return [`AnyCalendarKind::Iso`].
     ///
-    /// [`AnyCalendar`]: icu::calendar::any_calendar::AnyCalendar
+    /// [`AnyCalendar`]: icu_calendar::any_calendar::AnyCalendar
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
 
     /// Converts date to ISO

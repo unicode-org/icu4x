@@ -11,11 +11,11 @@
 //!
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
+#[cfg(doc)]
+use super::*;
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::sets::CodePointSetData;
-#[cfg(doc)]
-use super::*;
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};

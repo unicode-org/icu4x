@@ -24,7 +24,7 @@
 //! for scenarios where the application stores information about user preferences they can be also provided via
 //! this bag (and if they are, they will take precedence over unicode extensions from the locale).
 //!
-//! [`Locale`]: icu::locid::Locale
+//! [`Locale`]: icu_locid::Locale
 //!
 //! # Examples
 //!

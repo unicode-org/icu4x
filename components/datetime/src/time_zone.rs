@@ -62,7 +62,7 @@ where
 /// first, a computationally heavy construction of [`TimeZoneFormatter`], and then fast formatting
 /// of the time-zone data using the instance.
 ///
-/// [`CustomTimeZone`] can be used as formatting input.
+/// [`CustomTimeZone`](icu_timezone::CustomTimeZone) can be used as formatting input.
 ///
 /// # Examples
 ///
@@ -139,7 +139,6 @@ where
 /// ```
 ///
 /// [data provider]: icu_provider
-/// [`CustomTimeZone`]: icu::timezone::CustomTimeZone
 #[derive(Debug)]
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,

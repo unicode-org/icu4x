@@ -34,7 +34,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`DateTimeFormatter`], and then fast formatting of [`DateTime`](icu::calendar::DateTime) data using the instance.
+/// heavy construction of [`DateTimeFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
 ///
 #[doc = date_time_formatter_size!()]
 ///
@@ -69,7 +69,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// );
 /// ```
 ///
-/// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu::calendar::DateTime) with [`AnyCalendar`]
+/// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
@@ -122,7 +122,7 @@ impl DateTimeFormatter {
     /// Construct a new [`DateTimeFormatter`] from compiled data.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`](icu::calendar::AnyCalendarKind) for a list of supported calendars.
+    /// calendar for the locale. See [`AnyCalendarKind`](icu_calendar::AnyCalendarKind) for a list of supported calendars.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
