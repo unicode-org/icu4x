@@ -64,7 +64,7 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// # Example
 ///
 /// ```
-/// use icu_collections::codepointtrie::CodePointTrie;
+/// use icu::collections::codepointtrie::CodePointTrie;
 /// use icu::properties::bidi::BidiClassAdapter;
 /// use icu::properties::{maps, BidiClass};
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
@@ -92,7 +92,7 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu_collections::codepointtrie::CodePointTrie;
+    /// use icu::collections::codepointtrie::CodePointTrie;
     /// use icu::properties::bidi::BidiClassAdapter;
     /// use icu::properties::{maps, BidiClass};
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
@@ -102,7 +102,7 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu::collections::codepointtrie::CodePointTrie
     fn bidi_class(&self, c: char) -> DataSourceBidiClass {
         let bidi_class = self.data.get(c);
         match bidi_class {

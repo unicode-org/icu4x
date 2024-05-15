@@ -437,7 +437,7 @@ impl CaseMapper {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapper;
-    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapper::new();
     /// let mut builder = CodePointInversionListBuilder::new();

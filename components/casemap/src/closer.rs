@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 ///
 /// ```rust
 /// use icu::casemap::CaseMapCloser;
-/// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+/// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
 ///
 /// let cm = CaseMapCloser::new();
 /// let mut builder = CodePointInversionListBuilder::new();
@@ -55,7 +55,7 @@ impl CaseMapCloser<CaseMapper> {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapCloser;
-    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapCloser::new();
     /// let mut builder = CodePointInversionListBuilder::new();
@@ -170,7 +170,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapCloser;
-    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapCloser::new();
     /// let mut builder = CodePointInversionListBuilder::new();
@@ -200,7 +200,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapCloser;
-    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapCloser::new();
     /// let mut builder = CodePointInversionListBuilder::new();

@@ -20,7 +20,7 @@
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{
+//! use icu::collections::codepointinvlist::{
 //!     CodePointInversionList, CodePointInversionListBuilder,
 //! };
 //!
@@ -36,7 +36,7 @@
 //! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{
+//! use icu::collections::codepointinvlist::{
 //!     CodePointInversionList, CodePointInversionListBuilder,
 //! };
 //!
