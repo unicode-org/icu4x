@@ -125,7 +125,7 @@ experimental = [
     "dep:icu_experimental",
 ]
 sync = ["icu_provider/sync"]
-logging = ["icu_provider/logging"]
+logging = ["icu_provider/logging", "icu_datetime/logging"]
 
 [package.metadata.cargo-all-features]
 # Components are tested individually, and there's no logic in this crate

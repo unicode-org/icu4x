@@ -157,6 +157,8 @@ fn test_islamic_civil_continuity() {
 
 #[test]
 fn test_islamic_observational_continuity() {
+    #[cfg(feature = "logging")]
+    let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = crate::islamic::IslamicObservational::new();
     let cal = Ref(&cal);
     let date = Date::try_new_observational_islamic_date(-10, 1, 1, cal);
@@ -177,6 +179,8 @@ fn test_islamic_tabular_continuity() {
 
 #[test]
 fn test_islamic_umm_al_qura_continuity() {
+    #[cfg(feature = "logging")]
+    let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = crate::islamic::IslamicUmmAlQura::new();
     let cal = Ref(&cal);
     let date = Date::try_new_ummalqura_date(-10, 1, 1, cal);

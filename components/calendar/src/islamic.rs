@@ -221,31 +221,34 @@ impl IslamicTabular {
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct IslamicYearInfo {
     packed_data: PackedIslamicYearInfo,
-    /// Is the previous year 355 days (short = 354)
-    prev_year_long: bool,
+    prev_year_length: u16,
 }
 
 impl IslamicYearInfo {
     pub(crate) const LONG_YEAR_LEN: u16 = 355;
     const SHORT_YEAR_LEN: u16 = 354;
-    pub(crate) fn new(prev_year_long: bool, packed_data: PackedIslamicYearInfo) -> Self {
-        Self {
-            prev_year_long,
-            packed_data,
-        }
+    pub(crate) fn new(
+        prev_packed: PackedIslamicYearInfo,
+        this_packed: PackedIslamicYearInfo,
+        extended_year: i32,
+    ) -> (Self, i32) {
+        let days_in_year = prev_packed.days_in_year();
+        let year_info = Self {
+            prev_year_length: days_in_year,
+            packed_data: this_packed,
+        };
+        (year_info, extended_year)
     }
 
     fn compute<IB: IslamicBasedMarker>(extended_year: i32) -> Self {
         let ny = IB::fixed_from_islamic(extended_year, 1, 1);
         let packed_data = PackedIslamicYearInfo::compute_with_ny::<IB>(extended_year, ny);
         let prev_ny = IB::fixed_from_islamic(extended_year - 1, 1, 1);
-        let diff = u16::try_from(ny - prev_ny).unwrap_or(0);
-        debug_assert!(
-            diff == Self::SHORT_YEAR_LEN || diff == Self::LONG_YEAR_LEN,
-            "Found wrong year length for Islamic year {}: Expected 355 or 354, got {diff}",
-            extended_year - 1
-        );
-        Self::new(diff == Self::LONG_YEAR_LEN, packed_data)
+        let rd_diff = u16::try_from(ny - prev_ny).unwrap_or(0);
+        Self {
+            prev_year_length: rd_diff,
+            packed_data,
+        }
     }
     /// Get the new year R.D. given the extended year that this yearinfo is for    
     fn new_year<IB: IslamicBasedMarker>(self, extended_year: i32) -> RataDie {
@@ -266,11 +269,7 @@ impl IslamicYearInfo {
 
     #[inline]
     fn days_in_prev_year(self) -> u16 {
-        if self.prev_year_long {
-            Self::LONG_YEAR_LEN
-        } else {
-            Self::SHORT_YEAR_LEN
-        }
+        self.prev_year_length
     }
 }
 
@@ -848,9 +847,9 @@ impl CalendarArithmetic for IslamicCivil {
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
         if Self::is_leap_year(year, ()) {
-            355
+            IslamicYearInfo::LONG_YEAR_LEN
         } else {
-            354
+            IslamicYearInfo::SHORT_YEAR_LEN
         }
     }
 
@@ -1092,9 +1091,9 @@ impl CalendarArithmetic for IslamicTabular {
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
         if Self::is_leap_year(year, ()) {
-            355
+            IslamicYearInfo::LONG_YEAR_LEN
         } else {
-            354
+            IslamicYearInfo::SHORT_YEAR_LEN
         }
     }
 
