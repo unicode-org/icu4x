@@ -367,7 +367,7 @@ impl Date<Hebrew> {
     ///
     ///
     /// ```rust
-    /// use icu_calendar::Date;
+    /// use icu::calendar::Date;
     ///
     /// let date_hebrew =
     ///     Date::try_new_hebrew_date(3425, 4, 25)

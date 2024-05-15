@@ -307,7 +307,7 @@ impl NeoDayComponents {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::neo_skeleton::NeoDayComponents;
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
     ///
     /// assert_eq!("gym0de", &*NeoDayComponents::EraYearMonthDayWeekday.id_str());
     /// ```
@@ -330,7 +330,7 @@ impl NeoDayComponents {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::neo_skeleton::NeoDayComponents;
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use tinystr::tinystr;
     ///
     /// assert_eq!(NeoDayComponents::from_id_str(tinystr!(8, "gym0de")), Some(NeoDayComponents::EraYearMonthDayWeekday));

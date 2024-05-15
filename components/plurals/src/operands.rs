@@ -31,7 +31,7 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// use icu_plurals::rules::RawPluralOperands;
+/// use icu::plurals::rules::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
@@ -50,7 +50,7 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// use icu_plurals::rules::RawPluralOperands;
+/// use icu::plurals::rules::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     Ok(PluralOperands::from(RawPluralOperands {
@@ -70,7 +70,7 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
-/// use icu_plurals::rules::RawPluralOperands;
+/// use icu::plurals::rules::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {

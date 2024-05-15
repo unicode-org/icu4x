@@ -13,7 +13,7 @@ use core::marker::PhantomData;
 /// # Example
 ///
 /// ```rust
-/// use icu_calendar::{
+/// use icu::calendar::{
 ///     types::IsoWeekday, Date, DateDuration, DateDurationUnit,
 /// };
 ///
@@ -114,7 +114,7 @@ impl<C: Calendar + ?Sized> DateDuration<C> {
     /// Construct a DateDuration
     ///
     /// ```rust
-    /// # use icu_calendar::*;
+    /// # use icu::calendar::*;
     /// // two years, three months, and five days
     /// let duration: DateDuration<Iso> = DateDuration::new(2, 3, 0, 5);
     /// ```

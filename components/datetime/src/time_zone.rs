@@ -24,9 +24,6 @@ use core::fmt::Write;
 use icu_provider::prelude::*;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
 
-#[cfg(doc)]
-use crate::ZonedDateTimeFormatter;
-
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
     locale: &DataLocale,
@@ -51,7 +48,7 @@ where
 }
 
 /// [`TimeZoneFormatter`] is available for users who need to separately control the formatting of time
-/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`], which includes default time zone
+/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`](super::ZonedDateTimeFormatter), which includes default time zone
 /// formatting according to the calendar.
 ///
 /// [`TimeZoneFormatter`] uses data from the [data provider] and the selected locale
@@ -65,7 +62,7 @@ where
 /// first, a computationally heavy construction of [`TimeZoneFormatter`], and then fast formatting
 /// of the time-zone data using the instance.
 ///
-/// [`CustomTimeZone`] can be used as formatting input.
+/// [`CustomTimeZone`](icu_timezone::CustomTimeZone) can be used as formatting input.
 ///
 /// # Examples
 ///
@@ -142,7 +139,6 @@ where
 /// ```
 ///
 /// [data provider]: icu_provider
-/// [`CustomTimeZone`]: icu_timezone::CustomTimeZone
 #[derive(Debug)]
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,

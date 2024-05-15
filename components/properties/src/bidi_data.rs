@@ -97,7 +97,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu_properties::bidi_data;
+    /// use icu::properties::bidi_data;
     ///
     /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
@@ -132,7 +132,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu_properties::{bidi_data, bidi_data::BidiPairingProperties};
+    /// use icu::properties::{bidi_data, bidi_data::BidiPairingProperties};
     ///
     /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
@@ -180,7 +180,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 ///
 /// # Examples
 /// ```
-/// use icu_properties::bidi_data;
+/// use icu::properties::bidi_data;
 ///
 /// let bidi_data = bidi_data::bidi_auxiliary_properties();
 ///

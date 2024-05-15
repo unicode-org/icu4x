@@ -48,7 +48,7 @@ use core::fmt;
 ///
 /// let calendar = AnyCalendar::new_for_locale(&locale.into());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
-///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
+///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
 /// // manually construct a datetime in this calendar
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");

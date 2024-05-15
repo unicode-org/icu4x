@@ -10,8 +10,8 @@
 //! # Examples
 //!
 //! ```rust
-//! use icu_casemap::CaseMapper;
-//! use icu_locid::langid;
+//! use icu::casemap::CaseMapper;
+//! use icu::locid::langid;
 //!
 //! let cm = CaseMapper::new();
 //!
