@@ -197,14 +197,21 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::neo",
         "icu::datetime::neo_pattern",
+        "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
         "icu::datetime::DateTimeFormatter::try_new_experimental",
+        "icu::datetime::DateTimeWriteError",
+        "icu::datetime::LoadError",
+        "icu::datetime::SingleLoadError",
         "icu::datetime::FormattedDateTimePattern",
         "icu::datetime::TypedDateTimeNames",
         "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
         "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
+
+        // experimental
+        "icu::experimental",
 
         // Experimental and unused decimal types
         "fixed_decimal::CompactDecimal",
@@ -390,6 +397,7 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::Gregorian",
         "icu::calendar::gregorian::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
+        "icu::datetime::NeverCalendar",
 
         // Options bags which are expanded in FFI to regular functions
         // TODO-2.0: investigate flattening on the rust side too

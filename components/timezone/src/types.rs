@@ -163,7 +163,7 @@ impl FromStr for GmtOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::GmtOffset;
+    /// use icu::timezone::GmtOffset;
     ///
     /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset");
     /// let offset1: GmtOffset =

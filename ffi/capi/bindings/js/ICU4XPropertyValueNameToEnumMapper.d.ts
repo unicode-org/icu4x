@@ -35,17 +35,17 @@ export class ICU4XPropertyValueNameToEnumMapper {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_general_category(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.HangulSyllableType.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static load_bidi_class(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
+  static load_hangul_syllable_type(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
@@ -53,6 +53,13 @@ export class ICU4XPropertyValueNameToEnumMapper {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_east_asian_width(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_bidi_class(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
 
   /**
 
@@ -70,7 +77,7 @@ export class ICU4XPropertyValueNameToEnumMapper {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_grapheme_cluster_break(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;

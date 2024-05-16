@@ -11,20 +11,44 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct ParentLocales {
+#[derive(PartialEq, Debug, Deserialize, PartialOrd, Ord, Eq)]
+pub(in crate::provider) struct LocaleRule {
+    #[serde(rename = "nonlikelyScript")]
+    pub(in crate::provider) non_likely_scripts: String,
+}
+
+#[derive(PartialEq, Debug, Deserialize, PartialOrd, Ord, Eq)]
+pub(in crate::provider) struct LocaleRules {
     #[serde(rename = "parentLocale")]
-    pub parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
-    pub collations: BTreeMap<String, LanguageIdentifier>,
+    pub(in crate::provider) parent_locale: Option<LocaleRule>,
+    pub(in crate::provider) collations: Option<LocaleRule>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct ParentLocales {
+    #[serde(rename = "parentLocale")]
+    pub(in crate::provider) parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
+    pub(in crate::provider) collations: BTreeMap<String, LanguageIdentifier>,
+    #[serde(rename = "_localeRules", default = "rules_backport")]
+    pub(in crate::provider) rules: LocaleRules,
+}
+
+fn rules_backport() -> LocaleRules {
+    LocaleRules {
+        parent_locale: Some(LocaleRule {
+            non_likely_scripts: "root".into(),
+        }),
+        collations: None,
+    }
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "parentLocales")]
-    pub parent_locales: ParentLocales,
+    pub(in crate::provider) parent_locales: ParentLocales,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

@@ -9,7 +9,8 @@ use crate::{input::DateInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -32,7 +33,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 ///
 #[doc = date_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
@@ -187,6 +188,8 @@ impl DateFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>

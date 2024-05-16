@@ -2,12 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::transform::cldr::decimal::decimal_pattern::DecimalPattern;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
-
-use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
-
-use crate::DatagenProvider;
 
 use std::borrow::Cow;
 
@@ -81,7 +79,7 @@ fn currency_pattern_selection(
     )
 }
 
-impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
+impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -108,7 +106,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
@@ -354,7 +352,7 @@ fn test_basic() {
     use icu_experimental::dimension::provider::currency::*;
     use icu_locid::locale;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {

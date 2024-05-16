@@ -75,6 +75,8 @@ pub enum ParserError {
     // Duplicate calendar with critical.
     #[displaydoc("Duplicate calendars cannot be provided when one is critical.")]
     CriticalDuplicateCalendar,
+    #[displaydoc("Unrecognized annoation is marked as critical.")]
+    UnrecognizedCritical,
 
     // Time Zone Errors
     #[displaydoc("Invalid time zone leading character.")]

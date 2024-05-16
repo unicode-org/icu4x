@@ -21,7 +21,7 @@ use std::fs::File;
 
 DatagenDriver::new()
     .with_keys([icu::list::provider::AndListV1Marker::KEY])
-    .with_all_locales()
+    .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
     .export(
         &DatagenProvider::new_latest_tested(),
         BlobExporter::new_v2_with_sink(Box::new(
@@ -44,39 +44,6 @@ Once the tool is installed, you can invoke it like this:
 ```bash
 $ icu4x-datagen --keys all --locales de en-AU --format blob --out data.postcard
 ```
-
-For complex invocations, the CLI also supports configuration files:
-
-```bash
-$ icu4x-datagen config.json
-```
-
-<details><summary><code>config.json</code></summary>
-<pre><code>{
-  "keys": {
-    "explicit": [
-      "core/helloworld@1",
-      "fallback/likelysubtags@1",
-      "fallback/parents@1",
-      "fallback/supplement/co@1"
-    ]
-  },
-  "fallback": "runtimeManual",
-  "locales": "all",
-  "segmenterModels": ["burmesedict"],
-  "additionalCollations": ["big5han"],<br/>
-  "cldr": "latest",
-  "icuExport": "73.1",
-  "segmenterLstm": "none",<br/>
-  "export": {
-    "blob": {
-      "path": "blob.postcard"
-    }
-  },
-  "overwrite": true
-}
-</code></pre>
-</details>
 
 More details can be found by running `--help`.
 

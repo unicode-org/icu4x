@@ -4,16 +4,23 @@
 
 #![allow(deprecated)]
 
-use crate::source::*;
-use crate::transform::cldr::source::CldrCache;
-use crate::{CollationHanDatabase, CoverageLevel};
 use elsa::sync::FrozenMap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use source::{AbstractFs, SerdeCache};
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
+use transform::cldr::source::CldrCache;
+
+#[path = "transform/mod.rs"]
+mod transform;
+
+mod source;
+
+#[cfg(test)]
+mod tests;
 
 /// An [`ExportableProvider`](icu_provider::datagen::ExportableProvider) backed by raw CLDR and ICU data.
 ///
@@ -32,15 +39,33 @@ pub struct DatagenProvider {
     pub source: SourceData,
 }
 
-crate::registry::make_exportable_provider!(DatagenProvider);
+macro_rules! cb {
+    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+        icu_provider::make_exportable_provider!(
+            DatagenProvider,
+            [
+                icu_provider::hello_world::HelloWorldV1Marker,
+                $(
+                    $marker,
+                )+
+                $(
+                    #[cfg(feature = "experimental_components")]
+                    $emarker,
+                )+
+            ]
+        );
+    }
+}
+crate::registry!(cb);
+
 icu_provider::impl_data_provider_never_marker!(DatagenProvider);
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "44.1.0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "45.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-74-2";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-75-1";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -209,21 +234,21 @@ impl DatagenProvider {
         e == Self::MISSING_SEGMENTER_LSTM_ERROR
     }
 
-    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
+    fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.source
             .cldr_paths
             .as_deref()
             .ok_or(Self::MISSING_CLDR_ERROR)
     }
 
-    pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
+    fn icuexport(&self) -> Result<&SerdeCache, DataError> {
         self.source
             .icuexport_paths
             .as_deref()
             .ok_or(Self::MISSING_ICUEXPORT_ERROR)
     }
 
-    pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
+    fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         self.source
             .segmenter_lstm_paths
             .as_deref()
@@ -250,11 +275,11 @@ impl DatagenProvider {
         }
     }
 
-    pub(crate) fn trie_type(&self) -> TrieType {
+    fn trie_type(&self) -> TrieType {
         self.source.trie_type
     }
 
-    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
+    fn collation_han_database(&self) -> CollationHanDatabase {
         self.source.collation_han_database
     }
 
@@ -266,7 +291,7 @@ impl DatagenProvider {
         self.cldr()?.locales(levels)
     }
 
-    pub(crate) fn supported_locales_set<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
+    fn supported_locales_set<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
     where
         M: KeyedDataMarker,
         Self: IterableDataProviderInternal<M>,
@@ -278,6 +303,58 @@ impl DatagenProvider {
             .as_ref()
             .map_err(|e| *e)
     }
+}
+
+/// Specifies the collation Han database to use.
+///
+/// Unihan is more precise but significantly increases data size. See
+/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum CollationHanDatabase {
+    /// Implicit
+    #[serde(rename = "implicit")]
+    #[default]
+    Implicit,
+    /// Unihan
+    #[serde(rename = "unihan")]
+    Unihan,
+}
+
+impl std::fmt::Display for CollationHanDatabase {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            CollationHanDatabase::Implicit => write!(f, "implicithan"),
+            CollationHanDatabase::Unihan => write!(f, "unihan"),
+        }
+    }
+}
+
+/// A language's CLDR coverage level.
+///
+/// In ICU4X, these are disjoint sets: a language belongs to a single coverage level. This
+/// contrasts with CLDR usage, where these levels are understood to be additive (i.e., "basic"
+/// includes all language with "basic", or better coverage). The ICU4X semantics allow
+/// generating different data files for different coverage levels without duplicating data.
+/// However, the data itself is still additive (e.g. for fallback to work correctly), so data
+/// for moderate (basic) languages should only be loaded if modern (modern and moderate) data
+/// is already present.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
+#[non_exhaustive]
+#[serde(rename_all = "camelCase")]
+pub enum CoverageLevel {
+    /// Locales listed as modern coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the highest level of coverage.
+    Modern,
+    /// Locales listed as moderate, but not modern, coverage targets by the CLDR subcomittee.
+    ///
+    /// This is a medium level of coverage.
+    Moderate,
+    /// Locales listed as basic, but not moderate or modern, coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the lowest level of coverage.
+    Basic,
 }
 
 /// Specifies the trie type to use.
@@ -303,6 +380,24 @@ impl std::fmt::Display for TrieType {
     }
 }
 
+trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
+    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError>;
+}
+
+impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
+where
+    DatagenProvider: IterableDataProviderInternal<M>,
+{
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        self.supported_locales_set()
+            .map(|v| v.iter().cloned().collect())
+    }
+
+    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
+        self.supported_locales_set().map(|v| v.contains(locale))
+    }
+}
+
 // SEMVER GRAVEYARD
 
 /// Bag of options for [`datagen`](crate::datagen).
@@ -316,19 +411,18 @@ impl std::fmt::Display for TrieType {
 #[non_exhaustive]
 #[deprecated(since = "1.3.0", note = "use `DatagenProvider`")]
 pub struct SourceData {
-    pub(crate) cldr_paths: Option<Arc<CldrCache>>,
-    pub(crate) icuexport_paths: Option<Arc<SerdeCache>>,
-    pub(crate) segmenter_lstm_paths: Option<Arc<SerdeCache>>,
-    pub(crate) trie_type: TrieType,
-    pub(crate) collation_han_database: CollationHanDatabase,
+    cldr_paths: Option<Arc<CldrCache>>,
+    icuexport_paths: Option<Arc<SerdeCache>>,
+    segmenter_lstm_paths: Option<Arc<SerdeCache>>,
+    trie_type: TrieType,
+    collation_han_database: CollationHanDatabase,
     #[cfg(feature = "legacy_api")]
     // populated if constructed through `SourceData` constructor only
-    pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
+    icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,
     #[cfg(feature = "legacy_api")]
     pub(crate) collations: Vec<String>,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    pub(crate) supported_locales_cache:
-        Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
+    supported_locales_cache: Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
 }
 
 #[cfg(feature = "legacy_api")]
@@ -424,7 +518,7 @@ impl SourceData {
     pub fn with_cldr(
         self,
         root: PathBuf,
-        _use_default_here: crate::CldrLocaleSubset,
+        _use_default_here: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(DatagenProvider { source: self }.with_cldr(root)?.source)
     }
@@ -441,7 +535,7 @@ impl SourceData {
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
-        _use_default_here: crate::CldrLocaleSubset,
+        _use_default_here: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(DatagenProvider { source: self }
             .with_cldr_for_tag(tag)
@@ -462,10 +556,7 @@ impl SourceData {
     )]
     #[cfg(feature = "networking")]
     /// See [`DatagenProvider::with_cldr_for_tag`]
-    pub fn with_cldr_latest(
-        self,
-        _use_default_here: crate::CldrLocaleSubset,
-    ) -> Result<Self, DataError> {
+    pub fn with_cldr_latest(self, _use_default_here: CldrLocaleSubset) -> Result<Self, DataError> {
         self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
     }
 
@@ -509,20 +600,33 @@ impl SourceData {
     }
 }
 
-pub(crate) trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError>;
+#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[doc(hidden)]
+#[derive(Debug)]
+#[cfg(feature = "legacy_api")]
+pub enum CldrLocaleSubset {
+    Ignored,
 }
 
-impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
-where
-    DatagenProvider: IterableDataProviderInternal<M>,
-{
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales_set()
-            .map(|v| v.iter().cloned().collect())
+#[cfg(feature = "legacy_api")]
+impl Default for CldrLocaleSubset {
+    fn default() -> Self {
+        Self::Ignored
     }
+}
 
-    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        self.supported_locales_set().map(|v| v.contains(locale))
+#[cfg(feature = "legacy_api")]
+impl CldrLocaleSubset {
+    #[allow(non_upper_case_globals)]
+    pub const Full: Self = Self::Ignored;
+    #[allow(non_upper_case_globals)]
+    pub const Modern: Self = Self::Ignored;
+}
+
+#[cfg(feature = "legacy_api")]
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+impl AnyProvider for DatagenProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.as_any_provider().load_any(key, req)
     }
 }

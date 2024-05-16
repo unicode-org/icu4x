@@ -80,7 +80,7 @@ pub struct PropertyValueNameToEnumMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     markers: PhantomData<fn() -> T>,
@@ -125,7 +125,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -150,7 +150,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -176,7 +176,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -205,7 +205,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -229,7 +229,10 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
 }
 
 impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'static, T> {
-    /// Cheaply converts a `PropertyValueNameToEnumMapperBorrowed<'static>` into a `PropertyValueNameToEnumMapper`.
+    /// Cheaply converts a [`PropertyValueNameToEnumMapperBorrowed<'static>`] into a [`PropertyValueNameToEnumMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`PropertyValueNameToEnumMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyValueNameToEnumMapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
         PropertyValueNameToEnumMapper {
             map: DataPayload::from_static_ref(self.map),
@@ -295,7 +298,7 @@ pub struct PropertyEnumToValueNameSparseMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyEnumToValueNameSparseMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyEnumToValueNameSparseMapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameSparseMapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
@@ -355,7 +358,10 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
 }
 
 impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
-    /// Cheaply converts a `PropertyEnumToValueNameSparseMapperBorrowed<'static>` into a `PropertyEnumToValueNameSparseMapper`.
+    /// Cheaply converts a [`PropertyEnumToValueNameSparseMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameSparseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameSparseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameSparseMapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
         PropertyEnumToValueNameSparseMapper {
             map: DataPayload::from_static_ref(self.map),
@@ -405,7 +411,7 @@ pub struct PropertyEnumToValueNameLinearMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyEnumToValueNameLinearMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyEnumToValueNameLinearMapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameLinearMapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
@@ -459,7 +465,10 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
 }
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
-    /// Cheaply converts a `PropertyEnumToValueNameLinearMapperBorrowed<'static>` into a `PropertyEnumToValueNameLinearMapper`.
+    /// Cheaply converts a [`PropertyEnumToValueNameLinearMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearMapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
         PropertyEnumToValueNameLinearMapper {
             map: DataPayload::from_static_ref(self.map),
@@ -502,7 +511,7 @@ pub struct PropertyEnumToValueNameLinearTiny4Mapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PropertyEnumToValueNameLinearTiny4MapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameLinearTiny4MapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
@@ -557,7 +566,10 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
 }
 
 impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
-    /// Cheaply converts a `PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>` into a `PropertyEnumToValueNameLinearTiny4Mapper`.
+    /// Cheaply converts a [`PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearTiny4Mapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearTiny4Mapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
     pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
         PropertyEnumToValueNameLinearTiny4Mapper {
             map: DataPayload::from_static_ref(self.map),
@@ -1566,6 +1578,106 @@ impl_value_getter! {
     }
 }
 
+/// Enumerated property Hangul_Syllable_Type
+///
+/// The Unicode standard provides both precomposed Hangul syllables and conjoining Jamo to compose
+/// arbitrary Hangul syllables. This property provies that ontology of Hangul code points.
+///
+/// For more information, see the [Unicode Korean FAQ](https://www.unicode.org/faq/korean.html).
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(HangulSyllableTypeULE)]
+pub struct HangulSyllableType(pub u8);
+
+create_const_array! {
+#[allow(non_upper_case_globals)]
+impl HangulSyllableType {
+    /// (`NA`) not applicable (e.g. not a Hangul code point).
+    pub const NotApplicable: HangulSyllableType = HangulSyllableType(0);
+    /// (`L`) a conjoining leading consonant Jamo.
+    pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1);
+    /// (`V`) a conjoining vowel Jamo.
+    pub const VowelJamo: HangulSyllableType = HangulSyllableType(2);
+    /// (`T`) a conjoining trailing consonent Jamo.
+    pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3);
+    /// (`LV`) a precomposed syllable with a leading consonant and a vowel.
+    pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4);
+    /// (`LVT`) a precomposed syllable with a leading consonant, a vowel, and a trailing consonant.
+    pub const LeadingVowelTrailingSyllable: HangulSyllableType = HangulSyllableType(5);
+}
+}
+
+impl_value_getter! {
+    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_HST_V1, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1;
+    impl HangulSyllableType {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `Bidi_Class` enumerated property
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::HangulSyllableType;
+        ///
+        /// let lookup = HangulSyllableType::name_to_enum_mapper();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("L"), Some(HangulSyllableType::LeadingJamo));
+        /// assert_eq!(lookup.get_strict("LV"), Some(HangulSyllableType::LeadingVowelSyllable));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Leading_Jamo"), Some(HangulSyllableType::LeadingJamo));
+        /// assert_eq!(lookup.get_strict("LV_Syllable"), Some(HangulSyllableType::LeadingVowelSyllable));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("lv"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("lv"), Some(HangulSyllableType::LeadingVowelSyllable));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("LT_Syllable"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
+        /// for values of the `Bidi_Class` enumerated property
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::HangulSyllableType;
+        ///
+        /// let lookup = HangulSyllableType::enum_to_short_name_mapper();
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("L"));
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV"));
+        /// ```
+        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
+        /// for values of the `Bidi_Class` enumerated property
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::HangulSyllableType;
+        ///
+        /// let lookup = HangulSyllableType::enum_to_long_name_mapper();
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("Leading_Jamo"));
+        /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV_Syllable"));
+        /// ```
+        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+    }
+}
+
 /// Enumerated property East_Asian_Width.
 ///
 /// See "Definition" in UAX #11 for the summary of each property value:
@@ -2136,7 +2248,7 @@ impl_value_getter! {
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
 ///
-/// See `icu_normalizer::properties::CanonicalCombiningClassMap` for the API
+/// See `icu::normalizer::properties::CanonicalCombiningClassMap` for the API
 /// to look up the Canonical_Combining_Class property by scalar value.
 //
 // NOTE: The Pernosco debugger has special knowledge
@@ -2602,6 +2714,14 @@ mod test_enumerated_property_completeness {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
             BidiClass::ALL_CONSTS,
+        );
+    }
+
+    #[test]
+    fn test_hst() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_HST_V1,
+            HangulSyllableType::ALL_CONSTS,
         );
     }
 }

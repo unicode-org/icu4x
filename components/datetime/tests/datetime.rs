@@ -79,11 +79,10 @@ fn test_fixture(fixture_name: &str, file: &str) {
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
         let input_hebrew = input_value.to_calendar(Hebrew);
         let input_indian = input_value.to_calendar(Indian);
-        let input_islamic_civil = input_value.to_calendar(IslamicCivil::new_always_calculating());
+        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
         let input_islamic_observational =
             input_value.to_calendar(IslamicObservational::new_always_calculating());
-        let input_islamic_tabular =
-            input_value.to_calendar(IslamicTabular::new_always_calculating());
+        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
         let input_islamic_umm_al_qura =
             input_value.to_calendar(IslamicUmmAlQura::new_always_calculating());
         let input_iso = input_value.to_calendar(Iso);
@@ -556,7 +555,7 @@ fn test_time_zone_format_configs() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = "using last-resort time zone fallback")]
+#[should_panic(expected = "MissingInputField(Some(\"gmt_offset\"))")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let time_zone = CustomTimeZone {
         gmt_offset: None,

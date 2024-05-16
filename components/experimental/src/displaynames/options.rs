@@ -9,8 +9,8 @@
 /// # Example
 ///
 /// ```
-/// use icu_experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
-/// use icu_locid::{locale, subtags::region};
+/// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
+/// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
@@ -21,7 +21,7 @@
 /// // Full name would be "Bosnia & Herzegovina"
 /// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
 /// ```
-#[derive(Debug, Eq, PartialEq, Clone, Default)]
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {
     /// The optional formatting style to use for display name.

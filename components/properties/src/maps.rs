@@ -11,11 +11,11 @@
 //!
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
+#[cfg(doc)]
+use super::*;
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::sets::CodePointSetData;
-#[cfg(doc)]
-use crate::*;
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
@@ -259,7 +259,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 }
 
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
-    /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
+    /// Cheaply converts a [`CodePointMapDataBorrowed<'static>`] into a [`CodePointMapData`].
+    ///
+    /// Note: Due to branching and indirection, using [`CodePointMapData`] might inhibit some
+    /// compile-time optimizations that are possible with [`CodePointMapDataBorrowed`].
     pub const fn static_to_owned(self) -> CodePointMapData<T> {
         CodePointMapData {
             data: DataPayload::from_static_ref(self.map),
@@ -414,6 +417,32 @@ make_map_property! {
 }
 
 make_map_property! {
+    property: "Hangul_Syllable_Type";
+    marker: HangulSyllableTypeProperty;
+    value: crate::HangulSyllableType;
+    keyed_data_marker: HangulSyllableTypeV1Marker;
+    func:
+    /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
+    /// Unicode enumerated property. See [`HangulSyllableType`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, HangulSyllableType};
+    ///
+    /// assert_eq!(maps::hangul_syllable_type().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
+    /// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
+    /// ```
+
+    pub const hangul_syllable_type => SINGLETON_PROPS_HST_V1;
+    pub fn load_hangul_syllable_type();
+}
+
+make_map_property! {
     property: "East_Asian_Width";
     marker: EastAsianWidthProperty;
     value: crate::EastAsianWidth;
@@ -559,7 +588,7 @@ make_map_property! {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
-    /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
     /// to look up the Canonical_Combining_Class property by scalar value.
     ///
     /// # Example

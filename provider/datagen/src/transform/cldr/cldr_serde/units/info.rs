@@ -11,72 +11,72 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Constant {
+pub(in crate::provider) struct Constant {
     #[serde(rename = "_value")]
-    pub value: String,
+    pub(in crate::provider) value: String,
 
     #[serde(rename = "_status")]
-    pub status: Option<String>,
+    pub(in crate::provider) status: Option<String>,
 
     #[serde(rename = "_description")]
-    pub description: Option<String>,
+    pub(in crate::provider) description: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Quantity {
+pub(in crate::provider) struct Quantity {
     #[serde(rename = "_quantity")]
-    pub quantity: String,
+    pub(in crate::provider) quantity: String,
 
     #[serde(rename = "_status")]
-    pub status: Option<String>,
+    pub(in crate::provider) status: Option<String>,
 
     #[serde(rename = "_description")]
-    pub description: Option<String>,
+    pub(in crate::provider) description: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ConvertUnit {
+pub(in crate::provider) struct ConvertUnit {
     #[serde(rename = "_baseUnit")]
-    pub base_unit: String,
+    pub(in crate::provider) base_unit: String,
 
     #[serde(rename = "_factor")]
-    pub factor: Option<String>,
+    pub(in crate::provider) factor: Option<String>,
 
     #[serde(rename = "_offset")]
-    pub offset: Option<String>,
+    pub(in crate::provider) offset: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct UnitConstants {
+pub(in crate::provider) struct UnitConstants {
     #[serde(flatten)]
-    pub constants: BTreeMap<String, Constant>,
+    pub(in crate::provider) constants: BTreeMap<String, Constant>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct UnitQuantities {
+pub(in crate::provider) struct UnitQuantities {
     #[serde(flatten)]
-    pub quantities: BTreeMap<String, Quantity>,
+    pub(in crate::provider) quantities: BTreeMap<String, Quantity>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ConvertUnits {
+pub(in crate::provider) struct ConvertUnits {
     #[serde(flatten)]
-    pub convert_units: BTreeMap<String, ConvertUnit>,
+    pub(in crate::provider) convert_units: BTreeMap<String, ConvertUnit>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
+pub(in crate::provider) struct Supplemental {
     #[serde(rename = "unitConstants")]
-    pub unit_constants: UnitConstants,
+    pub(in crate::provider) unit_constants: UnitConstants,
 
     #[serde(rename = "unitQuantities")]
-    pub unit_quantities: UnitQuantities,
+    pub(in crate::provider) unit_quantities: UnitQuantities,
 
     #[serde(rename = "convertUnits")]
-    pub convert_units: ConvertUnits,
+    pub(in crate::provider) convert_units: ConvertUnits,
 }
 
 #[derive(Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

@@ -47,7 +47,7 @@ final class Bidi implements ffi.Finalizable {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [textArena];
-    final result = _ICU4XBidi_for_text(_ffi, textView.allocIn(textArena.arena), textView.length, defaultLevel);
+    final result = _ICU4XBidi_for_text_valid_utf8(_ffi, textView.allocIn(textArena.arena), textView.length, defaultLevel);
     return BidiInfo._fromFfi(result, [], textEdges);
   }
 
@@ -92,18 +92,18 @@ final class Bidi implements ffi.Finalizable {
   /// Get a basic RTL Level value
   ///
   /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
-  static final int levelRtl = () {
+  static int levelRtl() {
     final result = _ICU4XBidi_level_rtl();
     return result;
-  }();
+  }
 
   /// Get a simple LTR Level value
   ///
   /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
-  static final int levelLtr = () {
+  static int levelLtr() {
     final result = _ICU4XBidi_level_ltr();
     return result;
-  }();
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XBidi_destroy')
@@ -116,10 +116,10 @@ external void _ICU4XBidi_destroy(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XBidi_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XBidi_for_text')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_for_text')
+@meta.ResourceIdentifier('ICU4XBidi_for_text_valid_utf8')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XBidi_for_text_valid_utf8')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XBidi_for_text(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> textData, int textLength, int defaultLevel);
+external ffi.Pointer<ffi.Opaque> _ICU4XBidi_for_text_valid_utf8(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> textData, int textLength, int defaultLevel);
 
 @meta.ResourceIdentifier('ICU4XBidi_reorder_visual')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidi_reorder_visual')

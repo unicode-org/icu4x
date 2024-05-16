@@ -92,7 +92,7 @@ impl ParseError {
     /// # Examples
     ///
     /// ```
-    /// use icu_experimental::unicodeset_parse::*;
+    /// use icu::experimental::unicodeset_parse::*;
     ///
     /// let source = "[[abc]-x]";
     /// let set = parse(source);
@@ -105,7 +105,7 @@ impl ParseError {
     /// ```
     ///
     /// ```
-    /// use icu_experimental::unicodeset_parse::*;
+    /// use icu::experimental::unicodeset_parse::*;
     ///
     /// let source = r"[\N{LATIN CAPITAL LETTER A}]";
     /// let set = parse(source);
@@ -242,7 +242,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert(&mut self, key: String, value: VariableValue<'a>) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -265,7 +265,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -280,7 +280,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -301,7 +301,7 @@ impl<'a> VariableMap<'a> {
     /// Returns `Err` with the old value, if it exists, and does not update the map.
     pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -326,7 +326,7 @@ impl<'a> VariableMap<'a> {
         set: CodePointInversionListAndStringList<'a>,
     ) -> Result<(), &VariableValue> {
         // borrow-checker shenanigans, otherwise we could use if let
-        if self.0.get(&key).is_some() {
+        if self.0.contains_key(&key) {
             // we just checked that this key exists
             #[allow(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
@@ -1443,7 +1443,7 @@ where
 ///
 /// Parse ranges
 /// ```
-/// use icu_experimental::unicodeset_parse::parse;
+/// use icu::experimental::unicodeset_parse::parse;
 ///
 /// let source = "[a-zA-Z0-9]";
 /// let (set, consumed) = parse(source).unwrap();
@@ -1457,7 +1457,7 @@ where
 ///
 /// Parse properties, set operations, inner sets
 /// ```
-/// use icu_experimental::unicodeset_parse::parse;
+/// use icu::experimental::unicodeset_parse::parse;
 ///
 /// let (set, _) =
 ///     parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
@@ -1468,7 +1468,7 @@ where
 ///
 /// Inversions remove strings
 /// ```
-/// use icu_experimental::unicodeset_parse::parse;
+/// use icu::experimental::unicodeset_parse::parse;
 ///
 /// let (set, _) =
 ///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
@@ -1479,7 +1479,7 @@ where
 ///
 /// Set operators (including the implicit union) have the same precedence and are left-associative
 /// ```
-/// use icu_experimental::unicodeset_parse::parse;
+/// use icu::experimental::unicodeset_parse::parse;
 ///
 /// let (set, _) = parse("[[ace][bdf] - [abc][def]]").unwrap();
 /// let elements = 'd'..='f';
@@ -1489,7 +1489,7 @@ where
 ///
 /// Supports partial parses
 /// ```
-/// use icu_experimental::unicodeset_parse::parse;
+/// use icu::experimental::unicodeset_parse::parse;
 ///
 /// let (set, consumed) = parse("[a-c][x-z]").unwrap();
 /// let code_points = set.code_points();
@@ -1513,7 +1513,7 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// # Examples
 ///
 /// ```
-/// use icu_experimental::unicodeset_parse::*;
+/// use icu::experimental::unicodeset_parse::*;
 ///
 /// let (my_set, _) = parse("[abc]").unwrap();
 ///

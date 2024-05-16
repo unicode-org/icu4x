@@ -321,9 +321,6 @@
       "dt": "Hora de verano de Macao",
       "st": "Hora estándar de Macao"
     },
-    "macq": {
-      "st": "hora de la Isla Macquarie"
-    },
     "maga": {
       "dt": "hora de verano de Magadán",
       "st": "hora estándar de Magadán"
@@ -346,10 +343,6 @@
     },
     "maws": {
       "st": "hora de Mawson"
-    },
-    "meno": {
-      "dt": "hora de verano del noroeste de México",
-      "st": "hora estándar del noroeste de México"
     },
     "mepa": {
       "dt": "hora de verano del Pacífico de México",

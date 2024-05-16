@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::icuexport::uprops::uprops_serde::enumerated::EnumeratedPropertyMap;
+use crate::provider::DatagenProvider;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::provider::{names::*, *};
 use icu_provider::datagen::*;
@@ -11,8 +11,8 @@ use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
 
-impl crate::DatagenProvider {
-    pub(crate) fn get_enumerated_prop<'a>(
+impl DatagenProvider {
+    pub(super) fn get_enumerated_prop<'a>(
         &'a self,
         key: &str,
     ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
@@ -125,7 +125,7 @@ fn map_to_vec<'a>(
 
 /// Load the mapping from property values to their names
 fn load_values_to_names(
-    data: &EnumeratedPropertyMap,
+    data: &super::uprops_serde::enumerated::EnumeratedPropertyMap,
     is_short: bool,
 ) -> Result<BTreeMap<u16, &str>, DataError> {
     let mut map: BTreeMap<_, &str> = BTreeMap::new();
@@ -147,7 +147,7 @@ fn load_values_to_names(
 
 /// Load the mapping from property values to their names as a sparse map
 fn load_values_to_names_sparse<M>(
-    p: &crate::DatagenProvider,
+    p: &DatagenProvider,
     prop_name: &str,
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
@@ -168,7 +168,7 @@ where
 
 /// Load the mapping from property values to their names as a linear map
 fn load_values_to_names_linear<M>(
-    p: &crate::DatagenProvider,
+    p: &DatagenProvider,
     prop_name: &str,
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
@@ -190,7 +190,7 @@ where
 
 /// Load the mapping from property values to their names as a linear map of TinyStr4s
 fn load_values_to_names_linear4<M>(
-    p: &crate::DatagenProvider,
+    p: &DatagenProvider,
     prop_name: &str,
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
@@ -226,7 +226,7 @@ macro_rules! expand {
 
         $prop_name:literal)),+,) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider
+            impl DataProvider<$marker> for DatagenProvider
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
@@ -243,7 +243,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
+            impl IterableDataProvider<$marker> for DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -252,7 +252,7 @@ macro_rules! expand {
                 }
             }
 
-            impl DataProvider<$marker_n2e> for crate::DatagenProvider
+            impl DataProvider<$marker_n2e> for DatagenProvider
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_n2e>, DataError> {
                     self.check_req::<$marker_n2e>(req)?;
@@ -268,7 +268,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker_n2e> for crate::DatagenProvider {
+            impl IterableDataProvider<$marker_n2e> for DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -278,7 +278,7 @@ macro_rules! expand {
             }
 
             $(
-                impl DataProvider<$marker_e2sns> for crate::DatagenProvider
+                impl DataProvider<$marker_e2sns> for DatagenProvider
                 {
                     fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2sns>, DataError> {
                         self.check_req::<$marker_e2sns>(req)?;
@@ -286,7 +286,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl IterableDataProvider<$marker_e2sns> for crate::DatagenProvider {
+                impl IterableDataProvider<$marker_e2sns> for DatagenProvider {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
@@ -295,7 +295,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl DataProvider<$marker_e2lns> for crate::DatagenProvider
+                impl DataProvider<$marker_e2lns> for DatagenProvider
                 {
                     fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lns>, DataError> {
                         self.check_req::<$marker_e2lns>(req)?;
@@ -303,7 +303,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl IterableDataProvider<$marker_e2lns> for crate::DatagenProvider {
+                impl IterableDataProvider<$marker_e2lns> for DatagenProvider {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
@@ -314,7 +314,7 @@ macro_rules! expand {
             )?
 
             $(
-                impl DataProvider<$marker_e2snl> for crate::DatagenProvider
+                impl DataProvider<$marker_e2snl> for DatagenProvider
                 {
                     fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2snl>, DataError> {
                         self.check_req::<$marker_e2snl>(req)?;
@@ -322,7 +322,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl IterableDataProvider<$marker_e2snl> for crate::DatagenProvider {
+                impl IterableDataProvider<$marker_e2snl> for DatagenProvider {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
@@ -331,7 +331,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl DataProvider<$marker_e2lnl> for crate::DatagenProvider
+                impl DataProvider<$marker_e2lnl> for DatagenProvider
                 {
                     fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lnl>, DataError> {
                         self.check_req::<$marker_e2lnl>(req)?;
@@ -339,7 +339,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl IterableDataProvider<$marker_e2lnl> for crate::DatagenProvider {
+                impl IterableDataProvider<$marker_e2lnl> for DatagenProvider {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
@@ -350,7 +350,7 @@ macro_rules! expand {
             )?
 
             $(
-                impl DataProvider<$marker_e2snl4> for crate::DatagenProvider
+                impl DataProvider<$marker_e2snl4> for DatagenProvider
                 {
                     fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2snl4>, DataError> {
                         self.check_req::<$marker_e2snl4>(req)?;
@@ -358,7 +358,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl IterableDataProvider<$marker_e2snl4> for crate::DatagenProvider {
+                impl IterableDataProvider<$marker_e2snl4> for DatagenProvider {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
@@ -367,7 +367,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl DataProvider<$marker_e2lnl4> for crate::DatagenProvider
+                impl DataProvider<$marker_e2lnl4> for DatagenProvider
                 {
                     fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_e2lnl4>, DataError> {
                         self.check_req::<$marker_e2lnl4>(req)?;
@@ -376,7 +376,7 @@ macro_rules! expand {
                     }
                 }
 
-                impl IterableDataProvider<$marker_e2lnl4> for crate::DatagenProvider {
+                impl IterableDataProvider<$marker_e2lnl4> for DatagenProvider {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
@@ -390,7 +390,7 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
+impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -419,7 +419,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProv
     }
 }
 
-impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(vec![Default::default()])
@@ -462,6 +462,15 @@ expand!(
             ScriptValueToLongNameV1Marker
         ),
         "sc"
+    ),
+    (
+        HangulSyllableTypeV1Marker,
+        HangulSyllableTypeNameToValueV1Marker,
+        (
+            linear: HangulSyllableTypeValueToShortNameV1Marker,
+            HangulSyllableTypeValueToLongNameV1Marker
+        ),
+        "hst"
     ),
     (
         EastAsianWidthV1Marker,
@@ -543,7 +552,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
@@ -561,7 +570,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())

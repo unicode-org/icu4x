@@ -3,13 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::helpers::size_test;
-use crate::provider::{calendar::*, date_time::PatternSelector};
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
+use crate::provider::{
+    calendar::*,
+    date_time::{PatternForLengthError, PatternSelector},
+};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -32,7 +38,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 ///
 #[doc = date_time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
@@ -165,7 +171,11 @@ impl DateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
             locale,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new(
@@ -241,6 +251,8 @@ impl DateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -262,7 +274,14 @@ impl DateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(
@@ -331,7 +350,14 @@ impl DateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new(
@@ -388,6 +414,8 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<RocDateLengthsV1Marker>
@@ -402,7 +430,11 @@ impl DateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
             locale,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(

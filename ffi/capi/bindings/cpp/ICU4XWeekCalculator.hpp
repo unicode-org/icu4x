@@ -16,6 +16,7 @@ class ICU4XLocale;
 class ICU4XWeekCalculator;
 #include "ICU4XError.hpp"
 #include "ICU4XIsoWeekday.hpp"
+struct ICU4XWeekendContainsDay;
 
 /**
  * A destruction policy for using ICU4XWeekCalculator with std::unique_ptr.
@@ -60,6 +61,11 @@ class ICU4XWeekCalculator {
    * See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
    */
   uint8_t min_week_days() const;
+
+  /**
+   * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+   */
+  ICU4XWeekendContainsDay weekend() const;
   inline const capi::ICU4XWeekCalculator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XWeekCalculator* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XWeekCalculator(capi::ICU4XWeekCalculator* i) : inner(i) {}
@@ -72,6 +78,7 @@ class ICU4XWeekCalculator {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
+#include "ICU4XWeekendContainsDay.hpp"
 
 inline diplomat::result<ICU4XWeekCalculator, ICU4XError> ICU4XWeekCalculator::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
   auto diplomat_result_raw_out_value = capi::ICU4XWeekCalculator_create(provider.AsFFI(), locale.AsFFI());
@@ -91,5 +98,9 @@ inline ICU4XIsoWeekday ICU4XWeekCalculator::first_weekday() const {
 }
 inline uint8_t ICU4XWeekCalculator::min_week_days() const {
   return capi::ICU4XWeekCalculator_min_week_days(this->inner.get());
+}
+inline ICU4XWeekendContainsDay ICU4XWeekCalculator::weekend() const {
+  capi::ICU4XWeekendContainsDay diplomat_raw_struct_out_value = capi::ICU4XWeekCalculator_weekend(this->inner.get());
+  return ICU4XWeekendContainsDay{ .monday = std::move(diplomat_raw_struct_out_value.monday), .tuesday = std::move(diplomat_raw_struct_out_value.tuesday), .wednesday = std::move(diplomat_raw_struct_out_value.wednesday), .thursday = std::move(diplomat_raw_struct_out_value.thursday), .friday = std::move(diplomat_raw_struct_out_value.friday), .saturday = std::move(diplomat_raw_struct_out_value.saturday), .sunday = std::move(diplomat_raw_struct_out_value.sunday) };
 }
 #endif

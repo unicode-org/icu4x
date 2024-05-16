@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::date_time::PatternForLengthError;
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::{calendar, options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
@@ -14,7 +17,8 @@ use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
 use icu_calendar::{DateTime, Time};
@@ -195,7 +199,14 @@ impl ZonedDateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -257,6 +268,8 @@ impl ZonedDateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -278,7 +291,14 @@ impl ZonedDateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(
@@ -351,7 +371,11 @@ impl ZonedDateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -411,6 +435,8 @@ impl ZonedDateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -431,7 +457,11 @@ impl ZonedDateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
             locale,
             &date_time_format_options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new_unstable(

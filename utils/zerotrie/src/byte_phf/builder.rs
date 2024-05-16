@@ -26,7 +26,7 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
 
     let mut bqs = vec![0u8; N];
     let mut seen = vec![false; N];
-    let mut max_allowable_p = P_FAST_MAX;
+    let max_allowable_p = P_FAST_MAX;
     let mut max_allowable_q = Q_FAST_MAX;
 
     'p_loop: loop {
@@ -67,13 +67,15 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
                         num_max_q += 1;
                         bqs[i] = 0;
                         if i == 0 || num_max_q > MAX_L2_SEARCH_MISSES {
-                            if p == max_allowable_p && max_allowable_p != P_REAL_MAX {
+                            if p == max_allowable_p && max_allowable_q != Q_REAL_MAX {
                                 // println!("Could not solve fast function: trying again: {bytes:?}");
-                                max_allowable_p = P_REAL_MAX;
                                 max_allowable_q = Q_REAL_MAX;
                                 p = 0;
                                 continue 'p_loop;
-                            } else if p == P_REAL_MAX {
+                            } else if p == max_allowable_p {
+                                // If a fallback algorithm for `p` is added, relax this assertion
+                                // and re-run the loop with a higher `max_allowable_p`.
+                                debug_assert_eq!(max_allowable_p, P_REAL_MAX);
                                 // println!("Could not solve PHF function");
                                 return Err(Error::CouldNotSolvePerfectHash);
                             } else {

@@ -38,6 +38,23 @@ final class IanaToBcp47Mapper implements ffi.Finalizable {
     }
     return IanaToBcp47Mapper._fromFfi(result.union.ok, []);
   }
+
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get) for more information.
+  ///
+  /// See the [Rust documentation for `iana_to_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.iana_to_bcp47) for more information.
+  ///
+  /// Throws [Error] on failure.
+  String operator [](String value) {
+    final temp = ffi2.Arena();
+    final valueView = value.utf8View;
+    final writeable = _Writeable();
+    final result = _ICU4XIanaToBcp47Mapper_get(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    temp.releaseAll();
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return writeable.finalize();
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XIanaToBcp47Mapper_destroy')
@@ -49,3 +66,8 @@ external void _ICU4XIanaToBcp47Mapper_destroy(ffi.Pointer<ffi.Void> self);
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XIanaToBcp47Mapper_create(ffi.Pointer<ffi.Opaque> provider);
+
+@meta.ResourceIdentifier('ICU4XIanaToBcp47Mapper_get')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_get')
+// ignore: non_constant_identifier_names
+external _ResultVoidInt32 _ICU4XIanaToBcp47Mapper_get(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);

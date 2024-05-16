@@ -20,27 +20,28 @@ include.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-smallvec = "1.6"
-utf16_iter = "1.0.3"
-utf8_iter = "1.0.1"
-write16 = { version = "1.0", features = ["alloc"] }
+smallvec = { workspace = true }
+utf16_iter = { workspace = true }
+utf8_iter = { workspace = true }
+write16 = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_normalizer_data = { workspace = true, optional = true }
 
 [dev-dependencies]
-arraystring = "0.3.0"
-arrayvec = "0.7.2"
-atoi = "1.0.0"
-write16 = { version = "1.0", features = ["arrayvec"] }
-detone = "1.0.0"
+arraystring = { workspace = true }
+arrayvec = { workspace = true }
+atoi = { workspace = true }
+detone = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
+write16 = { workspace = true, features = ["arrayvec"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde::{
+use crate::provider::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
+use crate::provider::DatagenProvider;
+use crate::provider::IterableDataProviderInternal;
 use icu_calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };
@@ -14,7 +15,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl IterableDataProviderInternal<WeekDataV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<WeekDataV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
@@ -37,7 +38,7 @@ impl IterableDataProviderInternal<WeekDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
+impl DataProvider<WeekDataV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         self.check_req::<WeekDataV1Marker>(req)?;
         let territory = req
@@ -82,7 +83,7 @@ fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(Default::default())
@@ -134,7 +135,7 @@ fn basic_cldr_week_data() {
     );
 }
 
-impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
+impl DataProvider<WeekDataV2Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV2Marker>, DataError> {
         self.check_req::<WeekDataV2Marker>(req)?;
         let territory = req
@@ -197,7 +198,7 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<WeekDataV2Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<WeekDataV2Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         IterableDataProviderInternal::<WeekDataV1Marker>::supported_locales_impl(self)
     }
@@ -209,7 +210,7 @@ fn test_basic_cldr_week_data_v2() {
     use icu_calendar::types::IsoWeekday::*;
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let default_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(Default::default())

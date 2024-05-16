@@ -27,15 +27,15 @@ use serde::Deserialize;
 /// This deserializer is generic over `T`, which is the type of the resource-specific fields,
 /// and will in effect "strip" the top two layers from the JSON when parsing.
 #[derive(Debug, Deserialize)]
-pub struct LocaleResource<T> {
-    pub main: SingleLocaleMap<T>,
+pub(in crate::provider) struct LocaleResource<T> {
+    pub(in crate::provider) main: SingleLocaleMap<T>,
 }
 
 /// A map containing a single locale key and value.
 #[derive(Debug)]
-pub struct SingleLocaleMap<T> {
-    pub locale: LanguageIdentifier,
-    pub value: T,
+pub(in crate::provider) struct SingleLocaleMap<T> {
+    pub(in crate::provider) _locale: LanguageIdentifier,
+    pub(in crate::provider) value: T,
 }
 
 struct SingleLocaleMapVisitor<T>(PhantomData<T>);
@@ -62,7 +62,10 @@ where
         if access.next_key::<LanguageIdentifier>()?.is_some() {
             return Err(M::Error::duplicate_field("<LOCALE>"));
         }
-        Ok(SingleLocaleMap { locale, value })
+        Ok(SingleLocaleMap {
+            _locale: locale,
+            value,
+        })
     }
 }
 

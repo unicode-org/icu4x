@@ -5,11 +5,15 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`TypedDateTimeFormatter`].
 
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
 use crate::{
     helpers::size_test,
     options::{length, preferences, DateTimeFormatterOptions},
-    provider::calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
-    provider::date_time::PatternSelector,
+    provider::{
+        calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
+        date_time::{PatternForLengthError, PatternSelector},
+    },
     raw,
 };
 use alloc::string::String;
@@ -27,7 +31,7 @@ use crate::{
 
 size_test!(TimeFormatter, time_formatter_size, 1200);
 
-/// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
+/// [`TimeFormatter`] is a structure of the [`icu::datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
 ///
@@ -36,7 +40,7 @@ size_test!(TimeFormatter, time_formatter_size, 1200);
 ///
 #[doc = time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TimeFormatter
 ///
 /// # Examples
@@ -201,7 +205,7 @@ size_test!(
 ///
 #[doc = typed_date_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
@@ -421,7 +425,7 @@ size_test!(
 ///
 #[doc = typed_date_time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateTimeFormatter
 ///
 /// # Examples
@@ -543,7 +547,11 @@ where {
             calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
             locale,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::DateTimeFormatter::try_new(
                 patterns,
@@ -595,7 +603,11 @@ where {
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
             locale,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(
                 provider,
@@ -662,7 +674,14 @@ where {
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
         Ok(Self(
             raw::DateTimeFormatter::try_new(
                 patterns,
@@ -703,7 +722,15 @@ where {
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
+
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(
                 provider,

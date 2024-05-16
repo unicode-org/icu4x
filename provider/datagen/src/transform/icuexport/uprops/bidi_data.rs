@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn get_code_point_prop_map<'a>(
         &'a self,
         key: &str,
@@ -26,7 +27,7 @@ impl crate::DatagenProvider {
 
 // implement data provider 2 different ways, based on whether or not
 // features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
-impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
+impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
@@ -108,7 +109,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -122,7 +123,7 @@ mod tests {
 
     #[test]
     fn test_bidi_data_provider() {
-        let provider = crate::DatagenProvider::new_testing();
+        let provider = DatagenProvider::new_testing();
 
         let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
             .load(Default::default())

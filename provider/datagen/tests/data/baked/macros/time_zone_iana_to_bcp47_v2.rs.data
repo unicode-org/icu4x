@@ -25,3 +25,18 @@ macro_rules! __impl_time_zone_iana_to_bcp47_v2 {
         }
     };
 }
+/// Implement `IterableDataProvider<IanaToBcp47MapV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `DatagenDriver` for this key.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impliterable_time_zone_iana_to_bcp47_v2 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::datagen::IterableDataProvider<icu::timezone::provider::names::IanaToBcp47MapV2Marker> for $provider {
+            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
+                Ok([icu_provider::DataLocale::default()].into())
+            }
+        }
+    };
+}

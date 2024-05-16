@@ -41,4 +41,10 @@ export class ICU4XLocaleExpander {
    * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize Rust documentation for `minimize`} for more information.
    */
   minimize(locale: ICU4XLocale): ICU4XTransformResult;
+
+  /**
+
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize_favor_script Rust documentation for `minimize_favor_script`} for more information.
+   */
+  minimize_favor_script(locale: ICU4XLocale): ICU4XTransformResult;
 }

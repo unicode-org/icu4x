@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
@@ -28,31 +29,70 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
-impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
         self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
 
-        let data = LocaleFallbackSupplementV1 {
-            parents: self
-                .cldr()?
-                .core()
-                .read_and_parse::<super::super::cldr::cldr_serde::parent_locales::Resource>(
-                    "supplemental/parentLocales.json",
-                )?
-                .supplemental
-                .parent_locales
-                .collations
-                .iter()
-                .map(|(from, to)| {
-                    (
-                        <&UnvalidatedStr>::from(from.as_str()),
-                        <(Language, Option<Script>, Option<Region>)>::from(to),
+        let parent_locales = &self
+            .cldr()?
+            .core()
+            .read_and_parse::<crate::provider::transform::cldr::cldr_serde::parent_locales::Resource>(
+                "supplemental/parentLocales.json",
+            )?.supplemental.parent_locales;
+
+        let additional = if parent_locales
+            .rules
+            .collations
+            .as_ref()
+            .map(|c| &c.non_likely_scripts)
+            != Some(&String::from("root"))
+        {
+            let collation_locales = self
+                .icuexport()?
+                .list(&format!("collation/{}", self.collation_han_database()))?
+                .filter_map(|s| {
+                    Some(
+                        file_name_to_locale(
+                            s.rsplit_once('_')?.0,
+                            self.has_legacy_swedish_variants(),
+                        )?
+                        .id
+                        .language,
                     )
                 })
-                .collect(),
+                .collect::<HashSet<_>>();
+
+            parent_locales
+                .parent_locale
+                .iter()
+                .filter(|(k, _)| collation_locales.contains(&k.language))
+                .filter(|(from, to)| {
+                    // Script gets removed while language changes. For collation we want to insert the script-removal as its
+                    // own step.
+                    from.script.is_some() && to.script.is_none() && from.language != to.language
+                })
+                .map(|(from, _)| (from.to_string(), (from.language, None, from.region)))
+                .collect()
+        } else {
+            HashSet::new()
+        };
+
+        let parents = additional
+            .iter()
+            .map(|(k, v)| (UnvalidatedStr::from_str(k), *v))
+            .chain(parent_locales.collations.iter().map(|(from, to)| {
+                (
+                    <&UnvalidatedStr>::from(from.as_str()),
+                    <(Language, Option<Script>, Option<Region>)>::from(to),
+                )
+            }))
+            .collect();
+
+        let data = LocaleFallbackSupplementV1 {
+            parents,
             unicode_extension_defaults: [
                 (
                     key!("co"),
@@ -75,13 +115,13 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
     }
 }
 
-impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
     fn has_legacy_swedish_variants(&self) -> bool {
         self.icuexport()
@@ -168,7 +208,7 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
 macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider {
+            impl DataProvider<$marker> for DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let $toml_data: &collator_serde::$serde_struct = self
@@ -197,7 +237,7 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for crate::DatagenProvider {
+            impl IterableDataProviderInternal<$marker> for DatagenProvider {
                 fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
                     Ok(self
                         .icuexport()?

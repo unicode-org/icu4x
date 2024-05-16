@@ -26,6 +26,7 @@ pub mod ffi {
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locid_transform::LocaleCanonicalizer::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
@@ -42,6 +43,7 @@ pub mod ffi {
             icu::locid_transform::LocaleCanonicalizer::new_with_expander,
             FnInStruct
         )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
         pub fn create_extended(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
@@ -74,6 +76,7 @@ pub mod ffi {
     impl ICU4XLocaleExpander {
         /// Create a new [`ICU4XLocaleExpander`].
         #[diplomat::rust_link(icu::locid_transform::LocaleExpander::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
@@ -87,6 +90,7 @@ pub mod ffi {
 
         /// Create a new [`ICU4XLocaleExpander`] with extended data.
         #[diplomat::rust_link(icu::locid_transform::LocaleExpander::new_extended, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
         pub fn create_extended(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
@@ -106,6 +110,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locid_transform::LocaleExpander::minimize, FnInStruct)]
         pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
             self.0.minimize(&mut locale.0).into()
+        }
+
+        #[diplomat::rust_link(
+            icu::locid_transform::LocaleExpander::minimize_favor_script,
+            FnInStruct
+        )]
+        pub fn minimize_favor_script(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+            self.0.minimize_favor_script(&mut locale.0).into()
         }
     }
 }

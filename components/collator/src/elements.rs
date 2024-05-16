@@ -772,7 +772,7 @@ where
     /// `iter` but haven't yet been mapped to `CollationElement`s.
     ///
     /// Typically, `upcoming` holds one character and corresponds semantically
-    /// to `pending_unnormalized_starter` in `icu_normalizer::Decomposition`.
+    /// to `pending_unnormalized_starter` in `icu::normalizer::Decomposition`.
     /// This is why there isn't a move avoidance optimization similar to
     /// `pending_pos` above for this buffer. A complex decomposition, a
     /// Hangul syllable followed by a non-starter, or lookahead can cause

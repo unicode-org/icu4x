@@ -12,9 +12,9 @@ use serde::{de::Visitor, Deserialize};
 use std::collections::HashMap;
 
 #[derive(PartialEq, PartialOrd, Ord, Eq, Hash, Debug)]
-pub struct PluralRange {
-    pub start: String,
-    pub end: String,
+pub(in crate::provider) struct PluralRange {
+    pub(in crate::provider) start: String,
+    pub(in crate::provider) end: String,
 }
 
 impl<'de> Deserialize<'de> for PluralRange {
@@ -59,17 +59,21 @@ impl<'de> Deserialize<'de> for PluralRange {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LocalePluralRanges(pub HashMap<PluralRange, String>);
+pub(in crate::provider) struct LocalePluralRanges(
+    pub(in crate::provider) HashMap<PluralRange, String>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct PluralRanges(pub HashMap<LanguageIdentifier, LocalePluralRanges>);
+pub(in crate::provider) struct PluralRanges(
+    pub(in crate::provider) HashMap<LanguageIdentifier, LocalePluralRanges>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
-    pub plurals: PluralRanges,
+pub(in crate::provider) struct Supplemental {
+    pub(in crate::provider) plurals: PluralRanges,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
+pub(in crate::provider) struct Resource {
+    pub(in crate::provider) supplemental: Supplemental,
 }

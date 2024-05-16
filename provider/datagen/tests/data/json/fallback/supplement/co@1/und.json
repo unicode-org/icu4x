@@ -1,10 +1,5 @@
 {
   "parents": {
-    "bs-Cyrl": [
-      "bs",
-      null,
-      null
-    ],
     "sr-Cyrl-ME": [
       "sr",
       null,

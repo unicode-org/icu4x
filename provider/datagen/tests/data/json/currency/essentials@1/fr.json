@@ -936,7 +936,7 @@
         "Index": 4
       }
     },
-    "XOF": {
+    "XCG": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
@@ -944,7 +944,7 @@
       },
       "narrow_placeholder_value": null
     },
-    "XPF": {
+    "XOF": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
@@ -952,11 +952,19 @@
       },
       "narrow_placeholder_value": null
     },
-    "XXX": {
+    "XPF": {
       "short_pattern_selection": "Standard",
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
         "Index": 91
+      },
+      "narrow_placeholder_value": null
+    },
+    "XXX": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 92
       },
       "narrow_placeholder_value": null
     },
@@ -965,7 +973,7 @@
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 92
+        "Index": 93
       }
     },
     "ZMW": {
@@ -973,7 +981,7 @@
       "narrow_pattern_selection": "Standard",
       "short_placeholder_value": null,
       "narrow_placeholder_value": {
-        "Index": 93
+        "Index": 94
       }
     }
   },
@@ -1079,6 +1087,7 @@
     "₫",
     "$WS",
     "FCFA",
+    "Cg.",
     "F CFA",
     "FCFP",
     "¤",

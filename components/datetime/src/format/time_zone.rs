@@ -4,10 +4,9 @@
 
 use core::fmt;
 
-use crate::error::DateTimeError as Error;
 use crate::{
     input::TimeZoneInput,
-    time_zone::{FormatTimeZone, TimeZoneFormatter, TimeZoneFormatterUnit},
+    time_zone::{FormatTimeZone, FormatTimeZoneWithFallback, TimeZoneFormatter},
     DateTimeError,
 };
 use writeable::Writeable;
@@ -28,34 +27,22 @@ where
 {
     /// Format time zone with fallbacks.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        match self.write_no_fallback(sink) {
-            Ok(Ok(r)) => Ok(r),
-            _ => match self.time_zone_format.fallback_unit {
-                TimeZoneFormatterUnit::LocalizedGmt(fallback) => {
-                    match fallback.format(
-                        sink,
-                        self.time_zone,
-                        &self.time_zone_format.data_payloads,
-                    ) {
-                        Ok(Ok(r)) => Ok(r),
-                        Ok(Err(e)) => Err(e),
-                        Err(e) => self.handle_last_resort_error(e, sink),
-                    }
-                }
-                TimeZoneFormatterUnit::Iso8601(fallback) => {
-                    match fallback.format(
-                        sink,
-                        self.time_zone,
-                        &self.time_zone_format.data_payloads,
-                    ) {
-                        Ok(Ok(r)) => Ok(r),
-                        Ok(Err(e)) => Err(e),
-                        Err(e) => self.handle_last_resort_error(e, sink),
-                    }
-                }
-                _ => Err(core::fmt::Error),
-            },
-        }
+        let mut sink = writeable::adapters::CoreWriteAsPartsWrite(sink);
+
+        let r = match self.write_no_fallback(&mut sink) {
+            Ok(fmt_result) => Ok(fmt_result?),
+            Err(_) => self
+                .time_zone_format
+                .fallback_unit
+                .format_with_last_resort_fallback(
+                    &mut sink,
+                    self.time_zone,
+                    &self.time_zone_format.data_payloads,
+                )?,
+        };
+
+        debug_assert!(r.is_ok(), "{r:?}");
+        Ok(())
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -119,50 +106,21 @@ where
     /// // Use the `Writable` trait instead to enable infallible formatting:
     /// writeable::assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn write_no_fallback<W>(&self, w: &mut W) -> Result<fmt::Result, Error>
+    pub fn write_no_fallback<W>(&self, mut w: &mut W) -> Result<fmt::Result, DateTimeError>
     where
         W: core::fmt::Write + ?Sized,
     {
         for unit in self.time_zone_format.format_units.iter() {
-            match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
+            match unit.format(
+                &mut writeable::adapters::CoreWriteAsPartsWrite(&mut w),
+                self.time_zone,
+                &self.time_zone_format.data_payloads,
+            ) {
                 Ok(r) => return Ok(r),
                 Err(DateTimeError::UnsupportedOptions) => continue,
                 Err(e) => return Err(e),
             }
         }
         Err(DateTimeError::UnsupportedOptions)
-    }
-
-    fn handle_last_resort_error<W>(&self, e: DateTimeError, sink: &mut W) -> fmt::Result
-    where
-        W: core::fmt::Write + ?Sized,
-    {
-        match e {
-            DateTimeError::MissingInputField(Some("gmt_offset")) => {
-                debug_assert!(
-                    false,
-                    "Warning: using last-resort time zone fallback: {:?}.\
- To fix this warning, ensure the gmt_offset field is present.",
-                    &self
-                        .time_zone_format
-                        .data_payloads
-                        .zone_formats
-                        .get()
-                        .gmt_offset_fallback
-                );
-                sink.write_str(
-                    &self
-                        .time_zone_format
-                        .data_payloads
-                        .zone_formats
-                        .get()
-                        .gmt_offset_fallback,
-                )
-            }
-            _ => {
-                debug_assert!(false, "{e:?}");
-                Err(core::fmt::Error)
-            }
-        }
     }
 }

@@ -2,14 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde::{self, ca};
+use crate::provider::transform::cldr::cldr_serde::{self, ca};
 use icu_calendar::types::MonthCode;
 use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
-pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
+pub(in crate::provider) fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: &str,
+) -> DateSymbolsV1<'static> {
     let eras = if let Some(ref eras) = other.eras {
         convert_eras(eras, calendar)
     } else {
@@ -22,7 +25,7 @@ pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbo
     }
 }
 
-pub fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbolsV1<'static> {
+pub(in crate::provider) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbolsV1<'static> {
     TimeSymbolsV1 {
         day_periods: other.day_periods.get(&()),
     }
@@ -46,7 +49,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 /// Returns a month code map and whether the map has leap months
-pub(super) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+pub(in crate::provider) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066
     static SOLAR_MONTH_CODES: &[TinyStr4] = &[
@@ -93,7 +96,9 @@ pub(super) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     }
 }
 
-pub(super) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
+pub(in crate::provider) fn get_era_code_map(
+    calendar: &str,
+) -> impl Iterator<Item = (&str, TinyStr16)> {
     use either::Either;
 
     let array: &[_] = match calendar {
@@ -101,7 +106,7 @@ pub(super) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
         "buddhist" => &[("0", tinystr!(16, "be"))],
         "japanese" | "japanext" => {
             return Either::Right(
-                crate::transform::cldr::calendar::japanese::get_era_code_map()
+                crate::provider::transform::cldr::calendar::japanese::get_era_code_map()
                     .iter()
                     .map(|(k, v)| (&**k, *v)),
             )
@@ -160,7 +165,7 @@ macro_rules! symbols_from {
     ([$symbols: path, $name2: ident], $ctx:ty) => {
         impl $symbols {
             // Helper function which returns `None` if the two groups of symbols overlap.
-            pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
+            pub(in crate::provider) fn get_unaliased(&self, other: &Self) -> Option<Self> {
                 if self == other {
                     None
                 } else {
@@ -182,7 +187,7 @@ macro_rules! symbols_from {
 
         impl ca::StandAloneWidths<$symbols> {
             // Helper function which returns `None` if the two groups of symbols overlap.
-            pub fn get_unaliased(&self, other: &ca::FormatWidths<$symbols>) -> Option<Self> {
+            pub(in crate::provider) fn get_unaliased(&self, other: &ca::FormatWidths<$symbols>) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
                 let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));
                 let short = if self.short == other.short {

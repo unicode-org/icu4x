@@ -22,8 +22,8 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
-//!     .export(&DatagenProvider::new_latest_tested(), exporter)
+//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)

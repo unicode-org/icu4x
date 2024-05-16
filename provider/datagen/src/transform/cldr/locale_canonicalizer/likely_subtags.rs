@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde;
-use crate::CoverageLevel;
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::CoverageLevel;
+use crate::provider::DatagenProvider;
 use icu_locid::subtags::Language;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::*;
@@ -11,7 +12,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
+impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
         self.check_req::<LikelySubtagsV1Marker>(req)?;
         let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
@@ -23,13 +24,13 @@ impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LikelySubtagsV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl DataProvider<LikelySubtagsExtendedV1Marker> for crate::DatagenProvider {
+impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -46,13 +47,13 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsExtendedV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl DataProvider<LikelySubtagsForLanguageV1Marker> for crate::DatagenProvider {
+impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -66,13 +67,13 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for crate::DatagenProvider {
+impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -86,19 +87,19 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for crate::DatagenProvid
     }
 }
 
-impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-pub(crate) struct LikelySubtagsResources<'a> {
+pub(in crate::provider) struct LikelySubtagsResources<'a> {
     likely_subtags: &'a cldr_serde::likely_subtags::Resource,
     basic_plus_languages: HashSet<Language>,
 }
 
 impl<'a> LikelySubtagsResources<'a> {
-    pub fn try_from_cldr_cache(
+    pub(in crate::provider) fn try_from_cldr_cache(
         cache: &'a super::super::source::CldrCache,
     ) -> Result<LikelySubtagsResources, DataError> {
         let likely_subtags: &cldr_serde::likely_subtags::Resource = cache
@@ -137,7 +138,7 @@ impl<'a> LikelySubtagsResources<'a> {
             || **minimized == LanguageIdentifier::UND
     }
 
-    pub fn get_common(
+    pub(in crate::provider) fn get_common(
         &self,
     ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
         self.likely_subtags
@@ -147,7 +148,7 @@ impl<'a> LikelySubtagsResources<'a> {
             .filter(|min_max| self.common_predicate(min_max))
     }
 
-    pub fn get_extended(
+    pub(in crate::provider) fn get_extended(
         &self,
     ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
         self.likely_subtags
@@ -158,7 +159,7 @@ impl<'a> LikelySubtagsResources<'a> {
     }
 }
 
-pub(crate) fn transform<'x>(
+pub(in crate::provider) fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LikelySubtagsV1<'static> {
     let mut language_script = BTreeMap::new();
@@ -268,7 +269,7 @@ pub(crate) fn transform<'x>(
 fn test_basic() {
     use icu_locid::subtags::{language, region, script};
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
     let result_common: DataPayload<LikelySubtagsV1Marker> = provider
         .load(Default::default())
         .unwrap()

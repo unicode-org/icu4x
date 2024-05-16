@@ -102,6 +102,13 @@ export class ICU4XCodePointMapData8 {
 
   /**
 
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.hangul_syllable_type.html Rust documentation for `hangul_syllable_type`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_hangul_syllable_type(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+
+  /**
+
    * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html Rust documentation for `indic_syllabic_category`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */

@@ -4,15 +4,16 @@
 
 use std::collections::HashSet;
 
+use crate::provider::transform::cldr::cldr_serde;
+use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use crate::transform::cldr::cldr_serde;
 
 use icu_experimental::dimension::provider::percent::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use tinystr::tinystr;
 
-impl DataProvider<PercentEssentialsV1Marker> for crate::DatagenProvider {
+impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
         self.check_req::<PercentEssentialsV1Marker>(req)?;
         let langid = req.locale.get_langid();
@@ -31,7 +32,7 @@ impl DataProvider<PercentEssentialsV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<PercentEssentialsV1Marker> for crate::DatagenProvider {
+impl IterableDataProviderInternal<PercentEssentialsV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
         Ok(self
             .cldr()?
@@ -109,7 +110,7 @@ fn test_basic() {
     use icu_experimental::dimension::provider::percent::*;
     use icu_locid::locale;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let en: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {

@@ -112,4 +112,13 @@ export class ICU4XTimeZoneFormatter {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_custom_time_zone(value: ICU4XCustomTimeZone): string | never;
+
+  /**
+
+   * Formats a {@link ICU4XCustomTimeZone `ICU4XCustomTimeZone`} to a string, performing no fallback
+
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/struct.FormattedTimeZone.html#method.write_no_fallback Rust documentation for `write_no_fallback`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  format_custom_time_zone_no_fallback(value: ICU4XCustomTimeZone): string | never;
 }

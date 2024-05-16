@@ -7,7 +7,7 @@
 //! aggregators for forward and reverse directions.
 //!
 //! These aggregators both accept source-order (!) `parse::Rule`s and aggregate them into the rule
-//! groups that the data struct [`RuleBasedTransliterator`](icu_experimental::transliterate::provider::RuleBasedTransliterator)
+//! groups that the data struct [`RuleBasedTransliterator`](icu::experimental::transliterate::provider::RuleBasedTransliterator)
 //! semantically expects. A later step converts these into the actual zero-copy format.
 //! They also transform the bidirectional `parse::Rule`s into a unidirectional version.
 
@@ -109,11 +109,9 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
                 self.preceding_transform_group = Some(transform_group);
             }
             ForwardRuleGroup::Conversion(conversion_group) => {
-                let associated_transform_group = match self.preceding_transform_group.take() {
-                    Some(transform_group) => transform_group,
-                    // match arm is necessary if the first source-order rule group is a conversion group
-                    None => Vec::new(),
-                };
+                // unwrap is necessary if the first source-order rule group is a conversion group
+                let associated_transform_group =
+                    self.preceding_transform_group.take().unwrap_or_default();
                 self.groups
                     .push((associated_transform_group, conversion_group));
             }
@@ -254,11 +252,9 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                 self.preceding_conversion_group = Some(conv_group);
             }
             ReverseRuleGroup::Transform(transform_group) => {
-                let associated_conv_group = match self.preceding_conversion_group.take() {
-                    Some(conv_group) => conv_group,
-                    // match arm is necessary if the first source-order rule group is a transform group
-                    None => Vec::new(),
-                };
+                // unwrap is necessary if the first source-order rule group is a transform group
+                let associated_conv_group =
+                    self.preceding_conversion_group.take().unwrap_or_default();
                 let vec_transform_group = transform_group.into(); // non-allocating conversion
                 self.groups
                     .push_front((vec_transform_group, associated_conv_group));

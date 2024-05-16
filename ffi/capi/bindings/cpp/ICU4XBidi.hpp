@@ -46,11 +46,13 @@ class ICU4XBidi {
    * 
    * Takes in a Level for the default level, if it is an invalid value it will default to LTR
    * 
+   * Returns nothing if `text` is invalid UTF-8.
+   * 
    * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
    * 
    * Lifetimes: `text` must live at least as long as the output.
    */
-  ICU4XBidiInfo for_text(const std::string_view text, uint8_t default_level) const;
+  std::optional<ICU4XBidiInfo> for_text(const std::string_view text, uint8_t default_level) const;
 
   /**
    * Utility function for producing reorderings given a list of levels
@@ -121,8 +123,15 @@ inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::create(const ICU4XData
   }
   return diplomat_result_out_value;
 }
-inline ICU4XBidiInfo ICU4XBidi::for_text(const std::string_view text, uint8_t default_level) const {
-  return ICU4XBidiInfo(capi::ICU4XBidi_for_text(this->inner.get(), text.data(), text.size(), default_level));
+inline std::optional<ICU4XBidiInfo> ICU4XBidi::for_text(const std::string_view text, uint8_t default_level) const {
+  auto diplomat_optional_raw_out_value = capi::ICU4XBidi_for_text(this->inner.get(), text.data(), text.size(), default_level);
+  std::optional<ICU4XBidiInfo> diplomat_optional_out_value;
+  if (diplomat_optional_raw_out_value != nullptr) {
+    diplomat_optional_out_value = ICU4XBidiInfo(diplomat_optional_raw_out_value);
+  } else {
+    diplomat_optional_out_value = std::nullopt;
+  }
+  return diplomat_optional_out_value;
 }
 inline ICU4XReorderedIndexMap ICU4XBidi::reorder_visual(const diplomat::span<const uint8_t> levels) const {
   return ICU4XReorderedIndexMap(capi::ICU4XBidi_reorder_visual(this->inner.get(), levels.data(), levels.size()));

@@ -34,10 +34,10 @@ macro_rules! impl_from_signed_integer_type {
             fn from(value: $itype) -> Self {
                 Self {
                     unum: {
-                        if value == core::$itype::MIN {
-                            core::$itype::MAX as $utype + 1
+                        if value == $itype::MIN {
+                            $itype::MAX as $utype + 1
                         } else {
-                            value.abs() as $utype
+                            value.unsigned_abs()
                         }
                     },
                     is_negative: value.is_negative(),

@@ -8,7 +8,7 @@ use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::vec::Vec;
 use core::str::FromStr;
 use icu_provider::prelude::*;
-use zerovec::ZeroVec;
+use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
@@ -17,11 +17,20 @@ use zerovec::ZeroVec;
     databake(path = icu_datetime::pattern::runtime),
 )]
 #[zerovec::make_varule(PatternULE)]
+#[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
+#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
     /// This field should contain the smallest time unit from the `items` vec.
     /// If it doesn't, unexpected results for day periods may be encountered.
+    pub metadata: PatternMetadata,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct PatternBorrowed<'data> {
+    pub items: &'data ZeroSlice<PatternItem>,
     pub metadata: PatternMetadata,
 }
 
@@ -31,6 +40,8 @@ pub struct Pattern<'data> {
 pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
+    pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
+
     #[inline]
     pub(crate) fn time_granularity(self) -> TimeGranularity {
         TimeGranularity::from_ordinal(self.0)
@@ -69,7 +80,7 @@ impl PatternMetadata {
 impl Default for PatternMetadata {
     #[inline]
     fn default() -> Self {
-        Self::from_time_granularity(TimeGranularity::None)
+        Self::DEFAULT
     }
 }
 
@@ -77,6 +88,37 @@ impl<'data> Pattern<'data> {
     pub fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
+            metadata: self.metadata,
+        }
+    }
+
+    pub fn as_borrowed(&self) -> PatternBorrowed {
+        PatternBorrowed {
+            items: &self.items,
+            metadata: self.metadata,
+        }
+    }
+}
+
+impl PatternULE {
+    pub fn as_borrowed(&self) -> PatternBorrowed {
+        PatternBorrowed {
+            items: &self.items,
+            metadata: PatternMetadata::from_unaligned(self.metadata),
+        }
+    }
+}
+
+impl<'data> PatternBorrowed<'data> {
+    #[cfg(feature = "experimental")]
+    pub(crate) const DEFAULT: PatternBorrowed<'static> = PatternBorrowed {
+        items: ZeroSlice::new_empty(),
+        metadata: PatternMetadata::DEFAULT,
+    };
+
+    pub fn as_pattern(&self) -> Pattern<'data> {
+        Pattern {
+            items: self.items.as_zerovec(),
             metadata: self.metadata,
         }
     }

@@ -134,6 +134,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/Gr_Link.toml",
     "uprops/small/graph.toml",
     "uprops/small/Hex.toml",
+    "uprops/small/hst.toml",
     "uprops/small/Hyphen.toml",
     "uprops/small/IDC.toml",
     "uprops/small/Ideo.toml",

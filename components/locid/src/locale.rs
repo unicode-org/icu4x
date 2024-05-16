@@ -28,7 +28,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::{
+/// use icu::locid::{
 ///     extensions::unicode::{key, value},
 ///     locale,
 ///     subtags::{language, region},
@@ -193,7 +193,7 @@ impl Locale {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.write_cmp_bytes(other)
+        self.writeable_cmp_bytes(other)
     }
 
     #[allow(clippy::type_complexity)]

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::DatagenProvider;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
@@ -9,7 +10,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn get_binary_prop_for_unicodeset<'a>(
         &'a self,
         key: &str,
@@ -29,7 +30,7 @@ impl crate::DatagenProvider {
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
-            impl DataProvider<$marker> for crate::DatagenProvider {
+            impl DataProvider<$marker> for DatagenProvider {
                 fn load(
                     &self,
                     req: DataRequest,
@@ -58,7 +59,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker> for crate::DatagenProvider {
+            impl IterableDataProvider<$marker> for DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -79,7 +80,7 @@ fn test_basic() {
     use icu_properties::provider::BasicEmojiV1Marker;
     use icu_properties::provider::PropertyUnicodeSetV1;
 
-    let provider = crate::DatagenProvider::new_testing();
+    let provider = DatagenProvider::new_testing();
 
     let payload: DataPayload<BasicEmojiV1Marker> = provider
         .load(Default::default())

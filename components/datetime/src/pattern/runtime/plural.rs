@@ -3,13 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    error::DateTimeError,
     fields::{Field, FieldSymbol, Week},
-    input::{DateTimeInput, LocalizedDateTimeInput},
     pattern::{runtime::Pattern, PatternError, PatternItem},
 };
 use either::Either;
-use icu_plurals::{PluralCategory, PluralRules};
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
@@ -64,7 +62,7 @@ impl<'data> PluralPattern<'data> {
         })
     }
 
-    /// Returns which week field determines the [icu_plurals::PluralCategory] used to select a pattern variant for a given date.
+    /// Returns which week field determines the [icu::plurals::PluralCategory] used to select a pattern variant for a given date.
     pub fn pivot_field(&self) -> Week {
         self.pivot_field
     }
@@ -83,7 +81,7 @@ impl<'data> PluralPattern<'data> {
         }
     }
 
-    fn variant(&self, category: PluralCategory) -> &Pattern<'data> {
+    pub(crate) fn variant(&self, category: PluralCategory) -> &Pattern<'data> {
         let variant = match category {
             PluralCategory::Zero => &self.zero,
             PluralCategory::One => &self.one,
@@ -151,30 +149,6 @@ pub enum PatternPlurals<'data> {
 }
 
 impl<'data> PatternPlurals<'data> {
-    // Returns the pattern to use according to loc_datetime and ordinal_rules.
-    pub fn select<T>(
-        &self,
-        loc_datetime: &impl LocalizedDateTimeInput<T>,
-        ordinal_rules: Option<&PluralRules>,
-    ) -> Result<&Pattern, DateTimeError>
-    where
-        T: DateTimeInput,
-    {
-        match self {
-            Self::SinglePattern(pattern) => Ok(pattern),
-            Self::MultipleVariants(plural_pattern) => {
-                let week_number = match plural_pattern.pivot_field() {
-                    Week::WeekOfMonth => loc_datetime.week_of_month()?.0,
-                    Week::WeekOfYear => loc_datetime.week_of_year()?.1 .0,
-                };
-                let category = ordinal_rules
-                    .ok_or(DateTimeError::MissingOrdinalRules)?
-                    .category_for(week_number);
-                Ok(plural_pattern.variant(category))
-            }
-        }
-    }
-
     pub fn into_owned(self) -> PatternPlurals<'static> {
         match self {
             Self::SinglePattern(pattern) => PatternPlurals::SinglePattern(pattern.into_owned()),

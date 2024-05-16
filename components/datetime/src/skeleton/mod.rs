@@ -23,7 +23,7 @@ mod test {
 
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
-        options::components,
+        options::{components, preferences},
         pattern::runtime,
         provider::calendar::{
             DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
@@ -33,11 +33,6 @@ mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
     use litemap::LiteMap;
-
-    use ::serde::{
-        ser::{self, SerializeSeq},
-        Serialize,
-    };
 
     fn get_data_payload() -> (
         DataPayload<GregorianDateLengthsV1Marker>,
@@ -76,7 +71,7 @@ mod test {
 
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
@@ -103,7 +98,7 @@ mod test {
             weekday: Some(components::Text::Short),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
@@ -134,7 +129,7 @@ mod test {
             time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (patterns, skeletons) = get_data_payload();
 
         match create_best_pattern_for_fields(
@@ -161,7 +156,7 @@ mod test {
     #[test]
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         assert_eq!(
@@ -178,7 +173,7 @@ mod test {
             time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
-        let requested_fields = components.to_vec_fields();
+        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
@@ -329,23 +324,54 @@ mod test {
         );
     }
 
-    /// Skeletons are represented in bincode as a vec of field, but bincode shouldn't be completely
-    /// trusted, test that the bincode gets validated correctly.
-    struct TestInvalidSkeleton(Vec<Field>);
+    #[test]
+    fn test_skeleton_matching_weekday_short() {
+        let components = components::Bag {
+            weekday: Some(components::Text::Short),
+            ..Default::default()
+        };
+        let default_hour_cycle = preferences::HourCycle::H23;
+        let requested_fields = components.to_vec_fields(default_hour_cycle);
+        let (_, skeletons) = get_data_payload();
 
-    #[cfg(feature = "serde")]
-    impl Serialize for TestInvalidSkeleton {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: ser::Serializer,
-        {
-            let fields = &self.0;
-            let mut seq = serializer.serialize_seq(Some(fields.len()))?;
-            for item in fields.iter() {
-                seq.serialize_element(item)?;
+        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+                assert_eq!(
+                    available_format_pattern
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string()
+                        .as_str(),
+                    // Requesting E, CLDR has ccc, should not be shortened to c
+                    "ccc"
+                )
             }
-            seq.end()
-        }
+            best => panic!("Unexpected {best:?}"),
+        };
+    }
+
+    #[test]
+    fn test_skeleton_matching_weekday_long() {
+        let components = components::Bag {
+            weekday: Some(components::Text::Long),
+            ..Default::default()
+        };
+        let default_hour_cycle = preferences::HourCycle::H23;
+        let requested_fields = components.to_vec_fields(default_hour_cycle);
+        let (_, skeletons) = get_data_payload();
+
+        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+                assert_eq!(
+                    available_format_pattern
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string()
+                        .as_str(),
+                    // Requesting EEEE, CLDR has ccc, should be lengthened to cccc
+                    "cccc"
+                )
+            }
+            best => panic!("Unexpected {best:?}"),
+        };
     }
 
     #[cfg(feature = "datagen")]
