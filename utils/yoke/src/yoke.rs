@@ -173,7 +173,7 @@ where
     ///     (yoke, *bytes_remaining)
     /// }
     ///
-    /// let (yoke, bytes_remaining) = load_object("filename.bincode");
+    /// let (yoke, bytes_remaining) = load_object("filename.postcard");
     /// assert_eq!(&**yoke.get(), "hello");
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// assert_eq!(bytes_remaining, 3);
