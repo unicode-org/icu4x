@@ -222,6 +222,7 @@ diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "
 ## External Deps Group 1: Library deps except datagen. No default features.
 # Keep in sync with allowlist.rs:
 # BASIC_RUNTIME_DEPS
+# BASIC_BUILD_DEPS
 # EXTRA_SERDE_DEPS
 # EXTRA_EXPERIMENTAL_DEPS
 # EXTRA_LSTM_DEPS
@@ -230,7 +231,9 @@ diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "
 # EXTRA_BLOB_DEPS
 # EXTRA_FS_DEPS
 core_maths = { version = "0.1.0", default-features = false }
+displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.9.0", default-features = false }
+libc_alloc = { version = "1.0.6", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }
 num-bigint = { version = "0.4.3", default-features = false }
@@ -248,11 +251,11 @@ utf16_iter = { version = "1.0.2", default-features = false }
 utf8_iter = { version = "1.0.2", default-features = false }
 write16 = { version = "1.0.0", default-features = false }
 
-## External Deps Group 2: Heavy Build, Dev, and Datagen deps. No default features.
+## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
 zip = { version = "0.6.0", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 
-## External Deps Group 3: Build, Dev, and Datagen deps. Include default features.
+## External Deps Group 3: Dev and Datagen deps. Include default features.
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
 atoi = "1.0.0"
@@ -261,7 +264,6 @@ clap = "4.2.0"
 combine = "4.3.1"
 criterion = "0.5.0"
 detone = "1.0.0"
-displaydoc = "0.2.3"
 elsa = "1.10.0"
 erased-serde = "0.3.11"
 eyre = "0.6.0"
@@ -269,7 +271,6 @@ getrandom = "0.2"
 iai = "0.1.1"
 indexmap = "1.0.0"
 itertools = "0.10.3"
-libc_alloc = "1.0.6"
 ndarray = "0.15.0"
 nom = "7.0.0"
 once_cell = "1.15.0"
