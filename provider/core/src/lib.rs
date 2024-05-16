@@ -248,20 +248,23 @@ pub mod prelude {
     pub use crate::DynamicDataProvider;
     #[doc(no_inline)]
     pub use crate::KeyedDataMarker;
-    #[doc(no_inline)]
-    #[doc(no_inline)]
-    pub use icu_locid::extensions::unicode::{
-        key as unicode_extension_key, Key as UnicodeExtensionKey,
-    };
-    #[doc(no_inline)]
-    pub use icu_locid::extensions::unicode::{
-        value as unicode_extension_value, Value as UnicodeExtensionValue,
-    };
-    #[doc(no_inline)]
-    pub use icu_locid::{langid, LanguageIdentifier};
 
     #[cfg(feature = "experimental")]
-    pub use icu_locid::extensions::private::{subtag as aux_key, Subtag as AuxiliaryKey};
+    pub use icu_locid::extensions::private::subtag as aux_key;
+    #[cfg(feature = "experimental")]
+    pub use icu_locid::extensions::private::Subtag as AuxiliaryKey;
+    #[doc(no_inline)]
+    pub use icu_locid::extensions::unicode::key as unicode_extension_key;
+    #[doc(no_inline)]
+    pub use icu_locid::extensions::unicode::value as unicode_extension_value;
+    #[doc(no_inline)]
+    pub use icu_locid::extensions::unicode::Key as UnicodeExtensionKey;
+    #[doc(no_inline)]
+    pub use icu_locid::extensions::unicode::Value as UnicodeExtensionValue;
+    #[doc(no_inline)]
+    pub use icu_locid::langid;
+    #[doc(no_inline)]
+    pub use icu_locid::LanguageIdentifier;
 
     #[doc(hidden)]
     pub use icu_locid;
