@@ -43,4 +43,5 @@ zerofrom = { workspace = true, optional = true}
 
 [dev-dependencies]
 bincode = { workspace = true }
+postcard = { workspace = true }
 serde = { workspace = true }

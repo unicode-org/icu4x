@@ -148,6 +148,36 @@ where
     /// assert_eq!(&**yoke.get(), "hello");
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// ```
+    ///
+    /// Keep track of how many bytes were read from the buffer:
+    ///
+    /// ```
+    /// # use yoke::Yoke;
+    /// # use std::rc::Rc;
+    /// # use std::borrow::Cow;
+    /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
+    /// #     // dummy implementation
+    /// #     Rc::new([0x5, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0, 0, 0])
+    /// # }
+    ///
+    /// fn load_object(filename: &str) -> (Yoke<Cow<'static, str>, Rc<[u8]>>, usize) {
+    ///     let rc: Rc<[u8]> = load_from_cache(filename);
+    ///     let mut bytes_remaining = 0;
+    ///     let bytes_remaining = &mut bytes_remaining;
+    ///     let yoke = Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
+    ///         let mut d = postcard::Deserializer::from_bytes(data);
+    ///         let output = serde::Deserialize::deserialize(&mut d);
+    ///         *bytes_remaining = d.finalize().unwrap().len();
+    ///         Cow::Borrowed(output.unwrap())
+    ///     });
+    ///     (yoke, *bytes_remaining)
+    /// }
+    ///
+    /// let (yoke, bytes_remaining) = load_object("filename.bincode");
+    /// assert_eq!(&**yoke.get(), "hello");
+    /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
+    /// assert_eq!(bytes_remaining, 3);
+    /// ```
     pub fn attach_to_cart<F>(cart: C, f: F) -> Self
     where
         // safety note: This works by enforcing that the *only* place the return value of F
