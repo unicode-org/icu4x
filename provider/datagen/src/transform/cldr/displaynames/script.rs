@@ -93,7 +93,7 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags::script};
+    use icu_locid::{langid, subtags::script};
 
     #[test]
     fn test_basic_script_display_names() {
@@ -101,7 +101,7 @@ mod tests {
 
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -123,7 +123,7 @@ mod tests {
 
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()

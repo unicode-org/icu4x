@@ -98,13 +98,13 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     let provider = DatagenProvider::new_testing();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("ar-EG").into(),
+            locale: &langid!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

@@ -338,10 +338,10 @@ impl ZonedDateTimeFormatter {
     ///     length::Date::Medium,
     ///     length::Time::Long,
     /// );
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new(
-    ///     &locale.into(),
+    ///     &locale,
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )

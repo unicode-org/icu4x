@@ -123,7 +123,7 @@ impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for Data
 
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
     use std::borrow::Cow;
     use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
@@ -135,7 +135,7 @@ mod tests {
 
         let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -201,7 +201,7 @@ mod tests {
 
         let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("ja").into(),
+                locale: &langid!("ja").into(),
                 metadata: Default::default(),
             })
             .unwrap()

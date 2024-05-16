@@ -185,14 +185,14 @@ make_data_provider!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     #[test]
     fn test_basic() {
         let provider = DatagenProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -212,7 +212,7 @@ mod tests {
         let provider = DatagenProvider::new_testing();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("ar").into(),
+                locale: &langid!("ar").into(),
                 metadata: Default::default(),
             })
             .unwrap()

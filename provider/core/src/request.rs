@@ -507,12 +507,10 @@ impl DataLocale {
     /// Auxiliary keys are retained:
     ///
     /// ```
-    /// use icu_locid::Locale;
     /// use icu_provider::prelude::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let locale: Locale = "und-u-nu-arab-x-gbp".parse().unwrap();
-    /// let data_locale = DataLocale::from(locale);
+    /// let data_locale: DataLocale = "und-u-nu-arab-x-gbp".parse().unwrap();
     /// assert_writeable_eq!(data_locale, "und-u-nu-arab-x-gbp");
     ///
     /// let recovered_locale = data_locale.into_locale();
@@ -610,14 +608,10 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{
-    ///     extensions::unicode::{key, value},
-    ///     Locale,
-    /// };
+    /// use icu_locid::extensions::unicode::{key, value};
     /// use icu_provider::prelude::*;
     ///
-    /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
-    /// let locale: DataLocale = locale.into();
+    /// let locale: DataLocale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     ///
     /// assert_eq!(locale.get_unicode_ext(&key!("hc")), None);
     /// assert_eq!(locale.get_unicode_ext(&key!("ca")), Some(value!("coptic")));
@@ -685,11 +679,11 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
+    /// use icu_locid::langid;
     /// use icu_provider::prelude::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let mut data_locale: DataLocale = locale!("ar-EG").into();
+    /// let mut data_locale: DataLocale = langid!("ar-EG").into();
     /// let aux = "gbp"
     ///     .parse::<AuxiliaryKeys>()
     ///     .expect("contains valid characters");
@@ -724,11 +718,11 @@ impl DataLocale {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locid::langid;
 /// use icu_provider::prelude::*;
 /// use writeable::assert_writeable_eq;
 ///
-/// let mut data_locale: DataLocale = locale!("ar-EG").into();
+/// let mut data_locale: DataLocale = langid!("ar-EG").into();
 /// assert_writeable_eq!(data_locale, "ar-EG");
 /// assert!(!data_locale.has_aux());
 /// assert_eq!(data_locale.get_aux(), None);
@@ -1013,43 +1007,41 @@ impl From<Subtag> for AuxiliaryKeys {
 
 #[test]
 fn test_data_locale_to_string() {
-    use icu_locid::locale;
-
     struct TestCase {
-        pub locale: Locale,
+        pub locale: &'static str,
         pub aux: Option<&'static str>,
         pub expected: &'static str,
     }
 
     for cas in [
         TestCase {
-            locale: Locale::UND,
+            locale: "und",
             aux: None,
             expected: "und",
         },
         TestCase {
-            locale: locale!("und-u-cu-gbp"),
+            locale: "und-u-cu-gbp",
             aux: None,
             expected: "und-u-cu-gbp",
         },
         TestCase {
-            locale: locale!("en-ZA-u-cu-gbp"),
+            locale: "en-ZA-u-cu-gbp",
             aux: None,
             expected: "en-ZA-u-cu-gbp",
         },
         #[cfg(feature = "experimental")]
         TestCase {
-            locale: locale!("en-ZA-u-nu-arab"),
+            locale: "en-ZA-u-nu-arab",
             aux: Some("gbp"),
             expected: "en-ZA-u-nu-arab-x-gbp",
         },
     ] {
-        let mut data_locale = DataLocale::from(cas.locale);
+        let mut locale = cas.locale.parse::<DataLocale>().unwrap();
         #[cfg(feature = "experimental")]
         if let Some(aux) = cas.aux {
-            data_locale.set_aux(aux.parse().unwrap());
+            locale.set_aux(aux.parse().unwrap());
         }
-        writeable::assert_writeable_eq!(data_locale, cas.expected);
+        writeable::assert_writeable_eq!(locale, cas.expected);
     }
 }
 

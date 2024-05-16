@@ -18,7 +18,6 @@ pub use helpers::*;
 mod test {
     use super::reference::Skeleton;
     use super::*;
-    use icu_locid::Locale;
     use icu_provider::prelude::*;
 
     use crate::{
@@ -38,7 +37,7 @@ mod test {
         DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
             locale: &locale,
             metadata: Default::default(),
