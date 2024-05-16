@@ -10,8 +10,6 @@
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-
-
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct UnitsData {
     long: BTreeMap<String, String>,
@@ -23,8 +21,6 @@ pub struct UnitsData {
 pub struct Units {
     pub units: UnitsData,
 }
-
-
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LangUnits {

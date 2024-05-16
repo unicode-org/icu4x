@@ -2,5 +2,5 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub(in crate::provider) mod info;
 pub(in crate::provider) mod data;
+pub(in crate::provider) mod info;
