@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
