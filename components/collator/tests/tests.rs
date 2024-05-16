@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::*;
-use icu_locid::{locale, langid, Locale};
+use icu_locid::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;

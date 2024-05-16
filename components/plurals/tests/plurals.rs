@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{locale, langid};
+use icu_locid::{langid, locale};
 use icu_plurals::{provider::CardinalV1Marker, PluralCategory, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 
