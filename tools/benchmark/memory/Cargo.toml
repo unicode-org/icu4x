@@ -10,5 +10,5 @@ edition = "2021"
 
 [dependencies]
 serde_json = { workspace = true }
-clap = { workspace = true, features = ["derive", "default"] }
+clap = { workspace = true, features = ["derive"] }
 libc = "0.2"

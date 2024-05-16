@@ -15,10 +15,10 @@ icu_datagen = { workspace = true, features = ["legacy_api", "use_wasm", "network
 icu_locid = { workspace = true, features = ["databake"] }
 icu_provider = { workspace = true }
 
-clap = { workspace = true, features = ["derive", "default"] }
-eyre = { workspace = true, features = ["default"]}
+clap = { workspace = true, features = ["derive"] }
+eyre = { workspace = true }
 log = { workspace = true }
 quote = { workspace = true }
 simple_logger = { workspace = true }
-ureq = { workspace = true, features = ["tls"] }
+ureq = { workspace = true }
 zip = { workspace = true, features = ["deflate"] }
