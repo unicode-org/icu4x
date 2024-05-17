@@ -22,15 +22,15 @@ independent = true
 all-features = true
 
 [dependencies]
-itertools = "0.10"
+itertools = { workspace = true }
 partial-min-max = "0.4"
 strum = { version = "0.20", features = ["derive"] }
 writeable = { workspace = true }
 
 [dev-dependencies]
-rand = "0.8"
-rand_distr = "0.4"
-rand_pcg = "0.3"
+rand = { workspace = true }
+rand_distr = { workspace = true }
+rand_pcg = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

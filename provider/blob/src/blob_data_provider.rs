@@ -111,6 +111,12 @@ impl BlobDataProvider {
             )?),
         })
     }
+
+    /// For testing purposes only: checks if it is using the V2Bigger format
+    #[doc(hidden)]
+    pub fn internal_is_using_v2_bigger_format(&self) -> bool {
+        matches!(self.data.get(), BlobSchema::V002Bigger(..))
+    }
 }
 
 impl BufferProvider for BlobDataProvider {

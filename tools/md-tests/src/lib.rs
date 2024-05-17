@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::needless_doctest_main)]
+
 #[doc = include_str!("../../../README.md")]
 mod readme {}
 

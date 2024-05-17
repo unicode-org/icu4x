@@ -328,9 +328,6 @@
       "dt": "Makao Yaz Saati",
       "st": "Makao Standart Saati"
     },
-    "macq": {
-      "st": "Macquarie Adası Saati"
-    },
     "maga": {
       "dt": "Magadan Yaz Saati",
       "st": "Magadan Standart Saati"
@@ -353,10 +350,6 @@
     },
     "maws": {
       "st": "Mawson Saati"
-    },
-    "meno": {
-      "dt": "Kuzeybatı Meksika Yaz Saati",
-      "st": "Kuzeybatı Meksika Standart Saati"
     },
     "mepa": {
       "dt": "Meksika Pasifik Kıyısı Yaz Saati",

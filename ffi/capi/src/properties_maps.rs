@@ -29,10 +29,9 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
     fn convert_8<P: TrieValue>(data: maps::CodePointMapData<P>) -> Box<ICU4XCodePointMapData8> {
-        #[allow(clippy::expect_used)] // infallible for the chosen properties
+        #[allow(clippy::unwrap_used)] // infallible for the chosen properties
         Box::new(ICU4XCodePointMapData8(
-            data.try_into_converted()
-                .expect("try_into_converted to u8 must be infallible"),
+            data.try_into_converted().map_err(|_| ()).unwrap(),
         ))
     }
 
@@ -166,6 +165,19 @@ pub mod ffi {
             Ok(convert_8(call_constructor_unstable!(
                 maps::east_asian_width [r => Ok(r.static_to_owned())],
                 maps::load_east_asian_width,
+                provider,
+            )?))
+        }
+
+        #[diplomat::rust_link(icu::properties::maps::hangul_syllable_type, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_hangul_syllable_type, Fn, hidden)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
+        pub fn load_hangul_syllable_type(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+            Ok(convert_8(call_constructor_unstable!(
+                maps::hangul_syllable_type [r => Ok(r.static_to_owned())],
+                maps::load_hangul_syllable_type,
                 provider,
             )?))
         }
@@ -320,7 +332,7 @@ pub mod ffi {
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData16>, ICU4XError> {
-            #[allow(clippy::expect_used)] // script is a 16-bit property
+            #[allow(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(ICU4XCodePointMapData16(
                 call_constructor_unstable!(
                     maps::script [r => Ok(r.static_to_owned())],
@@ -328,7 +340,8 @@ pub mod ffi {
                     provider,
                 )?
                 .try_into_converted()
-                .expect("try_into_converted to u16 must be infallible"),
+                .map_err(|_| ())
+                .unwrap(),
             )))
         }
     }

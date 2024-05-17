@@ -37,13 +37,13 @@ int main() {
         "ב"
         "א";
     auto bidi_info = bidi.for_text(str, ICU4XBidi::level_ltr());
-    auto n_para = bidi_info.paragraph_count();
+    auto n_para = bidi_info->paragraph_count();
     if (n_para != 2) {
         std::cout << "Expected 2 paragraphs, found " << n_para << std::endl;
         return 1;
     }
 
-    auto para = bidi_info.paragraph_at(0).value();
+    auto para = bidi_info->paragraph_at(0).value();
 
     auto size = para.size();
     if (size != 10) {

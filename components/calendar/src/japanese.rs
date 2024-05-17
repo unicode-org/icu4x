@@ -509,7 +509,7 @@ impl Date<JapaneseExtended> {
         Ok(Date::from_raw(inner, japanext_calendar))
     }
 
-    /// For testing era fallback in icu_datetime
+    // For testing era fallback in icu_datetime
     #[doc(hidden)]
     pub fn into_japanese_date(self) -> Date<Japanese> {
         Date::from_raw(self.inner, self.calendar.0)

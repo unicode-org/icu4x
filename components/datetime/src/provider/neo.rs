@@ -4,14 +4,16 @@
 
 mod adapter;
 
-#[cfg(feature = "experimental")]
-use crate::neo_skeleton::{NeoDateSkeleton, NeoTimeSkeleton};
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{VarZeroVec, ZeroMap};
 
+#[cfg(feature = "experimental")]
+use crate::neo_skeleton::NeoSkeletonLength;
+#[cfg(feature = "experimental")]
+use crate::pattern::runtime::PatternBorrowed;
 #[cfg(feature = "experimental")]
 use core::ops::Range;
 
@@ -571,14 +573,28 @@ pub struct SkeletonDataIndex {
     /// If true, there are 6 plural variants for each pattern.
     /// If false, it is just a single variant.
     pub has_plurals: bool,
-    /// The offset into the vector of the first pattern.
-    pub index: u8,
+}
+
+impl SkeletonDataIndex {
+    // TODO: This should handle plurals
+    #[cfg(feature = "experimental")]
+    pub(crate) fn index_for(self, length: NeoSkeletonLength) -> u8 {
+        match (length, self.has_long, self.has_medium) {
+            (NeoSkeletonLength::Long, _, _) => 0,
+            (NeoSkeletonLength::Medium, true, _) => 1,
+            (NeoSkeletonLength::Medium, false, _) => 0,
+            (NeoSkeletonLength::Short, true, true) => 2,
+            (NeoSkeletonLength::Short, true, false) => 1,
+            (NeoSkeletonLength::Short, false, true) => 1,
+            (NeoSkeletonLength::Short, false, false) => 0,
+        }
+    }
 }
 
 /// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
 #[derive(Debug, Copy, Clone, ULE)]
 #[repr(transparent)]
-pub struct SkeletonDataIndexULE([u8; 2]);
+pub struct SkeletonDataIndexULE(u8);
 
 impl AsULE for SkeletonDataIndex {
     type ULE = SkeletonDataIndexULE;
@@ -588,26 +604,36 @@ impl AsULE for SkeletonDataIndex {
         flags |= (self.has_long as u8) << 7;
         flags |= (self.has_medium as u8) << 6;
         flags |= (self.has_plurals as u8) << 5;
-        SkeletonDataIndexULE([flags, self.index])
+        SkeletonDataIndexULE(flags)
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let [flags, index] = unaligned.0;
+        let flags = unaligned.0;
         // TODO: `flags` could have more bits set, but we don't check that here.
         SkeletonDataIndex {
             has_long: (flags & (1 << 7)) != 0,
             has_medium: (flags & (1 << 6)) != 0,
             has_plurals: (flags & (1 << 5)) != 0,
-            index,
         }
     }
 }
 
 #[icu_provider::data_struct(
-    marker(
-        GregorianDateNeoSkeletonPatternsV1Marker,
-        "datetime/patterns/gregory/date_skeleton@1"
-    ),
+    // date patterns
+    marker(BuddhistDateNeoSkeletonPatternsV1Marker, "datetime/patterns/buddhist/skeleton@1"),
+    marker(ChineseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/chinese/skeleton@1"),
+    marker(CopticDateNeoSkeletonPatternsV1Marker, "datetime/patterns/coptic/skeleton@1"),
+    marker(DangiDateNeoSkeletonPatternsV1Marker, "datetime/patterns/dangi/skeleton@1"),
+    marker(EthiopianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/ethiopic/skeleton@1"),
+    marker(GregorianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/gregory/skeleton@1"),
+    marker(HebrewDateNeoSkeletonPatternsV1Marker, "datetime/patterns/hebrew/skeleton@1"),
+    marker(IndianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/indian/skeleton@1"),
+    marker(IslamicDateNeoSkeletonPatternsV1Marker, "datetime/patterns/islamic/skeleton@1"),
+    marker(JapaneseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanese/skeleton@1"),
+    marker(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanext/skeleton@1"),
+    marker(PersianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/persian/skeleton@1"),
+    marker(RocDateNeoSkeletonPatternsV1Marker, "datetime/patterns/roc/skeleton@1"),
+    // Time patterns
     marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
@@ -619,10 +645,9 @@ impl AsULE for SkeletonDataIndex {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
-    // len = 12 for time, 17 for date
     #[allow(missing_docs)] // TODO
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub indices: ZeroVec<'data, SkeletonDataIndex>,
+    // TODO: Use the bitpacked version here
+    pub index_info: SkeletonDataIndex,
     // TODO: This should support plurals
     #[allow(missing_docs)] // TODO
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -631,24 +656,18 @@ pub struct PackedSkeletonDataV1<'data> {
 
 impl<'data> PackedSkeletonDataV1<'data> {
     #[cfg(feature = "experimental")]
-    pub(crate) fn get_for_date_skeleton(
-        &self,
-        sk: NeoDateSkeleton,
-    ) -> Option<&runtime::PatternULE> {
-        self.get_for_discriminant(sk.components.discriminant())
-    }
-    #[cfg(feature = "experimental")]
-    pub(crate) fn get_for_time_skeleton(
-        &self,
-        sk: NeoTimeSkeleton,
-    ) -> Option<&runtime::PatternULE> {
-        self.get_for_discriminant(sk.components.discriminant())
-    }
-    #[cfg(feature = "experimental")]
-    fn get_for_discriminant(&self, discriminant: u8) -> Option<&runtime::PatternULE> {
-        self.indices
-            .get(discriminant as usize)
-            .and_then(|index_info| self.patterns.get(index_info.index as usize))
+    // TODO: Handle plurals
+    pub(crate) fn get_pattern(&self, length: NeoSkeletonLength) -> PatternBorrowed {
+        match self
+            .patterns
+            .get(self.index_info.index_for(length) as usize)
+        {
+            Some(pattern_ule) => pattern_ule.as_borrowed(),
+            None => {
+                debug_assert!(false, "failed to load a pattern for length {length:?}");
+                PatternBorrowed::DEFAULT
+            }
+        }
     }
 }
 
@@ -674,22 +693,30 @@ pub struct DateTimeSkeletonsV1<'data> {
     pub map: ZeroMap<'data, str, PatternULE>,
 }
 
-pub(crate) struct ErasedYearNamesV1Marker;
-impl DataMarker for ErasedYearNamesV1Marker {
+/// Calendar-agnostic year name data marker
+#[derive(Debug)]
+pub struct YearNamesV1Marker;
+impl DataMarker for YearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
 }
 
-pub(crate) struct ErasedMonthNamesV1Marker;
-impl DataMarker for ErasedMonthNamesV1Marker {
+/// Calendar-agnostic month name data marker
+#[derive(Debug)]
+pub struct MonthNamesV1Marker;
+impl DataMarker for MonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 
-pub(crate) struct ErasedDatePatternV1Marker;
-impl DataMarker for ErasedDatePatternV1Marker {
+/// Calendar-agnostic date pattern data marker
+#[derive(Debug)]
+pub struct DatePatternV1Marker;
+impl DataMarker for DatePatternV1Marker {
     type Yokeable = DatePatternV1<'static>;
 }
 
-pub(crate) struct ErasedPackedSkeletonDataV1Marker;
-impl DataMarker for ErasedPackedSkeletonDataV1Marker {
+/// Calendar-agnostic date skeleta data marker
+#[derive(Debug)]
+pub struct SkeletaV1Marker;
+impl DataMarker for SkeletaV1Marker {
     type Yokeable = PackedSkeletonDataV1<'static>;
 }

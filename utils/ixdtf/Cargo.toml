@@ -27,10 +27,10 @@ default = ["duration"]
 duration = []
 
 [dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 
 [dev-dependencies]
-serde-json-core = { version = "0.4", features = ["std"] }
+serde-json-core = { workspace = true, features = ["std"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

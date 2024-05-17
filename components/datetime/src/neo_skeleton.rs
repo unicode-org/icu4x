@@ -4,15 +4,36 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
+use crate::calendar::CalMarkers;
+use crate::calendar::FullDataCalMarkers;
 use crate::calendar::NeverCalendar;
+use crate::calendar::NoDataCalMarkers;
 use crate::options::components;
 use crate::provider::neo::*;
 use crate::CldrCalendar;
 use icu_provider::prelude::*;
 use icu_provider::NeverMarker;
+use tinystr::tinystr;
+use tinystr::TinyAsciiStr;
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoSkeletonData<C>
+pub trait NeoSkeletonCommonData {
+    /// Marker for loading weekday names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    /// Marker for loading day period names.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    /// Marker for loading time skeleton patterns.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    /// Marker for loading the date/time glue pattern.
+    /// Can be [`NeverMarker`] if not needed for this skeleton.
+    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+}
+
+/// Sealed trait implemented by neo skeleton marker types.
+pub trait TypedNeoSkeletonData<C>: NeoSkeletonCommonData
 where
     C: CldrCalendar + ?Sized,
 {
@@ -22,46 +43,23 @@ where
     /// Marker for loading month names.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
     type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
-    /// Marker for loading weekday names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading day period names.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
     /// Marker for loading date skeleton patterns.
     /// Can be [`NeverMarker`] if not needed for this skeleton.
     type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading time skeleton patterns.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading the date/time glue pattern.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
-    /// Marker for loading date/time combined patterns.
-    /// Can be [`NeverMarker`] if not needed for this skeleton.
-    type DateTimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = DateTimeSkeletonsV1<'static>>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoDateSkeletonComponents<C>: TypedNeoSkeletonData<C>
-where
-    C: CldrCalendar + ?Sized,
-{
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoDateComponents;
+pub trait NeoSkeletonData: NeoSkeletonCommonData {
+    /// Cross-calendar data markers for year names.
+    type Year: CalMarkers<YearNamesV1Marker>;
+    /// Cross-calendar data markers for month names.
+    type Month: CalMarkers<MonthNamesV1Marker>;
+    /// Cross-calendar data markers for date skeleta.
+    type Skel: CalMarkers<SkeletaV1Marker>;
 }
 
 /// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoTimeSkeletonComponents: TypedNeoSkeletonData<NeverCalendar> {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoTimeComponents;
-}
-
-/// Sealed trait implemented by neo skeleton marker types.
-pub trait TypedNeoSkeletonComponents<C>: TypedNeoSkeletonData<C>
-where
-    C: CldrCalendar + ?Sized,
-{
+pub trait NeoSkeletonComponents {
     /// Components in the neo skeleton.
     const COMPONENTS: NeoComponents;
 }
@@ -131,6 +129,14 @@ impl NeoSkeletonLength {
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum YearMonthMarker {}
 
+impl NeoSkeletonCommonData for YearMonthMarker {
+    // Data to exclude
+    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+}
+
 impl<C> TypedNeoSkeletonData<C> for YearMonthMarker
 where
     C: CldrCalendar,
@@ -138,21 +144,56 @@ where
     // Data to include
     type YearNamesV1Marker = C::YearNamesV1Marker;
     type MonthNamesV1Marker = C::MonthNamesV1Marker;
-    type DateSkeletonPatternsV1Marker = C::DateSkeletonPatternsV1Marker;
+    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
+}
+
+impl NeoSkeletonData for YearMonthMarker {
+    // Data to include
+    type Year = FullDataCalMarkers;
+    type Month = FullDataCalMarkers;
+    type Skel = FullDataCalMarkers;
+}
+
+impl NeoSkeletonComponents for YearMonthMarker {
+    const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::YearMonth);
+}
+
+/// Marker for a day, month, and year, as in
+/// “January 1, 2000”.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum YearMonthDayMarker {}
+
+impl NeoSkeletonCommonData for YearMonthDayMarker {
+    // Data to include
+    type WeekdayNamesV1Marker = WeekdayNamesV1Marker;
 
     // Data to exclude
-    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
     type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
-    type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
-impl<C> TypedNeoDateSkeletonComponents<C> for YearMonthMarker
+impl<C> TypedNeoSkeletonData<C> for YearMonthDayMarker
 where
     C: CldrCalendar,
 {
-    const COMPONENTS: NeoDateComponents = NeoDateComponents::YearMonth;
+    // Data to include
+    type YearNamesV1Marker = C::YearNamesV1Marker;
+    type MonthNamesV1Marker = C::MonthNamesV1Marker;
+    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
+}
+
+impl NeoSkeletonData for YearMonthDayMarker {
+    // Data to include
+    type Year = FullDataCalMarkers;
+    type Month = FullDataCalMarkers;
+    type Skel = FullDataCalMarkers;
+}
+
+impl NeoSkeletonComponents for YearMonthDayMarker {
+    const COMPONENTS: NeoComponents =
+        NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay));
 }
 
 /// Marker for an hour and minute (12-hour or 24-hour chosen by locale), as in
@@ -161,22 +202,32 @@ where
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum HourMinuteMarker {}
 
-impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
+impl NeoSkeletonCommonData for HourMinuteMarker {
     // Data to include
     type DayPeriodNamesV1Marker = DayPeriodNamesV1Marker;
     type TimeSkeletonPatternsV1Marker = TimeNeoSkeletonPatternsV1Marker;
 
     // Data to exclude
-    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
-    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type DateTimeSkeletonPatternsV1Marker = NeverMarker<DateTimeSkeletonsV1<'static>>;
 }
 
-impl TypedNeoTimeSkeletonComponents for HourMinuteMarker {
-    const COMPONENTS: NeoTimeComponents = NeoTimeComponents::HourMinute;
+impl TypedNeoSkeletonData<NeverCalendar> for HourMinuteMarker {
+    // Data to exclude
+    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+}
+
+impl NeoSkeletonData for HourMinuteMarker {
+    // Data to exclude
+    type Year = NoDataCalMarkers;
+    type Month = NoDataCalMarkers;
+    type Skel = NoDataCalMarkers;
+}
+
+impl NeoSkeletonComponents for HourMinuteMarker {
+    const COMPONENTS: NeoComponents = NeoComponents::Time(NeoTimeComponents::HourMinute);
 }
 
 // TODO: Add more of these TypedNeoSkeletonData marker types.
@@ -185,7 +236,7 @@ impl TypedNeoTimeSkeletonComponents for HourMinuteMarker {
 /// opposed to a whole month, week, or quarter).
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoDayComponents {
     /// The day of the month, as in
@@ -230,6 +281,74 @@ impl NeoDayComponents {
         Self::EraYearMonthDayWeekday,
         Self::Weekday,
     ];
+
+    const DAY_STR: TinyAsciiStr<8> = tinystr!(8, "d");
+    const MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "m0d");
+    const YEAR_MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "ym0d");
+    const ERA_YEAR_MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "gym0d");
+    const DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "de");
+    const MONTH_DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "m0de");
+    const YEAR_MONTH_DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "ym0de");
+    const ERA_YEAR_MONTH_DAY_WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "gym0de");
+    const WEEKDAY_STR: TinyAsciiStr<8> = tinystr!(8, "e");
+
+    /// Returns a stable string identifying this set of components.
+    ///
+    /// # Encoding Details
+    ///
+    /// The string is based roughly on the UTS 35 symbol table with the following exceptions:
+    ///
+    /// 1. Lowercase letters are chosen where there is no ambiguity: `G` becomes `g`\*
+    /// 2. Capitals are replaced with their lowercase and a number 0: `M` becomes `m0`
+    /// 3. A single symbol is included for each component: length doesn't matter
+    ///
+    /// \* `g` represents a different field, but it is never used in skeleta.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
+    ///
+    /// assert_eq!("gym0de", &*NeoDayComponents::EraYearMonthDayWeekday.id_str());
+    /// ```
+    pub const fn id_str(self) -> TinyAsciiStr<8> {
+        match self {
+            Self::Day => Self::DAY_STR,
+            Self::MonthDay => Self::MONTH_DAY_STR,
+            Self::YearMonthDay => Self::YEAR_MONTH_DAY_STR,
+            Self::EraYearMonthDay => Self::ERA_YEAR_MONTH_DAY_STR,
+            Self::DayWeekday => Self::DAY_WEEKDAY_STR,
+            Self::MonthDayWeekday => Self::MONTH_DAY_WEEKDAY_STR,
+            Self::YearMonthDayWeekday => Self::YEAR_MONTH_DAY_WEEKDAY_STR,
+            Self::EraYearMonthDayWeekday => Self::ERA_YEAR_MONTH_DAY_WEEKDAY_STR,
+            Self::Weekday => Self::WEEKDAY_STR,
+        }
+    }
+
+    /// Returns the set of components for the given stable string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::neo_skeleton::NeoDayComponents;
+    /// use tinystr::tinystr;
+    ///
+    /// assert_eq!(NeoDayComponents::from_id_str(tinystr!(8, "gym0de")), Some(NeoDayComponents::EraYearMonthDayWeekday));
+    /// ```
+    pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
+        match id_str {
+            Self::DAY_STR => Some(Self::Day),
+            Self::MONTH_DAY_STR => Some(Self::MonthDay),
+            Self::YEAR_MONTH_DAY_STR => Some(Self::YearMonthDay),
+            Self::ERA_YEAR_MONTH_DAY_STR => Some(Self::EraYearMonthDay),
+            Self::DAY_WEEKDAY_STR => Some(Self::DayWeekday),
+            Self::MONTH_DAY_WEEKDAY_STR => Some(Self::MonthDayWeekday),
+            Self::YEAR_MONTH_DAY_WEEKDAY_STR => Some(Self::YearMonthDayWeekday),
+            Self::ERA_YEAR_MONTH_DAY_WEEKDAY_STR => Some(Self::EraYearMonthDayWeekday),
+            Self::WEEKDAY_STR => Some(Self::Weekday),
+            _ => None,
+        }
+    }
 
     fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> components::Bag {
         match self {
@@ -292,7 +411,7 @@ impl NeoDayComponents {
 /// A specification for a set of parts of a date.
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
 /// a date such as “fourth quarter, Anno Domini”.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoDateComponents {
     /// A date that specifies a single day. See [`NeoDayComponents`].
@@ -345,26 +464,49 @@ impl NeoDateComponents {
         Self::YearQuarter,
     ];
 
-    #[cfg(feature = "experimental")]
-    pub(crate) fn discriminant(self) -> u8 {
+    const MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "m0");
+    const YEAR_MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "ym0");
+    const ERA_YEAR_MONTH_STR: TinyAsciiStr<8> = tinystr!(8, "gym0");
+    const YEAR_STR: TinyAsciiStr<8> = tinystr!(8, "y");
+    const ERA_YEAR_STR: TinyAsciiStr<8> = tinystr!(8, "gy");
+    const YEAR_WEEK_STR: TinyAsciiStr<8> = tinystr!(8, "y0w");
+    const QUARTER_STR: TinyAsciiStr<8> = tinystr!(8, "q");
+    const YEAR_QUARTER_STR: TinyAsciiStr<8> = tinystr!(8, "yq");
+
+    /// Returns a stable string identifying this set of components.
+    ///
+    /// For details, see [`NeoDayComponents::id_str()`].
+    pub const fn id_str(self) -> TinyAsciiStr<8> {
         match self {
-            Self::Day(NeoDayComponents::Day) => 0,
-            Self::Day(NeoDayComponents::MonthDay) => 1,
-            Self::Day(NeoDayComponents::YearMonthDay) => 2,
-            Self::Day(NeoDayComponents::EraYearMonthDay) => 3,
-            Self::Day(NeoDayComponents::DayWeekday) => 4,
-            Self::Day(NeoDayComponents::MonthDayWeekday) => 5,
-            Self::Day(NeoDayComponents::YearMonthDayWeekday) => 6,
-            Self::Day(NeoDayComponents::EraYearMonthDayWeekday) => 7,
-            Self::Day(NeoDayComponents::Weekday) => 8,
-            Self::Month => 9,
-            Self::YearMonth => 10,
-            Self::EraYearMonth => 11,
-            Self::Year => 12,
-            Self::EraYear => 13,
-            Self::YearWeek => 14,
-            Self::Quarter => 15,
-            Self::YearQuarter => 16,
+            Self::Day(day_components) => day_components.id_str(),
+            Self::Month => Self::MONTH_STR,
+            Self::YearMonth => Self::YEAR_MONTH_STR,
+            Self::EraYearMonth => Self::ERA_YEAR_MONTH_STR,
+            Self::Year => Self::YEAR_STR,
+            Self::EraYear => Self::ERA_YEAR_STR,
+            Self::YearWeek => Self::YEAR_WEEK_STR,
+            Self::Quarter => Self::QUARTER_STR,
+            Self::YearQuarter => Self::YEAR_QUARTER_STR,
+        }
+    }
+
+    /// Returns the set of components for the given stable string.
+    ///
+    /// For details, see [`NeoDayComponents::from_id_str()`].
+    pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
+        match id_str {
+            Self::MONTH_STR => Some(Self::Month),
+            Self::YEAR_MONTH_STR => Some(Self::YearMonth),
+            Self::ERA_YEAR_MONTH_STR => Some(Self::EraYearMonth),
+            Self::YEAR_STR => Some(Self::Year),
+            Self::ERA_YEAR_STR => Some(Self::EraYear),
+            Self::YEAR_WEEK_STR => Some(Self::YearWeek),
+            Self::QUARTER_STR => Some(Self::Quarter),
+            Self::YEAR_QUARTER_STR => Some(Self::YearQuarter),
+            other => match NeoDayComponents::from_id_str(other) {
+                Some(day_components) => Some(Self::Day(day_components)),
+                None => None,
+            },
         }
     }
 
@@ -406,17 +548,10 @@ impl NeoDateComponents {
     }
 }
 
-#[test]
-fn test_neo_date_components_discriminants() {
-    for (i, component) in NeoDateComponents::VALUES.iter().enumerate() {
-        assert_eq!(component.discriminant() as usize, i);
-    }
-}
-
 /// A specification for a set of parts of a time.
 /// Only sets that yield “sensible” time are allowed: this type cannot describe
 /// a time such as “am, 5 minutes, 25 milliseconds”.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
     /// An hour (12-hour or 24-hour chosen by locale), as in
@@ -474,21 +609,57 @@ impl NeoTimeComponents {
         Self::Hour24MinuteSecond,
     ];
 
-    #[cfg(feature = "experimental")]
-    pub(crate) fn discriminant(self) -> u8 {
+    const HOUR_STR: TinyAsciiStr<8> = tinystr!(8, "j");
+    const HOUR_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "jm");
+    const HOUR_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "jms");
+    const DAY_PERIOD_HOUR12_STR: TinyAsciiStr<8> = tinystr!(8, "bh");
+    const HOUR12_STR: TinyAsciiStr<8> = tinystr!(8, "h");
+    const DAY_PERIOD_HOUR12_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "bhm");
+    const HOUR12_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "hm");
+    const DAY_PERIOD_HOUR12_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "bhms");
+    const HOUR12_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "hms");
+    const HOUR24_STR: TinyAsciiStr<8> = tinystr!(8, "h0");
+    const HOUR24_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "h0m");
+    const HOUR24_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "h0ms");
+
+    /// Returns a stable string identifying this set of components.
+    ///
+    /// For details, see [`NeoDayComponents::id_str()`].
+    pub const fn id_str(self) -> TinyAsciiStr<8> {
         match self {
-            Self::Hour => 0,
-            Self::HourMinute => 1,
-            Self::HourMinuteSecond => 2,
-            Self::DayPeriodHour12 => 3,
-            Self::Hour12 => 4,
-            Self::DayPeriodHour12Minute => 5,
-            Self::Hour12Minute => 6,
-            Self::DayPeriodHour12MinuteSecond => 7,
-            Self::Hour12MinuteSecond => 8,
-            Self::Hour24 => 9,
-            Self::Hour24Minute => 10,
-            Self::Hour24MinuteSecond => 11,
+            Self::Hour => Self::HOUR_STR,
+            Self::HourMinute => Self::HOUR_MINUTE_STR,
+            Self::HourMinuteSecond => Self::HOUR_MINUTE_SECOND_STR,
+            Self::DayPeriodHour12 => Self::DAY_PERIOD_HOUR12_STR,
+            Self::Hour12 => Self::HOUR12_STR,
+            Self::DayPeriodHour12Minute => Self::DAY_PERIOD_HOUR12_MINUTE_STR,
+            Self::Hour12Minute => Self::HOUR12_MINUTE_STR,
+            Self::DayPeriodHour12MinuteSecond => Self::DAY_PERIOD_HOUR12_MINUTE_SECOND_STR,
+            Self::Hour12MinuteSecond => Self::HOUR12_MINUTE_SECOND_STR,
+            Self::Hour24 => Self::HOUR24_STR,
+            Self::Hour24Minute => Self::HOUR24_MINUTE_STR,
+            Self::Hour24MinuteSecond => Self::HOUR24_MINUTE_SECOND_STR,
+        }
+    }
+
+    /// Returns the set of components for the given stable string.
+    ///
+    /// For details, see [`NeoDayComponents::from_id_str()`].
+    pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
+        match id_str {
+            Self::HOUR_STR => Some(Self::Hour),
+            Self::HOUR_MINUTE_STR => Some(Self::HourMinute),
+            Self::HOUR_MINUTE_SECOND_STR => Some(Self::HourMinuteSecond),
+            Self::DAY_PERIOD_HOUR12_STR => Some(Self::DayPeriodHour12),
+            Self::HOUR12_STR => Some(Self::Hour12),
+            Self::DAY_PERIOD_HOUR12_MINUTE_STR => Some(Self::DayPeriodHour12Minute),
+            Self::HOUR12_MINUTE_STR => Some(Self::Hour12Minute),
+            Self::DAY_PERIOD_HOUR12_MINUTE_SECOND_STR => Some(Self::DayPeriodHour12MinuteSecond),
+            Self::HOUR12_MINUTE_SECOND_STR => Some(Self::Hour12MinuteSecond),
+            Self::HOUR24_STR => Some(Self::Hour24),
+            Self::HOUR24_MINUTE_STR => Some(Self::Hour24Minute),
+            Self::HOUR24_MINUTE_SECOND_STR => Some(Self::Hour24MinuteSecond),
+            _ => None,
         }
     }
 
@@ -519,13 +690,6 @@ impl NeoTimeComponents {
             Self::Hour24Minute => todo!(),
             Self::Hour24MinuteSecond => todo!(),
         }
-    }
-}
-
-#[test]
-fn test_neo_time_components_discriminants() {
-    for (i, component) in NeoTimeComponents::VALUES.iter().enumerate() {
-        assert_eq!(component.discriminant() as usize, i);
     }
 }
 

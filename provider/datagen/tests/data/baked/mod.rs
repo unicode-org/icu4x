@@ -41,20 +41,32 @@ macro_rules! impl_data_provider {
         impl_datetime_japanext_datelengths_v1!($provider);
         impl_datetime_japanext_datesymbols_v1!($provider);
         impl_datetime_patterns_buddhist_date_v1!($provider);
+        impl_datetime_patterns_buddhist_skeleton_v1!($provider);
         impl_datetime_patterns_chinese_date_v1!($provider);
+        impl_datetime_patterns_chinese_skeleton_v1!($provider);
         impl_datetime_patterns_coptic_date_v1!($provider);
+        impl_datetime_patterns_coptic_skeleton_v1!($provider);
         impl_datetime_patterns_dangi_date_v1!($provider);
+        impl_datetime_patterns_dangi_skeleton_v1!($provider);
         impl_datetime_patterns_datetime_v1!($provider);
         impl_datetime_patterns_ethiopic_date_v1!($provider);
+        impl_datetime_patterns_ethiopic_skeleton_v1!($provider);
         impl_datetime_patterns_gregory_date_v1!($provider);
-        impl_datetime_patterns_gregory_date_skeleton_v1!($provider);
+        impl_datetime_patterns_gregory_skeleton_v1!($provider);
         impl_datetime_patterns_hebrew_date_v1!($provider);
+        impl_datetime_patterns_hebrew_skeleton_v1!($provider);
         impl_datetime_patterns_indian_date_v1!($provider);
+        impl_datetime_patterns_indian_skeleton_v1!($provider);
         impl_datetime_patterns_islamic_date_v1!($provider);
+        impl_datetime_patterns_islamic_skeleton_v1!($provider);
         impl_datetime_patterns_japanese_date_v1!($provider);
+        impl_datetime_patterns_japanese_skeleton_v1!($provider);
         impl_datetime_patterns_japanext_date_v1!($provider);
+        impl_datetime_patterns_japanext_skeleton_v1!($provider);
         impl_datetime_patterns_persian_date_v1!($provider);
+        impl_datetime_patterns_persian_skeleton_v1!($provider);
         impl_datetime_patterns_roc_date_v1!($provider);
+        impl_datetime_patterns_roc_skeleton_v1!($provider);
         impl_datetime_patterns_time_v1!($provider);
         impl_datetime_patterns_time_skeleton_v1!($provider);
         impl_datetime_persian_datelengths_v1!($provider);
@@ -121,6 +133,7 @@ macro_rules! impl_data_provider {
         impl_normalizer_nfkdex_v1!($provider);
         impl_normalizer_uts46d_v1!($provider);
         impl_percent_essentials_v1!($provider);
+        impl_personnames_personnames_v1!($provider);
         impl_plurals_cardinal_v1!($provider);
         impl_plurals_ordinal_v1!($provider);
         impl_plurals_ranges_v1!($provider);
@@ -133,6 +146,7 @@ macro_rules! impl_data_provider {
         impl_propnames_from_ea_v1!($provider);
         impl_propnames_from_gc_v1!($provider);
         impl_propnames_from_gcm_v1!($provider);
+        impl_propnames_from_hst_v1!($provider);
         impl_propnames_from_jt_v1!($provider);
         impl_propnames_from_lb_v1!($provider);
         impl_propnames_from_sc_v1!($provider);
@@ -143,6 +157,7 @@ macro_rules! impl_data_provider {
         impl_propnames_to_long_linear_bc_v1!($provider);
         impl_propnames_to_long_linear_ea_v1!($provider);
         impl_propnames_to_long_linear_gc_v1!($provider);
+        impl_propnames_to_long_linear_hst_v1!($provider);
         impl_propnames_to_long_linear_jt_v1!($provider);
         impl_propnames_to_long_linear_lb_v1!($provider);
         impl_propnames_to_long_linear_sc_v1!($provider);
@@ -154,6 +169,7 @@ macro_rules! impl_data_provider {
         impl_propnames_to_short_linear_bc_v1!($provider);
         impl_propnames_to_short_linear_ea_v1!($provider);
         impl_propnames_to_short_linear_gc_v1!($provider);
+        impl_propnames_to_short_linear_hst_v1!($provider);
         impl_propnames_to_short_linear_jt_v1!($provider);
         impl_propnames_to_short_linear_lb_v1!($provider);
         impl_propnames_to_short_linear4_sc_v1!($provider);
@@ -233,6 +249,7 @@ macro_rules! impl_data_provider {
         impl_props_exemplarchars_punctuation_v1!($provider);
         impl_props_gc_v1!($provider);
         impl_props_graph_v1!($provider);
+        impl_props_hst_v1!($provider);
         impl_props_jt_v1!($provider);
         impl_props_lb_v1!($provider);
         impl_props_nfcinert_v1!($provider);
@@ -334,20 +351,32 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::ChineseDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::ChineseDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::CopticDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::CopticDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::DangiDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DangiDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::DangiDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DangiDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::DateTimePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DateTimePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::EthiopianDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::EthiopianDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::EthiopianDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::EthiopianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::GregorianDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::GregorianDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::HebrewDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::HebrewDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::HebrewDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::HebrewDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::IndianDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::IndianDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::IndianDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::IndianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::IslamicDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::IslamicDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::IslamicDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::IslamicDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::JapaneseDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::JapaneseDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::JapaneseDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::JapaneseDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::JapaneseExtendedDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::JapaneseExtendedDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::JapaneseExtendedDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::PersianDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::PersianDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::RocDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocDatePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::TimePatternV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::TimePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::calendar::PersianDateLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::PersianDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -414,6 +443,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::normalizer::provider::CompatibilityDecompositionTablesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CompatibilityDecompositionTablesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::normalizer::provider::Uts46DecompositionSupplementV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::Uts46DecompositionSupplementV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::personnames::provider::PersonNamesFormatV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::experimental::personnames::provider::PersonNamesFormatV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::plurals::provider::CardinalV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::plurals::provider::OrdinalV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::PluralRangesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::plurals::provider::PluralRangesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -426,6 +456,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::names::GeneralCategoryMaskNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::names::GeneralCategoryMaskNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::HangulSyllableTypeNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::JoiningTypeNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -436,6 +467,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::BidiClassValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::HangulSyllableTypeValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::JoiningTypeValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -447,6 +479,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::BidiClassValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::EastAsianWidthValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::HangulSyllableTypeValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::JoiningTypeValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -526,6 +559,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::ExemplarCharactersPunctuationV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::HangulSyllableTypeV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::JoiningTypeV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoiningTypeV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LineBreakV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::NfcInertV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::NfcInertV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

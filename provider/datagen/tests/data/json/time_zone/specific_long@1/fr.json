@@ -318,9 +318,6 @@
       "dt": "heure d’été de Lord Howe",
       "st": "heure normale de Lord Howe"
     },
-    "macq": {
-      "st": "heure de l’île Macquarie"
-    },
     "maga": {
       "dt": "heure d’été de Magadan",
       "st": "heure normale de Magadan"
@@ -343,10 +340,6 @@
     },
     "maws": {
       "st": "heure de Mawson"
-    },
-    "meno": {
-      "dt": "heure d’été du Nord-Ouest du Mexique",
-      "st": "heure normale du Nord-Ouest du Mexique"
     },
     "mepa": {
       "dt": "heure d’été du Pacifique mexicain",

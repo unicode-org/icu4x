@@ -11,7 +11,6 @@ use alloc::borrow::Cow;
 use num_bigint::BigInt;
 use num_rational::Ratio;
 use num_traits::Signed;
-use num_traits::ToPrimitive;
 use num_traits::{One, Pow, Zero};
 
 use super::provider::{Base, SiPrefix};
@@ -54,20 +53,19 @@ pub enum RatioFromStrError {
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
-    pub(crate) fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
+    pub fn from_big_ints(numerator: BigInt, denominator: BigInt) -> Self {
         Self(Ratio::new(numerator, denominator))
+    }
+
+    /// Returns the current [`IcuRatio`] as a [`Ratio`] of [`BigInt`].
+    pub fn get_ratio(self) -> Ratio<BigInt> {
+        self.0
     }
 
     /// Returns the reciprocal of the ratio.
     /// For example, the reciprocal of 2/3 is 3/2.
     pub(crate) fn recip(&self) -> Self {
         Self(self.0.recip())
-    }
-
-    // TODO: Make the function private after fixing the need for it in the tests.
-    /// Returns the value of the ratio as a `f64`.
-    pub fn to_f64(&self) -> Option<f64> {
-        Some(self.0.numer().to_f64()? / self.0.denom().to_f64()?)
     }
 
     /// Returns the absolute value of the ratio.
@@ -222,7 +220,7 @@ impl FromStr for IcuRatio {
     /// Converts a string representation of a ratio into an `IcuRatio`.
     /// Supported string formats include:
     /// ```
-    /// use icu_experimental::units::ratio::IcuRatio;
+    /// use icu::experimental::units::ratio::IcuRatio;
     /// use num_bigint::BigInt;
     /// use core::str::FromStr;
     /// use num_traits::identities::Zero;

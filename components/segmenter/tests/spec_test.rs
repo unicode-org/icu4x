@@ -7,7 +7,6 @@ use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
 use std::char;
-use std::u32;
 
 struct TestContentIterator(core::str::Split<'static, char>);
 
@@ -178,11 +177,44 @@ fn run_line_break_extra_test() {
 fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
     let segmenter = WordSegmenter::new_dictionary();
-    for test in test_iter {
+    for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
-        assert_eq!(result, test.break_result_utf8, "{}", test.original_line);
+        if result != test.break_result_utf8 {
+            let wb = icu::properties::maps::word_break();
+            let wb_name = icu::properties::WordBreak::enum_to_long_name_mapper();
+            let mut iter = segmenter.segment_str(&s);
+            // TODO(egg): It would be really nice to have Name here.
+            println!("  | A | E | Code pt. |   Word_Break   | State | Literal");
+            for (i, c) in s.char_indices() {
+                let expected_break = test.break_result_utf8.contains(&i);
+                let actual_break = result.contains(&i);
+                if actual_break {
+                    iter.next();
+                }
+                println!(
+                    "{}| {} | {} | {:>8} | {:>14} | {} | {}",
+                    if actual_break != expected_break {
+                        "😭"
+                    } else {
+                        "  "
+                    },
+                    if actual_break { "÷" } else { "×" },
+                    if expected_break { "÷" } else { "×" },
+                    format!("{:04X}", c as u32),
+                    wb_name
+                        .get(wb.get(c))
+                        .unwrap_or(&format!("{:?}", wb.get(c))),
+                    // Placeholder for logging the state if exposed.
+                    // Not "?????" to hide from clippy.
+                    "?".repeat(5),
+                    c
+                )
+            }
+            println!("Test case #{}", i);
+            panic!()
+        }
 
         let iter = segmenter.segment_utf16(&test.utf16_vec);
         let result: Vec<usize> = iter.collect();

@@ -43,6 +43,13 @@ pub struct IanaToBcp47Mapper {
     data: DataPayload<IanaToBcp47MapV1Marker>,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for IanaToBcp47Mapper {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl IanaToBcp47Mapper {
     /// Creates a new [`IanaToBcp47Mapper`] using compiled data.
     ///
@@ -168,6 +175,13 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 pub struct IanaBcp47RoundTripMapper {
     data1: DataPayload<IanaToBcp47MapV1Marker>,
     data2: DataPayload<Bcp47ToIanaMapV1Marker>,
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for IanaBcp47RoundTripMapper {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl IanaBcp47RoundTripMapper {

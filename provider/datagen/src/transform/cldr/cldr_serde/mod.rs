@@ -26,6 +26,8 @@ pub(in crate::provider) mod locale_resource;
 pub(in crate::provider) mod numbering_systems;
 pub(in crate::provider) mod numbers;
 pub(in crate::provider) mod parent_locales;
+#[cfg(feature = "experimental_components")]
+pub(in crate::provider) mod personnames;
 pub(in crate::provider) mod plural_ranges;
 pub(in crate::provider) mod plurals;
 pub(in crate::provider) mod time_zones;

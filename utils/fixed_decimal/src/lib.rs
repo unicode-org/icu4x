@@ -78,11 +78,11 @@ pub use scientific::ScientificDecimal;
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum FixedDecimalError {
-    /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
-    /// magnitude of the most significant digit is core::i16::MAX, and the lowest magnitude of the
-    /// least significant digit is core::i16::MIN.
+    /// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`]. The highest
+    /// magnitude of the most significant digit is [`i16::MAX`], and the lowest magnitude of the
+    /// least significant digit is [`i16::MIN`].
     ///
-    /// This error is also returned when constructing a FixedInteger from a FixedDecimal with a
+    /// This error is also returned when constructing a [`FixedInteger`] from a [`FixedDecimal`] with a
     /// fractional part.
     ///
     /// # Examples
@@ -92,7 +92,7 @@ pub enum FixedDecimalError {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
-    /// dec1.multiply_pow10(core::i16::MAX);
+    /// dec1.multiply_pow10(i16::MAX);
     /// assert!(dec1.is_zero());
     /// ```
     #[displaydoc("Magnitude or number of digits exceeded")]

@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::isize;
 use core::num::ParseIntError;
 use core::str::FromStr;
 use displaydoc::Display;
@@ -32,7 +31,7 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// use icu_plurals::rules::RawPluralOperands;
+/// use icu::plurals::rules::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
@@ -51,7 +50,7 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// use icu_plurals::rules::RawPluralOperands;
+/// use icu::plurals::rules::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     Ok(PluralOperands::from(RawPluralOperands {
@@ -71,7 +70,7 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
-/// use icu_plurals::rules::RawPluralOperands;
+/// use icu::plurals::rules::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {

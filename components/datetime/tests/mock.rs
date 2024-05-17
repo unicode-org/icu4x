@@ -15,7 +15,7 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 ///
 /// ```
 /// use icu::datetime::mock::parse_gregorian_from_str;
-/// use icu_calendar::{DateTime, Gregorian};
+/// use icu::calendar::{DateTime, Gregorian};
 ///
 /// let date: DateTime<Gregorian> =
 ///     parse_gregorian_from_str("2020-10-14T13:21:00")
@@ -26,7 +26,7 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 ///
 /// ```
 /// use icu::datetime::mock::parse_gregorian_from_str;
-/// use icu_calendar::{DateTime, Gregorian};
+/// use icu::calendar::{DateTime, Gregorian};
 ///
 /// let date: DateTime<Gregorian> =
 ///     parse_gregorian_from_str("2020-10-14T13:21:00.101")

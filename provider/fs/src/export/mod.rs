@@ -13,6 +13,7 @@
 //! ```
 //! use icu_datagen::prelude::*;
 //! use icu_provider_fs::export::*;
+//! use icu_provider::hello_world::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
@@ -26,9 +27,9 @@
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
-//!     .export(&DatagenProvider::new_latest_tested(), exporter)
+//!     .with_keys([HelloWorldV1Marker::KEY])
+//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);

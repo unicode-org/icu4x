@@ -53,9 +53,6 @@ pub const KEYS: &[DataKey] = &[
     PluralRangesV1Marker::KEY,
 ];
 
-#[cfg(doc)]
-use crate::PluralCategory;
-
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
@@ -78,19 +75,19 @@ use crate::PluralCategory;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PluralRulesV1<'data> {
-    /// Rule that matches [`PluralCategory::Zero`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::One`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::One`](super::PluralCategory::One), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Two`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Two`](super::PluralCategory::Two), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Few`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Few`](super::PluralCategory::Few), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Many`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
 }
