@@ -2175,4 +2175,17 @@ mod test {
         assert_eq!(islamic.month().ordinal, 4);
         assert_eq!(islamic.year().number, 1432);
     }
+
+    #[test]
+    fn test_regression_4914() {
+        // https://github.com/unicode-org/icu4x/issues/4914
+        let cal = IslamicUmmAlQura::new_always_calculating();
+        let era = "ah".parse().unwrap();
+        let year = -6823;
+        let month_code = "M01".parse().unwrap();
+        let dt = cal.date_from_codes(era, year, month_code, 1).unwrap();
+        assert_eq!(dt.0.day, 1);
+        assert_eq!(dt.0.month, 1);
+        assert_eq!(dt.0.year, -6823);
+    }
 }
