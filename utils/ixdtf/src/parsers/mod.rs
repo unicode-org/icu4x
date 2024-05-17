@@ -39,9 +39,33 @@ macro_rules! assert_syntax {
 /// `IxdtfParser` is the primary parser implementation of `ixdtf`.
 ///
 /// This parser provides various options for parsing date/time strings with the extended notation
-/// laid out in [sedate's IXDTF][ixdtf-draft] along with other variations laid out in the [`Temporal`][temporal-proposal].
+/// laid out in [RFC9557][ref-9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
-/// [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
+/// ```rust
+/// use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord, UTCOffsetRecord}};
+///
+/// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
+///
+/// let result = IxdtfParser::new(ixdtf_str).parse().unwrap();
+///
+/// let date = result.date.unwrap();
+/// let time = result.time.unwrap();
+/// let offset = result.offset.unwrap();
+/// let tz_annotation = result.tz.unwrap();
+///
+/// assert_eq!(date.year, 2024);
+/// assert_eq!(date.month, 3);
+/// assert_eq!(date.day, 2);
+/// assert_eq!(time.hour, 8);
+/// assert_eq!(time.minute, 48);
+/// assert_eq!(offset.sign, Sign::Negative);
+/// assert_eq!(offset.hour, 5);
+/// assert_eq!(offset.minute, 0);
+/// assert!(!tz_annotation.critical);
+/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+/// ```
+///
+/// [rfc-9557]: https://datatracker.ietf.org/doc/rfc9557/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
 pub struct IxdtfParser<'a> {
@@ -56,16 +80,16 @@ impl<'a> IxdtfParser<'a> {
         }
     }
 
-    /// Parses the source as an annotated [DateTime string][temporal-dt].
+    /// Parses the source as an [extended Date/Time string][rfc-9557].
     ///
     /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
     ///
-    /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
+    /// [rfc-9557]: https://datatracker.ietf.org/doc/rfc9557/
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated DateTime string with an Annotation handler.
+    /// Parses the source as an extended Date/Time string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_with_annotation_handler(
@@ -75,12 +99,28 @@ impl<'a> IxdtfParser<'a> {
         datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
 
-    /// Parses the source as an annotated YearMonth string.
+    /// Parses the source as an extended [YearMonth string][temporal-ym].
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::IxdtfParser;
+    ///
+    /// let extended_year_month = "2020-11[u-ca=iso8601]";
+    ///
+    /// let result = IxdtfParser::new(extended_year_month).parse_year_month().unwrap();
+    ///
+    /// let date = result.date.unwrap();
+    ///
+    /// assert_eq!(date.year, 2020);
+    /// assert_eq!(date.month, 11);
+    ///
+    /// ```
+    ///
+    /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
     pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated YearMonth string with an Annotation handler.
+    /// Parses the source as an extended YearMonth string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_year_month_with_annotation_handler(
@@ -90,12 +130,27 @@ impl<'a> IxdtfParser<'a> {
         datetime::parse_annotated_year_month(&mut self.cursor, handler)
     }
 
-    /// Parses the source as an annotated MonthDay string.
+    /// Parses the source as an extended [MonthDay string][temporal-md].
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::IxdtfParser;
+    /// let extended_month_day = "1107[+04:00]";
+    ///
+    /// let result = IxdtfParser::new(extended_month_day).parse_month_day().unwrap();
+    ///
+    /// let date = result.date.unwrap();
+    ///
+    /// assert_eq!(date.month, 11);
+    /// assert_eq!(date.day, 7);
+    ///
+    /// ```
+    ///
+    /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
     pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated MonthDay string with an Annotation handler.
+    /// Parses the source as an extended MonthDay string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_month_day_with_annotation_handler(
@@ -105,12 +160,34 @@ impl<'a> IxdtfParser<'a> {
         datetime::parse_annotated_month_day(&mut self.cursor, handler)
     }
 
-    /// Parses the source as an annotated Time string.
+    /// Parses the source as an extended [Time string][temporal-time].
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
+    /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
+    ///
+    /// let result = IxdtfParser::new(extended_time).parse_time().unwrap();
+    ///
+    /// let time = result.time.unwrap();
+    /// let offset = result.offset.unwrap();
+    /// let tz_annotation = result.tz.unwrap();
+    ///
+    /// assert_eq!(time.hour, 12);
+    /// assert_eq!(time.minute, 1);
+    /// assert_eq!(time.second, 4);
+    /// assert_eq!(offset.sign, Sign::Negative);
+    /// assert_eq!(offset.hour, 5);
+    /// assert_eq!(offset.minute, 0);
+    /// assert!(!tz_annotation.critical);
+    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+    /// ```
+    ///
+    /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
     pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_time_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated Time string with an Annotation handler.
+    /// Parses the source as an extended Time string with an Annotation handler.
     ///
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_time_with_annotation_handler(
