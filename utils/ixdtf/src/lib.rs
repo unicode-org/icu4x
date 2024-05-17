@@ -18,7 +18,7 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord, UTCOffsetRecord}};
+//! use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
@@ -58,7 +58,7 @@
 //! ## IXDTF Extensions: A Deeper Look
 //!
 //! The suffix extensions come in two primary kinds: a time zone annotation and a key-value
-//! annotation. The suffixes may also be flagged as critical with a '!' as a leading flag
+//! annotation. The suffixes may also be flagged as critical with a `!` as a leading flag
 //! character.
 //!
 //! ### Time Zone Annotations
@@ -74,14 +74,14 @@
 //! ### Key-Value Annotations
 //!
 //! Key-value pair annotations are any key and value string separated by a '=' character.
-//! Key-value pairs are can include any information. Keys can be permanently registered,
+//! Key-value pairs are can include any information. Keys may be permanently registered,
 //! provisionally registered, or unknown; however, only permanent keys are acted on by
-//! the parser. All annotations will be parsed and returned to the user in a `Vec` of
-//! annotations.
+//! `IxdtfParser`.
 //!
 //! If duplicate registered keys are provided the first key will be returned, unless one
 //! of the duplicate annotations is marked as critical, in which case an error may be
-//! thrown by the `ixdtf` (See [Invalid Annotations](#invalid-annotations) for more information).
+//! thrown by the `ixdtf` (See [Invalid Annotations](#invalid-annotations) for more
+//! information).
 //!
 //! #### Permanent Registered Keys
 //!
@@ -100,17 +100,21 @@
 //!
 //! ##### Example 2
 //!
-//! This example has a duplicate calendar, but neither calendar is flagged as critical so
-//! the first calendar is returned while the second calendar is ignored.
+//! This example is duplicate and different calendar annotations, but neither calendar
+//! is flagged as critical so the first calendar is returned while the second calendar
+//! is ignored.
 //!
 //! ##### Example 3
 //!
-//! This example shows an unknown key-value annotation. In this situation, the annotation
-//! is not flagged as critical, so the annotation is valid.
+//! This example is a duplicate and identical calendar annotations with one annotation flagged
+//! as critical. As the annotations are identical values, there is no ambiguity with the use of
+//! the critical flag that may cause an error. Thus, the first annotation is returned, and the
+//! second is ignored (See [Annotations with Application Defined
+//! Behavior](#annotations-with-application-defined-behavior)).
 //!
 //! ##### Example 4
 //!
-//! This example has displays an unknown annotation. The annotation is not marked as critical
+//! This example contains an unknown annotation. The annotation is not marked as critical
 //! so the value is ignored (See [Implementing Annotation Handlers](#implementing-annotation-handlers)).
 //!
 //! #### Invalid Annotations
@@ -247,7 +251,7 @@
 //!
 //! let _ = IxdtfParser::new(example_with_custom_key).parse_with_annotation_handler(|annotation| {
 //!     if annotation.key == "answer-to-universe" {
-//!         answer = Some(annotation);
+//!         answer.get_or_insert(annotation);
 //!         // Found our value! We don't need `ixdtf` to handle this annotation.
 //!         return None
 //!     }
