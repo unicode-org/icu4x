@@ -19,7 +19,7 @@ use crate::{
 };
 
 #[cfg(feature = "datagen")]
-use crate::provider::calendar::DateLengthsV1;
+use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
 
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
@@ -545,8 +545,15 @@ impl DateTimeFormatterOptions {
         self,
         skeletons: &DateSkeletonPatternsV1<'data>,
         date_patterns: &DateLengthsV1<'data>,
-        default_hour_cycle: crate::options::preferences::HourCycle,
+        time_patterns: &TimeLengthsV1<'data>,
     ) -> Option<PatternPlurals<'data>> {
+        use crate::options::preferences::HourCycle;
+        use crate::pattern::hour_cycle::CoarseHourCycle;
+
+        let default_hour_cycle = match time_patterns.preferred_hour_cycle {
+            CoarseHourCycle::H11H12 => HourCycle::H12,
+            CoarseHourCycle::H23H24 => HourCycle::H23,
+        };
         match self {
             Self::Components(components_bag) => {
                 let fields = components_bag.to_vec_fields(default_hour_cycle);
@@ -578,7 +585,30 @@ impl DateTimeFormatterOptions {
                     date_patterns.date.short.clone(),
                 )),
             },
-            Self::Length(_) => unimplemented!(),
+            Self::Length(length::Bag {
+                date: None,
+                time: Some(time_length),
+            }) => {
+                let time_patterns = match time_patterns.preferred_hour_cycle {
+                    CoarseHourCycle::H11H12 => &time_patterns.time_h11_h12,
+                    CoarseHourCycle::H23H24 => &time_patterns.time_h23_h24,
+                };
+                match time_length {
+                    length::Time::Full => {
+                        Some(PatternPlurals::SinglePattern(time_patterns.full.clone()))
+                    }
+                    length::Time::Long => {
+                        Some(PatternPlurals::SinglePattern(time_patterns.long.clone()))
+                    }
+                    length::Time::Medium => {
+                        Some(PatternPlurals::SinglePattern(time_patterns.medium.clone()))
+                    }
+                    length::Time::Short => {
+                        Some(PatternPlurals::SinglePattern(time_patterns.short.clone()))
+                    }
+                }
+            }
+            _ => unimplemented!(),
         }
     }
 }

@@ -8,9 +8,7 @@ use crate::provider::{DatagenProvider, IterableDataProviderInternal};
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
-use icu_datetime::options::preferences;
 use icu_datetime::pattern::runtime::PatternPlurals;
-use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::TimeLengthsV1Marker;
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::{
@@ -85,7 +83,8 @@ impl DatagenProvider {
                 metadata: req.metadata,
             })?
             .take_payload()?;
-        let length_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
+        // TODO: Make this calendar-specific!
+        let date_lengths_v1: DataPayload<GregorianDateLengthsV1Marker> =
             self.load(req)?.take_payload()?;
         let time_lengths_v1: DataPayload<TimeLengthsV1Marker> = self
             .load(DataRequest {
@@ -109,11 +108,8 @@ impl DatagenProvider {
         .map(|bag| {
             bag.select_pattern(
                 skeletons_data.get(),
-                length_patterns_data.get(),
-                match time_lengths_v1.get().preferred_hour_cycle {
-                    CoarseHourCycle::H11H12 => preferences::HourCycle::H12,
-                    CoarseHourCycle::H23H24 => preferences::HourCycle::H23,
-                },
+                date_lengths_v1.get(),
+                time_lengths_v1.get(),
             )
             .unwrap()
         });
@@ -180,6 +176,7 @@ impl DatagenProvider {
                             matches!(neo_components, NeoTimeComponents::Hour)
                                 || matches!(neo_components, NeoTimeComponents::HourMinute)
                                 || matches!(neo_components, NeoTimeComponents::HourMinuteSecond)
+                                || matches!(neo_components, NeoTimeComponents::Auto)
                         })
                         .copied()
                         .map(NeoTimeComponents::id_str)

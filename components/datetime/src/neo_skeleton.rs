@@ -653,6 +653,14 @@ pub enum NeoTimeComponents {
     /// An hour, minute, and second with a 24-hour clock, as in
     /// "16:03:51"
     Hour24MinuteSecond,
+    /// Fields to represent the time chosen by the locale.
+    ///
+    /// These are the _standard time patterns_ for types "medium" and
+    /// "short" as defined in [UTS 35]. For "full" and "long", use a
+    /// formatter that includes a time zone.
+    ///
+    /// [UTS 35]: <https://www.unicode.org/reports/tr35/tr35-dates.html#dateFormats>
+    Auto,
 }
 
 impl NeoTimeComponents {
@@ -670,6 +678,7 @@ impl NeoTimeComponents {
         Self::Hour24,
         Self::Hour24Minute,
         Self::Hour24MinuteSecond,
+        Self::Auto,
     ];
 
     const HOUR_STR: TinyAsciiStr<8> = tinystr!(8, "j");
@@ -684,6 +693,7 @@ impl NeoTimeComponents {
     const HOUR24_STR: TinyAsciiStr<8> = tinystr!(8, "h0");
     const HOUR24_MINUTE_STR: TinyAsciiStr<8> = tinystr!(8, "h0m");
     const HOUR24_MINUTE_SECOND_STR: TinyAsciiStr<8> = tinystr!(8, "h0ms");
+    const AUTO_STR: TinyAsciiStr<8> = tinystr!(8, "a1");
 
     /// Returns a stable string identifying this set of components.
     ///
@@ -702,6 +712,7 @@ impl NeoTimeComponents {
             Self::Hour24 => Self::HOUR24_STR,
             Self::Hour24Minute => Self::HOUR24_MINUTE_STR,
             Self::Hour24MinuteSecond => Self::HOUR24_MINUTE_SECOND_STR,
+            Self::Auto => Self::AUTO_STR,
         }
     }
 
@@ -722,6 +733,7 @@ impl NeoTimeComponents {
             Self::HOUR24_STR => Some(Self::Hour24),
             Self::HOUR24_MINUTE_STR => Some(Self::Hour24Minute),
             Self::HOUR24_MINUTE_SECOND_STR => Some(Self::Hour24MinuteSecond),
+            Self::AUTO_STR => Some(Self::Auto),
             _ => None,
         }
     }
@@ -752,6 +764,22 @@ impl NeoTimeComponents {
             Self::Hour24 => todo!(),
             Self::Hour24Minute => todo!(),
             Self::Hour24MinuteSecond => todo!(),
+            Self::Auto => match length {
+                // Note: For now, make "long" and "medium" both map to "medium".
+                // This could be improved in light of additional data.
+                NeoSkeletonLength::Long => DateTimeFormatterOptions::Length(length::Bag {
+                    date: None,
+                    time: Some(length::Time::Medium),
+                }),
+                NeoSkeletonLength::Medium => DateTimeFormatterOptions::Length(length::Bag {
+                    date: None,
+                    time: Some(length::Time::Medium),
+                }),
+                NeoSkeletonLength::Short => DateTimeFormatterOptions::Length(length::Bag {
+                    date: None,
+                    time: Some(length::Time::Short),
+                }),
+            },
         }
     }
 }
