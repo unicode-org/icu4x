@@ -131,6 +131,13 @@ class ICU4XIsoDateTime {
   uint32_t nanosecond() const;
 
   /**
+   * Returns the 1-indexed day in the year for this date
+   * 
+   * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+   */
+  uint16_t day_of_year() const;
+
+  /**
    * Returns the 1-indexed day in the month for this date
    * 
    * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
@@ -264,6 +271,9 @@ inline uint8_t ICU4XIsoDateTime::second() const {
 }
 inline uint32_t ICU4XIsoDateTime::nanosecond() const {
   return capi::ICU4XIsoDateTime_nanosecond(this->inner.get());
+}
+inline uint16_t ICU4XIsoDateTime::day_of_year() const {
+  return capi::ICU4XIsoDateTime_day_of_year(this->inner.get());
 }
 inline uint32_t ICU4XIsoDateTime::day_of_month() const {
   return capi::ICU4XIsoDateTime_day_of_month(this->inner.get());

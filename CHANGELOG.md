@@ -40,6 +40,7 @@
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
+      - Add `day_of_year` getter (https://github.com/unicode-org/icu4x/issues/4891)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
       - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
