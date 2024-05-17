@@ -8,7 +8,7 @@ use crate::provider::{DatagenProvider, IterableDataProviderInternal};
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
-use icu_datetime::options::{components, preferences};
+use icu_datetime::options::preferences;
 use icu_datetime::pattern::runtime::PatternPlurals;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::TimeLengthsV1Marker;
@@ -17,6 +17,7 @@ use icu_datetime::provider::{
     calendar::{DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker},
     neo::*,
 };
+use icu_datetime::DateTimeFormatterOptions;
 use icu_locid::extensions::private::Subtag;
 use icu_locid::extensions::unicode::{key, value, Value};
 use icu_locid::LanguageIdentifier;
@@ -40,7 +41,7 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
         from_id_str: impl Fn(TinyAsciiStr<8>) -> Option<C>,
-        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> components::Bag,
+        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
@@ -74,7 +75,7 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
         neo_components: C,
-        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> components::Bag,
+        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
         let mut skeletons_data_locale = req.locale.clone();
         skeletons_data_locale.set_unicode_ext(key!("ca"), value!("gregory"));
@@ -108,7 +109,7 @@ impl DatagenProvider {
         .map(|bag| {
             bag.select_pattern(
                 skeletons_data.get(),
-                &length_patterns_data.get().length_combinations,
+                length_patterns_data.get(),
                 match time_lengths_v1.get().preferred_hour_cycle {
                     CoarseHourCycle::H11H12 => preferences::HourCycle::H12,
                     CoarseHourCycle::H23H24 => preferences::HourCycle::H23,

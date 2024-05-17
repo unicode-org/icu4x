@@ -15,7 +15,11 @@ use crate::{
         PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
+    DateTimeFormatterOptions,
 };
+
+#[cfg(feature = "datagen")]
+use crate::provider::calendar::DateLengthsV1;
 
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
@@ -534,19 +538,47 @@ pub fn get_best_available_format_pattern<'data>(
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
 }
 
-impl components::Bag {
+impl DateTimeFormatterOptions {
     #[doc(hidden)] // TODO(#4467): Internal
     #[cfg(feature = "datagen")]
     pub fn select_pattern<'data>(
         self,
         skeletons: &DateSkeletonPatternsV1<'data>,
-        length_patterns: &GenericLengthPatternsV1<'data>,
+        date_patterns: &DateLengthsV1<'data>,
         default_hour_cycle: crate::options::preferences::HourCycle,
     ) -> Option<PatternPlurals<'data>> {
-        let fields = self.to_vec_fields(default_hour_cycle);
-        match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
-            BestSkeleton::AllFieldsMatch(p) => Some(p),
-            _ => None,
+        match self {
+            Self::Components(components_bag) => {
+                let fields = components_bag.to_vec_fields(default_hour_cycle);
+                match create_best_pattern_for_fields(
+                    skeletons,
+                    &date_patterns.length_combinations,
+                    &fields,
+                    &components_bag,
+                    false,
+                ) {
+                    BestSkeleton::AllFieldsMatch(p) => Some(p),
+                    _ => None,
+                }
+            }
+            Self::Length(length::Bag {
+                date: Some(date_length),
+                time: None,
+            }) => match date_length {
+                length::Date::Full => Some(PatternPlurals::SinglePattern(
+                    date_patterns.date.full.clone(),
+                )),
+                length::Date::Long => Some(PatternPlurals::SinglePattern(
+                    date_patterns.date.long.clone(),
+                )),
+                length::Date::Medium => Some(PatternPlurals::SinglePattern(
+                    date_patterns.date.medium.clone(),
+                )),
+                length::Date::Short => Some(PatternPlurals::SinglePattern(
+                    date_patterns.date.short.clone(),
+                )),
+            },
+            Self::Length(_) => unimplemented!(),
         }
     }
 }
