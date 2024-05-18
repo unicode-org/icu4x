@@ -11,10 +11,10 @@ use crate::format::datetime::{try_write_field, try_write_pattern};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
+use crate::neo_marker::{NeoFormatterMarker, TypedNeoFormatterMarker};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeletonCommonData,
-    NeoSkeletonComponents, NeoSkeletonLength, TypedNeoSkeletonData,
+    NeoSkeletonCommonData, NeoSkeletonComponents, NeoSkeletonLength, TypedNeoSkeletonData,
 };
 use crate::options::length;
 use crate::provider::neo::*;
@@ -29,7 +29,7 @@ use icu_calendar::provider::{
 };
 use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_provider::{prelude::*, NeverMarker};
+use icu_provider::prelude::*;
 use writeable::TryWriteable;
 
 #[doc(hidden)] // internal
@@ -396,107 +396,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 }
 
-mod private {
-    pub trait Sealed {}
-}
-
-/// A collection of types and constants for specific variants of [`TypedNeoFormatter`].
-///
-/// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
-pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoComponents;
-    /// Fields for [`TypedDateTimeNames`].
-    type DateTimeNamesMarker: DateTimeNamesMarker;
-    /// Marker for loading year names.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
-    /// Marker for loading month names.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
-    /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
-    // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
-}
-
-/// A collection of types and constants for specific variants of [`NeoFormatter`].
-///
-/// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
-///
-/// The cross-calendar fields should be either [`FullDataCalMarkers`] or [`NoDataCalMarkers`].
-///
-/// [`FullDataCalMarkers`]: _internal::FullDataCalMarkers
-/// [`NoDataCalMarkers`]: _internal::NoDataCalMarkers
-pub trait NeoFormatterMarker {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoComponents;
-    /// Fields for [`TypedDateTimeNames`].
-    type DateTimeNamesMarker: DateTimeNamesMarker;
-    /// Cross-calendar data markers for year names.
-    type Year: CalMarkers<YearNamesV1Marker>;
-    /// Cross-calendar data markers for month names.
-    type Month: CalMarkers<MonthNamesV1Marker>;
-    /// Cross-calendar data markers for date skeleta.
-    type Skel: CalMarkers<SkeletaV1Marker>;
-    /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
-    // TODO: Add WeekCalculator, FixedDecimalFormatter, and AnyCalendar optional bindings here
-}
-
-/// Marker for a Year/Month/Day format, like "January 1, 2000"
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty enum
-pub enum NeoYearMonthDayMarker {}
-
-impl private::Sealed for NeoYearMonthDayMarker {}
-
-impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for NeoYearMonthDayMarker {
-    const COMPONENTS: NeoComponents =
-        NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay));
-    type DateTimeNamesMarker = DateMarker;
-
-    // Data to include
-    type YearNamesV1Marker = C::YearNamesV1Marker;
-    type MonthNamesV1Marker = C::MonthNamesV1Marker;
-    type DateSkeletonPatternsV1Marker = C::SkeletaV1Marker;
-    type WeekdayNamesV1Marker = WeekdayNamesV1Marker;
-
-    // Data to exclude
-    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
-    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
-}
-
-impl NeoFormatterMarker for NeoYearMonthDayMarker {
-    const COMPONENTS: NeoComponents =
-        NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay));
-    type DateTimeNamesMarker = DateMarker;
-
-    // Data to include
-    type WeekdayNamesV1Marker = WeekdayNamesV1Marker;
-    type Year = FullData;
-    type Month = FullData;
-    type Skel = FullData;
-
-    // Data to exclude
-    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
-    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
-}
-
-size_test!(TypedNeoFormatter<icu_calendar::Gregorian, NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 456);
+size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 456);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -527,7 +427,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
@@ -656,7 +556,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
 }
 
 size_test!(
-    NeoFormatter<NeoYearMonthDayMarker>,
+    NeoFormatter<crate::neo_marker::NeoYearMonthDayMarker>,
     neo_year_month_day_formatter_size,
     512
 );
@@ -697,7 +597,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::calendar::{any_calendar::AnyCalendar, Date};
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::datetime::neo::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::locid::locale;
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;

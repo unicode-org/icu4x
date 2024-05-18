@@ -144,6 +144,8 @@ pub mod input;
 #[cfg(feature = "experimental")]
 pub mod neo;
 #[cfg(feature = "experimental")]
+pub mod neo_marker;
+#[cfg(feature = "experimental")]
 pub mod neo_pattern;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo_skeleton;
