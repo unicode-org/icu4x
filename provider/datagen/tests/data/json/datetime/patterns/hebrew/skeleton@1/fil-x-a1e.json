@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "EEEE, MMMM d, y",
-    "E, MMM d, y",
-    "E, M/d/y"
+    "EEEE, MMMM d y",
+    "E, MMM d, y G",
+    "E, M/d/y GGGGG"
   ]
 }

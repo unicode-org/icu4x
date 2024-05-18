@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "d MMMM G y",
+    "d MMMM y",
     "d MMM y",
     "d/M/yy"
   ]

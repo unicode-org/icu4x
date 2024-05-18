@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "y年M月d日EEEE",
-    "y年M月d日(E)",
-    "y/M/d(E)"
+    "Gy年M月d日(EEEE)",
+    "Gy年M月d日(E)",
+    "GGGGGy/M/d(E)"
   ]
 }

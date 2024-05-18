@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "d MMMM y г.",
-    "d MMM y г.",
+    "d MMMM U",
+    "dd.MM U",
     "dd.MM.y"
   ]
 }
