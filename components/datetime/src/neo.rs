@@ -714,7 +714,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ///
     /// assert_try_writeable_eq!(
     ///     df.format(&any_datetime).expect("Calendars should match"),
-    ///     "Nisan 30, 5784"
+    ///     "30 Nisan 5784"
     /// );
     /// ```
     ///
