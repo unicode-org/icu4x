@@ -63,7 +63,7 @@ impl DatagenProvider {
         let is_japanext = calendar == Either::Left(&value!("japanext"));
         let cldr_cal = match calendar {
             Either::Left(value) => supported_cals()
-                .get(&value)
+                .get(value)
                 .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
             Either::Right(s) => s,
         };
@@ -71,7 +71,7 @@ impl DatagenProvider {
         let resource: &cldr_serde::ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
+            .read_and_parse(langid, &format!("ca-{}.json", cldr_cal))?;
 
         let mut data = resource
             .main
@@ -89,7 +89,7 @@ impl DatagenProvider {
             let ethioaa: &cldr_serde::ca::Resource = self
                 .cldr()?
                 .dates("ethiopic")
-                .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+                .read_and_parse(langid, "ca-ethiopic-amete-alem.json")?;
 
             let ethioaa_data = ethioaa
                 .main
@@ -134,7 +134,7 @@ impl DatagenProvider {
             let greg_resource: &cldr_serde::ca::Resource = self
                 .cldr()?
                 .dates("gregorian")
-                .read_and_parse(&langid, "ca-gregorian.json")?;
+                .read_and_parse(langid, "ca-gregorian.json")?;
 
             let greg = greg_resource
                 .main

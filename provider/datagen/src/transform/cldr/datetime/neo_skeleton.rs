@@ -71,7 +71,7 @@ impl DatagenProvider {
         neo_components: C,
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
-        let data = self.get_datetime_resources(&langid, calendar)?;
+        let data = self.get_datetime_resources(langid, calendar)?;
 
         let date_lengths_v1 = DateLengthsV1::from(&data);
         let time_lengths_v1 = TimeLengthsV1::from(&data);
