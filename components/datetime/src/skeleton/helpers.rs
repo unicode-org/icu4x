@@ -546,9 +546,10 @@ impl DateTimeFormatterOptions {
         skeletons: &DateSkeletonPatternsV1<'data>,
         date_patterns: &DateLengthsV1<'data>,
         time_patterns: &TimeLengthsV1<'data>,
-    ) -> Option<PatternPlurals<'data>> {
+    ) -> PatternPlurals<'data> {
         use crate::options::preferences::HourCycle;
         use crate::pattern::hour_cycle::CoarseHourCycle;
+        use crate::pattern::runtime::Pattern;
 
         let default_hour_cycle = match time_patterns.preferred_hour_cycle {
             CoarseHourCycle::H11H12 => HourCycle::H12,
@@ -564,26 +565,38 @@ impl DateTimeFormatterOptions {
                     &components_bag,
                     false,
                 ) {
-                    BestSkeleton::AllFieldsMatch(p) => Some(p),
-                    _ => None,
+                    BestSkeleton::AllFieldsMatch(p) => p,
+                    _ => {
+                        // Build a last-resort pattern that contains all of the requested fields.
+                        // This is NOT in the CLDR standard! Should be using Append Items.
+                        let pattern_items = fields
+                            .into_iter()
+                            .flat_map(|field| {
+                                [PatternItem::Literal(' '), PatternItem::Field(field)]
+                            })
+                            .skip(1)
+                            .collect::<Vec<_>>();
+                        let pattern = Pattern::from(pattern_items);
+                        PatternPlurals::SinglePattern(pattern)
+                    }
                 }
             }
             Self::Length(length::Bag {
                 date: Some(date_length),
                 time: None,
             }) => match date_length {
-                length::Date::Full => Some(PatternPlurals::SinglePattern(
-                    date_patterns.date.full.clone(),
-                )),
-                length::Date::Long => Some(PatternPlurals::SinglePattern(
-                    date_patterns.date.long.clone(),
-                )),
-                length::Date::Medium => Some(PatternPlurals::SinglePattern(
-                    date_patterns.date.medium.clone(),
-                )),
-                length::Date::Short => Some(PatternPlurals::SinglePattern(
-                    date_patterns.date.short.clone(),
-                )),
+                length::Date::Full => {
+                    PatternPlurals::SinglePattern(date_patterns.date.full.clone())
+                }
+                length::Date::Long => {
+                    PatternPlurals::SinglePattern(date_patterns.date.long.clone())
+                }
+                length::Date::Medium => {
+                    PatternPlurals::SinglePattern(date_patterns.date.medium.clone())
+                }
+                length::Date::Short => {
+                    PatternPlurals::SinglePattern(date_patterns.date.short.clone())
+                }
             },
             Self::Length(length::Bag {
                 date: None,
@@ -594,17 +607,13 @@ impl DateTimeFormatterOptions {
                     CoarseHourCycle::H23H24 => &time_patterns.time_h23_h24,
                 };
                 match time_length {
-                    length::Time::Full => {
-                        Some(PatternPlurals::SinglePattern(time_patterns.full.clone()))
-                    }
-                    length::Time::Long => {
-                        Some(PatternPlurals::SinglePattern(time_patterns.long.clone()))
-                    }
+                    length::Time::Full => PatternPlurals::SinglePattern(time_patterns.full.clone()),
+                    length::Time::Long => PatternPlurals::SinglePattern(time_patterns.long.clone()),
                     length::Time::Medium => {
-                        Some(PatternPlurals::SinglePattern(time_patterns.medium.clone()))
+                        PatternPlurals::SinglePattern(time_patterns.medium.clone())
                     }
                     length::Time::Short => {
-                        Some(PatternPlurals::SinglePattern(time_patterns.short.clone()))
+                        PatternPlurals::SinglePattern(time_patterns.short.clone())
                     }
                 }
             }

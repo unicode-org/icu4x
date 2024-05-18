@@ -90,10 +90,7 @@ impl DatagenProvider {
             NeoSkeletonLength::Short,
         ]
         .map(|length| to_components_bag(length, &neo_components))
-        .map(|bag| {
-            bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1)
-                .unwrap()
-        });
+        .map(|bag| bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1));
         let [long, medium, short] = if long_medium_short
             .iter()
             .any(|pp| matches!(pp, PatternPlurals::MultipleVariants(_)))
