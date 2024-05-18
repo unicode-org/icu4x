@@ -27,7 +27,7 @@ use icu_calendar::provider::{
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV2Marker,
 };
-use icu_calendar::AnyCalendar;
+use icu_calendar::{AnyCalendar, Iso};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
@@ -270,11 +270,11 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<YearMonthMarker>(
-    ///     &locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Long
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<
+    ///         YearMonthMarker,
+    ///     >(&locale!("es-MX").into(), NeoSkeletonLength::Long)
+    ///     .unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
@@ -432,11 +432,12 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
-    ///     &locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Long
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Long,
+    ///     )
+    ///     .unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
@@ -596,8 +597,8 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date};
     /// use icu::datetime::neo::NeoFormatter;
-    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locid::locale;
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;
@@ -605,8 +606,9 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// let length = NeoSkeletonLength::Medium;
     /// let locale = locale!("en-u-ca-hebrew");
     ///
-    /// let df = NeoFormatter::<NeoYearMonthDayMarker>::try_new(&locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df =
+    ///     NeoFormatter::<NeoYearMonthDayMarker>::try_new(&locale.into(), length)
+    ///         .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
     ///     Date::try_new_iso_date(2024, 5, 8).expect("Failed to construct Date.");
@@ -869,7 +871,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
         })
     }
 
-    /// Formats a date.
+    /// Formats a date, checking that the calendar system is correct.
     ///
     /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
     /// an error is returned.
@@ -891,6 +893,29 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             names: self.names.as_borrowed(),
         })
     }
+
+    /// Infallibly formats a datetime after first converting it
+    /// to the formatter's calendar.
+    pub fn convert_and_format<T>(&self, datetime: &T) -> FormattedNeoDate
+    where
+        T: DateTimeInput<Calendar = Iso>,
+    {
+        let calendar = icu_calendar::Ref(&self.calendar);
+        let date = icu_calendar::Date::new_from_iso(datetime.to_iso(), calendar);
+        let time = icu_calendar::Time::new(
+            datetime.hour().unwrap_or_default(),
+            datetime.minute().unwrap_or_default(),
+            datetime.second().unwrap_or_default(),
+            datetime.nanosecond().unwrap_or_default(),
+        );
+        let datetime = icu_calendar::DateTime::new(date, time);
+        let datetime = ExtractedDateTimeInput::extract_from(&datetime);
+        FormattedNeoDate {
+            pattern: self.selection.select(&datetime),
+            datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
 }
 
 size_test!(NeoDateFormatter, neo_date_formatter_size, 512);
@@ -898,7 +923,6 @@ size_test!(NeoDateFormatter, neo_date_formatter_size, 512);
 /// [`NeoDateFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
 /// [crate root docs][crate].
-///
 #[doc = neo_date_formatter_size!()]
 ///
 /// <div class="stab unstable">
@@ -928,7 +952,7 @@ impl NeoDateFormatter {
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date};
-    /// use icu::datetime::{options::length, neo::NeoDateFormatter};
+    /// use icu::datetime::{neo::NeoDateFormatter, options::length};
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
@@ -1331,15 +1355,16 @@ impl NeoTimeFormatter {
     /// ```
     /// use icu::calendar::Time;
     /// use icu::datetime::neo::NeoTimeFormatter;
-    /// use icu::datetime::neo_skeleton::{NeoSkeletonLength, HourMinuteMarker};
+    /// use icu::datetime::neo_skeleton::{HourMinuteMarker, NeoSkeletonLength};
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = NeoTimeFormatter::try_new_with_skeleton::<HourMinuteMarker>(
-    ///     &locale!("es-MX").into(),
-    ///     NeoSkeletonLength::Medium
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     NeoTimeFormatter::try_new_with_skeleton::<HourMinuteMarker>(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Medium,
+    ///     )
+    ///     .unwrap();
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&Time::try_new(14, 48, 58, 0).unwrap()),
@@ -1954,20 +1979,20 @@ impl NeoDateTimeFormatter {
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter =
-    ///     NeoDateTimeFormatter::try_new_with_date_length(
-    ///         &locale!("es-MX").into(),
-    ///         length::Date::Full,
-    ///     )
-    ///     .unwrap();
+    /// let formatter = NeoDateTimeFormatter::try_new_with_date_length(
+    ///     &locale!("es-MX").into(),
+    ///     length::Date::Full,
+    /// )
+    /// .unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format(
-    ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
-    ///             .unwrap()
-    ///             .to_any()
-    ///     )
-    ///     .unwrap(),
+    ///     formatter
+    ///         .format(
+    ///             &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
+    ///                 .unwrap()
+    ///                 .to_any()
+    ///         )
+    ///         .unwrap(),
     ///     "miércoles, 20 de diciembre de 2023"
     /// );
     /// ```
@@ -2168,20 +2193,20 @@ impl NeoDateTimeFormatter {
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter =
-    ///     NeoDateTimeFormatter::try_new_with_time_length(
-    ///         &locale!("es-MX").into(),
-    ///         length::Time::Medium,
-    ///     )
-    ///     .unwrap();
+    /// let formatter = NeoDateTimeFormatter::try_new_with_time_length(
+    ///     &locale!("es-MX").into(),
+    ///     length::Time::Medium,
+    /// )
+    /// .unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format(
-    ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
-    ///             .unwrap()
-    ///             .to_any()
-    ///     )
-    ///     .unwrap(),
+    ///     formatter
+    ///         .format(
+    ///             &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
+    ///                 .unwrap()
+    ///                 .to_any()
+    ///         )
+    ///         .unwrap(),
     ///     "2:48:58 p.m."
     /// );
     /// ```
@@ -2273,21 +2298,21 @@ impl NeoDateTimeFormatter {
     /// use icu::locid::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter =
-    ///     NeoDateTimeFormatter::try_new_with_lengths(
-    ///         &locale!("es-MX").into(),
-    ///         length::Date::Full,
-    ///         length::Time::Medium,
-    ///     )
-    ///     .unwrap();
+    /// let formatter = NeoDateTimeFormatter::try_new_with_lengths(
+    ///     &locale!("es-MX").into(),
+    ///     length::Date::Full,
+    ///     length::Time::Medium,
+    /// )
+    /// .unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     formatter.format(
-    ///         &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
-    ///             .unwrap()
-    ///             .to_any()
-    ///     )
-    ///     .unwrap(),
+    ///     formatter
+    ///         .format(
+    ///             &DateTime::try_new_iso_datetime(2023, 12, 20, 14, 48, 58)
+    ///                 .unwrap()
+    ///                 .to_any()
+    ///         )
+    ///         .unwrap(),
     ///     "miércoles, 20 de diciembre de 2023, 2:48:58 p.m."
     /// );
     /// ```

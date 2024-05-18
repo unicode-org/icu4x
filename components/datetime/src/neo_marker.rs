@@ -67,6 +67,26 @@ pub trait NeoFormatterMarker {
 }
 
 /// Marker for a Year/Month/Day format, like "January 1, 2000"
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::DateTime;
+/// use icu::datetime::neo::NeoFormatter;
+/// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+/// use icu::locid::locale;
+/// use writeable::assert_try_writeable_eq;
+///
+/// let fmt = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
+///     &locale!("en").into(),
+///     NeoSkeletonLength::Medium,
+/// )
+/// .unwrap();
+/// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+///
+/// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "May 17, 2024");
+/// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NeoYearMonthDayMarker {}

@@ -337,7 +337,10 @@ impl NeoDayComponents {
     /// ```
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     ///
-    /// assert_eq!("gym0de", &*NeoDayComponents::EraYearMonthDayWeekday.id_str());
+    /// assert_eq!(
+    ///     "gym0de",
+    ///     &*NeoDayComponents::EraYearMonthDayWeekday.id_str()
+    /// );
     /// ```
     pub const fn id_str(self) -> TinyAsciiStr<8> {
         match self {
@@ -363,7 +366,10 @@ impl NeoDayComponents {
     /// use icu::datetime::neo_skeleton::NeoDayComponents;
     /// use tinystr::tinystr;
     ///
-    /// assert_eq!(NeoDayComponents::from_id_str(tinystr!(8, "gym0de")), Some(NeoDayComponents::EraYearMonthDayWeekday));
+    /// assert_eq!(
+    ///     NeoDayComponents::from_id_str(tinystr!(8, "gym0de")),
+    ///     Some(NeoDayComponents::EraYearMonthDayWeekday)
+    /// );
     /// ```
     pub const fn from_id_str(id_str: TinyAsciiStr<8>) -> Option<Self> {
         match id_str {
