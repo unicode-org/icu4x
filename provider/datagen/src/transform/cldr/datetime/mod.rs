@@ -5,7 +5,9 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
+use either::Either;
 use icu_datetime::provider::calendar::*;
+use icu_locid::extensions::unicode::Value;
 use icu_locid::LanguageIdentifier;
 use icu_locid::{
     extensions::unicode::{key, value},
@@ -56,9 +58,16 @@ impl DatagenProvider {
     fn get_datetime_resources(
         &self,
         langid: &LanguageIdentifier,
-        cldr_cal: &str,
-        is_japanext: bool,
+        calendar: Either<&Value, &str>,
     ) -> Result<cldr_serde::ca::Dates, DataError> {
+        let is_japanext = calendar == Either::Left(&value!("japanext"));
+        let cldr_cal = match calendar {
+            Either::Left(value) => supported_cals()
+                .get(&value)
+                .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
+            Either::Right(s) => s,
+        };
+
         let resource: &cldr_serde::ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
@@ -208,12 +217,7 @@ macro_rules! impl_data_provider {
                     value!($calendar)
                 };
 
-                let cldr_cal = supported_cals()
-                    .get(&calendar)
-                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-
-                let data =
-                    self.get_datetime_resources(&langid, cldr_cal, calendar == value!("japanext"))?;
+                let data = self.get_datetime_resources(&langid, Either::Left(&calendar))?;
 
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
