@@ -122,8 +122,7 @@ fn bad_zoned_date_time() {
 #[test]
 fn good_extended_year_parsing() {
     let extended_year = "+002020-11-08";
-    let mut ixdtf = IxdtfParser::new(extended_year);
-    let result = ixdtf.parse().unwrap();
+    let result = IxdtfParser::new(extended_year).parse().unwrap();
     assert_eq!(
         result.date,
         Some(DateRecord {
@@ -135,8 +134,19 @@ fn good_extended_year_parsing() {
     );
 
     let extended_year = "-002020-11-08";
-    let mut ixdtf = IxdtfParser::new(extended_year);
-    let result = ixdtf.parse().unwrap();
+    let result = IxdtfParser::new(extended_year).parse().unwrap();
+    assert_eq!(
+        result.date,
+        Some(DateRecord {
+            year: -2020,
+            month: 11,
+            day: 8,
+        }),
+        "Extended year \"{extended_year}\" should pass."
+    );
+
+    let extended_year = "−002020-11-08";
+    let result = IxdtfParser::new(extended_year).parse().unwrap();
     assert_eq!(
         result.date,
         Some(DateRecord {
@@ -465,6 +475,7 @@ fn temporal_time() {
         "12:01:04[u-ca=iso8601]",
         "12:01:04[+04:00][u-ca=iso8601]",
         "12:01:04-05:00[America/New_York][u-ca=iso8601]",
+        "12:01:04−05:00[America/New_York][u-ca=iso8601]",
     ];
 
     for time in possible_times {
@@ -909,4 +920,46 @@ fn test_bad_time_spec_separator() {
     let mut ixdtf = IxdtfParser::new(dt);
     let parsed = ixdtf.parse();
     assert_eq!(parsed, Err(ParserError::InvalidEnd));
+}
+
+#[test]
+fn invalid_bytes_injected() {
+    // Random bytes: "2024" + [0xB2, 0x2D]
+    let invalid_bytes = &[0x32, 0x30, 0x32, 0x34, 0xB2, 0x2D];
+    let err = IxdtfParser::from_bytes(invalid_bytes).parse();
+    assert_eq!(err, Err(ParserError::Utf8Encoding));
+
+    // Orignal - 12:01:04−05:00[America/New_York][u-ca=iso8601]
+    // Removed first byte from <MINUS> (0xe2)
+    let invalid_bytes = &[
+        0x31, 0x32, 0x3a, 0x30, 0x31, 0x3a, 0x30, 0x34, 0x88, 0x92, 0x30, 0x35, 0x3a, 0x30, 0x30,
+        0x5b, 0x41, 0x6d, 0x65, 0x72, 0x69, 0x63, 0x61, 0x2f, 0x4e, 0x65, 0x77, 0x5f, 0x59, 0x6f,
+        0x72, 0x6b, 0x5d, 0x5b, 0x75, 0x2d, 0x63, 0x61, 0x3d, 0x69, 0x73, 0x6f, 0x38, 0x36, 0x30,
+        0x31, 0x5d,
+    ];
+    let err = IxdtfParser::from_bytes(invalid_bytes).parse_time();
+    assert_eq!(err, Err(ParserError::Utf8Encoding));
+
+    // Original - 2021-01-29 02:12:48−01:00:00[u-ca=gregorian][u-ca=iso8601][u-ca=japanese]
+    // Removed first byte from <MINUS>
+    let invalid_bytes = &[
+        0x32, 0x30, 0x32, 0x31, 0x2d, 0x30, 0x31, 0x2d, 0x32, 0x39, 0x20, 0x30, 0x32, 0x3a, 0x31,
+        0x32, 0x3a, 0x34, 0x38, 0x88, 0x92, 0x30, 0x31, 0x3a, 0x30, 0x30, 0x3a, 0x30, 0x30, 0x5b,
+        0x75, 0x2d, 0x63, 0x61, 0x3d, 0x67, 0x72, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x61, 0x6e, 0x5d,
+        0x5b, 0x75, 0x2d, 0x63, 0x61, 0x3d, 0x69, 0x73, 0x6f, 0x38, 0x36, 0x30, 0x31, 0x5d, 0x5b,
+        0x75, 0x2d, 0x63, 0x61, 0x3d, 0x6a, 0x61, 0x70, 0x61, 0x6e, 0x65, 0x73, 0x65, 0x5d, 0xa,
+    ];
+    let err = IxdtfParser::from_bytes(invalid_bytes).parse();
+    assert_eq!(err, Err(ParserError::Utf8Encoding));
+}
+
+#[test]
+fn invalid_bytes_start() {
+    // Original case: "−002020-11-08"
+    // Removed the flag byte prior to minus.
+    let invalid_bytes = &[
+        0x88, 0x92, 0x30, 0x30, 0x32, 0x30, 0x32, 0x30, 0x2d, 0x31, 0x31, 0x2d, 0x30, 0x38, 0xa,
+    ];
+    let err = IxdtfParser::from_bytes(invalid_bytes).parse();
+    assert_eq!(err, Err(ParserError::Utf8Encoding));
 }

@@ -73,10 +73,17 @@ pub struct IxdtfParser<'a> {
 }
 
 impl<'a> IxdtfParser<'a> {
-    /// Creates a new `IXDTFParser` from a provided `&str`.
+    /// Creates a new `IxdtfParser` from a provided `&str`.
     pub fn new(value: &'a str) -> Self {
         Self {
-            cursor: Cursor::new(value),
+            cursor: Cursor::new(value.as_bytes()),
+        }
+    }
+
+    /// Creates a new `IxdtfParser` from a provided `&[u8]`.
+    pub fn from_bytes(bytes: &'a [u8]) -> Self {
+        Self {
+            cursor: Cursor::new(bytes),
         }
     }
 
@@ -228,7 +235,14 @@ impl<'a> IsoDurationParser<'a> {
     /// Creates a new `IsoDurationParser` from a target `&str`.
     pub fn new(value: &'a str) -> Self {
         Self {
-            cursor: Cursor::new(value),
+            cursor: Cursor::new(value.as_bytes()),
+        }
+    }
+
+    /// Creates a new `IsoDurationParser` from a `&[u8]`.
+    pub fn from_bytes(bytes: &'a [u8]) -> Self {
+        Self {
+            cursor: Cursor::new(bytes),
         }
     }
 
@@ -244,19 +258,20 @@ impl<'a> IsoDurationParser<'a> {
 #[derive(Debug)]
 pub(crate) struct Cursor<'a> {
     pos: usize,
-    source: &'a str,
+    source: &'a [u8],
 }
 
 impl<'a> Cursor<'a> {
     /// Create a new cursor from a source `String` value.
     #[must_use]
-    pub(crate) fn new(source: &'a str) -> Self {
+    pub(crate) fn new(source: &'a [u8]) -> Self {
         Self { pos: 0, source }
     }
 
     /// Returns a string value from a slice of the cursor.
     fn slice(&self, start: usize, end: usize) -> Option<&'a str> {
-        self.source.get(start..end)
+        // Safety: grammar tests enforce that the &[u8] is a valid well-formed utf-8 byte sequence.
+        unsafe { core::mem::transmute(self.source.get(start..end)) }
     }
 
     /// Get current position
@@ -265,47 +280,46 @@ impl<'a> Cursor<'a> {
     }
 
     /// Peek the value at next position (current + 1).
-    fn peek(&self) -> Option<char> {
-        self.peek_n_char(1)
+    fn peek(&self) -> ParserResult<Option<&'a [u8]>> {
+        self.peek_n(1)
     }
 
     /// Returns current position in source as `char`.
-    fn current(&self) -> Option<char> {
-        self.peek_n_char(0)
-    }
-
-    /// Peek the value at n len from current.
-    fn peek_n(&self, n: usize) -> Option<&'a str> {
-        let index = self.pos + n;
-        self.source.get(index..index + 1)
+    fn current(&self) -> ParserResult<Option<&'a [u8]>> {
+        self.peek_n(0)
     }
 
     /// Peeks the value at `n` as a `char`.
-    fn peek_n_char(&self, n: usize) -> Option<char> {
-        self.peek_n(n).map(str::chars).and_then(|mut c| c.next())
+    fn peek_n(&self, n: usize) -> ParserResult<Option<&'a [u8]>> {
+        let mut index = self.pos;
+        for _ in 0..n {
+            index += get_utf8_offset(self.source.get(index))?;
+        }
+        let offset = get_utf8_offset(self.source.get(index))?;
+        Ok(self.source.get(index..index + offset))
     }
 
     /// Runs the provided check on the current position.
-    fn check<F>(&self, f: F) -> Option<bool>
+    fn check<F>(&self, f: F) -> ParserResult<Option<bool>>
     where
-        F: FnOnce(char) -> bool,
+        F: FnOnce(&'a [u8]) -> bool,
     {
-        self.current().map(f)
+        Ok(self.current()?.map(f))
     }
 
     /// Runs the provided check on current position returns the default value if None.
-    fn check_or<F>(&self, default: bool, f: F) -> bool
+    fn check_or<F>(&self, default: bool, f: F) -> ParserResult<bool>
     where
-        F: FnOnce(char) -> bool,
+        F: FnOnce(&'a [u8]) -> bool,
     {
-        self.current().map_or(default, f)
+        Ok(self.current()?.map_or(default, f))
     }
 
     /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> Option<char> {
-        let result = self.current();
-        self.advance();
-        result
+    fn next(&mut self) -> ParserResult<Option<&'a [u8]>> {
+        let result = self.current()?;
+        self.advance_n(result.map_or(0, |a| a.len()));
+        Ok(result)
     }
 
     /// Returns the next value as a digit.
@@ -314,21 +328,22 @@ impl<'a> Cursor<'a> {
     ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        let p_digit = self.next_or(ParserError::InvalidEnd)?.to_digit(10);
-        let Some(digit) = p_digit else {
-            return Ok(None);
-        };
-        Ok(Some(digit as u8))
+        Ok(to_ascii_digit(self.next_or(ParserError::InvalidEnd)?))
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParserError) -> ParserResult<char> {
-        self.next().ok_or(err)
+    fn next_or(&mut self, err: ParserError) -> ParserResult<&'a [u8]> {
+        self.next()?.ok_or(err)
     }
 
-    /// Advances the cursor's position by 1.
+    /// Advances the cursor's position by n bytes.
+    fn advance_n(&mut self, n: usize) {
+        self.pos += n;
+    }
+
+    // Advances the cursor by 1 byte.
     fn advance(&mut self) {
-        self.pos += 1;
+        self.advance_n(1)
     }
 
     /// Utility function to advance when a condition is true
@@ -345,4 +360,33 @@ impl<'a> Cursor<'a> {
         }
         Ok(())
     }
+}
+
+// ==== Utility functions ====
+
+/// Checks the leading byte to determine width of character.
+fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<usize> {
+    match byte {
+        Some(x) if (0x00..=0x7F).contains(x) => Ok(1),
+        Some(x) if (0xC2..=0xDF).contains(x) => Ok(2),
+        Some(x) if (0xE0..=0xEF).contains(x) => Ok(3),
+        Some(x) if (0xF0..=0xF4).contains(x) => Ok(4),
+        // Came across a UTF8-Tail character or a non-valid character as a leading byte.
+        Some(_) => Err(ParserError::Utf8Encoding),
+        None => Ok(1),
+    }
+}
+
+/// Converts the slice to a `u8`.
+fn to_ascii_digit(slice: &[u8]) -> Option<u8> {
+    if slice.len() > 1 {
+        return None;
+    }
+    slice.first().and_then(|digit| {
+        if (*digit).is_ascii_digit() {
+            Some(digit.wrapping_sub(b'0'))
+        } else {
+            None
+        }
+    })
 }
