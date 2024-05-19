@@ -22,7 +22,7 @@
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
-//! let result = IxdtfParser::new(ixdtf_str).parse().unwrap();
+//! let result = IxdtfParser::new(ixdtf_str.as_bytes()).parse().unwrap();
 //!
 //! let date = result.date.unwrap();
 //! let time = result.time.unwrap();
@@ -138,9 +138,7 @@
 //!
 //! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
 //!
-//! let mut ixdtf = IxdtfParser::new(example_one);
-//!
-//! let result = ixdtf.parse();
+//! let result = IxdtfParser::new(example_one.as_bytes()).parse();
 //!
 //! assert_eq!(result, Err(ParserError::AnnotationKeyLeadingChar));
 //! ```
@@ -154,9 +152,9 @@
 //! ```rust
 //! use ixdtf::{parsers::IxdtfParser, ParserError};
 //!
-//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
+//! let example_two = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 //!
-//! let result = IxdtfParser::new(example_one).parse();
+//! let result = IxdtfParser::new(example_two.as_bytes()).parse();
 //!
 //! assert_eq!(result, Err(ParserError::CriticalDuplicateCalendar));
 //! ```
@@ -169,9 +167,9 @@
 //! ```rust
 //! use ixdtf::{parsers::IxdtfParser, ParserError};
 //!
-//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
+//! let example_three = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 //!
-//! let result = IxdtfParser::new(example_one).parse();
+//! let result = IxdtfParser::new(example_three.as_bytes()).parse();
 //!
 //! assert_eq!(result, Err(ParserError::UnrecognizedCritical));
 //! ```
@@ -202,11 +200,9 @@
 //! ```rust
 //! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
 //!
-//! let example_one = "2024-03-02T08:48:00+01:00[!America/New_York]";
+//! let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 //!
-//! let mut ixdtf = IxdtfParser::new(example_one);
-//!
-//! let result = ixdtf.parse().unwrap();
+//! let result = IxdtfParser::new(example_two.as_bytes()).parse().unwrap();
 //!
 //! let tz_annotation = result.tz.unwrap();
 //! let offset = result.offset.unwrap();
@@ -249,7 +245,7 @@
 //!
 //! let mut answer = None;
 //!
-//! let _ = IxdtfParser::new(example_with_custom_key).parse_with_annotation_handler(|annotation| {
+//! let _ = IxdtfParser::new(example_with_custom_key.as_bytes()).parse_with_annotation_handler(|annotation| {
 //!     if annotation.key == "answer-to-universe" {
 //!         answer.get_or_insert(annotation);
 //!         // Found our value! We don't need `ixdtf` to handle this annotation.

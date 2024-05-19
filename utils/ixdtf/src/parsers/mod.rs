@@ -46,7 +46,7 @@ macro_rules! assert_syntax {
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 ///
-/// let result = IxdtfParser::new(ixdtf_str).parse().unwrap();
+/// let result = IxdtfParser::new(ixdtf_str.as_bytes()).parse().unwrap();
 ///
 /// let date = result.date.unwrap();
 /// let time = result.time.unwrap();
@@ -74,16 +74,9 @@ pub struct IxdtfParser<'a> {
 
 impl<'a> IxdtfParser<'a> {
     /// Creates a new `IxdtfParser` from a provided `&str`.
-    pub fn new(value: &'a str) -> Self {
+    pub fn new(value: &'a [u8]) -> Self {
         Self {
-            cursor: Cursor::new(value.as_bytes()),
-        }
-    }
-
-    /// Creates a new `IxdtfParser` from a provided `&[u8]`.
-    pub fn from_bytes(bytes: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(bytes),
+            cursor: Cursor::new(value),
         }
     }
 
@@ -113,7 +106,7 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// let extended_year_month = "2020-11[u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_year_month).parse_year_month().unwrap();
+    /// let result = IxdtfParser::new(extended_year_month.as_bytes()).parse_year_month().unwrap();
     ///
     /// let date = result.date.unwrap();
     ///
@@ -143,7 +136,7 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::IxdtfParser;
     /// let extended_month_day = "1107[+04:00]";
     ///
-    /// let result = IxdtfParser::new(extended_month_day).parse_month_day().unwrap();
+    /// let result = IxdtfParser::new(extended_month_day.as_bytes()).parse_month_day().unwrap();
     ///
     /// let date = result.date.unwrap();
     ///
@@ -173,7 +166,7 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_time).parse_time().unwrap();
+    /// let result = IxdtfParser::new(extended_time.as_bytes()).parse_time().unwrap();
     ///
     /// let time = result.time.unwrap();
     /// let offset = result.offset.unwrap();
@@ -214,7 +207,7 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// let duration_str = "P1Y2M3W1D";
 ///
-/// let result = IsoDurationParser::new(duration_str).parse().unwrap();
+/// let result = IsoDurationParser::new(duration_str.as_bytes()).parse().unwrap();
 ///
 /// let date_duration = result.date.unwrap();
 ///
@@ -233,16 +226,9 @@ pub struct IsoDurationParser<'a> {
 #[cfg(feature = "duration")]
 impl<'a> IsoDurationParser<'a> {
     /// Creates a new `IsoDurationParser` from a target `&str`.
-    pub fn new(value: &'a str) -> Self {
+    pub fn new(value: &'a [u8]) -> Self {
         Self {
-            cursor: Cursor::new(value.as_bytes()),
-        }
-    }
-
-    /// Creates a new `IsoDurationParser` from a `&[u8]`.
-    pub fn from_bytes(bytes: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(bytes),
+            cursor: Cursor::new(value),
         }
     }
 
@@ -264,7 +250,7 @@ pub(crate) struct Cursor<'a> {
 impl<'a> Cursor<'a> {
     /// Create a new cursor from a source `String` value.
     #[must_use]
-    pub(crate) fn new(source: &'a [u8]) -> Self {
+    pub fn new(source: &'a [u8]) -> Self {
         Self { pos: 0, source }
     }
 
