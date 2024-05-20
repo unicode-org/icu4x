@@ -34,6 +34,13 @@ pub struct Uts46Mapper {
     normalizer: ComposingNormalizer,
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for Uts46Mapper {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Uts46Mapper {
     /// Construct with compiled data.
     #[cfg(feature = "compiled_data")]
@@ -59,9 +66,7 @@ impl Uts46Mapper {
 
         Ok(Uts46Mapper { normalizer })
     }
-}
 
-impl Uts46Mapper {
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
     /// into an iterator yielding a `char` sequence that gets the following
     /// operations from the "Map" and "Normalize" steps of the "Processing"
