@@ -125,7 +125,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -150,7 +150,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -176,7 +176,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -205,7 +205,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu_properties::GeneralCategory;
+    /// use icu::properties::GeneralCategory;
     ///
     /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
@@ -2248,7 +2248,7 @@ impl_value_getter! {
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
 ///
-/// See `icu_normalizer::properties::CanonicalCombiningClassMap` for the API
+/// See `icu::normalizer::properties::CanonicalCombiningClassMap` for the API
 /// to look up the Canonical_Combining_Class property by scalar value.
 //
 // NOTE: The Pernosco debugger has special knowledge

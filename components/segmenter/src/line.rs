@@ -240,7 +240,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// [LB5]: https://www.unicode.org/reports/tr14/#LB5
 ///
 /// ```rust
-/// # use icu_segmenter::LineSegmenter;
+/// # use icu::segmenter::LineSegmenter;
 /// #
 /// # let segmenter = LineSegmenter::new_auto();
 /// #
@@ -270,7 +270,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a string with default options:
 ///
 /// ```rust
-/// use icu_segmenter::LineSegmenter;
+/// use icu::segmenter::LineSegmenter;
 ///
 /// let segmenter = LineSegmenter::new_auto();
 ///
@@ -282,7 +282,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust
-/// use icu_segmenter::{
+/// use icu::segmenter::{
 ///     LineBreakOptions, LineBreakStrictness, LineBreakWordOption,
 ///     LineSegmenter,
 /// };
@@ -301,7 +301,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::LineSegmenter;
+/// use icu::segmenter::LineSegmenter;
 ///
 /// let segmenter = LineSegmenter::new_auto();
 ///
@@ -314,7 +314,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// ```rust
 /// use icu::properties::{maps, LineBreak};
-/// use icu_segmenter::LineSegmenter;
+/// use icu::segmenter::LineSegmenter;
 ///
 /// # let segmenter = LineSegmenter::new_auto();
 /// #

@@ -38,7 +38,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 ///
 #[doc = date_time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///

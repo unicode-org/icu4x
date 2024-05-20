@@ -26,8 +26,8 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
+/// use icu::locid::Locale;
+/// use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 ///
 /// let lc = LocaleCanonicalizer::new();
 ///
@@ -326,8 +326,8 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
+    /// use icu::locid::Locale;
+    /// use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
     ///
     /// let lc = LocaleCanonicalizer::new();
     ///

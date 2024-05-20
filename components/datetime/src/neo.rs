@@ -697,7 +697,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::calendar::{any_calendar::AnyCalendar, Date};
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu_datetime::neo::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo::NeoYearMonthDayMarker;
     /// use icu::locid::locale;
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;

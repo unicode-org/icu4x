@@ -14,7 +14,7 @@ together in one place.
 It does not bring any unique functionality, but rather,
 it re-exports the relevant crates as modules.
 The exported crate corresponding to each module is also
-available in a stand-alone manner, i.e. `icu::list` as `icu_list`.
+available in a stand-alone manner, i.e. `icu::list` as `icu::list`.
 
 ## Data Management
 
@@ -114,7 +114,7 @@ The following Cargo features are only available on the individual crates, but no
 
 ## Experimental modules
 
-Experimental, unstable functionality can be found in the `icu_experimental` crate. The modules in that crate
+Experimental, unstable functionality can be found in the `icu::experimental` crate. The modules in that crate
 are on track to be eventually stabilized into this crate.
 
 

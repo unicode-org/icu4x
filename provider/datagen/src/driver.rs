@@ -391,7 +391,7 @@ enum LocalesWithOrWithoutFallback {
 ///
 /// DatagenDriver::new()
 ///     .with_keys([icu::list::provider::AndListV1Marker::KEY])
-///     .with_all_locales()
+///     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 ///     .export(
 ///         &DatagenProvider::new_latest_tested(),
 ///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),

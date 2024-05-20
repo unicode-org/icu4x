@@ -28,7 +28,7 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
+//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #

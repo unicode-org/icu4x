@@ -107,7 +107,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu_segmenter::WordSegmenter;
+/// use icu::segmenter::WordSegmenter;
 /// let segmenter = WordSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
@@ -118,7 +118,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::WordSegmenter;
+/// use icu::segmenter::WordSegmenter;
 /// let segmenter = WordSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
@@ -131,7 +131,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu_segmenter::WordSegmenter;
+/// # use icu::segmenter::WordSegmenter;
 /// # let segmenter = WordSegmenter::new_auto();
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
@@ -153,7 +153,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu_segmenter::{WordType, WordSegmenter};
+/// # use icu::segmenter::{WordType, WordSegmenter};
 /// # let segmenter = WordSegmenter::new_auto();
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter

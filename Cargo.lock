@@ -1343,6 +1343,7 @@ dependencies = [
  "databake",
  "detone",
  "displaydoc",
+ "icu",
  "icu_collections",
  "icu_normalizer_data",
  "icu_properties",
@@ -1429,6 +1430,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "erased-serde",
+ "icu",
  "icu_locid",
  "icu_locid_transform",
  "icu_provider_adapters",
@@ -1467,8 +1469,12 @@ version = "1.4.0"
 dependencies = [
  "criterion",
  "icu_datagen",
+ "icu_datetime",
+ "icu_datetime_data",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
+ "icu_provider_adapters",
  "log",
  "postcard",
  "serde",
@@ -1564,7 +1570,6 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_calendar",
- "icu_locid",
  "icu_provider",
  "icu_timezone_data",
  "serde",
@@ -2445,7 +2450,9 @@ version = "4.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2230cd5c29b815c9b699fb610b49a5ed65588f3509d9f0108be3a885da629333"
 dependencies = [
+ "colored",
  "log",
+ "time",
  "windows-sys 0.42.0",
 ]
 
@@ -2596,10 +2603,12 @@ version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a561bf4617eebd33bca6434b988f39ed798e527f51a1e797d0ee4f61c0a38376"
 dependencies = [
+ "itoa",
  "libc",
  "num_threads",
  "serde",
  "time-core",
+ "time-macros",
 ]
 
 [[package]]
@@ -2607,6 +2616,15 @@ name = "time-core"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e153e1f1acaef8acc537e68b44906d2db6436e2b35ac2c6b42640fff91f00fd"
+
+[[package]]
+name = "time-macros"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d967f99f534ca7e495c575c62638eebc2898a8c84c119b89e250477bc4ba16b2"
+dependencies = [
+ "time-core",
+]
 
 [[package]]
 name = "tinystr"
@@ -2664,6 +2682,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
+ "rand",
  "static_assertions",
 ]
 
@@ -2736,6 +2755,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "11f214ce18d8b2cbe84ed3aa6486ed3f5b285cf8d8fbdbce9f3f767a724adc35"
 dependencies = [
  "base64",
+ "flate2",
  "log",
  "once_cell",
  "rustls",

@@ -10,6 +10,7 @@
   - `icu_calendar`
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
+    - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
   - `icu_datetime`
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
   - `icu_locid`
@@ -20,6 +21,7 @@
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
     - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
     - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
+    - Implement Hangul_Syllable_Type property (https://github.com/unicode-org/icu4x/pull/4885)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
 - Data model and providers
@@ -38,6 +40,7 @@
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
+      - Add `day_of_year` getter (https://github.com/unicode-org/icu4x/issues/4891)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
       - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
@@ -61,6 +64,7 @@
     - `zerotrie`
         - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
         - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
+        - Increase bound of `p` to solve more perfect hash functions; _might_ break serialized ZeroTriePerfectHash from previous versions (https://github.com/unicode-org/icu4x/pull/4888)
     - `zerovec`
         - Change `ZeroHashMap` to use `twox-hash` (https://github.com/unicode-org/icu4x/pull/4592)
     - `writeable`

@@ -134,6 +134,14 @@ final class IsoDateTime implements ffi.Finalizable {
     return result;
   }
 
+  /// Returns the 1-indexed day in the year for this date
+  ///
+  /// See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+  int get dayOfYear {
+    final result = _ICU4XIsoDateTime_day_of_year(_ffi);
+    return result;
+  }
+
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
@@ -292,6 +300,11 @@ external int _ICU4XIsoDateTime_second(ffi.Pointer<ffi.Opaque> self);
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_nanosecond')
 // ignore: non_constant_identifier_names
 external int _ICU4XIsoDateTime_nanosecond(ffi.Pointer<ffi.Opaque> self);
+
+@meta.ResourceIdentifier('ICU4XIsoDateTime_day_of_year')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_day_of_year')
+// ignore: non_constant_identifier_names
+external int _ICU4XIsoDateTime_day_of_year(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XIsoDateTime_day_of_month')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIsoDateTime_day_of_month')
