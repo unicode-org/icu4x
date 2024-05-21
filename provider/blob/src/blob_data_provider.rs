@@ -204,7 +204,7 @@ mod test {
                     provider.load_buffer(
                         HelloSingletonV1Marker::KEY,
                         DataRequest {
-                            locale: &icu_locid::locale!("de").into(),
+                            locale: &icu_locid::langid!("de").into(),
                             metadata: Default::default()
                         }
                     ),

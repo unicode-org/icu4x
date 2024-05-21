@@ -47,7 +47,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! use icu_locid::langid;
+//! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! # macro_rules! include {
@@ -70,7 +70,7 @@
 //! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
-//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
@@ -86,11 +86,11 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::langid;
+//! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! let formatter =
-//!     HelloWorldFormatter::try_new(&langid!("en").into()).unwrap();
+//!     HelloWorldFormatter::try_new(&locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```

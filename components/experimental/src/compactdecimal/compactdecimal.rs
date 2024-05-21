@@ -559,14 +559,14 @@ impl CompactDecimalFormatter {
     /// #    &locale!("fr").into(),
     /// #    Default::default(),
     /// # ).unwrap();
-    /// # let [long_french, long_bangla] = [locale!("fr"), locale!("bn")]
-    /// #     .map(|locale| {
-    /// #         CompactDecimalFormatter::try_new_long(
-    /// #             &locale.into(),
-    /// #             Default::default(),
-    /// #         )
-    /// #         .unwrap()
-    /// #     });
+    /// # let long_french = CompactDecimalFormatter::try_new_long(
+    /// #    &locale!("fr").into(),
+    /// #    Default::default()
+    /// # ).unwrap();
+    /// # let long_bangla = CompactDecimalFormatter::try_new_long(
+    /// #    &locale!("bn").into(),
+    /// #    Default::default()
+    /// # ).unwrap();
     /// #
     /// let about_a_million = CompactDecimal::from_str("1.20c6").unwrap();
     /// let three_million = CompactDecimal::from_str("+3c6").unwrap();
@@ -657,9 +657,9 @@ impl CompactDecimalFormatter {
     /// use icu::locid::locale;
     ///
     /// let [long_french, long_japanese, long_bangla] =
-    ///     [locale!("fr"), locale!("ja"), locale!("bn")].map(|locale| {
+    ///     [locale!("fr").into(), locale!("ja").into(), locale!("bn").into()].map(|locale| {
     ///         CompactDecimalFormatter::try_new_long(
-    ///             &locale.into(),
+    ///             &locale,
     ///             Default::default(),
     ///         )
     ///         .unwrap()
