@@ -4828,7 +4828,7 @@ normalizer/nfd@1, und, 26794B, c40f7786ed5f8124
 normalizer/nfdex@1, und, 2055B, e46dea1008ed4c44
 normalizer/nfkd@1, und, 20317B, 8e78591f8550fe97
 normalizer/nfkdex@1, und, 5680B, e2ac6fe35e7e58a0
-normalizer/uts46d@1, und, 27992B, b8c5cfc5c3fc33ef
+normalizer/uts46d@1, und, 41268B, f926715c424ff137
 plurals/cardinal@1, ar, 105B, ef7f74f9342d183f
 plurals/cardinal@1, ar-EG, 105B, ef7f74f9342d183f
 plurals/cardinal@1, bn, 40B, a09347c88cd1da4d
@@ -4890,7 +4890,7 @@ propnames/from/ea@1, und, 105B, 4bc69f982fa6b2de
 propnames/from/gc@1, und, 747B, 2f7ece7581036df2
 propnames/from/gcm@1, und, 907B, 43b812154d2d3914
 propnames/from/lb@1, und, 963B, bb6e2daf75e2057f
-propnames/from/sc@1, und, 3632B, 536093cd88973193
+propnames/from/sc@1, und, 3640B, d1ed7fca398b05b8
 propnames/to/long/linear/GCB@1, und, 151B, 9feae38a09898348
 propnames/to/long/linear/InSC@1, und, 585B, 36e854e09df6ac36
 propnames/to/long/linear/SB@1, und, 109B, 1bddbfc00ea789cb
@@ -4899,7 +4899,7 @@ propnames/to/long/linear/bc@1, und, 460B, 98758a587d562ad1
 propnames/to/long/linear/ea@1, und, 61B, b4df37d762a5c879
 propnames/to/long/linear/gc@1, und, 488B, 4786f3c0d2d639d
 propnames/to/long/linear/lb@1, und, 598B, 6ee04a546e351ffb
-propnames/to/long/linear/sc@1, und, 1958B, 8397d5c5b16356aa
+propnames/to/long/linear/sc@1, und, 1964B, 9b97b7f85684632c
 propnames/to/long/sparse/ccc@1, und, 652B, 440a07537c221a20
 propnames/to/short/linear/GCB@1, und, 78B, 3f593af98eec2820
 propnames/to/short/linear/InSC@1, und, 585B, 36e854e09df6ac36
@@ -4909,7 +4909,7 @@ propnames/to/short/linear/bc@1, und, 103B, 85ea5db229b1eaba
 propnames/to/short/linear/ea@1, und, 24B, 9dcf5f0ed5697f5b
 propnames/to/short/linear/gc@1, und, 125B, a6da6a4499b7361b
 propnames/to/short/linear/lb@1, und, 199B, 808bb5403b659e4
-propnames/to/short/linear4/sc@1, und, 802B, 55c3455e15d1d2ae
+propnames/to/short/linear4/sc@1, und, 806B, d488da3356b27392
 propnames/to/short/sparse/ccc@1, und, 478B, aa23b3caa16eae5e
 props/AHex@1, und, 26B, 779017d199091bbe
 props/Alpha@1, und, 5867B, 6d7b02a5e1d18551
