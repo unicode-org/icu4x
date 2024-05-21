@@ -273,14 +273,16 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Sets the `zone_variant` field to standard time.
+        /// Sets the `zone_variant` field to "standard" time, which may or may
+        /// not correspond to a display name with "Standard" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn set_standard_time(&mut self) {
             self.0.zone_variant = Some(ZoneVariant::standard())
         }
 
-        /// Sets the `zone_variant` field to daylight time.
+        /// Sets the `zone_variant` field to "daylight" time, which may or may
+        /// not correspond to a display name with "Daylight" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn set_daylight_time(&mut self) {
