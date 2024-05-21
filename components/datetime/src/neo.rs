@@ -1368,7 +1368,7 @@ impl NeoTimeFormatter {
     ///
     /// assert_try_writeable_eq!(
     ///     formatter.format(&Time::try_new(14, 48, 58, 0).unwrap()),
-    ///     "2:48 p.m."
+    ///     "02:48 p.m."
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
