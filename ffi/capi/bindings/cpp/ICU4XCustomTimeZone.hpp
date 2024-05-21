@@ -257,7 +257,8 @@ class ICU4XCustomTimeZone {
   diplomat::result<std::string, ICU4XError> zone_variant() const;
 
   /**
-   * Sets the `zone_variant` field to standard time.
+   * Sets the `zone_variant` field to "standard" time, which may or may
+   * not correspond to a display name with "Standard" in its name.
    * 
    * See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
    * 
@@ -266,7 +267,8 @@ class ICU4XCustomTimeZone {
   void set_standard_time();
 
   /**
-   * Sets the `zone_variant` field to daylight time.
+   * Sets the `zone_variant` field to "daylight" time, which may or may
+   * not correspond to a display name with "Daylight" in its name.
    * 
    * See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
    * 
