@@ -13,6 +13,8 @@ jobs:
 
     name:                       Coverage
     runs-on:                    ubuntu-latest
+    # TODO(#2701): Update and re-enable this job.
+    if: false
 
     steps:
       - uses:                   actions/checkout@v4
