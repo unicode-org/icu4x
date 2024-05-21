@@ -120,6 +120,9 @@ where
 {
     /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
     ///
+    /// The closure can read and write data outside of its scope, but data it returns
+    /// may borrow only from the argument passed to the closure.
+    ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
     /// Call sites for this function may not compile pre-1.61; if this still happens, use
@@ -149,7 +152,7 @@ where
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// ```
     ///
-    /// Keep track of how many bytes were read from the buffer:
+    /// Write the number of consumed bytes to a local variable:
     ///
     /// ```
     /// # use yoke::Yoke;
