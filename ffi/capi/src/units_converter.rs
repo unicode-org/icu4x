@@ -6,6 +6,7 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
+    use diplomat_runtime::DiplomatStr;
     use icu_experimental::units::converter::UnitsConverter;
     use icu_experimental::units::converter_factory::ConverterFactory;
     use icu_experimental::units::measureunit::MeasureUnit;
@@ -70,12 +71,29 @@ pub mod ffi {
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
+        /// Returns an error if the unit identifier is not valid or the `unit_id` is not a valid UTF-8 string.
+        #[diplomat::rust_link(
+            icu::experimental::units::measureunit::MeasureUnitParser::parse,
+            FnInStruct
+        )]
+        pub fn parse_unit_identifier<'text>(
+            &self,
+            unit_id: &'text DiplomatStr,
+        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
+            let unit_id = core::str::from_utf8(unit_id)
+                .map_err(|_| ICU4XError::InvalidCldrUnitIdentifierError)?;
+            Ok(Box::new(ICU4XMeasureUnit(
+                self.0.try_from_identifier(unit_id)?,
+            )))
+        }
+
+        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
         /// Returns an error if the unit identifier is not valid.
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse_measure_unit(
+        pub fn parse_valid_utf8_unit_identifier(
             &self,
             unit_id: &str,
         ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {

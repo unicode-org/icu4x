@@ -12,10 +12,19 @@ export class ICU4XMeasureUnitParser {
 
   /**
 
+   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}. Returns an error if the unit identifier is not valid or the `unit_id` is not a valid UTF-8 string.
+
+   * See the {@link https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse Rust documentation for `parse`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  parse_unit_identifier(unit_id: string): ICU4XMeasureUnit | never;
+
+  /**
+
    * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding {@link ICU4XMeasureUnit `ICU4XMeasureUnit`}. Returns an error if the unit identifier is not valid.
 
    * See the {@link https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse Rust documentation for `parse`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  parse_measure_unit(unit_id: string): ICU4XMeasureUnit | never;
+  parse_valid_utf8_unit_identifier(unit_id: string): ICU4XMeasureUnit | never;
 }
