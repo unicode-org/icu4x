@@ -266,29 +266,33 @@ impl<'a> Cursor<'a> {
     }
 
     /// Peek the value at next position (current + 1).
-    fn peek(&self) -> ParserResult<Option<&'a [u8]>> {
+    fn peek(&self) -> ParserResult<Option<char>> {
         self.peek_n(1)
     }
 
     /// Returns current position in source as `char`.
-    fn current(&self) -> ParserResult<Option<&'a [u8]>> {
+    fn current(&self) -> ParserResult<Option<char>> {
         self.peek_n(0)
     }
 
     /// Peeks the value at `n` as a `char`.
-    fn peek_n(&self, n: usize) -> ParserResult<Option<&'a [u8]>> {
+    fn peek_n(&self, n: usize) -> ParserResult<Option<char>> {
         let mut index = self.pos;
         for _ in 0..n {
             index += get_utf8_offset(self.source.get(index))?;
         }
         let offset = get_utf8_offset(self.source.get(index))?;
-        Ok(self.source.get(index..index + offset))
+        let Some(bytes) = self.source.get(index..index + offset) else {
+            return Ok(None);
+        };
+
+        decode_utf8_bytes(bytes).map(Some)
     }
 
     /// Runs the provided check on the current position.
     fn check<F>(&self, f: F) -> ParserResult<Option<bool>>
     where
-        F: FnOnce(&'a [u8]) -> bool,
+        F: FnOnce(char) -> bool,
     {
         Ok(self.current()?.map(f))
     }
@@ -296,16 +300,18 @@ impl<'a> Cursor<'a> {
     /// Runs the provided check on current position returns the default value if None.
     fn check_or<F>(&self, default: bool, f: F) -> ParserResult<bool>
     where
-        F: FnOnce(&'a [u8]) -> bool,
+        F: FnOnce(char) -> bool,
     {
         Ok(self.current()?.map_or(default, f))
     }
 
     /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> ParserResult<Option<&'a [u8]>> {
-        let result = self.current()?;
-        self.advance_n(result.map_or(0, |a| a.len()));
-        Ok(result)
+    fn next(&mut self) -> ParserResult<Option<char>> {
+        let Some(result) = self.current()? else {
+            return Ok(None);
+        };
+        self.advance_n(get_char_bytes(result)?);
+        Ok(Some(result))
     }
 
     /// Returns the next value as a digit.
@@ -314,11 +320,15 @@ impl<'a> Cursor<'a> {
     ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        Ok(to_ascii_digit(self.next_or(ParserError::InvalidEnd)?))
+        // Safety: Char digit with a radix of ten must be in the range of a u8
+        Ok(self
+            .next_or(ParserError::InvalidEnd)?
+            .to_digit(10)
+            .map(|d| d as u8))
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParserError) -> ParserResult<&'a [u8]> {
+    fn next_or(&mut self, err: ParserError) -> ParserResult<char> {
         self.next()?.ok_or(err)
     }
 
@@ -350,7 +360,44 @@ impl<'a> Cursor<'a> {
 
 // ==== Utility functions ====
 
+/// Decodes a `&[u8]` into a UTF8 character.
+#[inline]
+fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
+    let code_point = match bytes.len() {
+        1 => return Ok(char::from(*bytes.first().ok_or(ParserError::ImplAssert)?)),
+        2 => {
+            let code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
+            concatenate_continuation_byte(code_point, bytes.get(1))?
+        }
+        3 => {
+            let mut code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
+            code_point = concatenate_continuation_byte(code_point, bytes.get(1))?;
+            concatenate_continuation_byte(code_point, bytes.get(2))?
+        }
+        4 => {
+            let mut code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
+            code_point = concatenate_continuation_byte(code_point, bytes.get(1))?;
+            code_point = concatenate_continuation_byte(code_point, bytes.get(2))?;
+            concatenate_continuation_byte(code_point, bytes.get(3))?
+        }
+        _ => return Err(ParserError::ImplAssert),
+    };
+
+    // Safety: Codepoint should be guaranteed above.
+    Ok(unsafe { char::from_u32_unchecked(code_point) })
+}
+
+/// Checks for continuation byte and appends the byte to the current code point if valid. 
+#[inline]
+fn concatenate_continuation_byte(codepoint: u32, byte: Option<&u8>) -> ParserResult<u32> {
+    match byte {
+        Some(b) if (0x80..=0xBF).contains(b) => Ok((codepoint << 6) | u32::from(*b & 0x3F)),
+        _ => Err(ParserError::Utf8Encoding),
+    }
+}
+
 /// Checks the leading byte to determine width of character.
+#[inline]
 fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<usize> {
     match byte {
         Some(x) if (0x00..=0x7F).contains(x) => Ok(1),
@@ -363,16 +410,9 @@ fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<usize> {
     }
 }
 
-/// Converts the slice to a `u8`.
-fn to_ascii_digit(slice: &[u8]) -> Option<u8> {
-    if slice.len() > 1 {
-        return None;
-    }
-    slice.first().and_then(|digit| {
-        if (*digit).is_ascii_digit() {
-            Some(digit.wrapping_sub(b'0'))
-        } else {
-            None
-        }
-    })
+#[inline]
+fn get_char_bytes(char: char) -> ParserResult<usize> {
+    let mut bytes: [u8; 4] = [0; 4];
+    char.encode_utf8(bytes.as_mut_slice());
+    get_utf8_offset(bytes.first())
 }

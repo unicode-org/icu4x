@@ -230,7 +230,7 @@ pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<DateRecord> {
 #[inline]
 fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
     if cursor.check_or(false, is_sign)? {
-        let sign = if cursor.next_or(ParserError::ImplAssert)? == [b'+'] {
+        let sign = if cursor.next_or(ParserError::ImplAssert)? == '+' {
             1
         } else {
             -1

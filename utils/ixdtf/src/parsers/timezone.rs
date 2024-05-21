@@ -7,9 +7,8 @@
 use super::{
     grammar::{
         is_a_key_char, is_a_key_leading_char, is_annotation_close,
-        is_annotation_key_value_separator, is_annotation_open, is_ascii_digit, is_critical_flag,
-        is_sign, is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator,
-        is_utc_designator,
+        is_annotation_key_value_separator, is_annotation_open, is_critical_flag, is_sign,
+        is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator, is_utc_designator,
     },
     records::{Sign, TimeZoneAnnotation, TimeZoneRecord, UTCOffsetRecord},
     time::{parse_fraction, parse_hour, parse_minute_second},
@@ -180,14 +179,14 @@ pub(crate) fn parse_utc_offset_minute_precision(
 ) -> ParserResult<(UTCOffsetRecord, bool)> {
     let sign = if cursor.check_or(false, is_sign)? {
         let sign = cursor.next_or(ParserError::ImplAssert)?;
-        Sign::from(sign == [b'+'])
+        Sign::from(sign == '+')
     } else {
         Sign::Positive
     };
     let hour = parse_hour(cursor)?;
 
     // If at the end of the utc, then return.
-    if !cursor.check_or(false, |ch| is_ascii_digit(ch) || is_time_separator(ch))? {
+    if !cursor.check_or(false, |ch| ch.is_ascii_digit() || is_time_separator(ch))? {
         return Ok((
             UTCOffsetRecord {
                 sign,

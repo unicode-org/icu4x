@@ -8,9 +8,9 @@ use crate::{
     assert_syntax,
     parsers::{
         grammar::{
-            is_ascii_digit, is_day_designator, is_duration_designator, is_hour_designator,
-            is_minute_designator, is_month_designator, is_second_designator, is_sign,
-            is_time_designator, is_week_designator, is_year_designator,
+            is_day_designator, is_duration_designator, is_hour_designator, is_minute_designator,
+            is_month_designator, is_second_designator, is_sign, is_time_designator,
+            is_week_designator, is_year_designator,
         },
         records::{DateDurationRecord, DurationParseRecord, TimeDurationRecord},
         time::parse_fraction,
@@ -24,7 +24,7 @@ pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseR
         .check(is_sign)?
         .ok_or_else(|| ParserError::abrupt_end("DurationStart"))?
     {
-        cursor.next_or(ParserError::ImplAssert)? == [b'+']
+        cursor.next_or(ParserError::ImplAssert)? == '+'
     } else {
         true
     };
@@ -64,9 +64,9 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
     let mut date = DateDurationRecord::default();
     let mut previous_unit = DateUnit::None;
 
-    while cursor.check_or(false, is_ascii_digit)? {
+    while cursor.check_or(false, |ch| ch.is_ascii_digit())? {
         let mut value: u32 = 0;
-        while cursor.check_or(false, is_ascii_digit)? {
+        while cursor.check_or(false, |ch| ch.is_ascii_digit())? {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("DateDuration"))?;
@@ -127,15 +127,15 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
 
     cursor.advance();
     assert_syntax!(
-        cursor.check_or(false, is_ascii_digit)?,
+        cursor.check_or(false, |c| c.is_ascii_digit())?,
         TimeDurationDesignator,
     );
 
     let mut time: (u32, u32, u32, Option<u32>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
-    while cursor.check_or(false, is_ascii_digit)? {
+    while cursor.check_or(false, |c| c.is_ascii_digit())? {
         let mut value: u32 = 0;
-        while cursor.check_or(false, is_ascii_digit)? {
+        while cursor.check_or(false, |c| c.is_ascii_digit())? {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParserError::abrupt_end("TimeDurationDigit"))?;
@@ -182,7 +182,10 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
         }
 
         if fraction.is_some() {
-            assert_syntax!(cursor.check_or(true, |ch| !is_ascii_digit(ch))?, InvalidEnd,);
+            assert_syntax!(
+                cursor.check_or(true, |ch| !ch.is_ascii_digit())?,
+                InvalidEnd,
+            );
             break;
         }
     }

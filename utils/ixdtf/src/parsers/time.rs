@@ -8,7 +8,7 @@ use crate::{
     assert_syntax,
     parsers::{
         grammar::{
-            is_annotation_open, is_ascii_digit, is_decimal_separator, is_sign, is_time_designator,
+            is_annotation_open, is_decimal_separator, is_sign, is_time_designator,
             is_time_separator, is_utc_designator,
         },
         records::{Annotation, TimeRecord},
@@ -70,7 +70,7 @@ pub(crate) fn parse_annotated_time_record<'a>(
 pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord> {
     let hour = parse_hour(cursor)?;
 
-    if !cursor.check_or(false, |ch| is_time_separator(ch) || is_ascii_digit(ch))? {
+    if !cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
         return Ok(TimeRecord {
             hour,
             minute: 0,
@@ -84,7 +84,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 
     let minute = parse_minute_second(cursor, false)?;
 
-    if !cursor.check_or(false, |ch| is_time_separator(ch) || is_ascii_digit(ch))? {
+    if !cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
         return Ok(TimeRecord {
             hour,
             minute,
@@ -150,7 +150,7 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
 
     let mut result = 0;
     let mut fraction_len = 0;
-    while cursor.check_or(false, is_ascii_digit)? {
+    while cursor.check_or(false, |ch| ch.is_ascii_digit())? {
         if fraction_len > 9 {
             return Err(ParserError::FractionPart);
         }
