@@ -387,7 +387,7 @@ fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
     Ok(unsafe { char::from_u32_unchecked(code_point) })
 }
 
-/// Checks for continuation byte and appends the byte to the current code point if valid. 
+/// Checks for continuation byte and appends the byte to the current code point if valid.
 #[inline]
 fn concatenate_continuation_byte(codepoint: u32, byte: Option<&u8>) -> ParserResult<u32> {
     match byte {
