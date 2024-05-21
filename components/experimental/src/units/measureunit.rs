@@ -33,12 +33,12 @@ impl<'data> MeasureUnitParser<'data> {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id<'a>(&'a self, part: &'a str) -> Result<(u16, &str), ConversionError> {
+    fn get_unit_id<'a>(&'a self, part: &'a [u8]) -> Result<(u16, &[u8]), ConversionError> {
         let mut cursor = self.units_trie.cursor();
         let mut longest_match = Err(ConversionError::InvalidUnit);
 
-        for (i, byte) in part.bytes().enumerate() {
-            cursor.step(byte);
+        for (i, byte) in part.iter().enumerate() {
+            cursor.step(*byte);
             if cursor.is_empty() {
                 break;
             }
@@ -49,7 +49,7 @@ impl<'data> MeasureUnitParser<'data> {
         longest_match
     }
 
-    fn get_power<'a>(&'a self, part: &'a str) -> Result<(u8, &str), ConversionError> {
+    fn get_power<'a>(&'a self, part: &'a [u8]) -> Result<(u8, &[u8]), ConversionError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -58,19 +58,19 @@ impl<'data> MeasureUnitParser<'data> {
         }
 
         // If the power is found, this means that the part must start with the `-` sign.
-        match part_without_power.strip_prefix('-') {
+        match part_without_power.strip_prefix(b"-") {
             Some(part_without_power) => Ok((power, part_without_power)),
             None => Err(ConversionError::InvalidUnit),
         }
     }
 
-    fn get_si_prefix<'a>(&'a self, part: &'a str) -> (SiPrefix, &str) {
+    fn get_si_prefix<'a>(&'a self, part: &'a [u8]) -> (SiPrefix, &[u8]) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
             return (si_prefix, part);
         }
 
-        match part_without_si_prefix.strip_prefix('-') {
+        match part_without_si_prefix.strip_prefix(b"-") {
             Some(part_without_dash) => (si_prefix, part_without_dash),
             None => (si_prefix, part_without_si_prefix),
         }
@@ -81,7 +81,7 @@ impl<'data> MeasureUnitParser<'data> {
     /// this function will be called for "square-kilometer" with sign (1) and "second" with sign (-1).
     fn analyze_identifier_part(
         &self,
-        identifier_part: &str,
+        identifier_part: &[u8],
         sign: i8,
         result: &mut Vec<MeasureUnitItem>,
     ) -> Result<(), ConversionError> {
@@ -115,7 +115,7 @@ impl<'data> MeasureUnitParser<'data> {
 
             identifier_part = match identifier_part_without_unit_id.len() {
                 0 => identifier_part_without_unit_id,
-                _ if identifier_part_without_unit_id.starts_with('-') => {
+                _ if identifier_part_without_unit_id.starts_with(b"-") => {
                     &identifier_part_without_unit_id[1..]
                 }
                 _ => return Err(ConversionError::InvalidUnit),
@@ -129,16 +129,18 @@ impl<'data> MeasureUnitParser<'data> {
     /// Process an identifier.
     pub fn try_from_identifier(
         &self,
-        identifier: &'data str,
+        identifier: &'data [u8],
     ) -> Result<MeasureUnit, ConversionError> {
-        if identifier.starts_with('-') || identifier.ends_with('-') {
+        if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
             return Err(ConversionError::InvalidUnit);
         }
 
         let (num_part, den_part) = identifier
-            .split_once("per-")
-            .map(|(num_part, den_part)| (num_part.strip_suffix('-').unwrap_or(num_part), den_part))
-            .unwrap_or((identifier, ""));
+            .splitn(2, |&x| x == b'p' && x == b'e' && x == b'r' && x == b'-')
+            .map(|parts| parts.split_at(parts.len() - 1))
+            .map(|(num_part, den_part)| (num_part.strip_suffix(b"-").unwrap_or(num_part), den_part))
+            .next()
+            .unwrap_or((identifier, &b""[..]));
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
 
