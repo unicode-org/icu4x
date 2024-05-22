@@ -78,8 +78,12 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 self.len = 1;
                 return Some(0);
             }
+            let Some(right_prop) = self.get_current_break_property() else {
+                // iterator already reaches to EOT. Reset boundary property for word-like.
+                self.boundary_property = 0;
+                return None;
+            };
             // SOT x anything
-            let right_prop = self.get_current_break_property()?;
             if matches!(
                 self.get_break_state_from_table(self.data.sot_property, right_prop),
                 BreakState::Break | BreakState::NoMatch
