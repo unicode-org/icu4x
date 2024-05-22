@@ -125,11 +125,12 @@ impl<'data> ChineseBasedCacheV1<'data> {
 /// Bit:             0   1   2   3   4   5   6   7
 /// Byte 0:          [  month lengths .............
 /// Byte 1:         .. month lengths ] | [ leap month index ..
-/// Byte 2:          ] | [   NY offset   ] | unused
+/// Byte 2:          ] | [   NY offset       ] | unused
 /// ```
 ///
 /// Where the New Year Offset is the offset from ISO Jan 21 of that year for Chinese New Year,
 /// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
+/// The largest possible offset is 33, which requires 6 bits of storage.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -162,7 +163,7 @@ impl PackedChineseBasedYearInfo {
             !month_lengths[12] || leap_month_idx.is_some(),
             "Last month length should not be set for non-leap years"
         );
-        debug_assert!(ny_offset < 32, "Year offset too big to store");
+        debug_assert!(ny_offset < 33, "Year offset too big to store");
         debug_assert!(
             leap_month_idx.map(|l| l.get() <= 13).unwrap_or(true),
             "Leap month indices must be 1 <= i <= 13"
