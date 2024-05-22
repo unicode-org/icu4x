@@ -151,8 +151,11 @@ impl PackedChineseBasedYearInfo {
     ///
     /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
     ///
-    /// Chinese New Year in the year 30 AD is January 20 (30-01-20)
-    pub(crate) const FIRST_NY: u8 = 20;
+    /// Chinese New Year in the year 30 AD is January 20 (30-01-20).
+    ///
+    /// We allow it to occur as early as January 19 which is the earliest the second new moon
+    /// could occur after the Winter Solstice if the solstice is pinned to December 20.
+    pub(crate) const FIRST_NY: u8 = 19;
 
     pub(crate) fn new(
         month_lengths: [bool; 13],

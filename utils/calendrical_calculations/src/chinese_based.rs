@@ -1,5 +1,6 @@
 use crate::astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::helpers::i64_to_i32;
+use crate::iso::{fixed_from_iso, iso_from_fixed};
 use crate::rata_die::{Moment, RataDie};
 use core::num::NonZeroU8;
 #[allow(unused_imports)]
@@ -28,8 +29,11 @@ pub trait ChineseBased {
 
     /// The ISO year that corresponds to year 1
     const EPOCH_ISO: i32;
-    /// Given an ISO year, return the extended year
 
+    /// The name of the calendar for debugging.
+    const DEBUG_NAME: &'static str;
+
+    /// Given an ISO year, return the extended year
     fn extended_from_iso(iso_year: i32) -> i32 {
         iso_year - Self::EPOCH_ISO + 1
     }
@@ -137,6 +141,7 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
     const EPOCH_ISO: i32 = CHINESE_EPOCH_ISO;
+    const DEBUG_NAME: &'static str = "chinese";
 }
 
 impl ChineseBased for Dangi {
@@ -156,6 +161,7 @@ impl ChineseBased for Dangi {
 
     const EPOCH: RataDie = KOREAN_EPOCH;
     const EPOCH_ISO: i32 = KOREAN_EPOCH_ISO;
+    const DEBUG_NAME: &'static str = "dangi";
 }
 
 /// Marks the bounds of a lunar year
@@ -261,21 +267,16 @@ pub(crate) fn midnight<C: ChineseBased>(moment: Moment) -> Moment {
 pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (RataDie, RataDie) {
     // s1 is prior_solstice
     // Using 370 here since solstices are ~365 days apart
-    // Both solstices should fall in December
-    let following_solstice = winter_solstice_on_or_before::<C>(prior_solstice + 370); // s2
-    debug_assert_eq!(
-        crate::iso::iso_from_fixed(prior_solstice).unwrap().1,
-        12,
-        "Winter solstice not in December! {prior_solstice:?}"
-    );
-    debug_assert_eq!(
-        crate::iso::iso_from_fixed(following_solstice).unwrap().1,
-        12,
-        "Winter solstice not in December! {following_solstice:?}"
-    );
+    // Both solstices should fall in December, and the first solstice MUST fall on
+    // December 20, 21, or 22. It doesn't seem to change the outcome if the following
+    // solstice is out of range.
+    let prior_solstice = bind_winter_solstice::<C>(prior_solstice);
+    let following_solstice = bind_winter_solstice::<C>(winter_solstice_on_or_before::<C>(prior_solstice + 370)); // s2
     let month_after_eleventh = new_moon_on_or_after::<C>((prior_solstice + 1).as_moment()); // m12
+    debug_assert!(month_after_eleventh - prior_solstice >= 0);
     let month_after_twelfth = new_moon_on_or_after::<C>((month_after_eleventh + 1).as_moment()); // m13
     let month_after_thirteenth = new_moon_on_or_after::<C>((month_after_twelfth + 1).as_moment());
+    debug_assert!(month_after_twelfth - month_after_eleventh >= 29);
     let next_eleventh_month = new_moon_before::<C>((following_solstice + 1).as_moment()); // next-m11
     let lhs_argument =
         ((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH).round() as i64;
@@ -289,7 +290,36 @@ pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (Rata
     }
 }
 
-/// Get the moment of the nearest winter solstice on or before a given fixed date
+/// This function forces the RataDie to be on December 20, 21, or 22. It was
+/// created for practical considerations and is not in the text.
+///
+/// See: <https://github.com/unicode-org/icu4x/pull/4904>
+fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
+    let (iso_year, iso_month, iso_day) = match iso_from_fixed(solstice) {
+        Ok(ymd) => ymd,
+        Err(_) => {
+            debug_assert!(false, "Solstice REALLY out of bounds: {solstice:?}");
+            return solstice;
+        }
+    };
+    if iso_month < 12 || iso_day < 20 {
+        #[cfg(feature = "logging")]
+        log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
+        fixed_from_iso(iso_year, 12, 20)
+    } else if iso_day > 22 {
+        #[cfg(feature = "logging")]
+        log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
+        fixed_from_iso(iso_year, 12, 22)
+    } else {
+        solstice
+    }
+}
+
+/// Get the fixed date of the nearest winter solstice, in the Chinese time zone,
+/// on or before a given fixed date.
+///
+/// This is valid for several thousand years, but it drifts for large positive
+/// and negative years. See [`bind_winter_solstice`].
 ///
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5359-L5368
