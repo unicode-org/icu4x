@@ -135,12 +135,30 @@ impl<'data> MeasureUnitParser<'data> {
             return Err(ConversionError::InvalidUnit);
         }
 
-        let (num_part, den_part) = identifier
-            .splitn(2, |&x| x == b'p' && x == b'e' && x == b'r' && x == b'-')
-            .map(|parts| parts.split_at(parts.len() - 1))
-            .map(|(num_part, den_part)| (num_part.strip_suffix(b"-").unwrap_or(num_part), den_part))
-            .next()
-            .unwrap_or((identifier, &b""[..]));
+        fn split_once<'a>(haystack: &'a [u8], needle: &'a [u8]) -> (&'a [u8], &'a [u8]) {
+            let needle_len = needle.len();
+
+            if needle_len == 0 {
+                return (haystack, &[]);
+            }
+
+            for (i, &byte) in haystack.iter().enumerate() {
+                if byte == needle[0]
+                    && haystack[i..].len() >= needle_len
+                    && &haystack[i..i + needle_len] == needle
+                {
+                    // Safely split the haystack (lifetimes are now explicit)
+                    let before = &haystack[..i];
+                    let after = &haystack[i + needle_len..];
+                    return (before, after);
+                }
+            }
+
+            (haystack, &[])
+        }
+
+        let (num_part, den_part) = split_once(&identifier, b"per-");
+        let num_part = num_part.strip_suffix(b"-").unwrap_or(num_part);
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
 
