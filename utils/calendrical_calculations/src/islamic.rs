@@ -23,6 +23,8 @@ pub trait IslamicBasedMarker {
     const EPOCH: RataDie;
     /// The name of the calendar for debugging.
     const DEBUG_NAME: &'static str;
+    /// Whether this calendar is known to have 353-day years.
+    const HAS_353_DAY_YEARS: bool;
     /// Given the extended year, calculate the approximate new year using the mean synodic month
     fn mean_synodic_ny(extended_year: i32) -> RataDie {
         Self::EPOCH + (f64::from((extended_year - 1) * 12) * MEAN_SYNODIC_MONTH).floor() as i64
@@ -42,13 +44,24 @@ pub trait IslamicBasedMarker {
     /// Given an extended year, calculate whether each month is 29 or 30 days long
     fn month_lengths_for_year(extended_year: i32, ny: RataDie) -> [bool; 12] {
         let next_ny = Self::fixed_from_islamic(extended_year + 1, 1, 1);
-        #[cfg(feature = "logging")]
-        if !matches!(next_ny - ny, 354 | 355) {
-            log::warn!(
-                "({}) Found year {extended_year} AH with length {}",
-                Self::DEBUG_NAME,
-                next_ny - ny
-            );
+        match next_ny - ny {
+            355 | 354 => (),
+            353 if Self::HAS_353_DAY_YEARS => {
+                #[cfg(feature = "logging")]
+                log::warn!(
+                    "({}) Found year {extended_year} AH with length {}",
+                    Self::DEBUG_NAME,
+                    next_ny - ny
+                );
+            }
+            other => {
+                debug_assert!(
+                    false,
+                    "({}) Found year {extended_year} AH with length {}",
+                    Self::DEBUG_NAME,
+                    other
+                )
+            }
         }
         let mut prev_rd = ny;
         let mut excess_days = 0;
@@ -126,6 +139,7 @@ pub struct TabularIslamicMarker;
 impl IslamicBasedMarker for ObservationalIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = "ObservationalIslamic";
+    const HAS_353_DAY_YEARS: bool = true;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_observational(year, month, day)
     }
@@ -137,6 +151,7 @@ impl IslamicBasedMarker for ObservationalIslamicMarker {
 impl IslamicBasedMarker for SaudiIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = "SaudiIslamic";
+    const HAS_353_DAY_YEARS: bool = true;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_saudi_islamic(year, month, day)
     }
@@ -148,6 +163,7 @@ impl IslamicBasedMarker for SaudiIslamicMarker {
 impl IslamicBasedMarker for CivilIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = "CivilIslamic";
+    const HAS_353_DAY_YEARS: bool = false;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_civil(year, month, day)
     }
@@ -159,6 +175,7 @@ impl IslamicBasedMarker for CivilIslamicMarker {
 impl IslamicBasedMarker for TabularIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_THURSDAY;
     const DEBUG_NAME: &'static str = "TabularIslamic";
+    const HAS_353_DAY_YEARS: bool = false;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_tabular(year, month, day)
     }

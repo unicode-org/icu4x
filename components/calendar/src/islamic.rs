@@ -219,9 +219,40 @@ impl IslamicTabular {
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+enum IslamicYearLength {
+    L355,
+    L354,
+    L353,
+}
+
+impl Default for IslamicYearLength {
+    fn default() -> Self {
+        Self::L354
+    }
+}
+
+impl IslamicYearLength {
+    fn try_from_int(value: i64) -> Option<Self> {
+        match value {
+            355 => Some(Self::L355),
+            354 => Some(Self::L354),
+            353 => Some(Self::L353),
+            _ => None,
+        }
+    }
+    fn to_int(self) -> u16 {
+        match self {
+            Self::L355 => 355,
+            Self::L354 => 354,
+            Self::L353 => 353,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct IslamicYearInfo {
     packed_data: PackedIslamicYearInfo,
-    prev_year_length: u16,
+    prev_year_length: IslamicYearLength,
 }
 
 impl IslamicYearInfo {
@@ -233,6 +264,13 @@ impl IslamicYearInfo {
         extended_year: i32,
     ) -> (Self, i32) {
         let days_in_year = prev_packed.days_in_year();
+        let days_in_year = match IslamicYearLength::try_from_int(days_in_year as i64) {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, "Found wrong year length for Islamic year {extended_year}: Expected 355 or 354, got {days_in_year}");
+                Default::default()
+            }
+        };
         let year_info = Self {
             prev_year_length: days_in_year,
             packed_data: this_packed,
@@ -244,7 +282,14 @@ impl IslamicYearInfo {
         let ny = IB::fixed_from_islamic(extended_year, 1, 1);
         let packed_data = PackedIslamicYearInfo::compute_with_ny::<IB>(extended_year, ny);
         let prev_ny = IB::fixed_from_islamic(extended_year - 1, 1, 1);
-        let rd_diff = u16::try_from(ny - prev_ny).unwrap_or(0);
+        let rd_diff = ny - prev_ny;
+        let rd_diff = match IslamicYearLength::try_from_int(rd_diff) {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, "({}) Found wrong year length for Islamic year {extended_year}: Expected 355 or 354, got {rd_diff}", IB::DEBUG_NAME);
+                Default::default()
+            }
+        };
         Self {
             prev_year_length: rd_diff,
             packed_data,
@@ -269,7 +314,7 @@ impl IslamicYearInfo {
 
     #[inline]
     fn days_in_prev_year(self) -> u16 {
-        self.prev_year_length
+        self.prev_year_length.to_int()
     }
 }
 
