@@ -1,6 +1,12 @@
 # Changelog
 
 ## icu4x 1.4.x
+ - [Expose UTS 46 data via the normalizer](https://github.com/unicode-org/icu4x/pull/4712)
+   - `icu_normalizer@1.4.2`
+
+ - [Implement Joining_Type property](https://github.com/unicode-org/icu4x/pull/4599)
+   - `icu_properties@1.4.1`
+
  - [Remove icu_datagen's dep on `fractional`](https://github.com/unicode-org/icu4x/pull/4472)
    - `icu_datagen@1.4.1`
 
