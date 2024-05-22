@@ -137,17 +137,13 @@ impl<'data> MeasureUnitParser<'data> {
 
         /// Splits a byte slice (`haystack`) by another byte slice (`needle`).
         /// Returns a tuple containing the part before the `needle` and the part after the `needle`.
-        /// 
+        ///
         /// # Notes
         /// - If `needle` is empty, returns the whole `haystack` and an empty slice.
         /// - If `needle` is not found, returns the whole `haystack` and an empty slice.
         fn split_once<'a>(haystack: &'a [u8], needle: &'a [u8]) -> (&'a [u8], &'a [u8]) {
             /// Finds the longest match of the needle in the haystack starting from the given position.
-            fn longest_match(
-                haystack: &[u8],
-                needle: &[u8],
-                pos: usize,
-            ) -> usize {
+            fn longest_match(haystack: &[u8], needle: &[u8], pos: usize) -> usize {
                 if pos + needle.len() > haystack.len() {
                     return 0;
                 }
@@ -158,14 +154,13 @@ impl<'data> MeasureUnitParser<'data> {
                     .take_while(|(h, n)| h == n)
                     .count()
             }
-            
-            if needle.is_empty() {
+
+            if needle.is_empty() || needle.len() > haystack.len() {
                 return (haystack, &[]);
             }
 
-
             let mut pos = 0;
-            while pos < haystack.len() {
+            while pos < (haystack.len() - needle.len() + 1) {
                 let match_len = longest_match(haystack, needle, pos);
                 if match_len == needle.len() {
                     let (before, after) = haystack.split_at(pos);
