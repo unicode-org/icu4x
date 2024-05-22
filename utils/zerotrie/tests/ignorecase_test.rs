@@ -16,23 +16,14 @@ fn test_ignore_case_coverage() {
 
     // Test both construction paths
     ZeroAsciiIgnoreCaseTrie::try_from(&litemap).unwrap();
-    let trie = litemap
-        .iter()
-        .map(|(k, v)| (*k, *v))
-        .collect::<ZeroAsciiIgnoreCaseTrie<Vec<u8>>>();
+    let trie = ZeroAsciiIgnoreCaseTrie::<Vec<u8>>::from_iter(litemap.iter().map(|(k, v)| (*k, *v)));
 
     // Test lookup
     for (k, v) in litemap.iter() {
         assert_eq!(trie.get(k), Some(*v), "normal: {k:?}");
-        let k_upper = k
-            .iter()
-            .map(|c| c.to_ascii_uppercase())
-            .collect::<Vec<u8>>();
+        let k_upper = Vec::from_iter(k.iter().map(|c| c.to_ascii_uppercase()));
         assert_eq!(trie.get(k_upper), Some(*v), "upper: {k:?}");
-        let k_lower = k
-            .iter()
-            .map(|c| c.to_ascii_lowercase())
-            .collect::<Vec<u8>>();
+        let k_lower = Vec::from_iter(k.iter().map(|c| c.to_ascii_lowercase()));
         assert_eq!(trie.get(k_lower), Some(*v), "lower: {k:?}");
     }
 

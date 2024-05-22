@@ -48,7 +48,7 @@ use core::iter::FromIterator;
 ///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without any allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+/// let deserialized = bincode::deserialize::<Data>(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(data.map.get(&1), Some("one"));
@@ -89,7 +89,7 @@ where
     /// ```
     /// use zerovec::ZeroMap;
     ///
-    /// let zm: ZeroMap<u16, str> = ZeroMap::new();
+    /// let zm = ZeroMap::<u16, str>::new();
     /// assert!(zm.is_empty());
     /// ```
     pub fn new() -> Self {
@@ -427,7 +427,7 @@ where
     ///     name: Cow<'a, str>,
     /// }
     ///
-    /// let mut map: ZeroMap<u32, PersonULE> = ZeroMap::new();
+    /// let mut map = ZeroMap::<u32, PersonULE>::new();
     /// map.insert_var_v(
     ///     &1,
     ///     &Person {

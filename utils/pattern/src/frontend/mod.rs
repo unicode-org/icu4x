@@ -120,8 +120,8 @@ impl<Backend, Store> Pattern<Backend, Store> {
     /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
     /// // with the same backend (`SinglePlaceholder`).
     /// let store = allocated_pattern.take_store();
-    /// let borrowed_pattern: Pattern<SinglePlaceholder, &str> =
-    ///     Pattern::from_store_unchecked(&store);
+    /// let borrowed_pattern =
+    ///     Pattern::<SinglePlaceholder, &str>::from_store_unchecked(&store);
     ///
     /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
     /// ```

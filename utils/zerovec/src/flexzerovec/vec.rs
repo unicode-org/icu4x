@@ -131,7 +131,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let zv: FlexZeroVec = FlexZeroVec::new();
+    /// let zv = FlexZeroVec::new();
     /// assert!(zv.is_empty());
     /// ```
     pub const fn new() -> Self {
@@ -158,7 +158,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zv = FlexZeroVec::parse_byte_slice(bytes).expect("valid slice");
     ///
     /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
@@ -176,7 +176,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
     /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
     ///
@@ -198,7 +198,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let mut zv = FlexZeroVec::parse_byte_slice(bytes).expect("valid bytes");
     /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
     ///
@@ -224,7 +224,7 @@ impl<'a> FlexZeroVec<'a> {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let mut zv: FlexZeroVec = [1, 2, 3].iter().copied().collect();
+    /// let mut zv = FlexZeroVec::from_iter([1, 2, 3]);
     /// assert!(!zv.is_empty());
     /// zv.clear();
     /// assert!(zv.is_empty());

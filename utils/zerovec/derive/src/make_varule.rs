@@ -316,15 +316,12 @@ fn make_zf_impl(
         .to_compile_error();
     };
 
-    let mut field_inits = sized_fields
-        .iter()
-        .map(|f| {
-            let ty = &f.field.ty;
-            let accessor = &f.accessor;
-            let setter = f.setter();
-            quote!(#setter <#ty as zerovec::ule::AsULE>::from_unaligned(other.#accessor))
-        })
-        .collect::<Vec<_>>();
+    let mut field_inits = Vec::from_iter(sized_fields.iter().map(|f| {
+        let ty = &f.field.ty;
+        let accessor = &f.accessor;
+        let setter = f.setter();
+        quote!(#setter <#ty as zerovec::ule::AsULE>::from_unaligned(other.#accessor))
+    }));
 
     unsized_field_info.push_zf_setters(lt, &mut field_inits);
 

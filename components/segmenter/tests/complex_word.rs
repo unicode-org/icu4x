@@ -14,13 +14,13 @@ fn word_break_th() {
         let utf16: Vec<u16> = s.encode_utf16().collect();
         let iter = segmenter.segment_utf16(&utf16);
         assert_eq!(
-            iter.collect::<Vec<usize>>(),
+            Vec::from_iter(iter),
             vec![0, 4, 7, 11, 14],
             "word segmenter with Thai"
         );
         let iter = segmenter.segment_str(s);
         assert_eq!(
-            iter.collect::<Vec<usize>>(),
+            Vec::from_iter(iter),
             vec![0, 12, 21, 33, 42],
             "word segmenter with Thai"
         );
@@ -30,7 +30,7 @@ fn word_break_th() {
         let utf16: Vec<u16> = s.encode_utf16().collect();
         let iter = segmenter.segment_utf16(&utf16);
         assert_eq!(
-            iter.collect::<Vec<usize>>(),
+            Vec::from_iter(iter),
             vec![0, 1, 5, 8, 12, 15, 16],
             "word segmenter with Thai and ascii"
         );
@@ -45,7 +45,7 @@ fn word_break_my() {
     let utf16: Vec<u16> = s.encode_utf16().collect();
     let iter = segmenter.segment_utf16(&utf16);
     assert_eq!(
-        iter.collect::<Vec<usize>>(),
+        Vec::from_iter(iter),
         vec![0, 8, 16, 22, 24],
         "word segmenter with Burmese"
     );
@@ -57,7 +57,7 @@ fn word_break_hiragana() {
         let s = "うなぎうなじ";
         let iter = segmenter.segment_str(s);
         assert_eq!(
-            iter.collect::<Vec<usize>>(),
+            Vec::from_iter(iter),
             vec![0, 9, 18],
             "word segmenter with Hiragana"
         );
@@ -70,7 +70,7 @@ fn word_break_mixed_han() {
         let s = "Welcome龟山岛龟山岛Welcome";
         let iter = segmenter.segment_str(s);
         assert_eq!(
-            iter.collect::<Vec<usize>>(),
+            Vec::from_iter(iter),
             vec![0, 7, 16, 25, 32],
             "word segmenter with Chinese and letter"
         );
@@ -89,7 +89,7 @@ fn word_line_th_wikipedia_auto() {
     let segmenter_word_auto = WordSegmenter::new_auto();
     let segmenter_line_auto = LineSegmenter::new_auto();
 
-    let breakpoints_word_utf8 = segmenter_word_auto.segment_str(text).collect::<Vec<_>>();
+    let breakpoints_word_utf8 = Vec::from_iter(segmenter_word_auto.segment_str(text));
     assert_eq!(
         breakpoints_word_utf8,
         [
@@ -99,7 +99,7 @@ fn word_line_th_wikipedia_auto() {
         ]
     );
 
-    let breakpoints_line_utf8 = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
+    let breakpoints_line_utf8 = Vec::from_iter(segmenter_line_auto.segment_str(text));
     assert_eq!(
         breakpoints_line_utf8,
         [
@@ -108,9 +108,7 @@ fn word_line_th_wikipedia_auto() {
         ]
     );
 
-    let breakpoints_word_utf16 = segmenter_word_auto
-        .segment_utf16(&utf16)
-        .collect::<Vec<_>>();
+    let breakpoints_word_utf16 = Vec::from_iter(segmenter_word_auto.segment_utf16(&utf16));
     assert_eq!(
         breakpoints_word_utf16,
         [
@@ -120,9 +118,7 @@ fn word_line_th_wikipedia_auto() {
         ]
     );
 
-    let breakpoints_word_utf16 = segmenter_word_auto
-        .segment_utf16(&utf16)
-        .collect::<Vec<_>>();
+    let breakpoints_word_utf16 = Vec::from_iter(segmenter_word_auto.segment_utf16(&utf16));
     assert_eq!(
         breakpoints_word_utf16,
         [

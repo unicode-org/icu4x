@@ -67,7 +67,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// use icu::segmenter::GraphemeClusterSegmenter;
 /// let segmenter = GraphemeClusterSegmenter::new();
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
+/// let breakpoints = Vec::from_iter(segmenter.segment_str("Hello 🗺"));
 /// // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 10]);
 /// ```
@@ -78,8 +78,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// use icu::segmenter::GraphemeClusterSegmenter;
 /// let segmenter = GraphemeClusterSegmenter::new();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints = Vec::from_iter(segmenter.segment_latin1(b"Hello World"));
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 /// ```
 ///
@@ -93,11 +92,11 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// #     GraphemeClusterSegmenter::new();
 /// use itertools::Itertools;
 /// let text = "मांजर";
-/// let grapheme_clusters: Vec<&str> = segmenter
+/// let grapheme_clusters = Vec::from_iter(segmenter
 ///     .segment_str(text)
 ///     .tuple_windows()
 ///     .map(|(i, j)| &text[i..j])
-///     .collect();
+///     );
 /// assert_eq!(&grapheme_clusters, &["मां", "ज", "र"]);
 /// ```
 ///
@@ -123,7 +122,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// // நி (TAMIL LETTER NA, TAMIL VOWEL SIGN I) is an extended grapheme cluster,
 /// // but not a legacy grapheme cluster.
 /// let ni = "நி";
-/// let egc_boundaries: Vec<usize> = segmenter.segment_str(ni).collect();
+/// let egc_boundaries = Vec::from_iter(segmenter.segment_str(ni));
 /// assert_eq!(&egc_boundaries, &[0, ni.len()]);
 /// ```
 #[derive(Debug)]

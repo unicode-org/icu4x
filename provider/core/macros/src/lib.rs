@@ -291,7 +291,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
         )
         .to_compile_error();
     }
-    let lifetimes = input.generics.lifetimes().collect::<Vec<_>>();
+    let lifetimes = Vec::from_iter(input.generics.lifetimes());
 
     let name = &input.ident;
 

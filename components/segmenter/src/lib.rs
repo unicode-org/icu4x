@@ -31,9 +31,8 @@
 //!
 //! let segmenter = LineSegmenter::new_auto();
 //!
-//! let breakpoints: Vec<usize> = segmenter
-//!     .segment_str("Hello World. Xin chào thế giới!")
-//!     .collect();
+//! let breakpoints = Vec::from_iter(segmenter
+//!     .segment_str("Hello World. Xin chào thế giới!"));
 //! assert_eq!(&breakpoints, &[0, 6, 13, 17, 23, 29, 36]);
 //! ```
 //!
@@ -48,9 +47,8 @@
 //!
 //! let segmenter = GraphemeClusterSegmenter::new();
 //!
-//! let breakpoints: Vec<usize> = segmenter
-//!     .segment_str("Hello World. Xin chào thế giới!")
-//!     .collect();
+//! let breakpoints = Vec::from_iter(segmenter
+//!     .segment_str("Hello World. Xin chào thế giới!"));
 //! assert_eq!(
 //!     &breakpoints,
 //!     &[
@@ -71,9 +69,8 @@
 //!
 //! let segmenter = WordSegmenter::new_auto();
 //!
-//! let breakpoints: Vec<usize> = segmenter
-//!     .segment_str("Hello World. Xin chào thế giới!")
-//!     .collect();
+//! let breakpoints = Vec::from_iter(segmenter
+//!     .segment_str("Hello World. Xin chào thế giới!"));
 //! assert_eq!(
 //!     &breakpoints,
 //!     &[0, 5, 6, 11, 12, 13, 16, 17, 22, 23, 28, 29, 35, 36]
@@ -91,9 +88,8 @@
 //!
 //! let segmenter = SentenceSegmenter::new();
 //!
-//! let breakpoints: Vec<usize> = segmenter
-//!     .segment_str("Hello World. Xin chào thế giới!")
-//!     .collect();
+//! let breakpoints = Vec::from_iter(segmenter
+//!     .segment_str("Hello World. Xin chào thế giới!"));
 //! assert_eq!(&breakpoints, &[0, 13, 36]);
 //! ```
 //!

@@ -112,7 +112,7 @@ where
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         ctx.insert("std");
-        let mut data = self.iter().map(|d| d.bake(ctx)).collect::<Vec<_>>();
+        let mut data = Vec::from_iter(self.iter().map(|d| d.bake(ctx)));
         data.sort_unstable_by_key(|data| data.to_string());
         quote! {
             std::collections::HashSet::from([#(#data),*])
@@ -136,14 +136,11 @@ where
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         ctx.insert("std");
-        let mut data = self
-            .iter()
-            .map(|(k, v)| {
-                let k = k.bake(ctx);
-                let v = v.bake(ctx);
-                quote!((#k, #v))
-            })
-            .collect::<Vec<_>>();
+        let mut data = Vec::from_iter(self.iter().map(|(k, v)| {
+            let k = k.bake(ctx);
+            let v = v.bake(ctx);
+            quote!((#k, #v))
+        }));
         data.sort_unstable_by_key(|data| data.to_string());
         quote! {
             std::collections::HashMap::from([#(#data),*])

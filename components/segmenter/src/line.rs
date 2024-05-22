@@ -245,14 +245,14 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// # let segmenter = LineSegmenter::new_auto();
 /// #
 /// let text = "Summary\r\nThis annex…";
-/// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
+/// let breakpoints = Vec::from_iter(segmenter.segment_str(text));
 /// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
 /// assert_eq!(&breakpoints, &[0, 9, 14, 22]);
 ///
 /// // There is a break opportunity between emoji, but not within the ZWJ sequence 🏳️‍🌈.
 /// let flag_equation = "🏳️➕🌈🟰🏳️\u{200D}🌈";
-/// let possible_first_lines: Vec<&str> =
-///     segmenter.segment_str(flag_equation).skip(1).map(|i| &flag_equation[..i]).collect();
+/// let possible_first_lines =
+///     Vec::from_iter(segmenter.segment_str(flag_equation).skip(1).map(|i| &flag_equation[..i]));
 /// assert_eq!(
 ///     &possible_first_lines,
 ///     &[
@@ -274,8 +274,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// let segmenter = LineSegmenter::new_auto();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_str("Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_str("Hello World"));
 /// assert_eq!(&breakpoints, &[0, 6, 11]);
 /// ```
 ///
@@ -293,8 +293,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// options.ja_zh = false;
 /// let segmenter = LineSegmenter::new_auto_with_options(options);
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_str("Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_str("Hello World"));
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
 /// ```
 ///
@@ -305,8 +305,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// let segmenter = LineSegmenter::new_auto();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_latin1(b"Hello World"));
 /// assert_eq!(&breakpoints, &[0, 6, 11]);
 /// ```
 ///
@@ -320,7 +320,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// #
 /// let text = "Summary\r\nThis annex…";
 ///
-/// let mandatory_breaks: Vec<usize> = segmenter
+/// let mandatory_breaks = Vec::from_iter(segmenter
 ///     .segment_str(text)
 ///     .into_iter()
 ///     .filter(|&i| {
@@ -334,7 +334,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///             ) || i == text.len()
 ///         })
 ///     })
-///     .collect();
+///     );
 /// assert_eq!(&mandatory_breaks, &[9, 22]);
 /// ```
 #[derive(Debug)]

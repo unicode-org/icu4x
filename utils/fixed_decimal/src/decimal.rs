@@ -554,7 +554,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
+    /// let dec = "012.340".parse::<FixedDecimal>().expect("valid syntax");
     /// assert_eq!(-3..=2, dec.magnitude_range());
     /// ```
     pub const fn magnitude_range(&self) -> RangeInclusive<i16> {
@@ -568,7 +568,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
+    /// let dec = "012.340".parse::<FixedDecimal>().expect("valid syntax");
     /// assert_eq!(1, dec.nonzero_magnitude_start());
     ///
     /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_start());
@@ -584,7 +584,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
+    /// let dec = "012.340".parse::<FixedDecimal>().expect("valid syntax");
     /// assert_eq!(-2, dec.nonzero_magnitude_end());
     ///
     /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_end());
@@ -604,7 +604,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec: FixedDecimal = "000.000".parse().expect("valid syntax");
+    /// let dec = "000.000".parse::<FixedDecimal>().expect("valid syntax");
     /// assert!(dec.is_zero());
     /// ```
     #[inline]

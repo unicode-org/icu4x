@@ -26,8 +26,8 @@ use writeable::Writeable;
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
 ///
-/// let default_options = Default::default();
-/// let mut preserve_case: TitlecaseOptions = Default::default();
+/// let default_options = TitlecaseOptions::default();
+/// let mut preserve_case = TitlecaseOptions::default();
 /// preserve_case.trailing_case = TrailingCase::Unchanged;
 ///
 /// // Exhibits trailing case when set:
@@ -72,8 +72,8 @@ pub enum TrailingCase {
 /// let root = langid!("und");
 ///
 /// let default_options = Default::default(); // head adjustment set to Auto
-/// let mut no_adjust: TitlecaseOptions = Default::default();
-/// let mut adjust_to_cased: TitlecaseOptions = Default::default();
+/// let mut no_adjust = TitlecaseOptions::default();
+/// let mut adjust_to_cased = TitlecaseOptions::default();
 /// no_adjust.leading_adjustment = LeadingAdjustment::None;
 /// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
 ///
@@ -383,8 +383,8 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
     ///
-    /// let default_options = Default::default();
-    /// let mut no_adjust: TitlecaseOptions = Default::default();
+    /// let default_options = TitlecaseOptions::default();
+    /// let mut no_adjust = TitlecaseOptions::default();
     /// no_adjust.leading_adjustment = LeadingAdjustment::None;
     ///
     /// // Exhibits leading adjustment when set:
@@ -423,8 +423,8 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
     ///
-    /// let default_options = Default::default();
-    /// let mut preserve_case: TitlecaseOptions = Default::default();
+    /// let default_options = TitlecaseOptions::default();
+    /// let mut preserve_case = TitlecaseOptions::default();
     /// preserve_case.trailing_case = TrailingCase::Unchanged;
     ///
     /// // Exhibits trailing case when set:

@@ -344,9 +344,10 @@ mod test {
         let c: VZV<VZS<[u8]>> = VarZeroVec::from(&u8_3d_vec);
         let d: VZV<VZS<[u8]>> = VarZeroVec::from(u8_3d_vzv_brackets);
         assert_eq!(
-            a.iter()
-                .map(|x| x.iter().map(|y| y.to_vec()).collect::<Vec<Vec<u8>>>())
-                .collect::<Vec<Vec<Vec<u8>>>>(),
+            Vec::from_iter(
+                a.iter()
+                    .map(|x| Vec::from_iter(x.iter().map(|y| y.to_vec())))
+            ),
             u8_3d_vec
         );
         assert_eq!(a, b);
@@ -358,12 +359,10 @@ mod test {
         let c: VZV<VZS<ZS<u8>>> = VarZeroVec::from(&u8_3d_vec);
         let d: VZV<VZS<ZS<u8>>> = VarZeroVec::from(u8_3d_vzv_zeroslice);
         assert_eq!(
-            a.iter()
-                .map(|x| x
-                    .iter()
-                    .map(|y| y.iter().collect::<Vec<u8>>())
-                    .collect::<Vec<Vec<u8>>>())
-                .collect::<Vec<Vec<Vec<u8>>>>(),
+            Vec::from_iter(
+                a.iter()
+                    .map(|x| Vec::from_iter(x.iter().map(|y| Vec::from_iter(y.iter()))))
+            ),
             u8_3d_vec
         );
         assert_eq!(a, b);
@@ -385,12 +384,10 @@ mod test {
         let c: VZV<VZS<ZS<u32>>> = VarZeroVec::from(&u32_3d_vec);
         let d: VZV<VZS<ZS<u32>>> = VarZeroVec::from(u32_3d_vzv);
         assert_eq!(
-            a.iter()
-                .map(|x| x
-                    .iter()
-                    .map(|y| y.iter().collect::<Vec<u32>>())
-                    .collect::<Vec<Vec<u32>>>())
-                .collect::<Vec<Vec<Vec<u32>>>>(),
+            Vec::from_iter(
+                a.iter()
+                    .map(|x| Vec::from_iter(x.iter().map(|y| Vec::from_iter(y.iter()))))
+            ),
             u32_3d_vec
         );
         assert_eq!(a, b);

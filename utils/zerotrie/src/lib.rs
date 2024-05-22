@@ -15,9 +15,7 @@
 //! ```
 //! use zerotrie::ZeroTrie;
 //!
-//! let data: &[(&str, usize)] = &[("abc", 11), ("xyz", 22), ("axyb", 33)];
-//!
-//! let trie: ZeroTrie<Vec<u8>> = data.iter().copied().collect();
+//! let trie = ZeroTrie::<Vec<u8>>::from_iter([("abc", 11), ("xyz", 22), ("axyb", 33)]);
 //!
 //! assert_eq!(trie.get("axyb"), Some(33));
 //! assert_eq!(trie.byte_len(), 18);

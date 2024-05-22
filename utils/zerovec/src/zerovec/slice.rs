@@ -102,7 +102,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let nums: &[u16] = &[211, 281, 421, 32973];
     ///
     /// let zerovec = ZeroVec::alloc_from_slice(nums);
@@ -128,9 +128,9 @@ where
     /// use zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(4, zerovec.len());
     /// assert_eq!(
@@ -150,13 +150,12 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let zerovec =
+    ///     ZeroVec::<u16>::from_iter([1,2,3]);
     /// assert!(!zerovec.is_empty());
     ///
-    /// let emptyvec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(&[]).expect("infallible");
+    /// let emptyvec =
+    ///     ZeroVec::<u16>::new();
     /// assert!(emptyvec.is_empty());
     /// ```
     #[inline]
@@ -176,9 +175,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.get(2), Some(421));
     /// assert_eq!(zerovec.get(4), None);
@@ -199,11 +198,11 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let array: [u16; 4] =
-    ///     zerovec.get_as_array().expect("should be 4 items in array");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
+    /// let array =
+    ///     zerovec.get_as_array::<4>().expect("should be 4 items in array");
     ///
     /// assert_eq!(array[2], 421);
     /// ```
@@ -220,9 +219,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(
     ///     zerovec.get_subslice(1..3),
@@ -295,8 +294,8 @@ where
     ///     }
     /// };
     ///
-    /// let zs_u8_4: &ZeroSlice<[u8; 4]> =
-    ///     ZS_U32.try_as_converted().expect("valid code points");
+    /// let zs_u8_4 =
+    ///     ZS_U32.try_as_converted::<[u8; 4]>().expect("valid code points");
     ///
     /// assert_eq!(ZS_U32.get(0), Some(127871));
     /// assert_eq!(zs_u8_4.get(0), Some([0x7F, 0xF3, 0x01, 0x00]));
@@ -314,9 +313,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.first(), Some(211));
     /// ```
@@ -332,9 +331,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.last(), Some(32973));
     /// ```
@@ -350,9 +349,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// let mut it = zerovec.iter();
     ///
     /// assert_eq!(it.next(), Some(211));
@@ -412,9 +411,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.binary_search(&281), Ok(1));
     /// assert_eq!(zerovec.binary_search(&282), Err(2));
@@ -440,9 +439,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&281)), Ok(1));
     /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&282)), Err(2));

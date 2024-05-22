@@ -55,8 +55,8 @@ where
     S0: StoreIntoIterator<K, V>,
     S1: StoreIntoIterator<K, V>,
 {
-    let a_vec = a.lm_into_iter().collect::<Vec<_>>();
-    let b_vec = b.lm_into_iter().collect::<Vec<_>>();
+    let a_vec = Vec::from_iter(a.lm_into_iter());
+    let b_vec = Vec::from_iter(b.lm_into_iter());
     assert_eq!(a_vec, b_vec);
 }
 

@@ -56,10 +56,9 @@ impl TryFrom<ZeroUTF16String<'_>> for String {
 
 impl Debug for ZeroUTF16String<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let decoded = char::decode_utf16(self.iter())
+        char::decode_utf16(self.iter())
             .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
-            .collect::<String>();
-        write!(f, "{}", decoded)
+            .try_for_each(|c| write!(f, "{c}"))
     }
 }
 

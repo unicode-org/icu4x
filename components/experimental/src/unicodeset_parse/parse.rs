@@ -764,8 +764,7 @@ where
                 let (single, string_set) = inner_builder.finalize();
                 // note: offset - 1, because we already consumed full set
                 let offset = self.must_peek_index()? - 1;
-                let mut strings = string_set.into_iter().collect::<Vec<_>>();
-                strings.sort();
+                let strings = Vec::from_iter(string_set);
                 let cpilasl = CodePointInversionListAndStringList::try_from(
                     single.build(),
                     VarZeroVec::from(&strings),
@@ -1637,8 +1636,7 @@ where
     let (single, string_set) = builder.finalize();
     let built_single = single.build();
 
-    let mut strings = string_set.into_iter().collect::<Vec<_>>();
-    strings.sort();
+    let strings = Vec::from_iter(string_set);
     let zerovec = (&strings).into();
 
     let cpinvlistandstrlist = CodePointInversionListAndStringList::try_from(built_single, zerovec)

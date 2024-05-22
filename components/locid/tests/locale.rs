@@ -97,16 +97,13 @@ fn test_locale_strict_cmp() {
     let tests: Vec<fixtures::LocaleTest> =
         serde_json::from_str(include_str!("fixtures/locale.json"))
             .expect("Failed to read a fixture");
-    let bcp47_strings = tests
-        .iter()
-        .map(|t| match t.input {
+    let bcp47_strings = Vec::from_iter(tests.iter().map(|t| match t.input {
+        fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
+        _ => match t.output {
             fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
-            _ => match t.output {
-                fixtures::LocaleInfo::Identifier(ref s) => s.identifier.as_str(),
-                _ => panic!("No string in fixture input or output: {t:?}"),
-            },
-        })
-        .collect::<Vec<&str>>();
+            _ => panic!("No string in fixture input or output: {t:?}"),
+        },
+    }));
     for a in bcp47_strings.iter() {
         for b in bcp47_strings.iter() {
             let a_langid = a.parse::<Locale>().expect("Invalid BCP-47 in fixture");

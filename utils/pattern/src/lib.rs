@@ -140,9 +140,7 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 /// // Interpolate some values into the pattern:
 /// assert_try_writeable_eq!(
 ///     pattern.try_interpolate(
-///         [("person0", "Alice"), ("person1", "Bob")]
-///             .into_iter()
-///             .collect::<BTreeMap<&str, &str>>()
+///         BTreeMap::from_iter([("person0", "Alice"), ("person1", "Bob")])
 ///     ),
 ///     "Hello, Alice and Bob!"
 /// );

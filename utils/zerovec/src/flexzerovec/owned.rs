@@ -69,7 +69,7 @@ impl FlexZeroVecOwned {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// let mut zv = FlexZeroVec::from_iter([22, 44, 66]);
     /// zv.to_mut().push(33);
     /// assert_eq!(zv.to_vec(), vec![22, 44, 66, 33]);
     /// ```
@@ -96,7 +96,7 @@ impl FlexZeroVecOwned {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// let mut zv = FlexZeroVec::from_iter([22, 44, 66]);
     /// zv.to_mut().insert(2, 33);
     /// assert_eq!(zv.to_vec(), vec![22, 44, 33, 66]);
     /// ```
@@ -150,7 +150,7 @@ impl FlexZeroVecOwned {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// let mut zv = FlexZeroVec::from_iter([22, 44, 66]);
     /// let removed_item = zv.to_mut().remove(1);
     /// assert_eq!(44, removed_item);
     /// assert_eq!(zv.to_vec(), vec![22, 66]);
@@ -184,7 +184,7 @@ impl FlexZeroVecOwned {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let mut zv: FlexZeroVec = [22, 44, 66].iter().copied().collect();
+    /// let mut zv = FlexZeroVec::from_iter([22, 44, 66]);
     /// let popped_item = zv.to_mut().pop_sorted();
     /// assert_eq!(66, popped_item);
     /// assert_eq!(zv.to_vec(), vec![22, 44]);

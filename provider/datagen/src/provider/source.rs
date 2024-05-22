@@ -222,30 +222,28 @@ impl AbstractFs {
             Self::Fs(root) => std::fs::read_dir(root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
                 .map(|e| -> Result<_, DataError> { Ok(e?.file_name().into_string().unwrap()) })
-                .collect::<Result<HashSet<_>, DataError>>()
-                .map(HashSet::into_iter)?,
-            Self::Zip(zip) => zip
-                .read()
-                .expect("poison")
-                .as_ref()
-                .ok()
-                .unwrap() // init called
-                .file_list
-                .iter()
-                .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(String::from)
-                .collect::<HashSet<_>>()
-                .into_iter(),
-            Self::Memory(map) => map
-                .keys()
-                .copied()
-                .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(String::from)
-                .collect::<HashSet<_>>()
-                .into_iter(),
-        })
+                .collect::<Result<HashSet<_>, DataError>>()?,
+            Self::Zip(zip) => HashSet::from_iter(
+                zip.read()
+                    .expect("poison")
+                    .as_ref()
+                    .ok()
+                    .unwrap() // init called
+                    .file_list
+                    .iter()
+                    .filter_map(|p| p.strip_prefix(path))
+                    .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+                    .map(String::from),
+            ),
+            Self::Memory(map) => HashSet::from_iter(
+                map.keys()
+                    .copied()
+                    .filter_map(|p| p.strip_prefix(path))
+                    .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+                    .map(String::from),
+            ),
+        }
+        .into_iter())
     }
 
     fn file_exists(&self, path: &str) -> Result<bool, DataError> {

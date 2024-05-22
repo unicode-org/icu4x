@@ -87,21 +87,14 @@ fn get_may_borrow_attr(attrs: &[syn::Attribute]) -> Result<HashSet<Ident>, Span>
 }
 
 fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let mut tybounds = input
-        .generics
-        .type_params()
-        .map(|ty| {
-            // Strip out param defaults, we don't need them in the impl
-            let mut ty = ty.clone();
-            ty.eq_token = None;
-            ty.default = None;
-            ty
-        })
-        .collect::<Vec<_>>();
-    let typarams = tybounds
-        .iter()
-        .map(|ty| ty.ident.clone())
-        .collect::<Vec<_>>();
+    let mut tybounds = Vec::from_iter(input.generics.type_params().map(|ty| {
+        // Strip out param defaults, we don't need them in the impl
+        let mut ty = ty.clone();
+        ty.eq_token = None;
+        ty.default = None;
+        ty
+    }));
+    let typarams = Vec::from_iter(tybounds.iter().map(|ty| ty.ident.clone()));
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
     let structure = Structure::new(input);

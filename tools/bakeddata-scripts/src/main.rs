@@ -44,10 +44,11 @@ fn main() {
     let args = std::env::args();
 
     let components = if args.len() == 1 {
-        COMPONENTS
-            .iter()
-            .map(|(krate, keys, version)| (krate.to_string(), *keys, *version))
-            .collect::<Vec<_>>()
+        Vec::from_iter(
+            COMPONENTS
+                .iter()
+                .map(|(krate, keys, version)| (krate.to_string(), *keys, *version)),
+        )
     } else {
         let map = std::collections::HashMap::<&str, (&'static [DataKey], &'static str)>::from_iter(
             COMPONENTS

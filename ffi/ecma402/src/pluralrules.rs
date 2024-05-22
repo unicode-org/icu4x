@@ -102,7 +102,7 @@ pub(crate) mod internal {
             // Take at most the number of fraction digits we're required to display.
             .take(display_fraction_digits);
         // "001234.500"
-        let nstr = i.chain(dd).chain(f).collect::<String>();
+        let nstr = String::from_iter(i.chain(dd).chain(f));
         dbg!("nstr={}", &nstr);
         nstr
     }
@@ -310,14 +310,11 @@ mod testing {
         for (i, test) in tests.into_iter().enumerate() {
             let plr = super::PluralRules::try_new(test.locale, test.opts)?;
             assert_eq!(
-                test.numbers
-                    .iter()
-                    .map(|n| {
-                        let mut result = String::new();
-                        plr.select(*n, &mut result).unwrap();
-                        result
-                    })
-                    .collect::<Vec<_>>(),
+                Vec::from_iter(test.numbers.iter().map(|n| {
+                    let mut result = String::new();
+                    plr.select(*n, &mut result).unwrap();
+                    result
+                })),
                 test.expected,
                 "for test case: {}",
                 i

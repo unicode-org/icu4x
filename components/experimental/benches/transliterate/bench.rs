@@ -22,7 +22,7 @@ fn owned_inputs(content: &str) -> Vec<String> {
         .lines()
         .filter(|&s| !s.starts_with('#'))
         .map(|s| s.split('\t').next().unwrap().to_string())
-        .collect::<Vec<String>>()
+        .collect()
 }
 
 fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataContent> {

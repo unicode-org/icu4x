@@ -123,14 +123,11 @@ impl<'data> CaseMapV1<'data> {
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
 
         #[allow(clippy::unwrap_used)] // datagen only
-        let trie_data = trie_data
-            .iter()
-            .map(|&i| {
-                CaseMapData::try_from_icu_integer(i)
-                    .unwrap()
-                    .with_updated_exception(&idx_map)
-            })
-            .collect::<ZeroVec<_>>();
+        let trie_data = ZeroVec::from_iter(trie_data.iter().map(|&i| {
+            CaseMapData::try_from_icu_integer(i)
+                .unwrap()
+                .with_updated_exception(&idx_map)
+        }));
 
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)
             .map_err(|_| DataError::custom("Casemapping data does not form valid trie"))?;

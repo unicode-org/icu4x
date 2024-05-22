@@ -23,15 +23,14 @@ use databake::*;
 /// use litemap::LiteMap;
 ///
 /// // Construct the LiteMap fully owned and allocated:
-/// let mut litemap_alloc: LiteMap<usize, String, Vec<_>> = LiteMap::new_vec();
+/// let mut litemap_alloc = LiteMap::<usize, String, Vec<_>>::new_vec();
 /// litemap_alloc.insert(1usize, "one".to_string());
 /// litemap_alloc.insert(2usize, "two".to_string());
 /// litemap_alloc.insert(10usize, "ten".to_string());
 ///
 /// // Convert to a borrowed type for baking:
-/// let litemap_str: LiteMap<usize, &str, Vec<_>> =
-///     litemap_alloc.to_borrowed_values();
-/// let litemap_slice: LiteMap<usize, &str, &[_]> = litemap_str.as_sliced();
+/// let litemap_str = litemap_alloc.to_borrowed_values::<str, Vec<_>>();
+/// let litemap_slice = litemap_str.as_sliced();
 ///
 /// // The bake will now work for const construction:
 /// let mut ctx = Default::default();

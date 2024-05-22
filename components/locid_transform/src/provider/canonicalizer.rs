@@ -83,15 +83,16 @@ pub struct AliasesV1<'data> {
 #[cfg(feature = "datagen")]
 impl<'data> From<AliasesV2<'data>> for AliasesV1<'data> {
     fn from(value: AliasesV2<'data>) -> Self {
-        let language_variants = value
-            .language_variants
-            .iter()
-            .map(zerofrom::ZeroFrom::zero_from)
-            .map(|v: LanguageStrStrPair| {
-                let langid = alloc::format!("{0}-{1}", v.0, v.1);
-                StrStrPair(langid.into(), v.2)
-            })
-            .collect::<alloc::vec::Vec<StrStrPair>>();
+        let language_variants = alloc::vec::Vec::from_iter(
+            value
+                .language_variants
+                .iter()
+                .map(zerofrom::ZeroFrom::zero_from)
+                .map(|v: LanguageStrStrPair| {
+                    let langid = alloc::format!("{0}-{1}", v.0, v.1);
+                    StrStrPair(langid.into(), v.2)
+                }),
+        );
 
         Self {
             language_variants: VarZeroVec::from(&language_variants),

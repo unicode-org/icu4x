@@ -34,8 +34,8 @@ pub trait NicheBytes<const N: usize> {
 /// use zerovec::ZeroVec;
 ///
 /// let bytes = &[0x00, 0x01, 0x02, 0x00];
-/// let zv_no: ZeroVec<NichedOption<NonZeroI8, 1>> =
-///     ZeroVec::parse_byte_slice(bytes)
+/// let zv_no =
+///     ZeroVec::<NichedOption<NonZeroI8, 1>>::parse_byte_slice(bytes)
 ///         .expect("Unable to parse as NichedOption.");
 ///
 /// assert_eq!(zv_no.get(0).map(|e| e.0), Some(None));

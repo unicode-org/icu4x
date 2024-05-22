@@ -215,10 +215,8 @@ where
     {
         if serializer.is_human_readable() {
             let lm = self.to_litemap();
-            let lm = lm
-                .iter()
-                .map(|(k, v)| (ByteStr::from_bytes(k), v))
-                .collect::<LiteMap<_, _>>();
+            let lm =
+                LiteMap::<_, _>::from_iter(lm.iter().map(|(k, v)| (ByteStr::from_bytes(k), v)));
             lm.serialize(serializer)
         } else {
             let bytes = self.as_bytes();
@@ -260,10 +258,8 @@ where
     {
         if serializer.is_human_readable() {
             let lm = self.to_litemap();
-            let lm = lm
-                .iter()
-                .map(|(k, v)| (ByteStr::from_bytes(k), v))
-                .collect::<LiteMap<_, _>>();
+            let lm =
+                LiteMap::<_, _>::from_iter(lm.iter().map(|(k, v)| (ByteStr::from_bytes(k), v)));
             lm.serialize(serializer)
         } else {
             let bytes = self.as_bytes();
@@ -326,10 +322,8 @@ where
     {
         if serializer.is_human_readable() {
             let lm = self.to_litemap();
-            let lm = lm
-                .iter()
-                .map(|(k, v)| (ByteStr::from_bytes(k), v))
-                .collect::<LiteMap<_, _>>();
+            let lm =
+                LiteMap::<_, _>::from_iter(lm.iter().map(|(k, v)| (ByteStr::from_bytes(k), v)));
             lm.serialize(serializer)
         } else {
             let (tag, bytes) = match &self.0 {

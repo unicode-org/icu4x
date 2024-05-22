@@ -158,11 +158,11 @@ mod test {
 
         let slice = "en";
         let si = SubtagIterator::new(slice.as_bytes());
-        assert_eq!(si.map(slice_to_str).collect::<Vec<_>>(), vec!["en",]);
+        assert_eq!(Vec::from_iter(si.map(slice_to_str)), vec!["en",]);
 
         let slice = "en-";
         let si = SubtagIterator::new(slice.as_bytes());
-        assert_eq!(si.map(slice_to_str).collect::<Vec<_>>(), vec!["en", "",]);
+        assert_eq!(Vec::from_iter(si.map(slice_to_str)), vec!["en", "",]);
 
         let slice = "--";
         let mut si = SubtagIterator::new(slice.as_bytes());
@@ -181,7 +181,7 @@ mod test {
         let slice = "de_at-u-ca-foobar";
         let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(
-            si.map(slice_to_str).collect::<Vec<_>>(),
+            Vec::from_iter(si.map(slice_to_str)),
             vec!["de", "at", "u", "ca", "foobar",]
         );
     }

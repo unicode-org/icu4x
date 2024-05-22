@@ -123,11 +123,11 @@ impl DataPayload<BufferMarker> {
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///
-    /// let buffer: &[u8] = br#"{"message":"Hallo Welt"}"#;
+    /// let buffer = br#"{"message":"Hallo Welt"}"#;
     ///
-    /// let buffer_payload = DataPayload::from_owned(buffer);
-    /// let payload: DataPayload<HelloWorldV1Marker> = buffer_payload
-    ///     .into_deserialized(BufferFormat::Json)
+    /// let buffer_payload = DataPayload::from_owned(buffer.as_slice());
+    /// let payload = buffer_payload
+    ///     .into_deserialized::<HelloWorldV1Marker>(BufferFormat::Json)
     ///     .expect("Deserialization successful");
     ///
     /// assert_eq!(payload.get().message, "Hallo Welt");

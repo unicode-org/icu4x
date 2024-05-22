@@ -31,7 +31,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// let lc = LocaleCanonicalizer::new();
 ///
-/// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
+/// let mut locale = "ja-Latn-fonipa-hepburn-heploc".parse::<Locale>().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
 /// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
 /// ```
@@ -331,7 +331,7 @@ impl LocaleCanonicalizer {
     ///
     /// let lc = LocaleCanonicalizer::new();
     ///
-    /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
+    /// let mut locale = "ja-Latn-fonipa-hepburn-heploc".parse::<Locale>().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
     /// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
     /// ```

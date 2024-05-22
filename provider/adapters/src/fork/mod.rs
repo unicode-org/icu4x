@@ -82,8 +82,7 @@ use predicates::MissingDataKeyPredicate;
 ///
 /// let provider = forking_provider.as_deserializing();
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
-///     .load(DataRequest {
+/// let german_hello_world = DataProvider::<HelloWorldV1Marker>::load(&provider, DataRequest {
 ///         locale: &langid!("de").into(),
 ///         metadata: Default::default(),
 ///     })

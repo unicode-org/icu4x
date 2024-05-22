@@ -129,7 +129,7 @@ impl<U: Copy + Eq> Eq for OptionULE<U> {}
 /// use zerovec::ule::OptionVarULE;
 /// use zerovec::VarZeroVec;
 ///
-/// let mut zv: VarZeroVec<OptionVarULE<str>> = VarZeroVec::new();
+/// let mut zv = VarZeroVec::<OptionVarULE<str>>::new();
 ///
 /// zv.make_mut().push(&None::<&str>);
 /// zv.make_mut().push(&Some("hello"));

@@ -43,11 +43,11 @@ impl<'data> GenericPattern<'data> {
     /// ```
     /// use icu::datetime::pattern::runtime::{GenericPattern, Pattern};
     ///
-    /// let date: Pattern = "Y-m-d".parse().expect("Failed to parse pattern");
-    /// let time: Pattern = "HH:mm".parse().expect("Failed to parse pattern");
+    /// let date = "Y-m-d".parse::<Pattern>().expect("Failed to parse pattern");
+    /// let time = "HH:mm".parse::<Pattern>().expect("Failed to parse pattern");
     ///
-    /// let glue: GenericPattern = "{1} 'at' {0}"
-    ///     .parse()
+    /// let glue = "{1} 'at' {0}"
+    ///     .parse::<GenericPattern>()
     ///     .expect("Failed to parse generic pattern");
     /// assert_eq!(
     ///     glue.combined(date, time)

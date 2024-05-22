@@ -285,7 +285,7 @@ impl DataLocale {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert_eq!(a.cmp(b), Ordering::Less, "strings: {} < {}", a, b);
-    ///     let a_loc: DataLocale = a.parse().unwrap();
+    ///     let a_loc = a.parse::<DataLocale>().unwrap();
     ///     assert_eq!(
     ///         a_loc.strict_cmp(a.as_bytes()),
     ///         Ordering::Equal,
@@ -300,7 +300,7 @@ impl DataLocale {
     ///         a_loc,
     ///         b
     ///     );
-    ///     let b_loc: DataLocale = b.parse().unwrap();
+    ///     let b_loc = b.parse::<DataLocale>().unwrap();
     ///     assert_eq!(
     ///         b_loc.strict_cmp(b.as_bytes()),
     ///         Ordering::Equal,
@@ -323,7 +323,7 @@ impl DataLocale {
     /// ```
     /// use icu_provider::DataLocale;
     ///
-    /// let invalid_strings: &[&str] = &[
+    /// let invalid_strings = &[
     ///     // Less than "ca-ES"
     ///     "CA",
     ///     "ar-x-gbp-FOO",
@@ -493,7 +493,7 @@ impl DataLocale {
     /// };
     /// use icu_provider::prelude::*;
     ///
-    /// let locale: DataLocale = locale!("it-IT-u-ca-coptic").into();
+    /// let locale = "it-IT-u-ca-coptic".parse::<DataLocale>().unwrap();
     ///
     /// assert_eq!(locale.get_langid(), langid!("it-IT"));
     /// assert_eq!(locale.language(), language!("it"));
@@ -510,7 +510,7 @@ impl DataLocale {
     /// use icu_provider::prelude::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let data_locale: DataLocale = "und-u-nu-arab-x-gbp".parse().unwrap();
+    /// let data_locale = "und-u-nu-arab-x-gbp".parse::<DataLocale>().unwrap();
     /// assert_writeable_eq!(data_locale, "und-u-nu-arab-x-gbp");
     ///
     /// let recovered_locale = data_locale.into_locale();
@@ -611,7 +611,7 @@ impl DataLocale {
     /// use icu_locid::extensions::unicode::{key, value};
     /// use icu_provider::prelude::*;
     ///
-    /// let locale: DataLocale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
+    /// let locale = "it-IT-u-ca-coptic".parse::<DataLocale>().expect("Valid BCP-47");
     ///
     /// assert_eq!(locale.get_unicode_ext(&key!("hc")), None);
     /// assert_eq!(locale.get_unicode_ext(&key!("ca")), Some(value!("coptic")));
@@ -683,7 +683,7 @@ impl DataLocale {
     /// use icu_provider::prelude::*;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let mut data_locale: DataLocale = langid!("ar-EG").into();
+    /// let mut data_locale = DataLocale::from(langid!("ar-EG"));
     /// let aux = "gbp"
     ///     .parse::<AuxiliaryKeys>()
     ///     .expect("contains valid characters");
@@ -722,7 +722,7 @@ impl DataLocale {
 /// use icu_provider::prelude::*;
 /// use writeable::assert_writeable_eq;
 ///
-/// let mut data_locale: DataLocale = langid!("ar-EG").into();
+/// let mut data_locale = DataLocale::from(langid!("ar-EG"));
 /// assert_writeable_eq!(data_locale, "ar-EG");
 /// assert!(!data_locale.has_aux());
 /// assert_eq!(data_locale.get_aux(), None);
@@ -965,9 +965,9 @@ impl AuxiliaryKeys {
     /// use icu_locid::extensions::private::subtag;
     /// use icu_provider::AuxiliaryKeys;
     ///
-    /// let aux: AuxiliaryKeys = "abc-defg".parse().unwrap();
+    /// let aux = "abc-defg".parse::<AuxiliaryKeys>().unwrap();
     /// assert_eq!(
-    ///     aux.iter().collect::<Vec<_>>(),
+    ///     Vec::from_iter(aux.iter()),
     ///     vec![subtag!("abc"), subtag!("defg")]
     /// );
     /// ```

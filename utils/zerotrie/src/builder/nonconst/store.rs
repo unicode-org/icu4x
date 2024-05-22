@@ -177,8 +177,7 @@ mod tests {
 
     #[test]
     fn test_swap_ranges() {
-        let s = b"..abcdefghijkl=";
-        let mut s = s.iter().copied().collect::<VecDeque<u8>>();
+        let mut s = VecDeque::from_iter(*b"..abcdefghijkl=");
         s.atbs_swap_ranges(2, 7, 14);
         assert_eq!(s.atbs_to_bytes(), b"..fghijklabcde=");
     }

@@ -110,8 +110,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// use icu::segmenter::WordSegmenter;
 /// let segmenter = WordSegmenter::new_auto();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_str("Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_str("Hello World"));
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///
@@ -121,8 +121,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// use icu::segmenter::WordSegmenter;
 /// let segmenter = WordSegmenter::new_auto();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_latin1(b"Hello World"));
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///
@@ -135,11 +135,11 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// # let segmenter = WordSegmenter::new_auto();
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
-/// let segments: Vec<&str> = segmenter
+/// let segments = Vec::from_iter(segmenter
 ///     .segment_str(text)
 ///     .tuple_windows()
 ///     .map(|(i, j)| &text[i..j])
-///     .collect();
+///     );
 /// assert_eq!(
 ///     &segments,
 ///     &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]
@@ -156,13 +156,13 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// # use icu::segmenter::{WordType, WordSegmenter};
 /// # let segmenter = WordSegmenter::new_auto();
 /// # let text = "Mark’d ye his words?";
-/// let words: Vec<&str> = segmenter
+/// let words = Vec::from_iter(segmenter
 ///     .segment_str(text)
 ///     .iter_with_word_type()
 ///     .tuple_windows()
 ///     .filter(|(_, (_, segment_type))| segment_type.is_word_like())
 ///     .map(|((i, _), (j, _))| &text[i..j])
-///     .collect();
+///     );
 /// assert_eq!(&words, &["Mark’d", "ye", "his", "words"]);
 /// ```
 #[derive(Debug)]
@@ -194,8 +194,8 @@ impl WordSegmenter {
     ///
     /// let segmenter = WordSegmenter::new_auto();
     ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
+    /// let th_bps = Vec::from_iter(segmenter.segment_str(th_str));
+    /// let ja_bps = Vec::from_iter(segmenter.segment_str(ja_str));
     ///
     /// assert_eq!(th_bps, [0, 9, 18, 39]);
     /// assert_eq!(ja_bps, [0, 15, 21]);
@@ -267,8 +267,8 @@ impl WordSegmenter {
     ///
     /// let segmenter = WordSegmenter::new_lstm();
     ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
+    /// let th_bps = Vec::from_iter(segmenter.segment_str(th_str));
+    /// let ja_bps = Vec::from_iter(segmenter.segment_str(ja_str));
     ///
     /// assert_eq!(th_bps, [0, 9, 18, 39]);
     ///
@@ -338,8 +338,8 @@ impl WordSegmenter {
     ///
     /// let segmenter = WordSegmenter::new_dictionary();
     ///
-    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
-    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
+    /// let th_bps = Vec::from_iter(segmenter.segment_str(th_str));
+    /// let ja_bps = Vec::from_iter(segmenter.segment_str(ja_str));
     ///
     /// assert_eq!(th_bps, [0, 9, 18, 39]);
     /// assert_eq!(ja_bps, [0, 15, 21]);
@@ -613,6 +613,6 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
 #[test]
 fn empty_string() {
     let segmenter = WordSegmenter::new_auto();
-    let breaks: Vec<usize> = segmenter.segment_str("").collect();
+    let breaks = Vec::from_iter(segmenter.segment_str(""));
     assert_eq!(breaks, [0]);
 }

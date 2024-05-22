@@ -321,10 +321,11 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
         {
             Err(format!(
                 "Compact decimal exponents should be nondecreasing: {:?}",
-                patterns
-                    .values()
-                    .map(|plural_map| plural_map.get(&Count::Other).map(|p| p.exponent))
-                    .collect::<Vec<_>>(),
+                Vec::from_iter(
+                    patterns
+                        .values()
+                        .map(|plural_map| plural_map.get(&Count::Other).map(|p| p.exponent))
+                ),
             ))?;
         }
         // Deduplicate sequences of types that have the same plural map (up to =1), keeping the lowest type.

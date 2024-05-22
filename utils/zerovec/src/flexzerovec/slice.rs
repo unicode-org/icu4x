@@ -157,7 +157,7 @@ impl FlexZeroSlice {
     /// ```
     /// use zerovec::vecs::FlexZeroSlice;
     ///
-    /// let bytes: &[u8] = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let bytes = &[2, 0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let fzv = FlexZeroSlice::parse_byte_slice(bytes).expect("valid bytes");
     ///
     /// assert_eq!(bytes, fzv.as_bytes());
@@ -200,7 +200,7 @@ impl FlexZeroSlice {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let fzv: FlexZeroVec = [22, 33].iter().copied().collect();
+    /// let fzv = FlexZeroVec::from_iter([22, 33]);
     /// assert_eq!(fzv.get(0), Some(22));
     /// assert_eq!(fzv.get(1), Some(33));
     /// assert_eq!(fzv.get(2), None);
@@ -286,8 +286,7 @@ impl FlexZeroSlice {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let nums: &[usize] = &[211, 281, 421, 461];
-    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
+    /// let fzv = FlexZeroVec::from_iter([211, 281, 421, 461]);
     ///
     /// let mut pairs_it = fzv.iter_pairs();
     ///
@@ -308,11 +307,10 @@ impl FlexZeroSlice {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let nums: &[usize] = &[211, 281, 421, 461];
-    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
-    /// let vec: Vec<usize> = fzv.to_vec();
+    /// let fzv = FlexZeroVec::from_iter([211, 281, 421, 461]);
+    /// let vec = fzv.to_vec();
     ///
-    /// assert_eq!(nums, vec.as_slice());
+    /// assert_eq!(vec.as_slice(), &[211, 281, 421, 461]);
     /// ```
     #[inline]
     pub fn to_vec(&self) -> Vec<usize> {
@@ -326,8 +324,7 @@ impl FlexZeroSlice {
     /// ```
     /// use zerovec::vecs::FlexZeroVec;
     ///
-    /// let nums: &[usize] = &[211, 281, 421, 461];
-    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
+    /// let fzv = FlexZeroVec::from_iter([211, 281, 421, 461]);
     ///
     /// assert_eq!(fzv.binary_search(0), Err(0));
     /// assert_eq!(fzv.binary_search(211), Ok(0));
@@ -354,8 +351,7 @@ impl FlexZeroSlice {
     /// use zerovec::vecs::FlexZeroVec;
     ///
     /// // Make a FlexZeroVec with two sorted ranges: 0..3 and 3..5
-    /// let nums: &[usize] = &[111, 222, 444, 333, 555];
-    /// let fzv: FlexZeroVec = nums.iter().copied().collect();
+    /// let fzv = FlexZeroVec::from_iter([111, 222, 444, 333, 555]);
     ///
     /// // Search in the first range:
     /// assert_eq!(fzv.binary_search_in_range(0, 0..3), Some(Err(0)));

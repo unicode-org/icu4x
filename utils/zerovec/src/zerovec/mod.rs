@@ -65,7 +65,7 @@ use core::ptr::{self, NonNull};
 ///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+/// let deserialized = bincode::deserialize::<Data>(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
 /// // This deserializes without allocation!
@@ -287,7 +287,7 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let zv: ZeroVec<u16> = ZeroVec::new();
+    /// let zv = ZeroVec::<u16>::new();
     /// assert!(zv.is_empty());
     /// ```
     #[inline]
@@ -365,9 +365,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert!(!zerovec.is_owned());
     /// assert_eq!(zerovec.get(2), Some(421));
@@ -401,9 +401,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// let zv_bytes = zerovec.into_bytes();
     ///
     /// assert!(!zv_bytes.is_owned());
@@ -447,7 +447,7 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     ///
     /// let zerovec_u16: ZeroVec<u16> =
     ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
@@ -481,9 +481,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
-    /// let zv_char: ZeroVec<char> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    /// let bytes = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
+    /// let zv_char =
+    ///     ZeroVec::<char>::parse_byte_slice(bytes).expect("valid code points");
     /// let zv_u8_3: ZeroVec<[u8; 3]> =
     ///     zv_char.try_into_converted().expect("infallible conversion");
     ///
@@ -496,10 +496,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let chars: &[char] = &['🍿', '🙉'];
-    /// let zv_char = ZeroVec::alloc_from_slice(chars);
-    /// let zv_u8_3: ZeroVec<[u8; 3]> =
-    ///     zv_char.try_into_converted().expect("length is divisible");
+    /// let zv_char = ZeroVec::alloc_from_slice(&['🍿', '🙉']);
+    /// let zv_u8_3 =
+    ///     zv_char.try_into_converted::<[u8; 3]>().expect("length is divisible");
     ///
     /// assert!(zv_u8_3.is_owned());
     /// assert_eq!(zv_u8_3.get(0), Some([0x7F, 0xF3, 0x01]));
@@ -510,9 +509,9 @@ where
     /// ```should_panic
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
-    /// let zv_char: ZeroVec<char> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    /// let bytes = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
+    /// let zv_char =
+    ///     ZeroVec::<char>::parse_byte_slice(bytes).expect("valid code points");
     ///
     /// // Panics! mem::size_of::<char::ULE> != mem::size_of::<u16::ULE>
     /// zv_char.try_into_converted::<u16>();
@@ -523,9 +522,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
-    /// let zv_char: ZeroVec<char> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("valid code points");
+    /// let bytes = &[0x7F, 0xF3, 0x01, 0x49, 0xF6, 0x01];
+    /// let zv_char =
+    ///     ZeroVec::<char>::parse_byte_slice(bytes).expect("valid code points");
     /// let zv_u16: ZeroVec<u16> =
     ///     zv_char.into_bytes().try_into_parsed().expect("infallible");
     ///
@@ -628,9 +627,9 @@ impl<'a> ZeroVec<'a, u8> {
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zv_bytes = ZeroVec::new_borrowed(bytes);
-    /// let zerovec: ZeroVec<u16> = zv_bytes.try_into_parsed().expect("infallible");
+    /// let zerovec = zv_bytes.try_into_parsed::<u16>().expect("infallible");
     ///
     /// assert!(!zerovec.is_owned());
     /// assert_eq!(zerovec.get(0), Some(211));
@@ -641,9 +640,9 @@ impl<'a> ZeroVec<'a, u8> {
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: Vec<u8> = vec![0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = vec![0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let zv_bytes = ZeroVec::new_owned(bytes);
-    /// let zerovec: ZeroVec<u16> = zv_bytes.try_into_parsed().expect("infallible");
+    /// let zerovec = zv_bytes.try_into_parsed::<u16>().expect("infallible");
     ///
     /// assert!(zerovec.is_owned());
     /// assert_eq!(zerovec.get(0), Some(211));
@@ -676,7 +675,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
     /// let zerovec = ZeroVec::alloc_from_slice(nums);
@@ -697,7 +696,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let nums: &[u16] = &[211, 281, 421, 461];
-    /// let vec: Vec<u16> = ZeroVec::alloc_from_slice(nums).to_vec();
+    /// let vec = ZeroVec::alloc_from_slice(nums).to_vec();
     ///
     /// assert_eq!(nums, vec.as_slice());
     /// ```
@@ -721,7 +720,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
     /// if let Some(zerovec) = ZeroVec::try_from_slice(nums) {
@@ -746,7 +745,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
     /// let zerovec = ZeroVec::from_slice_or_alloc(nums);
@@ -775,9 +774,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// zerovec.for_each_mut(|item| *item += 1);
     ///
@@ -800,9 +799,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     ///
     /// zerovec.try_for_each_mut(|item| {
     ///     *item = item.checked_add(1).ok_or(())?;
@@ -833,9 +832,9 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// let owned = zerovec.into_owned();
@@ -861,9 +860,9 @@ where
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// zerovec.with_mut(|v| v.push(12_u16.to_unaligned()));
@@ -892,9 +891,9 @@ where
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// zerovec.to_mut_slice()[1] = 5u16.to_unaligned();
@@ -923,9 +922,9 @@ where
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// let first = zerovec.take_first().unwrap();
@@ -967,9 +966,9 @@ where
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> =
-    ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let bytes = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec =
+    ///     ZeroVec::<u16>::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
     /// let last = zerovec.take_last().unwrap();

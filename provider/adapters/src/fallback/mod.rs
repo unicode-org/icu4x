@@ -151,8 +151,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// );
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
-    /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
-    ///     .load(req)
+    /// let german_hello_world = DataProvider::<HelloWorldV1Marker>::load(&provider ,req)
     ///     .expect("Loading should succeed")
     ///     .take_payload()
     ///     .expect("Data should be present");

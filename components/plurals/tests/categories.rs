@@ -5,7 +5,7 @@
 mod fixtures;
 
 use icu_locid::LanguageIdentifier;
-use icu_plurals::{PluralCategory, PluralRules};
+use icu_plurals::PluralRules;
 use std::str::FromStr;
 
 #[test]
@@ -32,7 +32,7 @@ fn test_categories() {
             test.langid,
             test.plural_type,
             test.categories,
-            pr.categories().collect::<Vec<PluralCategory>>(),
+            Vec::from_iter(pr.categories()),
         );
 
         for (expected, actual) in test.categories.iter().zip(pr.categories()) {
@@ -47,7 +47,7 @@ fn test_categories() {
                 test.langid,
                 test.plural_type,
                 test.categories,
-                pr.categories().collect::<Vec<PluralCategory>>(),
+                Vec::from_iter(pr.categories()),
             );
         }
     }

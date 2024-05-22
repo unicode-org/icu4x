@@ -136,7 +136,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<&str, &str> = LiteMap::new_vec();
+    /// let mut map = LiteMap::<&str, &str>::new_vec();
     /// map.insert("one", "uno");
     /// map.insert("two", "dos");
     ///
@@ -174,7 +174,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<&str, usize> = LiteMap::new_vec();
+    /// let mut map = LiteMap::<&str, usize>::new_vec();
     /// map.insert("one", 11);
     /// map.insert("two", 22);
     ///
@@ -211,7 +211,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<usize, &str> = LiteMap::new_vec();
+    /// let mut map = LiteMap::<usize, &str>::new_vec();
     /// map.insert(11, "uno");
     /// map.insert(22, "dos");
     ///
@@ -403,7 +403,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<Box<usize>, String> = LiteMap::new_vec();
+    /// let mut map = LiteMap::<Box<usize>, String>::new_vec();
     /// map.insert(Box::new(1), "one".to_string());
     /// map.insert(Box::new(2), "two".to_string());
     ///
@@ -439,7 +439,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<Box<usize>, String> = LiteMap::new_vec();
+    /// let mut map = LiteMap::<Box<usize>, String>::new_vec();
     /// map.insert(Box::new(1), "one".to_string());
     /// map.insert(Box::new(2), "two".to_string());
     ///
@@ -473,7 +473,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<Box<usize>, String> = LiteMap::new_vec();
+    /// let mut map = LiteMap::<Box<usize>, String>::new_vec();
     /// map.insert(Box::new(1), "one".to_string());
     /// map.insert(Box::new(2), "two".to_string());
     ///
@@ -1167,22 +1167,21 @@ mod test {
 
     #[test]
     fn from_iterator() {
-        let mut expected = LiteMap::with_capacity(4);
-        expected.insert(1, "updated-one");
-        expected.insert(2, "original-two");
-        expected.insert(3, "original-three");
-        expected.insert(4, "updated-four");
+        let expected = LiteMap::<_, _>::from_iter([
+            (1, "updated-one"),
+            (2, "original-two"),
+            (3, "original-three"),
+            (4, "updated-four"),
+        ]);
 
-        let actual = [
+        let actual = LiteMap::from_iter([
             (1, "original-one"),
             (2, "original-two"),
             (4, "original-four"),
             (4, "updated-four"),
             (1, "updated-one"),
             (3, "original-three"),
-        ]
-        .into_iter()
-        .collect::<LiteMap<_, _>>();
+        ]);
 
         assert_eq!(expected, actual);
     }

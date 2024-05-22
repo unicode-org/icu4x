@@ -87,7 +87,7 @@ impl CldrCache {
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
-        let levels = levels.into_iter().collect::<HashSet<_>>();
+        let levels = HashSet::<_>::from_iter(levels);
         Ok(self
             .serde_cache
             .read_and_parse_json::<crate::provider::transform::cldr::cldr_serde::coverage_levels::Resource>(

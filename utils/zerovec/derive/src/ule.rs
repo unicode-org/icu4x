@@ -103,5 +103,5 @@ pub(crate) fn make_ule_fields(fields: &[FieldInfo]) -> Vec<TokenStream2> {
             let vis = &f.field.vis;
             quote!(#vis #setter #ty)
         })
-        .collect::<Vec<_>>()
+        .collect()
 }

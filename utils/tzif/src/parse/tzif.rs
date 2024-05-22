@@ -1047,18 +1047,8 @@ mod test {
         const ONE: &[u8] = 1i64.to_be_bytes().as_slice();
         const TWO: &[u8] = 2i64.to_be_bytes().as_slice();
         const SIX: &[u8] = 6i64.to_be_bytes().as_slice();
-        let ascending = ONE
-            .iter()
-            .chain(TWO)
-            .chain(SIX)
-            .copied()
-            .collect::<Vec<u8>>();
-        let descending = SIX
-            .iter()
-            .chain(TWO)
-            .chain(ONE)
-            .copied()
-            .collect::<Vec<u8>>();
+        let ascending = Vec::from_iter(ONE.iter().chain(TWO).chain(SIX).copied());
+        let descending = Vec::from_iter(SIX.iter().chain(TWO).chain(ONE).copied());
 
         // invalid descending order
         assert_parse_err!(
@@ -1261,16 +1251,8 @@ mod test {
         const ONE_64BIT: &[u8] = 1i64.to_be_bytes().as_slice();
         const ONE_32BIT: &[u8] = 1i32.to_be_bytes().as_slice();
 
-        let record_v1 = ONE_32BIT
-            .iter()
-            .chain(ONE_32BIT)
-            .copied()
-            .collect::<Vec<u8>>();
-        let record_v2p = ONE_64BIT
-            .iter()
-            .chain(ONE_32BIT)
-            .copied()
-            .collect::<Vec<u8>>();
+        let record_v1 = Vec::from_iter(ONE_32BIT.iter().chain(ONE_32BIT).copied());
+        let record_v2p = Vec::from_iter(ONE_64BIT.iter().chain(ONE_32BIT).copied());
 
         // version 1
         assert_parse_eq!(
@@ -1305,58 +1287,59 @@ mod test {
 
     #[test]
     fn parse_leap_second_records() {
-        let invalid_first_occurrence = (-5i64)
-            .to_be_bytes()
-            .iter()
-            .copied()
-            .chain(1i32.to_be_bytes().iter().copied())
-            .collect::<Vec<u8>>();
-        let invalid_first_correction = 0i64
-            .to_be_bytes()
-            .iter()
-            .copied()
-            .chain(0i32.to_be_bytes().iter().copied())
-            .collect::<Vec<u8>>();
-        let invalid_second_occurrence = 0i64
-            .to_be_bytes()
-            .iter()
-            .copied()
-            .chain(1i32.to_be_bytes().iter().copied())
-            .chain(2419198i64.to_be_bytes().iter().copied())
-            .chain(2i32.to_be_bytes().iter().copied())
-            .chain((2 * 2419199i64).to_be_bytes().iter().copied())
-            .chain(3i32.to_be_bytes().iter().copied())
-            .collect::<Vec<u8>>();
-        let invalid_second_correction = 0i64
-            .to_be_bytes()
-            .iter()
-            .copied()
-            .chain(1i32.to_be_bytes().iter().copied())
-            .chain(2419199i64.to_be_bytes().iter().copied())
-            .chain(3i32.to_be_bytes().iter().copied())
-            .chain((2 * 2419199i64).to_be_bytes().iter().copied())
-            .chain(4i32.to_be_bytes().iter().copied())
-            .collect::<Vec<u8>>();
-        let valid_v1 = 0i32
-            .to_be_bytes()
-            .iter()
-            .copied()
-            .chain(1i32.to_be_bytes().iter().copied())
-            .chain(2419199i32.to_be_bytes().iter().copied())
-            .chain(2i32.to_be_bytes().iter().copied())
-            .chain((2 * 2419199i32).to_be_bytes().iter().copied())
-            .chain(3i32.to_be_bytes().iter().copied())
-            .collect::<Vec<u8>>();
-        let valid_v2p = 0i64
-            .to_be_bytes()
-            .iter()
-            .copied()
-            .chain(1i32.to_be_bytes().iter().copied())
-            .chain(2419199i64.to_be_bytes().iter().copied())
-            .chain(2i32.to_be_bytes().iter().copied())
-            .chain((2 * 2419199i64).to_be_bytes().iter().copied())
-            .chain(3i32.to_be_bytes().iter().copied())
-            .collect::<Vec<u8>>();
+        let invalid_first_occurrence = Vec::from_iter(
+            (-5i64)
+                .to_be_bytes()
+                .iter()
+                .copied()
+                .chain(1i32.to_be_bytes().iter().copied()),
+        );
+        let invalid_first_correction = Vec::from_iter(
+            0i64.to_be_bytes()
+                .iter()
+                .copied()
+                .chain(0i32.to_be_bytes().iter().copied()),
+        );
+        let invalid_second_occurrence = Vec::from_iter(
+            0i64.to_be_bytes()
+                .iter()
+                .copied()
+                .chain(1i32.to_be_bytes().iter().copied())
+                .chain(2419198i64.to_be_bytes().iter().copied())
+                .chain(2i32.to_be_bytes().iter().copied())
+                .chain((2 * 2419199i64).to_be_bytes().iter().copied())
+                .chain(3i32.to_be_bytes().iter().copied()),
+        );
+        let invalid_second_correction = Vec::from_iter(
+            0i64.to_be_bytes()
+                .iter()
+                .copied()
+                .chain(1i32.to_be_bytes().iter().copied())
+                .chain(2419199i64.to_be_bytes().iter().copied())
+                .chain(3i32.to_be_bytes().iter().copied())
+                .chain((2 * 2419199i64).to_be_bytes().iter().copied())
+                .chain(4i32.to_be_bytes().iter().copied()),
+        );
+        let valid_v1 = Vec::from_iter(
+            0i32.to_be_bytes()
+                .iter()
+                .copied()
+                .chain(1i32.to_be_bytes().iter().copied())
+                .chain(2419199i32.to_be_bytes().iter().copied())
+                .chain(2i32.to_be_bytes().iter().copied())
+                .chain((2 * 2419199i32).to_be_bytes().iter().copied())
+                .chain(3i32.to_be_bytes().iter().copied()),
+        );
+        let valid_v2p = Vec::from_iter(
+            0i64.to_be_bytes()
+                .iter()
+                .copied()
+                .chain(1i32.to_be_bytes().iter().copied())
+                .chain(2419199i64.to_be_bytes().iter().copied())
+                .chain(2i32.to_be_bytes().iter().copied())
+                .chain((2 * 2419199i64).to_be_bytes().iter().copied())
+                .chain(3i32.to_be_bytes().iter().copied()),
+        );
 
         // invalid count
         assert_parse_err!(

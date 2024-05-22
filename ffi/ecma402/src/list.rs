@@ -49,7 +49,7 @@ impl ecma402_traits::listformat::Format for ListFormat {
             }
         }
 
-        let values = list.into_iter().map(WriteableWrap).collect::<Vec<_>>();
+        let values = Vec::from_iter(list.into_iter().map(WriteableWrap));
         self.0.format(values.iter()).write_to(writer)
     }
 }

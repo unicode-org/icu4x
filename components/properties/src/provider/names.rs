@@ -48,13 +48,11 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 /// use icu::properties::provider::names::NormalizedPropertyNameStr;
 /// use zerovec::ZeroMap;
 ///
-/// let map: ZeroMap<NormalizedPropertyNameStr, usize> = [
+/// let map = ZeroMap::<NormalizedPropertyNameStr, usize>::from_iter([
 ///     (NormalizedPropertyNameStr::from_str("A_BC"), 11),
 ///     (NormalizedPropertyNameStr::from_str("dEf"), 22),
 ///     (NormalizedPropertyNameStr::from_str("G_H-I"), 33),
-/// ]
-/// .into_iter()
-/// .collect();
+/// ]);
 ///
 /// let key_approx = NormalizedPropertyNameStr::from_str("AB-C");
 /// let key_exact = NormalizedPropertyNameStr::from_str("A_BC");

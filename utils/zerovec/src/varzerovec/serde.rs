@@ -245,11 +245,7 @@ mod test {
 
     #[test]
     fn test_nonascii_bincode() {
-        let src_vec = NONASCII_STR
-            .iter()
-            .copied()
-            .map(Box::<str>::from)
-            .collect::<Vec<_>>();
+        let src_vec = Vec::from_iter(NONASCII_STR.iter().copied().map(Box::<str>::from));
         let mut zerovec: VarZeroVec<str> =
             VarZeroVec::parse_byte_slice(NONASCII_BYTES).expect("parse");
         assert_eq!(zerovec.to_vec(), src_vec);

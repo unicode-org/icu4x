@@ -46,10 +46,11 @@ fn main() {
 
     icu_datagen::datagen(
         Some(LOCALES),
-        &icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-            .collect::<Vec<_>>(),
+        &Vec::from_iter(
+            icu_datagen::all_keys_with_experimental()
+                .into_iter()
+                .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY]),
+        ),
         &source,
         vec![blob_out, mod_out],
     )

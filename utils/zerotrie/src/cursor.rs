@@ -254,15 +254,15 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// ```
     /// use zerotrie::ZeroTrieSimpleAscii;
     ///
-    /// let data: &[(String, usize)] = &[
+    /// let data = &[
     ///     ("ab".to_string(), 111),
     ///     ("abcxyz".to_string(), 22),
     ///     ("abde".to_string(), 333),
     ///     ("afg".to_string(), 44),
     /// ];
     ///
-    /// let trie: ZeroTrieSimpleAscii<Vec<u8>> =
-    ///     data.iter().map(|(s, v)| (s.as_str(), *v)).collect();
+    /// let trie = ZeroTrieSimpleAscii<Vec<u8>>::from_iter(
+    ///     data.iter().map(|(s, v)| (s.as_str(), *v)));
     ///
     /// let mut cursor = trie.cursor();
     /// let mut key = String::new();
@@ -282,16 +282,15 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///
     /// ```
     /// # use zerotrie::ZeroTrieSimpleAscii;
-    /// # let data: &[(String, usize)] = &[
+    /// # let data = &[
     /// #     ("ab".to_string(), 111),
     /// #     ("abcxyz".to_string(), 22),
     /// #     ("abde".to_string(), 333),
     /// #     ("afg".to_string(), 44)
     /// # ];
-    /// # let trie: ZeroTrieSimpleAscii<Vec<u8>> = data
+    /// # let trie = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(data
     /// #     .iter()
-    /// #     .map(|(s, v)| (s.as_str(), *v))
-    /// #     .collect();
+    /// #     .map(|(s, v)| (s.as_str(), *v)));
     /// // (trie built as in previous example)
     ///
     /// // Initialize the iteration at the first child of the trie.

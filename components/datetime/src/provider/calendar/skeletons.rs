@@ -85,14 +85,10 @@ impl databake::Bake for DateSkeletonPatternsV1<'_> {
         use zerofrom::ZeroFrom;
         env.insert("icu_datetime");
         databake::Bake::bake(
-            &self
-                .0
-                .iter()
-                .map(|(skeleton, pattern)| {
-                    (skeleton.0 .0.as_slice(), PatternPlurals::zero_from(pattern))
-                })
-                .collect::<Vec<_>>()
-                .as_slice(),
+            &Vec::from_iter(self.0.iter().map(|(skeleton, pattern)| {
+                (skeleton.0 .0.as_slice(), PatternPlurals::zero_from(pattern))
+            }))
+            .as_slice(),
             env,
         )
     }

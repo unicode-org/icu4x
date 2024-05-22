@@ -27,11 +27,12 @@ fn random_alphanums(lengths: RangeInclusive<usize>, count: usize, seed: u64) -> 
         .sample_iter(&mut rng1)
         .take(count)
         .map(|len| {
-            (&alpha_dist)
-                .sample_iter(&mut rng2)
-                .take(len)
-                .map(char::from)
-                .collect::<String>()
+            String::from_iter(
+                (&alpha_dist)
+                    .sample_iter(&mut rng2)
+                    .take(len)
+                    .map(char::from),
+            )
         })
         .collect();
     (string_vec, rand::Rng::gen(&mut rng1))

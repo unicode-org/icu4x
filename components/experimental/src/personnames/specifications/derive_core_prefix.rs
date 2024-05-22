@@ -172,23 +172,18 @@ mod tests {
         field_part: FieldPart,
         expected_parts: &[FieldPart],
     ) {
-        let available_fields: Vec<NameField> = available_parts
-            .iter()
-            .map(|part: &FieldPart| NameField {
+        let available_fields =
+            Vec::from_iter(available_parts.iter().map(|part: &FieldPart| NameField {
                 kind: NameFieldKind::Given,
                 modifier: FieldModifierSet::part(*part),
-            })
-            .collect::<Vec<NameField>>();
-        let expected_fields: Vec<NameField> = expected_parts
-            .iter()
-            .map(|part| NameField {
-                kind: NameFieldKind::Given,
-                modifier: FieldModifierSet::part(*part),
-            })
-            .collect::<Vec<NameField>>();
+            }));
+        let expected_fields = Vec::from_iter(expected_parts.iter().map(|part| NameField {
+            kind: NameFieldKind::Given,
+            modifier: FieldModifierSet::part(*part),
+        }));
         assert_eq!(
             super::handle_field_modifier_core_prefix(
-                &available_fields.iter().collect::<Vec<&NameField>>(),
+                &Vec::from_iter(available_fields.iter()),
                 &NameField {
                     kind: NameFieldKind::Given,
                     modifier: FieldModifierSet::part(field_part),

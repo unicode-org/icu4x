@@ -77,7 +77,7 @@
 //!     bincode::serialize(&data).expect("Serialization should be successful");
 //! assert_eq!(bincode_bytes.len(), 67);
 //!
-//! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
+//! let deserialized = bincode::deserialize::<DataStruct>(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
 //! assert_eq!(deserialized.nums.first(), Some(211));
 //! assert_eq!(deserialized.chars.get(1), Some('冇'));
@@ -140,7 +140,7 @@
 //!
 //! let important_dates = ZeroVec::alloc_from_slice(&[Date { y: 1943, m: 3, d: 20}, Date { y: 1976, m: 8, d: 2}, Date { y: 1998, m: 2, d: 15}]);
 //! let important_people = VarZeroVec::from(&[&person1, &person2]);
-//! let mut birthdays_to_people: ZeroMap<Date, PersonULE> = ZeroMap::new();
+//! let mut birthdays_to_people = ZeroMap::<Date, PersonULE>::new();
 //! // `.insert_var_v()` is slightly more convenient over `.insert()` for custom ULE types
 //! birthdays_to_people.insert_var_v(&person1.birthday, &person1);
 //! birthdays_to_people.insert_var_v(&person2.birthday, &person2);
@@ -151,12 +151,12 @@
 //!     .expect("Serialization should be successful");
 //! assert_eq!(bincode_bytes.len(), 168);
 //!
-//! let deserialized: Data = bincode::deserialize(&bincode_bytes)
+//! let deserialized = bincode::deserialize::<Data>(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
 //!
-//! assert_eq!(deserialized.important_dates.get(0).unwrap().y, 1943);
-//! assert_eq!(&deserialized.important_people.get(1).unwrap().name, "Jesse");
-//! assert_eq!(&deserialized.important_people.get(0).unwrap().name, "Kate");
+//! assert_eq!(deserialized.important_dates[0].y, 1943);
+//! assert_eq!(&deserialized.important_people[1].name, "Jesse");
+//! assert_eq!(&deserialized.important_people[0].name, "Kate");
 //! assert_eq!(&deserialized.birthdays_to_people.get(&person1.birthday).unwrap().name, "Kate");
 //!
 //! } // feature = serde and derive
@@ -389,10 +389,10 @@ pub mod vecs {
 ///     bincode::serialize(&dates).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Dates = bincode::deserialize(&bincode_bytes)
+/// let deserialized = bincode::deserialize::<Dates>(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
-/// assert_eq!(deserialized.dates.get(1).unwrap().y, 1970);
+/// assert_eq!(deserialized.dates[1].y, 1970);
 /// assert_eq!(deserialized.dates.get(2).unwrap().d, 13);
 /// ```
 #[cfg(feature = "derive")]
@@ -503,16 +503,16 @@ pub use zerovec_derive::make_ule;
 /// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized =
+///     bincode::deserialize::<Data>(&bincode_bytes).expect("Deserialization should be successful");
 ///
-/// assert_eq!(&deserialized.important_people.get(1).unwrap().name, "Jesse");
-/// assert_eq!(&deserialized.important_people.get(0).unwrap().name, "Kate");
+/// assert_eq!(&deserialized.important_people[1].name, "Jesse");
+/// assert_eq!(&deserialized.important_people[0].name, "Kate");
 ///
 /// // Since VarZeroVec produces PersonULE types, it's convenient to use ZeroFrom
 /// // to recoup Person values in a zero-copy way
-/// let person_converted: Person =
-///     ZeroFrom::zero_from(deserialized.important_people.get(1).unwrap());
+/// let person_converted =
+///     Person::zero_from(deserialized.important_people[1]);
 /// assert_eq!(person_converted.name, "Jesse");
 /// assert_eq!(person_converted.birthday.y, 1960);
 /// ```

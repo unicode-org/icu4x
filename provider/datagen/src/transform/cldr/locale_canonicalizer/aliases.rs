@@ -185,10 +185,11 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
             } else {
                 complex_region.insert(
                     from,
-                    to.replacement
-                        .split(' ')
-                        .filter_map(|r| r.parse::<subtags::Region>().ok())
-                        .collect::<Box<[_]>>(),
+                    Box::from_iter(
+                        to.replacement
+                            .split(' ')
+                            .filter_map(|r| r.parse::<subtags::Region>().ok()),
+                    ),
                 );
             }
         }
@@ -218,20 +219,18 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
         language_variants.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
         language.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
 
-        let language_variants = language_variants
-            .iter()
-            .map(|(from, to)| {
-                LanguageStrStrPair(
-                    from.language,
-                    from.variants.to_string().into(),
-                    to.to_string().into(),
-                )
-            })
-            .collect::<Vec<_>>();
-        let language = language
-            .iter()
-            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
-            .collect::<Vec<_>>();
+        let language_variants = Vec::from_iter(language_variants.iter().map(|(from, to)| {
+            LanguageStrStrPair(
+                from.language,
+                from.variants.to_string().into(),
+                to.to_string().into(),
+            )
+        }));
+        let language = Vec::from_iter(
+            language
+                .iter()
+                .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into())),
+        );
 
         Self {
             language_variants: language_variants.as_slice().into(),

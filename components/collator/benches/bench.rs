@@ -17,69 +17,77 @@ fn to_data_locale(locale_str: &str) -> DataLocale {
 
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load file content in reverse order vector.
-    let content_latin: (&str, Vec<&str>) = (
+    let content_latin = (
         "TestNames_Latin",
-        include_str!("data/TestNames_Latin.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect::<Vec<&str>>(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Latin.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_asian: (&str, Vec<&str>) = (
+    let content_asian = (
         "TestNames_Asian",
-        include_str!("data/TestNames_Asian.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Asian.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_russian: (&str, Vec<&str>) = (
+    let content_russian = (
         "TestNames_Russian",
-        include_str!("data/TestNames_Russian.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Russian.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_chinese: (&str, Vec<&str>) = (
+    let content_chinese = (
         "TestNames_Chinese",
-        include_str!("data/TestNames_Chinese.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Chinese.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_jp_h: (&str, Vec<&str>) = (
+    let content_jp_h = (
         "TestNames_Japanese_h",
-        include_str!("data/TestNames_Japanese_h.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect::<Vec<&str>>(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Japanese_h.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_jp_k: (&str, Vec<&str>) = (
+    let content_jp_k = (
         "TestNames_Japanese_k",
-        include_str!("data/TestNames_Japanese_k.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect::<Vec<&str>>(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Japanese_k.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_korean: (&str, Vec<&str>) = (
+    let content_korean = (
         "TestNames_Korean",
-        include_str!("data/TestNames_Korean.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect::<Vec<&str>>(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Korean.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
-    let content_thai: (&str, Vec<&str>) = (
+    let content_thai = (
         "TestNames_Thai",
-        include_str!("data/TestNames_Thai.txt")
-            .lines()
-            .filter(|&s| !s.starts_with('#'))
-            .rev()
-            .collect::<Vec<&str>>(),
+        Vec::from_iter(
+            include_str!("data/TestNames_Thai.txt")
+                .lines()
+                .filter(|&s| !s.starts_with('#'))
+                .rev(),
+        ),
     );
 
     // hsivonen@ : All five strengths are benched.

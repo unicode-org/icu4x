@@ -127,8 +127,8 @@ mod test {
         let deserialized_hm: ZeroHashMap<u32, str> =
             serde_json::from_str(JSON_STR).expect("deserialize");
         assert_eq!(
-            hm.iter().collect::<Vec<_>>(),
-            deserialized_hm.iter().collect::<Vec<_>>()
+            Vec::from_iter(hm.iter()),
+            Vec::from_iter(deserialized_hm.iter())
         );
     }
 
@@ -140,8 +140,8 @@ mod test {
         let deserialized_hm: ZeroHashMap<u32, str> =
             bincode::deserialize(BINCODE_BYTES).expect("deserialize");
         assert_eq!(
-            hm.iter().collect::<Vec<_>>(),
-            deserialized_hm.iter().collect::<Vec<_>>()
+            Vec::from_iter(hm.iter()),
+            Vec::from_iter(deserialized_hm.iter())
         );
     }
 }

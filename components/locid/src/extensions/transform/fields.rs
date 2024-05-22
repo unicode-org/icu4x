@@ -27,7 +27,7 @@ use super::Value;
 /// use icu::locid::extensions::transform::{key, Fields, Value};
 ///
 /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
-/// let fields = [(key!("h0"), value)].into_iter().collect::<Fields>();
+/// let fields = Fields::from_iter([(key!("h0"), value)]);
 ///
 /// assert_eq!(&fields.to_string(), "h0-hybrid");
 /// ```
@@ -77,7 +77,7 @@ impl Fields {
     /// use icu::locid::extensions::transform::{key, Fields, Value};
     ///
     /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
-    /// let mut fields = [(key!("h0"), value)].into_iter().collect::<Fields>();
+    /// let mut fields = Fields::from_iter([(key!("h0"), value)]);
     ///
     /// assert_eq!(&fields.to_string(), "h0-hybrid");
     ///
@@ -97,11 +97,11 @@ impl Fields {
     /// ```
     /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
-    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
-    /// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
-    /// let mut fields = [(key, value)].into_iter().collect::<Fields>();
+    /// let key = "h0".parse::<Key>().expect("Failed to parse a Key.");
+    /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
+    /// let mut fields = Fields::from_iter([(key, value)]);
     ///
-    /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
+    /// let key = "h0".parse().expect("Failed to parse a Key.");
     /// assert!(&fields.contains_key(&key));
     /// ```
     pub fn contains_key<Q>(&self, key: &Q) -> bool
@@ -121,9 +121,7 @@ impl Fields {
     /// use icu::locid::extensions::transform::{key, Fields, Value};
     ///
     /// let value = "hybrid".parse::<Value>().unwrap();
-    /// let fields = [(key!("h0"), value.clone())]
-    ///     .into_iter()
-    ///     .collect::<Fields>();
+    /// let fields = Fields::from_iter([(key!("h0"), value.clone())]);
     ///
     /// assert_eq!(fields.get(&key!("h0")), Some(&value));
     /// ```
@@ -146,8 +144,8 @@ impl Fields {
     /// let lower = "lower".parse::<Value>().expect("valid extension subtag");
     /// let casefold = "casefold".parse::<Value>().expect("valid extension subtag");
     ///
-    /// let mut loc: Locale = "en-t-hi-d0-casefold"
-    ///     .parse()
+    /// let mut loc = "en-t-hi-d0-casefold"
+    ///     .parse::<Locale>()
     ///     .expect("valid BCP-47 identifier");
     /// let old_value = loc.extensions.transform.fields.set(key!("d0"), lower);
     ///
@@ -166,7 +164,7 @@ impl Fields {
     /// use icu::locid::extensions::transform::key;
     /// use icu::locid::Locale;
     ///
-    /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();
+    /// let mut loc = "und-t-h0-hybrid-d0-hex-m0-xml".parse::<Locale>().unwrap();
     ///
     /// loc.extensions
     ///     .transform

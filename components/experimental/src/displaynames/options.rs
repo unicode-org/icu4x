@@ -13,7 +13,7 @@
 /// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
-/// let mut options: DisplayNamesOptions = Default::default();
+/// let mut options = DisplayNamesOptions::default();
 /// options.style = Some(Style::Short);
 /// let display_name = RegionDisplayNames::try_new(&locale.into(), options)
 ///     .expect("Data should load successfully");

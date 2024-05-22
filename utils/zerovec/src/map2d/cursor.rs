@@ -294,7 +294,7 @@ where
     /// ```rust
     /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map: ZeroMap2d<u16, u16, u16> = ZeroMap2d::new();
+    /// let mut map = ZeroMap2d::<u16, u16, u16>::new();
     /// map.insert(&1, &2, &3);
     /// map.insert(&1, &4, &5);
     /// map.insert(&6, &7, &8);

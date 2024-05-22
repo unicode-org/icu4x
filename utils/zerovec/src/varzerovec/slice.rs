@@ -55,24 +55,14 @@ use core::ops::Range;
 /// let vzv_34 = VarZeroVec::from(&[vzv_3.as_slice(), vzv_4.as_slice()]);
 /// let vzv_all = VarZeroVec::from(&[vzv_12.as_slice(), vzv_34.as_slice()]);
 ///
-/// let reconstructed: Vec<Vec<Vec<String>>> = vzv_all
-///     .iter()
-///     .map(|v: &VarZeroSlice<VarZeroSlice<str>>| {
-///         v.iter()
-///             .map(|x: &VarZeroSlice<_>| {
-///                 x.as_varzerovec()
-///                     .iter()
-///                     .map(|s| s.to_owned())
-///                     .collect::<Vec<String>>()
-///             })
-///             .collect::<Vec<_>>()
-///     })
-///     .collect::<Vec<_>>();
+/// let reconstructed = Vec::from_iter(
+///     vzv_all.iter()
+///     .map(|v| Vec::from_iter(v.iter().map(|x| Vec::from_iter(x.iter().map(ToOwned::to_owned))))));
 /// assert_eq!(reconstructed, all_strings);
 ///
 /// let bytes = vzv_all.as_bytes();
-/// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> =
-///     VarZeroVec::parse_byte_slice(bytes).unwrap();
+/// let vzv_from_bytes =
+///     VarZeroVec::<VarZeroSlice<VarZeroSlice<str>>>::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 ///
@@ -85,7 +75,7 @@ use core::ops::Range;
 /// use zerovec::VarZeroVec;
 ///
 /// let vzv = VarZeroVec::<str>::from(&["a", "b", "c", "d"]);
-/// # let mut pairs: Vec<(&str, &str)> = Vec::new();
+/// # let mut pairs = Vec::<(&str, &str)>::new();
 ///
 /// let mut it = vzv.iter().peekable();
 /// while let (Some(x), Some(y)) = (it.next(), it.peek()) {
@@ -156,7 +146,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings: Vec<String> = vec![];
+    /// let strings = Vec::<String>::new();
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
     /// assert!(vec.is_empty());
@@ -177,7 +167,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// let mut iter_results = Vec::from_iter(vec.iter());
     /// assert_eq!(iter_results[0], "foo");
     /// assert_eq!(iter_results[1], "bar");
     /// assert_eq!(iter_results[2], "baz");
@@ -199,7 +189,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// let mut iter_results = Vec::from_iter(vec.iter());
     /// assert_eq!(vec.get(0), Some("foo"));
     /// assert_eq!(vec.get(1), Some("bar"));
     /// assert_eq!(vec.get(2), Some("baz"));
@@ -226,7 +216,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// let mut iter_results = Vec::from_iter(vec.iter());
     /// unsafe {
     ///     assert_eq!(vec.get_unchecked(0), "foo");
     ///     assert_eq!(vec.get_unchecked(1), "bar");

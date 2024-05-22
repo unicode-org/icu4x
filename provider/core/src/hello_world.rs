@@ -64,7 +64,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let german_hello_world =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &langid!("de").into(),
@@ -83,7 +83,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+/// let reverse_hello_world =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &"en-x-reverse".parse().unwrap(),

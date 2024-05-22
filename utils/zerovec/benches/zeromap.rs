@@ -139,7 +139,7 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
         }
     }
 
-    let keys = keys.iter().map(|s| indexify(s)).collect::<Vec<_>>();
+    let keys = Vec::from_iter(keys.iter().map(|s| indexify(s)));
     // keys are sorted by construction
     unsafe { ZeroMap::from_parts_unchecked(VarZeroVec::from(&keys), VarZeroVec::from(&values)) }
 }

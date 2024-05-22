@@ -705,10 +705,8 @@ impl DatagenDriver {
 
         let (uses_internal_fallback, deduplication_strategy) = match &locales_fallback {
             LocalesWithOrWithoutFallback::WithoutFallback { langids } => {
-                let mut sorted_locale_strs = langids
-                    .iter()
-                    .map(|x| x.write_to_string())
-                    .collect::<Vec<_>>();
+                let mut sorted_locale_strs =
+                    Vec::from_iter(langids.iter().map(|x| x.write_to_string()));
                 sorted_locale_strs.sort_unstable();
                 log::info!(
                     "Datagen configured without fallback with these locales: {:?}",
@@ -733,11 +731,12 @@ impl DatagenDriver {
                     }
                     Some(x) => x,
                 };
-                let mut sorted_locale_strs = families
-                    .iter()
-                    .map(LocaleFamilyBorrowed::from_parts)
-                    .map(|family| family.write_to_string().into_owned())
-                    .collect::<Vec<_>>();
+                let mut sorted_locale_strs = Vec::from_iter(
+                    families
+                        .iter()
+                        .map(LocaleFamilyBorrowed::from_parts)
+                        .map(|family| family.write_to_string().into_owned()),
+                );
                 sorted_locale_strs.sort_unstable();
                 log::info!(
                     "Datagen configured with {}, {}, and these locales: {:?}",
@@ -1057,14 +1056,14 @@ fn select_locales_for_key(
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
     // The "candidate" langids that could be exported is the union of requested and supported.
-    let all_candidate_langids = supported_map
-        .keys()
-        .chain(requested_families.keys())
-        .collect::<HashSet<_>>();
+    let all_candidate_langids = HashSet::<_>::from_iter(
+        supported_map.keys().chain(requested_families.keys()),
+    );
 
     // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
     // and extensions. Also resolve the ancestors and descendants while building this map.
-    let mut selected_langids = requested_families.keys().cloned().collect::<HashSet<_>>();
+    let mut selected_langids =
+        HashSet::<_>::from_iter(requested_families.keys().cloned());
     let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataLocale>> = all_candidate_langids
         .into_iter()
         .map(|current_langid| {
@@ -1300,26 +1299,24 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
-        let resolved_locales = select_locales_for_key(
-            &crate::provider::DatagenProvider::new_testing(),
-            icu_collator::provider::CollationDataV1Marker::KEY,
-            &LocalesWithOrWithoutFallback::WithoutFallback {
-                langids: [cas.language.clone()].into_iter().collect(),
-            },
-            &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
-            &[],
-            &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
-        )
-        .unwrap()
-        .into_iter()
-        .map(|l| l.to_string())
-        .collect::<BTreeSet<_>>();
-        let expected_locales = cas
-            .expected
-            .iter()
-            .copied()
-            .map(String::from)
-            .collect::<BTreeSet<_>>();
+        let resolved_locales = BTreeSet::from_iter(
+            select_locales_for_key(
+                &crate::provider::DatagenProvider::new_testing(),
+                icu_collator::provider::CollationDataV1Marker::KEY,
+                &LocalesWithOrWithoutFallback::WithoutFallback {
+                    langids: [cas.language.clone()].into_iter().collect(),
+                },
+                &HashSet::<_>::from_iter(
+                    cas.include_collations.iter().copied().map(String::from),
+                ),
+                &[],
+                &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
+            )
+            .unwrap()
+            .into_iter()
+            .map(|l| l.to_string()),
+        );
+        let expected_locales = BTreeSet::from_iter(cas.expected.iter().copied().map(String::from));
         assert_eq!(resolved_locales, expected_locales, "{cas:?}");
     }
 }
@@ -1345,11 +1342,9 @@ fn test_family_precedence() {
 
     assert_eq!(
         families,
-        [
+        HashMap::from_iter([
             "@en".parse::<LocaleFamily>().unwrap().into_parts(),
             "^zh-TW".parse::<LocaleFamily>().unwrap().into_parts()
-        ]
-        .into_iter()
-        .collect::<HashMap<_, _>>()
+        ])
     );
 }

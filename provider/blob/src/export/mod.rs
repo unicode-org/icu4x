@@ -14,7 +14,7 @@
 //! use icu_datagen::prelude::*;
 //! use icu_provider_blob::export::*;
 //!
-//! let mut blob: Vec<u8> = Vec::new();
+//! let mut blob = Vec::new();
 //!
 //! // Set up the exporter
 //! let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));

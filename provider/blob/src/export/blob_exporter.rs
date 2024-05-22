@@ -166,25 +166,25 @@ impl BlobExporter<'_> {
         let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
 
         // Now build up the ZeroMap2d, changing old ID to new ID
-        let mut zm = self
-            .resources
-            .get_mut()
-            .expect("poison")
-            .iter()
-            .flat_map(|(hash, sub_map)| {
-                sub_map
-                    .iter()
-                    .map(|(locale, old_id)| (*hash, locale, old_id))
-            })
-            .map(|(hash, locale, old_id)| {
-                (
-                    hash,
-                    Index32U8::parse_byte_slice(locale)
-                        .expect("[u8] to IndexU32U8 should never fail"),
-                    remap.get(old_id).expect("in-bound index"),
-                )
-            })
-            .collect::<ZeroMap2d<DataKeyHash, Index32U8, usize>>();
+        let mut zm = ZeroMap2d::<DataKeyHash, Index32U8, usize>::from_iter(
+            self.resources
+                .get_mut()
+                .expect("poison")
+                .iter()
+                .flat_map(|(hash, sub_map)| {
+                    sub_map
+                        .iter()
+                        .map(|(locale, old_id)| (*hash, locale, old_id))
+                })
+                .map(|(hash, locale, old_id)| {
+                    (
+                        hash,
+                        Index32U8::parse_byte_slice(locale)
+                            .expect("[u8] to IndexU32U8 should never fail"),
+                        remap.get(old_id).expect("in-bound index"),
+                    )
+                }),
+        );
 
         for key in self.all_keys.lock().expect("poison").iter() {
             if zm.get0(key).is_none() {

@@ -714,34 +714,38 @@ fn test_weekend() {
     use icu_locid::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und").into())
-            .unwrap()
-            .weekend()
-            .collect::<Vec<_>>(),
+        Vec::from_iter(
+            WeekCalculator::try_new(&locale!("und").into())
+                .unwrap()
+                .weekend()
+        ),
         vec![IsoWeekday::Saturday, IsoWeekday::Sunday],
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-FR").into())
-            .unwrap()
-            .weekend()
-            .collect::<Vec<_>>(),
+        Vec::from_iter(
+            WeekCalculator::try_new(&locale!("und-FR").into())
+                .unwrap()
+                .weekend()
+        ),
         vec![IsoWeekday::Saturday, IsoWeekday::Sunday],
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IQ").into())
-            .unwrap()
-            .weekend()
-            .collect::<Vec<_>>(),
+        Vec::from_iter(
+            WeekCalculator::try_new(&locale!("und-IQ").into())
+                .unwrap()
+                .weekend()
+        ),
         vec![IsoWeekday::Saturday, IsoWeekday::Friday],
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IR").into())
-            .unwrap()
-            .weekend()
-            .collect::<Vec<_>>(),
+        Vec::from_iter(
+            WeekCalculator::try_new(&locale!("und-IR").into())
+                .unwrap()
+                .weekend()
+        ),
         vec![IsoWeekday::Friday],
     );
 }
@@ -752,11 +756,11 @@ fn test_weekdays_iter() {
 
     // Weekend ends one day before week starts
     let default_weekend = WeekdaySetIterator::new(Monday, WeekdaySet::new(&[Saturday, Sunday]));
-    assert_eq!(vec![Saturday, Sunday], default_weekend.collect::<Vec<_>>());
+    assert_eq!(vec![Saturday, Sunday], Vec::from_iter(default_weekend));
 
     // Non-contiguous weekend
     let fri_sun_weekend = WeekdaySetIterator::new(Monday, WeekdaySet::new(&[Friday, Sunday]));
-    assert_eq!(vec![Friday, Sunday], fri_sun_weekend.collect::<Vec<_>>());
+    assert_eq!(vec![Friday, Sunday], Vec::from_iter(fri_sun_weekend));
 
     let multiple_contiguous_days = WeekdaySetIterator::new(
         Monday,
@@ -769,7 +773,7 @@ fn test_weekdays_iter() {
     );
     assert_eq!(
         vec![Tuesday, Wednesday, Thursday, Friday],
-        multiple_contiguous_days.collect::<Vec<_>>()
+        Vec::from_iter(multiple_contiguous_days)
     );
 
     // Non-contiguous days and iterator yielding elements based off first_weekday
@@ -784,6 +788,6 @@ fn test_weekdays_iter() {
     );
     assert_eq!(
         vec![Thursday, Friday, Sunday, Tuesday],
-        multiple_non_contiguous_days.collect::<Vec<_>>()
+        Vec::from_iter(multiple_non_contiguous_days)
     );
 }

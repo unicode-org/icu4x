@@ -112,7 +112,7 @@ pub trait TryWriteable {
     ///
     /// ```
     /// # use writeable::TryWriteable;
-    /// # let my_writeable: Result<&str, &str> = Ok("");
+    /// # let my_writeable = Ok::<&str, &str>("");
     /// # let mut sink = String::new();
     /// let _ = my_writeable.try_write_to(&mut sink)?;
     /// # Ok::<(), core::fmt::Error>(())
@@ -127,7 +127,7 @@ pub trait TryWriteable {
     /// ```
     /// use writeable::TryWriteable;
     ///
-    /// let w: Result<&str, usize> = Ok("success");
+    /// let w = Ok::<&str, usize>("success");
     /// let mut sink = String::new();
     /// let result = w.try_write_to(&mut sink);
     ///
@@ -140,7 +140,7 @@ pub trait TryWriteable {
     /// ```
     /// use writeable::TryWriteable;
     ///
-    /// let w: Result<&str, usize> = Err(44);
+    /// let w = Err::<&str, usize>(44);
     /// let mut sink = String::new();
     /// let result = w.try_write_to(&mut sink);
     ///

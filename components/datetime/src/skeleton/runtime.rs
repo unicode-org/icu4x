@@ -4,7 +4,6 @@
 
 use crate::fields::Field;
 use crate::skeleton::reference;
-use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -12,8 +11,7 @@ pub struct Skeleton<'data>(pub(crate) ZeroVec<'data, Field>);
 
 impl From<reference::Skeleton> for Skeleton<'_> {
     fn from(input: reference::Skeleton) -> Self {
-        let fields = input.fields_iter().copied().collect::<Vec<_>>();
-        Self(ZeroVec::alloc_from_slice(&fields))
+        Self(ZeroVec::from_iter(input.fields_iter().copied()))
     }
 }
 

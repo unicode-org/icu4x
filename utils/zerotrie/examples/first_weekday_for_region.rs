@@ -216,7 +216,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
     // Un-comment to re-generate the bytes (printed to the terminal)
-    // let trie_phf = DATA.iter().copied().collect::<ZeroTriePerfectHash<Vec<_>>>();
+    // let trie_phf = ZeroTriePerfectHash::<Vec<_>>::from_iter(DATA.iter().copied());
     // assert_eq!(trie_phf.as_bytes(), TRIE_PHF.as_bytes());
 
     if black_box(TRIE_PHF).get(b"MV") == Some(weekday::FRI) {

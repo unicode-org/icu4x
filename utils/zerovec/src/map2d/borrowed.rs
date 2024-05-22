@@ -23,15 +23,15 @@ use crate::map2d::ZeroMap2dCursor;
 /// use zerovec::maps::ZeroMap2dBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
-/// let BINCODE_BYTES: &[u8; 51] = &[
+/// let BINCODE_BYTES = &[
 ///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0,
 ///     0, 0, 0, 0, 0, 0, 2, 0, 11, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 116,
 ///     104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap2d requires no heap allocations.
-/// let zero_map: ZeroMap2dBorrowed<u16, u16, str> =
-///     bincode::deserialize(BINCODE_BYTES)
+/// let zero_map =
+///     bincode::deserialize::<ZeroMap2dBorrowed<u16, u16, str>>(BINCODE_BYTES)
 ///         .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get_2d(&1, &2), Some("three"));
 /// ```
@@ -116,7 +116,7 @@ where
     /// ```
     /// use zerovec::maps::ZeroMap2dBorrowed;
     ///
-    /// let zm: ZeroMap2dBorrowed<u16, u16, str> = ZeroMap2dBorrowed::new();
+    /// let zm = ZeroMap2dBorrowed::<u16, u16, str>::new();
     /// assert!(zm.is_empty());
     /// ```
     pub fn new() -> Self {

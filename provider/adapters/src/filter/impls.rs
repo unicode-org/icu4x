@@ -40,8 +40,7 @@ where
     ///     locale: &langid!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_de);
+    /// let response = DataProvider::<HelloWorldV1Marker>::load(&provider, req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -49,8 +48,7 @@ where
     ///     locale: &langid!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_en);
+    /// let response = DataProvider::<HelloWorldV1Marker>::load(&provider, req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -60,12 +58,11 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider
+    /// let supported_langids = HashSet::from_iter(provider
     ///     .supported_locales()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()
-    ///     .map(|options| options.get_langid())
-    ///     .collect::<Vec<LanguageIdentifier>>();
+    ///     .map(|options| options.get_langid()));
     /// assert!(supported_langids.contains(&langid!("de")));
     /// assert!(!supported_langids.contains(&langid!("en")));
     /// ```
@@ -116,8 +113,7 @@ where
     ///     locale: &langid!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_de);
+    /// let response = DataProvider::<HelloWorldV1Marker>::load(&provider, req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -125,8 +121,7 @@ where
     ///     locale: &langid!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_en);
+    /// let response = DataProvider::<HelloWorldV1Marker>::load(&provider, req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -178,8 +173,7 @@ where
     ///     locale: &langid!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_with_langid);
+    /// let response = DataProvider::<HelloWorldV1Marker>::load(&provider, req_with_langid);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // Requests without a langid should fail:
@@ -187,8 +181,7 @@ where
     ///     locale: Default::default(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(req_no_langid);
+    /// let response = DataProvider::<HelloWorldV1Marker>::load(&provider, req_no_langid);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {

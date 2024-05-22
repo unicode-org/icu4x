@@ -41,10 +41,7 @@ type LiteMapOfStrings = LiteMap<String, String>;
 type TupleVecOfStrings = Vec<(String, String)>;
 
 fn generate() -> AlignedVec {
-    let map = DATA
-        .iter()
-        .map(|&(k, v)| (k.to_owned(), v.to_owned()))
-        .collect::<LiteMapOfStrings>();
+    let map = LiteMapOfStrings::from_iter(DATA.iter().map(|&(k, v)| (k.to_owned(), v.to_owned())));
 
     let mut serializer = AllocSerializer::<4096>::default();
     serializer

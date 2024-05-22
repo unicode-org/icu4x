@@ -19,9 +19,13 @@ fn strip_headers(content: &str) -> String {
     content
         .lines()
         .filter(|&s| !s.starts_with('#'))
-        .map(|s| s.to_owned())
-        .collect::<Vec<String>>()
-        .join("\n")
+        .fold(String::new(), |mut acc, s| {
+            if !acc.is_empty() {
+                acc.push('\n');
+            }
+            acc.push_str(s);
+            acc
+        })
 }
 
 fn normalizer_bench_data() -> [BenchDataContent; 15] {

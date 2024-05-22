@@ -18,14 +18,11 @@ use crate::map::{MutableZeroVecLike, ZeroVecLike};
 /// A zero-copy, two-dimensional map datastructure .
 ///
 /// This is an extension of [`ZeroMap`] that supports two layers of keys. For example,
-/// to map a pair of an integer and a string to a buffer, you can write:
+/// to map a pair of an integer and a string to a buffer, you can use the type:
 ///
-/// ```no_run
-/// # use zerovec::ZeroMap2d;
-/// let _: ZeroMap2d<u32, str, [u8]> = unimplemented!();
-/// ```
+/// `ZeroMap2d<u32, str, [u8]>`
 ///
-/// Internally, `ZeroMap2d` stores four zero-copy vectors, one for each type argument plus
+/// Internally, [`ZeroMap2d`] stores four zero-copy vectors, one for each type argument plus
 /// one more to match between the two vectors of keys.
 ///
 /// # Examples
@@ -34,15 +31,15 @@ use crate::map::{MutableZeroVecLike, ZeroVecLike};
 /// use zerovec::ZeroMap2d;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
-/// let BINCODE_BYTES: &[u8; 51] = &[
+/// let BINCODE_BYTES = &[
 ///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0,
 ///     0, 0, 0, 0, 0, 0, 2, 0, 11, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 116,
 ///     104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap2d<u16, u16, str> =
-///     bincode::deserialize(BINCODE_BYTES)
+/// let zero_map =
+///     bincode::deserialize::<ZeroMap2d<u16, u16, str>>(BINCODE_BYTES)
 ///         .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get_2d(&1, &2), Some("three"));
 /// ```
@@ -119,7 +116,7 @@ where
     /// ```
     /// use zerovec::ZeroMap2d;
     ///
-    /// let zm: ZeroMap2d<u16, str, str> = ZeroMap2d::new();
+    /// let zm = ZeroMap2d::<u16, str, str>::new();
     /// assert!(zm.is_empty());
     /// ```
     pub fn new() -> Self {
@@ -205,7 +202,7 @@ where
     /// ```
     /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map: ZeroMap2d<u16, u16, str> = ZeroMap2d::new();
+    /// let mut map = ZeroMap2d::<u16, u16, str>::new();
     /// map.insert(&1, &1, "foo");
     /// map.insert(&2, &3, "bar");
     /// map.insert(&2, &4, "baz");
@@ -590,7 +587,7 @@ where
     ///
     /// ```
     /// # use zerovec::ZeroMap2d;
-    /// let mut map: ZeroMap2d<u16, u16, u16> = ZeroMap2d::new();
+    /// let mut map = ZeroMap2d::<u16, u16, u16>::new();
     /// map.insert(&1, &2, &3);
     /// map.insert(&1, &4, &5);
     /// map.insert(&6, &7, &8);

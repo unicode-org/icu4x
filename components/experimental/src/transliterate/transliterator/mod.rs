@@ -218,7 +218,7 @@ impl Transliterator {
     ///     }
     /// }
     ///
-    /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
+    /// let override_locale = "und-t-und-Latn-d0-ascii".parse::<Locale>().unwrap();
     /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
     ///     override_locale.eq(lookup_locale).then_some(Box::new(FunkyGermanToAscii))
     /// };

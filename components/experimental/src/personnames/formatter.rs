@@ -147,11 +147,14 @@ impl PersonNamesFormatter {
             .as_ref()
             .map(|f| f.as_ref())
             .unwrap_or("{0} {1}");
-        return Ok(best_applicable_pattern
+        Ok(best_applicable_pattern
             .format_person_name(person_name, initial_pattern, initial_sequence_pattern)
             .split_whitespace()
-            .collect::<Vec<_>>()
-            .join(space_replacement));
+            .fold(String::new(), |mut acc, s| {
+                acc.push_str(space_replacement);
+                acc.push_str(s);
+                acc
+            }))
     }
 
     fn final_person_names_formatter_options<N>(

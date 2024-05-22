@@ -41,12 +41,9 @@ fn test_all_cldr() {
         let test_cases = data
             .lines()
             .filter(|x| !x.starts_with('#'))
-            .map(|l| l.split_once('\t').unwrap())
-            .collect::<Vec<_>>();
+            .map(|l| l.split_once('\t').unwrap());
 
-        eprintln!("Testing {:?} with {} test cases", locale, test_cases.len());
-
-        for (idx, (input, output)) in test_cases.into_iter().enumerate() {
+        for (idx, (input, output)) in test_cases.enumerate() {
             eprintln!(
                 "Testing testcase {}! Input: {:?} Output: {:?}",
                 idx + 1,

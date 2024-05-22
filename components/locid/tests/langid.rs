@@ -136,13 +136,10 @@ fn test_langid_strict_cmp() {
     let tests: Vec<fixtures::LocaleTest> =
         serde_json::from_str(include_str!("fixtures/langid.json"))
             .expect("Failed to read a fixture");
-    let bcp47_strings = tests
-        .iter()
-        .map(|t| match t.input {
-            fixtures::LocaleInfo::String(ref s) => s.as_str(),
-            _ => panic!("Invalid fixture"),
-        })
-        .collect::<Vec<&str>>();
+    let bcp47_strings = Vec::from_iter(tests.iter().map(|t| match t.input {
+        fixtures::LocaleInfo::String(ref s) => s.as_str(),
+        _ => panic!("Invalid fixture"),
+    }));
     for a in bcp47_strings.iter() {
         for b in bcp47_strings.iter() {
             let a_langid = a

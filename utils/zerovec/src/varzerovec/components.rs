@@ -383,12 +383,12 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     // Dump a debuggable representation of this type
     #[allow(unused)] // useful for debugging
     pub(crate) fn dump(&self) -> String {
-        let indices = self
-            .indices_slice()
-            .iter()
-            .copied()
-            .map(F::rawbytes_to_usize)
-            .collect::<Vec<_>>();
+        let indices = Vec::from_iter(
+            self.indices_slice()
+                .iter()
+                .copied()
+                .map(F::rawbytes_to_usize),
+        );
         format!("VarZeroVecComponents {{ indices: {indices:?} }}")
     }
 }

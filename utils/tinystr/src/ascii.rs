@@ -728,17 +728,19 @@ mod test {
     fn gen_strings(num_strings: usize, allowed_lengths: &[usize]) -> Vec<String> {
         let mut rng = SmallRng::seed_from_u64(2022);
         // Need to do this in 2 steps since the RNG is needed twice
-        let string_lengths = core::iter::repeat_with(|| *allowed_lengths.choose(&mut rng).unwrap())
-            .take(num_strings)
-            .collect::<Vec<usize>>();
+        let string_lengths = Vec::from_iter(
+            core::iter::repeat_with(|| *allowed_lengths.choose(&mut rng).unwrap())
+                .take(num_strings),
+        );
         string_lengths
-            .iter()
+            .into_iter()
             .map(|len| {
-                Standard
-                    .sample_iter(&mut rng)
-                    .filter(|b: &u8| *b > 0 && *b < 0x80)
-                    .take(*len)
-                    .collect::<Vec<u8>>()
+                Vec::from_iter(
+                    Standard
+                        .sample_iter(&mut rng)
+                        .filter(|b: &u8| *b > 0 && *b < 0x80)
+                        .take(len),
+                )
             })
             .map(|byte_vec| String::from_utf8(byte_vec).expect("All ASCII"))
             .collect()
@@ -953,11 +955,7 @@ mod test {
     fn test_to_ascii_lowercase() {
         fn check<const N: usize>() {
             check_operation(
-                |s| {
-                    s.chars()
-                        .map(|c| c.to_ascii_lowercase())
-                        .collect::<String>()
-                },
+                |s| s.to_ascii_lowercase(),
                 |t: TinyAsciiStr<N>| TinyAsciiStr::to_ascii_lowercase(t).as_str().to_owned(),
             )
         }
@@ -974,10 +972,7 @@ mod test {
         fn check<const N: usize>() {
             check_operation(
                 |s| {
-                    let mut r = s
-                        .chars()
-                        .map(|c| c.to_ascii_lowercase())
-                        .collect::<String>();
+                    let mut r = s.to_ascii_lowercase();
                     // Safe because the string is nonempty and an ASCII string
                     unsafe { r.as_bytes_mut()[0].make_ascii_uppercase() };
                     r
@@ -997,11 +992,7 @@ mod test {
     fn test_to_ascii_uppercase() {
         fn check<const N: usize>() {
             check_operation(
-                |s| {
-                    s.chars()
-                        .map(|c| c.to_ascii_uppercase())
-                        .collect::<String>()
-                },
+                |s| s.to_ascii_uppercase(),
                 |t: TinyAsciiStr<N>| TinyAsciiStr::to_ascii_uppercase(t).as_str().to_owned(),
             )
         }

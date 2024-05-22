@@ -24,7 +24,7 @@ use zerovec::ule::UnvalidatedStr;
 /// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001").into();
-/// let options: DisplayNamesOptions = Default::default();
+/// let options = DisplayNamesOptions::default();
 /// let display_name = RegionDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
@@ -97,7 +97,7 @@ impl RegionDisplayNames {
 /// use icu::locid::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001").into();
-/// let options: DisplayNamesOptions = Default::default();
+/// let options = DisplayNamesOptions::default();
 /// let display_name = ScriptDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
@@ -170,7 +170,7 @@ impl ScriptDisplayNames {
 /// use icu::locid::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001").into();
-/// let options: DisplayNamesOptions = Default::default();
+/// let options = DisplayNamesOptions::default();
 /// let display_name = VariantDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
@@ -238,7 +238,7 @@ impl VariantDisplayNames {
 /// use icu::locid::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001").into();
-/// let options: DisplayNamesOptions = Default::default();
+/// let options = DisplayNamesOptions::default();
 /// let display_name = LanguageDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
 ///
@@ -317,7 +317,7 @@ impl LanguageDisplayNames {
 /// use icu::locid::locale;
 ///
 /// let locale = locale!("en-001").into();
-/// let options: DisplayNamesOptions = Default::default();
+/// let options = DisplayNamesOptions::default();
 /// let display_name =
 ///     LocaleDisplayNamesFormatter::try_new(&locale, options)
 ///         .expect("Data should load successfully");

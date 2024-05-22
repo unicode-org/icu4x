@@ -99,10 +99,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, Error> {
         let items = Vec::<(K, usize)>::from_iter(iter);
-        let mut items = items
-            .iter()
-            .map(|(k, v)| (k.as_ref(), *v))
-            .collect::<Vec<(&[u8], usize)>>();
+        let mut items = Vec::from_iter(items.iter().map(|(k, v)| (k.as_ref(), *v)));
         items.sort_by(|a, b| cmp_keys_values(&options, *a, *b));
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);

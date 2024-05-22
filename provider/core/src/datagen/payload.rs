@@ -107,11 +107,11 @@ impl DataPayload<ExportMarker> {
     /// use icu_provider::prelude::*;
     ///
     /// // Create an example DataPayload
-    /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
-    /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
+    /// let payload = DataPayload::<HelloWorldV1Marker>::default();
+    /// let export = ExportMarker::upcast(payload);
     ///
     /// // Serialize the payload to a JSON string
-    /// let mut buffer: Vec<u8> = vec![];
+    /// let mut buffer = Vec::new();
     /// export
     ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
@@ -141,8 +141,8 @@ impl DataPayload<ExportMarker> {
     /// # use std::collections::BTreeSet;
     ///
     /// // Create an example DataPayload
-    /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
-    /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
+    /// let payload = DataPayload::<HelloWorldV1Marker>::default();
+    /// let export = ExportMarker::upcast(payload);
     ///
     /// let env = databake::CrateEnv::default();
     /// let tokens = export.tokenize(&env);
@@ -156,10 +156,8 @@ impl DataPayload<ExportMarker> {
     ///     tokens.to_string()
     /// );
     /// assert_eq!(
-    ///     env.into_iter().collect::<BTreeSet<_>>(),
-    ///     ["icu_provider", "alloc"]
-    ///         .into_iter()
-    ///         .collect::<BTreeSet<_>>()
+    ///     BTreeSet::from_iter(env),
+    ///     BTreeSet::from_iter(["icu_provider", "alloc"]),
     /// );
     /// ```
     pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {

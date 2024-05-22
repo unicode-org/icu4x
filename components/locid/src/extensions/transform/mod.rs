@@ -15,11 +15,11 @@
 //! use icu::locid::extensions::transform::{Fields, Key, Transform, Value};
 //! use icu::locid::{LanguageIdentifier, Locale};
 //!
-//! let mut loc: Locale =
-//!     "en-US-t-es-ar-h0-hybrid".parse().expect("Parsing failed.");
+//! let mut loc =
+//!     "en-US-t-es-ar-h0-hybrid".parse::<Locale>().expect("Parsing failed.");
 //!
-//! let lang: LanguageIdentifier =
-//!     "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
+//! let lang =
+//!     "es-AR".parse::<LanguageIdentifier>().expect("Parsing LanguageIdentifier failed.");
 //!
 //! let key: Key = "h0".parse().expect("Parsing key failed.");
 //! let value: Value = "hybrid".parse().expect("Parsing value failed.");

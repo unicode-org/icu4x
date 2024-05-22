@@ -831,8 +831,8 @@ where
     ///     PluralRuleType::Cardinal,
     /// )
     /// .expect("locale should be present");
-    /// let operands: PluralOperands =
-    ///     "0.5".parse().expect("parsing to operands should succeed");
+    /// let operands =
+    ///     "0.5".parse::<PluralOperands>().expect("parsing to operands should succeed");
     /// let operands2 = PluralOperands::from(1_usize);
     ///
     /// assert_eq!(

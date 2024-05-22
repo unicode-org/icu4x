@@ -187,14 +187,12 @@ where
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> = [
+/// let placeholder_value_map = BTreeMap::from_iter([
 ///     ("num", "5"),
 ///     ("letter", "X"),
 ///     ("", "empty"),
 ///     ("unused", "unused"),
-/// ]
-/// .into_iter()
-/// .collect();
+/// ]);
 ///
 /// // Single placeholder:
 /// assert_eq!(
@@ -256,8 +254,8 @@ where
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> =
-///     [("num", "5"), ("letter", "X")].into_iter().collect();
+/// let placeholder_value_map =
+///     BTreeMap::from_iter([("num", "5"), ("letter", "X")]);
 ///
 /// Pattern::<MultiNamedPlaceholder, _>::try_from_str(
 ///     "Your name is {your_name}",
@@ -277,8 +275,8 @@ where
 /// use std::collections::BTreeMap;
 /// use writeable::TryWriteable;
 ///
-/// let placeholder_value_map: BTreeMap<&str, &str> =
-///     [("num", "5"), ("letter", "X")].into_iter().collect();
+/// let placeholder_value_map =
+///     BTreeMap::from_iter([("num", "5"), ("letter", "X")]);
 ///
 /// let pattern = Pattern::<MultiNamedPlaceholder, _>::try_from_str(
 ///     "Your name is {your_name}",

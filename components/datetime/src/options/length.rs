@@ -34,7 +34,7 @@
 //! ```
 //! use icu::datetime::options::length;
 //! use icu::datetime::DateTimeFormatterOptions;
-//! let options: DateTimeFormatterOptions = length::Bag::default().into();
+//! let options = DateTimeFormatterOptions::from(length::Bag::default());
 //! ```
 //!
 //! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
@@ -69,7 +69,7 @@ use serde::{Deserialize, Serialize};
 /// ```
 /// use icu::datetime::options::length;
 /// use icu::datetime::DateTimeFormatterOptions;
-/// let options: DateTimeFormatterOptions = length::Bag::default().into();
+/// let options = DateTimeFormatterOptions::from(length::Bag::default());
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html

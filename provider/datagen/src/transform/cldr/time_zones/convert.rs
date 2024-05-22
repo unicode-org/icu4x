@@ -206,38 +206,42 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                         }
                         None => panic!("Cannot find bcp47 for {key:?}."),
                     },
-                    ZonePeriod::LocationOrSubRegion(place) => place
-                        .iter()
-                        .flat_map(move |(inner_key, location_or_subregion)| {
-                            let mut key = key.clone();
-                            key.push('/');
-                            key.push_str(inner_key);
-                            match location_or_subregion {
-                                MetaLocationOrSubRegion::Location(periods) => {
-                                    match bcp47_tzid_data.get(&key) {
-                                        Some(bcp47) => {
-                                            vec![(*bcp47, periods, meta_zone_id_data)]
-                                        }
-                                        None => panic!("Cannot find bcp47 for {key:?}."),
-                                    }
-                                }
-                                MetaLocationOrSubRegion::SubRegion(subregion) => subregion
-                                    .iter()
-                                    .flat_map(move |(inner_inner_key, periods)| {
-                                        let mut key = key.clone();
-                                        key.push('/');
-                                        key.push_str(inner_inner_key);
+                    ZonePeriod::LocationOrSubRegion(place) => {
+                        Vec::from_iter(place.iter().flat_map(
+                            move |(inner_key, location_or_subregion)| {
+                                let mut key = key.clone();
+                                key.push('/');
+                                key.push_str(inner_key);
+                                match location_or_subregion {
+                                    MetaLocationOrSubRegion::Location(periods) => {
                                         match bcp47_tzid_data.get(&key) {
                                             Some(bcp47) => {
                                                 vec![(*bcp47, periods, meta_zone_id_data)]
                                             }
                                             None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
-                                    })
-                                    .collect::<Vec<_>>(),
-                            }
-                        })
-                        .collect::<Vec<_>>(),
+                                    }
+                                    MetaLocationOrSubRegion::SubRegion(subregion) => {
+                                        Vec::from_iter(subregion.iter().flat_map(
+                                            move |(inner_inner_key, periods)| {
+                                                let mut key = key.clone();
+                                                key.push('/');
+                                                key.push_str(inner_inner_key);
+                                                match bcp47_tzid_data.get(&key) {
+                                                    Some(bcp47) => {
+                                                        vec![(*bcp47, periods, meta_zone_id_data)]
+                                                    }
+                                                    None => {
+                                                        panic!("Cannot find bcp47 for {key:?}.")
+                                                    }
+                                                }
+                                            },
+                                        ))
+                                    }
+                                }
+                            },
+                        ))
+                    }
                 })
                 .flat_map(metazone_periods_iter)
                 .collect(),
@@ -309,7 +313,7 @@ macro_rules! long_short_impls {
                                                 None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         }
-                                        LocationOrSubRegion::SubRegion(region) => region
+                                        LocationOrSubRegion::SubRegion(region) => Vec::from_iter(region
                                             .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
@@ -324,8 +328,7 @@ macro_rules! long_short_impls {
                                                         panic!("Cannot find bcp47 for {key:?}.")
                                                     }
                                                 }
-                                            })
-                                            .collect::<Vec<_>>(),
+                                            })),
                                     }
                                 })
                         })
@@ -386,18 +389,17 @@ macro_rules! long_short_impls {
                                     match place_or_region {
                                         LocationOrSubRegion::Location(place) => {
                                             match bcp47_tzid_data.get(&key) {
-                                                Some(bcp47) => [place]
+                                                Some(bcp47) => Vec::from_iter([place]
                                                     .into_iter()
                                                     .filter_map(|inner_place| {
                                                         inner_place
                                                             .$metazones_name()
                                                             .map(|format| (bcp47.clone(), format))
-                                                    })
-                                                    .collect::<Vec<_>>(),
+                                                    })),
                                                 None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         }
-                                        LocationOrSubRegion::SubRegion(region) => region
+                                        LocationOrSubRegion::SubRegion(region) => Vec::from_iter(region
                                             .iter()
                                             .filter_map(|(inner_key, place)| {
                                                 let mut key = key.clone();
@@ -411,8 +413,7 @@ macro_rules! long_short_impls {
                                                         panic!("Cannot find bcp47 for {key:?}.")
                                                     }
                                                 }
-                                            })
-                                            .collect::<Vec<_>>(),
+                                            })),
                                     }
                                 })
                         })

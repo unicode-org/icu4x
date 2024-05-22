@@ -481,7 +481,7 @@ where
             .cloned()
             .chain(exclusive_data.1.keys().cloned())
             .map(|s| s.parse().unwrap())
-            .collect::<Vec<_>>())
+            .collect())
     }
 }
 
@@ -757,7 +757,7 @@ mod tests {
             assert_eq!(*forward.get(), expected_rbt);
 
             assert_eq!(
-                forward.get().deps().collect::<HashSet<_>>(),
+                HashSet::<_>::from_iter(forward.get().deps()),
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
@@ -862,7 +862,7 @@ mod tests {
             assert_eq!(*reverse.get(), expected_rbt);
 
             assert_eq!(
-                reverse.get().deps().collect::<HashSet<_>>(),
+                HashSet::<_>::from_iter(reverse.get().deps()),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),

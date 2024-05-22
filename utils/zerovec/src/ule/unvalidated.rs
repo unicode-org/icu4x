@@ -28,13 +28,11 @@ use core::ops::Deref;
 /// use zerovec::ule::UnvalidatedStr;
 /// use zerovec::ZeroMap;
 ///
-/// let map: ZeroMap<UnvalidatedStr, usize> = [
+/// let map = ZeroMap::<UnvalidatedStr, usize>::from_iter([
 ///     (UnvalidatedStr::from_str("abc"), 11),
 ///     (UnvalidatedStr::from_str("def"), 22),
 ///     (UnvalidatedStr::from_str("ghi"), 33),
-/// ]
-/// .into_iter()
-/// .collect();
+/// ]);
 ///
 /// let key = "abc";
 /// let value = map.get_copied_by(|uvstr| uvstr.as_bytes().cmp(key.as_bytes()));
@@ -229,11 +227,11 @@ where
 /// // ground truth expectation
 /// let real = ['h', 'i', '👋'];
 ///
-/// let chars: &ZeroSlice<UnvalidatedChar> = ZeroSlice::parse_byte_slice(&data).expect("invalid data length");
-/// let parsed: Vec<_> = chars.iter().map(|c| unsafe { c.to_char_unchecked() }).collect();
+/// let chars = ZeroSlice::<UnvalidatedChar>::parse_byte_slice(&data).expect("invalid data length");
+/// let parsed = Vec::from_iter(chars.iter().map(|c| unsafe { c.to_char_unchecked() }));
 /// assert_eq!(&parsed, &real);
 ///
-/// let real_chars: ZeroVec<_> = real.iter().copied().map(UnvalidatedChar::from_char).collect();
+/// let real_chars = ZeroVec::from_iter(real.iter().copied().map(UnvalidatedChar::from_char));
 /// let serialized_data = chars.as_bytes();
 /// assert_eq!(serialized_data, &data);
 /// ```

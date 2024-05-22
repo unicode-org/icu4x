@@ -16,7 +16,7 @@
 //! use icu::locid::extensions::other::Other;
 //! use icu::locid::Locale;
 //!
-//! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
+//! let mut loc = "en-US-a-foo-faa".parse::<Locale>().expect("Parsing failed.");
 //! ```
 
 mod subtag;
@@ -105,7 +105,7 @@ impl Other {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "und-a-hello-world".parse().unwrap();
+    /// let loc = "und-a-hello-world".parse::<Locale>().unwrap();
     /// let other_ext = &loc.extensions.other[0];
     /// assert_eq!(other_ext.get_ext_str(), "a");
     /// ```
@@ -121,7 +121,7 @@ impl Other {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "und-a-hello-world".parse().unwrap();
+    /// let loc = "und-a-hello-world".parse::<Locale>().unwrap();
     /// let other_ext = &loc.extensions.other[0];
     /// assert_eq!(other_ext.get_ext(), 'a');
     /// ```
@@ -136,7 +136,7 @@ impl Other {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "und-a-hello-world".parse().unwrap();
+    /// let loc = "und-a-hello-world".parse::<Locale>().unwrap();
     /// let other_ext = &loc.extensions.other[0];
     /// assert_eq!(other_ext.get_ext_byte(), b'a');
     /// ```

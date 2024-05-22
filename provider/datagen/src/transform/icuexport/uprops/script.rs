@@ -44,10 +44,11 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
         // Convert the input from Vec<Vec<u16>> to Vec<ZeroVec<Script>> so that
         // we can go through the VarZeroVec construction process for a desired result
         // type of VZV<ZeroSlice<Script>>
-        let ule_scx_array_data: Vec<ZeroVec<Script>> = scx_array_data
-            .iter()
-            .map(|v| v.iter().map(|i| Script(*i)).collect::<ZeroVec<Script>>())
-            .collect::<Vec<ZeroVec<Script>>>();
+        let ule_scx_array_data = Vec::from_iter(
+            scx_array_data
+                .iter()
+                .map(|v| ZeroVec::<Script>::from_iter(v.iter().map(|i| Script(*i)))),
+        );
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
@@ -105,46 +106,39 @@ mod tests {
         let swe = swe.as_borrowed();
 
         assert_eq!(
-            swe.get_script_extensions_val('𐓐' as u32) /* U+104D0 OSAGE CAPITAL LETTER KHA */
-                .iter()
-                .collect::<Vec<Script>>(),
+            /* U+104D0 OSAGE CAPITAL LETTER KHA */
+            Vec::from_iter(swe.get_script_extensions_val('𐓐' as u32).iter()),
             vec![Script::Osage]
         );
+        /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
         assert_eq!(
-            swe.get_script_extensions_val('🥳' as u32) /* U+1F973 FACE WITH PARTY HORN AND PARTY HAT */
-                .iter()
-                .collect::<Vec<Script>>(),
+            Vec::from_iter(swe.get_script_extensions_val('🥳' as u32).iter()),
             vec![Script::Common]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-                .iter()
-                .collect::<Vec<Script>>(),
+            // ZERO WIDTH JOINER
+            Vec::from_iter(swe.get_script_extensions_val(0x200D).iter(),),
             vec![Script::Inherited]
         );
         assert_eq!(
-            swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-                .iter()
-                .collect::<Vec<Script>>(),
+            // U+0BEB TAMIL DIGIT FIVE
+            Vec::from_iter(swe.get_script_extensions_val('௫' as u32).iter(),),
             vec![Script::Tamil, Script::Grantha]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
-                .iter()
-                .collect::<Vec<Script>>(),
+            // GRANTHA SIGN VISARGA
+            Vec::from_iter(swe.get_script_extensions_val(0x11303).iter(),),
             vec![Script::Tamil, Script::Grantha]
         );
         assert_eq!(
-            swe.get_script_extensions_val(0x30A0) // KATAKANA-HIRAGANA DOUBLE HYPHEN
-                .iter()
-                .collect::<Vec<Script>>(),
+            // KATAKANA-HIRAGANA DOUBLE HYPHEN
+            Vec::from_iter(swe.get_script_extensions_val(0x30A0).iter()),
             vec![Script::Hiragana, Script::Katakana]
         );
 
+        // ZERO WIDTH JOINER
         assert_eq!(
-            swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-                .iter()
-                .next(),
+            swe.get_script_extensions_val(0x200D).iter().next(),
             Some(Script::Inherited)
         );
 
@@ -158,9 +152,10 @@ mod tests {
 
         // // Invalid code point
         assert_eq!(
-            swe.get_script_extensions_val(0x11_0000) // CODE_POINT_MAX + 1 is invalid
-                .iter()
-                .collect::<Vec<Script>>(),
+            Vec::from_iter(
+                swe.get_script_extensions_val(0x11_0000) // CODE_POINT_MAX + 1 is invalid
+                    .iter()
+            ),
             vec![Script::Unknown]
         );
     }

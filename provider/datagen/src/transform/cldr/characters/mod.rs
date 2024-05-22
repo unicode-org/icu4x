@@ -169,7 +169,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
 
     // Workaround for literal values like "\\-" that cause problems for the TOML parser.
     // In such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character.
-    let mut ch_vec = char_block.chars().collect::<Vec<char>>();
+    let mut ch_vec = Vec::from_iter(char_block.chars());
     let mut ch_indices_to_remove: Vec<usize> = vec![];
     for (idx, ch) in ch_vec.iter().enumerate().rev() {
         if ch == &'\\' {
@@ -182,7 +182,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     for idx in ch_indices_to_remove {
         ch_vec.remove(idx);
     }
-    let ch_for_toml = ch_vec.iter().collect::<String>();
+    let ch_for_toml = String::from_iter(ch_vec);
 
     // Workaround for double quotation mark literal values, which can appear in a string as a backslash followed
     // by the quotation mark itself (\"), but for the purposes of the TOML parser, should be escaped to be 2
@@ -222,10 +222,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
 /// which could either be an individual code point or a code point sequence) into the set.
 fn insert_chars_from_string(set: &mut HashSet<String>, input: &str) {
     let s = if input.chars().count() > 1 && input.starts_with('\\') {
-        input
-            .chars()
-            .skip_while(|ch| ch == &'\\')
-            .collect::<String>()
+        String::from_iter(input.chars().skip_while(|ch| ch == &'\\'))
     } else {
         input.to_string()
     };

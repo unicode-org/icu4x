@@ -34,7 +34,7 @@ use core::convert::TryFrom;
 /// ```
 /// use zerovec::ule::{CharULE, ULE};
 ///
-/// let bytes: &[u8] = &[0xFF, 0xFF, 0xFF, 0xFF];
+/// let bytes = &[0xFF, 0xFF, 0xFF, 0xFF];
 /// CharULE::parse_byte_slice(bytes).expect_err("Invalid bytes");
 /// ```
 #[repr(transparent)]

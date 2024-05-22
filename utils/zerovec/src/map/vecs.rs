@@ -717,8 +717,8 @@ mod test {
         let mut permutation = vec![3, 2, 1, 0, 6, 5, 4];
         fzv.zvl_permute(&mut permutation);
         assert_eq!(
-            fzv.iter().collect::<Vec<_>>(),
-            [44, 33, 22, 11, 77, 66, 55].into_iter().collect::<Vec<_>>()
+            Vec::from_iter(fzv.iter()),
+            Vec::from_iter([44, 33, 22, 11, 77, 66, 55])
         );
     }
 }

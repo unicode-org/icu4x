@@ -30,7 +30,7 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// use writeable::assert_writeable_eq;
 ///
 /// let locale = Locale::UND;
-/// let mut options: options::FixedDecimalFormatterOptions = Default::default();
+/// let mut options = options::FixedDecimalFormatterOptions::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
 /// let fdf = FixedDecimalFormatter::try_new(&locale.into(), options)
 ///     .expect("locale should be present");

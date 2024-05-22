@@ -89,7 +89,7 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
-/// let payload: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
+/// let payload = HelloWorldProvider
 ///     .load(DataRequest {
 ///         locale: &"de".parse().unwrap(),
 ///         metadata: Default::default(),
@@ -715,8 +715,8 @@ where
     ///     type Yokeable = HelloWorldV1<'static>;
     /// }
     ///
-    /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
-    /// let custom: DataPayload<CustomHelloWorldV1Marker> = hello_world.cast();
+    /// let hello_world = DataPayload::<HelloWorldV1Marker>::default();
+    /// let custom = hello_world.cast::<CustomHelloWorldV1Marker>();
     /// ```
     #[inline]
     pub fn cast<M2>(self) -> DataPayload<M2>

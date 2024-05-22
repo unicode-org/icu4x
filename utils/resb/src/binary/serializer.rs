@@ -154,10 +154,11 @@ impl<'a> From<&'a Resource<'a>> for BinResourceData<'a> {
             }
             Resource::Table(table) => {
                 // Build resource data structs for each entry in the table.
-                let map = table
-                    .iter()
-                    .map(|(key, resource)| (key.clone(), BinResourceData::from(resource)))
-                    .collect::<BTreeMap<_, _>>();
+                let map = BTreeMap::from_iter(
+                    table
+                        .iter()
+                        .map(|(key, resource)| (key.clone(), BinResourceData::from(resource))),
+                );
 
                 Self::new(BinResourceTypeData::Table { map })
             }
@@ -437,7 +438,7 @@ impl Serializer {
 
         // Sort the strings such that any suffixes occur immediately after their
         // containing string.
-        let mut sorted_strings = strings.keys().cloned().collect::<Vec<_>>();
+        let mut sorted_strings = Vec::from_iter(strings.keys().cloned());
         sorted_strings.sort_unstable_by(cmp_string_descending_suffix_aware);
 
         // Locate strings which are suffixes of other strings and link them to
@@ -497,9 +498,7 @@ impl Serializer {
         // Ascending length order allows for the maximum number of strings to be
         // addressable by 16-bit offsets in cases where there are a large number
         // of strings.
-        let mut sorted_strings = strings
-            .iter()
-            .collect::<Vec<(&&str, &Rc<RefCell<StringResourceData>>)>>();
+        let mut sorted_strings = Vec::from_iter(strings.iter());
         sorted_strings.sort_unstable_by(cmp_string_ascending_suffix_aware);
 
         for (string, data) in sorted_strings {

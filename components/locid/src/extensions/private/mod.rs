@@ -16,7 +16,7 @@
 //! use icu::locid::extensions::private::subtag;
 //! use icu::locid::{locale, Locale};
 //!
-//! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
+//! let mut loc = "en-US-x-foo-faa".parse::<Locale>().expect("Parsing failed.");
 //!
 //! assert!(loc.extensions.private.contains(&subtag!("foo")));
 //! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag!("foo")));
@@ -101,7 +101,7 @@ impl Private {
     /// ```
     /// use icu::locid::extensions::private::{Private, Subtag};
     ///
-    /// let subtag: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag = "foo".parse::<Subtag>().expect("Failed to parse a Subtag.");
     ///
     /// let private = Private::new_single(subtag);
     /// assert_eq!(&private.to_string(), "x-foo");

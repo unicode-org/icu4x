@@ -207,9 +207,8 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// let swe = script::script_with_extensions();
     ///
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
+    ///      // U+0BEB TAMIL DIGIT FIVE
+    ///     Vec::from_iter(swe.get_script_extensions_val('௫' as u32).iter()),
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
@@ -370,28 +369,24 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///
     /// let swe = script::script_with_extensions();
     ///
+    /// // U+104D0 OSAGE CAPITAL LETTER KHA
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
+    ///     Vec::from_iter(swe.get_script_extensions_val('𐓐' as u32).iter()),
     ///     vec![Script::Osage]
     /// );
+    /// // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
+    ///     Vec::from_iter(swe.get_script_extensions_val('🥳' as u32).iter()),
     ///     vec![Script::Common]
     /// );
     /// assert_eq!(
-    ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
+    ///     // ZERO WIDTH JOINER
+    ///     Vec::from_iter(swe.get_script_extensions_val(0x200D).iter()),
     ///     vec![Script::Inherited]
     /// );
+    /// // U+0BEB TAMIL DIGIT FIVE
     /// assert_eq!(
-    ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-    ///         .iter()
-    ///         .collect::<Vec<Script>>(),
+    ///     Vec::from_iter(swe.get_script_extensions_val('௫' as u32).iter()),
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
@@ -581,26 +576,26 @@ impl ScriptWithExtensionsBorrowed<'static> {
 /// assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
 ///
 /// // get the `Script_Extensions` property value
+/// // U+0640 ARABIC TATWEEL
 /// assert_eq!(
-///     swe.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
-///         .iter().collect::<Vec<Script>>(),
+///     Vec::from_iter(swe.get_script_extensions_val(0x0640).iter()),
 ///     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
 ///          Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian,
 ///          Script::OldUyghur]
 /// );
+/// // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
 /// assert_eq!(
-///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-///         .iter().collect::<Vec<Script>>(),
+///     Vec::from_iter(swe.get_script_extensions_val('🥳' as u32).iter()),
 ///     vec![Script::Common]
 /// );
 /// assert_eq!(
-///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
-///         .iter().collect::<Vec<Script>>(),
+///     // ZERO WIDTH JOINER
+///     Vec::from_iter(swe.get_script_extensions_val(0x200D).iter()),
 ///     vec![Script::Inherited]
 /// );
+/// // U+0BEB TAMIL DIGIT FIVE
 /// assert_eq!(
-///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
-///         .iter().collect::<Vec<Script>>(),
+///     Vec::from_iter(swe.get_script_extensions_val('௫' as u32).iter()),
 ///     vec![Script::Tamil, Script::Grantha]
 /// );
 ///

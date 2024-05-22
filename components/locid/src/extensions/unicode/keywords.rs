@@ -35,9 +35,7 @@ use crate::shortvec::ShortBoxSlice;
 ///     extensions::unicode::{key, value, Keywords},
 /// };
 ///
-/// let keywords = [(key!("hc"), value!("h23"))]
-///     .into_iter()
-///     .collect::<Keywords>();
+/// let keywords = Keywords::from_iter([(key!("hc"), value!("h23"))]);
 ///
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
@@ -118,9 +116,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let keywords = [(key!("ca"), value!("gregory"))]
-    ///     .into_iter()
-    ///     .collect::<Keywords>();
+    /// let keywords = Keywords::from_iter([(key!("ca"), value!("gregory"))]);
     ///
     /// assert!(&keywords.contains_key(&key!("ca")));
     /// ```
@@ -140,9 +136,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let keywords = [(key!("ca"), value!("buddhist"))]
-    ///     .into_iter()
-    ///     .collect::<Keywords>();
+    /// let keywords = Keywords::from_iter([(key!("ca"), value!("buddhist"))]);
     ///
     /// assert_eq!(keywords.get(&key!("ca")), Some(&value!("buddhist")));
     /// ```
@@ -163,9 +157,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let mut keywords = [(key!("ca"), value!("buddhist"))]
-    ///     .into_iter()
-    ///     .collect::<Keywords>();
+    /// let mut keywords = Keywords::from_iter(= [(key!("ca"), value!("buddhist"))]);
     ///
     /// if let Some(value) = keywords.get_mut(&key!("ca")) {
     ///     *value = value!("gregory");

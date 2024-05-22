@@ -267,10 +267,7 @@ mod test {
         let json_str = serde_json::to_string(&map).expect("serialize");
         assert_eq!(JSON_STR, json_str);
         let new_map: ZeroMap<u32, str> = serde_json::from_str(&json_str).expect("deserialize");
-        assert_eq!(
-            new_map.iter().collect::<Vec<_>>(),
-            map.iter().collect::<Vec<_>>()
-        );
+        assert_eq!(Vec::from_iter(new_map.iter()), Vec::from_iter(map.iter()));
     }
 
     #[test]
@@ -286,10 +283,7 @@ mod test {
         );
         let new_map: ZeroMap<(u32, u32), str> =
             serde_json::from_str(&json_str).expect("deserialize");
-        assert_eq!(
-            new_map.iter().collect::<Vec<_>>(),
-            map.iter().collect::<Vec<_>>()
-        );
+        assert_eq!(Vec::from_iter(new_map.iter()), Vec::from_iter(map.iter()));
     }
 
     #[test]
@@ -298,16 +292,10 @@ mod test {
         let bincode_bytes = bincode::serialize(&map).expect("serialize");
         assert_eq!(BINCODE_BYTES, bincode_bytes);
         let new_map: ZeroMap<u32, str> = bincode::deserialize(&bincode_bytes).expect("deserialize");
-        assert_eq!(
-            new_map.iter().collect::<Vec<_>>(),
-            map.iter().collect::<Vec<_>>()
-        );
+        assert_eq!(Vec::from_iter(new_map.iter()), Vec::from_iter(map.iter()));
 
         let new_map: ZeroMapBorrowed<u32, str> =
             bincode::deserialize(&bincode_bytes).expect("deserialize");
-        assert_eq!(
-            new_map.iter().collect::<Vec<_>>(),
-            map.iter().collect::<Vec<_>>()
-        );
+        assert_eq!(Vec::from_iter(new_map.iter()), Vec::from_iter(map.iter()));
     }
 }

@@ -75,7 +75,7 @@
 //! ```
 //! use icu::datetime::options::components;
 //! use icu::datetime::DateTimeFormatterOptions;
-//! let options: DateTimeFormatterOptions = components::Bag::default().into();
+//! let options = DateTimeFormatterOptions::from(components::Bag::default());
 //! ```
 //!
 //! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over

@@ -100,26 +100,27 @@ impl<'l> LstmSegmenter<'l> {
     // For unit testing as we cannot inspect the opaque type's bies
     fn segment_str_p(&'l self, input: &'l str) -> LstmSegmenterIterator<'l> {
         let input_seq = if let Some(grapheme) = self.grapheme {
-            GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
-                .collect::<Vec<usize>>()
-                .windows(2)
-                .map(|chunk| {
-                    let range = if let [first, second, ..] = chunk {
-                        *first..*second
-                    } else {
-                        unreachable!()
-                    };
-                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
-                        grapheme_cluster
-                    } else {
-                        return self.dic.len() as u16;
-                    };
+            Vec::from_iter(GraphemeClusterSegmenter::new_and_segment_str(
+                input, grapheme,
+            ))
+            .windows(2)
+            .map(|chunk| {
+                let range = if let [first, second, ..] = chunk {
+                    *first..*second
+                } else {
+                    unreachable!()
+                };
+                let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
+                    grapheme_cluster
+                } else {
+                    return self.dic.len() as u16;
+                };
 
-                    self.dic
-                        .get_copied(UnvalidatedStr::from_str(grapheme_cluster))
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
+                self.dic
+                    .get_copied(UnvalidatedStr::from_str(grapheme_cluster))
+                    .unwrap_or_else(|| self.dic.len() as u16)
+            })
+            .collect()
         } else {
             input
                 .chars()
@@ -140,37 +141,38 @@ impl<'l> LstmSegmenter<'l> {
     /// Create an LSTM based break iterator for a UTF-16 string.
     pub(super) fn segment_utf16(&'l self, input: &[u16]) -> impl Iterator<Item = usize> + 'l {
         let input_seq = if let Some(grapheme) = self.grapheme {
-            GraphemeClusterSegmenter::new_and_segment_utf16(input, grapheme)
-                .collect::<Vec<usize>>()
-                .windows(2)
-                .map(|chunk| {
-                    let range = if let [first, second, ..] = chunk {
-                        *first..*second
-                    } else {
-                        unreachable!()
-                    };
-                    let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
-                        grapheme_cluster
-                    } else {
-                        return self.dic.len() as u16;
-                    };
+            Vec::from_iter(GraphemeClusterSegmenter::new_and_segment_utf16(
+                input, grapheme,
+            ))
+            .windows(2)
+            .map(|chunk| {
+                let range = if let [first, second, ..] = chunk {
+                    *first..*second
+                } else {
+                    unreachable!()
+                };
+                let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
+                    grapheme_cluster
+                } else {
+                    return self.dic.len() as u16;
+                };
 
-                    self.dic
-                        .get_copied_by(|key| {
-                            key.as_bytes().iter().copied().cmp(
-                                decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
-                                    let mut buf = [0; 4];
-                                    let len = c
-                                        .unwrap_or(REPLACEMENT_CHARACTER)
-                                        .encode_utf8(&mut buf)
-                                        .len();
-                                    buf.into_iter().take(len)
-                                }),
-                            )
-                        })
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
+                self.dic
+                    .get_copied_by(|key| {
+                        key.as_bytes().iter().copied().cmp(
+                            decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
+                                let mut buf = [0; 4];
+                                let len = c
+                                    .unwrap_or(REPLACEMENT_CHARACTER)
+                                    .encode_utf8(&mut buf)
+                                    .len();
+                                buf.into_iter().take(len)
+                            }),
+                        )
+                    })
+                    .unwrap_or_else(|| self.dic.len() as u16)
+            })
+            .collect()
         } else {
             decode_utf16(input.iter().copied())
                 .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
@@ -373,11 +375,14 @@ mod tests {
 
         // Testing
         for test_case in &test_text.data.testcases {
-            let lstm_output = lstm
-                .segment_str_p(&test_case.unseg)
-                .bies
-                .map(|is_e| if is_e { 'e' } else { '?' })
-                .collect::<String>();
+            let lstm_output =
+                String::from_iter(lstm.segment_str_p(&test_case.unseg).bies.map(|is_e| {
+                    if is_e {
+                        'e'
+                    } else {
+                        '?'
+                    }
+                }));
             println!("Test case      : {}", test_case.unseg);
             println!("Expected bies  : {}", test_case.expected_bies);
             println!("Estimated bies : {lstm_output}");

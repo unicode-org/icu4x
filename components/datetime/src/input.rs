@@ -131,12 +131,12 @@ pub trait TimeZoneInput {
 /// }
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+/// let mut names =
+///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
-/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+/// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
 ///
 /// // The pattern string contains lots of symbols, but our DateTimeInput is empty!
 /// let mut buffer = String::new();

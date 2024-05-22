@@ -47,19 +47,19 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
             .map(|c| &c.non_likely_scripts)
             != Some(&String::from("root"))
         {
-            let collation_locales = self
-                .icuexport()?
-                .list(&format!("collation/{}", self.collation_han_database()))?
-                .filter_map(|s| {
-                    Some(
-                        file_name_to_locale(
-                            s.rsplit_once('_')?.0,
-                            self.has_legacy_swedish_variants(),
-                        )?
-                        .language(),
-                    )
-                })
-                .collect::<HashSet<_>>();
+            let collation_locales = HashSet::<_>::from_iter(
+                self.icuexport()?
+                    .list(&format!("collation/{}", self.collation_han_database()))?
+                    .filter_map(|s| {
+                        Some(
+                            file_name_to_locale(
+                                s.rsplit_once('_')?.0,
+                                self.has_legacy_swedish_variants(),
+                            )?
+                            .language(),
+                        )
+                    }),
+            );
 
             parent_locales
                 .parent_locale
@@ -113,7 +113,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
 
 impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for DatagenProvider {
     fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
+        Ok(HashSet::<_>::from_iter([Default::default()]))
     }
 }
 

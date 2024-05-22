@@ -223,7 +223,7 @@ fn all_preferred() {
     ];
 
     // Should return exactly the supported locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -272,7 +272,7 @@ fn all_hybrid() {
     ];
 
     // Should return exactly the supported locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -320,7 +320,7 @@ fn all_runtime() {
     ];
 
     // Should return the supported locales set with deduplication.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -364,7 +364,7 @@ fn all_runtime_retain_base() {
     ];
 
     // Should return the supported locales set with deduplication.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -413,7 +413,7 @@ fn explicit_preferred() {
     ];
 
     // Should return the expanded explicit locales set above.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -466,7 +466,7 @@ fn explicit_hybrid() {
     ];
 
     // Should return the expanded explicit locales set above.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -518,7 +518,7 @@ fn explicit_runtime() {
     ];
 
     // Should return the expanded then deduplicated explicit locales set above.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -566,7 +566,7 @@ fn explicit_runtime_retain_base() {
     ];
 
     // Should return the expanded then deduplicated explicit locales set above.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -605,7 +605,7 @@ fn explicit_preresolved() {
     ];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -650,7 +650,7 @@ fn explicit_hybrid_without_descendants() {
     ];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -695,7 +695,7 @@ fn explicit_hybrid_without_ancestors() {
     ];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -740,7 +740,7 @@ fn explicit_hybrid_mixed_families() {
     ];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -764,7 +764,7 @@ fn explicit_runtime_und() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -784,7 +784,7 @@ fn explicit_runtime_und_retain_base() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -808,7 +808,7 @@ fn explicit_hybrid_und() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -828,7 +828,7 @@ fn explicit_preresolved_und() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -852,7 +852,7 @@ fn explicit_runtime_empty() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -872,7 +872,7 @@ fn explicit_runtime_empty_retain_base() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -896,7 +896,7 @@ fn explicit_hybrid_empty() {
     let locales = ["und"];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }
 
 #[test]
@@ -916,5 +916,5 @@ fn explicit_preresolved_empty() {
     let locales: [&str; 0] = [];
 
     // Should return the exact explicit locales set.
-    assert_eq!(exported.keys().collect::<Vec<_>>(), locales);
+    assert_eq!(Vec::from_iter(exported.keys()), locales);
 }

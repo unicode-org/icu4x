@@ -194,13 +194,12 @@ impl TryFrom<LocaleSubtags> for LanguageIdentifier {
         let variants = subtags
             .variants
             .iter()
-            .map(|v| v.parse().expect("Failed to parse variant subtag."))
-            .collect::<Vec<_>>();
+            .map(|v| v.parse().expect("Failed to parse variant subtag."));
         Ok(LanguageIdentifier {
             language,
             script,
             region,
-            variants: subtags::Variants::from_vec_unchecked(variants),
+            variants: subtags::Variants::from_vec_unchecked(variants.collect()),
         })
     }
 }
@@ -223,8 +222,7 @@ impl TryFrom<LocaleSubtags> for Locale {
         let variants = subtags
             .variants
             .iter()
-            .map(|v| v.parse().expect("Failed to parse variant subtag."))
-            .collect::<Vec<_>>();
+            .map(|v| v.parse().expect("Failed to parse variant subtag."));
         let extensions = if let Some(e) = subtags.extensions {
             e.try_into().expect("Failed to parse extensions.")
         } else {
@@ -235,7 +233,7 @@ impl TryFrom<LocaleSubtags> for Locale {
                 language,
                 script,
                 region,
-                variants: subtags::Variants::from_vec_unchecked(variants),
+                variants: subtags::Variants::from_vec_unchecked(variants.collect()),
             },
             extensions,
         })

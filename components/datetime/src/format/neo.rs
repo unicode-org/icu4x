@@ -165,8 +165,8 @@ size_test!(
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("uk").into()).unwrap();
+/// let mut names =
+///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("uk").into()).unwrap();
 /// names
 ///     .include_month_names(fields::Month::Format, FieldLength::Abbreviated)
 ///     .unwrap()
@@ -177,7 +177,7 @@ size_test!(
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "E MMM d y -- h:mm a";
-/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+/// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
 ///
 /// // Test it:
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
@@ -196,12 +196,12 @@ size_test!(
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+/// let mut names =
+///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
-/// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+/// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
@@ -697,7 +697,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// // Format a pattern needing week data:
     /// let pattern_str = "'Week' w 'of' Y";
-    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
     /// let date = Date::try_new_gregorian_date(2023, 12, 5).unwrap();
     /// assert_try_writeable_eq!(
     ///     names.with_pattern(&pattern).format_date(&date),
@@ -799,7 +799,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "EEEE 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
-    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
     ///
     /// // Load data for the pattern and format:
     /// let datetime =
@@ -1269,8 +1269,8 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
-    /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
+    /// let mut names =
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
@@ -1279,7 +1279,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The date is:' MMMM d, y GGGG";
-    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
     ///
     /// // Test it with some different dates:
     /// // Note: extended year -50 is year 51 BCE
@@ -1319,15 +1319,15 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
-    /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
+    /// let mut names =
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en-US").into()).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The time is:' h:mm b";
-    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// let pattern = pattern_str.parse::<DateTimePattern>().unwrap();
     ///
     /// // Test it with different times of day:
     /// let time_am = Time::try_new(11, 4, 14, 0).unwrap();

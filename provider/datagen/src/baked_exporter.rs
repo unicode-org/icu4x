@@ -104,14 +104,6 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-macro_rules! move_out {
-    ($field:expr) => {{
-        let mut tmp = Default::default();
-        core::mem::swap(&mut tmp, &mut $field);
-        tmp
-    }};
-}
-
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
 
@@ -273,9 +265,7 @@ impl BakedExporter {
     }
 
     fn print_deps(&mut self) {
-        let mut deps = move_out!(self.dependencies)
-            .into_iter()
-            .collect::<BTreeSet<_>>();
+        let mut deps = BTreeSet::from_iter(core::mem::take(&mut self.dependencies));
         if !self.use_separate_crates {
             deps.retain(|&krate| !krate.starts_with("icu_"));
             deps.insert("icu");
@@ -510,16 +500,13 @@ impl BakedExporter {
             for (bake, locales) in values {
                 let first_locale = locales.iter().next().unwrap();
                 let anchor = proc_macro2::Ident::new(
-                    &first_locale
-                        .chars()
-                        .map(|ch| {
-                            if ch == '-' {
-                                '_'
-                            } else {
-                                ch.to_ascii_uppercase()
-                            }
-                        })
-                        .collect::<String>(),
+                    &String::from_iter(first_locale.chars().map(|ch| {
+                        if ch == '-' {
+                            '_'
+                        } else {
+                            ch.to_ascii_uppercase()
+                        }
+                    })),
                     proc_macro2::Span::call_site(),
                 );
                 let bake = bake.parse::<TokenStream>().unwrap();
@@ -635,9 +622,11 @@ impl BakedExporter {
     fn close_internal(&mut self) -> Result<(), DataError> {
         log::info!("Writing macros module...");
 
-        let data = move_out!(self.impl_data).into_inner().expect("poison");
+        let data = core::mem::take(&mut self.impl_data)
+            .into_inner()
+            .expect("poison");
 
-        let features = data
+        let features = Vec::from_iter(data
             .iter()
             .map(|(key, marker)| {
                 if !self.insert_feature_gates {
@@ -656,13 +645,12 @@ impl BakedExporter {
                     let feature = marker.split(" :: ").next().unwrap();
                     quote! { #[cfg(feature = #feature)] }
                 }
-            })
-            .collect::<Vec<_>>();
+            }));
 
-        let markers = data
-            .values()
-            .map(|marker| marker.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
+        let markers = Vec::from_iter(
+            data.values()
+                .map(|marker| marker.parse::<TokenStream>().unwrap()),
+        );
 
         let (
             macro_idents,

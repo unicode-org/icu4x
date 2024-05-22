@@ -62,8 +62,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// use icu::segmenter::SentenceSegmenter;
 /// let segmenter = SentenceSegmenter::new();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_str("Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_str("Hello World"));
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
 ///
@@ -73,8 +73,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// use icu::segmenter::SentenceSegmenter;
 /// let segmenter = SentenceSegmenter::new();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints =
+///     Vec::from_iter(segmenter.segment_latin1(b"Hello World"));
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
 ///
@@ -87,11 +87,11 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// # let segmenter = SentenceSegmenter::new();
 /// use itertools::Itertools;
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
-/// let sentences: Vec<&str> = segmenter
+/// let sentences = Vec::from_iter(segmenter
 ///     .segment_str(text)
 ///     .tuple_windows()
 ///     .map(|(i, j)| &text[i..j])
-///     .collect();
+///     );
 /// assert_eq!(
 ///     &sentences,
 ///     &["Ceci tuera cela. ", "Le livre tuera l’édifice."]
@@ -215,6 +215,6 @@ impl SentenceSegmenter {
 #[test]
 fn empty_string() {
     let segmenter = SentenceSegmenter::new();
-    let breaks: Vec<usize> = segmenter.segment_str("").collect();
+    let breaks = Vec::from_iter(segmenter.segment_str(""));
     assert_eq!(breaks, [0]);
 }

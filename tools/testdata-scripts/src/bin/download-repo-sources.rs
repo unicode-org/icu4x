@@ -8,6 +8,7 @@ use icu_datagen::DatagenProvider;
 use icu_locid::*;
 use icu_provider::DataError;
 use simple_logger::SimpleLogger;
+use std::fmt::Write as _;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
@@ -193,32 +194,39 @@ fn main() -> eyre::Result<()> {
         &mut Default::default(),
     )?;
 
-    let cldr_data = cldr_data
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../../tests/data/cldr/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                            ");
-    let icuexport_data = icuexport_data
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(
-                r#"("{path}", include_bytes!("../../../tests/data/icuexport/{path}").as_slice())"#
-            )
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                            ");
-    let lstm_data = LSTM_GLOB
-        .iter()
-        .map(|path| {
-            let path = path.replace('\\', "/");
-            format!(r#"("{path}", include_bytes!("../../../tests/data/lstm/{path}").as_slice())"#)
-        })
-        .collect::<Vec<_>>()
-        .join(",\n                            ");
+    let cldr_data = cldr_data.iter().fold(String::new(), |mut acc, path| {
+        if !acc.is_empty() {
+            acc.push_str(",\n                            ");
+        }
+        let path = path.replace('\\', "/");
+        let _ = write!(
+            &mut acc,
+            r#"("{path}", include_bytes!("../../../tests/data/cldr/{path}").as_slice())"#
+        );
+        acc
+    });
+    let icuexport_data = icuexport_data.iter().fold(String::new(), |mut acc, path| {
+        if !acc.is_empty() {
+            acc.push_str(",\n                            ");
+        }
+        let path = path.replace('\\', "/");
+        let _ = write!(
+            &mut acc,
+            r#"("{path}", include_bytes!("../../../tests/data/icuexport/{path}").as_slice())"#
+        );
+        acc
+    });
+    let lstm_data = LSTM_GLOB.iter().fold(String::new(), |mut acc, path| {
+        if !acc.is_empty() {
+            acc.push_str(",\n                            ");
+        }
+        let path = path.replace('\\', "/");
+        let _ = write!(
+            &mut acc,
+            r#"("{path}", include_bytes!("../../../tests/data/lstm/{path}").as_slice())"#
+        );
+        acc
+    });
 
     write!(&mut crlify::BufWriterWithLineEndingFix::new(File::create(out_root.join("src/provider/tests/data.rs")).unwrap()), "\
 // This file is part of ICU4X. For terms of use, please see the file

@@ -271,21 +271,15 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
             &mut BTreeSet::default()
         );
 
-        let violations = self
-            .zero_copy_violations
-            .get_mut()
-            .expect("poison")
-            .iter()
-            .copied()
-            .collect::<Vec<_>>();
+        let violations = Vec::from_iter(core::mem::take(
+            self.zero_copy_violations.get_mut().expect("poison"),
+        ));
 
-        let transient_violations = self
-            .zero_copy_transient_violations
-            .get_mut()
-            .expect("poison")
-            .iter()
-            .copied()
-            .collect::<Vec<_>>();
+        let transient_violations = Vec::from_iter(core::mem::take(
+            self.zero_copy_transient_violations
+                .get_mut()
+                .expect("poison"),
+        ));
 
         assert!(transient_violations == EXPECTED_TRANSIENT_VIOLATIONS && violations == EXPECTED_VIOLATIONS,
             "Expected violations list does not match found violations!\n\

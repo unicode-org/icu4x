@@ -196,12 +196,12 @@ impl<'data> CodePointInversionList<'data> {
     /// use icu::collections::codepointinvlist::CodePointInversionListError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
-    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&valid);
+    /// let inv_list = ZeroVec::<u32>::from_slice_or_alloc(&valid);
     /// let result = CodePointInversionList::try_from_inversion_list(inv_list);
     /// assert!(matches!(result, CodePointInversionList));
     ///
-    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&invalid);
+    /// let invalid = vec![0x0, 0x80, 0x3];
+    /// let inv_list = ZeroVec::<u32>::from_slice_or_alloc(&invalid);
     /// let result = CodePointInversionList::try_from_inversion_list(inv_list);
     /// assert!(matches!(
     ///     result,
@@ -252,7 +252,7 @@ impl<'data> CodePointInversionList<'data> {
     /// let result = CodePointInversionList::try_from_inversion_list_slice(&valid);
     /// assert!(matches!(result, CodePointInversionList));
     ///
-    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
+    /// let invalid = vec![0x0, 0x80, 0x3];
     /// let result =
     ///     CodePointInversionList::try_from_inversion_list_slice(&invalid);
     /// assert!(matches!(
@@ -285,14 +285,12 @@ impl<'data> CodePointInversionList<'data> {
     /// let smp_list = &[0x10000, 0x20000];
     /// let sip_list = &[0x20000, 0x30000];
     ///
-    /// let lists: Vec<CodePointInversionList> =
+    /// let lists =
     ///     [&bmp_list[..], smp_list, sip_list]
-    ///         .into_iter()
     ///         .map(|l| {
     ///             CodePointInversionList::try_clone_from_inversion_list_slice(l)
     ///                 .unwrap()
-    ///         })
-    ///         .collect();
+    ///         });
     ///
     /// let bmp = &lists[0];
     /// assert!(bmp.contains32(0xFFFF));

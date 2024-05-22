@@ -76,7 +76,7 @@ use super::*;
 ///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+/// let deserialized = bincode::deserialize::<Data>(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.strings.get(2), Some("文"));
@@ -112,7 +112,7 @@ use super::*;
 /// let bincode_bytes =
 ///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
-/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+/// let deserialized = bincode::deserialize::<Data>(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.vecs[0].get(1).unwrap(), 25);
@@ -169,7 +169,7 @@ pub enum VarZeroVec<'a, T: ?Sized, F = Index16> {
     ///     145, 132, 131,
     /// ];
     ///
-    /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();
+    /// let vzv = VarZeroVec::<str>::parse_byte_slice(bytes).unwrap();
     /// assert!(matches!(vzv, VarZeroVec::Borrowed(_)));
     /// ```
     Borrowed(&'a VarZeroSlice<T, F>),
@@ -240,7 +240,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// ```
     /// use zerovec::VarZeroVec;
     ///
-    /// let vzv: VarZeroVec<str> = VarZeroVec::new();
+    /// let vzv = VarZeroVec::<str>::new();
     /// assert!(vzv.is_empty());
     /// ```
     #[inline]
@@ -368,7 +368,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// let strings = vec!["foo", "bar", "baz"];
     /// let bytes = VarZeroVec::<str>::from(&strings).into_bytes();
     ///
-    /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let mut borrowed = VarZeroVec::<str>::parse_byte_slice(&bytes)?;
     /// assert_eq!(borrowed, &*strings);
     ///
     /// # Ok::<(), ZeroVecError>(())

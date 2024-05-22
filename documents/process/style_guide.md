@@ -1060,7 +1060,7 @@ However you can do more than just conversion types, and the [Unicode Segmentatio
 use unicode_segmentation::UnicodeSegmentation;
 
 // A vector of individual graphemes (true => extended).
-let graphemes = "a\r\nb🇷🇺🇸🇹".graphemes(true).collect::<Vec<&str>>();
+let graphemes = Vec::from_iter("a\r\nb🇷🇺🇸🇹".graphemes(true));
 
 // Print each word (according to Unicode).
 let s = "The quick (\"brown\") fox can't jump 32.3 feet, right?";

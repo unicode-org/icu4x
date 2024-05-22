@@ -139,7 +139,7 @@ fn make_ule_enum_impl(
         }
     }
 
-    let not_found = not_found.iter().collect::<Vec<_>>();
+    let not_found = Vec::from_iter(not_found.iter());
 
     if !not_found.is_empty() {
         return Error::new(input.span(), format!("#[make_ule] must be applied to enums with discriminants \
