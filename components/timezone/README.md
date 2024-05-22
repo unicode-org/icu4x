@@ -11,7 +11,7 @@ In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different f
 1. The offset from GMT
 2. The time zone ID
 3. The metazone ID
-4. The zone variant (standard or daylight time)
+4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 
 ### GMT Offset
 
@@ -58,10 +58,11 @@ and module name, where "timezone" is used with no separators. See
 ### Zone Variant
 
 Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
-this is called the _zone variant_. There are two zone variants:
+this is called the _zone variant_.
 
-1. `"dt"` = daylight or summer time
-2. `"st"` = standard or winter time
+CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
+variants to specific observed offsets varies from time zone to time zone, and they may not
+consistently represent winter versus summer time.
 
 Note: It is optional (not required) to set the zone variant when constructing a
 [`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant

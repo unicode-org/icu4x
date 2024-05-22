@@ -237,7 +237,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Sets the `zone_variant` field to standard time.
+   * Sets the `zone_variant` field to "standard" time, which may or may not correspond to a display name with "Standard" in its name.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard Rust documentation for `standard`} for more information.
 
@@ -247,7 +247,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Sets the `zone_variant` field to daylight time.
+   * Sets the `zone_variant` field to "daylight" time, which may or may not correspond to a display name with "Daylight" in its name.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight Rust documentation for `daylight`} for more information.
 
