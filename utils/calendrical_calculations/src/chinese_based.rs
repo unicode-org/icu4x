@@ -271,7 +271,8 @@ pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (Rata
     // December 20, 21, or 22. It doesn't seem to change the outcome if the following
     // solstice is out of range.
     let prior_solstice = bind_winter_solstice::<C>(prior_solstice);
-    let following_solstice = bind_winter_solstice::<C>(winter_solstice_on_or_before::<C>(prior_solstice + 370)); // s2
+    let following_solstice =
+        bind_winter_solstice::<C>(winter_solstice_on_or_before::<C>(prior_solstice + 370)); // s2
     let month_after_eleventh = new_moon_on_or_after::<C>((prior_solstice + 1).as_moment()); // m12
     debug_assert!(month_after_eleventh - prior_solstice >= 0);
     let month_after_twelfth = new_moon_on_or_after::<C>((month_after_eleventh + 1).as_moment()); // m13
@@ -307,7 +308,11 @@ fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
         log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
         fixed_from_iso(iso_year, 12, 20)
     } else if iso_day > 23 {
-        debug_assert!(false, "({}) Solstice too late in December: {solstice:?}", C::DEBUG_NAME);
+        debug_assert!(
+            false,
+            "({}) Solstice too late in December: {solstice:?}",
+            C::DEBUG_NAME
+        );
         fixed_from_iso(iso_year, 12, 23)
     } else {
         solstice
