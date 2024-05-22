@@ -166,7 +166,7 @@ impl PackedChineseBasedYearInfo {
             !month_lengths[12] || leap_month_idx.is_some(),
             "Last month length should not be set for non-leap years"
         );
-        debug_assert!(ny_offset < 33, "Year offset too big to store");
+        debug_assert!(ny_offset < 34, "Year offset too big to store");
         debug_assert!(
             leap_month_idx.map(|l| l.get() <= 13).unwrap_or(true),
             "Leap month indices must be 1 <= i <= 13"

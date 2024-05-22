@@ -290,7 +290,7 @@ pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (Rata
     }
 }
 
-/// This function forces the RataDie to be on December 20, 21, or 22. It was
+/// This function forces the RataDie to be on December 20, 21, 22, or 23. It was
 /// created for practical considerations and is not in the text.
 ///
 /// See: <https://github.com/unicode-org/icu4x/pull/4904>
@@ -306,10 +306,9 @@ fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
         #[cfg(feature = "logging")]
         log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
         fixed_from_iso(iso_year, 12, 20)
-    } else if iso_day > 22 {
-        #[cfg(feature = "logging")]
-        log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
-        fixed_from_iso(iso_year, 12, 22)
+    } else if iso_day > 23 {
+        debug_assert!(false, "({}) Solstice too late in December: {solstice:?}", C::DEBUG_NAME);
+        fixed_from_iso(iso_year, 12, 23)
     } else {
         solstice
     }
