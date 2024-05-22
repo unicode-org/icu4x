@@ -34,7 +34,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ),
     ("normalizer", icu::normalizer::provider::KEYS, "1.4.1"),
     ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
-    ("properties", icu::properties::provider::KEYS, REPO_VERSION),
+    ("properties", icu::properties::provider::KEYS, "1.4.1"),
     (
         "relativetime",
         icu::relativetime::provider::KEYS,

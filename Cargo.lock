@@ -1805,7 +1805,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "1.4.0"
+version = "1.4.1"
 
 [[package]]
 name = "icu_pattern"
