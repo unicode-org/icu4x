@@ -95,7 +95,9 @@ pub trait IslamicBasedMarker {
                 "({}) Found year {extended_year} AH with more than one excess day",
                 Self::DEBUG_NAME
             );
-            lengths.iter_mut().find(|l| **l == false).map(|l| *l = true);
+            if let Some(l) = lengths.iter_mut().find(|l| !(**l)) {
+                *l = true;
+            }
         }
         lengths
     }

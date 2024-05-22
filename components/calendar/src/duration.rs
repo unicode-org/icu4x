@@ -83,13 +83,7 @@ pub struct DateDuration<C: Calendar + ?Sized> {
 // Custom impl so that C need not be bound on Copy/Clone
 impl<C: Calendar + ?Sized> Clone for DateDuration<C> {
     fn clone(&self) -> Self {
-        Self {
-            years: self.years,
-            months: self.months,
-            weeks: self.weeks,
-            days: self.days,
-            marker: PhantomData,
-        }
+        *self
     }
 }
 
