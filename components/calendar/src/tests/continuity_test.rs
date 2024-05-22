@@ -75,6 +75,8 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
+    #[cfg(feature = "logging")]
+    let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = crate::chinese::Chinese::new();
     let cal = Ref(&cal);
     let date = Date::try_new_chinese_date_with_calendar(-10, 1, 1, cal);
@@ -95,6 +97,8 @@ fn test_coptic_continuity() {
 
 #[test]
 fn test_dangi_continuity() {
+    #[cfg(feature = "logging")]
+    let _ = simple_logger::SimpleLogger::new().env().init();
     let cal = crate::dangi::Dangi::new();
     let cal = Ref(&cal);
     let date = Date::try_new_dangi_date_with_calendar(-10, 1, 1, cal);

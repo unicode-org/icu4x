@@ -93,10 +93,11 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     let YearBounds {
         new_year,
         next_new_year,
+        drift_delta,
         ..
     } = year_bounds;
     let (month_lengths, leap_month) =
-        chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
+        chinese_based::month_structure_for_year::<CB>(new_year, next_new_year, drift_delta);
 
     let related_iso = CB::iso_from_extended(extended_year);
     let iso_ny = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
@@ -104,7 +105,15 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     // +1 because `new_year - iso_ny` is zero-indexed, but `FIRST_NY` is 1-indexed
     let ny_offset = new_year - iso_ny - i64::from(PackedChineseBasedYearInfo::FIRST_NY) + 1;
     let ny_offset = if let Ok(ny_offset) = u8::try_from(ny_offset) {
-        ny_offset
+        if ny_offset >= 33 {
+            debug_assert!(
+                false,
+                "Expected small new years offset, got {ny_offset} in ISO year {related_iso}"
+            );
+            33
+        } else {
+            ny_offset
+        }
     } else {
         debug_assert!(
             false,
