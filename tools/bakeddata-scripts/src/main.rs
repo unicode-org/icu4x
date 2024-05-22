@@ -32,7 +32,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
         icu::locid_transform::provider::KEYS,
         REPO_VERSION,
     ),
-    ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
+    ("normalizer", icu::normalizer::provider::KEYS, "1.4.1"),
     ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
     ("properties", icu::properties::provider::KEYS, REPO_VERSION),
     (
