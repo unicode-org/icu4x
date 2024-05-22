@@ -267,7 +267,7 @@ impl IslamicYearInfo {
         let days_in_year = match IslamicYearLength::try_from_int(days_in_year as i64) {
             Some(x) => x,
             None => {
-                debug_assert!(false, "Found wrong year length for Islamic year {extended_year}: Expected 355 or 354, got {days_in_year}");
+                debug_assert!(false, "Found wrong year length for Islamic year {extended_year}: Expected 355, 354, or 353, got {days_in_year}");
                 Default::default()
             }
         };
@@ -286,7 +286,7 @@ impl IslamicYearInfo {
         let rd_diff = match IslamicYearLength::try_from_int(rd_diff) {
             Some(x) => x,
             None => {
-                debug_assert!(false, "({}) Found wrong year length for Islamic year {extended_year}: Expected 355 or 354, got {rd_diff}", IB::DEBUG_NAME);
+                debug_assert!(false, "({}) Found wrong year length for Islamic year {extended_year}: Expected 355, 354, or 353, got {rd_diff}", IB::DEBUG_NAME);
                 Default::default()
             }
         };
