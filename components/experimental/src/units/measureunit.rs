@@ -156,7 +156,7 @@ impl<'data> MeasureUnitParser<'data> {
             (haystack, &[])
         }
 
-        let (num_part, den_part) = split_once(&identifier, b"per-");
+        let (num_part, den_part) = split_once(identifier, b"per-");
         let num_part = num_part.strip_suffix(b"-").unwrap_or(num_part);
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
