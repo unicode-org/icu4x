@@ -135,23 +135,22 @@ impl<'data> MeasureUnitParser<'data> {
             return Err(ConversionError::InvalidUnit);
         }
 
+        /// Split the haystack in type [u8] by the needle in type [u8]
+        /// and return the part before the needle and the part after the needle.
+        /// NOTE:
+        ///     If the needle is empty, the function will return the whole haystack and an empty slice.
+        ///     If the needle is not found, the function will return the whole haystack and an empty slice.
         fn split_once<'a>(haystack: &'a [u8], needle: &'a [u8]) -> (&'a [u8], &'a [u8]) {
-            let needle_len = needle.len();
-
-            if needle_len == 0 {
+            if needle.is_empty() {
                 return (haystack, &[]);
             }
 
-            for (i, &byte) in haystack.iter().enumerate() {
-                if byte == needle[0]
-                    && haystack[i..].len() >= needle_len
-                    && &haystack[i..i + needle_len] == needle
-                {
-                    // Safely split the haystack (lifetimes are now explicit)
-                    let before = &haystack[..i];
-                    let after = &haystack[i + needle_len..];
-                    return (before, after);
-                }
+            if let Some(pos) = haystack
+                .windows(needle.len())
+                .position(|window| window == needle)
+            {
+                let (before, after) = haystack.split_at(pos);
+                return (before, &after[needle.len()..]);
             }
 
             (haystack, &[])
