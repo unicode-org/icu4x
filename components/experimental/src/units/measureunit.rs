@@ -141,16 +141,44 @@ impl<'data> MeasureUnitParser<'data> {
         ///     If the needle is empty, the function will return the whole haystack and an empty slice.
         ///     If the needle is not found, the function will return the whole haystack and an empty slice.
         fn split_once<'a>(haystack: &'a [u8], needle: &'a [u8]) -> (&'a [u8], &'a [u8]) {
+            /// Finds the longest match of the needle in the haystack starting from the given position.
+            fn longest_match<'a>(
+                haystack: &'a [u8],
+                needle: &[u8],
+                pos: usize,
+                haystack_len: usize,
+                needle_len: usize,
+            ) -> usize {
+                if pos + needle_len > haystack_len {
+                    return 0;
+                }
+
+                let mut longest_match = 0;
+                for i in 0..needle_len {
+                    if haystack[pos + i] != needle[i] {
+                        break;
+                    }
+                    longest_match += 1;
+                }
+
+                longest_match
+            }
+            
             if needle.is_empty() {
                 return (haystack, &[]);
             }
 
-            if let Some(pos) = haystack
-                .windows(needle.len())
-                .position(|window| window == needle)
-            {
-                let (before, after) = haystack.split_at(pos);
-                return (before, &after[needle.len()..]);
+            let haystack_len = haystack.len();
+            let needle_len = needle.len();
+
+            let mut pos = 0;
+            while pos < haystack_len {
+                let match_len = longest_match(haystack, needle, pos, haystack_len, needle_len);
+                if match_len == needle_len {
+                    let (before, after) = haystack.split_at(pos);
+                    return (before, &after[needle_len..]);
+                }
+                pos += match_len.max(1); // Ensure progress even if match_len is 0
             }
 
             (haystack, &[])
