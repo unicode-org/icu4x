@@ -141,7 +141,7 @@ impl<'data> MeasureUnitParser<'data> {
         /// # Notes
         /// - If `needle` is empty, returns the whole `haystack` and an empty slice.
         /// - If `needle` is not found, returns the whole `haystack` and an empty slice.
-        fn split_once<'a>(haystack: &'a [u8], needle: &'a [u8]) -> (&'a [u8], &'a [u8]) {
+        fn split_once<'a>(haystack: &'a [u8], needle: &[u8]) -> (&'a [u8], &'a [u8]) {
             /// Finds the longest match of the needle in the haystack starting from the given position.
             fn longest_match(haystack: &[u8], needle: &[u8], pos: usize) -> usize {
                 if pos + needle.len() > haystack.len() {
