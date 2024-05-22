@@ -1,6 +1,5 @@
 use crate::astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::helpers::i64_to_i32;
-use crate::iso::{fixed_from_iso, iso_from_fixed};
 use crate::rata_die::{Moment, RataDie};
 use core::num::NonZeroU8;
 #[allow(unused_imports)]
@@ -29,11 +28,8 @@ pub trait ChineseBased {
 
     /// The ISO year that corresponds to year 1
     const EPOCH_ISO: i32;
-
-    /// The name of the calendar for debugging.
-    const DEBUG_NAME: &'static str;
-
     /// Given an ISO year, return the extended year
+
     fn extended_from_iso(iso_year: i32) -> i32 {
         iso_year - Self::EPOCH_ISO + 1
     }
@@ -141,7 +137,6 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
     const EPOCH_ISO: i32 = CHINESE_EPOCH_ISO;
-    const DEBUG_NAME: &'static str = "chinese";
 }
 
 impl ChineseBased for Dangi {
@@ -161,12 +156,7 @@ impl ChineseBased for Dangi {
 
     const EPOCH: RataDie = KOREAN_EPOCH;
     const EPOCH_ISO: i32 = KOREAN_EPOCH_ISO;
-    const DEBUG_NAME: &'static str = "dangi";
 }
-
-/// The number of days that were added to the Winter solstice to fix calendar drift
-#[derive(Debug, Copy, Clone)]
-pub struct DriftDelta(pub i64);
 
 /// Marks the bounds of a lunar year
 #[derive(Debug, Copy, Clone)]
@@ -176,8 +166,6 @@ pub struct YearBounds {
     pub new_year: RataDie,
     /// The date marking the start of the next lunar year
     pub next_new_year: RataDie,
-    /// The number of days that were added to the Winter solstice to fix calendar drift
-    pub drift_delta: DriftDelta,
 }
 
 impl YearBounds {
@@ -188,15 +176,13 @@ impl YearBounds {
     #[inline]
     pub fn compute<C: ChineseBased>(date: RataDie) -> Self {
         let prev_solstice = winter_solstice_on_or_before::<C>(date);
-        let (new_year, next_solstice, drift_delta) =
-            new_year_on_or_before_fixed_date::<C>(date, prev_solstice);
+        let (new_year, next_solstice) = new_year_on_or_before_fixed_date::<C>(date, prev_solstice);
         // Using 400 here since new years can be up to 390 days apart, and we add some padding
         let next_new_year = new_year_on_or_before_fixed_date::<C>(new_year + 400, next_solstice).0;
 
         Self {
             new_year,
             next_new_year,
-            drift_delta,
         }
     }
 
@@ -221,11 +207,7 @@ impl YearBounds {
 ///
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
-pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(
-    date: RataDie,
-    drift_delta: DriftDelta,
-) -> u32 {
-    let date = date - drift_delta.0;
+pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32 {
     let moment: Moment = date.as_moment();
     let location = C::location(date);
     let universal: Moment = Location::universal_from_standard(moment, location);
@@ -274,78 +256,40 @@ pub(crate) fn midnight<C: ChineseBased>(moment: Moment) -> Moment {
 ///
 /// Calls to `no_major_solar_term` have been inlined for increased efficiency.
 ///
-/// The return values are:
-///
-/// - The calculated lunar new year
-/// - The date of the following solstice
-/// - The number of days between `prior_solstice` and December 20 if `prior_solstice` is too early
-///
-/// The third argument, called `drift_delta`, must be subtracted from dates when checking their
-/// major solar term.
-///
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5370-L5394
-pub(crate) fn new_year_in_sui<C: ChineseBased>(
-    prior_solstice: RataDie,
-) -> (RataDie, RataDie, DriftDelta) {
+pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (RataDie, RataDie) {
     // s1 is prior_solstice
     // Using 370 here since solstices are ~365 days apart
-    // Both solstices should fall in December, and the first solstice MUST fall on
-    // December 20, 21, or 22. It doesn't seem to change the outcome if the following
-    // solstice is out of range.
-    let (prior_solstice, drift_delta) = {
-        let adjusted = bind_winter_solstice::<C>(prior_solstice);
-        (adjusted, DriftDelta(adjusted - prior_solstice))
-    };
+    // Both solstices should fall in December
     let following_solstice = winter_solstice_on_or_before::<C>(prior_solstice + 370); // s2
+    debug_assert_eq!(
+        crate::iso::iso_from_fixed(prior_solstice).unwrap().1,
+        12,
+        "Winter solstice not in December! {prior_solstice:?}"
+    );
+    debug_assert_eq!(
+        crate::iso::iso_from_fixed(following_solstice).unwrap().1,
+        12,
+        "Winter solstice not in December! {following_solstice:?}"
+    );
     let month_after_eleventh = new_moon_on_or_after::<C>((prior_solstice + 1).as_moment()); // m12
-    debug_assert!(month_after_eleventh - prior_solstice >= 0);
     let month_after_twelfth = new_moon_on_or_after::<C>((month_after_eleventh + 1).as_moment()); // m13
     let month_after_thirteenth = new_moon_on_or_after::<C>((month_after_twelfth + 1).as_moment());
-    debug_assert!(month_after_twelfth - month_after_eleventh >= 29);
     let next_eleventh_month = new_moon_before::<C>((following_solstice + 1).as_moment()); // next-m11
     let lhs_argument =
         ((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH).round() as i64;
-    let solar_term_a = major_solar_term_from_fixed::<C>(month_after_eleventh, drift_delta);
-    let solar_term_b = major_solar_term_from_fixed::<C>(month_after_twelfth, drift_delta);
-    let solar_term_c = major_solar_term_from_fixed::<C>(month_after_thirteenth, drift_delta);
+    let solar_term_a = major_solar_term_from_fixed::<C>(month_after_eleventh);
+    let solar_term_b = major_solar_term_from_fixed::<C>(month_after_twelfth);
+    let solar_term_c = major_solar_term_from_fixed::<C>(month_after_thirteenth);
     if lhs_argument == 12 && (solar_term_a == solar_term_b || solar_term_b == solar_term_c) {
-        (month_after_thirteenth, following_solstice, drift_delta)
+        (month_after_thirteenth, following_solstice)
     } else {
-        (month_after_twelfth, following_solstice, drift_delta)
+        (month_after_twelfth, following_solstice)
     }
 }
 
-/// This function forces the RataDie to be on December 20, 21, or 22. It was
-/// created for practical considerations and is not in the text.
-///
-/// See: <https://github.com/unicode-org/icu4x/pull/4904>
-fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
-    let (iso_year, iso_month, iso_day) = match iso_from_fixed(solstice) {
-        Ok(ymd) => ymd,
-        Err(_) => {
-            debug_assert!(false, "Solstice REALLY out of bounds: {solstice:?}");
-            return solstice;
-        }
-    };
-    if iso_month < 12 || iso_day < 20 {
-        #[cfg(feature = "logging")]
-        log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
-        fixed_from_iso(iso_year, 12, 20)
-    } else if iso_day > 22 {
-        #[cfg(feature = "logging")]
-        log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
-        fixed_from_iso(iso_year, 12, 22)
-    } else {
-        solstice
-    }
-}
-
-/// Get the fixed date of the nearest winter solstice, in the Chinese time zone,
-/// on or before a given fixed date.
-///
-/// This is valid for several thousand years, but it drifts for large positive
-/// and negative years. See [`bind_winter_solstice`].
+/// Get the moment of the nearest winter solstice on or before a given fixed date
 ///
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5359-L5368
@@ -374,7 +318,6 @@ pub(crate) fn winter_solstice_on_or_before<C: ChineseBased>(date: RataDie) -> Ra
 
 /// Get the fixed date of the nearest Lunar New Year on or before a given fixed date.
 /// This function also returns the solstice following a given date for optimization (see #3743).
-/// The third return value is the drift delta; see [`new_year_in_sui`].
 ///
 /// To call this function you must precompute the value of the prior solstice, which
 /// is the result of winter_solstice_on_or_before
@@ -384,7 +327,7 @@ pub(crate) fn winter_solstice_on_or_before<C: ChineseBased>(date: RataDie) -> Ra
 pub(crate) fn new_year_on_or_before_fixed_date<C: ChineseBased>(
     date: RataDie,
     prior_solstice: RataDie,
-) -> (RataDie, RataDie, DriftDelta) {
+) -> (RataDie, RataDie) {
     let new_year = new_year_in_sui::<C>(prior_solstice);
     if date >= new_year.0 {
         new_year
@@ -485,10 +428,7 @@ pub fn chinese_based_date_from_fixed<C: ChineseBased>(date: RataDie) -> ChineseF
     let leap_month = if year_bounds.is_leap() {
         // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
         // will always return a number greater than or equal to 1, and less than 14.
-        NonZeroU8::new(get_leap_month_from_new_year::<C>(
-            first_day_of_year,
-            year_bounds.drift_delta,
-        ))
+        NonZeroU8::new(get_leap_month_from_new_year::<C>(first_day_of_year))
     } else {
         None
     };
@@ -512,16 +452,13 @@ pub fn chinese_based_date_from_fixed<C: ChineseBased>(date: RataDie) -> ChineseF
 ///
 /// Conceptually similar to code from _Calendrical Calculations_ by Reingold & Dershowitz
 /// Lisp reference code: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5443-L5450>
-pub fn get_leap_month_from_new_year<C: ChineseBased>(
-    new_year: RataDie,
-    drift_delta: DriftDelta,
-) -> u8 {
+pub fn get_leap_month_from_new_year<C: ChineseBased>(new_year: RataDie) -> u8 {
     let mut cur = new_year;
     let mut result = 1;
-    let mut solar_term = major_solar_term_from_fixed::<C>(cur, drift_delta);
+    let mut solar_term = major_solar_term_from_fixed::<C>(cur);
     loop {
         let next = new_moon_on_or_after::<C>((cur + 1).as_moment());
-        let next_solar_term = major_solar_term_from_fixed::<C>(next, drift_delta);
+        let next_solar_term = major_solar_term_from_fixed::<C>(next);
         if result >= MAX_ITERS_FOR_MONTHS_OF_YEAR || solar_term == next_solar_term {
             break;
         }
@@ -566,7 +503,7 @@ pub fn days_in_month<C: ChineseBased>(
 pub fn days_in_prev_year<C: ChineseBased>(new_year: RataDie) -> u16 {
     let date = new_year - 300;
     let prev_solstice = winter_solstice_on_or_before::<C>(date);
-    let (prev_new_year, _, _) = new_year_on_or_before_fixed_date::<C>(date, prev_solstice);
+    let (prev_new_year, _) = new_year_on_or_before_fixed_date::<C>(date, prev_solstice);
     u16::try_from(new_year - prev_new_year).unwrap_or(360)
 }
 
@@ -576,18 +513,15 @@ pub fn days_in_prev_year<C: ChineseBased>(new_year: RataDie) -> u16 {
 pub fn month_structure_for_year<C: ChineseBased>(
     new_year: RataDie,
     next_new_year: RataDie,
-    drift_delta: DriftDelta,
 ) -> ([bool; 13], Option<NonZeroU8>) {
     let mut ret = [false; 13];
 
     let mut current_month_start = new_year;
-    let mut current_month_major_solar_term =
-        major_solar_term_from_fixed::<C>(new_year, drift_delta);
+    let mut current_month_major_solar_term = major_solar_term_from_fixed::<C>(new_year);
     let mut leap_month_index = None;
     for i in 0u8..12 {
         let next_month_start = new_moon_on_or_after::<C>((current_month_start + 28).as_moment());
-        let next_month_major_solar_term =
-            major_solar_term_from_fixed::<C>(next_month_start, drift_delta);
+        let next_month_major_solar_term = major_solar_term_from_fixed::<C>(next_month_start);
 
         if next_month_major_solar_term == current_month_major_solar_term {
             leap_month_index = NonZeroU8::new(i + 1);
@@ -625,8 +559,7 @@ pub fn month_structure_for_year<C: ChineseBased>(
     if current_month_start != next_new_year && leap_month_index.is_none() {
         leap_month_index = NonZeroU8::new(13); // The last month is a leap month
         debug_assert!(
-            major_solar_term_from_fixed::<C>(current_month_start, drift_delta)
-                == current_month_major_solar_term,
+            major_solar_term_from_fixed::<C>(current_month_start) == current_month_major_solar_term,
             "A leap month is required here, but it had a major solar term!"
         );
     }
@@ -685,7 +618,6 @@ mod test {
             let (month_lengths, leap) = month_structure_for_year::<Chinese>(
                 chinese_year.year_bounds.new_year,
                 chinese_year.year_bounds.next_new_year,
-                DriftDelta(0),
             );
 
             for (i, month_is_30) in month_lengths.into_iter().enumerate() {

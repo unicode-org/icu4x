@@ -445,7 +445,7 @@ mod test {
 
     use super::*;
     use crate::types::MonthCode;
-    use calendrical_calculations::{chinese_based::DriftDelta, iso::fixed_from_iso, rata_die::RataDie};
+    use calendrical_calculations::{iso::fixed_from_iso, rata_die::RataDie};
     /// Run a test twice, with two calendars
     fn do_twice(
         chinese_calculating: &Chinese,
@@ -630,8 +630,6 @@ mod test {
 
     #[test]
     fn test_fixed_chinese_roundtrip() {
-        #[cfg(feature = "logging")]
-        let _ = simple_logger::SimpleLogger::new().env().init();
         let mut fixed = -1963020;
         let max_fixed = 1963020;
         let mut iters = 0;
@@ -770,7 +768,7 @@ mod test {
                         expected_month,
                         calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
                             calendrical_calculations::chinese_based::Chinese,
-                        >(new_year, DriftDelta(0)),
+                        >(new_year),
                         "[{calendar_type}] {year} have leap month {expected_month}"
                     );
                 },
