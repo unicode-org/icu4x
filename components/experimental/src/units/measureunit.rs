@@ -159,8 +159,8 @@ impl<'data> MeasureUnitParser<'data> {
                 return (haystack, &[]);
             }
 
-            let mut pos = 0;
-            while pos < (haystack.len() - needle.len() + 1) {
+            let (mut pos, max_pos) = (0, haystack.len() - needle.len());
+            while pos <= max_pos {
                 let match_len = longest_match(haystack, needle, pos);
                 if match_len == needle.len() {
                     let (before, after) = haystack.split_at(pos);
