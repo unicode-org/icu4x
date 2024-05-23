@@ -7,8 +7,8 @@
 extern crate alloc;
 
 use alloc::borrow::Cow;
-use icu_pattern::{Pattern, SinglePlaceholder};
 use core::str::FromStr;
+use icu_pattern::{Pattern, SinglePlaceholder};
 
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
