@@ -306,7 +306,6 @@ impl NeoDayComponents {
         Self::AutoWeekday,
     ];
 
-    // Note:
     const DAY_STR: TinyAsciiStr<8> = tinystr!(8, "d");
     const MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "m0d");
     const YEAR_MONTH_DAY_STR: TinyAsciiStr<8> = tinystr!(8, "ym0d");
