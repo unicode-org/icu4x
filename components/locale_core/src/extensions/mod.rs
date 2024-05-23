@@ -52,9 +52,9 @@ pub mod unicode;
 use core::cmp::Ordering;
 
 use other::Other;
-use private::Private;
-use transform::Transform;
-use unicode::Unicode;
+use private::{Private, PRIVATE_EXT_CHAR};
+use transform::{Transform, TRANSFORM_EXT_CHAR};
+use unicode::{Unicode, UNICODE_EXT_CHAR};
 
 use alloc::vec::Vec;
 
@@ -77,13 +77,21 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
+    pub(crate) const fn try_from_byte_slice(key: &[u8]) -> Result<Self, ParserError> {
+        if let [b] = key {
+            Self::try_from_byte(*b)
+        } else {
+            Err(ParserError::InvalidExtension)
+        }
+    }
+
     pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
-        match key {
-            b'u' => Ok(Self::Unicode),
-            b't' => Ok(Self::Transform),
-            b'x' => Ok(Self::Private),
-            b'a'..=b'z' => Ok(Self::Other(key)),
+        match key as char {
+            UNICODE_EXT_CHAR => Ok(Self::Unicode),
+            TRANSFORM_EXT_CHAR => Ok(Self::Transform),
+            PRIVATE_EXT_CHAR => Ok(Self::Private),
+            'a'..='z' => Ok(Self::Other(key)),
             _ => Err(ParserError::InvalidExtension),
         }
     }
@@ -301,27 +309,27 @@ impl Extensions {
         let mut wrote_tu = false;
         // Alphabetic by singleton
         self.other.iter().try_for_each(|other| {
-            if other.get_ext() > 't' && !wrote_tu {
+            if other.get_ext() > TRANSFORM_EXT_CHAR && !wrote_tu {
                 // Since 't' and 'u' are next to each other in alphabetical
                 // order, write both now.
-                self.transform.for_each_subtag_str(f)?;
-                self.unicode.for_each_subtag_str(f)?;
+                self.transform.for_each_subtag_str(f, true)?;
+                self.unicode.for_each_subtag_str(f, true)?;
                 wrote_tu = true;
             }
-            other.for_each_subtag_str(f)?;
+            other.for_each_subtag_str(f, true)?;
             Ok(())
         })?;
 
         if !wrote_tu {
-            self.transform.for_each_subtag_str(f)?;
-            self.unicode.for_each_subtag_str(f)?;
+            self.transform.for_each_subtag_str(f, true)?;
+            self.unicode.for_each_subtag_str(f, true)?;
         }
 
         // Private must be written last, since it allows single character
         // keys. Extensions must also be written in alphabetical order,
         // which would seem to imply that other extensions `y` and `z` are
         // invalid, but this is not specified.
-        self.private.for_each_subtag_str(f)?;
+        self.private.for_each_subtag_str(f, true)?;
         Ok(())
     }
 }

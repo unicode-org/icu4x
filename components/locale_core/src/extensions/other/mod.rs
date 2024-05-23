@@ -19,6 +19,9 @@
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
 
+use core::str::FromStr;
+
+use super::ExtensionType;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
@@ -80,8 +83,22 @@ impl Other {
         Self { ext, keys }
     }
 
+    pub(crate) fn try_from_bytes(t: &[u8]) -> Result<Self, ParserError> {
+        let mut iter = SubtagIterator::new(t);
+
+        let ext = iter.next().ok_or(ParserError::InvalidExtension)?;
+        if let ExtensionType::Other(b) = ExtensionType::try_from_byte_slice(ext)? {
+            return Self::try_from_iter(b, &mut iter);
+        }
+
+        Err(ParserError::InvalidExtension)
+    }
+
     pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParserError> {
-        debug_assert!(ext.is_ascii_alphabetic());
+        debug_assert!(matches!(
+            ExtensionType::try_from_byte(ext),
+            Ok(ExtensionType::Other(_)),
+        ));
 
         let mut keys = ShortBoxSlice::new();
         while let Some(subtag) = iter.peek() {
@@ -143,12 +160,26 @@ impl Other {
         self.ext
     }
 
-    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F, with_ext: bool) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        f(self.get_ext_str())?;
+        if self.keys.is_empty() {
+            return Ok(());
+        }
+
+        if with_ext {
+            f(self.get_ext_str())?;
+        }
         self.keys.iter().map(|t| t.as_str()).try_for_each(f)
+    }
+}
+
+impl FromStr for Other {
+    type Err = ParserError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -181,5 +212,16 @@ impl writeable::Writeable for Other {
             alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
         let _ = self.write_to(&mut string);
         alloc::borrow::Cow::Owned(string)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_other_extension_fromstr() {
+        let pe: Other = "o-foo-bar".parse().expect("Failed to parse Other");
+        assert_eq!(pe.to_string(), "o-foo-bar");
     }
 }
