@@ -22,6 +22,9 @@
    - `icu_casemap@1.4.1`, `icu_properties@1.4.3`
    - A full fix also needs `zerovec@0.10.3`,`zerovec_derive@0.10.3`
 
+ - Upgrade `icu_compactdecimal` to use `u8` for compact exponent (https://github.com/unicode-org/icu4x/pull/4828)
+   - `icu_compactdecimal@0.2.4`
+
 
 ## icu4x 1.4 (Nov 16, 2023)
 

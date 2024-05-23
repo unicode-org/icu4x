@@ -6,7 +6,7 @@ use core::isize;
 use core::num::ParseIntError;
 use core::str::FromStr;
 use displaydoc::Display;
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::{CompactDecimal, FixedDecimal};
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
@@ -235,25 +235,25 @@ macro_rules! impl_signed_integer_type {
 impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
-impl From<&FixedDecimal> for PluralOperands {
-    /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
-    /// digits each from the integer and fraction parts.
-    fn from(dec: &FixedDecimal) -> Self {
+impl PluralOperands {
+    fn from_significand_and_exponent(dec: &FixedDecimal, exp: u8) -> PluralOperands {
+        let exp_i16 = i16::from(exp);
+
         let mag_range = dec.magnitude_range();
-        let mag_high = core::cmp::min(17, *mag_range.end());
-        let mag_low = core::cmp::max(-18, *mag_range.start());
+        let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
+        let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
             i *= 10;
-            i += dec.digit_at(magnitude) as u64;
+            i += dec.digit_at(magnitude - exp_i16) as u64;
         }
 
         let mut f: u64 = 0;
         let mut t: u64 = 0;
         let mut w: usize = 0;
         for magnitude in (mag_low..=-1).rev() {
-            let digit = dec.digit_at(magnitude) as u64;
+            let digit = dec.digit_at(magnitude - exp_i16) as u64;
             f *= 10;
             f += digit;
             if digit != 0 {
@@ -268,7 +268,66 @@ impl From<&FixedDecimal> for PluralOperands {
             w,
             f,
             t,
-            c: 0,
+            c: usize::from(exp),
         }
+    }
+}
+
+impl From<&FixedDecimal> for PluralOperands {
+    /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
+    /// digits each from the integer and fraction parts.
+    fn from(dec: &FixedDecimal) -> Self {
+        Self::from_significand_and_exponent(dec, 0)
+    }
+}
+
+impl From<&CompactDecimal> for PluralOperands {
+    /// Converts a [`fixed_decimal::CompactDecimal`] to [`PluralOperands`]. Retains at most 18
+    /// digits each from the integer and fraction parts.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::CompactDecimal;
+    /// use fixed_decimal::FixedDecimal;
+    /// use icu::locid::locale;
+    /// use icu::plurals::rules::RawPluralOperands;
+    /// use icu::plurals::PluralCategory;
+    /// use icu::plurals::PluralOperands;
+    /// use icu::plurals::PluralRules;
+    ///
+    /// let fixed_decimal = "1000000.20".parse::<FixedDecimal>().unwrap();
+    /// let compact_decimal = "1.00000020c6".parse::<CompactDecimal>().unwrap();
+    ///
+    /// assert_eq!(
+    ///     PluralOperands::from(RawPluralOperands {
+    ///         i: 1000000,
+    ///         v: 2,
+    ///         w: 1,
+    ///         f: 20,
+    ///         t: 2,
+    ///         c: 0,
+    ///     }),
+    ///     PluralOperands::from(&fixed_decimal)
+    /// );
+    ///
+    /// assert_eq!(
+    ///     PluralOperands::from(RawPluralOperands {
+    ///         i: 1000000,
+    ///         v: 2,
+    ///         w: 1,
+    ///         f: 20,
+    ///         t: 2,
+    ///         c: 6,
+    ///     }),
+    ///     PluralOperands::from(&compact_decimal)
+    /// );
+    ///
+    /// let rules = PluralRules::try_new_cardinal(&locale!("fr").into()).unwrap();
+    /// assert_eq!(rules.category_for(&fixed_decimal), PluralCategory::Other);
+    /// assert_eq!(rules.category_for(&compact_decimal), PluralCategory::Many);
+    /// ```
+    fn from(compact: &CompactDecimal) -> Self {
+        Self::from_significand_and_exponent(compact.significand(), compact.exponent())
     }
 }

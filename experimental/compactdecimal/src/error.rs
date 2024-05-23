@@ -32,9 +32,9 @@ pub enum CompactDecimalError {
     #[displaydoc("Expected compact exponent {expected} for 10^{log10_type}, got {actual}")]
     Exponent {
         /// The compact decimal exponent passed to the formatter.
-        actual: i16,
+        actual: u8,
         /// The appropriate compact decimal exponent for a number of the given magnitude.
-        expected: i16,
+        expected: u8,
         /// The magnitude of the number being formatted.
         log10_type: i16,
     },
