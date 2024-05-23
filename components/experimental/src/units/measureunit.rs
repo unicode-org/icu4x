@@ -90,16 +90,6 @@ impl<'data> MeasureUnitParser<'data> {
         let mut identifier_part = identifier_part;
         let mut sign = 1;
         while !identifier_part.is_empty() {
-            if identifier_part.starts_with(b"per-") {
-                if sign < 1 {
-                    println!("sing {:?}", sign);
-                    return Err(ConversionError::InvalidUnit);
-                }
-                sign = -1;
-                identifier_part = &identifier_part[4..];
-                continue;
-            }
-
             // First: extract the power.
             let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
 
@@ -118,7 +108,21 @@ impl<'data> MeasureUnitParser<'data> {
                         let (si_prefix, identifier_part_without_si_prefix) =
                             self.get_si_prefix(identifier_part_without_power);
                         let (unit_id, identifier_part_without_unit_id) =
-                            self.get_unit_id(identifier_part_without_si_prefix)?;
+                            match self.get_unit_id(identifier_part_without_si_prefix) {
+                                Ok((unit_id, identifier_part_without_unit_id)) => {
+                                    (unit_id, identifier_part_without_unit_id)
+                                }
+                                Err(_) if identifier_part.starts_with(b"per-") => {
+                                    if sign < 1 {
+                                        println!("sign {:?}", sign);
+                                        return Err(ConversionError::InvalidUnit);
+                                    }
+                                    sign = -1;
+                                    identifier_part = &identifier_part[4..];
+                                    continue;
+                                }
+                                Err(_) => return Err(ConversionError::InvalidUnit),
+                            };
                         (si_prefix, unit_id, identifier_part_without_unit_id)
                     }
                 };
