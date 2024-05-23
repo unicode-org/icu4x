@@ -315,7 +315,11 @@ fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
             #[cfg(feature = "logging")]
             log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
         } else {
-            debug_assert!(false, "({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
+            debug_assert!(
+                false,
+                "({}) Solstice out of bounds: {solstice:?}",
+                C::DEBUG_NAME
+            );
         }
     }
     resolved_solstice
