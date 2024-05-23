@@ -8,11 +8,8 @@ use crate::provider::IterableDataProviderInternal;
 use either::Either;
 use icu_datetime::provider::calendar::*;
 use icu_locid::extensions::unicode::Value;
+use icu_locid::extensions::unicode::{key, value};
 use icu_locid::LanguageIdentifier;
-use icu_locid::{
-    extensions::unicode::{key, value},
-    Locale,
-};
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
