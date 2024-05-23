@@ -4,6 +4,8 @@
 
 //! The parser module contains the implementation details for `IXDTFParser` and `ISODurationParser`
 
+use core::ops::RangeInclusive;
+
 use crate::{ParserError, ParserResult};
 
 #[cfg(feature = "duration")]
@@ -270,7 +272,7 @@ impl<'a> IsoDurationParser<'a> {
     /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
     /// let date_duration = "P1Y2M3W1D";
     ///
-    /// let result = IsoDurationParser::new(date_duration).parse().unwrap();
+    /// let result = IsoDurationParser::new(date_duration.as_bytes()).parse().unwrap();
     ///
     /// let date_duration = result.date.unwrap();
     ///
@@ -288,7 +290,7 @@ impl<'a> IsoDurationParser<'a> {
     /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
     /// let time_duration = "PT2H10M30S";
     ///
-    /// let result = IsoDurationParser::new(time_duration).parse().unwrap();
+    /// let result = IsoDurationParser::new(time_duration.as_bytes()).parse().unwrap();
     ///
     /// let (hours, minutes, seconds, fraction) = match result.time {
     ///     // Hours variant is defined as { hours: u32, fraction: u64 }
@@ -329,7 +331,7 @@ impl<'a> Cursor<'a> {
 
     /// Returns a string value from a slice of the cursor.
     fn slice(&self, start: usize, end: usize) -> Option<&'a str> {
-        // Safety: grammar tests enforce that the &[u8] is a valid well-formed utf-8 byte sequence.
+        // Safety: grammar tests and decoding enforce that the &[u8] is a valid well-formed utf-8 byte sequence.
         unsafe { core::mem::transmute(self.source.get(start..end)) }
     }
 
@@ -350,16 +352,22 @@ impl<'a> Cursor<'a> {
 
     /// Peeks the value at `n` as a `char`.
     fn peek_n(&self, n: usize) -> ParserResult<Option<char>> {
+        let (char, _) = self.peek_with_info(n)?;
+        Ok(char)
+    }
+
+    /// Peeks the value at `n` and returns the char with its byte length.
+    fn peek_with_info(&self, n: usize) -> ParserResult<(Option<char>, usize)> {
         let mut index = self.pos;
         for _ in 0..n {
             index += get_utf8_offset(self.source.get(index))?;
         }
         let offset = get_utf8_offset(self.source.get(index))?;
         let Some(bytes) = self.source.get(index..index + offset) else {
-            return Ok(None);
+            return Ok((None, 0));
         };
 
-        decode_utf8_bytes(bytes).map(Some)
+        decode_utf8_bytes(bytes).map(|x| (Some(x), offset))
     }
 
     /// Runs the provided check on the current position.
@@ -380,10 +388,10 @@ impl<'a> Cursor<'a> {
 
     /// Returns `Cursor`'s current char and advances to the next position.
     fn next(&mut self) -> ParserResult<Option<char>> {
-        let Some(result) = self.current()? else {
+        let (Some(result), byte_count) = self.peek_with_info(0)? else {
             return Ok(None);
         };
-        self.advance_n(get_char_bytes(result)?);
+        self.advance_n(byte_count);
         Ok(Some(result))
     }
 
@@ -435,36 +443,46 @@ impl<'a> Cursor<'a> {
 
 /// Decodes a `&[u8]` into a UTF8 character.
 #[inline]
-fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
+pub(super) fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
     let code_point = match bytes.len() {
         1 => return Ok(char::from(*bytes.first().ok_or(ParserError::ImplAssert)?)),
         2 => {
             let code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
-            concatenate_continuation_byte(code_point, bytes.get(1))?
+            concatenate_continuation_byte(code_point, bytes.get(1), 0x80..=0xBF)?
         }
         3 => {
-            let mut code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
-            code_point = concatenate_continuation_byte(code_point, bytes.get(1))?;
-            concatenate_continuation_byte(code_point, bytes.get(2))?
+            let byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
+            let lower: u8 = if byte == 0xE0 { 0xA0 } else { 0x80 };
+            let upper: u8 = if byte == 0xEF { 0x80 } else { 0x9F };
+            let mut code_point = u32::from(byte & 0xF);
+            code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
+            concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?
         }
         4 => {
-            let mut code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
-            code_point = concatenate_continuation_byte(code_point, bytes.get(1))?;
-            code_point = concatenate_continuation_byte(code_point, bytes.get(2))?;
-            concatenate_continuation_byte(code_point, bytes.get(3))?
+            let byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
+            let lower: u8 = if byte == 0xF0 { 0x90 } else { 0x80 };
+            let upper: u8 = if byte == 0xF4 { 0x8F } else { 0xBF };
+            let mut code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x7);
+            code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
+            code_point = concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?;
+            concatenate_continuation_byte(code_point, bytes.get(3), 0x80..=0xBF)?
         }
         _ => return Err(ParserError::ImplAssert),
     };
 
-    // Safety: Codepoint should be guaranteed above.
+    // Safety: Codepoint is guaranteed correct by the above decoding.
     Ok(unsafe { char::from_u32_unchecked(code_point) })
 }
 
 /// Checks for continuation byte and appends the byte to the current code point if valid.
 #[inline]
-fn concatenate_continuation_byte(codepoint: u32, byte: Option<&u8>) -> ParserResult<u32> {
+fn concatenate_continuation_byte(
+    codepoint: u32,
+    byte: Option<&u8>,
+    range: RangeInclusive<u8>,
+) -> ParserResult<u32> {
     match byte {
-        Some(b) if (0x80..=0xBF).contains(b) => Ok((codepoint << 6) | u32::from(*b & 0x3F)),
+        Some(b) if range.contains(b) => Ok((codepoint << 6) | u32::from(*b & 0x3F)),
         _ => Err(ParserError::Utf8Encoding),
     }
 }
@@ -481,11 +499,4 @@ fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<usize> {
         Some(_) => Err(ParserError::Utf8Encoding),
         None => Ok(1),
     }
-}
-
-#[inline]
-fn get_char_bytes(char: char) -> ParserResult<usize> {
-    let mut bytes: [u8; 4] = [0; 4];
-    char.encode_utf8(bytes.as_mut_slice());
-    get_utf8_offset(bytes.first())
 }

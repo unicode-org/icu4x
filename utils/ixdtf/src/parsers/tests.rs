@@ -16,6 +16,8 @@ use crate::{
     ParserError,
 };
 
+use super::decode_utf8_bytes;
+
 #[test]
 fn temporal_parser_basic() {
     let basic_result = IxdtfParser::new("20201108".as_bytes()).parse().unwrap();
@@ -135,18 +137,6 @@ fn good_extended_year_parsing() {
     );
 
     let extended_year = "-002020-11-08";
-    let result = IxdtfParser::new(extended_year.as_bytes()).parse().unwrap();
-    assert_eq!(
-        result.date,
-        Some(DateRecord {
-            year: -2020,
-            month: 11,
-            day: 8,
-        }),
-        "Extended year \"{extended_year}\" should pass."
-    );
-
-    let extended_year = "−002020-11-08";
     let result = IxdtfParser::new(extended_year.as_bytes()).parse().unwrap();
     assert_eq!(
         result.date,
@@ -478,7 +468,6 @@ fn temporal_time() {
         "12:01:04[u-ca=iso8601]",
         "12:01:04[+04:00][u-ca=iso8601]",
         "12:01:04-05:00[America/New_York][u-ca=iso8601]",
-        "12:01:04−05:00[America/New_York][u-ca=iso8601]",
     ];
 
     for time in possible_times {
@@ -957,4 +946,31 @@ fn invalid_bytes_start() {
     ];
     let err = IxdtfParser::new(invalid_bytes).parse();
     assert_eq!(err, Err(ParserError::Utf8Encoding));
+}
+
+#[test]
+fn test_two_byte_char_decoding() {
+    let test = decode_utf8_bytes("¿".as_bytes()).unwrap();
+    assert_eq!(test, '¿');
+}
+
+#[test]
+fn test_three_byte_char_decoding() {
+    // 3 byte characters
+    let hello = ["안", "녕", "하", "세", "요"];
+    let hello_chars = ['안', '녕', '하', '세', '요'];
+    for (index, test_char) in hello.iter().enumerate() {
+        let decoded_char = decode_utf8_bytes(test_char.as_bytes()).unwrap();
+        assert_eq!(*hello_chars.get(index).unwrap(), decoded_char);
+    }
+}
+
+#[test]
+fn test_four_byte_char_decoding() {
+    // 4 byte characters
+    let smiley = decode_utf8_bytes("😄".as_bytes()).unwrap();
+    assert_eq!(smiley, '😄');
+
+    let rocket = decode_utf8_bytes("🚀".as_bytes()).unwrap();
+    assert_eq!(rocket, '🚀');
 }

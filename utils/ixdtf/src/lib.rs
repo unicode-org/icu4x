@@ -282,7 +282,7 @@
 //! [rfc3339]: https://datatracker.ietf.org/doc/html/rfc3339
 //! [temporal-grammar]: https://tc39.es/proposal-temporal/#sec-temporal-iso8601grammar
 
-#![no_std]
+// #![no_std]
 #![cfg_attr(
     not(test),
     deny(
