@@ -1056,14 +1056,12 @@ fn select_locales_for_key(
     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
     // The "candidate" langids that could be exported is the union of requested and supported.
-    let all_candidate_langids = HashSet::<_>::from_iter(
-        supported_map.keys().chain(requested_families.keys()),
-    );
+    let all_candidate_langids =
+        HashSet::<_>::from_iter(supported_map.keys().chain(requested_families.keys()));
 
     // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
     // and extensions. Also resolve the ancestors and descendants while building this map.
-    let mut selected_langids =
-        HashSet::<_>::from_iter(requested_families.keys().cloned());
+    let mut selected_langids = HashSet::<_>::from_iter(requested_families.keys().cloned());
     let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataLocale>> = all_candidate_langids
         .into_iter()
         .map(|current_langid| {
@@ -1306,9 +1304,7 @@ fn test_collation_filtering() {
                 &LocalesWithOrWithoutFallback::WithoutFallback {
                     langids: [cas.language.clone()].into_iter().collect(),
                 },
-                &HashSet::<_>::from_iter(
-                    cas.include_collations.iter().copied().map(String::from),
-                ),
+                &HashSet::<_>::from_iter(cas.include_collations.iter().copied().map(String::from)),
                 &[],
                 &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
             )

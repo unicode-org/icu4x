@@ -261,7 +261,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///     ("afg".to_string(), 44),
     /// ];
     ///
-    /// let trie = ZeroTrieSimpleAscii<Vec<u8>>::from_iter(
+    /// let trie = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
     ///     data.iter().map(|(s, v)| (s.as_str(), *v)));
     ///
     /// let mut cursor = trie.cursor();

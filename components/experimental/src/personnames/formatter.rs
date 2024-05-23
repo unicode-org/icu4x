@@ -151,7 +151,9 @@ impl PersonNamesFormatter {
             .format_person_name(person_name, initial_pattern, initial_sequence_pattern)
             .split_whitespace()
             .fold(String::new(), |mut acc, s| {
-                acc.push_str(space_replacement);
+                if !acc.is_empty() {
+                    acc.push_str(space_replacement);
+                }
                 acc.push_str(s);
                 acc
             }))

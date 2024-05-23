@@ -42,36 +42,40 @@ impl fmt::Display for RustLinkInfo {
 
 fn main() {
     let out_path = std::env::args().nth(1);
-    let doc_types = BTreeSet::from_iter(["icu", "fixed_decimal", "icu_provider_adapters"]
-        .into_iter()
-        .flat_map(collect_public_types)
-        .map(|(path_vec, typ)| {
-            let mut path = ast::Path::empty();
-            path.elements = path_vec.into_iter().map(ast::Ident::from).collect();
-            RustLinkInfo { path, typ }
-        })
-        .filter(|rl| {
-            ![
-                ast::DocType::EnumVariant,
-                ast::DocType::Mod,
-                ast::DocType::Trait,
-            ]
-            .contains(&rl.typ)
-        }));
+    let doc_types = BTreeSet::from_iter(
+        ["icu", "fixed_decimal", "icu_provider_adapters"]
+            .into_iter()
+            .flat_map(collect_public_types)
+            .map(|(path_vec, typ)| {
+                let mut path = ast::Path::empty();
+                path.elements = path_vec.into_iter().map(ast::Ident::from).collect();
+                RustLinkInfo { path, typ }
+            })
+            .filter(|rl| {
+                ![
+                    ast::DocType::EnumVariant,
+                    ast::DocType::Mod,
+                    ast::DocType::Trait,
+                ]
+                .contains(&rl.typ)
+            }),
+    );
 
     let capi_crate = PathBuf::from(concat!(
         std::env!("CARGO_MANIFEST_DIR"),
         "/../../ffi/capi/src/lib.rs"
     ));
     eprintln!("Loading icu_capi crate from {capi_crate:?}");
-    let capi_types = BTreeSet::from_iter(ast::File::from(&syn_inline_mod::parse_and_inline_modules(&capi_crate))
-        .all_rust_links()
-        .into_iter()
-        .cloned()
-        .map(|rl| RustLinkInfo {
-            path: rl.path,
-            typ: rl.typ,
-        }));
+    let capi_types = BTreeSet::from_iter(
+        ast::File::from(&syn_inline_mod::parse_and_inline_modules(&capi_crate))
+            .all_rust_links()
+            .into_iter()
+            .cloned()
+            .map(|rl| RustLinkInfo {
+                path: rl.path,
+                typ: rl.typ,
+            }),
+    );
 
     let mut file_anchor = None;
     let mut stdout_anchor = None;

@@ -27,8 +27,8 @@ use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 
 let lc = LocaleCanonicalizer::new();
 
-let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
-    .parse()
+let mut locale = "ja-Latn-fonipa-hepburn-heploc"
+    .parse::<Locale>()
     .expect("parse failed");
 assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
 assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());

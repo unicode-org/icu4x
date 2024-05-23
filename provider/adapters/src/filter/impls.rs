@@ -58,7 +58,7 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = HashSet::from_iter(provider
+    /// let supported_langids = Vec::from_iter(provider
     ///     .supported_locales()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()

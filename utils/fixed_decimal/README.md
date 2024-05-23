@@ -19,10 +19,10 @@ assert_eq!("2.50", format!("{}", dec));
 #[derive(Debug, PartialEq)]
 struct MagnitudeAndDigit(i16, u8);
 
-let digits: Vec<MagnitudeAndDigit> = dec
+let digits = Vec::from_iter(dec
     .magnitude_range()
     .map(|m| MagnitudeAndDigit(m, dec.digit_at(m)))
-    .collect();
+);
 
 assert_eq!(
     vec![

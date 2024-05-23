@@ -26,7 +26,7 @@ use icu::locid::locale;
 let locale_es = locale!("es-u-co-trad").into();
 let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
-let collator_es: Collator =
+let collator_es =
     Collator::try_new(&locale_es, options).unwrap();
 
 // "pollo" > "polvo" in traditional Spanish
@@ -35,7 +35,7 @@ assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
 let locale_en = locale!("en").into();
 let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
-let collator_en: Collator =
+let collator_en =
     Collator::try_new(&locale_en, options).unwrap();
 
 // "pollo" < "polvo" according to English rules
@@ -236,7 +236,7 @@ use icu::collator::*;
 
 let mut options_num_off = CollatorOptions::new();
 options_num_off.numeric = Some(Numeric::Off);
-let collator_num_off: Collator =
+let collator_num_off =
     Collator::try_new(&Default::default(), options_num_off).unwrap();
 assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
@@ -244,7 +244,7 @@ assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
 let mut options_num_on = CollatorOptions::new();
 options_num_on.numeric = Some(Numeric::On);
-let collator_num_on: Collator =
+let collator_num_on =
     Collator::try_new(&Default::default(), options_num_on).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```

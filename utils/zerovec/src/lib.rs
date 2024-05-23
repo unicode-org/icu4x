@@ -154,12 +154,12 @@
 //! let deserialized = bincode::deserialize::<Data>(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
 //!
-//! assert_eq!(deserialized.important_dates[0].y, 1943);
-//! assert_eq!(&deserialized.important_people[1].name, "Jesse");
-//! assert_eq!(&deserialized.important_people[0].name, "Kate");
+//! assert_eq!(deserialized.important_dates.get(0).unwrap().y, 1943);
+//! assert_eq!(&deserialized.important_people.get(1).unwrap().name, "Jesse");
+//! assert_eq!(&deserialized.important_people.get(0).unwrap().name, "Kate");
 //! assert_eq!(&deserialized.birthdays_to_people.get(&person1.birthday).unwrap().name, "Kate");
 //!
-//! } // feature = serde and derive
+//! # } // feature = serde and derive
 //! ```
 //!
 //! # Performance
@@ -392,7 +392,7 @@ pub mod vecs {
 /// let deserialized = bincode::deserialize::<Dates>(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
-/// assert_eq!(deserialized.dates[1].y, 1970);
+/// assert_eq!(deserialized.dates.get(1).unwrap().y, 1970);
 /// assert_eq!(deserialized.dates.get(2).unwrap().d, 13);
 /// ```
 #[cfg(feature = "derive")]
@@ -512,7 +512,7 @@ pub use zerovec_derive::make_ule;
 /// // Since VarZeroVec produces PersonULE types, it's convenient to use ZeroFrom
 /// // to recoup Person values in a zero-copy way
 /// let person_converted =
-///     Person::zero_from(deserialized.important_people[1]);
+///     Person::zero_from(&deserialized.important_people[1]);
 /// assert_eq!(person_converted.name, "Jesse");
 /// assert_eq!(person_converted.birthday.y, 1960);
 /// ```

@@ -157,7 +157,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let mut keywords = Keywords::from_iter(= [(key!("ca"), value!("buddhist"))]);
+    /// let mut keywords = Keywords::from_iter([(key!("ca"), value!("buddhist"))]);
     ///
     /// if let Some(value) = keywords.get_mut(&key!("ca")) {
     ///     *value = value!("gregory");
