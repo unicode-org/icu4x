@@ -64,6 +64,9 @@ impl<'data> MeasureUnitParser<'data> {
         }
     }
 
+    /// Get the SI prefix.
+    /// NOTE:
+    ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
     fn get_si_prefix<'a>(&'a self, part: &'a [u8]) -> (SiPrefix, &[u8]) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
@@ -82,12 +85,25 @@ impl<'data> MeasureUnitParser<'data> {
     fn analyze_identifier_part(
         &self,
         identifier_part: &[u8],
-        sign: i8,
         result: &mut Vec<MeasureUnitItem>,
     ) -> Result<(), ConversionError> {
         let mut identifier_part = identifier_part;
+        let mut sign = 1;
         while !identifier_part.is_empty() {
+            if identifier_part.starts_with(b"per-") {
+                if sign < 1 {
+                    println!("sing {:?}", sign);
+                    return Err(ConversionError::InvalidUnit);
+                }
+                sign = -1;
+                identifier_part = &identifier_part[4..];
+                continue;
+            }
+
+            // First: extract the power.
             let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
+
+            // Second: extract the si_prefix and the unit_id.
             let (si_prefix, unit_id, identifier_part_without_unit_id) =
                 match self.get_unit_id(identifier_part_without_power) {
                     Ok((unit_id, identifier_part_without_unit_id)) => (
@@ -135,50 +151,9 @@ impl<'data> MeasureUnitParser<'data> {
             return Err(ConversionError::InvalidUnit);
         }
 
-        /// Splits a byte slice (`haystack`) by another byte slice (`needle`).
-        /// Returns a tuple containing the part before the `needle` and the part after the `needle`.
-        ///
-        /// # Notes
-        /// - If `needle` is empty, returns the whole `haystack` and an empty slice.
-        /// - If `needle` is not found, returns the whole `haystack` and an empty slice.
-        fn split_once<'a>(haystack: &'a [u8], needle: &[u8]) -> (&'a [u8], &'a [u8]) {
-            /// Finds the longest match of the needle in the haystack starting from the given position.
-            fn longest_match(haystack: &[u8], needle: &[u8], pos: usize) -> usize {
-                if pos + needle.len() > haystack.len() {
-                    return 0;
-                }
-
-                haystack[pos..pos + needle.len()]
-                    .iter()
-                    .zip(needle)
-                    .take_while(|(h, n)| h == n)
-                    .count()
-            }
-
-            if needle.is_empty() || needle.len() > haystack.len() {
-                return (haystack, &[]);
-            }
-
-            let (mut pos, max_pos) = (0, haystack.len() - needle.len());
-            while pos <= max_pos {
-                let match_len = longest_match(haystack, needle, pos);
-                if match_len == needle.len() {
-                    let (before, after) = haystack.split_at(pos);
-                    return (before, &after[needle.len()..]);
-                }
-                pos += match_len.max(1); // Ensure progress even if match_len is 0
-            }
-
-            (haystack, &[])
-        }
-
-        let (num_part, den_part) = split_once(identifier, b"per-");
-        let num_part = num_part.strip_suffix(b"-").unwrap_or(num_part);
-
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
 
-        self.analyze_identifier_part(num_part, 1, &mut measure_unit_items)?;
-        self.analyze_identifier_part(den_part, -1, &mut measure_unit_items)?;
+        self.analyze_identifier_part(identifier, &mut measure_unit_items)?;
         Ok(MeasureUnit {
             contained_units: measure_unit_items.into(),
         })
