@@ -49,7 +49,7 @@ pub trait IslamicBasedMarker {
             355 | 354 => (),
             353 if Self::HAS_353_DAY_YEARS => {
                 #[cfg(feature = "logging")]
-                log::warn!(
+                log::trace!(
                     "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
                     Self::DEBUG_NAME,
                     next_ny - ny
@@ -80,7 +80,7 @@ pub trait IslamicBasedMarker {
                 30 => true,
                 31 => {
                     #[cfg(feature = "logging")]
-                    log::warn!(
+                    log::trace!(
                         "({}) Found year {extended_year} AH with month length {diff} for month {}.",
                         Self::DEBUG_NAME,
                         month_idx + 1

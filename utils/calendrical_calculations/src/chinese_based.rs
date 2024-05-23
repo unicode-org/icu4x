@@ -303,20 +303,22 @@ fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
             return solstice;
         }
     };
-    if iso_month < 12 || iso_day < 20 {
-        #[cfg(feature = "logging")]
-        log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
+    let resolved_solstice = if iso_month < 12 || iso_day < 20 {
         fixed_from_iso(iso_year, 12, 20)
     } else if iso_day > 23 {
-        debug_assert!(
-            false,
-            "({}) Solstice too late in December: {solstice:?}",
-            C::DEBUG_NAME
-        );
         fixed_from_iso(iso_year, 12, 23)
     } else {
         solstice
+    };
+    if resolved_solstice != solstice {
+        if iso_year < 0 || iso_year > 4000 {
+            #[cfg(feature = "logging")]
+            log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
+        } else {
+            debug_assert!(false, "({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
+        }
     }
+    resolved_solstice
 }
 
 /// Get the fixed date of the nearest winter solstice, in the Chinese time zone,
