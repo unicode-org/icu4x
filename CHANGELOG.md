@@ -17,6 +17,8 @@
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_locid_transform`
     - Add `LocaleExpander::minimize_favor_script` (https://github.com/unicode-org/icu4x/pull/4752)
+  - `icu_plurals`
+    - Added support for `CompactDecimal` (https://github.com/unicode-org/icu4x/pull/4828)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
     - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
@@ -54,6 +56,8 @@
         - Deprecate `Hebrew::new_always_precomputing()`, `Date::try_new_hebrew_date_with_calendar()`, `DateTime::try_new_hebrew_datetime_with_calendar()`. The new implementation of the Hebrew calendar is faster and we do not need APIs for precomputation. (https://github.com/unicode-org/icu4x/pulls/4532)
     - `databake`
         - Add `impl Bake for PhantomData<T>` (https://github.com/unicode-org/icu4x/pull/4663)
+    - `fixed_decimal`
+        - Changed type of compact exponent from `i16` to `u8` (https://github.com/unicode-org/icu4x/pull/4828)
     - `litemap`
         - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
     - `yoke`
