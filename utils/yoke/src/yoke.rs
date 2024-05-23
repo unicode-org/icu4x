@@ -120,6 +120,9 @@ where
 {
     /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
     ///
+    /// The closure can read and write data outside of its scope, but data it returns
+    /// may borrow only from the argument passed to the closure.
+    ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
     /// Call sites for this function may not compile pre-1.61; if this still happens, use
@@ -147,6 +150,36 @@ where
     /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
     /// assert_eq!(&**yoke.get(), "hello");
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
+    /// ```
+    ///
+    /// Write the number of consumed bytes to a local variable:
+    ///
+    /// ```
+    /// # use yoke::Yoke;
+    /// # use std::rc::Rc;
+    /// # use std::borrow::Cow;
+    /// # fn load_from_cache(_filename: &str) -> Rc<[u8]> {
+    /// #     // dummy implementation
+    /// #     Rc::new([0x5, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0, 0, 0])
+    /// # }
+    ///
+    /// fn load_object(filename: &str) -> (Yoke<Cow<'static, str>, Rc<[u8]>>, usize) {
+    ///     let rc: Rc<[u8]> = load_from_cache(filename);
+    ///     let mut bytes_remaining = 0;
+    ///     let bytes_remaining = &mut bytes_remaining;
+    ///     let yoke = Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
+    ///         let mut d = postcard::Deserializer::from_bytes(data);
+    ///         let output = serde::Deserialize::deserialize(&mut d);
+    ///         *bytes_remaining = d.finalize().unwrap().len();
+    ///         Cow::Borrowed(output.unwrap())
+    ///     });
+    ///     (yoke, *bytes_remaining)
+    /// }
+    ///
+    /// let (yoke, bytes_remaining) = load_object("filename.postcard");
+    /// assert_eq!(&**yoke.get(), "hello");
+    /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
+    /// assert_eq!(bytes_remaining, 3);
     /// ```
     pub fn attach_to_cart<F>(cart: C, f: F) -> Self
     where

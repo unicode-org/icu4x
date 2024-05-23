@@ -3235,6 +3235,7 @@ name = "yoke"
 version = "0.7.3"
 dependencies = [
  "bincode",
+ "postcard",
  "serde",
  "stable_deref_trait",
  "yoke-derive",
