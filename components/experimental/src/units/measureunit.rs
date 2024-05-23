@@ -79,19 +79,26 @@ impl<'data> MeasureUnitParser<'data> {
         }
     }
 
-    /// Process a part of an identifier.
-    /// For example, if the whole identifier is: "square-kilometer-per-second",
-    /// this function will be called for "square-kilometer" with sign (1) and "second" with sign (-1).
-    fn analyze_identifier_part(
+    // TODO: add test cases for this function.
+    /// Parses a CLDR unit identifier and returns a MeasureUnit.
+    /// Examples include: `meter`, `foot`, `meter-per-second`, `meter-per-square-second`, `meter-per-square-second-per-second`, etc.
+    /// Returns:
+    ///    - Ok(MeasureUnit) if the identifier is valid.
+    ///    - Err(ConversionError::InvalidUnit) if the identifier is invalid.
+    pub fn try_from_identifier(
         &self,
-        identifier_part: &[u8],
-        result: &mut Vec<MeasureUnitItem>,
-    ) -> Result<(), ConversionError> {
-        let mut identifier_part = identifier_part;
+        identifier: &'data [u8],
+    ) -> Result<MeasureUnit, ConversionError> {
+        if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
+            return Err(ConversionError::InvalidUnit);
+        }
+
+        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
+        let mut identifier = identifier;
         let mut sign = 1;
-        while !identifier_part.is_empty() {
+        while !identifier.is_empty() {
             // First: extract the power.
-            let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
+            let (power, identifier_part_without_power) = self.get_power(identifier)?;
 
             // Second: extract the si_prefix and the unit_id.
             let (si_prefix, unit_id, identifier_part_without_unit_id) =
@@ -112,13 +119,13 @@ impl<'data> MeasureUnitParser<'data> {
                                 Ok((unit_id, identifier_part_without_unit_id)) => {
                                     (unit_id, identifier_part_without_unit_id)
                                 }
-                                Err(_) if identifier_part.starts_with(b"per-") => {
+                                Err(_) if identifier.starts_with(b"per-") => {
                                     if sign < 1 {
                                         println!("sign {:?}", sign);
                                         return Err(ConversionError::InvalidUnit);
                                     }
                                     sign = -1;
-                                    identifier_part = &identifier_part[4..];
+                                    identifier = &identifier[4..];
                                     continue;
                                 }
                                 Err(e) => return Err(e),
@@ -127,13 +134,13 @@ impl<'data> MeasureUnitParser<'data> {
                     }
                 };
 
-            result.push(MeasureUnitItem {
+            measure_unit_items.push(MeasureUnitItem {
                 power: sign * power as i8,
                 si_prefix,
                 unit_id,
             });
 
-            identifier_part = match identifier_part_without_unit_id.len() {
+            identifier = match identifier_part_without_unit_id.len() {
                 0 => identifier_part_without_unit_id,
                 _ if identifier_part_without_unit_id.starts_with(b"-") => {
                     &identifier_part_without_unit_id[1..]
@@ -142,22 +149,6 @@ impl<'data> MeasureUnitParser<'data> {
             };
         }
 
-        Ok(())
-    }
-
-    // TODO: add test cases for this function.
-    /// Process an identifier.
-    pub fn try_from_identifier(
-        &self,
-        identifier: &'data [u8],
-    ) -> Result<MeasureUnit, ConversionError> {
-        if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
-            return Err(ConversionError::InvalidUnit);
-        }
-
-        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
-
-        self.analyze_identifier_part(identifier, &mut measure_unit_items)?;
         Ok(MeasureUnit {
             contained_units: measure_unit_items.into(),
         })
