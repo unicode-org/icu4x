@@ -311,7 +311,7 @@ fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
         solstice
     };
     if resolved_solstice != solstice {
-        if iso_year < 0 || iso_year > 4000 {
+        if !(0..=4000).contains(&iso_year) {
             #[cfg(feature = "logging")]
             log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
         } else {
