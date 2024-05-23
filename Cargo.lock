@@ -296,6 +296,7 @@ version = "0.1.0"
 dependencies = [
  "core_maths",
  "displaydoc",
+ "log",
 ]
 
 [[package]]
@@ -942,6 +943,7 @@ dependencies = [
  "icu_provider",
  "serde",
  "serde_json",
+ "simple_logger",
  "tinystr",
  "writeable",
  "zerovec",
@@ -3233,6 +3235,7 @@ name = "yoke"
 version = "0.7.3"
 dependencies = [
  "bincode",
+ "postcard",
  "serde",
  "stable_deref_trait",
  "yoke-derive",

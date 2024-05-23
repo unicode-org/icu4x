@@ -19,8 +19,15 @@ export enum ICU4XError {
    */
   WriteableError = 'WriteableError',
   /**
+
+   * Some input was out of bounds
    */
   OutOfBoundsError = 'OutOfBoundsError',
+  /**
+
+   * Input expected to be UTF-8 was ill-formed
+   */
+  Utf8Error = 'Utf8Error',
   /**
    */
   DataMissingDataKeyError = 'DataMissingDataKeyError',

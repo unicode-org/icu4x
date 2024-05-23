@@ -87,6 +87,10 @@ export class ICU4XIsoDateTime {
     return wasm.ICU4XIsoDateTime_nanosecond(this.underlying);
   }
 
+  day_of_year() {
+    return wasm.ICU4XIsoDateTime_day_of_year(this.underlying);
+  }
+
   day_of_month() {
     return wasm.ICU4XIsoDateTime_day_of_month(this.underlying);
   }

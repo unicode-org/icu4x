@@ -711,10 +711,10 @@ fn test_simple_week_of() {
 
 #[test]
 fn test_weekend() {
-    use icu_locid::langid;
+    use icu_locid::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(&langid!("und").into())
+        WeekCalculator::try_new(&locale!("und").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -722,7 +722,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&langid!("und-FR").into())
+        WeekCalculator::try_new(&locale!("und-FR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -730,7 +730,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&langid!("und-IQ").into())
+        WeekCalculator::try_new(&locale!("und-IQ").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -738,7 +738,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&langid!("und-IR").into())
+        WeekCalculator::try_new(&locale!("und-IR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),

@@ -822,7 +822,6 @@ mod tests {
     use super::*;
     use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
-    use icu_locid::Locale;
     use tinystr::tinystr;
 
     #[test]
@@ -832,8 +831,8 @@ mod tests {
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
-        let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoDateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+        let locale = "en-u-ca-japanese".parse().unwrap();
+        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -859,7 +858,7 @@ mod tests {
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
             locale: &locale,
             metadata: Default::default(),

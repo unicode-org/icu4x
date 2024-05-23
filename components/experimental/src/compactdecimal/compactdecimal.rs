@@ -559,14 +559,14 @@ impl CompactDecimalFormatter {
     /// #    &locale!("fr").into(),
     /// #    Default::default(),
     /// # ).unwrap();
-    /// # let [long_french, long_bangla] = [locale!("fr"), locale!("bn")]
-    /// #     .map(|locale| {
-    /// #         CompactDecimalFormatter::try_new_long(
-    /// #             &locale.into(),
-    /// #             Default::default(),
-    /// #         )
-    /// #         .unwrap()
-    /// #     });
+    /// # let long_french = CompactDecimalFormatter::try_new_long(
+    /// #    &locale!("fr").into(),
+    /// #    Default::default()
+    /// # ).unwrap();
+    /// # let long_bangla = CompactDecimalFormatter::try_new_long(
+    /// #    &locale!("bn").into(),
+    /// #    Default::default()
+    /// # ).unwrap();
     /// #
     /// let about_a_million = CompactDecimal::from_str("1.20c6").unwrap();
     /// let three_million = CompactDecimal::from_str("+3c6").unwrap();
@@ -629,14 +629,15 @@ impl CompactDecimalFormatter {
         &'l self,
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, CompactDecimalError> {
-        let log10_type = value.significand().nonzero_magnitude_start() + value.exponent();
+        let log10_type =
+            value.significand().nonzero_magnitude_start() + i16::from(value.exponent());
 
         let (plural_map, expected_exponent) =
             self.plural_map_and_exponent_for_magnitude(log10_type);
-        if value.exponent() != i16::from(expected_exponent) {
+        if value.exponent() != expected_exponent {
             return Err(CompactDecimalError::Exponent {
                 actual: value.exponent(),
-                expected: i16::from(expected_exponent),
+                expected: expected_exponent,
                 log10_type,
             });
         }
@@ -657,9 +658,9 @@ impl CompactDecimalFormatter {
     /// use icu::locid::locale;
     ///
     /// let [long_french, long_japanese, long_bangla] =
-    ///     [locale!("fr"), locale!("ja"), locale!("bn")].map(|locale| {
+    ///     [locale!("fr").into(), locale!("ja").into(), locale!("bn").into()].map(|locale| {
     ///         CompactDecimalFormatter::try_new_long(
-    ///             &locale.into(),
+    ///             &locale,
     ///             Default::default(),
     ///         )
     ///         .unwrap()

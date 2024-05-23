@@ -40,6 +40,13 @@ pub use __impl_time_zone_iana_to_bcp47_v1 as impl_time_zone_iana_to_bcp47_v1;
 #[doc(inline)]
 pub use __impliterable_time_zone_iana_to_bcp47_v1 as impliterable_time_zone_iana_to_bcp47_v1;
 #[macro_use]
+#[path = "macros/time_zone_iana_to_bcp47_v2.rs.data"]
+mod time_zone_iana_to_bcp47_v2;
+#[doc(inline)]
+pub use __impl_time_zone_iana_to_bcp47_v2 as impl_time_zone_iana_to_bcp47_v2;
+#[doc(inline)]
+pub use __impliterable_time_zone_iana_to_bcp47_v2 as impliterable_time_zone_iana_to_bcp47_v2;
+#[macro_use]
 #[path = "macros/time_zone_metazone_period_v1.rs.data"]
 mod time_zone_metazone_period_v1;
 #[doc(inline)]
