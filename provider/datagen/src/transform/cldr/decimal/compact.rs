@@ -6,7 +6,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use icu_experimental::compactdecimal::provider::*;
-use icu_locale_core::extensions::unicode::key;
+use icu_locale_core::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -28,17 +28,17 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
-                .as_tinystr_slice()
+                .as_subtags_slice()
                 .first()
                 .expect("expecting subtag if key is present"),
-            None => numbers.default_numbering_system,
+            None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
         };
 
         let result = CompactDecimalPatternDataV1::try_from(
             &numbers
                 .numsys_data
                 .formats
-                .get(&nsname)
+                .get(&nsname.as_tinystr())
                 .ok_or_else(|| {
                     DataError::custom("Could not find formats for numbering system")
                         .with_display_context(&nsname)
@@ -76,17 +76,17 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
-                .as_tinystr_slice()
+                .as_subtags_slice()
                 .first()
                 .expect("expecting subtag if key is present"),
-            None => numbers.default_numbering_system,
+            None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
         };
 
         let result = CompactDecimalPatternDataV1::try_from(
             &numbers
                 .numsys_data
                 .formats
-                .get(&nsname)
+                .get(&nsname.as_tinystr())
                 .ok_or_else(|| {
                     DataError::custom("Could not find formats for numbering system")
                         .with_display_context(&nsname)

@@ -952,7 +952,7 @@ impl AnyCalendarKind {
     /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        match *x.as_tinystr_slice() {
+        match x.as_subtags_slice() {
             [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
             [first] if first == "chinese" => Some(AnyCalendarKind::Chinese),
             [first] if first == "coptic" => Some(AnyCalendarKind::Coptic),

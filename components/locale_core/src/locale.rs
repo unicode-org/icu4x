@@ -8,11 +8,11 @@ use crate::parser::{
     parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
     ParserError, ParserMode, SubtagIterator,
 };
+use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
 use core::cmp::Ordering;
 use core::str::FromStr;
-use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
@@ -370,7 +370,7 @@ impl Locale {
             Option<subtags::Script>,
             Option<subtags::Region>,
             Option<subtags::Variant>,
-            Option<(extensions::unicode::Key, Option<TinyAsciiStr<8>>)>,
+            Option<(extensions::unicode::Key, Option<Subtag>)>,
         ),
         ParserError,
     > {
