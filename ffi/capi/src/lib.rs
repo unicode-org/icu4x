@@ -152,6 +152,8 @@ pub mod time;
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+pub mod timezone_mapper;
 #[cfg(feature = "experimental_components")]
 pub mod units_converter;
 #[cfg(feature = "icu_calendar")]
