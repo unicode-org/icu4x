@@ -218,10 +218,17 @@ impl IslamicTabular {
     }
 }
 
+/// Compact representation of the length of an Islamic year.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 enum IslamicYearLength {
+    /// Long (355-day) Islamic year
     L355,
+    /// Short (354-day) Islamic year
     L354,
+    /// Unexpectedly Short (353-day) Islamic year
+    ///
+    /// It is probably a bug when this year length is returned. See:
+    /// <https://github.com/unicode-org/icu4x/issues/4930>
     L353,
 }
 

@@ -24,6 +24,7 @@ pub trait IslamicBasedMarker {
     /// The name of the calendar for debugging.
     const DEBUG_NAME: &'static str;
     /// Whether this calendar is known to have 353-day years.
+    /// This is probably a bug; see <https://github.com/unicode-org/icu4x/issues/4930>
     const HAS_353_DAY_YEARS: bool;
     /// Given the extended year, calculate the approximate new year using the mean synodic month
     fn mean_synodic_ny(extended_year: i32) -> RataDie {
@@ -49,7 +50,7 @@ pub trait IslamicBasedMarker {
             353 if Self::HAS_353_DAY_YEARS => {
                 #[cfg(feature = "logging")]
                 log::warn!(
-                    "({}) Found year {extended_year} AH with length {}",
+                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
                     Self::DEBUG_NAME,
                     next_ny - ny
                 );
@@ -57,7 +58,7 @@ pub trait IslamicBasedMarker {
             other => {
                 debug_assert!(
                     false,
-                    "({}) Found year {extended_year} AH with length {}",
+                    "({}) Found year {extended_year} AH with length {}!",
                     Self::DEBUG_NAME,
                     other
                 )
@@ -80,7 +81,7 @@ pub trait IslamicBasedMarker {
                 31 => {
                     #[cfg(feature = "logging")]
                     log::warn!(
-                        "({}) Found year {extended_year} AH with month length {diff} for month {}",
+                        "({}) Found year {extended_year} AH with month length {diff} for month {}.",
                         Self::DEBUG_NAME,
                         month_idx + 1
                     );
@@ -90,7 +91,7 @@ pub trait IslamicBasedMarker {
                 _ => {
                     debug_assert!(
                         false,
-                        "({}) Found year {extended_year} AH with month length {diff} for month {}",
+                        "({}) Found year {extended_year} AH with month length {diff} for month {}!",
                         Self::DEBUG_NAME,
                         month_idx + 1
                     );
@@ -105,7 +106,7 @@ pub trait IslamicBasedMarker {
             debug_assert_eq!(
                 excess_days,
                 1,
-                "({}) Found year {extended_year} AH with more than one excess day",
+                "({}) Found year {extended_year} AH with more than one excess day!",
                 Self::DEBUG_NAME
             );
             if let Some(l) = lengths.iter_mut().find(|l| !(**l)) {
