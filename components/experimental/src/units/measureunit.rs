@@ -121,7 +121,6 @@ impl<'data> MeasureUnitParser<'data> {
                                 }
                                 Err(_) if identifier.starts_with(b"per-") => {
                                     if sign < 1 {
-                                        println!("sign {:?}", sign);
                                         return Err(ConversionError::InvalidUnit);
                                     }
                                     sign = -1;
