@@ -121,7 +121,7 @@ impl<'data> MeasureUnitParser<'data> {
                                     identifier_part = &identifier_part[4..];
                                     continue;
                                 }
-                                Err(_) => return Err(ConversionError::InvalidUnit),
+                                Err(e) => return Err(e),
                             };
                         (si_prefix, unit_id, identifier_part_without_unit_id)
                     }
