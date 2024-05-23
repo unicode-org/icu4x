@@ -171,9 +171,11 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::try_new_roc_datetime",
         "icu::calendar::DateTime::try_new_ummalqura_datetime",
 
-        // This is formatting internals, we do not expect people
-        // to implement custom formatters over FFI
-        "icu::calendar::Date::day_of_year_info",
+        // Calendar structs mostly for internal use but which might expose
+        // useful information to clients.
+        "icu::calendar::types::FormattableMonth",
+        "icu::calendar::types::FormattableYear",
+        "icu::calendar::types::DayOfYearInfo",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
         // Potential solutions:
@@ -351,7 +353,7 @@ lazy_static::lazy_static! {
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::calendar::types::Time::midnight",
+        "icu::calendar::types::Time",
 
 
         // TODO-2.0 these errors will have changed
@@ -413,7 +415,17 @@ lazy_static::lazy_static! {
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
-        "icu::calendar::types",
+        "icu::calendar::types::MonthCode",
+        "icu::calendar::types::DayOfMonth",
+        "icu::calendar::types::WeekOfMonth",
+        "icu::calendar::types::WeekOfYear",
+        "icu::calendar::types::DayOfWeekInMonth",
+        "icu::calendar::types::IsoHour",
+        "icu::calendar::types::IsoMinute",
+        "icu::calendar::types::IsoSecond",
+        "icu::calendar::types::NanoSecond",
+        "icu::calendar::types::IsoWeekday",
+        "icu::calendar::types::Era",
 
         // Rusty input trait
         "icu::datetime::input",

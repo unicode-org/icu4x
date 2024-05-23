@@ -14,6 +14,11 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::normalizer::uts46::Uts46Mapper#Struct
+icu::normalizer::uts46::Uts46Mapper::map_normalize#FnInStruct
+icu::normalizer::uts46::Uts46Mapper::new#FnInStruct
+icu::normalizer::uts46::Uts46Mapper::normalize_validate#FnInStruct
+icu::normalizer::uts46::Uts46Mapper::try_new#FnInStruct
 icu::properties::BidiClass#Struct
 icu::properties::BidiClass::ArabicLetter#AssociatedConstantInStruct
 icu::properties::BidiClass::ArabicNumber#AssociatedConstantInStruct

@@ -350,13 +350,13 @@ fn test_basic() {
     }
 
     use icu_experimental::dimension::provider::currency::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     let provider = DatagenProvider::new_testing();
 
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("en").into(),
+            locale: &langid!("en").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -395,7 +395,7 @@ fn test_basic() {
 
     let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("ar-EG").into(),
+            locale: &langid!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

@@ -9,20 +9,17 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_locid::extensions::unicode::key;
-use icu_locid::extensions::unicode::Value;
+use icu_locid::extensions::unicode::{key, value};
 use icu_locid::subtags::language;
 use icu_locid::subtags::Language;
 use icu_locid::subtags::Region;
 use icu_locid::subtags::Script;
 use icu_locid::LanguageIdentifier;
-use icu_locid::Locale;
 use icu_locid_transform::provider::CollationFallbackSupplementV1Marker;
 use icu_locid_transform::provider::LocaleFallbackSupplementV1;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use std::str::FromStr;
 use writeable::Writeable;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
@@ -59,8 +56,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
                             s.rsplit_once('_')?.0,
                             self.has_legacy_swedish_variants(),
                         )?
-                        .id
-                        .language,
+                        .language(),
                     )
                 })
                 .collect::<HashSet<_>>();
@@ -168,14 +164,13 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
     s
 }
 
-fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<Locale> {
+fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<DataLocale> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
-    let langid = if language == "root" {
-        LanguageIdentifier::UND
+    let mut locale = if language == "root" {
+        DataLocale::default()
     } else {
         language.parse().ok()?
     };
-    let mut locale = Locale::from(langid);
 
     // See above for the two special cases.
     if language == "zh" {
@@ -191,17 +186,17 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
         return Some(locale);
     }
 
-    let shortened = match variant {
-        "traditional" => "trad",
-        "phonebook" => "phonebk",
-        "dictionary" => "dict",
-        "gb2312han" => "gb2312",
-        _ => variant,
-    };
-    locale.extensions.unicode.keywords.set(
+    locale.set_unicode_ext(
         key!("co"),
-        Value::from_str(shortened).expect("valid extension subtag"),
+        match variant {
+            "traditional" => value!("trad"),
+            "phonebook" => value!("phonebk"),
+            "dictionary" => value!("dict"),
+            "gb2312han" => value!("gb2312"),
+            _ => variant.parse().unwrap(),
+        },
     );
+
     Some(locale)
 }
 

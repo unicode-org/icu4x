@@ -63,6 +63,13 @@ class ICU4XIsoDate {
   ICU4XDate to_any() const;
 
   /**
+   * Returns the 1-indexed day in the year for this date
+   * 
+   * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+   */
+  uint16_t day_of_year() const;
+
+  /**
    * Returns the 1-indexed day in the month for this date
    * 
    * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
@@ -167,6 +174,9 @@ inline ICU4XDate ICU4XIsoDate::to_calendar(const ICU4XCalendar& calendar) const 
 }
 inline ICU4XDate ICU4XIsoDate::to_any() const {
   return ICU4XDate(capi::ICU4XIsoDate_to_any(this->inner.get()));
+}
+inline uint16_t ICU4XIsoDate::day_of_year() const {
+  return capi::ICU4XIsoDate_day_of_year(this->inner.get());
 }
 inline uint32_t ICU4XIsoDate::day_of_month() const {
   return capi::ICU4XIsoDate_day_of_month(this->inner.get());

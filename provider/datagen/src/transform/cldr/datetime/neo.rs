@@ -14,7 +14,7 @@ use icu_datetime::provider::neo::*;
 use icu_locid::{
     extensions::private::Subtag,
     extensions::unicode::{value, Value},
-    LanguageIdentifier, Locale,
+    LanguageIdentifier,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -190,9 +190,7 @@ impl DatagenProvider {
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
             keylengths.iter().map(move |length| {
-                let locale: Locale = lid.clone().into();
-
-                let mut locale = DataLocale::from(locale);
+                let mut locale = DataLocale::from(lid.clone());
 
                 locale.set_aux((*length).into());
                 locale
@@ -707,9 +705,7 @@ impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
                 nondefault_subtag(&tp.short, aux::PATTERN_SHORT12, aux::PATTERN_SHORT24),
             ];
             keylengths.into_iter().map(move |length| {
-                let locale: Locale = lid.clone().into();
-
-                let mut locale = DataLocale::from(locale);
+                let mut locale = DataLocale::from(lid.clone());
 
                 locale.set_aux(length.into());
                 locale

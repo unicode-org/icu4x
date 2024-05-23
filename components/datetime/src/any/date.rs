@@ -86,9 +86,9 @@ impl DateFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
-    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    /// let df = DateFormatter::try_new_with_length(&locale, length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =

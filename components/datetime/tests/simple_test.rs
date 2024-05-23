@@ -6,7 +6,7 @@ use icu_calendar::DateTime;
 use icu_datetime::neo::TypedNeoDateTimeFormatter;
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
-use icu_locid::langid;
+use icu_locid::locale;
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -74,9 +74,14 @@ fn neo_datetime_lengths() {
         length::Date::Short,
     ] {
         for time_length in [length::Time::Medium, length::Time::Short] {
-            for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
+            for locale in [
+                locale!("en").into(),
+                locale!("fr").into(),
+                locale!("zh").into(),
+                locale!("hi").into(),
+            ] {
                 let formatter = TypedNeoDateTimeFormatter::try_new_with_lengths(
-                    &(&langid).into(),
+                    &locale,
                     date_length,
                     time_length,
                 )
@@ -87,7 +92,7 @@ fn neo_datetime_lengths() {
                     formatted,
                     *expected,
                     Ok(()),
-                    "{date_length:?} {time_length:?} {langid:?}"
+                    "{date_length:?} {time_length:?} {locale:?}"
                 );
             }
         }
@@ -104,13 +109,17 @@ fn neo_date_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
-        for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
+        for locale in [
+            locale!("en").into(),
+            locale!("fr").into(),
+            locale!("zh").into(),
+            locale!("hi").into(),
+        ] {
             let formatter =
-                TypedNeoDateTimeFormatter::try_new_with_date_length(&(&langid).into(), date_length)
-                    .unwrap();
+                TypedNeoDateTimeFormatter::try_new_with_date_length(&locale, date_length).unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_length:?} {langid:?}");
+            assert_try_writeable_eq!(formatted, *expected, Ok(()), "{date_length:?} {locale:?}");
         }
     }
 }
@@ -126,9 +135,14 @@ fn old_datetime_lengths() {
         length::Date::Short,
     ] {
         for time_length in [length::Time::Medium, length::Time::Short] {
-            for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
+            for locale in [
+                locale!("en").into(),
+                locale!("fr").into(),
+                locale!("zh").into(),
+                locale!("hi").into(),
+            ] {
                 let formatter = TypedDateTimeFormatter::try_new(
-                    &(&langid).into(),
+                    &locale,
                     DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
                         date_length,
                         time_length,
@@ -140,7 +154,7 @@ fn old_datetime_lengths() {
                 assert_writeable_eq!(
                     formatted,
                     *expected,
-                    "{date_length:?} {time_length:?} {langid:?}"
+                    "{date_length:?} {time_length:?} {locale:?}"
                 );
             }
         }
@@ -157,15 +171,20 @@ fn old_date_lengths() {
         length::Date::Medium,
         length::Date::Short,
     ] {
-        for langid in [langid!("en"), langid!("fr"), langid!("zh"), langid!("hi")] {
+        for locale in [
+            locale!("en").into(),
+            locale!("fr").into(),
+            locale!("zh").into(),
+            locale!("hi").into(),
+        ] {
             let formatter = TypedDateTimeFormatter::try_new(
-                &(&langid).into(),
+                &locale,
                 DateTimeFormatterOptions::Length(length::Bag::from_date_style(date_length)),
             )
             .unwrap();
             let formatted = formatter.format(&datetime);
             let expected = expected_iter.next().unwrap();
-            assert_writeable_eq!(formatted, *expected, "{date_length:?} {langid:?}");
+            assert_writeable_eq!(formatted, *expected, "{date_length:?} {locale:?}");
         }
     }
 }
