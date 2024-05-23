@@ -138,6 +138,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::deref, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneBcp47Id::Target,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn try_set_time_zone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
                 tinystr::TinyAsciiStr::from_bytes(id)?,
@@ -161,6 +167,27 @@ pub mod ffi {
                     .0
                     .as_borrowed()
                     .get(id)
+                    .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
+            );
+            Ok(())
+        }
+
+        // *** TODO: in 2.0 please replace try_set_iana_time_zone_id with try_set_iana_time_zone_id_2 ***
+
+        /// Sets the `time_zone_id` field from an IANA string by looking up
+        /// the corresponding BCP-47 string.
+        ///
+        /// Errors if the string is not a valid BCP-47 time zone ID.
+        pub fn try_set_iana_time_zone_id_2(
+            &mut self,
+            mapper: &crate::timezone_mapper::ffi::ICU4XTimeZoneIdMapper,
+            id: &DiplomatStr,
+        ) -> Result<(), ICU4XError> {
+            self.0.time_zone_id = Some(
+                mapper
+                    .0
+                    .as_borrowed()
+                    .iana_bytes_to_bcp47(id)
                     .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
             );
             Ok(())

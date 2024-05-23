@@ -73,8 +73,10 @@ pub mod ffi {
         /// Typically found when not enough space is allocated
         /// Most APIs that return a string may return this error
         WriteableError = 0x01,
-        // Some input was out of bounds
+        /// Some input was out of bounds
         OutOfBoundsError = 0x02,
+        /// Input expected to be UTF-8 was ill-formed
+        Utf8Error = 0x03,
 
         // general data errors
         // See DataError
@@ -212,6 +214,12 @@ impl From<DataError> for ICU4XError {
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)
+    }
+}
+
+impl From<core::str::Utf8Error> for ICU4XError {
+    fn from(_: core::str::Utf8Error) -> Self {
+        ICU4XError::Utf8Error
     }
 }
 

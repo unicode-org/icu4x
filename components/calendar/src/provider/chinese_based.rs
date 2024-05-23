@@ -151,8 +151,11 @@ impl PackedChineseBasedYearInfo {
     ///
     /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
     ///
-    /// Chinese New Year in the year 30 AD is January 20 (30-01-20)
-    pub(crate) const FIRST_NY: u8 = 20;
+    /// Chinese New Year in the year 30 AD is January 20 (30-01-20).
+    ///
+    /// We allow it to occur as early as January 19 which is the earliest the second new moon
+    /// could occur after the Winter Solstice if the solstice is pinned to December 20.
+    pub(crate) const FIRST_NY: u8 = 19;
 
     pub(crate) fn new(
         month_lengths: [bool; 13],
@@ -163,7 +166,7 @@ impl PackedChineseBasedYearInfo {
             !month_lengths[12] || leap_month_idx.is_some(),
             "Last month length should not be set for non-leap years"
         );
-        debug_assert!(ny_offset < 33, "Year offset too big to store");
+        debug_assert!(ny_offset < 34, "Year offset too big to store");
         debug_assert!(
             leap_month_idx.map(|l| l.get() <= 13).unwrap_or(true),
             "Leap month indices must be 1 <= i <= 13"

@@ -87,7 +87,7 @@ impl CalendarArithmetic for Coptic {
     }
 
     fn is_leap_year(year: i32, _data: ()) -> bool {
-        year % 4 == 3
+        year.rem_euclid(4) == 3
     }
 
     fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {

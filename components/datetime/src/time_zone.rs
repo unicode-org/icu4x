@@ -72,7 +72,7 @@ where
 ///
 /// ```
 /// use icu::calendar::DateTime;
-/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, IanaToBcp47Mapper};
+/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
 /// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
 /// use icu::locid::locale;
 /// use tinystr::tinystr;
@@ -87,7 +87,7 @@ where
 /// // Set up the Metazone calculator, time zone ID mapper,
 /// // and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::new();
-/// let mapper = IanaToBcp47Mapper::new();
+/// let mapper = TimeZoneIdMapper::new();
 /// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 ///
@@ -102,7 +102,7 @@ where
 ///
 /// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
+/// time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),

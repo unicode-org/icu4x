@@ -31,7 +31,7 @@ There are two mostly-interchangeable standards for time zone IDs:
 2. BCP-47 time zone IDs, like `"uschi"`
 
 ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
-IANA time zone, use [`IanaToBcp47Mapper`].
+IANA time zone, use [`TimeZoneIdMapper`].
 
 ### Metazone
 
@@ -87,15 +87,15 @@ the metazone based on a certain local datetime:
 use icu::calendar::DateTime;
 use icu::timezone::CustomTimeZone;
 use icu::timezone::GmtOffset;
-use icu::timezone::IanaToBcp47Mapper;
+use icu::timezone::TimeZoneIdMapper;
 use icu::timezone::MetazoneCalculator;
 use tinystr::{tinystr, TinyAsciiStr};
 
 // Create a time zone for America/Chicago at GMT-6:
 let mut time_zone = CustomTimeZone::new_empty();
 time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-let mapper = IanaToBcp47Mapper::new();
-time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
+let mapper = TimeZoneIdMapper::new();
+time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 
 // Alternatively, set it directly from the BCP-47 ID
 assert_eq!(time_zone.time_zone_id, Some(tinystr!(8, "uschi").into()));
