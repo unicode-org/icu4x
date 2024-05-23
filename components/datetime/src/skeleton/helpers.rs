@@ -568,7 +568,11 @@ impl DateTimeFormatterOptions {
                     BestSkeleton::AllFieldsMatch(p) => p,
                     _ => {
                         // Build a last-resort pattern that contains all of the requested fields.
-                        // This is NOT in the CLDR standard! Should be using Append Items.
+                        // This is NOT in the CLDR standard! Better would be:
+                        // - Use Append Items?
+                        // - Fall back to the format from the Gregorian or Generic calendar?
+                        // - Bubble up an error of some sort?
+                        // See issue: <https://github.com/unicode-org/icu4x/issues/586>
                         let pattern_items = fields
                             .into_iter()
                             .flat_map(|field| {
