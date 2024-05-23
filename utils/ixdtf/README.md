@@ -277,7 +277,7 @@ and the [Temporal proposal][temporal-grammar].
 
 ### Additional Feature
 
-The `ixdtf` crate also implements an ISU8601 Duration parser (`IsoDurationParser`) that is available under
+The `ixdtf` crate also implements an ISO8601 Duration parser (`IsoDurationParser`) that is available under
 the `duration` feature flag. The API for `IsoDurationParser` is the same as `IxdtfParser`, but
 parses duration strings over date/time strings.
 

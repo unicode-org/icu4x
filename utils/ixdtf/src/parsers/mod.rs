@@ -39,7 +39,7 @@ macro_rules! assert_syntax {
 /// `IxdtfParser` is the primary parser implementation of `ixdtf`.
 ///
 /// This parser provides various options for parsing date/time strings with the extended notation
-/// laid out in [RFC9557][ref-9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
+/// laid out in [RFC9557][rfc9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
 /// ```rust
 /// use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord, UTCOffsetRecord}};
@@ -65,7 +65,7 @@ macro_rules! assert_syntax {
 /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
 /// ```
 ///
-/// [rfc-9557]: https://datatracker.ietf.org/doc/rfc9557/
+/// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
 pub struct IxdtfParser<'a> {
@@ -80,11 +80,14 @@ impl<'a> IxdtfParser<'a> {
         }
     }
 
-    /// Parses the source as an [extended Date/Time string][rfc-9557].
+    /// Parses the source as an [extended Date/Time string][rfc9557].
     ///
-    /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
+    /// This is the baseline parse method for `ixdtf`. For this method, the
+    /// TimeRecord, UTCOffsetRecord, and all annotations are optional.
     ///
-    /// [rfc-9557]: https://datatracker.ietf.org/doc/rfc9557/
+    /// # Example
+    ///
+    /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_with_annotation_handler(Some)
     }
@@ -100,6 +103,8 @@ impl<'a> IxdtfParser<'a> {
     }
 
     /// Parses the source as an extended [YearMonth string][temporal-ym].
+    ///
+    /// # Example
     ///
     /// ```rust
     /// # use ixdtf::parsers::IxdtfParser;
@@ -132,6 +137,8 @@ impl<'a> IxdtfParser<'a> {
 
     /// Parses the source as an extended [MonthDay string][temporal-md].
     ///
+    /// # Example
+    ///
     /// ```rust
     /// # use ixdtf::parsers::IxdtfParser;
     /// let extended_month_day = "1107[+04:00]";
@@ -161,6 +168,8 @@ impl<'a> IxdtfParser<'a> {
     }
 
     /// Parses the source as an extended [Time string][temporal-time].
+    ///
+    /// # Example
     ///
     /// ```rust
     /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
@@ -198,25 +207,44 @@ impl<'a> IxdtfParser<'a> {
     }
 }
 
-/// A parser for Duration strings.
+/// A parser for ISO8601 Duration strings.
 ///
-/// # Exmaple
+/// ✨ *Enabled with the `duration` Cargo feature.*
 ///
-/// ```
-/// use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
+/// # Example
 ///
-/// let duration_str = "P1Y2M3W1D";
+/// ```rust
+/// use ixdtf::parsers::{IsoDurationParser, records::{Sign, DurationParseRecord, TimeDurationRecord}};
+///
+/// let duration_str = "P1Y2M1DT2H10M30S";
 ///
 /// let result = IsoDurationParser::new(duration_str).parse().unwrap();
 ///
 /// let date_duration = result.date.unwrap();
 ///
+/// let (hours, minutes, seconds, fraction) = match result.time {
+///     // Hours variant is defined as { hours: u32, fraction: u64 }
+///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
+///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
+///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
+///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction as u64),
+///     None => (0,0,0,0),
+/// };
+///
+/// assert_eq!(result.sign, Sign::Positive);
 /// assert_eq!(date_duration.years, 1);
 /// assert_eq!(date_duration.months, 2);
-/// assert_eq!(date_duration.weeks, 3);
-/// assert_eq!(date_duration.days, 1);
+/// assert_eq!(date_duration.weeks, 0);
+/// assert_eq!(date_duration.days, 1);//
+/// assert_eq!(hours, 2);
+/// assert_eq!(minutes, 10);
+/// assert_eq!(seconds, 30);
+/// assert_eq!(fraction, 0);
 ///
 /// ```
+///
+///
 #[cfg(feature = "duration")]
 #[derive(Debug)]
 pub struct IsoDurationParser<'a> {
@@ -233,6 +261,51 @@ impl<'a> IsoDurationParser<'a> {
     }
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
+    ///
+    /// # Examples
+    ///
+    /// ## Parsing a date duration
+    ///
+    /// ```
+    /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
+    /// let date_duration = "P1Y2M3W1D";
+    ///
+    /// let result = IsoDurationParser::new(date_duration).parse().unwrap();
+    ///
+    /// let date_duration = result.date.unwrap();
+    ///
+    /// assert!(result.time.is_none());
+    /// assert_eq!(date_duration.years, 1);
+    /// assert_eq!(date_duration.months, 2);
+    /// assert_eq!(date_duration.weeks, 3);
+    /// assert_eq!(date_duration.days, 1);
+    ///
+    /// ```
+    ///
+    /// ## Parsing a time duration
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
+    /// let time_duration = "PT2H10M30S";
+    ///
+    /// let result = IsoDurationParser::new(time_duration).parse().unwrap();
+    ///
+    /// let (hours, minutes, seconds, fraction) = match result.time {
+    ///     // Hours variant is defined as { hours: u32, fraction: u64 }
+    ///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
+    ///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+    ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
+    ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
+    ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction as u64),
+    ///     None => (0,0,0,0),
+    /// };
+    /// assert!(result.date.is_none());
+    /// assert_eq!(hours, 2);
+    /// assert_eq!(minutes, 10);
+    /// assert_eq!(seconds, 30);
+    /// assert_eq!(fraction, 0);
+    /// ```
+    ///
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)
     }
