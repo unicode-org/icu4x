@@ -8,6 +8,7 @@ extern crate alloc;
 
 use alloc::borrow::Cow;
 use icu_pattern::{Pattern, SinglePlaceholder};
+use core::str::FromStr;
 
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
@@ -37,7 +38,7 @@ fn bake_SinglePlaceholderPattern_Cow() {
 #[test]
 #[cfg(feature = "serde")]
 fn json_SinglePlaceholderPattern_Cow() {
-    let pattern_owned = Pattern::<SinglePlaceholder, String>::try_from_str("Hello, {0}!").unwrap();
+    let pattern_owned = Pattern::<SinglePlaceholder, String>::from_str("Hello, {0}!").unwrap();
     let pattern_cow: Pattern<SinglePlaceholder, Cow<str>> =
         Pattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
     let data = DeriveTest_SinglePlaceholderPattern_Cow { data: pattern_cow };
@@ -54,7 +55,7 @@ fn json_SinglePlaceholderPattern_Cow() {
 #[test]
 #[cfg(feature = "serde")]
 fn postcard_SinglePlaceholderPattern_Cow() {
-    let pattern_owned = Pattern::<SinglePlaceholder, String>::try_from_str("Hello, {0}!").unwrap();
+    let pattern_owned = Pattern::<SinglePlaceholder, String>::from_str("Hello, {0}!").unwrap();
     let pattern_cow: Pattern<SinglePlaceholder, Cow<str>> =
         Pattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
     let data = DeriveTest_SinglePlaceholderPattern_Cow { data: pattern_cow };

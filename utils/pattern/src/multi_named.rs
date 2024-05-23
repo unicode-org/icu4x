@@ -23,9 +23,10 @@ use crate::Error;
 /// use icu_pattern::MultiNamedPlaceholderKey;
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use icu_pattern::PatternItem;
+/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern = MultiNamedPlaceholderPattern::try_from_str(
+/// let pattern = MultiNamedPlaceholderPattern::from_str(
 ///     "Hello, {person0} and {person1}!",
 /// )
 /// .unwrap();
@@ -169,9 +170,10 @@ where
 /// ```
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
+/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<MultiNamedPlaceholder, _>::try_from_str(
+/// let store = Pattern::<MultiNamedPlaceholder, _>::from_str(
 ///     "Hello, {user} and {someone_else}!",
 /// )
 /// .unwrap()
@@ -186,6 +188,7 @@ where
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
+/// use core::str::FromStr;
 ///
 /// let placeholder_value_map: BTreeMap<&str, &str> = [
 ///     ("num", "5"),
@@ -198,7 +201,7 @@ where
 ///
 /// // Single placeholder:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("{num} days ago")
+///     Pattern::<MultiNamedPlaceholder, _>::from_str("{num} days ago")
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
@@ -207,7 +210,7 @@ where
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("yesterday")
+///     Pattern::<MultiNamedPlaceholder, _>::from_str("yesterday")
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
@@ -216,7 +219,7 @@ where
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::try_from_str("{letter}{num}{}")
+///     Pattern::<MultiNamedPlaceholder, _>::from_str("{letter}{num}{}")
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
@@ -230,6 +233,7 @@ where
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use litemap::LiteMap;
 /// use writeable::TryWriteable;
+/// use core::str::FromStr;
 ///
 /// static placeholder_value_map: LiteMap<&str, usize, &[(&str, usize)]> =
 ///     LiteMap::from_sorted_store_unchecked(&[("seven", 11)]);
@@ -237,7 +241,7 @@ where
 /// // Note: String allocates, but this could be a non-allocating sink
 /// let mut sink = String::new();
 ///
-/// MultiNamedPlaceholderPattern::try_from_str("{seven}")
+/// MultiNamedPlaceholderPattern::from_str("{seven}")
 ///     .unwrap()
 ///     .try_interpolate(&placeholder_value_map)
 ///     .try_write_to(&mut sink)
@@ -255,11 +259,12 @@ where
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
+/// use core::str::FromStr;
 ///
 /// let placeholder_value_map: BTreeMap<&str, &str> =
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// Pattern::<MultiNamedPlaceholder, _>::try_from_str(
+/// Pattern::<MultiNamedPlaceholder, _>::from_str(
 ///     "Your name is {your_name}",
 /// )
 /// .unwrap()
@@ -275,12 +280,13 @@ where
 /// use icu_pattern::Pattern;
 /// use std::borrow::Cow;
 /// use std::collections::BTreeMap;
+/// use core::str::FromStr;
 /// use writeable::TryWriteable;
 ///
 /// let placeholder_value_map: BTreeMap<&str, &str> =
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// let pattern = Pattern::<MultiNamedPlaceholder, _>::try_from_str(
+/// let pattern = Pattern::<MultiNamedPlaceholder, _>::from_str(
 ///     "Your name is {your_name}",
 /// )
 /// .unwrap();
@@ -466,6 +472,7 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
 #[cfg(test)]
 mod tests {
     use crate::MultiNamedPlaceholderPattern;
+    use core::str::FromStr;
 
     #[test]
     fn test_invalid() {
@@ -479,7 +486,7 @@ mod tests {
         for string in strings {
             let string = string.replace('@', &long_str);
             assert!(
-                MultiNamedPlaceholderPattern::try_from_str(&string).is_err(),
+                MultiNamedPlaceholderPattern::from_str(&string).is_err(),
                 "{string:?}"
             );
         }

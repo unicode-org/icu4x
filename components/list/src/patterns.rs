@@ -110,11 +110,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 impl<'data> ListJoinerPattern<'data> {
     /// Construct the pattern from a CLDR pattern string
     #[cfg(feature = "datagen")]
-    pub fn from_str(
-        pattern: &str,
-        allow_prefix: bool,
-        allow_suffix: bool,
-    ) -> Result<Self, DataError> {
+    fn from_str(pattern: &str, allow_prefix: bool, allow_suffix: bool) -> Result<Self, DataError> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
             (Some(index_0), Some(index_1))
                 if index_0 < index_1
