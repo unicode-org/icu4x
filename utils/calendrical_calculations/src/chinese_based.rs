@@ -267,9 +267,9 @@ pub(crate) fn midnight<C: ChineseBased>(moment: Moment) -> Moment {
 pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (RataDie, RataDie) {
     // s1 is prior_solstice
     // Using 370 here since solstices are ~365 days apart
-    // Both solstices should fall in December, and the first solstice MUST fall on
-    // December 20, 21, or 22. It doesn't seem to change the outcome if the following
-    // solstice is out of range.
+    // Both solstices should fall on December 20, 21, 22, or 23. The calendrical calculations
+    // drift away from this for large positive and negative years, so we artifically bind them
+    // to this range in order for other code invariants to be upheld.
     let prior_solstice = bind_winter_solstice::<C>(prior_solstice);
     let following_solstice =
         bind_winter_solstice::<C>(winter_solstice_on_or_before::<C>(prior_solstice + 370)); // s2
