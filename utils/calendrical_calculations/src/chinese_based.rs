@@ -223,16 +223,6 @@ pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32
     result_signed as u32
 }
 
-/// Returns true if the month of a given fixed date does not have a major solar term,
-/// false otherwise.
-///
-/// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-/// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5345-L5351
-pub(crate) fn no_major_solar_term<C: ChineseBased>(date: RataDie) -> bool {
-    major_solar_term_from_fixed::<C>(date)
-        == major_solar_term_from_fixed::<C>(new_moon_on_or_after::<C>((date + 1).as_moment()))
-}
-
 /// The fixed date in standard time at the observation location of the next new moon on or after a given Moment.
 ///
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
@@ -264,6 +254,8 @@ pub(crate) fn midnight<C: ChineseBased>(moment: Moment) -> Moment {
 /// Determines the fixed date of the lunar new year given the start of its corresponding solar year (歲), which is
 /// also the winter solstice
 ///
+/// Calls to `no_major_solar_term` have been inlined for increased efficiency.
+///
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5370-L5394
 pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (RataDie, RataDie) {
@@ -272,17 +264,15 @@ pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (Rata
     let following_solstice = winter_solstice_on_or_before::<C>(prior_solstice + 370); // s2
     let month_after_eleventh = new_moon_on_or_after::<C>((prior_solstice + 1).as_moment()); // m12
     let month_after_twelfth = new_moon_on_or_after::<C>((month_after_eleventh + 1).as_moment()); // m13
+    let month_after_thirteenth = new_moon_on_or_after::<C>((month_after_twelfth + 1).as_moment());
     let next_eleventh_month = new_moon_before::<C>((following_solstice + 1).as_moment()); // next-m11
     let lhs_argument =
         ((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH).round() as i64;
-    if lhs_argument == 12
-        && (no_major_solar_term::<C>(month_after_eleventh)
-            || no_major_solar_term::<C>(month_after_twelfth))
-    {
-        (
-            new_moon_on_or_after::<C>((month_after_twelfth + 1).as_moment()),
-            following_solstice,
-        )
+    let solar_term_a = major_solar_term_from_fixed::<C>(month_after_eleventh);
+    let solar_term_b = major_solar_term_from_fixed::<C>(month_after_twelfth);
+    let solar_term_c = major_solar_term_from_fixed::<C>(month_after_thirteenth);
+    if lhs_argument == 12 && (solar_term_a == solar_term_b || solar_term_b == solar_term_c) {
+        (month_after_thirteenth, following_solstice)
     } else {
         (month_after_twelfth, following_solstice)
     }
@@ -447,13 +437,22 @@ pub fn chinese_based_date_from_fixed<C: ChineseBased>(date: RataDie) -> ChineseF
 /// function assumes the date passed in is in a leap year and tests to ensure this is the case in debug
 /// mode by asserting that no more than thirteen months are analyzed.
 ///
+/// Calls to `no_major_solar_term` have been inlined for increased efficiency.
+///
 /// Conceptually similar to code from _Calendrical Calculations_ by Reingold & Dershowitz
 /// Lisp reference code: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5443-L5450>
 pub fn get_leap_month_from_new_year<C: ChineseBased>(new_year: RataDie) -> u8 {
     let mut cur = new_year;
     let mut result = 1;
-    while result < MAX_ITERS_FOR_MONTHS_OF_YEAR && !no_major_solar_term::<C>(cur) {
-        cur = new_moon_on_or_after::<C>((cur + 1).as_moment());
+    let mut solar_term = major_solar_term_from_fixed::<C>(cur);
+    loop {
+        let next = new_moon_on_or_after::<C>((cur + 1).as_moment());
+        let next_solar_term = major_solar_term_from_fixed::<C>(next);
+        if result >= MAX_ITERS_FOR_MONTHS_OF_YEAR || solar_term == next_solar_term {
+            break;
+        }
+        cur = next;
+        solar_term = next_solar_term;
         result += 1;
     }
     debug_assert!(result < MAX_ITERS_FOR_MONTHS_OF_YEAR, "The given year was not a leap year and an unexpected number of iterations occurred searching for a leap month.");
