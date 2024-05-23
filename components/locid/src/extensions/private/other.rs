@@ -13,9 +13,24 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::extensions::private::Subtag;
     ///
-    /// let subtag1: Subtag = "Foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag1: Subtag = "Foo".parse()
+    ///     .expect("Failed to parse a Subtag.");
     ///
     /// assert_eq!(subtag1.as_str(), "foo");
+    /// ```
+    ///
+    /// Notice: This is different from the generic [`Subtag`](crate::subtags::Subtag)
+    /// which is between two and eight characters.
+    ///
+    /// ```
+    /// use icu::locid::extensions::private;
+    /// use icu::locid::subtags;
+    ///
+    /// let subtag: Result<private::Subtag, _> = "f".parse();
+    /// assert!(subtag.is_ok());
+    ///
+    /// let subtag: Result<subtags::Subtag, _> = "f".parse();
+    /// assert!(subtag.is_err());
     /// ```
     Subtag,
     extensions::private,
