@@ -117,7 +117,6 @@ dependencies = [
  "displaydoc",
  "icu_collator_data",
  "icu_collections",
- "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
  "icu_properties",
@@ -175,7 +174,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
- "icu_locid",
  "icu_locid_transform",
  "icu_provider",
  "writeable",
@@ -208,6 +206,7 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "zerofrom",
  "zerotrie",
  "zerovec",
 ]
@@ -296,7 +295,6 @@ version = "1.4.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
- "icu_locid",
  "icu_locid_transform",
  "icu_plurals_data",
  "icu_provider",
@@ -372,7 +370,6 @@ version = "1.4.0"
 dependencies = [
  "displaydoc",
  "icu_calendar",
- "icu_locid",
  "icu_provider",
  "icu_timezone_data",
  "tinystr",
@@ -427,6 +424,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
+ "num-bigint",
  "num-integer",
  "num-traits",
 ]
