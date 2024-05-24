@@ -131,48 +131,52 @@ impl<'l> LstmSegmenter<'l> {
 
     /// Create an LSTM based break iterator for a UTF-16 string.
     pub(super) fn segment_utf16(&'l self, input: &[u16]) -> impl Iterator<Item = usize> + 'l {
-        let input_seq = if let Some(grapheme) = self.grapheme {
-            Vec::from_iter(GraphemeClusterSegmenter::new_and_segment_utf16(
-                input, grapheme,
-            ))
-            .windows(2)
-            .map(|chunk| {
-                let range = if let [first, second, ..] = chunk {
-                    *first..*second
-                } else {
-                    unreachable!()
-                };
-                let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
-                    grapheme_cluster
-                } else {
-                    return self.dic.len() as u16;
-                };
+        let mut input_seq = Vec::new();
+        if let Some(grapheme) = self.grapheme {
+            let mut iter = GraphemeClusterSegmenter::new_and_segment_utf16(input, grapheme);
 
-                self.dic
-                    .get_copied_by(|key| {
-                        key.as_bytes().iter().copied().cmp(
-                            decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
-                                let mut buf = [0; 4];
-                                let len = c
-                                    .unwrap_or(REPLACEMENT_CHARACTER)
-                                    .encode_utf8(&mut buf)
-                                    .len();
-                                buf.into_iter().take(len)
-                            }),
-                        )
-                    })
-                    .unwrap_or_else(|| self.dic.len() as u16)
-            })
-            .collect()
+            if let Some(mut prev) = iter.next() {
+                for curr in iter {
+                    input_seq.push(
+                        input
+                            .get(prev..curr)
+                            .and_then(|gc| {
+                                fn cmp_utf8_utf16(
+                                    utf8: impl Iterator<Item = u8>,
+                                    utf16: impl Iterator<Item = u16>,
+                                ) -> core::cmp::Ordering {
+                                    utf8.cmp(decode_utf16(utf16).flat_map(|c| {
+                                        let mut buf = [0; 4];
+                                        let len = c
+                                            .unwrap_or(char::REPLACEMENT_CHARACTER)
+                                            .encode_utf8(&mut buf)
+                                            .len();
+                                        buf.into_iter().take(len)
+                                    }))
+                                }
+
+                                self.dic.get_copied_by(|key| {
+                                    cmp_utf8_utf16(
+                                        key.as_bytes().iter().copied(),
+                                        gc.iter().copied(),
+                                    )
+                                })
+                            })
+                            .unwrap_or_else(|| self.dic.len() as u16),
+                    );
+                    prev = curr;
+                }
+            }
         } else {
-            decode_utf16(input.iter().copied())
-                .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
-                .map(|c| {
-                    self.dic
-                        .get_copied(UnvalidatedStr::from_str(c.encode_utf8(&mut [0; 4])))
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
+            input_seq.extend(
+                decode_utf16(input.iter().copied())
+                    .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
+                    .map(|c| {
+                        self.dic
+                            .get_copied(UnvalidatedStr::from_str(c.encode_utf8(&mut [0; 4])))
+                            .unwrap_or_else(|| self.dic.len() as u16)
+                    }),
+            )
         };
         LstmSegmenterIteratorUtf16 {
             bies: BiesIterator::new(self, input_seq),
