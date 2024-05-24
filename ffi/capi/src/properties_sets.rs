@@ -937,11 +937,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             property_name: &DiplomatStr,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
-            let name = if let Ok(s) = str::from_utf8(property_name) {
-                s
-            } else {
-                return Err(ICU4XError::TinyStrNonAsciiError);
-            };
+            let name = str::from_utf8(property_name)?;
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
                 sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned())],
                 sets::load_for_ecma262_unstable,
