@@ -8,6 +8,7 @@
 //! are exported by way of the different public types on this crate.
 
 /// Whether to use the perfect hash function in the ZeroTrie.
+#[derive(Copy, Clone)]
 pub(crate) enum PhfMode {
     /// Use binary search for all branch nodes.
     BinaryOnly,
@@ -15,7 +16,17 @@ pub(crate) enum PhfMode {
     UsePhf,
 }
 
+impl PhfMode {
+    pub(crate) const fn to_u8_flag(self) -> u8 {
+        match self {
+            Self::BinaryOnly => 0,
+            Self::UsePhf => 0x1,
+        }
+    }
+}
+
 /// Whether to support non-ASCII data in the ZeroTrie.
+#[derive(Copy, Clone)]
 pub(crate) enum AsciiMode {
     /// Support only ASCII, returning an error if non-ASCII is found.
     AsciiOnly,
@@ -23,7 +34,17 @@ pub(crate) enum AsciiMode {
     BinarySpans,
 }
 
+impl AsciiMode {
+    pub(crate) const fn to_u8_flag(self) -> u8 {
+        match self {
+            Self::AsciiOnly => 0,
+            Self::BinarySpans => 0x2,
+        }
+    }
+}
+
 /// Whether to enforce a limit to the capacity of the ZeroTrie.
+#[derive(Copy, Clone)]
 pub(crate) enum CapacityMode {
     /// Return an error if the trie requires a branch of more than 2^32 bytes.
     Normal,
@@ -31,7 +52,17 @@ pub(crate) enum CapacityMode {
     Extended,
 }
 
+impl CapacityMode {
+    pub(crate) const fn to_u8_flag(self) -> u8 {
+        match self {
+            Self::Normal => 0,
+            Self::Extended => 0x4,
+        }
+    }
+}
+
 /// How to handle strings with mixed ASCII case at a node, such as "abc" and "Abc"
+#[derive(Copy, Clone)]
 pub(crate) enum CaseSensitivity {
     /// Allow all strings and sort them by byte value.
     Sensitive,
@@ -39,11 +70,30 @@ pub(crate) enum CaseSensitivity {
     IgnoreCase,
 }
 
+impl CaseSensitivity {
+    pub(crate) const fn to_u8_flag(self) -> u8 {
+        match self {
+            Self::Sensitive => 0,
+            Self::IgnoreCase => 0x8,
+        }
+    }
+}
+
+#[derive(Copy, Clone)]
 pub(crate) struct ZeroTrieBuilderOptions {
     pub phf_mode: PhfMode,
     pub ascii_mode: AsciiMode,
     pub capacity_mode: CapacityMode,
     pub case_sensitivity: CaseSensitivity,
+}
+
+impl ZeroTrieBuilderOptions {
+    pub(crate) const fn to_u8_flags(self) -> u8 {
+        self.phf_mode.to_u8_flag()
+            | self.ascii_mode.to_u8_flag()
+            | self.capacity_mode.to_u8_flag()
+            | self.case_sensitivity.to_u8_flag()
+    }
 }
 
 pub(crate) trait ZeroTrieWithOptions {
@@ -61,6 +111,10 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieSimpleAscii<S> {
     };
 }
 
+impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
+    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
+}
+
 /// All branch nodes are binary search
 /// and nodes use case-insensitive matching.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
@@ -70,6 +124,10 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
         capacity_mode: CapacityMode::Normal,
         case_sensitivity: CaseSensitivity::IgnoreCase,
     };
+}
+
+impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
+    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }
 
 /// Branch nodes could be either binary search or PHF.
@@ -82,6 +140,10 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
     };
 }
 
+impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
+    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
+}
+
 /// No limited capacity assertion.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
@@ -90,4 +152,8 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
         capacity_mode: CapacityMode::Extended,
         case_sensitivity: CaseSensitivity::Sensitive,
     };
+}
+
+impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
+    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }
