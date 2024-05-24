@@ -451,18 +451,18 @@ pub(super) fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
             concatenate_continuation_byte(code_point, bytes.get(1), 0x80..=0xBF)?
         }
         3 => {
-            let byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
-            let lower: u8 = if byte == 0xE0 { 0xA0 } else { 0x80 };
-            let upper: u8 = if byte == 0xEF { 0x80 } else { 0x9F };
-            let mut code_point = u32::from(byte & 0xF);
+            let leading_byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
+            let lower: u8 = if leading_byte == 0xE0 { 0xA0 } else { 0x80 };
+            let upper: u8 = if leading_byte == 0xED { 0x9F } else { 0xBF };
+            let mut code_point = u32::from(leading_byte & 0xF);
             code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
             concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?
         }
         4 => {
-            let byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
-            let lower: u8 = if byte == 0xF0 { 0x90 } else { 0x80 };
-            let upper: u8 = if byte == 0xF4 { 0x8F } else { 0xBF };
-            let mut code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x7);
+            let leading_byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
+            let lower: u8 = if leading_byte == 0xF0 { 0x90 } else { 0x80 };
+            let upper: u8 = if leading_byte == 0xF4 { 0x8F } else { 0xBF };
+            let mut code_point = u32::from(leading_byte & 0x7);
             code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
             code_point = concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?;
             concatenate_continuation_byte(code_point, bytes.get(3), 0x80..=0xBF)?
