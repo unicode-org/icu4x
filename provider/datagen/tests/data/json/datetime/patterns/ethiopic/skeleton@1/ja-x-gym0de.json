@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "GGGGy年M月d日EEEE",
+    "GGGGy年M月d日(EEEE)",
     "GGGy年M月d日(E)"
   ]
 }

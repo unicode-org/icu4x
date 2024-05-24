@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "EEEE, d 'de' MMMM 'de' y",
-    "E, d MMM y",
-    "E, d/M/y"
+    "EEEE, d 'de' MMMM 'de' y G",
+    "EEE, d 'de' MMM 'de' y G",
+    "E d/M/y G"
   ]
 }

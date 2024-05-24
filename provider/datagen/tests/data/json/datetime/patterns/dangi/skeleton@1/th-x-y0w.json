@@ -5,6 +5,6 @@
     "has_plurals": false
   },
   "patterns": [
-    "สัปดาห์ที่ w ของปี Y"
+    "Y w"
   ]
 }
