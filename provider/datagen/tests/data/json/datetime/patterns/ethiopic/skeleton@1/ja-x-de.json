@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "d日EEEE",
+    "d日(EEEE)",
     "d日(E)"
   ]
 }

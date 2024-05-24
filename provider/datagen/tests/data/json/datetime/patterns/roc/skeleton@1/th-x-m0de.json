@@ -7,6 +7,6 @@
   "patterns": [
     "EEEEที่ d MMMM",
     "E d MMM",
-    "E d/M"
+    "E, d/M"
   ]
 }
