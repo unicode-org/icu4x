@@ -360,14 +360,14 @@ impl<'a> Cursor<'a> {
     fn peek_with_info(&self, n: usize) -> ParserResult<(Option<char>, usize)> {
         let mut index = self.pos;
         for _ in 0..n {
-            index += get_utf8_offset(self.source.get(index))?;
+            index += get_utf8_offset(self.source.get(index))?.unwrap_or(0);
         }
         let offset = get_utf8_offset(self.source.get(index))?;
-        let Some(bytes) = self.source.get(index..index + offset) else {
+        let Some(bytes) = self.source.get(index..index + offset.unwrap_or(1)) else {
             return Ok((None, 0));
         };
 
-        decode_utf8_bytes(bytes).map(|x| (Some(x), offset))
+        decode_utf8_bytes(bytes).map(|x| (Some(x), offset.unwrap_or(0)))
     }
 
     /// Runs the provided check on the current position.
@@ -441,16 +441,17 @@ impl<'a> Cursor<'a> {
 
 // ==== Utility functions ====
 
+// NOTE: `decode_utf8_bytes` is safe
 /// Decodes a `&[u8]` into a UTF8 character.
 #[inline]
 pub(super) fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
-    let code_point = match bytes.len() {
-        1 => return Ok(char::from(*bytes.first().ok_or(ParserError::ImplAssert)?)),
-        2 => {
+    let code_point = match get_utf8_offset(bytes.first())? {
+        Some(1) => return Ok(char::from(*bytes.first().ok_or(ParserError::ImplAssert)?)),
+        Some(2) => {
             let code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
             concatenate_continuation_byte(code_point, bytes.get(1), 0x80..=0xBF)?
         }
-        3 => {
+        Some(3) => {
             let leading_byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
             let lower: u8 = if leading_byte == 0xE0 { 0xA0 } else { 0x80 };
             let upper: u8 = if leading_byte == 0xED { 0x9F } else { 0xBF };
@@ -458,7 +459,7 @@ pub(super) fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
             code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
             concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?
         }
-        4 => {
+        Some(4) => {
             let leading_byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
             let lower: u8 = if leading_byte == 0xF0 { 0x90 } else { 0x80 };
             let upper: u8 = if leading_byte == 0xF4 { 0x8F } else { 0xBF };
@@ -489,14 +490,14 @@ fn concatenate_continuation_byte(
 
 /// Checks the leading byte to determine width of character.
 #[inline]
-fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<usize> {
+fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<Option<usize>> {
     match byte {
-        Some(x) if (0x00..=0x7F).contains(x) => Ok(1),
-        Some(x) if (0xC2..=0xDF).contains(x) => Ok(2),
-        Some(x) if (0xE0..=0xEF).contains(x) => Ok(3),
-        Some(x) if (0xF0..=0xF4).contains(x) => Ok(4),
+        Some(x) if (0x00..=0x7F).contains(x) => Ok(Some(1)),
+        Some(x) if (0xC2..=0xDF).contains(x) => Ok(Some(2)),
+        Some(x) if (0xE0..=0xEF).contains(x) => Ok(Some(3)),
+        Some(x) if (0xF0..=0xF4).contains(x) => Ok(Some(4)),
         // Came across a UTF8-Tail character or a non-valid character as a leading byte.
         Some(_) => Err(ParserError::Utf8Encoding),
-        None => Ok(1),
+        None => Ok(None),
     }
 }
