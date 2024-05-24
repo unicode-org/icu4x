@@ -18,7 +18,7 @@ pub(crate) enum PhfMode {
 
 impl PhfMode {
     #[cfg(feature = "serde")]
-    pub(crate) const fn to_u8_flag(self) -> u8 {
+    const fn to_u8_flag(self) -> u8 {
         match self {
             Self::BinaryOnly => 0,
             Self::UsePhf => 0x1,
@@ -37,7 +37,7 @@ pub(crate) enum AsciiMode {
 
 impl AsciiMode {
     #[cfg(feature = "serde")]
-    pub(crate) const fn to_u8_flag(self) -> u8 {
+    const fn to_u8_flag(self) -> u8 {
         match self {
             Self::AsciiOnly => 0,
             Self::BinarySpans => 0x2,
@@ -56,7 +56,7 @@ pub(crate) enum CapacityMode {
 
 impl CapacityMode {
     #[cfg(feature = "serde")]
-    pub(crate) const fn to_u8_flag(self) -> u8 {
+    const fn to_u8_flag(self) -> u8 {
         match self {
             Self::Normal => 0,
             Self::Extended => 0x4,
@@ -75,7 +75,7 @@ pub(crate) enum CaseSensitivity {
 
 impl CaseSensitivity {
     #[cfg(feature = "serde")]
-    pub(crate) const fn to_u8_flag(self) -> u8 {
+    const fn to_u8_flag(self) -> u8 {
         match self {
             Self::Sensitive => 0,
             Self::IgnoreCase => 0x8,
@@ -93,7 +93,7 @@ pub(crate) struct ZeroTrieBuilderOptions {
 
 impl ZeroTrieBuilderOptions {
     #[cfg(feature = "serde")]
-    pub(crate) const fn to_u8_flags(self) -> u8 {
+    const fn to_u8_flags(self) -> u8 {
         self.phf_mode.to_u8_flag()
             | self.ascii_mode.to_u8_flag()
             | self.capacity_mode.to_u8_flag()
