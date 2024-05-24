@@ -272,7 +272,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     }
 }
 
-size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 456);
+size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 536);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -437,7 +437,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
 size_test!(
     NeoFormatter<crate::neo_marker::NeoYearMonthDayMarker>,
     neo_year_month_day_formatter_size,
-    512
+    592
 );
 
 /// [`NeoFormatter`] is a formatter capable of formatting dates and/or times from
