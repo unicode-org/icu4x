@@ -273,11 +273,12 @@ impl serde::Serialize for WeekdaySet {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            alloc::vec::Vec::from_iter(crate::week_of::WeekdaySetIterator::new(
-                IsoWeekday::Monday,
-                *self,
-            ))
-            .serialize(serializer)
+            use serde::ser::SerializeSeq;
+            let mut seq = serializer.serialize_seq(None)?;
+            for day in crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self) {
+                seq.serialize_element(&day)?;
+            }
+            seq.end()
         } else {
             self.0.serialize(serializer)
         }

@@ -99,37 +99,28 @@ impl<'l> LstmSegmenter<'l> {
 
     // For unit testing as we cannot inspect the opaque type's bies
     fn segment_str_p(&'l self, input: &'l str) -> LstmSegmenterIterator<'l> {
-        let input_seq = if let Some(grapheme) = self.grapheme {
-            Vec::from_iter(GraphemeClusterSegmenter::new_and_segment_str(
-                input, grapheme,
-            ))
-            .windows(2)
-            .map(|chunk| {
-                let range = if let [first, second, ..] = chunk {
-                    *first..*second
-                } else {
-                    unreachable!()
-                };
-                let grapheme_cluster = if let Some(grapheme_cluster) = input.get(range) {
-                    grapheme_cluster
-                } else {
-                    return self.dic.len() as u16;
-                };
+        let mut input_seq = Vec::new();
 
-                self.dic
-                    .get_copied(UnvalidatedStr::from_str(grapheme_cluster))
-                    .unwrap_or_else(|| self.dic.len() as u16)
-            })
-            .collect()
+        if let Some(grapheme) = self.grapheme {
+            let mut iter = GraphemeClusterSegmenter::new_and_segment_str(input, grapheme);
+
+            if let Some(mut prev) = iter.next() {
+                for curr in iter {
+                    input_seq.push(
+                        input
+                            .get(prev..curr)
+                            .and_then(|g| self.dic.get_copied(UnvalidatedStr::from_str(g)))
+                            .unwrap_or_else(|| self.dic.len() as u16),
+                    );
+                    prev = curr;
+                }
+            }
         } else {
-            input
-                .chars()
-                .map(|c| {
-                    self.dic
-                        .get_copied(UnvalidatedStr::from_str(c.encode_utf8(&mut [0; 4])))
-                        .unwrap_or_else(|| self.dic.len() as u16)
-                })
-                .collect()
+            input_seq.extend(input.chars().map(|c| {
+                self.dic
+                    .get_copied(UnvalidatedStr::from_str(c.encode_utf8(&mut [0; 4])))
+                    .unwrap_or_else(|| self.dic.len() as u16)
+            }));
         };
         LstmSegmenterIterator {
             input,
