@@ -209,8 +209,36 @@ where
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
+    try_write_pattern_items(
+        pattern.metadata,
+        pattern.items.iter(),
+        datetime,
+        date_symbols,
+        time_symbols,
+        week_data,
+        fixed_decimal_format,
+        w,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn try_write_pattern_items<'data, W, DS, TS>(
+    pattern_metadata: PatternMetadata,
+    pattern_items: impl Iterator<Item = PatternItem>,
+    datetime: &ExtractedDateTimeInput,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
+    week_data: Option<&'data WeekCalculator>,
+    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    w: &mut W,
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+where
+    W: writeable::PartsWrite + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
+{
     let mut r = Ok(());
-    let mut iter = pattern.items.iter().peekable();
+    let mut iter = pattern_items.peekable();
     while let Some(item) = iter.next() {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
@@ -218,7 +246,7 @@ where
                 r = r.and(try_write_field(
                     field,
                     &mut iter,
-                    pattern.metadata,
+                    pattern_metadata,
                     datetime,
                     date_symbols,
                     time_symbols,
