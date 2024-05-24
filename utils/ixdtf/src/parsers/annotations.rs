@@ -33,7 +33,7 @@ pub(crate) fn parse_annotation_set<'a>(
     let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
 
     // Parse any `Annotations`
-    let annotations = cursor.check_or(false, is_annotation_open)?;
+    let annotations = cursor.check_or(false, is_annotation_open);
 
     if annotations {
         let calendar = parse_annotations(cursor, handler)?;
@@ -56,7 +56,7 @@ pub(crate) fn parse_annotations<'a>(
 ) -> ParserResult<Option<&'a [u8]>> {
     let mut calendar: Option<Annotation<'a>> = None;
 
-    while cursor.check_or(false, is_annotation_open)? {
+    while cursor.check_or(false, is_annotation_open) {
         let annotation = handler(parse_kv_annotation(cursor)?);
 
         match annotation {
@@ -97,7 +97,7 @@ fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'
         AnnotationOpen
     );
 
-    let critical = cursor.check_or(false, is_critical_flag)?;
+    let critical = cursor.check_or(false, is_critical_flag);
     cursor.advance_if(critical);
 
     // Parse AnnotationKey.
@@ -131,9 +131,9 @@ fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
         AnnotationKeyLeadingChar,
     );
 
-    while let Some(potential_key_char) = cursor.next()? {
+    while let Some(potential_key_char) = cursor.next() {
         // End of key.
-        if cursor.check_or(false, is_annotation_key_value_separator)? {
+        if cursor.check_or(false, is_annotation_key_value_separator) {
             // Return found key
             return cursor
                 .slice(key_start, cursor.pos())
@@ -150,8 +150,8 @@ fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
 fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
     let value_start = cursor.pos();
     cursor.advance();
-    while let Some(potential_value_char) = cursor.next()? {
-        if cursor.check_or(false, is_annotation_close)? {
+    while let Some(potential_value_char) = cursor.next() {
+        if cursor.check_or(false, is_annotation_close) {
             // Return the determined AnnotationValue.
             return cursor
                 .slice(value_start, cursor.pos())
@@ -160,7 +160,7 @@ fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]>
 
         if is_hyphen(potential_value_char) {
             assert_syntax!(
-                cursor.peek()?.map_or(false, is_annotation_value_component),
+                cursor.peek().map_or(false, is_annotation_value_component),
                 AnnotationValueCharPostHyphen,
             );
             cursor.advance();

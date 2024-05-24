@@ -339,61 +339,56 @@ impl<'a> Cursor<'a> {
     }
 
     /// Peek the value at next position (current + 1).
-    fn peek(&self) -> ParserResult<Option<char>> {
+    fn peek(&self) -> Option<char> {
         self.peek_n(1)
     }
 
     /// Returns current position in source as `char`.
-    fn current(&self) -> ParserResult<Option<char>> {
+    fn current(&self) -> Option<char> {
         self.peek_n(0)
     }
 
     /// Peeks the value at `n` as a `char`.
-    fn peek_n(&self, n: usize) -> ParserResult<Option<char>> {
-        let Some((_, char)) = self.peek_with_info(n)? else {
-            return Ok(None);
-        };
-        Ok(Some(char))
+    fn peek_n(&self, n: usize) -> Option<char> {
+        let (_, char) = self.peek_with_info(n)?;
+        Some(char)
     }
 
     /// Peeks the value at `n` and returns the char with its byte length.
-    fn peek_with_info(&self, n: usize) -> ParserResult<Option<(usize, char)>> {
+    fn peek_with_info(&self, n: usize) -> Option<(usize, char)> {
         let mut chars =
             Utf8CharIndices::new(self.source.get(self.pos..self.source.len()).unwrap_or(&[]));
         for _ in 0..n {
             let _ = chars.next();
         }
-        let Some((_, peek)) = chars.next() else {
-            return Ok(None);
-        };
+        let (_, peek) = chars.next()?;
         let offset = chars.offset();
 
-        Ok(Some((offset, peek)))
+        Some((offset, peek))
     }
 
     /// Runs the provided check on the current position.
-    fn check<F>(&self, f: F) -> ParserResult<Option<bool>>
+    fn check<F>(&self, f: F) -> Option<bool>
     where
         F: FnOnce(char) -> bool,
     {
-        Ok(self.current()?.map(f))
+        self.current().map(f)
     }
 
     /// Runs the provided check on current position returns the default value if None.
-    fn check_or<F>(&self, default: bool, f: F) -> ParserResult<bool>
+    fn check_or<F>(&self, default: bool, f: F) -> bool
     where
         F: FnOnce(char) -> bool,
     {
-        Ok(self.current()?.map_or(default, f))
+        self.current().map_or(default, f)
     }
 
     /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> ParserResult<Option<char>> {
-        let Some((offset, result)) = self.peek_with_info(0)? else {
-            return Ok(None);
-        };
-        self.advance_n(offset);
-        Ok(Some(result))
+    fn next(&mut self) -> Option<char> {
+        self.peek_with_info(0).map(|(offset, result)| {
+            self.advance_n(offset);
+            result
+        })
     }
 
     /// Returns the next value as a digit.
@@ -411,7 +406,7 @@ impl<'a> Cursor<'a> {
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
     fn next_or(&mut self, err: ParserError) -> ParserResult<char> {
-        self.next()?.ok_or(err)
+        self.next().ok_or(err)
     }
 
     /// Advances the cursor's position by n bytes.
