@@ -314,7 +314,7 @@ impl FromStr for IcuRatio {
     /// ```
     /// NOTE:
     ///    You can add as many commas as you want in the string, they will be disregarded.
-    fn from_str(number_str: &str) -> Result<Self, RatioFromStrError> {
+    fn from_str(number_str: &str) -> Result<Self, Self::Err> {
         /// This function interprets numeric strings and converts them into an `IcuRatio` object, supporting:
         /// - Simple fractions: e.g., "1/2".
         /// - Decimals: e.g., "1.5".
