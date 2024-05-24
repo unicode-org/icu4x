@@ -28,6 +28,7 @@ duration = []
 
 [dependencies]
 displaydoc = { workspace = true }
+utf8_iter.workspace = true
 
 [dev-dependencies]
 serde-json-core = { workspace = true, features = ["std"] }

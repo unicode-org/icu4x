@@ -4,13 +4,12 @@
 
 //! The parser module contains the implementation details for `IXDTFParser` and `ISODurationParser`
 
-use core::ops::RangeInclusive;
-
 use crate::{ParserError, ParserResult};
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
 use records::IxdtfParseRecord;
+use utf8_iter::Utf8CharIndices;
 
 use self::records::Annotation;
 
@@ -64,7 +63,7 @@ macro_rules! assert_syntax {
 /// assert_eq!(offset.hour, 5);
 /// assert_eq!(offset.minute, 0);
 /// assert!(!tz_annotation.critical);
-/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
 /// ```
 ///
 /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
@@ -190,7 +189,7 @@ impl<'a> IxdtfParser<'a> {
     /// assert_eq!(offset.hour, 5);
     /// assert_eq!(offset.minute, 0);
     /// assert!(!tz_annotation.critical);
-    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
     /// ```
     ///
     /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
@@ -330,9 +329,8 @@ impl<'a> Cursor<'a> {
     }
 
     /// Returns a string value from a slice of the cursor.
-    fn slice(&self, start: usize, end: usize) -> Option<&'a str> {
-        // Safety: grammar tests and decoding enforce that the &[u8] is a valid well-formed utf-8 byte sequence.
-        unsafe { core::mem::transmute(self.source.get(start..end)) }
+    fn slice(&self, start: usize, end: usize) -> Option<&'a [u8]> {
+        self.source.get(start..end)
     }
 
     /// Get current position
@@ -352,22 +350,25 @@ impl<'a> Cursor<'a> {
 
     /// Peeks the value at `n` as a `char`.
     fn peek_n(&self, n: usize) -> ParserResult<Option<char>> {
-        let (char, _) = self.peek_with_info(n)?;
-        Ok(char)
+        let Some((_, char)) = self.peek_with_info(n)? else {
+            return Ok(None);
+        };
+        Ok(Some(char))
     }
 
     /// Peeks the value at `n` and returns the char with its byte length.
-    fn peek_with_info(&self, n: usize) -> ParserResult<(Option<char>, usize)> {
-        let mut index = self.pos;
+    fn peek_with_info(&self, n: usize) -> ParserResult<Option<(usize, char)>> {
+        let mut chars =
+            Utf8CharIndices::new(self.source.get(self.pos..self.source.len()).unwrap_or(&[]));
         for _ in 0..n {
-            index += get_utf8_offset(self.source.get(index))?.unwrap_or(0);
+            let _ = chars.next();
         }
-        let offset = get_utf8_offset(self.source.get(index))?;
-        let Some(bytes) = self.source.get(index..index + offset.unwrap_or(1)) else {
-            return Ok((None, 0));
+        let Some((_, peek)) = chars.next() else {
+            return Ok(None);
         };
+        let offset = chars.offset();
 
-        decode_utf8_bytes(bytes).map(|x| (Some(x), offset.unwrap_or(0)))
+        Ok(Some((offset, peek)))
     }
 
     /// Runs the provided check on the current position.
@@ -388,10 +389,10 @@ impl<'a> Cursor<'a> {
 
     /// Returns `Cursor`'s current char and advances to the next position.
     fn next(&mut self) -> ParserResult<Option<char>> {
-        let (Some(result), byte_count) = self.peek_with_info(0)? else {
+        let Some((offset, result)) = self.peek_with_info(0)? else {
             return Ok(None);
         };
-        self.advance_n(byte_count);
+        self.advance_n(offset);
         Ok(Some(result))
     }
 
@@ -436,67 +437,5 @@ impl<'a> Cursor<'a> {
             return Err(ParserError::InvalidEnd);
         }
         Ok(())
-    }
-}
-
-// ==== Utility functions ====
-
-/// Decodes a `&[u8]` into a UTF8 character.
-#[inline]
-pub(super) fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
-    let code_point = match get_utf8_offset(bytes.first())? {
-        Some(1) => return Ok(char::from(*bytes.first().ok_or(ParserError::ImplAssert)?)),
-        Some(2) => {
-            let code_point = u32::from(*bytes.first().ok_or(ParserError::ImplAssert)? & 0x1F);
-            concatenate_continuation_byte(code_point, bytes.get(1), 0x80..=0xBF)?
-        }
-        Some(3) => {
-            let leading_byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
-            let lower: u8 = if leading_byte == 0xE0 { 0xA0 } else { 0x80 };
-            let upper: u8 = if leading_byte == 0xED { 0x9F } else { 0xBF };
-            let mut code_point = u32::from(leading_byte & 0xF);
-            code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
-            concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?
-        }
-        Some(4) => {
-            let leading_byte: u8 = *bytes.first().ok_or(ParserError::ImplAssert)?;
-            let lower: u8 = if leading_byte == 0xF0 { 0x90 } else { 0x80 };
-            let upper: u8 = if leading_byte == 0xF4 { 0x8F } else { 0xBF };
-            let mut code_point = u32::from(leading_byte & 0x7);
-            code_point = concatenate_continuation_byte(code_point, bytes.get(1), lower..=upper)?;
-            code_point = concatenate_continuation_byte(code_point, bytes.get(2), 0x80..=0xBF)?;
-            concatenate_continuation_byte(code_point, bytes.get(3), 0x80..=0xBF)?
-        }
-        _ => return Err(ParserError::ImplAssert),
-    };
-
-    // Safety: Codepoint is guaranteed correct by the above decoding.
-    Ok(unsafe { char::from_u32_unchecked(code_point) })
-}
-
-/// Checks for continuation byte and appends the byte to the current code point if valid.
-#[inline]
-fn concatenate_continuation_byte(
-    codepoint: u32,
-    byte: Option<&u8>,
-    range: RangeInclusive<u8>,
-) -> ParserResult<u32> {
-    match byte {
-        Some(b) if range.contains(b) => Ok((codepoint << 6) | u32::from(*b & 0x3F)),
-        _ => Err(ParserError::Utf8Encoding),
-    }
-}
-
-/// Checks the leading byte to determine width of character.
-#[inline]
-fn get_utf8_offset(byte: Option<&u8>) -> ParserResult<Option<usize>> {
-    match byte {
-        Some(x) if (0x00..=0x7F).contains(x) => Ok(Some(1)),
-        Some(x) if (0xC2..=0xDF).contains(x) => Ok(Some(2)),
-        Some(x) if (0xE0..=0xEF).contains(x) => Ok(Some(3)),
-        Some(x) if (0xF0..=0xF4).contains(x) => Ok(Some(4)),
-        // Came across a UTF8-Tail character or a non-valid character as a leading byte.
-        Some(_) => Err(ParserError::Utf8Encoding),
-        None => Ok(None),
     }
 }

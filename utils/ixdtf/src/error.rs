@@ -104,10 +104,6 @@ pub enum ParserError {
     TimeDurationPartOrder,
     #[displaydoc("Invalid time duration designator.")]
     TimeDurationDesignator,
-
-    // UTF-8 Error
-    #[displaydoc("Invalid UTF-8 character found.")]
-    Utf8Encoding,
 }
 
 impl ParserError {

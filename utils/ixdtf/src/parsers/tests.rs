@@ -16,8 +16,6 @@ use crate::{
     ParserError,
 };
 
-use super::decode_utf8_bytes;
-
 #[test]
 fn temporal_parser_basic() {
     let basic_result = IxdtfParser::new("20201108".as_bytes()).parse().unwrap();
@@ -72,7 +70,7 @@ fn good_zoned_date_time() {
         tz_annotation,
         TimeZoneAnnotation {
             critical: false,
-            tz: TimeZoneRecord::Name("America/Chicago")
+            tz: TimeZoneRecord::Name("America/Chicago".as_bytes())
         }
     );
 }
@@ -190,11 +188,11 @@ fn good_annotations_date_time() {
         tz_annotation,
         TimeZoneAnnotation {
             critical: true,
-            tz: TimeZoneRecord::Name("America/Argentina/ComodRivadavia"),
+            tz: TimeZoneRecord::Name("America/Argentina/ComodRivadavia".as_bytes()),
         }
     );
 
-    assert_eq!(result.calendar, Some("iso8601"));
+    assert_eq!(result.calendar, Some("iso8601".as_bytes()));
 
     let omit_result = IxdtfParser::new("+0020201108[!u-ca=iso8601][f-1a2b=a0sa-2l4s]".as_bytes())
         .parse()
@@ -202,7 +200,7 @@ fn good_annotations_date_time() {
 
     assert!(omit_result.tz.is_none());
 
-    assert_eq!(omit_result.calendar, Some("iso8601"));
+    assert_eq!(omit_result.calendar, Some("iso8601".as_bytes()));
 }
 
 #[test]
@@ -326,7 +324,8 @@ fn duplicate_same_calendar() {
         let result = IxdtfParser::new(duplicate.as_bytes()).parse().unwrap();
         let calendar = result.calendar.unwrap();
         assert_eq!(
-            calendar, "iso8601",
+            calendar,
+            "iso8601".as_bytes(),
             "Invalid Ixdtf parsing: \"{duplicate}\" should fail parsing."
         );
     }
@@ -344,7 +343,7 @@ fn valid_calendar_annotations() {
         .unwrap();
     assert_eq!(
         result.calendar,
-        Some("japanese"),
+        Some("japanese".as_bytes()),
         "Valid annotation parsing: \"{value}\" should parse calendar as 'japanese'."
     );
 
@@ -352,8 +351,8 @@ fn valid_calendar_annotations() {
         annotations[1],
         Annotation {
             critical: false,
-            key: "u-ca",
-            value: "iso8601"
+            key: "u-ca".as_bytes(),
+            value: "iso8601".as_bytes()
         },
         "Valid annotation parsing: \"{value}\" should parse first annotation as 'iso8601'."
     );
@@ -362,8 +361,8 @@ fn valid_calendar_annotations() {
         annotations[2],
         Annotation {
             critical: false,
-            key: "u-ca",
-            value: "gregorian"
+            key: "u-ca".as_bytes(),
+            value: "gregorian".as_bytes()
         },
         "Valid annotation parsing: \"{value}\" should parse second annotation as 'gregorian'."
     );
@@ -378,7 +377,7 @@ fn valid_calendar_annotations() {
         .unwrap();
     assert_eq!(
         result.calendar,
-        Some("gregorian"),
+        Some("gregorian".as_bytes()),
         "Valid annotation parsing: \"{value}\" should parse calendar as 'gregorian'."
     );
 
@@ -386,8 +385,8 @@ fn valid_calendar_annotations() {
         annotations[1],
         Annotation {
             critical: false,
-            key: "u-ca",
-            value: "iso8601"
+            key: "u-ca".as_bytes(),
+            value: "iso8601".as_bytes()
         },
         "Valid annotation parsing: \"{value}\" should parse first annotation as 'iso8601'."
     );
@@ -396,8 +395,8 @@ fn valid_calendar_annotations() {
         annotations[2],
         Annotation {
             critical: false,
-            key: "u-ca",
-            value: "japanese"
+            key: "u-ca".as_bytes(),
+            value: "japanese".as_bytes()
         },
         "Valid annotation parsing: \"{value}\" should parse second annotation as 'japanese'."
     );
@@ -904,73 +903,4 @@ fn test_bad_time_spec_separator() {
     let dt = "2022-06-05 03:42:22;000";
     let err = IxdtfParser::new(dt.as_bytes()).parse();
     assert_eq!(err, Err(ParserError::InvalidEnd));
-}
-
-#[test]
-fn invalid_bytes_injected() {
-    // Random bytes: "2024" + [0xB2, 0x2D]
-    let invalid_bytes = &[0x32, 0x30, 0x32, 0x34, 0xB2, 0x2D];
-    let err = IxdtfParser::new(invalid_bytes).parse();
-    assert_eq!(err, Err(ParserError::Utf8Encoding));
-
-    // Orignal - 12:01:04−05:00[America/New_York][u-ca=iso8601]
-    // Removed first byte from <MINUS> (0xe2)
-    let invalid_bytes = &[
-        0x31, 0x32, 0x3a, 0x30, 0x31, 0x3a, 0x30, 0x34, 0x88, 0x92, 0x30, 0x35, 0x3a, 0x30, 0x30,
-        0x5b, 0x41, 0x6d, 0x65, 0x72, 0x69, 0x63, 0x61, 0x2f, 0x4e, 0x65, 0x77, 0x5f, 0x59, 0x6f,
-        0x72, 0x6b, 0x5d, 0x5b, 0x75, 0x2d, 0x63, 0x61, 0x3d, 0x69, 0x73, 0x6f, 0x38, 0x36, 0x30,
-        0x31, 0x5d,
-    ];
-    let err = IxdtfParser::new(invalid_bytes).parse_time();
-    assert_eq!(err, Err(ParserError::Utf8Encoding));
-
-    // Original - 2021-01-29 02:12:48−01:00:00[u-ca=gregorian][u-ca=iso8601][u-ca=japanese]
-    // Removed first byte from <MINUS>
-    let invalid_bytes = &[
-        0x32, 0x30, 0x32, 0x31, 0x2d, 0x30, 0x31, 0x2d, 0x32, 0x39, 0x20, 0x30, 0x32, 0x3a, 0x31,
-        0x32, 0x3a, 0x34, 0x38, 0x88, 0x92, 0x30, 0x31, 0x3a, 0x30, 0x30, 0x3a, 0x30, 0x30, 0x5b,
-        0x75, 0x2d, 0x63, 0x61, 0x3d, 0x67, 0x72, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x61, 0x6e, 0x5d,
-        0x5b, 0x75, 0x2d, 0x63, 0x61, 0x3d, 0x69, 0x73, 0x6f, 0x38, 0x36, 0x30, 0x31, 0x5d, 0x5b,
-        0x75, 0x2d, 0x63, 0x61, 0x3d, 0x6a, 0x61, 0x70, 0x61, 0x6e, 0x65, 0x73, 0x65, 0x5d, 0xa,
-    ];
-    let err = IxdtfParser::new(invalid_bytes).parse();
-    assert_eq!(err, Err(ParserError::Utf8Encoding));
-}
-
-#[test]
-fn invalid_bytes_start() {
-    // Original case: "−002020-11-08"
-    // Removed the flag byte prior to minus.
-    let invalid_bytes = &[
-        0x88, 0x92, 0x30, 0x30, 0x32, 0x30, 0x32, 0x30, 0x2d, 0x31, 0x31, 0x2d, 0x30, 0x38, 0xa,
-    ];
-    let err = IxdtfParser::new(invalid_bytes).parse();
-    assert_eq!(err, Err(ParserError::Utf8Encoding));
-}
-
-#[test]
-fn test_two_byte_char_decoding() {
-    let test = decode_utf8_bytes("¿".as_bytes()).unwrap();
-    assert_eq!(test, '¿');
-}
-
-#[test]
-fn test_three_byte_char_decoding() {
-    // 3 byte characters
-    let hello = ["안", "녕", "하", "세", "요"];
-    let hello_chars = ['안', '녕', '하', '세', '요'];
-    for (index, test_char) in hello.iter().enumerate() {
-        let decoded_char = decode_utf8_bytes(test_char.as_bytes()).unwrap();
-        assert_eq!(*hello_chars.get(index).unwrap(), decoded_char);
-    }
-}
-
-#[test]
-fn test_four_byte_char_decoding() {
-    // 4 byte characters
-    let smiley = decode_utf8_bytes("😄".as_bytes()).unwrap();
-    assert_eq!(smiley, '😄');
-
-    let rocket = decode_utf8_bytes("🚀".as_bytes()).unwrap();
-    assert_eq!(rocket, '🚀');
 }

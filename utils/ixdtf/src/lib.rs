@@ -38,7 +38,7 @@
 //! assert_eq!(offset.hour, 5);
 //! assert_eq!(offset.minute, 0);
 //! assert!(!tz_annotation.critical);
-//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
 //! ```
 //!
 //! ## Date/Time Strings
@@ -210,7 +210,7 @@
 //! // The time zone annotation and offset conflict with each other, and must therefore be
 //! // resolved by the user.
 //! assert!(tz_annotation.critical);
-//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
 //! assert_eq!(offset.hour, 1);
 //! ```
 //!
@@ -246,7 +246,7 @@
 //! let mut answer = None;
 //!
 //! let _ = IxdtfParser::new(example_with_custom_key.as_bytes()).parse_with_annotation_handler(|annotation| {
-//!     if annotation.key == "answer-to-universe" {
+//!     if annotation.key == "answer-to-universe".as_bytes() {
 //!         answer.get_or_insert(annotation);
 //!         // Found our value! We don't need `ixdtf` to handle this annotation.
 //!         return None
@@ -259,7 +259,7 @@
 //! let answer = answer.unwrap();
 //!
 //! assert!(answer.critical);
-//! assert_eq!(answer.value, "fortytwo");
+//! assert_eq!(answer.value, "fortytwo".as_bytes());
 //! ```
 //!
 //! It is worth noting that in the above example the annotation above found is a critically flagged
