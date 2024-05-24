@@ -142,7 +142,7 @@ where
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(Self::FLAGS);
             all_in_one_vec.extend(bytes);
-            all_in_one_vec.serialize(serializer)
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
@@ -197,7 +197,7 @@ where
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(Self::FLAGS);
             all_in_one_vec.extend(bytes);
-            all_in_one_vec.serialize(serializer)
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
@@ -252,7 +252,7 @@ where
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(Self::FLAGS);
             all_in_one_vec.extend(bytes);
-            all_in_one_vec.serialize(serializer)
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
@@ -307,7 +307,7 @@ where
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(Self::FLAGS);
             all_in_one_vec.extend(bytes);
-            all_in_one_vec.serialize(serializer)
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
@@ -376,7 +376,7 @@ where
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(tag);
             all_in_one_vec.extend(bytes);
-            all_in_one_vec.serialize(serializer)
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
