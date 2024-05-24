@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn test_json() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_json = serde_json::to_string(&pattern_cow).unwrap();
@@ -96,7 +96,7 @@ mod tests {
 
     #[test]
     fn test_postcard() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
@@ -132,7 +132,7 @@ mod tests {
 
     #[test]
     fn test_serde_stores() {
-        let store = SinglePlaceholderPattern::try_from_str("Hello, {0}!")
+        let store = SinglePlaceholderPattern::from_str("Hello, {0}!")
             .unwrap()
             .take_store();
 

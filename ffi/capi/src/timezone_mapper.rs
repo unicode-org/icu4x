@@ -105,7 +105,9 @@ pub mod ffi {
         ) -> Result<(), ICU4XError> {
             use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            let bcp47_id = TimeZoneBcp47Id(TinyAsciiStr::from_bytes(value)?);
+            let bcp47_id = TimeZoneBcp47Id(
+                TinyAsciiStr::from_bytes(value).map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
+            );
             if let Some(s) = handle.find_canonical_iana_from_bcp47(bcp47_id) {
                 Ok(s.write_to(write)?)
             } else {
@@ -194,7 +196,9 @@ pub mod ffi {
         ) -> Result<(), ICU4XError> {
             use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            let bcp47_id = TimeZoneBcp47Id(TinyAsciiStr::from_bytes(value)?);
+            let bcp47_id = TimeZoneBcp47Id(
+                TinyAsciiStr::from_bytes(value).map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
+            );
             if let Some(s) = handle.canonical_iana_from_bcp47(bcp47_id) {
                 Ok(s.write_to(write)?)
             } else {

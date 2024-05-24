@@ -268,8 +268,12 @@ pub mod ffi {
             nanosecond: u32,
             calendar: &ICU4XCalendar,
         ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
-            let era = TinyAsciiStr::from_bytes(era_code)?.into();
-            let month = TinyAsciiStr::from_bytes(month_code)?.into();
+            let era = TinyAsciiStr::from_bytes(era_code)
+                .map_err(|_| ICU4XError::CalendarUnknownEraError)?
+                .into();
+            let month = TinyAsciiStr::from_bytes(month_code)
+                .map_err(|_| ICU4XError::CalendarUnknownMonthCodeError)?
+                .into();
             let cal = calendar.0.clone();
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
