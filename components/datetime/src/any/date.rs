@@ -38,7 +38,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// # Examples
 ///
 /// ```
-/// use icu::calendar:: Date;
+/// use icu::calendar::Date;
 /// use icu::datetime::{options::length, DateFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;

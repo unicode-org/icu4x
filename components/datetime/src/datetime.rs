@@ -801,7 +801,8 @@ where {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::{components, length}, TypedDateTimeFormatter,
+    ///     options::{components, length},
+    ///     TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///

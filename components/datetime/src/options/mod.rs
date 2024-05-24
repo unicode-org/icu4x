@@ -70,7 +70,7 @@ pub enum DateTimeFormatterOptions {
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     Components(components::Bag),
 }
 

@@ -5,6 +5,6 @@
     "has_plurals": false
   },
   "patterns": [
-    "Y年第w週"
+    "Y w"
   ]
 }
