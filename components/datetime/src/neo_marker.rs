@@ -200,7 +200,7 @@ impl_datetime_marker!(
 );
 
 impl_datetime_marker!(
-    NeoAutoMarker,
+    NeoAutoDateMarker,
     { NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto)) },
     description = "locale-dependent date fields",
     expectation = "May 17, 2024",
@@ -211,6 +211,36 @@ impl_datetime_marker!(
     weekdays = yes,
     dayperiods = no,
     times = no,
+    datetimes = no
+);
+
+impl_datetime_marker!(
+    NeoAutoDateWeekdayMarker,
+    { NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::AutoWeekday)) },
+    description = "locale-dependent date fields, including the weekday",
+    expectation = "Fri, May 17, 2024",
+    names = DateMarker,
+    years = yes,
+    months = yes,
+    dates = yes,
+    weekdays = yes,
+    dayperiods = no,
+    times = no,
+    datetimes = no
+);
+
+impl_datetime_marker!(
+    NeoAutoTimeMarker,
+    { NeoComponents::Date(NeoTimeComponents::Auto) },
+    description = "locale-dependent time fields",
+    expectation = "3:47 pm",
+    names = DateMarker,
+    years = no,
+    months = no,
+    dates = no,
+    weekdays = no,
+    dayperiods = yes,
+    times = yes,
     datetimes = no
 );
 

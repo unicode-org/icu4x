@@ -3,6 +3,80 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! High-level entrypoints for Neo DateTime Formatter
+//!
+//! # Examples
+//! 
+//! Format a Gregorian date in CLDR "full" format:
+//!
+//! ```
+//! use icu::calendar::Date;
+//! use icu::calendar::Gregorian;
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoAutoDateWeekdayMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::locid::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatter = TypedNeoFormatter::<Gregorian, NeoAutoDateWeekdayMarker>::try_new(
+//!     &locale!("es-MX").into(),
+//!     NeoSkeletonLength::Long,
+//! )
+//! .unwrap();
+//!
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+//!     "miércoles, 20 de diciembre de 2023"
+//! );
+//! ```
+//! 
+//! Format with a date skeleton:
+//!
+//! ```
+//! use icu::calendar::Date;
+//! use icu::calendar::Gregorian;
+//! use icu::datetime::neo::TypedNeoDateFormatter;
+//! use icu::datetime::neo_marker::NeoYearMonthMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::locid::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatter = TypedNeoFormatter::<Gregorian, NeoYearMonthMarker>::try_new(
+//!     &locale!("es-MX").into(),
+//!     NeoSkeletonLength::Long,
+//! )
+//! .unwrap();
+//!
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+//!     "diciembre de 2023"
+//! );
+//! ```
+//! 
+//! Format with a locale-specific calendar dynamically chosen at runtime:
+//!
+//! ```
+//! use icu::calendar::{any_calendar::AnyCalendar, Date};
+//! use icu::datetime::{neo::NeoDateFormatter, options::length};
+//! use icu::locid::locale;
+//! use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
+//! use std::str::FromStr;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let length = length::Date::Medium;
+//! let locale = locale!("en-u-ca-hebrew");
+//!
+//! let df = NeoDateFormatter::try_new_with_length(&locale.into(), length)
+//!     .expect("Failed to create TypedDateFormatter instance.");
+//!
+//! let datetime =
+//!     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
+//! let any_datetime = datetime.to_any();
+//!
+//! assert_try_writeable_eq!(
+//!     df.format(&any_datetime).expect("ISO automatically converts to locale calendar"),
+//!     "Sep 1, 2020"
+//! );
+//! ```
 
 use crate::calendar::AnyCalendarProvider;
 use crate::external_loaders::*;
@@ -116,284 +190,6 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
     };
-}
-
-size_test!(
-    TypedNeoDateFormatter<icu_calendar::Gregorian>,
-    typed_neo_date_formatter_size,
-    456
-);
-
-/// [`TypedNeoDateFormatter`] can format dates from a calendar selected at compile time.
-///
-/// For the difference between this and [`DateFormatter`](crate::DateFormatter), please
-/// read the [crate root docs][crate].
-///
-#[doc = typed_neo_date_formatter_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
-#[derive(Debug)]
-pub struct TypedNeoDateFormatter<C: CldrCalendar> {
-    selection: DatePatternSelectionData,
-    names: RawDateTimeNames<DateMarker>,
-    _calendar: PhantomData<C>,
-}
-
-impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
-    /// Creates a [`TypedNeoDateFormatter`] for a date length.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoDateFormatter;
-    /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
-    ///     &locale!("es-MX").into(),
-    ///     length::Date::Full,
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-    ///     "miércoles, 20 de diciembre de 2023"
-    /// );
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, LoadError>
-    where
-        crate::provider::Baked: Sized
-            // Calendar-specific date formatting keys
-            + DataProvider<C::DatePatternV1Marker>
-            + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>,
-    {
-        Self::try_new_with_length_internal(
-            &crate::provider::Baked,
-            &ExternalLoaderCompiledData,
-            locale,
-            length,
-        )
-    }
-
-    gen_any_buffer_constructors_with_external_loader!(
-        try_new_with_length,
-        try_new_with_length_with_any_provider,
-        try_new_with_length_with_buffer_provider,
-        try_new_with_length_internal,
-        length: length::Date
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
-    pub fn try_new_with_length_unstable<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, LoadError>
-    where
-        P: ?Sized
-            // Date formatting keys
-            + DataProvider<C::DatePatternV1Marker>
-            + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>
-            // FixedDecimalFormatter keys
-            + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
-            + DataProvider<WeekDataV2Marker>,
-    {
-        Self::try_new_with_length_internal(
-            provider,
-            &ExternalLoaderUnstable(provider),
-            locale,
-            length,
-        )
-    }
-
-    fn try_new_with_length_internal<P, L>(
-        provider: &P,
-        loader: &L,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, LoadError>
-    where
-        P: ?Sized
-            // Date formatting keys
-            + DataProvider<C::DatePatternV1Marker>
-            + DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
-    {
-        let selection = DatePatternSelectionData::try_new_with_length(
-            &C::DatePatternV1Marker::bind(provider),
-            locale,
-            length,
-        )
-        .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern(
-            &C::YearNamesV1Marker::bind(provider),  // year
-            &C::MonthNamesV1Marker::bind(provider), // month
-            &WeekdayNamesV1Marker::bind(provider),  // weekday
-            &PhantomProvider,                       // day period
-            Some(loader),                           // fixed decimal formatter
-            Some(loader),                           // week calculator
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
-        Ok(Self {
-            selection,
-            names,
-            _calendar: PhantomData,
-        })
-    }
-
-    /// Creates a [`TypedNeoDateFormatter`] for a date skeleton.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::neo::TypedNeoDateFormatter;
-    /// use icu::datetime::neo_skeleton::{NeoSkeletonLength, YearMonthMarker};
-    /// use icu::locid::locale;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let formatter =
-    ///     TypedNeoDateFormatter::<Gregorian>::try_new_with_skeleton::<
-    ///         YearMonthMarker,
-    ///     >(&locale!("es-MX").into(), NeoSkeletonLength::Long)
-    ///     .unwrap();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
-    ///     "diciembre de 2023"
-    /// );
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_skeleton<S>(
-        locale: &DataLocale,
-        length: NeoSkeletonLength,
-    ) -> Result<Self, LoadError>
-    where
-        S: ?Sized + TypedNeoSkeletonData<C> + NeoSkeletonComponents,
-        crate::provider::Baked: Sized
-            // Date formatting keys
-            + DataProvider<S::DateSkeletonPatternsV1Marker>
-            + DataProvider<S::YearNamesV1Marker>
-            + DataProvider<S::MonthNamesV1Marker>
-            + DataProvider<S::WeekdayNamesV1Marker>,
-    {
-        Self::try_new_with_skeleton_internal::<S, _, _>(
-            &crate::provider::Baked,
-            &ExternalLoaderCompiledData,
-            locale,
-            length,
-        )
-    }
-
-    gen_any_buffer_constructors_with_external_loader!(
-        S: TypedNeoSkeletonData<C> | NeoSkeletonComponents,
-        try_new_with_skeleton,
-        try_new_with_skeleton_with_any_provider,
-        try_new_with_skeleton_with_buffer_provider,
-        try_new_with_skeleton_internal,
-        length: NeoSkeletonLength
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
-    pub fn try_new_with_skeleton_unstable<S, P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: NeoSkeletonLength,
-    ) -> Result<Self, LoadError>
-    where
-        S: ?Sized + TypedNeoSkeletonData<C> + NeoSkeletonComponents,
-        P: ?Sized
-            // Date formatting keys
-            + DataProvider<S::DateSkeletonPatternsV1Marker>
-            + DataProvider<S::YearNamesV1Marker>
-            + DataProvider<S::MonthNamesV1Marker>
-            + DataProvider<S::WeekdayNamesV1Marker>
-            // FixedDecimalFormatter keys
-            + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
-            + DataProvider<WeekDataV2Marker>,
-    {
-        Self::try_new_with_skeleton_internal::<S, _, _>(
-            provider,
-            &ExternalLoaderUnstable(provider),
-            locale,
-            length,
-        )
-    }
-
-    fn try_new_with_skeleton_internal<S, P, L>(
-        provider: &P,
-        loader: &L,
-        locale: &DataLocale,
-        length: NeoSkeletonLength,
-    ) -> Result<Self, LoadError>
-    where
-        S: ?Sized + TypedNeoSkeletonData<C> + NeoSkeletonComponents,
-        P: ?Sized
-            // Date formatting keys
-            + DataProvider<S::DateSkeletonPatternsV1Marker>
-            + DataProvider<S::YearNamesV1Marker>
-            + DataProvider<S::MonthNamesV1Marker>
-            + DataProvider<S::WeekdayNamesV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
-    {
-        let selection = DatePatternSelectionData::try_new_with_skeleton(
-            &S::DateSkeletonPatternsV1Marker::bind(provider),
-            locale,
-            length,
-            S::COMPONENTS,
-        )
-        .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern(
-            &S::YearNamesV1Marker::bind(provider),    // year
-            &S::MonthNamesV1Marker::bind(provider),   // month
-            &S::WeekdayNamesV1Marker::bind(provider), // weekday
-            &PhantomProvider,                         // day period
-            Some(loader),                             // fixed decimal formatter
-            Some(loader),                             // week calculator
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
-        Ok(Self {
-            selection,
-            names,
-            _calendar: PhantomData,
-        })
-    }
-
-    /// Formats a date.
-    ///
-    /// For an example, see [`TypedNeoDateFormatter`].
-    pub fn format<T>(&self, date: &T) -> FormattedNeoDate
-    where
-        T: DateInput<Calendar = C>,
-    {
-        let datetime = ExtractedDateTimeInput::extract_from_date(date);
-        FormattedNeoDate {
-            pattern: self.selection.select(&datetime),
-            datetime,
-            names: self.names.as_borrowed(),
-        }
-    }
 }
 
 size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 456);
@@ -542,7 +338,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
 
     /// Formats a date.
     ///
-    /// For an example, see [`TypedNeoDateFormatter`].
+    /// For an example, see [`TypedNeoFormatter`].
     pub fn format<T>(&self, date: &T) -> FormattedNeoDate
     where
         T: DateInput<Calendar = C>,
@@ -876,7 +672,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
     /// an error is returned.
     ///
-    /// For an example, see [`NeoDateFormatter`].
+    /// For an example, see [`NeoFormatter`].
     pub fn format<T>(&self, date: &T) -> Result<FormattedNeoDate, crate::MismatchedCalendarError>
     where
         T: DateInput<Calendar = AnyCalendar>,
@@ -915,281 +711,6 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             datetime,
             names: self.names.as_borrowed(),
         }
-    }
-}
-
-size_test!(NeoDateFormatter, neo_date_formatter_size, 512);
-
-/// [`NeoDateFormatter`] is a formatter capable of formatting dates from any calendar, selected
-/// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
-/// [crate root docs][crate].
-#[doc = neo_date_formatter_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
-#[derive(Debug)]
-pub struct NeoDateFormatter {
-    selection: DatePatternSelectionData,
-    names: RawDateTimeNames<DateMarker>,
-    calendar: AnyCalendar,
-}
-
-impl NeoDateFormatter {
-    /// Construct a new [`NeoDateFormatter`] from compiled data.
-    ///
-    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date};
-    /// use icu::datetime::{neo::NeoDateFormatter, options::length};
-    /// use icu::locid::locale;
-    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
-    /// use writeable::assert_try_writeable_eq;
-    ///
-    /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
-    ///
-    /// let df = NeoDateFormatter::try_new_with_length(&locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
-    ///
-    /// let datetime =
-    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
-    /// let any_datetime = datetime.to_any();
-    ///
-    /// assert_try_writeable_eq!(
-    ///     df.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020"
-    /// );
-    /// ```
-    ///
-    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
-    #[inline(never)]
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, LoadError> {
-        Self::try_new_with_length_internal(
-            &crate::provider::Baked,
-            &ExternalLoaderCompiledData,
-            locale,
-            length,
-        )
-    }
-
-    gen_any_buffer_constructors_with_external_loader!(
-        try_new_with_length,
-        try_new_with_length_with_any_provider,
-        try_new_with_length_with_buffer_provider,
-        try_new_with_length_internal,
-        length: length::Date
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
-    pub fn try_new_with_length_unstable<P>(
-        provider: &P,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, LoadError>
-    where
-        P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Dangi>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Ethiopian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Gregorian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Hebrew>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Indian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Japanese>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Persian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Roc>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Buddhist>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Chinese>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Coptic>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Dangi>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Gregorian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Hebrew>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Indian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Japanese>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Persian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Roc>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Buddhist>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Chinese>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Coptic>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Dangi>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Ethiopian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Gregorian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Hebrew>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Indian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicCivil>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicObservational>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicTabular>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Japanese>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
-            + DataProvider<WeekdayNamesV1Marker>
-            // AnyCalendar constructor keys
-            + DataProvider<ChineseCacheV1Marker>
-            + DataProvider<DangiCacheV1Marker>
-            + DataProvider<IslamicObservationalCacheV1Marker>
-            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
-            + DataProvider<JapaneseErasV1Marker>
-            + DataProvider<JapaneseExtendedErasV1Marker>
-            // FixedDecimalFormatter keys
-            + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
-            + DataProvider<WeekDataV2Marker>,
-    {
-        Self::try_new_with_length_internal(
-            provider,
-            &ExternalLoaderUnstable(provider),
-            locale,
-            length,
-        )
-    }
-
-    fn try_new_with_length_internal<P, L>(
-        provider: &P,
-        loader: &L,
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, LoadError>
-    where
-        P: ?Sized
-            // DatePattern, YearNames, and MonthNames keys
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Buddhist>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Chinese>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Coptic>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Dangi>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Ethiopian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Gregorian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Hebrew>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Indian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Japanese>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Persian>
-            + DataProvider<<FullData as CalMarkers<YearNamesV1Marker>>::Roc>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Buddhist>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Chinese>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Coptic>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Dangi>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Gregorian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Hebrew>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Indian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Japanese>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Persian>
-            + DataProvider<<FullData as CalMarkers<MonthNamesV1Marker>>::Roc>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Buddhist>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Chinese>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Coptic>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Dangi>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Ethiopian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Gregorian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Hebrew>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Indian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicCivil>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicObservational>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicTabular>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Japanese>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::JapaneseExtended>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Persian>
-            + DataProvider<<FullData as CalMarkers<DatePatternV1Marker>>::Roc>
-            // Other date formatting keys
-            + DataProvider<WeekdayNamesV1Marker>,
-        L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
-    {
-        let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
-        let kind = calendar.kind();
-        let selection = DatePatternSelectionData::try_new_with_length(
-            &AnyCalendarProvider::<FullData, _>::new(provider, kind),
-            locale,
-            length,
-        )
-        .map_err(LoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
-        names.load_for_pattern(
-            &AnyCalendarProvider::<FullData, _>::new(provider, kind), // year
-            &AnyCalendarProvider::<FullData, _>::new(provider, kind), // month
-            &WeekdayNamesV1Marker::bind(provider),                    // weekday
-            &PhantomProvider,                                         // day period
-            Some(loader),                                             // fixed decimal formatter
-            Some(loader),                                             // week calculator
-            locale,
-            selection.pattern_items_for_data_loading(),
-        )?;
-        Ok(Self {
-            selection,
-            names,
-            calendar,
-        })
-    }
-
-    /// Formats a date.
-    ///
-    /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
-    /// an error is returned.
-    ///
-    /// For an example, see [`NeoDateFormatter`].
-    pub fn format<T>(&self, date: &T) -> Result<FormattedNeoDate, crate::MismatchedCalendarError>
-    where
-        T: DateInput<Calendar = AnyCalendar>,
-    {
-        let datetime =
-            if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
-                ExtractedDateTimeInput::extract_from_date(&converted)
-            } else {
-                ExtractedDateTimeInput::extract_from_date(date)
-            };
-        Ok(FormattedNeoDate {
-            pattern: self.selection.select(&datetime),
-            datetime,
-            names: self.names.as_borrowed(),
-        })
     }
 }
 
