@@ -441,7 +441,6 @@ impl<'a> Cursor<'a> {
 
 // ==== Utility functions ====
 
-// NOTE: `decode_utf8_bytes` is safe
 /// Decodes a `&[u8]` into a UTF8 character.
 #[inline]
 pub(super) fn decode_utf8_bytes(bytes: &[u8]) -> ParserResult<char> {
