@@ -37,7 +37,7 @@
     - Updated grapheme cluster segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4536)
     - Updated sentence segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
     - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
-    - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segmenter in complex script (https://github.com/unicode-org/icu4x/pull/4903)
+    - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segment in complex script (https://github.com/unicode-org/icu4x/pull/4903)
   - `icu_timezone`
     - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
