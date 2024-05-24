@@ -5,14 +5,22 @@
 - Components
   - General
     - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
-  - `icu_datetime`
-    - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
   - `icu_calendar`
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
     - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
+    - Fix bugs in several calendars with new continuity test (#4904)
+  - `icu_canonicalizer`
+    - Make UTS 46 normalization non-experimental (#4712)
   - `icu_datetime`
+    - `Writeable` and `Display` implementations now don't return `fmt::Error`s that don't originate from the `fmt::Write` anymore (#4732, #4851, #4863)
+    - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
+  - `icu_experimental`
+    - New home for all experimental components. This supersedes the published `icu_compactdecimal`, `icu_displaynames`, `icu_relativetime`, `icu_transliterate`, and `icu_unicodeset_parse` crates (#4564)
+    - New experimental component `personnames` (#4050)
+    - New experimental component `dimension`
+    - New experimental component `units`
   - `icu_locid`
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_locid_transform`
@@ -26,6 +34,8 @@
     - Implement Hangul_Syllable_Type property (https://github.com/unicode-org/icu4x/pull/4885)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
+    - Update grapheme cluster break rules to Unicode 15.1 (#4536)
+    - Update sentence segmenter rules to Unicode 15.1 (#4625)
   - `icu_timezone`
     - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
@@ -34,6 +44,8 @@
     - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
     - Never use fallback for baked segmentation data (https://github.com/unicode-org/icu4x/pull/4510)
     - Propagate extension keywords and auxiliary keys to explicit locales (https://github.com/unicode-org/icu4x/pull/4533)
+    - Add baked data macros to generate `IterableDataProvider` (#4800, #4868)
+    - Add an option to generate data from an existing `DataProvider`, instead of from sources (#4814)
   - `icu_provider`
     - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
     - Add `NeverMarker` to allow for DataProvider bounds that never return data (https://github.com/unicode-org/icu4x/issues/4186)
@@ -45,12 +57,16 @@
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
       - Add `day_of_year` getter (https://github.com/unicode-org/icu4x/issues/4891)
+      - Adding panic-handler and allocator features to icu_capi (#4516)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
       - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
     - C++
       - Fixed a bug where a result header defines a struct that shadows the class' name  (https://github.com/rust-diplomat/diplomat/pull/394)
       - Add `explicit` keyword to internal constructors (https://github.com/rust-diplomat/diplomat/pull/386)
+      - Small breakage: some functions that used to return `diplomat::Result<T, std::monostate>` now return `std::optional<T>` (#4635)
+    - `icu_harfbuzz`
+      - Switch to harfbuzz funcs (#4794)
 - Utilities
     - `calendrical_calculations`:
         - Add Keviyah/Four Gates based optimized calculations module for the Hebrew calendar. (https://github.com/unicode-org/icu4x/pull/4504)
