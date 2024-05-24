@@ -423,6 +423,37 @@ mod tests {
     }
 
     #[derive(Serialize, Deserialize)]
+    pub struct ZeroAsciiIgnoreCaseTrieCow<'a> {
+        #[serde(borrow)]
+        trie: ZeroAsciiIgnoreCaseTrie<Cow<'a, [u8]>>,
+    }
+
+    #[test]
+    pub fn test_serde_asciiignorecase_cow() {
+        let trie = ZeroAsciiIgnoreCaseTrie::from_store(Cow::from(testdata::basic::TRIE_ASCII));
+        let original = ZeroAsciiIgnoreCaseTrieCow { trie };
+        let json_str = serde_json::to_string(&original).unwrap();
+        let bincode_bytes = bincode::serialize(&original).unwrap();
+
+        assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
+        assert_eq!(&bincode_bytes[0..9], &[27, 0, 0, 0, 0, 0, 0, 0, 8]);
+        assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
+
+        let json_recovered: ZeroAsciiIgnoreCaseTrieCow = serde_json::from_str(&json_str).unwrap();
+        let bincode_recovered: ZeroAsciiIgnoreCaseTrieCow =
+            bincode::deserialize(&bincode_bytes).unwrap();
+
+        assert_eq!(original.trie, json_recovered.trie);
+        assert_eq!(original.trie, bincode_recovered.trie);
+
+        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(
+            bincode_recovered.trie.take_store(),
+            Cow::Borrowed(_)
+        ));
+    }
+
+    #[derive(Serialize, Deserialize)]
     pub struct ZeroTriePerfectHashCow<'a> {
         #[serde(borrow)]
         trie: ZeroTriePerfectHash<Cow<'a, [u8]>>,
