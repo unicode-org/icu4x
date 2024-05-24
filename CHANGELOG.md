@@ -33,9 +33,11 @@
     - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
     - Implement Hangul_Syllable_Type property (https://github.com/unicode-org/icu4x/pull/4885)
   - `icu_segmenter`
-    - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
-    - Update grapheme cluster break rules to Unicode 15.1 (#4536)
-    - Update sentence segmenter rules to Unicode 15.1 (#4625)
+    - Fixed Unicode 15.0 for line segmenter (https://github.com/unicode-org/icu4x/pull/4389)
+    - Updated grapheme cluster segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4536)
+    - Updated sentence segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
+    - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
+    - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segmenter in complex script (https://github.com/unicode-org/icu4x/pull/4903)
   - `icu_timezone`
     - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
