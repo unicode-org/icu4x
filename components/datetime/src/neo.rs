@@ -418,14 +418,18 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
         })
     }
 
-    /// Formats a date.
+    /// Formats a datetime.
     ///
     /// For an example, see [`TypedNeoDateFormatter`].
-    pub fn format<T>(&self, date: &T) -> FormattedNeoDateTime
+    pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
-        T: DateInput<Calendar = C>,
+        for<'a> &'a T: Into<R::DateInputMarker<C>> + Into<R::WeekInputMarker<C>> + Into<R::TimeInputMarker>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_date(date);
+        let datetime = ExtractedDateTimeInput::extract_from_neo_input(
+            Into::<R::DateInputMarker<C>>::into(datetime).into(),
+            Into::<R::WeekInputMarker<C>>::into(datetime).into(),
+            Into::<R::TimeInputMarker>::into(datetime).into(),
+        );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -751,25 +755,26 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
         })
     }
 
-    /// Formats a date, checking that the calendar system is correct.
+    /// Formats a datetime, checking that the calendar system is correct.
     ///
-    /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
+    /// If the datetime is in neither ISO-8601 nor the same calendar system as the formatter,
     /// an error is returned.
     ///
     /// For an example, see [`NeoDateFormatter`].
     pub fn format<T>(
         &self,
-        date: &T,
+        datetime: &T,
     ) -> Result<FormattedNeoDateTime, crate::MismatchedCalendarError>
     where
-        T: DateInput<Calendar = AnyCalendar>,
+        T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        let datetime =
-            if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
-                ExtractedDateTimeInput::extract_from_date(&converted)
-            } else {
-                ExtractedDateTimeInput::extract_from_date(date)
-            };
+        let datetime = if let Some(converted) =
+            crate::calendar::convert_datetime_if_necessary(&self.calendar, datetime)?
+        {
+            ExtractedDateTimeInput::extract_from(&converted)
+        } else {
+            ExtractedDateTimeInput::extract_from(datetime)
+        };
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
