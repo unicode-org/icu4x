@@ -523,7 +523,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date};
+    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -539,7 +539,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ///         .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
-    ///     Date::try_new_iso_date(2024, 5, 8).expect("Failed to construct Date.");
+    ///     DateTime::try_new_iso_datetime(2024, 5, 8, 0, 0, 0).expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_try_writeable_eq!(

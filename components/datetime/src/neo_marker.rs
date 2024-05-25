@@ -8,7 +8,6 @@ use core::marker::PhantomData;
 
 use crate::{
     format::neo::*,
-    input::{self, DateInput},
     neo::_internal::*,
     neo_skeleton::*,
     provider::neo::*,
@@ -27,13 +26,20 @@ mod private {
     pub trait Sealed {}
 }
 
+/// Input data fields required for formatting dates.
 #[derive(Debug, Copy, Clone)]
 pub struct NeoDateInputFields<C> {
+    /// The era and year input.
     pub year: FormattableYear,
+    /// The month input.
     pub month: FormattableMonth,
+    /// The day-of-month input.
     pub day_of_month: DayOfMonth,
+    /// The day-of-week input.
     pub day_of_week: IsoWeekday,
+    /// The kind of calendar this date is for, if associated with [`AnyCalendar`]
     pub any_calendar_kind: Option<AnyCalendarKind>,
+    /// A type representing the caledar this date is for.
     pub calendar: PhantomData<C>,
 }
 
@@ -63,9 +69,12 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
     }
 }
 
+/// Input data fields required for formatting weeks of the year.
 #[derive(Debug, Copy, Clone)]
 pub struct NeoWeekInputFields<C> {
+    /// Information on the position of the day within the year.
     pub day_of_year_info: DayOfYearInfo,
+    /// A type representing the caledar this date is for.
     pub calendar: PhantomData<C>,
 }
 
@@ -87,6 +96,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoWeekInp
     }
 }
 
+/// Input data fields required for formatting times.
 // TODO: Should we directly use icu_calendar::Time here?
 #[derive(Debug, Copy, Clone)]
 pub struct NeoTimeInputFields {
