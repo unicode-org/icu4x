@@ -254,7 +254,9 @@ impl ExtractedDateTimeInput {
             month: neo_date.as_ref().map(|fields| fields.month),
             day_of_month: neo_date.as_ref().map(|fields| fields.day_of_month),
             iso_weekday: neo_date.as_ref().map(|fields| fields.day_of_week),
-            any_calendar_kind: neo_date.as_ref().and_then(|fields| fields.any_calendar_kind),
+            any_calendar_kind: neo_date
+                .as_ref()
+                .and_then(|fields| fields.any_calendar_kind),
             day_of_year_info: neo_week.as_ref().map(|fields| fields.day_of_year_info),
             hour: neo_time.as_ref().map(|fields| fields.hour),
             minute: neo_time.as_ref().map(|fields| fields.minute),

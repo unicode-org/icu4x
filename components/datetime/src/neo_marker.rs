@@ -18,7 +18,8 @@ use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
         IsoSecond, IsoWeekday, NanoSecond,
-    }, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime
+    },
+    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime,
 };
 use icu_provider::{prelude::*, NeverMarker};
 
@@ -167,9 +168,9 @@ pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
     /// Marker for resolving date fields from the input.
-    type DateInputMarker<Q>: Into<Option<NeoDateInputFields<Q>>>;
+    type DateInputMarker: Into<Option<NeoDateInputFields<C>>>;
     /// Marker for resolving week-of-year fields from the input.
-    type WeekInputMarker<Q>: Into<Option<NeoWeekInputFields<Q>>>;
+    type WeekInputMarker: Into<Option<NeoWeekInputFields<C>>>;
     /// Marker for resolving time fields from the input.
     type TimeInputMarker: Into<Option<NeoTimeInputFields>>;
     // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
@@ -254,13 +255,13 @@ macro_rules! datetime_marker_helper {
         NeverMarker<DateTimePatternV1<'static>>
     };
     (@dateinput, yes) => {
-        NeoDateInputFields<Q>
+        NeoDateInputFields<C>
     };
     (@dateinput, no) => {
         NeverFields
     };
     (@weekinput, yes) => {
-        NeoWeekInputFields<Q>
+        NeoWeekInputFields<C>
     };
     (@weekinput, no) => {
         NeverFields
@@ -274,7 +275,7 @@ macro_rules! datetime_marker_helper {
 }
 
 macro_rules! impl_datetime_marker {
-    ($type:ident, $components:expr, description = $description:literal, expectation = $expectation:literal, names = $namemarker:path, years = $years_yesno:ident, months = $months_yesno:ident, dates = $dates_yesno:ident, weekdays = $weekdays_yesno:ident, dayperiods = $dayperiods_yesno:ident, times = $times_yesno:ident, datetimes = $datetimes_yesno:ident, dateinput = $dateinput_yesno:ident, weekinput = $weekinput_yesno:ident, timeinput = $timeinput_yesno:ident) => {
+    ($type:ident, $components:expr, description = $description:literal, expectation = $expectation:literal, names = $namemarker:path, years = $years_yesno:ident, months = $months_yesno:ident, dates = $dates_yesno:ident, weekdays = $weekdays_yesno:ident, dayperiods = $dayperiods_yesno:ident, times = $times_yesno:ident, datetimes = $datetimes_yesno:ident, dateinput = $dateinput_yesno:ident, weekinput = $weekinput_yesno:ident, timeinput = $timeinput_yesno:ident,) => {
         #[doc = concat!("Marker for ", $description, ": ", $expectation)]
         ///
         /// # Examples
@@ -340,8 +341,8 @@ macro_rules! impl_datetime_marker {
             type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $dayperiods_yesno);
             type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, $datetimes_yesno);
-            type DateInputMarker<Q> = datetime_marker_helper!(@dateinput, $dateinput_yesno);
-            type WeekInputMarker<Q> = datetime_marker_helper!(@weekinput, $weekinput_yesno);
+            type DateInputMarker = datetime_marker_helper!(@dateinput, $dateinput_yesno);
+            type WeekInputMarker = datetime_marker_helper!(@weekinput, $weekinput_yesno);
             type TimeInputMarker = datetime_marker_helper!(@timeinput, $timeinput_yesno);
         }
         impl NeoFormatterMarker for $type {
@@ -374,7 +375,7 @@ impl_datetime_marker!(
     datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no
+    timeinput = no,
 );
 
 impl_datetime_marker!(
@@ -392,7 +393,7 @@ impl_datetime_marker!(
     datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no
+    timeinput = no,
 );
 
 impl_datetime_marker!(
@@ -410,7 +411,7 @@ impl_datetime_marker!(
     datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no
+    timeinput = no,
 );
 
 impl_datetime_marker!(
@@ -428,7 +429,7 @@ impl_datetime_marker!(
     datetimes = no,
     dateinput = no,
     weekinput = no,
-    timeinput = yes
+    timeinput = yes,
 );
 
 impl_datetime_marker!(
@@ -446,7 +447,7 @@ impl_datetime_marker!(
     datetimes = yes,
     dateinput = yes,
     weekinput = no,
-    timeinput = yes
+    timeinput = yes,
 );
 
 impl_datetime_marker!(
@@ -464,5 +465,5 @@ impl_datetime_marker!(
     datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no
+    timeinput = no,
 );

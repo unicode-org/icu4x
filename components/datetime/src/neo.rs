@@ -299,6 +299,8 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///
     /// # Examples
     ///
+    /// Basic usage:
+    ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
@@ -418,16 +420,60 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
         })
     }
 
-    /// Formats a datetime.
+    /// Formats a datetime. Calendars and fields must match at compile time.
     ///
-    /// For an example, see [`TypedNeoDateFormatter`].
+    /// # Examples
+    ///
+    /// Mismatched calendars will not compile:
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::Date;
+    /// use icu::calendar::buddhist::Buddhist;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locid::locale;
+    ///
+    /// let formatter =
+    ///     TypedNeoFormatter::<Buddhist, NeoYearMonthDayMarker>::try_new(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Long,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // type mismatch resolving `<Gregorian as AsCalendar>::Calendar == Buddhist`
+    /// formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap());
+    /// ```
+    ///
+    /// A time cannot be passed into the formatter when a date is expected:
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::Time;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locid::locale;
+    ///
+    /// let formatter =
+    ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Long,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // the trait `for<'a> From<&'a icu::icu_calendar::Time>` is not implemented
+    /// // for `NeoDateInputFields<icu::icu_calendar::Gregorian>`
+    /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// ```
     pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
-        for<'a> &'a T: Into<R::DateInputMarker<C>> + Into<R::WeekInputMarker<C>> + Into<R::TimeInputMarker>,
+        for<'a> &'a T:
+            Into<R::DateInputMarker> + Into<R::WeekInputMarker> + Into<R::TimeInputMarker>,
     {
         let datetime = ExtractedDateTimeInput::extract_from_neo_input(
-            Into::<R::DateInputMarker<C>>::into(datetime).into(),
-            Into::<R::WeekInputMarker<C>>::into(datetime).into(),
+            Into::<R::DateInputMarker>::into(datetime).into(),
+            Into::<R::WeekInputMarker>::into(datetime).into(),
             Into::<R::TimeInputMarker>::into(datetime).into(),
         );
         FormattedNeoDateTime {
