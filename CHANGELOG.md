@@ -48,7 +48,7 @@
     - Propagate extension keywords and auxiliary keys to explicit locales (https://github.com/unicode-org/icu4x/pull/4533)
     - Add baked data macros to generate `IterableDataProvider` (#4800, #4868)
     - Add an option to generate data from an existing `DataProvider`, instead of from sources (#4814)
-    - TODO (#4836)
+    - Implement `DeduplicationStrategy::RetainBaseLanguages` (https://github.com/unicode-org/icu4x/pull/4836)
   - `icu_provider`
     - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
     - Add `NeverMarker` to allow for DataProvider bounds that never return data (https://github.com/unicode-org/icu4x/issues/4186)
@@ -79,7 +79,7 @@
         - Add `impl Bake for PhantomData<T>` (https://github.com/unicode-org/icu4x/pull/4663)
     - `fixed_decimal`
         - Changed type of compact exponent from `i16` to `u8` (https://github.com/unicode-org/icu4x/pull/4828)
-        - Stabilize rounding to increment methods for `FixedDecimal` (#4578)
+        - Stabilize rounding to increment methods for `FixedDecimal` (https://github.com/unicode-org/icu4x/pull/4578)
     - `litemap`
         - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
     - `yoke`
