@@ -403,17 +403,22 @@ mod tests {
         let original = ZeroTrieSimpleAsciiCow { trie };
         let json_str = serde_json::to_string(&original).unwrap();
         let bincode_bytes = bincode::serialize(&original).unwrap();
+        let rmp_bytes = rmp_serde::to_vec(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
         assert_eq!(&bincode_bytes[0..9], &[27, 0, 0, 0, 0, 0, 0, 0, 0]);
         assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
+        assert_eq!(&rmp_bytes[0..4], &[145, 196, 27, 0]);
+        assert_eq!(&rmp_bytes[4..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTrieSimpleAsciiCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieSimpleAsciiCow =
             bincode::deserialize(&bincode_bytes).unwrap();
+        let rmp_recovered: ZeroTrieSimpleAsciiCow = rmp_serde::from_slice(&rmp_bytes).unwrap();
 
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
+        assert_eq!(original.trie, rmp_recovered.trie);
 
         assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
         assert!(matches!(
