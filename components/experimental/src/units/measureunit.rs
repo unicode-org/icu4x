@@ -119,12 +119,12 @@ impl<'data> MeasureUnitParser<'data> {
                                 Ok((unit_id, identifier_part_without_unit_id)) => {
                                     (unit_id, identifier_part_without_unit_id)
                                 }
-                                Err(_) if identifier.starts_with(b"per-") => {
+                                Err(_) if let Some(remainder) = identifier.strip_prefix(b"per-") => {
                                     if sign < 1 {
                                         return Err(ConversionError::InvalidUnit);
                                     }
                                     sign = -1;
-                                    identifier = &identifier[4..];
+                                    identifier = remainder;
                                     continue;
                                 }
                                 Err(e) => return Err(e),
