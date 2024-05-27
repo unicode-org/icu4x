@@ -121,7 +121,7 @@ impl<'data> MeasureUnitParser<'data> {
                                 }
                                 Err(_) if sign == 1 => {
                                     // If the sign is not positive, this means that the identifier may contain more than `per-` keyword.
-                                    if let Some(identifier) = identifier.strip_prefix(b"per-") {
+                                    if Some(identifier) = identifier.strip_prefix(b"per-") {
                                         sign = -1;
                                         continue;
                                     }
