@@ -33,8 +33,8 @@
     - Implement Joining_Type property (https://github.com/unicode-org/icu4x/pull/4599)
     - Implement Hangul_Syllable_Type property (https://github.com/unicode-org/icu4x/pull/4885)
   - `icu_segmenter`
-    - Fixed Unicode 15.0 for line segmenter (https://github.com/unicode-org/icu4x/pull/4389)
-    - Updated grapheme cluster segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4536)
+    - Fixed line segmenter, using Unicode 15.0 (https://github.com/unicode-org/icu4x/pull/4389)
+    - Fixed grapheme cluster segmenter and updated it to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4536)
     - Updated sentence segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
     - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
     - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segment in complex script (https://github.com/unicode-org/icu4x/pull/4903)
