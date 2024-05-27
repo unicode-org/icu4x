@@ -1782,7 +1782,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "1.4.2"
+version = "1.4.3"
 dependencies = [
  "arraystring",
  "arrayvec",
@@ -1853,7 +1853,7 @@ version = "1.4.0"
 
 [[package]]
 name = "icu_properties"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1870,7 +1870,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "1.4.0"
+version = "1.4.1"
 
 [[package]]
 name = "icu_provider"
