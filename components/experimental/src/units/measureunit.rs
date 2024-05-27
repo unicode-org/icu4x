@@ -101,37 +101,38 @@ impl<'data> MeasureUnitParser<'data> {
             let (power, identifier_part_without_power) = self.get_power(identifier)?;
 
             // Second: extract the si_prefix and the unit_id.
-            let (si_prefix, unit_id, identifier_part_without_unit_id) =
-                match self.get_unit_id(identifier_part_without_power) {
-                    Ok((unit_id, identifier_part_without_unit_id)) => (
-                        SiPrefix {
-                            power: 0,
-                            base: Base::Decimal,
-                        },
-                        unit_id,
-                        identifier_part_without_unit_id,
-                    ),
-                    Err(_) => {
-                        let (si_prefix, identifier_part_without_si_prefix) =
-                            self.get_si_prefix(identifier_part_without_power);
-                        let (unit_id, identifier_part_without_unit_id) =
-                            match self.get_unit_id(identifier_part_without_si_prefix) {
-                                Ok((unit_id, identifier_part_without_unit_id)) => {
-                                    (unit_id, identifier_part_without_unit_id)
+            let (si_prefix, unit_id, identifier_part_without_unit_id) = match self
+                .get_unit_id(identifier_part_without_power)
+            {
+                Ok((unit_id, identifier_part_without_unit_id)) => (
+                    SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id,
+                    identifier_part_without_unit_id,
+                ),
+                Err(_) => {
+                    let (si_prefix, identifier_part_without_si_prefix) =
+                        self.get_si_prefix(identifier_part_without_power);
+                    let (unit_id, identifier_part_without_unit_id) =
+                        match self.get_unit_id(identifier_part_without_si_prefix) {
+                            Ok((unit_id, identifier_part_without_unit_id)) => {
+                                (unit_id, identifier_part_without_unit_id)
+                            }
+                            Err(_) if let Some(remainder) = identifier.strip_prefix(b"per-") => {
+                                if sign < 1 {
+                                    return Err(ConversionError::InvalidUnit);
                                 }
-                                Err(_) if let Some(remainder) = identifier.strip_prefix(b"per-") => {
-                                    if sign < 1 {
-                                        return Err(ConversionError::InvalidUnit);
-                                    }
-                                    sign = -1;
-                                    identifier = remainder;
-                                    continue;
-                                }
-                                Err(e) => return Err(e),
-                            };
-                        (si_prefix, unit_id, identifier_part_without_unit_id)
-                    }
-                };
+                                sign = -1;
+                                identifier = remainder;
+                                continue;
+                            }
+                            Err(e) => return Err(e),
+                        };
+                    (si_prefix, unit_id, identifier_part_without_unit_id)
+                }
+            };
 
             measure_unit_items.push(MeasureUnitItem {
                 power: sign * power as i8,
