@@ -74,9 +74,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            let s =
-                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
-            self.0.lowercase(s, &locale.0.id).write_to(write)?;
+            self.0
+                .lowercase(core::str::from_utf8(s)?, &locale.0.id)
+                .write_to(write)?;
 
             Ok(())
         }
@@ -90,9 +90,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            let s =
-                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
-            self.0.uppercase(s, &locale.0.id).write_to(write)?;
+            self.0
+                .uppercase(core::str::from_utf8(s)?, &locale.0.id)
+                .write_to(write)?;
 
             Ok(())
         }
@@ -119,10 +119,12 @@ pub mod ffi {
             options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            let s =
-                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0
-                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
+                .titlecase_segment_with_only_case_data(
+                    core::str::from_utf8(s)?,
+                    &locale.0.id,
+                    options.into(),
+                )
                 .write_to(write)?;
 
             Ok(())
@@ -136,9 +138,7 @@ pub mod ffi {
             s: &DiplomatStr,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            let s =
-                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
-            self.0.fold(s).write_to(write)?;
+            self.0.fold(core::str::from_utf8(s)?).write_to(write)?;
 
             Ok(())
         }
@@ -151,9 +151,9 @@ pub mod ffi {
             s: &DiplomatStr,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            let s =
-                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
-            self.0.fold_turkic(s).write_to(write)?;
+            self.0
+                .fold_turkic(core::str::from_utf8(s)?)
+                .write_to(write)?;
 
             Ok(())
         }
@@ -327,10 +327,8 @@ pub mod ffi {
             options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            let s =
-                core::str::from_utf8(s).map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
             self.0
-                .titlecase_segment(s, &locale.0.id, options.into())
+                .titlecase_segment(core::str::from_utf8(s)?, &locale.0.id, options.into())
                 .write_to(write)?;
 
             Ok(())
