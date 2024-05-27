@@ -10,7 +10,7 @@
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
     - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
     - Fix bugs in several calendars with new continuity test (#4904)
-  - `icu_canonicalizer`
+  - `icu_normalizer`
     - Make UTS 46 normalization non-experimental (#4712)
   - `icu_datetime`
     - `Writeable` and `Display` implementations now don't return `fmt::Error`s that don't originate from the `fmt::Write` anymore (#4732, #4851, #4863)
