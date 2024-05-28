@@ -37,7 +37,7 @@ use yoke::*;
 ///
 /// // Read an ICU4X data blob dynamically:
 /// let blob = std::fs::read("tests/data/v2.postcard")
-/// .expect("Reading pre-computed postcard buffer");
+///     .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())

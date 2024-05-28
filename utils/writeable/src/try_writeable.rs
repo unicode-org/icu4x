@@ -184,9 +184,13 @@ pub trait TryWriteable {
     /// # use std::borrow::Cow;
     /// # use writeable::TryWriteable;
     /// // use the best-effort string
-    /// let r1: Cow<str> = Ok::<&str, u8>("ok").try_write_to_string().unwrap_or_else(|(_, s)| s);
+    /// let r1: Cow<str> = Ok::<&str, u8>("ok")
+    ///     .try_write_to_string()
+    ///     .unwrap_or_else(|(_, s)| s);
     /// // propagate the error
-    /// let r2: Result<Cow<str>, u8> = Ok::<&str, u8>("ok").try_write_to_string().map_err(|(e, _)| e);
+    /// let r2: Result<Cow<str>, u8> = Ok::<&str, u8>("ok")
+    ///     .try_write_to_string()
+    ///     .map_err(|(e, _)| e);
     /// ```
     fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
         let hint = self.writeable_length_hint();

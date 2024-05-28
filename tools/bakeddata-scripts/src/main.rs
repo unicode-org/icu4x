@@ -9,7 +9,7 @@ use icu_datagen::prelude::*;
 use std::path::Path;
 
 const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
-const EXPERIMENTAL_VERSION: &str = "0.0.0";
+const EXPERIMENTAL_VERSION: &str = "0.1.0";
 const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
     ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),

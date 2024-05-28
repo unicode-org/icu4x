@@ -104,8 +104,14 @@ macro_rules! datetime_marker_helper {
     (@dayperiods, no) => {
         NeverMarker<LinearNamesV1<'static>>
     };
+    (@times, yes) => {
+        TimeNeoSkeletonPatternsV1Marker
+    };
     (@times, no) => {
         NeverMarker<PackedSkeletonDataV1<'static>>
+    };
+    (@datetimes, yes) => {
+        DateTimePatternV1Marker
     };
     (@datetimes, no) => {
         NeverMarker<DateTimePatternV1<'static>>
@@ -125,7 +131,6 @@ macro_rules! impl_datetime_marker {
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locid::locale;
         /// use writeable::assert_try_writeable_eq;
-        ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
         ///     NeoSkeletonLength::Medium,
@@ -200,7 +205,7 @@ impl_datetime_marker!(
 );
 
 impl_datetime_marker!(
-    NeoAutoMarker,
+    NeoAutoDateMarker,
     { NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto)) },
     description = "locale-dependent date fields",
     expectation = "May 17, 2024",
@@ -212,6 +217,36 @@ impl_datetime_marker!(
     dayperiods = no,
     times = no,
     datetimes = no
+);
+
+impl_datetime_marker!(
+    NeoAutoTimeMarker,
+    { NeoComponents::Time(NeoTimeComponents::Auto) },
+    description = "locale-dependent time fields",
+    expectation = "3:47:50 PM",
+    names = TimeMarker,
+    years = no,
+    months = no,
+    dates = no,
+    weekdays = no,
+    dayperiods = yes,
+    times = yes,
+    datetimes = no
+);
+
+impl_datetime_marker!(
+    NeoAutoDateTimeMarker,
+    { NeoComponents::DateTime(NeoDayComponents::Auto, NeoTimeComponents::Auto) },
+    description = "locale-dependent date and time fields",
+    expectation = "May 17, 2024, 3:47:50 PM",
+    names = DateTimeMarker,
+    years = yes,
+    months = yes,
+    dates = yes,
+    weekdays = yes,
+    dayperiods = yes,
+    times = yes,
+    datetimes = yes
 );
 
 impl_datetime_marker!(

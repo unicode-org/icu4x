@@ -28,6 +28,7 @@ macro_rules! size_test {
         macro_rules! $id {
             () => {
                 concat!(
+                    "\n",
                     "📏 This item has a stack size of <b>",
                     stringify!($pinned),
                     " bytes</b> on the stable toolchain and <b>",

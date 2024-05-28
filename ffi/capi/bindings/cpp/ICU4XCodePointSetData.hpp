@@ -409,6 +409,8 @@ class ICU4XCodePointSetData {
    * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
    * 
    * See the [Rust documentation for `for_ecma262`](https://docs.rs/icu/latest/icu/properties/sets/fn.for_ecma262.html) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name);
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }

@@ -537,7 +537,10 @@ impl LocaleExpander {
     /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh_TW");
-    /// assert_eq!(lc.minimize_favor_script(&mut locale), TransformResult::Modified);
+    /// assert_eq!(
+    ///     lc.minimize_favor_script(&mut locale),
+    ///     TransformResult::Modified
+    /// );
     /// assert_eq!(locale, locale!("zh_Hant"));
     /// ```
     pub fn minimize_favor_script<T: AsMut<LanguageIdentifier>>(

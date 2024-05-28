@@ -20,7 +20,6 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
-///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples

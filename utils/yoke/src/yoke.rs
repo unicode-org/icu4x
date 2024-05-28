@@ -163,16 +163,21 @@ where
     /// #     Rc::new([0x5, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0, 0, 0])
     /// # }
     ///
-    /// fn load_object(filename: &str) -> (Yoke<Cow<'static, str>, Rc<[u8]>>, usize) {
+    /// fn load_object(
+    ///     filename: &str,
+    /// ) -> (Yoke<Cow<'static, str>, Rc<[u8]>>, usize) {
     ///     let rc: Rc<[u8]> = load_from_cache(filename);
     ///     let mut bytes_remaining = 0;
     ///     let bytes_remaining = &mut bytes_remaining;
-    ///     let yoke = Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(rc, |data: &[u8]| {
-    ///         let mut d = postcard::Deserializer::from_bytes(data);
-    ///         let output = serde::Deserialize::deserialize(&mut d);
-    ///         *bytes_remaining = d.finalize().unwrap().len();
-    ///         Cow::Borrowed(output.unwrap())
-    ///     });
+    ///     let yoke = Yoke::<Cow<'static, str>, Rc<[u8]>>::attach_to_cart(
+    ///         rc,
+    ///         |data: &[u8]| {
+    ///             let mut d = postcard::Deserializer::from_bytes(data);
+    ///             let output = serde::Deserialize::deserialize(&mut d);
+    ///             *bytes_remaining = d.finalize().unwrap().len();
+    ///             Cow::Borrowed(output.unwrap())
+    ///         },
+    ///     );
     ///     (yoke, *bytes_remaining)
     /// }
     ///
@@ -561,13 +566,11 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// # Examples
     ///
     /// ```
-    /// use yoke::Yoke;
     /// use std::borrow::Cow;
+    /// use yoke::Yoke;
     ///
-    /// let yoke: Yoke<Cow<[u8]>, Box<Vec<u8>>> = Yoke::attach_to_cart(
-    ///     vec![10, 20, 30].into(),
-    ///     |c| c.into(),
-    /// );
+    /// let yoke: Yoke<Cow<[u8]>, Box<Vec<u8>>> =
+    ///     Yoke::attach_to_cart(vec![10, 20, 30].into(), |c| c.into());
     ///
     /// let yoke_option = yoke.wrap_cart_in_option();
     /// let yoke_option_pointer = yoke_option.convert_cart_into_option_pointer();

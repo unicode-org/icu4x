@@ -20,10 +20,10 @@ use crate::Error;
 ///
 /// ```
 /// use core::cmp::Ordering;
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholderKey;
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use icu_pattern::PatternItem;
-/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let pattern = MultiNamedPlaceholderPattern::from_str(
@@ -168,9 +168,9 @@ where
 /// Parsing and comparing the pattern store:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
-/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let store = Pattern::<MultiNamedPlaceholder, _>::from_str(
@@ -185,10 +185,10 @@ where
 /// Example patterns supported by this backend:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
-/// use core::str::FromStr;
 ///
 /// let placeholder_value_map: BTreeMap<&str, &str> = [
 ///     ("num", "5"),
@@ -230,10 +230,10 @@ where
 /// Use [`LiteMap`] for alloc-free formatting:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use litemap::LiteMap;
 /// use writeable::TryWriteable;
-/// use core::str::FromStr;
 ///
 /// static placeholder_value_map: LiteMap<&str, usize, &[(&str, usize)]> =
 ///     LiteMap::from_sorted_store_unchecked(&[("seven", 11)]);
@@ -256,31 +256,29 @@ where
 /// a best-effort interpolation with potential replacement characters.
 ///
 /// ```should_panic
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::collections::BTreeMap;
-/// use core::str::FromStr;
 ///
 /// let placeholder_value_map: BTreeMap<&str, &str> =
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// Pattern::<MultiNamedPlaceholder, _>::from_str(
-///     "Your name is {your_name}",
-/// )
-/// .unwrap()
-/// .try_interpolate_to_string(&placeholder_value_map)
-/// .unwrap();
+/// Pattern::<MultiNamedPlaceholder, _>::from_str("Your name is {your_name}")
+///     .unwrap()
+///     .try_interpolate_to_string(&placeholder_value_map)
+///     .unwrap();
 /// ```
 ///
 /// Recover the best-effort lossy string by directly using [`Pattern::try_interpolate()`]:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::MissingNamedPlaceholderError;
 /// use icu_pattern::MultiNamedPlaceholder;
 /// use icu_pattern::Pattern;
 /// use std::borrow::Cow;
 /// use std::collections::BTreeMap;
-/// use core::str::FromStr;
 /// use writeable::TryWriteable;
 ///
 /// let placeholder_value_map: BTreeMap<&str, &str> =

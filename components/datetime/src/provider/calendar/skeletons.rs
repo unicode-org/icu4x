@@ -21,7 +21,6 @@ size_test!(DateSkeletonPatternsV1, date_skeleton_patterns_v1_size, 24);
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
-///
 #[doc = date_skeleton_patterns_v1_size!()]
 ///
 /// <div class="stab unstable">

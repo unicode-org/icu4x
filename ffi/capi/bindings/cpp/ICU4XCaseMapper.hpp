@@ -44,6 +44,8 @@ class ICU4XCaseMapper {
    * Returns the full lowercase mapping of the given string
    * 
    * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> lowercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
 
@@ -51,6 +53,8 @@ class ICU4XCaseMapper {
    * Returns the full lowercase mapping of the given string
    * 
    * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> lowercase(const std::string_view s, const ICU4XLocale& locale) const;
 
@@ -58,6 +62,8 @@ class ICU4XCaseMapper {
    * Returns the full uppercase mapping of the given string
    * 
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> uppercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
 
@@ -65,6 +71,8 @@ class ICU4XCaseMapper {
    * Returns the full uppercase mapping of the given string
    * 
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> uppercase(const std::string_view s, const ICU4XLocale& locale) const;
 
@@ -76,6 +84,8 @@ class ICU4XCaseMapper {
    * The `v1` refers to the version of the options struct, which may change as we add more options
    * 
    * See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_with_only_case_data_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const;
 
@@ -87,6 +97,8 @@ class ICU4XCaseMapper {
    * The `v1` refers to the version of the options struct, which may change as we add more options
    * 
    * See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> titlecase_segment_with_only_case_data_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
 
@@ -94,6 +106,8 @@ class ICU4XCaseMapper {
    * Case-folds the characters in the given string
    * 
    * See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> fold_to_writeable(const std::string_view s, W& write) const;
 
@@ -101,6 +115,8 @@ class ICU4XCaseMapper {
    * Case-folds the characters in the given string
    * 
    * See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> fold(const std::string_view s) const;
 
@@ -109,6 +125,8 @@ class ICU4XCaseMapper {
    * using Turkic (T) mappings for dotted/dotless I.
    * 
    * See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> fold_turkic_to_writeable(const std::string_view s, W& write) const;
 
@@ -117,6 +135,8 @@ class ICU4XCaseMapper {
    * using Turkic (T) mappings for dotted/dotless I.
    * 
    * See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> fold_turkic(const std::string_view s) const;
 

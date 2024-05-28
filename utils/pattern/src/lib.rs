@@ -94,13 +94,12 @@ mod private {
 /// # Examples
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::SinglePlaceholderPattern;
 /// use writeable::assert_writeable_eq;
-/// use core::str::FromStr;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern =
-///     SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
@@ -110,9 +109,9 @@ pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 /// # Examples
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholderPattern;
 /// use writeable::assert_writeable_eq;
-/// use core::str::FromStr;
 ///
 /// // Create a pattern from the string syntax:
 /// let pattern =
@@ -129,10 +128,10 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 /// # Examples
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use std::collections::BTreeMap;
 /// use writeable::assert_try_writeable_eq;
-/// use core::str::FromStr;
 ///
 /// // Create a pattern from the string syntax:
 /// let pattern = MultiNamedPlaceholderPattern::from_str(

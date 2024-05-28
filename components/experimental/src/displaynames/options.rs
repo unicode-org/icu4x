@@ -9,7 +9,9 @@
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, RegionDisplayNames, Style,
+/// };
 /// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
