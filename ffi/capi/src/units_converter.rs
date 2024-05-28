@@ -71,7 +71,7 @@ pub mod ffi {
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-        /// Returns an error if the unit identifier is not valid or the `unit_id` is not a valid UTF-8 string.
+        /// Returns an error if the unit identifier is not valid.
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
