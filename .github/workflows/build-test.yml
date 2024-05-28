@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: 
-        behavior: [local, cratesio]
+        behavior: [local] # cratesio disabled during release
       fail-fast: false
     steps:
     - uses: actions/checkout@v4

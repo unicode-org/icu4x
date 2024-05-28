@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "icu_decimal")]
+#![cfg(feature = "icu_decimal")]
+
 use alloc::borrow::Cow;
 
 #[diplomat::bridge]
@@ -29,7 +30,6 @@ pub mod ffi {
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
         #[allow(clippy::too_many_arguments)]
-        #[cfg(feature = "icu_decimal")]
         pub fn create_decimal_symbols_v1(
             plus_sign_prefix: &DiplomatStr,
             plus_sign_suffix: &DiplomatStr,
@@ -83,7 +83,7 @@ pub mod ffi {
         }
     }
 }
-#[cfg(feature = "icu_decimal")]
+
 fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
     if s.is_empty() {
         Cow::default()
