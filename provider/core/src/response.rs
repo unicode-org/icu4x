@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::buf::BufferMarker;
-use crate::error::{DataError, DataErrorKind};
+use crate::error::DataError;
 use crate::marker::DynamicDataMarker;
 use crate::request::DataLocale;
 use alloc::boxed::Box;
@@ -386,7 +386,7 @@ where
             DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
             DataPayloadInner::StaticRef(_) => None,
         }
-        .ok_or(DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
+        .ok_or(DataError::custom("DataPayload not owned"))
     }
 
     /// Mutate the data contained in this DataPayload.

@@ -504,12 +504,6 @@ mod test {
             DataPayload::from_owned_buffer(Box::new(*b"pretend we're borrowing from here"))
                 .map_project(|_, _| AnyPayload::from_static_ref(&CONST_DATA));
         let err = payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
-        assert!(matches!(
-            err,
-            DataError {
-                kind: DataErrorKind::InvalidState,
-                ..
-            }
-        ));
+        assert_eq!(err, DataError::custom("DataPayload not owned"));
     }
 }

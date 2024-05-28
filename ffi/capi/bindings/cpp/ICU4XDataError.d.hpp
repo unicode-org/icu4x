@@ -16,19 +16,15 @@ public:
   enum Value {
     Unknown = 0,
     MissingDataMarker = 1,
-    MissingVariant = 2,
-    MissingLocale = 3,
-    NeedsVariant = 4,
-    NeedsLocale = 5,
-    ExtraneousLocale = 6,
-    FilteredResource = 7,
-    MismatchedType = 8,
-    InvalidState = 9,
-    Custom = 10,
-    Io = 11,
-    UnavailableBufferFormat = 12,
-    MismatchedAnyBuffer = 13,
-    DataStructValidityError = 14,
+    MissingLocale = 2,
+    NeedsLocale = 3,
+    ExtraneousLocale = 4,
+    FilteredResource = 5,
+    MismatchedType = 6,
+    Custom = 7,
+    Io = 8,
+    UnavailableBufferFormat = 9,
+    InconsistentData = 10,
   };
 
   ICU4XDataError() = default;

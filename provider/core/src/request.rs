@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataError, DataErrorKind};
+use crate::DataError;
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
@@ -11,7 +11,7 @@ use core::hash::Hash;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
 use icu_locale_core::subtags::{Language, Region, Script, Variants};
-use icu_locale_core::{LanguageIdentifier, Locale};
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 use writeable::{LengthHint, Writeable};
 
 use alloc::string::String;
@@ -241,15 +241,9 @@ impl From<&Locale> for DataLocale {
 }
 
 impl FromStr for DataLocale {
-    type Err = DataError;
+    type Err = ParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let locale = Locale::from_str(s).map_err(|e| {
-            DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s)
-                .with_display_context(&e)
-        })?;
-        Ok(DataLocale::from(locale))
+        Locale::from_str(s).map(DataLocale::from)
     }
 }
 
@@ -750,19 +744,16 @@ impl DataMarkerAttributes {
             }
             builder.push_str(item.as_str())
         }
-        if builder.is_empty() {
-            return Err(DataErrorKind::KeyLocaleSyntax.with_str_context("empty aux iterator"));
-        }
-        if builder.len() <= 23 {
-            #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-            Ok(Self {
-                value: DataMarkerAttributesInner::Stack(builder.parse().unwrap()),
-            })
-        } else {
-            Ok(Self {
-                value: DataMarkerAttributesInner::Boxed(builder.into()),
-            })
-        }
+        Ok(Self {
+            value: if builder.is_empty() {
+                DataMarkerAttributesInner::Empty
+            } else if builder.len() <= 23 {
+                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
+                DataMarkerAttributesInner::Stack(builder.parse().unwrap())
+            } else {
+                DataMarkerAttributesInner::Boxed(builder.into())
+            },
+        })
     }
 
     /// Creates a [`DataMarkerAttributes`] from a single subtag.
