@@ -143,7 +143,9 @@ impl<'data> MeasureUnitParser<'data> {
 
             identifier = match identifier_part_without_unit_id.strip_prefix(b"-") {
                 Some(remainder) => remainder,
-                None if identifier_part_without_unit_id.is_empty() => identifier_part_without_unit_id,
+                None if identifier_part_without_unit_id.is_empty() => {
+                    identifier_part_without_unit_id
+                }
                 None => return Err(ConversionError::InvalidUnit),
             };
         }
