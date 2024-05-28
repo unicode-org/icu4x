@@ -231,7 +231,7 @@ lazy_static::lazy_static! {
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locid::LanguageIdentifier",
 
-        // Doesn't make sense to expose through icu_normalizer``
+        // Doesn't make sense to expose through `icu_normalizer`
         "icu::normalizer::uts46::Uts46Mapper",
 
         // Do not want for 2.0: we need DiplomatWriteable16
