@@ -23,7 +23,9 @@
     - New home for all experimental components. This supersedes the published `icu_compactdecimal`, `icu_displaynames`, `icu_relativetime`, `icu_transliterate`, and `icu_unicodeset_parse` crates (#4564)
     - New experimental component `personnames` (#4050)
     - New experimental component `dimension`
-    - New experimental component `units`
+      - Added `CurrencyFormatter`, which can format any currency based on the locale and the width (short and narrow are supported for now).
+    - New experimental component `units` (#4605)
+      - Added `UnitsConverter`, which can convert any single or compound units (such as `meter` and `square-meter-per-second`) to any compatible single or compound units.
   - `icu_locid`
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_locid_transform`
