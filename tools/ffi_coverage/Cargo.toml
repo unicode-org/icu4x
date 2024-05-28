@@ -4,8 +4,8 @@
 
 [package]
 name = "icu_ffi_coverage"
-version = "0.0.0"
 publish = false
+version = "0.0.0"
 edition = "2021"
 
 [dependencies]

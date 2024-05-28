@@ -4,6 +4,7 @@
 
 [package]
 name = "unused"
+version = "0.0.0"
 
 [lib]
 path = "unused"
