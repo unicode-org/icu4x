@@ -87,6 +87,8 @@
     - `fixed_decimal`
         - Changed type of compact exponent from `i16` to `u8` (https://github.com/unicode-org/icu4x/pull/4828)
         - Stabilize rounding to increment methods for `FixedDecimal` (https://github.com/unicode-org/icu4x/pull/4578)
+    - `icu_pattern`
+        - Complete re-write of crate with support for multiple backends and better integration with ZeroVec and Writeable (https://github.com/unicode-org/icu4x/pull/4610)
     - `litemap`
         - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
     - `yoke`
