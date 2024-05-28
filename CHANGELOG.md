@@ -6,13 +6,14 @@
   - General
     - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
   - `icu_calendar`
-    - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+    - Fix duration offsetting and negative-year bugs in several calendars including Chinese, Islamic, Coptic, Ethiopian, and Hebrew (#4904)
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
     - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
-    - Fix bugs in several calendars with new continuity test (#4904)
+    - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
   - `icu_normalizer`
     - Make UTS 46 normalization non-experimental (#4712)
   - `icu_datetime`
+    - Experimental "neo" datetime formatter with support for semantic skeleta and fine-grained data slicing (https://github.com/unicode-org/icu4x/issues/1317, https://github.com/unicode-org/icu4x/issues/3347)
     - `Writeable` and `Display` implementations now don't return `fmt::Error`s that don't originate from the `fmt::Write` anymore (#4732, #4851, #4863)
     - Make `CldrCalendar` trait sealed except with experimental feature (https://github.com/unicode-org/icu4x/pull/4392)
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
@@ -41,7 +42,10 @@
   - `icu_timezone`
     - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
+  - `icu_codepointtrie_builder`
+    - Switch from `wasmer` to `wasmi` (https://github.com/unicode-org/icu4x/pull/4621)
   - `icu_datagen`
+    - Add new API structure to `DatagenDriver` to better express the different aspects of `FallbackMode` (https://github.com/unicode-org/icu4x/issues/4629)
     - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
     - Datagen performance improvement by caching supported locales (https://github.com/unicode-org/icu4x/pull/4470)
     - Never use fallback for baked segmentation data (https://github.com/unicode-org/icu4x/pull/4510)
@@ -53,6 +57,7 @@
     - (Small breakage) `DataPayload::new_owned()` is no longer `const`, this was a mistake (https://github.com/unicode-org/icu4x/pull/4456)
     - Add `NeverMarker` to allow for DataProvider bounds that never return data (https://github.com/unicode-org/icu4x/issues/4186)
     - Add `BoundProvider` to allow temporal separation between key and request (https://github.com/unicode-org/icu4x/pull/4877)
+    - Add `DataPayloadOr` for more efficient memory layout to reduce stack size (https://github.com/unicode-org/icu4x/pull/4463)
   - `icu_provider_blob`
     - Blob v2 no longer allocates (https://github.com/unicode-org/icu4x/pull/4383)
 - FFI:
@@ -89,10 +94,12 @@
         - Support `?Sized` type parameters which must be `Sized` to implement `ZeroFrom` (https://github.com/unicode-org/icu4x/pull/4657)
     - `zerotrie`
         - Add `as_borrowed_slice` and `AsRef` impl (https://github.com/unicode-org/icu4x/pull/4381)
-        - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383)
+        - Add `ZeroTrieSimpleAsciiCursor` for manual iteration (https://github.com/unicode-org/icu4x/pull/4383, https://github.com/unicode-org/icu4x/pull/4725)
         - Increase bound of `p` to solve more perfect hash functions; _might_ break serialized ZeroTriePerfectHash from previous versions (https://github.com/unicode-org/icu4x/pull/4888)
     - `zerovec`
         - Change `ZeroHashMap` to use `twox-hash` (https://github.com/unicode-org/icu4x/pull/4592)
+        - Add a niche to `ZeroVec` to reduce memory usage (https://github.com/unicode-org/icu4x/pull/4491)
+        - Add `ZeroVec::take_last` and `::take_first` (https://github.com/unicode-org/icu4x/pull/4651)
     - `writeable`
         - Add `TryWriteable` for fallibility (https://github.com/unicode-org/icu4x/pull/4787)
         - Add `writeable_cmp_bytes` for more efficient comparison (https://github.com/unicode-org/icu4x/pull/4402)
