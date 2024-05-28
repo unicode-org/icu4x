@@ -5,6 +5,7 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
+#[cfg(feature = "experimental")]
 use crate::neo_marker::{NeoDateInputFields, NeoTimeInputFields, NeoWeekInputFields};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
@@ -244,6 +245,7 @@ impl ExtractedDateTimeInput {
         }
     }
     /// Construct given neo date input instances.
+    #[cfg(feature = "experimental")]
     pub(crate) fn extract_from_neo_input<C>(
         neo_date: Option<NeoDateInputFields<C>>,
         neo_week: Option<NeoWeekInputFields<C>>,
