@@ -74,9 +74,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0
-                .lowercase(s, &locale.0.id)
-                .write_to(write)?;
+            self.0.lowercase(s, &locale.0.id).write_to(write)?;
 
             Ok(())
         }
@@ -90,9 +88,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0
-                .uppercase(s, &locale.0.id)
-                .write_to(write)?;
+            self.0.uppercase(s, &locale.0.id).write_to(write)?;
 
             Ok(())
         }
@@ -120,11 +116,7 @@ pub mod ffi {
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
-                .titlecase_segment_with_only_case_data(
-                    s,
-                    &locale.0.id,
-                    options.into(),
-                )
+                .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
                 .write_to(write)?;
 
             Ok(())
@@ -133,11 +125,7 @@ pub mod ffi {
         /// Case-folds the characters in the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
-        pub fn fold(
-            &self,
-            s: &str,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        pub fn fold(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             self.0.fold(s).write_to(write)?;
 
             Ok(())
@@ -151,9 +139,7 @@ pub mod ffi {
             s: &str,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0
-                .fold_turkic(s)
-                .write_to(write)?;
+            self.0.fold_turkic(s).write_to(write)?;
 
             Ok(())
         }
