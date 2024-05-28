@@ -21,15 +21,14 @@ use alloc::string::String;
 ///
 /// ```
 /// use core::cmp::Ordering;
+/// use core::str::FromStr;
 /// use icu_pattern::PatternItem;
 /// use icu_pattern::SinglePlaceholder;
 /// use icu_pattern::SinglePlaceholderKey;
 /// use icu_pattern::SinglePlaceholderPattern;
-/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern =
-///     SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -108,9 +107,9 @@ where
 /// Parsing a pattern into the encoding:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
-/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let store = Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!")
@@ -123,9 +122,9 @@ where
 /// Example patterns supported by this backend:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
-/// use core::str::FromStr;
 ///
 /// // Single numeric placeholder:
 /// assert_eq!(

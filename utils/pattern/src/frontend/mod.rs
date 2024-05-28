@@ -59,10 +59,10 @@ use alloc::{borrow::ToOwned, str::FromStr, string::String};
 /// Interpolating a [`SinglePlaceholder`] pattern with parts:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
 /// use writeable::assert_writeable_parts_eq;
-/// use core::str::FromStr;
 ///
 /// let pattern =
 ///     Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!").unwrap();
@@ -108,10 +108,10 @@ impl<Backend, Store> Pattern<Backend, Store> {
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
     /// use writeable::assert_writeable_eq;
-    /// use core::str::FromStr;
     ///
     /// // Create a pattern from a valid string:
     /// let allocated_pattern =
@@ -232,9 +232,9 @@ where
     /// # Examples
     ///
     /// ```
+    /// use core::str::FromStr;
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
-    /// use core::str::FromStr;
     ///
     /// // Create a pattern from a valid string:
     /// Pattern::<SinglePlaceholder, _>::from_str("{0} days")

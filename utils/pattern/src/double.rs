@@ -22,10 +22,10 @@ use alloc::string::String;
 ///
 /// ```
 /// use core::cmp::Ordering;
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholderKey;
 /// use icu_pattern::DoublePlaceholderPattern;
 /// use icu_pattern::PatternItem;
-/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let pattern =
@@ -192,9 +192,9 @@ impl DoublePlaceholderInfo {
 /// Parsing a pattern into the encoding:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholder;
 /// use icu_pattern::Pattern;
-/// use core::str::FromStr;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let store =
@@ -213,9 +213,9 @@ impl DoublePlaceholderInfo {
 /// Example patterns supported by this backend:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholder;
 /// use icu_pattern::Pattern;
-/// use core::str::FromStr;
 ///
 /// // Single numeric placeholder (note, "5" is used):
 /// assert_eq!(

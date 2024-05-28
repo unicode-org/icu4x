@@ -131,7 +131,6 @@ macro_rules! impl_datetime_marker {
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
         /// use icu::locid::locale;
         /// use writeable::assert_try_writeable_eq;
-        ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
         ///     NeoSkeletonLength::Medium,

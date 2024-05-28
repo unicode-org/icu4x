@@ -42,7 +42,10 @@ macro_rules! assert_syntax {
 /// laid out in [RFC9557][rfc9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
 /// ```rust
-/// use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord, UTCOffsetRecord}};
+/// use ixdtf::parsers::{
+///     records::{Sign, TimeZoneRecord, UTCOffsetRecord},
+///     IxdtfParser,
+/// };
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 ///
@@ -111,13 +114,14 @@ impl<'a> IxdtfParser<'a> {
     ///
     /// let extended_year_month = "2020-11[u-ca=iso8601]";
     ///
-    /// let result = IxdtfParser::new(extended_year_month).parse_year_month().unwrap();
+    /// let result = IxdtfParser::new(extended_year_month)
+    ///     .parse_year_month()
+    ///     .unwrap();
     ///
     /// let date = result.date.unwrap();
     ///
     /// assert_eq!(date.year, 2020);
     /// assert_eq!(date.month, 11);
-    ///
     /// ```
     ///
     /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
@@ -143,13 +147,14 @@ impl<'a> IxdtfParser<'a> {
     /// # use ixdtf::parsers::IxdtfParser;
     /// let extended_month_day = "1107[+04:00]";
     ///
-    /// let result = IxdtfParser::new(extended_month_day).parse_month_day().unwrap();
+    /// let result = IxdtfParser::new(extended_month_day)
+    ///     .parse_month_day()
+    ///     .unwrap();
     ///
     /// let date = result.date.unwrap();
     ///
     /// assert_eq!(date.month, 11);
     /// assert_eq!(date.day, 7);
-    ///
     /// ```
     ///
     /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
@@ -241,9 +246,7 @@ impl<'a> IxdtfParser<'a> {
 /// assert_eq!(minutes, 10);
 /// assert_eq!(seconds, 30);
 /// assert_eq!(fraction, 0);
-///
 /// ```
-///
 ///
 #[cfg(feature = "duration")]
 #[derive(Debug)]
@@ -279,7 +282,6 @@ impl<'a> IsoDurationParser<'a> {
     /// assert_eq!(date_duration.months, 2);
     /// assert_eq!(date_duration.weeks, 3);
     /// assert_eq!(date_duration.days, 1);
-    ///
     /// ```
     ///
     /// ## Parsing a time duration
@@ -305,7 +307,6 @@ impl<'a> IsoDurationParser<'a> {
     /// assert_eq!(seconds, 30);
     /// assert_eq!(fraction, 0);
     /// ```
-    ///
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)
     }

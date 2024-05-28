@@ -142,7 +142,6 @@ size_test!(
 
 /// A low-level type that formats datetime patterns with localized symbols.
 /// The calendar should be chosen at compile time.
-///
 #[doc = typed_date_time_names_size!()]
 ///
 /// <div class="stab unstable">
