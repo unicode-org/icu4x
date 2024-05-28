@@ -141,12 +141,10 @@ impl<'data> MeasureUnitParser<'data> {
                 unit_id,
             });
 
-            identifier = match identifier_part_without_unit_id.len() {
-                0 => identifier_part_without_unit_id,
-                _ if identifier_part_without_unit_id.starts_with(b"-") => {
-                    &identifier_part_without_unit_id[1..]
-                }
-                _ => return Err(ConversionError::InvalidUnit),
+            identifier = match identifier_part_without_unit_id.strip_prefix(b"-") {
+                Some(remainder) => remainder,
+                None if identifier_part_without_unit_id.is_empty() => identifier_part_without_unit_id,
+                None => return Err(ConversionError::InvalidUnit),
             };
         }
 
