@@ -27,4 +27,5 @@ pub struct LangUnits {
     pub units: Units,
 }
 
-pub type Resource = super::super::LocaleResource<LangUnits>;
+// uncomment when LocaleResource is used
+// pub type Resource = super::super::LocaleResource<LangUnits>;
