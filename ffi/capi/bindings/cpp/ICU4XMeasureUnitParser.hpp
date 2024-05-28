@@ -34,7 +34,7 @@ class ICU4XMeasureUnitParser {
 
   /**
    * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-   * Returns an error if the unit identifier is not valid or the `unit_id` is not a valid UTF-8 string.
+   * Returns an error if the unit identifier is not valid.
    * 
    * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
    */
