@@ -33,12 +33,12 @@ impl<'data> MeasureUnitParser<'data> {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id<'a>(&'a self, part: &'a str) -> Result<(u16, &str), ConversionError> {
+    fn get_unit_id<'a>(&'a self, part: &'a [u8]) -> Result<(u16, &[u8]), ConversionError> {
         let mut cursor = self.units_trie.cursor();
         let mut longest_match = Err(ConversionError::InvalidUnit);
 
-        for (i, byte) in part.bytes().enumerate() {
-            cursor.step(byte);
+        for (i, byte) in part.iter().enumerate() {
+            cursor.step(*byte);
             if cursor.is_empty() {
                 break;
             }
@@ -49,7 +49,7 @@ impl<'data> MeasureUnitParser<'data> {
         longest_match
     }
 
-    fn get_power<'a>(&'a self, part: &'a str) -> Result<(u8, &str), ConversionError> {
+    fn get_power<'a>(&'a self, part: &'a [u8]) -> Result<(u8, &[u8]), ConversionError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -58,36 +58,49 @@ impl<'data> MeasureUnitParser<'data> {
         }
 
         // If the power is found, this means that the part must start with the `-` sign.
-        match part_without_power.strip_prefix('-') {
+        match part_without_power.strip_prefix(b"-") {
             Some(part_without_power) => Ok((power, part_without_power)),
             None => Err(ConversionError::InvalidUnit),
         }
     }
 
-    fn get_si_prefix<'a>(&'a self, part: &'a str) -> (SiPrefix, &str) {
+    /// Get the SI prefix.
+    /// NOTE:
+    ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
+    fn get_si_prefix<'a>(&'a self, part: &'a [u8]) -> (SiPrefix, &[u8]) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
             return (si_prefix, part);
         }
 
-        match part_without_si_prefix.strip_prefix('-') {
+        match part_without_si_prefix.strip_prefix(b"-") {
             Some(part_without_dash) => (si_prefix, part_without_dash),
             None => (si_prefix, part_without_si_prefix),
         }
     }
 
-    /// Process a part of an identifier.
-    /// For example, if the whole identifier is: "square-kilometer-per-second",
-    /// this function will be called for "square-kilometer" with sign (1) and "second" with sign (-1).
-    fn analyze_identifier_part(
+    // TODO: add test cases for this function.
+    /// Parses a CLDR unit identifier and returns a MeasureUnit.
+    /// Examples include: `meter`, `foot`, `meter-per-second`, `meter-per-square-second`, `meter-per-square-second-per-second`, etc.
+    /// Returns:
+    ///    - Ok(MeasureUnit) if the identifier is valid.
+    ///    - Err(ConversionError::InvalidUnit) if the identifier is invalid.
+    pub fn try_from_identifier(
         &self,
-        identifier_part: &str,
-        sign: i8,
-        result: &mut Vec<MeasureUnitItem>,
-    ) -> Result<(), ConversionError> {
-        let mut identifier_part = identifier_part;
-        while !identifier_part.is_empty() {
-            let (power, identifier_part_without_power) = self.get_power(identifier_part)?;
+        identifier: &'data [u8],
+    ) -> Result<MeasureUnit, ConversionError> {
+        if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
+            return Err(ConversionError::InvalidUnit);
+        }
+
+        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
+        let mut identifier = identifier;
+        let mut sign = 1;
+        while !identifier.is_empty() {
+            // First: extract the power.
+            let (power, identifier_part_without_power) = self.get_power(identifier)?;
+
+            // Second: extract the si_prefix and the unit_id.
             let (si_prefix, unit_id, identifier_part_without_unit_id) =
                 match self.get_unit_id(identifier_part_without_power) {
                     Ok((unit_id, identifier_part_without_unit_id)) => (
@@ -102,48 +115,41 @@ impl<'data> MeasureUnitParser<'data> {
                         let (si_prefix, identifier_part_without_si_prefix) =
                             self.get_si_prefix(identifier_part_without_power);
                         let (unit_id, identifier_part_without_unit_id) =
-                            self.get_unit_id(identifier_part_without_si_prefix)?;
+                            match self.get_unit_id(identifier_part_without_si_prefix) {
+                                Ok((unit_id, identifier_part_without_unit_id)) => {
+                                    (unit_id, identifier_part_without_unit_id)
+                                }
+                                // If the sign is negative, this means that the identifier may contain more than one `per-` keyword.
+                                Err(_) if sign == 1 => {
+                                    if let Some(remainder) = identifier.strip_prefix(b"per-") {
+                                        sign = -1;
+                                        identifier = remainder;
+                                        continue;
+                                    }
+
+                                    return Err(ConversionError::InvalidUnit);
+                                }
+                                Err(e) => return Err(e),
+                            };
                         (si_prefix, unit_id, identifier_part_without_unit_id)
                     }
                 };
 
-            result.push(MeasureUnitItem {
+            measure_unit_items.push(MeasureUnitItem {
                 power: sign * power as i8,
                 si_prefix,
                 unit_id,
             });
 
-            identifier_part = match identifier_part_without_unit_id.len() {
-                0 => identifier_part_without_unit_id,
-                _ if identifier_part_without_unit_id.starts_with('-') => {
-                    &identifier_part_without_unit_id[1..]
+            identifier = match identifier_part_without_unit_id.strip_prefix(b"-") {
+                Some(remainder) => remainder,
+                None if identifier_part_without_unit_id.is_empty() => {
+                    identifier_part_without_unit_id
                 }
-                _ => return Err(ConversionError::InvalidUnit),
+                None => return Err(ConversionError::InvalidUnit),
             };
         }
 
-        Ok(())
-    }
-
-    // TODO: add test cases for this function.
-    /// Process an identifier.
-    pub fn try_from_identifier(
-        &self,
-        identifier: &'data str,
-    ) -> Result<MeasureUnit, ConversionError> {
-        if identifier.starts_with('-') || identifier.ends_with('-') {
-            return Err(ConversionError::InvalidUnit);
-        }
-
-        let (num_part, den_part) = identifier
-            .split_once("per-")
-            .map(|(num_part, den_part)| (num_part.strip_suffix('-').unwrap_or(num_part), den_part))
-            .unwrap_or((identifier, ""));
-
-        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
-
-        self.analyze_identifier_part(num_part, 1, &mut measure_unit_items)?;
-        self.analyze_identifier_part(den_part, -1, &mut measure_unit_items)?;
         Ok(MeasureUnit {
             contained_units: measure_unit_items.into(),
         })
