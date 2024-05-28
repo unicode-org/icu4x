@@ -6,13 +6,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{
-    format::neo::*,
-    neo::_internal::*,
-    neo_skeleton::*,
-    provider::neo::*,
-    CldrCalendar,
-};
+use crate::{format::neo::*, neo::_internal::*, neo_skeleton::*, provider::neo::*, CldrCalendar};
 use icu_calendar::{
     types::{
         DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
