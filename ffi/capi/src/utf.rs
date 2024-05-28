@@ -7,6 +7,7 @@ use alloc::borrow::Cow;
 use core::fmt::Write;
 use writeable::{LengthHint, Part, TryWriteable, Writeable};
 
+#[allow(dead_code)]
 pub(crate) struct LossyWrap<T>(pub T);
 
 impl<T: TryWriteable> Writeable for LossyWrap<T> {
