@@ -20,9 +20,6 @@ enum Error {
   /// Some input was out of bounds
   outOfBoundsError,
 
-  /// Input expected to be UTF-8 was ill-formed
-  utf8Error,
-
   dataMissingDataKeyError,
 
   dataMissingVariantError,
@@ -140,8 +137,6 @@ enum Error {
         return 1;
       case outOfBoundsError:
         return 2;
-      case utf8Error:
-        return 3;
       case dataMissingDataKeyError:
         return 256;
       case dataMissingVariantError:

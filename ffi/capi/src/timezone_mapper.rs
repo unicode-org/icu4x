@@ -60,13 +60,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::normalize_iana, FnInStruct)]
         pub fn normalize_iana(
             &self,
-            value: &DiplomatStr,
+            value: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            // Validate the UTF-8 here because it gets echoed back to the writeable
-            let value = core::str::from_utf8(value)?;
             if let Some(s) = handle.normalize_iana(value) {
                 Ok(s.0.write_to(write)?)
             } else {
@@ -80,13 +78,11 @@ pub mod ffi {
         )]
         pub fn canonicalize_iana(
             &self,
-            value: &DiplomatStr,
+            value: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            // Validate the UTF-8 here because it gets echoed back to the writeable
-            let value = core::str::from_utf8(value)?;
             if let Some(s) = handle.canonicalize_iana(value) {
                 Ok(s.0.write_to(write)?)
             } else {
@@ -171,13 +167,11 @@ pub mod ffi {
         )]
         pub fn canonicalize_iana(
             &self,
-            value: &DiplomatStr,
+            value: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            // Validate the UTF-8 here because it gets echoed back to the writeable
-            let value = core::str::from_utf8(value)?;
             if let Some(s) = handle.canonicalize_iana(value) {
                 Ok(s.0.write_to(write)?)
             } else {

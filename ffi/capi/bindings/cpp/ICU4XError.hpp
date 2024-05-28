@@ -39,11 +39,6 @@ enum struct ICU4XError {
    * Some input was out of bounds
    */
   OutOfBoundsError = 2,
-
-  /**
-   * Input expected to be UTF-8 was ill-formed
-   */
-  Utf8Error = 3,
   DataMissingDataKeyError = 256,
   DataMissingVariantError = 257,
   DataMissingLocaleError = 258,
