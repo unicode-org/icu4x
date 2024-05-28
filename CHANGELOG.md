@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## icu4x 1.5 (May 28, 2024)
 
 - Components
   - General
