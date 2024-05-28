@@ -21,7 +21,8 @@ fn test_cldr_unit_tests() {
         result: IcuRatio,
     }
 
-    let data = std::fs::read_to_string("tests/units/data/unitsTest.txt").expect("Failed to read test data file");
+    let data = std::fs::read_to_string("tests/units/data/unitsTest.txt")
+        .expect("Failed to read test data file");
     let tests: Vec<UnitsTest> = data
         .lines()
         .filter(|line| !line.starts_with('#') && !line.is_empty())
@@ -40,13 +41,18 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        let input_unit = parser.try_from_bytes(test.input_unit.as_bytes()).expect("Failed to parse input unit");
-        let output_unit = parser.try_from_bytes(test.output_unit.as_bytes()).expect("Failed to parse output unit");
+        let input_unit = parser
+            .try_from_bytes(test.input_unit.as_bytes())
+            .expect("Failed to parse input unit");
+        let output_unit = parser
+            .try_from_bytes(test.output_unit.as_bytes())
+            .expect("Failed to parse output unit");
 
         let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
             .expect("Failed to create converter");
-        let result = converter.convert(&Ratio::<BigInt>::from_str("1000").expect("Failed to parse ratio"));
+        let result =
+            converter.convert(&Ratio::<BigInt>::from_str("1000").expect("Failed to parse ratio"));
 
         let converter_f64: UnitsConverter<f64> = converter_factory
             .converter(&input_unit, &output_unit)
@@ -62,7 +68,11 @@ fn test_cldr_unit_tests() {
             test.category, test.input_unit, test.output_unit, result, test.result
         );
 
-        let test_result_f64 = test.result.get_ratio().to_f64().expect("Failed to convert ratio to f64");
+        let test_result_f64 = test
+            .result
+            .get_ratio()
+            .to_f64()
+            .expect("Failed to convert ratio to f64");
         let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
         assert!(
             diff_ratio_f64 <= 0.000001,
@@ -70,8 +80,94 @@ fn test_cldr_unit_tests() {
             test.category, test.input_unit, test.output_unit, result_f64, test_result_f64
         );
     }
+}
 
-    // TODO: add more test cases for the NonConvertible units.
+#[test]
+fn test_units_non_convertible() {
+    let non_convertible_units = [
+        ("meter", "second"),
+        ("kilogram", "liter"),
+        ("celsius", "meter"),
+        ("ampere", "candela"),
+        ("radian", "steradian"),
+        ("byte", "meter"),
+        ("kilogram", "radian"),
+        ("kelvin", "candela"),
+        ("second", "radian"),
+        ("second", "steradian"),
+        ("second", "byte"),
+        ("second", "kilogram"),
+        ("second", "kelvin"),
+        ("second", "ampere"),
+        ("second", "candela"),
+        ("meter", "radian"),
+        ("meter", "steradian"),
+        ("meter", "byte"),
+        ("meter", "kilogram"),
+        ("meter", "kelvin"),
+        ("meter", "ampere"),
+        ("meter", "candela"),
+        ("kilogram", "radian"),
+        ("kilogram", "steradian"),
+        ("kilogram", "byte"),
+        ("kilogram", "kelvin"),
+        ("kilogram", "ampere"),
+        ("kilogram", "candela"),
+        ("kelvin", "radian"),
+        ("kelvin", "steradian"),
+        ("kelvin", "byte"),
+        ("kelvin", "ampere"),
+        ("kelvin", "candela"),
+        ("ampere", "radian"),
+        ("ampere", "steradian"),
+        ("ampere", "byte"),
+        ("ampere", "kelvin"),
+        ("ampere", "candela"),
+        ("candela", "radian"),
+        ("candela", "steradian"),
+        ("candela", "byte"),
+        ("candela", "kelvin"),
+        ("candela", "ampere"),
+        ("radian", "second"),
+        ("radian", "meter"),
+        ("radian", "kilogram"),
+        ("radian", "kelvin"),
+        ("radian", "ampere"),
+        ("radian", "candela"),
+        ("steradian", "second"),
+        ("steradian", "meter"),
+        ("steradian", "kilogram"),
+        ("steradian", "kelvin"),
+        ("steradian", "ampere"),
+        ("steradian", "candela"),
+        ("byte", "second"),
+        ("byte", "meter"),
+        ("byte", "kilogram"),
+        ("byte", "kelvin"),
+        ("byte", "ampere"),
+        ("byte", "candela"),
+    ];
+
+    let converter_factory = ConverterFactory::new();
+    let parser = converter_factory.parser();
+
+    for (input, output) in non_convertible_units.iter() {
+        let input_unit = parser
+            .try_from_bytes(input.as_bytes())
+            .expect("Failed to parse input unit");
+        let output_unit = parser
+            .try_from_bytes(output.as_bytes())
+            .expect("Failed to parse output unit");
+
+        let result: Option<UnitsConverter<f64>> =
+            converter_factory.converter(&input_unit, &output_unit);
+        assert!(
+            result.is_none(),
+            "Conversion should not be possible between {:?} and {:?}",
+            input,
+            output
+        );
+    }
 }
 
 #[test]
