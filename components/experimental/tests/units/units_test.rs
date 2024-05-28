@@ -13,7 +13,6 @@ use num_traits::{Signed, ToPrimitive};
 
 #[test]
 fn test_cldr_unit_tests() {
-    /// Represents a test case for units conversion.
     #[derive(Debug)]
     struct UnitsTest {
         category: String,
@@ -22,17 +21,17 @@ fn test_cldr_unit_tests() {
         result: IcuRatio,
     }
 
-    let data = std::fs::read_to_string("tests/units/data/unitsTest.txt").unwrap();
+    let data = std::fs::read_to_string("tests/units/data/unitsTest.txt").expect("Failed to read test data file");
     let tests: Vec<UnitsTest> = data
         .lines()
         .filter(|line| !line.starts_with('#') && !line.is_empty())
         .map(|line| {
-            let parts: Vec<&str> = line.split(';').map(|s| s.trim()).collect();
+            let parts: Vec<&str> = line.split(';').map(str::trim).collect();
             UnitsTest {
                 category: parts[0].to_string(),
                 input_unit: parts[1].to_string(),
                 output_unit: parts[2].to_string(),
-                result: IcuRatio::from_str(parts[4]).unwrap(),
+                result: IcuRatio::from_str(parts[4]).expect("Failed to parse IcuRatio"),
             }
         })
         .collect();
@@ -41,39 +40,35 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        let input_unit = parser.try_from_bytes(test.input_unit.as_bytes()).unwrap();
-        let output_unit = parser.try_from_bytes(test.output_unit.as_bytes()).unwrap();
+        let input_unit = parser.try_from_bytes(test.input_unit.as_bytes()).expect("Failed to parse input unit");
+        let output_unit = parser.try_from_bytes(test.output_unit.as_bytes()).expect("Failed to parse output unit");
 
         let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
-            .unwrap();
-        let result = converter.convert(&Ratio::<BigInt>::from_str("1000").unwrap());
+            .expect("Failed to create converter");
+        let result = converter.convert(&Ratio::<BigInt>::from_str("1000").expect("Failed to parse ratio"));
 
         let converter_f64: UnitsConverter<f64> = converter_factory
             .converter(&input_unit, &output_unit)
-            .unwrap();
+            .expect("Failed to create converter for f64");
         let result_f64 = converter_f64.convert(&1000.0);
 
-        // TODO: remove this extra clones by implementing Sub<&IcuRatio> & Div<&IcuRatio> for IcuRatio.
         let diff_ratio = ((result.clone() - test.result.clone().get_ratio())
             / test.result.clone().get_ratio())
         .abs();
-        if diff_ratio > Ratio::new(BigInt::from(1), BigInt::from(1000000)) {
-            panic!(
-                "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
-                test.category, test.input_unit, test.output_unit, result, test.result
-            );
-        }
+        assert!(
+            diff_ratio <= Ratio::new(BigInt::from(1), BigInt::from(1000000)),
+            "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
+            test.category, test.input_unit, test.output_unit, result, test.result
+        );
 
-        let test_result_f64 = test.result.get_ratio().to_f64().unwrap();
+        let test_result_f64 = test.result.get_ratio().to_f64().expect("Failed to convert ratio to f64");
         let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
-
-        if diff_ratio_f64 > 0.000001 {
-            panic!(
-                "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
-                test.category, test.input_unit, test.output_unit, result_f64, test_result_f64
-            );
-        }
+        assert!(
+            diff_ratio_f64 <= 0.000001,
+            "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
+            test.category, test.input_unit, test.output_unit, result_f64, test_result_f64
+        );
     }
 
     // TODO: add more test cases for the NonConvertible units.
