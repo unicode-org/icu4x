@@ -8,15 +8,14 @@
 
 [package]
 name = "tutorial_baked"
-version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "1.4", default-features = false } # turn off compiled_data
-icu_provider = "1.4" # for databake
+icu = { version = "1.5", default-features = false } # turn off compiled_data
+icu_provider = "1.5" # for databake
 zerovec = "0.10" # for databake
 
 [build-dependencies]
-icu = "1.4"
-icu_datagen = "1.4"
+icu = "1.5"
+icu_datagen = "1.5"
