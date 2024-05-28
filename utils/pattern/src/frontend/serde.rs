@@ -112,7 +112,7 @@ mod tests {
 
     #[test]
     fn test_rmp() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_rmp = rmp_serde::to_vec(&pattern_cow).unwrap();
