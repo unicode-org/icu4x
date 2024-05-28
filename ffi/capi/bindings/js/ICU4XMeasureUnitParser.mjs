@@ -17,11 +17,11 @@ export class ICU4XMeasureUnitParser {
     }
   }
 
-  parse_measure_unit(arg_unit_id) {
+  parse(arg_unit_id) {
     const buf_arg_unit_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_unit_id);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XMeasureUnitParser_parse_measure_unit(diplomat_receive_buffer, this.underlying, buf_arg_unit_id.ptr, buf_arg_unit_id.size);
+      wasm.ICU4XMeasureUnitParser_parse(diplomat_receive_buffer, this.underlying, buf_arg_unit_id.ptr, buf_arg_unit_id.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XMeasureUnit(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

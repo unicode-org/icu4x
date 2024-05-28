@@ -17,5 +17,5 @@ export class ICU4XMeasureUnitParser {
    * See the {@link https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse Rust documentation for `parse`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  parse_measure_unit(unit_id: string): ICU4XMeasureUnit | never;
+  parse(unit_id: string): ICU4XMeasureUnit | never;
 }
