@@ -5,7 +5,6 @@
 [package]
 name = "resb"
 description = "Utilities for reading and writing ICU resource bundle files"
-version = "0.0.0"
 publish = false
 
 authors.workspace = true

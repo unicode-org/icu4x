@@ -7,7 +7,7 @@ name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
 license = "Unicode-3.0"
 
-version = "1.4.1"
+version.workspace = true
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true

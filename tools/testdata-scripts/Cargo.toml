@@ -5,7 +5,6 @@
 [package]
 name = "icu_testdata_scripts"
 publish = false
-version = "0.0.0"
 edition = "2021"
 
 [dependencies]

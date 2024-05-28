@@ -5,7 +5,7 @@
 [package]
 name = "icu_pattern"
 description = "ICU pattern utilities"
-version = "0.1.5"
+version = "0.1.0"
 license = "Unicode-3.0"
 
 authors.workspace = true
