@@ -180,7 +180,7 @@ databake = { version = "0.1.8", path = "utils/databake", default-features = fals
 databake-derive = { version = "0.1.8", path = "utils/databake/derive", default-features = false }
 deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", default-features = false }
 fixed_decimal = { version = "0.5.6", path = "utils/fixed_decimal", default-features = false }
-icu_pattern = { version = "0.1.0", path = "utils/pattern", default-features = false }
+icu_pattern = { version = "0.2.0", path = "utils/pattern", default-features = false }
 ixdtf = { version = "0.2.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.7.3", path = "utils/litemap", default-features = false }
 tinystr = { version = "0.7.5", path = "utils/tinystr", default-features = false }
