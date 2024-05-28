@@ -8,5 +8,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu_harfbuzz = { version = "0.6.0", features = ["compiled_data"] }
+icu_harfbuzz = { version = "0.2.0", features = ["compiled_data"] }
 harfbuzz = { version = "0.6.0" }

@@ -158,7 +158,7 @@ dependencies = [
 
 [[package]]
 name = "icu_harfbuzz"
-version = "0.6.0"
+version = "0.2.0"
 dependencies = [
  "displaydoc",
  "harfbuzz-traits",
@@ -467,7 +467,7 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.2.1"
+version = "0.2.2"
 
 [[patch.unused]]
 name = "crlify"

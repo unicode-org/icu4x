@@ -147,7 +147,7 @@ icu_timezone = { version = "~1.5.0", path = "components/timezone", default-featu
 icu_capi = { version = "~1.5.0", path = "ffi/capi", default-features = false }
 icu4x_ecma402 = { version = "0.8.2", path = "ffi/ecma402", default-features = false }
 icu_freertos = { version = "~1.5.0", path = "ffi/freertos", default-features = false }
-icu_harfbuzz = { version = "~0.6.0", path = "ffi/harfbuzz", default-features = false }
+icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = false }
 
 # Provider
 icu_datagen = { version = "~1.5.0", path = "provider/datagen", default-features = false }
