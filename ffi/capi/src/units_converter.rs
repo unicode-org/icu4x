@@ -76,13 +76,8 @@ pub mod ffi {
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse(
-            &self,
-            unit_id: &DiplomatStr,
-        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            Ok(Box::new(ICU4XMeasureUnit(
-                self.0.try_from_bytes(unit_id)?,
-            )))
+        pub fn parse(&self, unit_id: &DiplomatStr) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
+            Ok(Box::new(ICU4XMeasureUnit(self.0.try_from_bytes(unit_id)?)))
         }
     }
 
