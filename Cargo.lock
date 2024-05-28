@@ -1558,13 +1558,11 @@ version = "0.0.0"
 dependencies = [
  "clap",
  "crlify",
- "databake",
  "eyre",
  "icu_datagen",
  "icu_locid",
  "icu_provider",
  "log",
- "quote",
  "simple_logger",
  "ureq",
  "zip",
