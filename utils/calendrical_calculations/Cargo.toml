@@ -34,8 +34,10 @@ all-features = true
 [dependencies]
 core_maths = { workspace = true }
 displaydoc = { workspace = true }
+log = { workspace = true, optional = true }
 
 [features]
+logging = ["dep:log"]
 std = []
 
 [package.metadata.cargo-all-features]

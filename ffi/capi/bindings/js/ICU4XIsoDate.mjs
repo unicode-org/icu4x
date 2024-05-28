@@ -49,6 +49,10 @@ export class ICU4XIsoDate {
     return new ICU4XDate(wasm.ICU4XIsoDate_to_any(this.underlying), true, []);
   }
 
+  day_of_year() {
+    return wasm.ICU4XIsoDate_day_of_year(this.underlying);
+  }
+
   day_of_month() {
     return wasm.ICU4XIsoDate_day_of_month(this.underlying);
   }

@@ -36,7 +36,6 @@ use icu_provider::{DataError, DataErrorKind};
 use icu_segmenter::SegmenterError;
 #[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 use icu_timezone::TimeZoneError;
-use tinystr::TinyStrError;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -73,8 +72,10 @@ pub mod ffi {
         /// Typically found when not enough space is allocated
         /// Most APIs that return a string may return this error
         WriteableError = 0x01,
-        // Some input was out of bounds
+        /// Some input was out of bounds
         OutOfBoundsError = 0x02,
+        /// Input expected to be UTF-8 was ill-formed
+        Utf8Error = 0x03,
 
         // general data errors
         // See DataError
@@ -139,6 +140,7 @@ pub mod ffi {
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
 
+        // dead
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
         TinyStrContainsNullError = 0x9_01,
@@ -212,6 +214,12 @@ impl From<DataError> for ICU4XError {
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)
+    }
+}
+
+impl From<core::str::Utf8Error> for ICU4XError {
+    fn from(_: core::str::Utf8Error) -> Self {
+        ICU4XError::Utf8Error
     }
 }
 
@@ -371,18 +379,6 @@ impl From<ParserError> for ICU4XError {
             ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
             ParserError::DuplicatedExtension => ICU4XError::LocaleParserExtensionError,
-            _ => ICU4XError::UnknownError,
-        }
-        .log_original(&e)
-    }
-}
-
-impl From<TinyStrError> for ICU4XError {
-    fn from(e: TinyStrError) -> Self {
-        match e {
-            TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
-            TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
-            TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)

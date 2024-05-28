@@ -62,7 +62,7 @@ impl<'data> PluralPattern<'data> {
         })
     }
 
-    /// Returns which week field determines the [icu_plurals::PluralCategory] used to select a pattern variant for a given date.
+    /// Returns which week field determines the [icu::plurals::PluralCategory] used to select a pattern variant for a given date.
     pub fn pivot_field(&self) -> Week {
         self.pivot_field
     }

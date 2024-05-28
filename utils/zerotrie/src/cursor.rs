@@ -365,10 +365,9 @@ impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     /// let mut key_str = Cow::Borrowed("abc".as_bytes());
     /// let mut i = 0;
     /// let value = loop {
-    ///     if i == key_str.len() {
+    ///     let Some(&input_byte) = key_str.get(i) else {
     ///         break cursor.take_value();
-    ///     }
-    ///     let input_byte = key_str[i];
+    ///     };
     ///     let Some(matched_byte) = cursor.step(input_byte) else {
     ///         break None;
     ///     };

@@ -12,8 +12,8 @@
 //!
 //! ```
 //! use icu_datagen::prelude::*;
-//! use icu_provider_fs::export::*;
 //! use icu_provider::hello_world::*;
+//! use icu_provider_fs::export::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
@@ -28,7 +28,7 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
+//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -38,7 +38,7 @@
 //! The resulting files can now be used like this:
 //!
 //! ```
-//! use icu_locid::langid;
+//! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_fs::FsDataProvider;
@@ -51,7 +51,7 @@
 //! // Use the provider as a `BufferProvider`
 //! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 //!     &provider,
-//!     &langid!("en").into(),
+//!     &locale!("en").into(),
 //! )
 //! .unwrap();
 //!

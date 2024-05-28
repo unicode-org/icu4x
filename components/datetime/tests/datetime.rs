@@ -39,7 +39,7 @@ use icu_datetime::{
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
     extensions::unicode::{key, value},
-    langid, locale, LanguageIdentifier, Locale,
+    locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
@@ -563,7 +563,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
+    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
     tzf.format_to_string(&time_zone);
 }
 
@@ -576,7 +576,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
+    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
     assert_writeable_eq!(tzf.format(&time_zone), "GMT+?");
 }
 

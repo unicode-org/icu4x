@@ -45,6 +45,8 @@ jobs:
 
       - name:                   Push grcov results to Codecov via GitHub Action
         uses:                   codecov/codecov-action@v3
+        # TODO(#2701): Update and re-enable this job.
+        if: false
         with:
           file:                 ${{ steps.coverage.outputs.report }}
           fail_ci_if_error:     true

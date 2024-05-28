@@ -70,6 +70,7 @@ extern crate alloc;
 mod error;
 pub mod properties;
 pub mod provider;
+pub mod uts46;
 
 pub use crate::error::NormalizerError;
 
@@ -79,7 +80,6 @@ pub use NormalizerError as Error;
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;
-#[cfg(feature = "experimental")]
 use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -106,7 +106,6 @@ use zerovec::{zeroslice, ZeroSlice};
 #[derive(Debug)]
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
-    #[cfg(feature = "experimental")]
     Uts46(DataPayload<Uts46DecompositionSupplementV1Marker>),
 }
 
@@ -114,10 +113,21 @@ impl SupplementPayloadHolder {
     fn get(&self) -> &DecompositionSupplementV1 {
         match self {
             SupplementPayloadHolder::Compatibility(d) => d.get(),
-            #[cfg(feature = "experimental")]
             SupplementPayloadHolder::Uts46(d) => d.get(),
         }
     }
+}
+
+/// Treatment of the ignorable marker (0xFFFFFFFF) in data.
+#[derive(Debug, PartialEq, Eq)]
+enum IgnorableBehavior {
+    /// 0xFFFFFFFF in data is not supported.
+    Unsupported,
+    /// Ignorables are ignored.
+    Ignored,
+    /// Ignorables are treated as singleton decompositions
+    /// to the REPLACEMENT CHARACTER.
+    ReplacementCharacter,
 }
 
 /// Number of iterations allowed on the fast path before flushing.
@@ -131,6 +141,9 @@ impl SupplementPayloadHolder {
 /// similar flushing, though the tested monomorphization never
 /// passes an error through from `Write`.
 const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
+
+/// Marker for UTS 46 ignorables.
+const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
 
 /// Marker for starters that decompose to themselves but may
 /// combine backwards under canonical composition.
@@ -541,6 +554,7 @@ where
     /// 1. Decomposes to self.
     /// 2. Decomposition starts with a non-starter
     decomposition_passthrough_bound: u32, // never above 0xC0
+    ignorable_behavior: IgnorableBehavior, // Arguably should be a type parameter
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -562,7 +576,15 @@ where
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
     ) -> Self {
-        Self::new_with_supplements(delegate, decompositions, None, tables, None, 0xC0)
+        Self::new_with_supplements(
+            delegate,
+            decompositions,
+            None,
+            tables,
+            None,
+            0xC0,
+            IgnorableBehavior::Unsupported,
+        )
     }
 
     /// Constructs a decomposing iterator adapter from a delegate
@@ -578,6 +600,7 @@ where
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         decomposition_passthrough_bound: u8,
+        ignorable_behavior: IgnorableBehavior,
     ) -> Self {
         let half_width_voicing_marks_become_non_starters =
             if let Some(supplementary) = supplementary_decompositions {
@@ -608,6 +631,7 @@ where
             },
             half_width_voicing_marks_become_non_starters,
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
+            ignorable_behavior,
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
@@ -734,16 +758,42 @@ where
 
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
         debug_assert!(self.pending.is_none());
-        let c = self.delegate.next()?;
+        loop {
+            let c = self.delegate.next()?;
 
-        // TODO(#2384): Measure if this check is actually an optimization even in the
-        // non-supplementary case of if this should go inside the supplementary
-        // `if` below.
-        if u32::from(c) < self.decomposition_passthrough_bound {
-            return Some(CharacterAndTrieValue::new(c, 0));
+            // TODO(#2384): Measure if this check is actually an optimization even in the
+            // non-supplementary case of if this should go inside the supplementary
+            // `if` below.
+            if u32::from(c) < self.decomposition_passthrough_bound {
+                return Some(CharacterAndTrieValue::new(c, 0));
+            }
+
+            if let Some(supplementary) = self.supplementary_trie {
+                if let Some(value) = self.attach_supplementary_trie_value(c, supplementary) {
+                    if value.trie_val == IGNORABLE_MARKER {
+                        match self.ignorable_behavior {
+                            IgnorableBehavior::Unsupported => {
+                                debug_assert!(false);
+                            }
+                            IgnorableBehavior::ReplacementCharacter => {
+                                return Some(CharacterAndTrieValue::new(
+                                    c,
+                                    u32::from(REPLACEMENT_CHARACTER),
+                                ));
+                            }
+                            IgnorableBehavior::Ignored => {
+                                // Else ignore this character by reading the next one from the delegate.
+                                continue;
+                            }
+                        }
+                    }
+                    return Some(value);
+                }
+            }
+            let trie_val = self.trie.get(c);
+            debug_assert_ne!(trie_val, IGNORABLE_MARKER);
+            return Some(CharacterAndTrieValue::new(c, trie_val));
         }
-
-        Some(self.attach_trie_value(c))
     }
 
     fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
@@ -1242,6 +1292,7 @@ macro_rules! composing_normalize_to {
         ) -> core::fmt::Result {
             $prolog
             let mut $composition = self.normalize_iter($text.chars());
+            debug_assert_eq!($composition.decomposition.ignorable_behavior, IgnorableBehavior::Unsupported);
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
@@ -1429,6 +1480,7 @@ macro_rules! decomposing_normalize_to {
             $prolog
 
             let mut $decomposition = self.normalize_iter($text.chars());
+            debug_assert_eq!($decomposition.ignorable_behavior, IgnorableBehavior::Unsupported);
 
             // Try to get the compiler to hoist the bound to a register.
             let $decomposition_passthrough_bound = $decomposition.decomposition_passthrough_bound;
@@ -1743,8 +1795,8 @@ impl DecomposingNormalizer {
     }
 
     #[doc(hidden)]
-    #[cfg(all(feature = "experimental", feature = "compiled_data"))]
-    pub const fn new_uts46_decomposed_without_ignored_and_disallowed() -> Self {
+    #[cfg(feature = "compiled_data")]
+    pub(crate) const fn new_uts46_decomposed() -> Self {
         const _: () = assert!(
             crate::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1
                 .scalars16
@@ -1820,8 +1872,7 @@ impl DecomposingNormalizer {
     ///
     /// Public for testing only.
     #[doc(hidden)]
-    #[cfg(feature = "experimental")]
-    pub fn try_new_uts46_decomposed_without_ignored_and_disallowed_unstable<D>(
+    pub(crate) fn try_new_uts46_decomposed_unstable<D>(
         provider: &D,
     ) -> Result<Self, NormalizerError>
     where
@@ -1885,6 +1936,7 @@ impl DecomposingNormalizer {
             self.tables.get(),
             self.supplementary_tables.as_ref().map(|s| s.get()),
             self.decomposition_passthrough_bound,
+            IgnorableBehavior::Unsupported,
         )
     }
 
@@ -2254,31 +2306,8 @@ impl ComposingNormalizer {
         })
     }
 
-    /// See [`Self::try_new_uts46_without_ignored_and_disallowed_unstable`].
-    #[cfg(all(feature = "experimental", feature = "compiled_data"))]
-    pub const fn new_uts46_without_ignored_and_disallowed() -> Self {
-        ComposingNormalizer {
-            decomposing_normalizer:
-                DecomposingNormalizer::new_uts46_decomposed_without_ignored_and_disallowed(),
-            canonical_compositions: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
-            ),
-        }
-    }
-
-    /// 🚧 \[Experimental\] UTS 46 constructor
-    ///
     /// This is a special building block normalization for IDNA that implements parts of the Map
-    /// step and the following Normalize step. The caller is responsible for performing the
-    /// "disallowed", "ignored", and "deviation" parts of the Map step before passing data to
-    /// this normalizer such that disallowed and ignored characters aren't passed to this
-    /// normalizer.
-    ///
-    /// This is ICU4C's UTS 46 normalization with two exceptions: characters that UTS 46 disallows
-    /// and ICU4C maps to U+FFFD and characters that UTS 46 maps to the empty string normalize as
-    /// in NFC in this normalization. Making the disallowed characters behave like this is beneficial
-    /// to data size, and this normalizer implementation cannot deal with a character normalizing
-    /// to the empty string, which doesn't happen in NFC or NFKC as of Unicode 14.
+    /// step and the following Normalize step.
     ///
     /// Warning: In this normalization, U+0345 COMBINING GREEK YPOGEGRAMMENI exhibits a behavior
     /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
@@ -2286,20 +2315,18 @@ impl ComposingNormalizer {
     /// Therefore, the output of this normalization may differ for different inputs that are
     /// canonically equivalents with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
-    ///
-    /// NOTE: This method remains experimental until suitability of this feature as part of
-    /// IDNA processing has been demonstrated.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-    /// of the icu meta-crate. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/2614">#2614</a>
-    /// </div>
-    #[cfg(feature = "experimental")]
-    pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(
-        provider: &D,
-    ) -> Result<Self, NormalizerError>
+    #[cfg(feature = "compiled_data")]
+    pub(crate) const fn new_uts46() -> Self {
+        ComposingNormalizer {
+            decomposing_normalizer: DecomposingNormalizer::new_uts46_decomposed(),
+            canonical_compositions: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_NORMALIZER_COMP_V1,
+            ),
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
+    pub(crate) fn try_new_uts46_unstable<D>(provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<Uts46DecompositionSupplementV1Marker>
@@ -2310,9 +2337,7 @@ impl ComposingNormalizer {
             + ?Sized,
     {
         let decomposing_normalizer =
-            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable(
-                provider,
-            )?;
+            DecomposingNormalizer::try_new_uts46_decomposed_unstable(provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
             provider.load(Default::default())?.take_payload()?;
@@ -2326,6 +2351,14 @@ impl ComposingNormalizer {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<I> {
+        self.normalize_iter_private(iter, IgnorableBehavior::Unsupported)
+    }
+
+    fn normalize_iter_private<I: Iterator<Item = char>>(
+        &self,
+        iter: I,
+        ignorable_behavior: IgnorableBehavior,
+    ) -> Composition<I> {
         Composition::new(
             Decomposition::new_with_supplements(
                 iter,
@@ -2340,6 +2373,7 @@ impl ComposingNormalizer {
                     .as_ref()
                     .map(|s| s.get()),
                 self.decomposing_normalizer.decomposition_passthrough_bound,
+                ignorable_behavior,
             ),
             ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
             self.decomposing_normalizer.composition_passthrough_bound,

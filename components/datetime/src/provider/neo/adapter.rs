@@ -469,13 +469,13 @@ impl_data_provider_adapter!(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     #[test]
     fn test_adapter_months_numeric() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -500,7 +500,7 @@ mod tests {
     fn test_adapter_months_map() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -525,7 +525,7 @@ mod tests {
     fn test_adapter_weekdays_abbreviated() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -550,7 +550,7 @@ mod tests {
     fn test_adapter_weekdays_short() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -575,7 +575,7 @@ mod tests {
     fn test_adapter_eras() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -600,7 +600,7 @@ mod tests {
     fn test_adapter_dayperiods() {
         let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()

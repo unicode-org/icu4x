@@ -41,7 +41,7 @@ impl<'data> GenericPattern<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::pattern::runtime::{GenericPattern, Pattern};
+    /// use icu::datetime::pattern::runtime::{GenericPattern, Pattern};
     ///
     /// let date: Pattern = "Y-m-d".parse().expect("Failed to parse pattern");
     /// let time: Pattern = "HH:mm".parse().expect("Failed to parse pattern");

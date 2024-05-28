@@ -1,12 +1,11 @@
 {
   "index_info": {
     "has_long": true,
-    "has_medium": true,
+    "has_medium": false,
     "has_plurals": false
   },
   "patterns": [
     "EEEE, d MMMM",
-    "E, dd MMM",
-    "E, MM/dd"
+    "E, d MMM"
   ]
 }

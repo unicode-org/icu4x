@@ -5,7 +5,7 @@
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_locid::locale;
+use icu_locid::langid;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::AsDeserializingBufferProvider;
@@ -62,7 +62,7 @@ fn providers_bench(c: &mut Criterion) {
             let result: DataResponse<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &locale!("ja").into(),
+                    locale: &langid!("ja").into(),
                     metadata: Default::default(),
                 })
                 .unwrap();
@@ -75,7 +75,7 @@ fn providers_bench(c: &mut Criterion) {
             let result: DataResponse<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(DataRequest {
-                    locale: &locale!("ja").into(),
+                    locale: &langid!("ja").into(),
                     metadata: Default::default(),
                 })
                 .unwrap();
@@ -87,7 +87,7 @@ fn providers_bench(c: &mut Criterion) {
         b.iter(|| {
             let result: DataResponse<HelloWorldV1Marker> = provider
                 .load(DataRequest {
-                    locale: &locale!("ja").into(),
+                    locale: &langid!("ja").into(),
                     metadata: Default::default(),
                 })
                 .unwrap();
@@ -100,7 +100,7 @@ fn providers_bench(c: &mut Criterion) {
             let result: DataResponse<HelloWorldV1Marker> = provider
                 .as_downcasting()
                 .load(DataRequest {
-                    locale: &locale!("ja").into(),
+                    locale: &langid!("ja").into(),
                     metadata: Default::default(),
                 })
                 .unwrap();

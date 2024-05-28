@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "GGGG y",
-    "GGG y"
+    "ปีGGGGที่ y",
+    "ปีGGGที่ y"
   ]
 }

@@ -24,8 +24,14 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
-//!     .export(&DatagenProvider::new_latest_tested(), exporter)
+//!     .with_locales_and_fallback([LocaleFamily::FULL], {
+//!         let mut options = FallbackOptions::default();
+//!         // HelloWorldProvider cannot provide fallback data, so we cannot deduplicate
+//!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
+//!         options
+//!     })
+//!     .with_fallback_mode(FallbackMode::Hybrid)
+//!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
@@ -41,7 +47,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! use icu_locid::langid;
+//! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! # macro_rules! include {
@@ -64,7 +70,7 @@
 //! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
-//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
@@ -80,11 +86,11 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::langid;
+//! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! let formatter =
-//!     HelloWorldFormatter::try_new(&langid!("en").into()).unwrap();
+//!     HelloWorldFormatter::try_new(&locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```

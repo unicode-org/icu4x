@@ -62,7 +62,7 @@ impl CanonicalComposition {
     /// # Examples
     ///
     /// ```
-    /// let comp = icu_normalizer::properties::CanonicalComposition::new();
+    /// let comp = icu::normalizer::properties::CanonicalComposition::new();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
@@ -158,8 +158,8 @@ impl CanonicalDecomposition {
     /// Performs non-recursive canonical decomposition (including for Hangul).
     ///
     /// ```
-    ///     use icu_normalizer::properties::Decomposed;
-    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::new();
+    ///     use icu::normalizer::properties::Decomposed;
+    ///     let decomp = icu::normalizer::properties::CanonicalDecomposition::new();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(
@@ -430,8 +430,8 @@ impl CanonicalDecomposition {
 /// # Example
 ///
 /// ```
-/// use icu_properties::CanonicalCombiningClass;
-/// use icu_normalizer::properties::CanonicalCombiningClassMap;
+/// use icu::properties::CanonicalCombiningClass;
+/// use icu::normalizer::properties::CanonicalCombiningClassMap;
 ///
 /// let map = CanonicalCombiningClassMap::new();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A

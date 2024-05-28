@@ -83,7 +83,7 @@ impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNam
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags::variant};
+    use icu_locid::{langid, subtags::variant};
 
     #[test]
     fn test_basic_variant_display_names() {
@@ -91,7 +91,7 @@ mod tests {
 
         let data: DataPayload<VariantDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()

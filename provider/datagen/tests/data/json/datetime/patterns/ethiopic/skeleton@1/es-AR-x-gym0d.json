@@ -6,7 +6,7 @@
   },
   "patterns": [
     "d 'de' MMMM 'de' y GGGG",
-    "d MMM y GGG",
+    "d 'de' MMM 'de' y GGG",
     "d/M/y GGG"
   ]
 }

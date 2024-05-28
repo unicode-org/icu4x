@@ -19,10 +19,10 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu::locid::locale;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
+/// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
@@ -45,11 +45,11 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu::locid::locale;
 /// use icu::experimental::relativetime::options::Numeric;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
+/// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
@@ -81,10 +81,10 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// # Example
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu::locid::locale;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
+/// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(

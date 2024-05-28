@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "cccc, d",
-    "ccc, d"
+    "EEEE, d",
+    "E, d"
   ]
 }

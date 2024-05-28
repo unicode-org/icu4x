@@ -9,7 +9,7 @@ use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
 use num_bigint::BigInt;
 use num_rational::Ratio;
-use num_traits::Signed;
+use num_traits::{Signed, ToPrimitive};
 
 #[test]
 fn test_cldr_unit_tests() {
@@ -41,12 +41,8 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        let input_unit = parser
-            .try_from_identifier(test.input_unit.as_str())
-            .unwrap();
-        let output_unit = parser
-            .try_from_identifier(test.output_unit.as_str())
-            .unwrap();
+        let input_unit = parser.try_from_bytes(test.input_unit.as_bytes()).unwrap();
+        let output_unit = parser.try_from_bytes(test.output_unit.as_bytes()).unwrap();
 
         let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
@@ -69,13 +65,13 @@ fn test_cldr_unit_tests() {
             );
         }
 
-        let test_result_f64 = test.result.to_f64().unwrap();
+        let test_result_f64 = test.result.get_ratio().to_f64().unwrap();
         let diff_ratio_f64 = ((test_result_f64 - result_f64) / test_result_f64).abs();
 
         if diff_ratio_f64 > 0.000001 {
             panic!(
                 "Failed test: Category: {:?}, Input Unit: {:?}, Output Unit: {:?}, Result: {:?}, Expected Result: {:?}",
-                test.category, test.input_unit, test.output_unit, result_f64, test.result
+                test.category, test.input_unit, test.output_unit, result_f64, test_result_f64
             );
         }
     }
@@ -97,7 +93,7 @@ fn test_units_not_parsable() {
     let parser = converter_factory.parser();
 
     for unit in unparsable_units.iter() {
-        let result = parser.try_from_identifier(unit);
+        let result = parser.try_from_bytes(unit.as_bytes());
         assert!(result.is_err());
     }
 }

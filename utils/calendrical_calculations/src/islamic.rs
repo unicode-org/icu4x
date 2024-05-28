@@ -21,6 +21,11 @@ const CAIRO: Location = Location {
 pub trait IslamicBasedMarker {
     /// The epoch of the calendar. Different calendars use a different epoch (Thu or Fri) due to disagreement on the exact date of Mohammed's migration to Mecca.
     const EPOCH: RataDie;
+    /// The name of the calendar for debugging.
+    const DEBUG_NAME: &'static str;
+    /// Whether this calendar is known to have 353-day years.
+    /// This is probably a bug; see <https://github.com/unicode-org/icu4x/issues/4930>
+    const HAS_353_DAY_YEARS: bool;
     /// Given the extended year, calculate the approximate new year using the mean synodic month
     fn mean_synodic_ny(extended_year: i32) -> RataDie {
         Self::EPOCH + (f64::from((extended_year - 1) * 12) * MEAN_SYNODIC_MONTH).floor() as i64
@@ -39,33 +44,74 @@ pub trait IslamicBasedMarker {
 
     /// Given an extended year, calculate whether each month is 29 or 30 days long
     fn month_lengths_for_year(extended_year: i32, ny: RataDie) -> [bool; 12] {
+        let next_ny = Self::fixed_from_islamic(extended_year + 1, 1, 1);
+        match next_ny - ny {
+            355 | 354 => (),
+            353 if Self::HAS_353_DAY_YEARS => {
+                #[cfg(feature = "logging")]
+                log::trace!(
+                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
+                    Self::DEBUG_NAME,
+                    next_ny - ny
+                );
+            }
+            other => {
+                debug_assert!(
+                    false,
+                    "({}) Found year {extended_year} AH with length {}!",
+                    Self::DEBUG_NAME,
+                    other
+                )
+            }
+        }
         let mut prev_rd = ny;
-        let mut lengths = [false; 12];
-
-        for month_idx in 0..11 {
-            let new_rd = Self::fixed_from_islamic(extended_year, month_idx + 2, 1);
+        let mut excess_days = 0;
+        let mut lengths = core::array::from_fn(|month_idx| {
+            let month_idx = month_idx as u8;
+            let new_rd = if month_idx < 11 {
+                Self::fixed_from_islamic(extended_year, month_idx + 2, 1)
+            } else {
+                next_ny
+            };
             let diff = new_rd - prev_rd;
-            debug_assert!(
-                // TODO: year 1409 has a 31-length month 1
-                diff == 29 || diff == 30 || diff == 31,
-                "Found extended year {extended_year} with month length {diff} for month {}",
-                month_idx + 1
-            );
-            if new_rd - prev_rd >= 30 {
-                if let Some(l) = lengths.get_mut(usize::from(month_idx)) {
-                    *l = true;
+            prev_rd = new_rd;
+            match diff {
+                29 => false,
+                30 => true,
+                31 => {
+                    #[cfg(feature = "logging")]
+                    log::trace!(
+                        "({}) Found year {extended_year} AH with month length {diff} for month {}.",
+                        Self::DEBUG_NAME,
+                        month_idx + 1
+                    );
+                    excess_days += 1;
+                    true
+                }
+                _ => {
+                    debug_assert!(
+                        false,
+                        "({}) Found year {extended_year} AH with month length {diff} for month {}!",
+                        Self::DEBUG_NAME,
+                        month_idx + 1
+                    );
+                    false
                 }
             }
-            prev_rd = new_rd
-        }
-        let new_rd = Self::fixed_from_islamic(extended_year + 1, 1, 1);
-        let diff = new_rd - prev_rd;
-        debug_assert!(
-            diff == 29 || diff == 30,
-            "Found extended year {extended_year} with month length {diff} for month 12"
-        );
-        if new_rd - prev_rd == 30 {
-            lengths[11] = true;
+        });
+        // To maintain invariants for calendar arithmetic, if astronomy finds
+        // a 31-day month, "move" the day to the first 29-day month in the
+        // same year to maintain all months at 29 or 30 days.
+        if excess_days != 0 {
+            debug_assert_eq!(
+                excess_days,
+                1,
+                "({}) Found year {extended_year} AH with more than one excess day!",
+                Self::DEBUG_NAME
+            );
+            if let Some(l) = lengths.iter_mut().find(|l| !(**l)) {
+                *l = true;
+            }
         }
         lengths
     }
@@ -93,6 +139,8 @@ pub struct TabularIslamicMarker;
 
 impl IslamicBasedMarker for ObservationalIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
+    const DEBUG_NAME: &'static str = "ObservationalIslamic";
+    const HAS_353_DAY_YEARS: bool = true;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_observational(year, month, day)
     }
@@ -103,6 +151,8 @@ impl IslamicBasedMarker for ObservationalIslamicMarker {
 
 impl IslamicBasedMarker for SaudiIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
+    const DEBUG_NAME: &'static str = "SaudiIslamic";
+    const HAS_353_DAY_YEARS: bool = true;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_saudi_islamic(year, month, day)
     }
@@ -113,6 +163,8 @@ impl IslamicBasedMarker for SaudiIslamicMarker {
 
 impl IslamicBasedMarker for CivilIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
+    const DEBUG_NAME: &'static str = "CivilIslamic";
+    const HAS_353_DAY_YEARS: bool = false;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_civil(year, month, day)
     }
@@ -123,6 +175,8 @@ impl IslamicBasedMarker for CivilIslamicMarker {
 
 impl IslamicBasedMarker for TabularIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_THURSDAY;
+    const DEBUG_NAME: &'static str = "TabularIslamic";
+    const HAS_353_DAY_YEARS: bool = false;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_tabular(year, month, day)
     }

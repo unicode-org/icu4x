@@ -22,7 +22,7 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .with_all_locales()
+//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //!
@@ -33,7 +33,7 @@
 //! The resulting blob can now be used like this:
 //!
 //! ```
-//! use icu_locid::langid;
+//! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_blob::BlobDataProvider;
@@ -48,7 +48,7 @@
 //! // Use the provider as a `BufferProvider`
 //! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 //!     &provider,
-//!     &langid!("en").into(),
+//!     &locale!("en").into(),
 //! )
 //! .unwrap();
 //!

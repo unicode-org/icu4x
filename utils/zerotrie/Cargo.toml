@@ -39,6 +39,7 @@ litemap = { path = "../../utils/litemap" }
 postcard = { workspace = true, features = ["alloc"] }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
+rmp-serde = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }

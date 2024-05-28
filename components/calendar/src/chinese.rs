@@ -445,7 +445,7 @@ mod test {
 
     use super::*;
     use crate::types::MonthCode;
-    use calendrical_calculations::rata_die::RataDie;
+    use calendrical_calculations::{iso::fixed_from_iso, rata_die::RataDie};
     /// Run a test twice, with two calendars
     fn do_twice(
         chinese_calculating: &Chinese,
@@ -502,6 +502,18 @@ mod test {
                 expected_year: 4660,
                 expected_month: 6,
                 expected_day: 12,
+            },
+            TestCase {
+                fixed: fixed_from_iso(2319, 2, 20).to_i64_date(),
+                expected_year: 2319 + 2636,
+                expected_month: 13,
+                expected_day: 30,
+            },
+            TestCase {
+                fixed: fixed_from_iso(2319, 2, 21).to_i64_date(),
+                expected_year: 2319 + 2636 + 1,
+                expected_month: 1,
+                expected_day: 1,
             },
             TestCase {
                 fixed: 738718,

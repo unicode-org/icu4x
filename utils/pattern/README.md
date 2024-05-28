@@ -29,7 +29,7 @@ assert_eq!(pattern.take_store(), "\x08Hello, !");
 ```
 
 [`ICU4X`]: ../icu/index.html
-[`FromStr`]: std::str::FromStr
+[`FromStr`]: core::str::FromStr
 
 <!-- cargo-rdme end -->
 

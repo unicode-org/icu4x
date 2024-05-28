@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "LLLL y г.",
-    "LLL y г.",
-    "MM.y"
+    "LLLL U",
+    "LLL U",
+    "M.y"
   ]
 }
