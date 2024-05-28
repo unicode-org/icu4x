@@ -38,7 +38,7 @@ class ICU4XMeasureUnitParser {
    * 
    * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
    */
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> parse_unit_identifier(const std::string_view unit_id) const;
+  diplomat::result<ICU4XMeasureUnit, ICU4XError> parse(const std::string_view unit_id) const;
   inline const capi::ICU4XMeasureUnitParser* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XMeasureUnitParser* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XMeasureUnitParser(capi::ICU4XMeasureUnitParser* i) : inner(i) {}
@@ -51,8 +51,8 @@ class ICU4XMeasureUnitParser {
 
 #include "ICU4XMeasureUnit.hpp"
 
-inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XMeasureUnitParser::parse_unit_identifier(const std::string_view unit_id) const {
-  auto diplomat_result_raw_out_value = capi::ICU4XMeasureUnitParser_parse_unit_identifier(this->inner.get(), unit_id.data(), unit_id.size());
+inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XMeasureUnitParser::parse(const std::string_view unit_id) const {
+  auto diplomat_result_raw_out_value = capi::ICU4XMeasureUnitParser_parse(this->inner.get(), unit_id.data(), unit_id.size());
   diplomat::result<ICU4XMeasureUnit, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnit>(ICU4XMeasureUnit(diplomat_result_raw_out_value.ok));

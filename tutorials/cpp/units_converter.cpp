@@ -14,8 +14,8 @@ int main() {
   ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
   auto converter_factory = ICU4XUnitsConverterFactory::create(dp).ok().value();
   auto parser = converter_factory.parser();
-  auto from = parser.parse_valid_utf8_unit_identifier("meter").ok().value();
-  auto to = parser.parse_valid_utf8_unit_identifier("foot").ok().value();
+  auto from = parser.parse("meter").ok().value();
+  auto to = parser.parse("foot").ok().value();
   auto converter = converter_factory.converter(from, to).value();
   auto result = converter.convert_f64(1.0);
 

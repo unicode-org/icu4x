@@ -76,7 +76,7 @@ pub mod ffi {
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse_unit_identifier<'text>(
+        pub fn parse<'text>(
             &self,
             unit_id: &'text DiplomatStr,
         ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {

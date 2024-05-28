@@ -20,7 +20,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XMeasureUnit_ICU4XError ICU4XMeasureUnitParser_parse_unit_identifier(const ICU4XMeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
+diplomat_result_box_ICU4XMeasureUnit_ICU4XError ICU4XMeasureUnitParser_parse(const ICU4XMeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
 void ICU4XMeasureUnitParser_destroy(ICU4XMeasureUnitParser* self);
 
 #ifdef __cplusplus
