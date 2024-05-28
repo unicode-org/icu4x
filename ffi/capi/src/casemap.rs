@@ -70,12 +70,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
         pub fn lowercase(
             &self,
-            s: &DiplomatStr,
+            s: &str,
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
-                .lowercase(core::str::from_utf8(s)?, &locale.0.id)
+                .lowercase(s, &locale.0.id)
                 .write_to(write)?;
 
             Ok(())
@@ -86,12 +86,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase_to_string, FnInStruct, hidden)]
         pub fn uppercase(
             &self,
-            s: &DiplomatStr,
+            s: &str,
             locale: &ICU4XLocale,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
-                .uppercase(core::str::from_utf8(s)?, &locale.0.id)
+                .uppercase(s, &locale.0.id)
                 .write_to(write)?;
 
             Ok(())
@@ -114,14 +114,14 @@ pub mod ffi {
         #[diplomat::attr(dart, rename = "titlecaseSegmentWithOnlyCaseData")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
-            s: &DiplomatStr,
+            s: &str,
             locale: &ICU4XLocale,
             options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
                 .titlecase_segment_with_only_case_data(
-                    core::str::from_utf8(s)?,
+                    s,
                     &locale.0.id,
                     options.into(),
                 )
@@ -135,10 +135,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
         pub fn fold(
             &self,
-            s: &DiplomatStr,
+            s: &str,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0.fold(core::str::from_utf8(s)?).write_to(write)?;
+            self.0.fold(s).write_to(write)?;
 
             Ok(())
         }
@@ -148,11 +148,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic_string, FnInStruct, hidden)]
         pub fn fold_turkic(
             &self,
-            s: &DiplomatStr,
+            s: &str,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
-                .fold_turkic(core::str::from_utf8(s)?)
+                .fold_turkic(s)
                 .write_to(write)?;
 
             Ok(())
@@ -322,13 +322,13 @@ pub mod ffi {
         #[diplomat::attr(dart, rename = "titlecaseSegment")]
         pub fn titlecase_segment_v1(
             &self,
-            s: &DiplomatStr,
+            s: &str,
             locale: &ICU4XLocale,
             options: ICU4XTitlecaseOptionsV1,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             self.0
-                .titlecase_segment(core::str::from_utf8(s)?, &locale.0.id, options.into())
+                .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write)?;
 
             Ok(())
