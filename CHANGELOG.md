@@ -10,6 +10,8 @@
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
     - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+  - `icu_collections`
+    - Switch to WASMI engine in `icu_codepointtrie_builder` (unicode-org#4621)
   - `icu_normalizer`
     - Make UTS 46 normalization non-experimental (#4712)
   - `icu_datetime`
