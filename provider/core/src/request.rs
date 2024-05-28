@@ -853,7 +853,31 @@ impl FromStr for AuxiliaryKeys {
     type Err = DataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(s)
+        if !s.is_empty()
+            && s.split(Self::separator()).all(|b| {
+                if let Ok(subtag) = Subtag::from_str(b) {
+                    // Enforces normalization:
+                    b == subtag.as_str()
+                } else {
+                    false
+                }
+            })
+        {
+            if s.len() <= 23 {
+                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
+                Ok(Self {
+                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap()),
+                })
+            } else {
+                Ok(Self {
+                    value: AuxiliaryKeysInner::Boxed(s.into()),
+                })
+            }
+        } else {
+            Err(DataErrorKind::KeyLocaleSyntax
+                .into_error()
+                .with_display_context(s))
+        }
     }
 }
 
@@ -926,34 +950,6 @@ impl AuxiliaryKeys {
     pub const fn from_subtag(input: Subtag) -> Self {
         Self {
             value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
-        }
-    }
-
-    pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
-        if !s.is_empty()
-            && s.split(Self::separator()).all(|b| {
-                if let Ok(subtag) = Subtag::from_str(b) {
-                    // Enforces normalization:
-                    b == subtag.as_str()
-                } else {
-                    false
-                }
-            })
-        {
-            if s.len() <= 23 {
-                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-                Ok(Self {
-                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap()),
-                })
-            } else {
-                Ok(Self {
-                    value: AuxiliaryKeysInner::Boxed(s.into()),
-                })
-            }
-        } else {
-            Err(DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s))
         }
     }
 

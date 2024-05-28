@@ -6,6 +6,6 @@
   },
   "patterns": [
     "MMMM 'de' y GGGG",
-    "MMM y GGG"
+    "MMM 'de' y GGG"
   ]
 }

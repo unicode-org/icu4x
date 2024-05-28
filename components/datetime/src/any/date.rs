@@ -30,7 +30,6 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
-///
 #[doc = date_formatter_size!()]
 ///
 /// [`icu::datetime`]: crate
@@ -38,7 +37,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// # Examples
 ///
 /// ```
-/// use icu::calendar:: Date;
+/// use icu::calendar::Date;
 /// use icu::datetime::{options::length, DateFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;

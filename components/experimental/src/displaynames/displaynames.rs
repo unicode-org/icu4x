@@ -20,7 +20,9 @@ use zerovec::ule::UnvalidatedStr;
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, RegionDisplayNames};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, RegionDisplayNames,
+/// };
 /// use icu::locid::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001").into();
@@ -93,7 +95,9 @@ impl RegionDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, ScriptDisplayNames};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, ScriptDisplayNames,
+/// };
 /// use icu::locid::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001").into();
@@ -166,7 +170,9 @@ impl ScriptDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, VariantDisplayNames};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, VariantDisplayNames,
+/// };
 /// use icu::locid::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001").into();
@@ -234,7 +240,9 @@ impl VariantDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, LanguageDisplayNames};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, LanguageDisplayNames,
+/// };
 /// use icu::locid::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001").into();
@@ -313,14 +321,15 @@ impl LanguageDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu::experimental::displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
+/// use icu::experimental::displaynames::{
+///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
+/// };
 /// use icu::locid::locale;
 ///
 /// let locale = locale!("en-001").into();
 /// let options = DisplayNamesOptions::default();
-/// let display_name =
-///     LocaleDisplayNamesFormatter::try_new(&locale, options)
-///         .expect("Data should load successfully");
+/// let display_name = LocaleDisplayNamesFormatter::try_new(&locale, options)
+///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
 /// assert_eq!(display_name.of(&locale!("en")), "English");

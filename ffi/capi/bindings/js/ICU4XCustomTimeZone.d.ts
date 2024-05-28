@@ -4,6 +4,7 @@ import { ICU4XError } from "./ICU4XError";
 import { ICU4XIanaToBcp47Mapper } from "./ICU4XIanaToBcp47Mapper";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XMetazoneCalculator } from "./ICU4XMetazoneCalculator";
+import { ICU4XTimeZoneIdMapper } from "./ICU4XTimeZoneIdMapper";
 
 /**
 
@@ -142,6 +143,15 @@ export class ICU4XCustomTimeZone {
 
   /**
 
+   * Sets the `time_zone_id` field from an IANA string by looking up the corresponding BCP-47 string.
+
+   * Errors if the string is not a valid BCP-47 time zone ID.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  try_set_iana_time_zone_id_2(mapper: ICU4XTimeZoneIdMapper, id: string): void | never;
+
+  /**
+
    * Clears the `time_zone_id` field.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
@@ -237,7 +247,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Sets the `zone_variant` field to standard time.
+   * Sets the `zone_variant` field to "standard" time, which may or may not correspond to a display name with "Standard" in its name.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard Rust documentation for `standard`} for more information.
 
@@ -247,7 +257,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Sets the `zone_variant` field to daylight time.
+   * Sets the `zone_variant` field to "daylight" time, which may or may not correspond to a display name with "Daylight" in its name.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight Rust documentation for `daylight`} for more information.
 

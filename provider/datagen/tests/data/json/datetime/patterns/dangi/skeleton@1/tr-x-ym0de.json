@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "d MMMM y EEEE",
-    "d MMM y E",
-    "d.M.y E"
+    "r(U) MMMM d, EEEE",
+    "r MMM d, E",
+    "r-M-d, E"
   ]
 }

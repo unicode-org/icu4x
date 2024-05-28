@@ -96,7 +96,7 @@ impl TryFrom<&[u8]> for FixedInteger {
 
 impl FromStr for FixedInteger {
     type Err = Error;
-    fn from_str(value: &str) -> Result<Self, Error> {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         FixedInteger::try_from(FixedDecimal::from_str(value)?)
     }
 }

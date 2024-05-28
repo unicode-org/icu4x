@@ -14,8 +14,8 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 /// string must take a specific form of the ISO-8601 format: `YYYY-MM-DDThh:mm:ss`.
 ///
 /// ```
-/// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::mock::parse_gregorian_from_str;
 ///
 /// let date: DateTime<Gregorian> =
 ///     parse_gregorian_from_str("2020-10-14T13:21:00")
@@ -25,8 +25,8 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 /// Optionally, fractional seconds can be specified: `YYYY-MM-DDThh:mm:ss.SSS`.
 ///
 /// ```
-/// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::mock::parse_gregorian_from_str;
 ///
 /// let date: DateTime<Gregorian> =
 ///     parse_gregorian_from_str("2020-10-14T13:21:00.101")

@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "EEEE، d",
-    "E، d"
+    "d, EEEE",
+    "d, E"
   ]
 }

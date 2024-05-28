@@ -62,11 +62,11 @@ mod tests;
 /// #   }
 /// #   pub use icu_provider::_internal::locid;
 /// # }
-/// use icu::locid_transform::fallback::*;
 /// use icu::locid::extensions::unicode::key;
-/// use icu_provider::KeyedDataMarker;
+/// use icu::locid_transform::fallback::*;
 /// use icu_provider::yoke;
 /// use icu_provider::zerofrom;
+/// use icu_provider::KeyedDataMarker;
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(
@@ -98,10 +98,7 @@ mod tests;
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     LocaleFallbackPriority::Region
 /// );
-/// assert_eq!(
-///     BazV1Marker::KEY.metadata().extension_key,
-///     Some(key!("ca"))
-/// );
+/// assert_eq!(BazV1Marker::KEY.metadata().extension_key, Some(key!("ca")));
 /// ```
 ///
 /// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also

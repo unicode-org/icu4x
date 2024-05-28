@@ -31,9 +31,7 @@ use crate::shortvec::ShortBoxSlice;
 /// Manually build up a [`Keywords`] object:
 ///
 /// ```
-/// use icu::locid::{
-///     extensions::unicode::{key, value, Keywords},
-/// };
+/// use icu::locid::extensions::unicode::{key, value, Keywords};
 ///
 /// let keywords = Keywords::from_iter([(key!("hc"), value!("h23"))]);
 ///

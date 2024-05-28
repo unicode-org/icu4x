@@ -125,7 +125,7 @@ pub struct JapaneseErasV1<'data> {
 
 impl FromStr for EraStartDate {
     type Err = ();
-    fn from_str(mut s: &str) -> Result<Self, ()> {
+    fn from_str(mut s: &str) -> Result<Self, Self::Err> {
         let sign = if let Some(suffix) = s.strip_prefix('-') {
             s = suffix;
             -1

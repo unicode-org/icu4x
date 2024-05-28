@@ -16,7 +16,6 @@ size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
-///
 #[doc = date_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -73,7 +72,6 @@ size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
 /// Symbol data for the day periods needed to format a time.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
-///
 #[doc = time_symbols_v1_size!()]
 ///
 /// <div class="stab unstable">

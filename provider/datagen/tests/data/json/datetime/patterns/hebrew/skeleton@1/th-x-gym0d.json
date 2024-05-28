@@ -7,6 +7,6 @@
   "patterns": [
     "d MMMM GGGG y",
     "d MMM GGG y",
-    "d/M/GGG y"
+    "d/M/y GGG"
   ]
 }

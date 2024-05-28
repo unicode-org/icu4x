@@ -9,7 +9,8 @@
 #include "ICU4XDataStruct.hpp"
 #include "ICU4XLogger.hpp"
 #include "ICU4XCustomTimeZone.hpp"
-#include "ICU4XIanaToBcp47Mapper.hpp"
+#include "ICU4XTimeZoneIdMapper.hpp"
+#include "ICU4XTimeZoneIdMapperWithFastCanonicalization.hpp"
 #include "ICU4XBcp47ToIanaMapper.hpp"
 #include "ICU4XGregorianZonedDateTimeFormatter.hpp"
 #include "ICU4XZonedDateTimeFormatter.hpp"
@@ -68,17 +69,32 @@ int main() {
         return 1;
     }
     ICU4XMetazoneCalculator mzcalc = ICU4XMetazoneCalculator::create(dp).ok().value();
-    ICU4XIanaToBcp47Mapper mapper = ICU4XIanaToBcp47Mapper::create(dp).ok().value();
-    time_zone.try_set_iana_time_zone_id(mapper, "america/chicago").ok().value();
+    ICU4XTimeZoneIdMapper mapper = ICU4XTimeZoneIdMapper::create(dp).ok().value();
+    time_zone.try_set_iana_time_zone_id_2(mapper, "america/chicago").ok().value();
     std::string time_zone_id_return = time_zone.time_zone_id().ok().value();
     if (time_zone_id_return != "uschi") {
         std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
         return 1;
     }
-    ICU4XBcp47ToIanaMapper reverse_mapper = ICU4XBcp47ToIanaMapper::create(dp).ok().value();
-    std::string recovered_iana_id = reverse_mapper.get("uschi").ok().value();
-    if (recovered_iana_id != "America/Chicago") {
-        std::cout << "Time zone ID does not canonicalize to IANA: " << recovered_iana_id << std::endl;
+    std::string normalized_iana_id = mapper.normalize_iana("America/CHICAGO").ok().value();
+    if (normalized_iana_id != "America/Chicago") {
+        std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
+        return 1;
+    }
+    std::string canonicalied_iana_id = mapper.canonicalize_iana("Asia/Calcutta").ok().value();
+    if (canonicalied_iana_id != "Asia/Kolkata") {
+        std::cout << "Time zone ID does not canonicalize: " << canonicalied_iana_id << std::endl;
+        return 1;
+    }
+    std::string slow_recovered_iana_id = mapper.find_canonical_iana_from_bcp47("uschi").ok().value();
+    if (slow_recovered_iana_id != "America/Chicago") {
+        std::cout << "Time zone ID does not roundtrip (slow): " << slow_recovered_iana_id << std::endl;
+        return 1;
+    }
+    ICU4XTimeZoneIdMapperWithFastCanonicalization reverse_mapper = ICU4XTimeZoneIdMapperWithFastCanonicalization::create(dp).ok().value();
+    std::string fast_recovered_iana_id = reverse_mapper.canonical_iana_from_bcp47("uschi").ok().value();
+    if (fast_recovered_iana_id != "America/Chicago") {
+        std::cout << "Time zone ID does not roundtrip (fast): " << fast_recovered_iana_id << std::endl;
         return 1;
     }
     ICU4XIsoDateTime local_datetime = ICU4XIsoDateTime::create(2022, 8, 25, 0, 0, 0, 0).ok().value();

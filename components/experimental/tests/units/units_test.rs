@@ -41,12 +41,8 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        let input_unit = parser
-            .try_from_identifier(test.input_unit.as_str())
-            .unwrap();
-        let output_unit = parser
-            .try_from_identifier(test.output_unit.as_str())
-            .unwrap();
+        let input_unit = parser.try_from_bytes(test.input_unit.as_bytes()).unwrap();
+        let output_unit = parser.try_from_bytes(test.output_unit.as_bytes()).unwrap();
 
         let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
@@ -97,7 +93,7 @@ fn test_units_not_parsable() {
     let parser = converter_factory.parser();
 
     for unit in unparsable_units.iter() {
-        let result = parser.try_from_identifier(unit);
+        let result = parser.try_from_bytes(unit.as_bytes());
         assert!(result.is_err());
     }
 }

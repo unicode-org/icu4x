@@ -198,6 +198,7 @@ lazy_static::lazy_static! {
 
         // experimental
         "icu::datetime::neo",
+        "icu::datetime::neo_marker",
         "icu::datetime::neo_pattern",
         "icu::datetime::neo_skeleton",
         "icu::datetime::options::components",
@@ -448,6 +449,9 @@ lazy_static::lazy_static! {
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
         "icu_provider_adapters::fork::MultiForkByKeyProvider",
+
+        // Specialized constructor for separately constructed instances
+        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
 
         // macros
         "icu::locid::langid",

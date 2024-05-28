@@ -656,7 +656,7 @@ impl<const N: usize> Deref for TinyAsciiStr<N> {
 impl<const N: usize> FromStr for TinyAsciiStr<N> {
     type Err = TinyStrError;
     #[inline]
-    fn from_str(s: &str) -> Result<Self, TinyStrError> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::from_str(s)
     }
 }

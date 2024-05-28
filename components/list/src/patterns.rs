@@ -13,9 +13,6 @@ use writeable::{LengthHint, Writeable};
 
 impl<'data> ListFormatterPatternsV1<'data> {
     /// Creates a new [`ListFormatterPatternsV1`] from the given patterns. Fails if any pattern is invalid.
-    ///
-    /// See [`ListJoinerPattern::from_str`]. `allow_prefix` will be true for `pair` and `end` patterns,
-    /// `allow_suffix` for `start` and `pair` patterns.
     #[cfg(feature = "datagen")]
     pub fn try_new(
         [start, middle, end, pair, short_start, short_middle, short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair]: [&str; 12],
@@ -108,13 +105,8 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 }
 
 impl<'data> ListJoinerPattern<'data> {
-    /// Construct the pattern from a CLDR pattern string
     #[cfg(feature = "datagen")]
-    pub fn from_str(
-        pattern: &str,
-        allow_prefix: bool,
-        allow_suffix: bool,
-    ) -> Result<Self, DataError> {
+    fn from_str(pattern: &str, allow_prefix: bool, allow_suffix: bool) -> Result<Self, DataError> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
             (Some(index_0), Some(index_1))
                 if index_0 < index_1

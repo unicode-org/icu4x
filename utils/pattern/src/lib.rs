@@ -29,7 +29,7 @@
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`FromStr`]: std::str::FromStr
+//! [`FromStr`]: core::str::FromStr
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -94,12 +94,12 @@ mod private {
 /// # Examples
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::SinglePlaceholderPattern;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern =
-///     SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
@@ -109,12 +109,13 @@ pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 /// # Examples
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholderPattern;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
 /// let pattern =
-///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!").unwrap();
+///     DoublePlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(
@@ -127,12 +128,13 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 /// # Examples
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::MultiNamedPlaceholderPattern;
 /// use std::collections::BTreeMap;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern = MultiNamedPlaceholderPattern::try_from_str(
+/// let pattern = MultiNamedPlaceholderPattern::from_str(
 ///     "Hello, {person0} and {person1}!",
 /// )
 /// .unwrap();
@@ -150,8 +152,10 @@ pub type MultiNamedPlaceholderPattern<Store> = Pattern<MultiNamedPlaceholder, St
 #[test]
 #[cfg(feature = "alloc")]
 fn test_single_placeholder_pattern_impls() {
-    let a = SinglePlaceholderPattern::try_from_str("{0}").unwrap();
-    let b = SinglePlaceholderPattern::try_from_str("{0}").unwrap();
+    use core::str::FromStr;
+
+    let a = SinglePlaceholderPattern::from_str("{0}").unwrap();
+    let b = SinglePlaceholderPattern::from_str("{0}").unwrap();
     assert_eq!(a, b);
     let c = b.clone();
     assert_eq!(a, c);

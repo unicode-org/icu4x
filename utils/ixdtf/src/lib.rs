@@ -18,7 +18,10 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
+//! use ixdtf::parsers::{
+//!     records::{Sign, TimeZoneRecord},
+//!     IxdtfParser,
+//! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
 //!
@@ -136,7 +139,8 @@
 //! ```rust
 //! use ixdtf::{parsers::IxdtfParser, ParserError};
 //!
-//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
+//! let example_one =
+//!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
 //!
 //! let mut ixdtf = IxdtfParser::new(example_one);
 //!
@@ -169,7 +173,8 @@
 //! ```rust
 //! use ixdtf::{parsers::IxdtfParser, ParserError};
 //!
-//! let example_one = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
+//! let example_one =
+//!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 //!
 //! let result = IxdtfParser::new(example_one).parse();
 //!
@@ -278,7 +283,7 @@
 //!
 //! ## Additional Feature
 //!
-//! The `ixdtf` crate also implements an ISU8601 Duration parser (`IsoDurationParser`) that is available under
+//! The `ixdtf` crate also implements an ISO8601 Duration parser (`IsoDurationParser`) that is available under
 //! the `duration` feature flag. The API for `IsoDurationParser` is the same as `IxdtfParser`, but
 //! parses duration strings over date/time strings.
 //!

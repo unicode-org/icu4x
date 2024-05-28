@@ -142,7 +142,6 @@ size_test!(
 
 /// A low-level type that formats datetime patterns with localized symbols.
 /// The calendar should be chosen at compile time.
-///
 #[doc = typed_date_time_names_size!()]
 ///
 /// <div class="stab unstable">
@@ -1310,8 +1309,8 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Time;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;

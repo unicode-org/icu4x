@@ -21,14 +21,14 @@ use alloc::string::String;
 ///
 /// ```
 /// use core::cmp::Ordering;
+/// use core::str::FromStr;
 /// use icu_pattern::PatternItem;
 /// use icu_pattern::SinglePlaceholder;
 /// use icu_pattern::SinglePlaceholderKey;
 /// use icu_pattern::SinglePlaceholderPattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern =
-///     SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -107,11 +107,12 @@ where
 /// Parsing a pattern into the encoding:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!")
+/// let store = Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!")
 ///     .unwrap()
 ///     .take_store();
 ///
@@ -121,12 +122,13 @@ where
 /// Example patterns supported by this backend:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Single numeric placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("{0} days ago")
+///     Pattern::<SinglePlaceholder, _>::from_str("{0} days ago")
 ///         .unwrap()
 ///         .interpolate_to_string([5]),
 ///     "5 days ago",
@@ -134,7 +136,7 @@ where
 ///
 /// // Single named placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("{name}")
+///     Pattern::<SinglePlaceholder, _>::from_str("{name}")
 ///         .unwrap()
 ///         .interpolate_to_string(["Alice"]),
 ///     "Alice",
@@ -142,7 +144,7 @@ where
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("yesterday")
+///     Pattern::<SinglePlaceholder, _>::from_str("yesterday")
 ///         .unwrap()
 ///         .interpolate_to_string(["hi"]),
 ///     "yesterday",
@@ -150,7 +152,7 @@ where
 ///
 /// // Escaped placeholder and a real placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("'{0}' {1}")
+///     Pattern::<SinglePlaceholder, _>::from_str("'{0}' {1}")
 ///         .unwrap()
 ///         .interpolate_to_string(("hi",)),
 ///     "{0} hi",

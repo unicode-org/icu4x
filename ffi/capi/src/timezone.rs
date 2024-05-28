@@ -138,9 +138,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::deref, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneBcp47Id::Target,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn try_set_time_zone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
-                tinystr::TinyAsciiStr::from_bytes(id)?,
+                tinystr::TinyAsciiStr::from_bytes(id)
+                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }
@@ -161,6 +168,27 @@ pub mod ffi {
                     .0
                     .as_borrowed()
                     .get(id)
+                    .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
+            );
+            Ok(())
+        }
+
+        // *** TODO: in 2.0 please replace try_set_iana_time_zone_id with try_set_iana_time_zone_id_2 ***
+
+        /// Sets the `time_zone_id` field from an IANA string by looking up
+        /// the corresponding BCP-47 string.
+        ///
+        /// Errors if the string is not a valid BCP-47 time zone ID.
+        pub fn try_set_iana_time_zone_id_2(
+            &mut self,
+            mapper: &crate::timezone_mapper::ffi::ICU4XTimeZoneIdMapper,
+            id: &DiplomatStr,
+        ) -> Result<(), ICU4XError> {
+            self.0.time_zone_id = Some(
+                mapper
+                    .0
+                    .as_borrowed()
+                    .iana_bytes_to_bcp47(id)
                     .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
             );
             Ok(())
@@ -200,9 +228,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::MetazoneId::from_str, FnInStruct, hidden)]
         pub fn try_set_metazone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
-            self.0.metazone_id = Some(icu_timezone::MetazoneId(tinystr::TinyAsciiStr::from_bytes(
-                id,
-            )?));
+            self.0.metazone_id = Some(icu_timezone::MetazoneId(
+                tinystr::TinyAsciiStr::from_bytes(id)
+                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
+            ));
             Ok(())
         }
 
@@ -241,7 +270,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.zone_variant = Some(icu_timezone::ZoneVariant(
-                tinystr::TinyAsciiStr::from_bytes(id)?,
+                tinystr::TinyAsciiStr::from_bytes(id)
+                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }
@@ -273,14 +303,16 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Sets the `zone_variant` field to standard time.
+        /// Sets the `zone_variant` field to "standard" time, which may or may
+        /// not correspond to a display name with "Standard" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn set_standard_time(&mut self) {
             self.0.zone_variant = Some(ZoneVariant::standard())
         }
 
-        /// Sets the `zone_variant` field to daylight time.
+        /// Sets the `zone_variant` field to "daylight" time, which may or may
+        /// not correspond to a display name with "Daylight" in its name.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn set_daylight_time(&mut self) {
