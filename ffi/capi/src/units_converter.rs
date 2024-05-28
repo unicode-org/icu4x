@@ -6,6 +6,7 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
+    use diplomat_runtime::DiplomatStr;
     use icu_experimental::units::converter::UnitsConverter;
     use icu_experimental::units::converter_factory::ConverterFactory;
     use icu_experimental::units::measureunit::MeasureUnit;
@@ -75,13 +76,8 @@ pub mod ffi {
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse_measure_unit(
-            &self,
-            unit_id: &str,
-        ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            Ok(Box::new(ICU4XMeasureUnit(
-                self.0.try_from_identifier(unit_id.as_bytes())?,
-            )))
+        pub fn parse(&self, unit_id: &DiplomatStr) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
+            Ok(Box::new(ICU4XMeasureUnit(self.0.try_from_bytes(unit_id)?)))
         }
     }
 

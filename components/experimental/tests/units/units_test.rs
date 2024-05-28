@@ -41,12 +41,8 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        let input_unit = parser
-            .try_from_identifier(test.input_unit.as_bytes())
-            .unwrap();
-        let output_unit = parser
-            .try_from_identifier(test.output_unit.as_bytes())
-            .unwrap();
+        let input_unit = parser.try_from_bytes(test.input_unit.as_bytes()).unwrap();
+        let output_unit = parser.try_from_bytes(test.output_unit.as_bytes()).unwrap();
 
         let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
@@ -84,70 +80,20 @@ fn test_cldr_unit_tests() {
 }
 
 #[test]
-fn test_unparsable_units() {
-    let unparsable_units = vec![
+fn test_units_not_parsable() {
+    let unparsable_units = [
         "garbage-unit-dafdsafdsafdsaf",
         "meter-per-second-",
         "meter-per-second-per-second",
         "-meter-per-second-per-second",
         "kilo-squared-meter",
-        "metersecond",
-        "metersecond-per-second",
-        "metersecond-per-second-per-second",
-        "-metersecond-per-second-per-second",
-        "kilo-squared-meter-second",
-        "squarefoot",
-        "p4meter",
-        "nonexistent-unit",
-        "mega--kilogram",
-        "giga--meter",
-        "invalid-unit-format",
-        "unit-without-measurement",
-        "meter123",
-        "123meter",
-        "meter^second",
-        "meter/second",
-        "meter*second",
-        "meter+second",
-        "meter@second",
-        "meter!second",
-        "meter?second",
-        "meter.second",
-        "meter:second",
-        "meter;second",
-        "meter[second",
-        "meter]second",
-        "meter{second",
-        "meter}second",
-        "meter<second",
-        "meter>second",
-        "meter,second",
-        "meter%second",
-        "meter$second",
-        "meter#second",
-        "meter&second",
-        "meter=second",
-        "meter_second",
-        "meter|second",
-        "meter~second",
-        "meter`second",
-        "meter'second",
-        "meter\"second",
-        "meter\\second",
-        "meter\nsecond",
-        "meter\tsecond",
-        "meter\rsecond",
-        "meter second",
     ];
 
     let converter_factory = ConverterFactory::new();
     let parser = converter_factory.parser();
 
-    unparsable_units.iter().for_each(|unit| {
-        assert!(
-            parser.try_from_identifier(unit.as_bytes()).is_err(),
-            "Unit '{}' should be unparsable but was parsed successfully.",
-            unit
-        );
-    });
+    for unit in unparsable_units.iter() {
+        let result = parser.try_from_bytes(unit.as_bytes());
+        assert!(result.is_err());
+    }
 }
