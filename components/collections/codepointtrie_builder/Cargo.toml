@@ -15,7 +15,7 @@ include = [
     "Cargo.toml",
     "LICENSE",
     "README.md",
-    "list_to_ucptrie.wasm"
+    "ucptrie_wrap.wasm"
 ]
 
 authors.workspace = true
@@ -45,7 +45,7 @@ zerovec = { workspace = true }
 wasmi = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu = { workspace = true }
+icu = { path = "../../icu" }
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
