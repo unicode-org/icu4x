@@ -159,7 +159,7 @@ pub(in crate::provider) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = match parser.try_from_identifier(base_unit.as_bytes()) {
+    let base_unit = match parser.try_from_bytes(base_unit.as_bytes()) {
         Ok(base_unit) => base_unit,
         Err(_) => return Err(DataError::custom("the base unit is not valid")),
     };
