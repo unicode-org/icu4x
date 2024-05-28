@@ -4,14 +4,13 @@
 
 [package]
 name = "unused"
-version = "0.0.0"
 
 [lib]
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false }
+icu_capi = { version = "1.5", default-features = false }
 
 [build-dependencies]
 # Required to bring icu_datagen into the crate graph
-icu_datagen = { version = "1.4", optional = true }
+icu_datagen = { version = "1.5", optional = true }
