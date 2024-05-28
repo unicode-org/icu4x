@@ -22,6 +22,7 @@ mod private {
 
 /// Input data fields required for formatting dates.
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct NeoDateInputFields<C> {
     /// The era and year input.
     pub year: FormattableYear,
@@ -35,6 +36,27 @@ pub struct NeoDateInputFields<C> {
     pub any_calendar_kind: Option<AnyCalendarKind>,
     /// A type representing the caledar this date is for.
     pub calendar: PhantomData<C>,
+}
+
+impl<C> NeoDateInputFields<C> {
+    /// Constructor for [`NeoDateInputFields`] with all required fields.
+    ///
+    /// Optional fields such as [`Self::any_calendar_kind`] should be populated manually.
+    pub fn new_with_year_month_day_weekday(
+        year: FormattableYear,
+        month: FormattableMonth,
+        day_of_month: DayOfMonth,
+        day_of_week: IsoWeekday,
+    ) -> Self {
+        Self {
+            year,
+            month,
+            day_of_month,
+            day_of_week,
+            any_calendar_kind: None,
+            calendar: PhantomData,
+        }
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFields<C> {
@@ -65,11 +87,22 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
 
 /// Input data fields required for formatting weeks of the year.
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct NeoWeekInputFields<C> {
     /// Information on the position of the day within the year.
     pub day_of_year_info: DayOfYearInfo,
     /// A type representing the caledar this date is for.
     pub calendar: PhantomData<C>,
+}
+
+impl<C> NeoWeekInputFields<C> {
+    /// Constructor for [`NeoWeekInputFields`] with all required fields.
+    pub fn new_with_info(day_of_year_info: DayOfYearInfo) -> Self {
+        Self {
+            day_of_year_info,
+            calendar: PhantomData,
+        }
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoWeekInputFields<C> {
@@ -93,6 +126,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoWeekInp
 /// Input data fields required for formatting times.
 // TODO: Should we directly use icu_calendar::Time here?
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub struct NeoTimeInputFields {
     /// 0-based hour.
     pub hour: IsoHour,
@@ -102,6 +136,23 @@ pub struct NeoTimeInputFields {
     pub second: IsoSecond,
     /// Fractional second
     pub nanosecond: NanoSecond,
+}
+
+impl NeoTimeInputFields {
+    /// Constructor for [`NeoTimeInputFields`] with all required fields.
+    pub fn new_with_hour_minute_second_nanosecond(
+        hour: IsoHour,
+        minute: IsoMinute,
+        second: IsoSecond,
+        nanosecond: NanoSecond,
+    ) -> Self {
+        Self {
+            hour,
+            minute,
+            second,
+            nanosecond,
+        }
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoTimeInputFields {
@@ -117,6 +168,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoTimeInp
 
 /// Struct representing the absence of datetime formatting fields.
 #[derive(Debug, Copy, Clone)]
+#[allow(clippy::exhaustive_structs)] // empty marker struct
 pub struct NeverFields;
 
 impl<T> From<&T> for NeverFields {

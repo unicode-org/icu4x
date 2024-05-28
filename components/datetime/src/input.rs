@@ -154,7 +154,7 @@ pub trait DateTimeInput: DateInput + IsoTimeInput {}
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
 
 /// A formattable calendar date and ISO time that takes the locale into account.
-#[deprecated(since = "1.5", note = "not used in any ICU4X APIs")]
+#[deprecated(since = "1.5.0", note = "not used in any ICU4X APIs")]
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// A reference to this instance's [`DateTimeInput`].
     fn datetime(&self) -> &T;
