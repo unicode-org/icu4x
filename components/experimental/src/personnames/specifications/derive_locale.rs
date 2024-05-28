@@ -17,7 +17,6 @@ use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterErr
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#switch-the-formatting-locale-if-necessary
 ///
 /// The formatter locale and name locale must be maximized first.
-///
 pub fn effective_locale<'a>(
     formatter_locale: &'a Locale,
     person_name_locale: &'a Locale,

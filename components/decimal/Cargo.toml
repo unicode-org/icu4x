@@ -22,7 +22,6 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 writeable = { workspace = true }
 
@@ -35,6 +34,7 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_locid = { path = "../../components/locid" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 rand = { workspace = true }
 rand_pcg = { workspace = true }

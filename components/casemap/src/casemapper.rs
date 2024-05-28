@@ -19,8 +19,8 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```rust
-/// use icu_casemap::CaseMapper;
-/// use icu_locid::langid;
+/// use icu::casemap::CaseMapper;
+/// use icu::locid::langid;
 ///
 /// let cm = CaseMapper::new();
 ///
@@ -61,8 +61,8 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locid::langid;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -252,8 +252,8 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locid::langid;
     ///
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");
@@ -282,8 +282,8 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locid::langid;
     ///
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");
@@ -331,8 +331,8 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
-    /// use icu_locid::langid;
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locid::langid;
     ///
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");
@@ -379,7 +379,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -406,7 +406,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -436,8 +436,8 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
-    /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+    /// use icu::casemap::CaseMapper;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
     ///
     /// let cm = CaseMapper::new();
     /// let mut builder = CodePointInversionListBuilder::new();
@@ -464,7 +464,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -485,7 +485,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -507,7 +507,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -545,7 +545,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -580,7 +580,7 @@ impl CaseMapper {
     /// # Examples
     ///
     /// ```rust
-    /// use icu_casemap::CaseMapper;
+    /// use icu::casemap::CaseMapper;
     ///
     /// let cm = CaseMapper::new();
     ///

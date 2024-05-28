@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO(review): write macro in a way that doesn't raise this warning
-#![allow(semicolon_in_expressions_from_macros)]
-
 extern crate alloc;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -21,6 +18,7 @@ struct Baked;
 const _: () = {
     pub mod icu {
         pub use icu_datetime as datetime;
+        #[allow(unused_imports)] // baked data may or may not need this
         pub use icu_locid_transform as locid_transform;
     }
     icu_datetime_data::make_provider!(Baked);
@@ -56,7 +54,7 @@ const _: () = {
 
 macro_rules! skeleton_markers {
     ($cb:ident) => {
-        $cb!([
+        $cb! {[
             BuddhistDateNeoSkeletonPatternsV1Marker,
             ChineseDateNeoSkeletonPatternsV1Marker,
             CopticDateNeoSkeletonPatternsV1Marker,
@@ -70,7 +68,7 @@ macro_rules! skeleton_markers {
             JapaneseExtendedDateNeoSkeletonPatternsV1Marker,
             PersianDateNeoSkeletonPatternsV1Marker,
             RocDateNeoSkeletonPatternsV1Marker,
-        ]);
+        ]}
     };
 }
 
@@ -96,7 +94,7 @@ fn make_blob_v1() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
-    assert_eq!(blob.len(), 567405);
+    assert_eq!(blob.len(), 684197);
     assert!(blob.len() > 100);
     blob
 }
@@ -109,7 +107,7 @@ fn make_blob_v2() -> Vec<u8> {
         .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
         .export(&Baked, exporter)
         .unwrap();
-    assert_eq!(blob.len(), 218376);
+    assert_eq!(blob.len(), 308744);
     assert!(blob.len() > 100);
     blob
 }

@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "MMMM y",
-    "MMM y",
-    "M/y"
+    "MMMM G y",
+    "MMM G y",
+    "M/y G"
   ]
 }

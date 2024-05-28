@@ -20,7 +20,7 @@ For an introduction to the project, please visit the ["Introduction to ICU4X for
 
 For technical information on how to use ICU4X, visit our [API docs (latest stable)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
 
-More information about the project can be found in [the docs subdirectory](docs/README.md).
+More information about the project can be found in [the documents subdirectory](documents/README.md).
 
 ## Quick Start
 
@@ -66,7 +66,7 @@ Please subscribe to this repository to participate in discussions.  If you want 
 
 ## Charter
 
-*For the full charter, including answers to frequently asked questions, see [charter.md](docs/process/charter.md).*
+*For the full charter, including answers to frequently asked questions, see [charter.md](documents/process/charter.md).*
 
 ICU4X is a new project whose objective is to solve the needs of clients who wish to provide client-side internationalization for their products in resource-constrained environments.
 

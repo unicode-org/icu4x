@@ -201,7 +201,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags::language};
+    use icu_locid::{langid, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {
@@ -209,7 +209,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -231,7 +231,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -253,7 +253,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -275,7 +275,7 @@ mod tests {
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -297,7 +297,7 @@ mod tests {
 
         let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en-001").into(),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()

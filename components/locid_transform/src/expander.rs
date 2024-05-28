@@ -18,8 +18,8 @@ use crate::TransformResult;
 /// Add likely subtags:
 ///
 /// ```
-/// use icu_locid::locale;
-/// use icu_locid_transform::{LocaleExpander, TransformResult};
+/// use icu::locid::locale;
+/// use icu::locid_transform::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new();
 ///
@@ -35,8 +35,8 @@ use crate::TransformResult;
 /// Remove likely subtags:
 ///
 /// ```
-/// use icu_locid::locale;
-/// use icu_locid_transform::{LocaleExpander, TransformResult};
+/// use icu::locid::locale;
+/// use icu::locid_transform::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new();
 ///
@@ -53,8 +53,8 @@ use crate::TransformResult;
 /// locales for maximization, use [`try_new_extended`](Self::try_new_extended_unstable):
 ///
 /// ```
-/// use icu_locid::locale;
-/// use icu_locid_transform::{LocaleExpander, TransformResult};
+/// use icu::locid::locale;
+/// use icu::locid_transform::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new_extended();
 ///
@@ -396,8 +396,8 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_locid_transform::{LocaleExpander, TransformResult};
+    /// use icu::locid::locale;
+    /// use icu::locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
     ///
@@ -415,8 +415,8 @@ impl LocaleExpander {
     /// more languages.
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_locid_transform::{LocaleExpander, TransformResult};
+    /// use icu::locid::locale;
+    /// use icu::locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
     ///
@@ -501,8 +501,8 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_locid_transform::{LocaleExpander, TransformResult};
+    /// use icu::locid::locale;
+    /// use icu::locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
     ///
@@ -531,13 +531,16 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
-    /// use icu_locid_transform::{LocaleExpander, TransformResult};
+    /// use icu::locid::locale;
+    /// use icu::locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
     ///
     /// let mut locale = locale!("zh_TW");
-    /// assert_eq!(lc.minimize_favor_script(&mut locale), TransformResult::Modified);
+    /// assert_eq!(
+    ///     lc.minimize_favor_script(&mut locale),
+    ///     TransformResult::Modified
+    /// );
     /// assert_eq!(locale, locale!("zh_Hant"));
     /// ```
     pub fn minimize_favor_script<T: AsMut<LanguageIdentifier>>(

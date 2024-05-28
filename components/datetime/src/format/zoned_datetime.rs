@@ -17,11 +17,8 @@ use icu_calendar::week::WeekCalculator;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::Writeable;
 
-#[cfg(doc)]
-use crate::ZonedDateTimeFormatter;
-
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved
-/// as an output from [`ZonedDateTimeFormatter`].
+/// as an output from [`ZonedDateTimeFormatter`](super::super::ZonedDateTimeFormatter).
 #[derive(Debug, Copy, Clone)]
 pub struct FormattedZonedDateTime<'l> {
     pub(crate) formatted_datetime: FormattedDateTime<'l>,

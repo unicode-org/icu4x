@@ -45,7 +45,6 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
 /// first, a computationally heavy construction of [`ZonedDateTimeFormatter`], and then fast formatting
 /// of the data using the instance.
-///
 #[doc = zoned_date_time_formatter_size!()]
 ///
 /// # Examples
@@ -338,10 +337,10 @@ impl ZonedDateTimeFormatter {
     ///     length::Date::Medium,
     ///     length::Time::Long,
     /// );
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new(
-    ///     &locale.into(),
+    ///     &locale,
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )

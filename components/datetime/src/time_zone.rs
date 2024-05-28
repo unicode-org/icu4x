@@ -24,9 +24,6 @@ use core::fmt::Write;
 use icu_provider::prelude::*;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
 
-#[cfg(doc)]
-use crate::ZonedDateTimeFormatter;
-
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
     locale: &DataLocale,
@@ -51,7 +48,7 @@ where
 }
 
 /// [`TimeZoneFormatter`] is available for users who need to separately control the formatting of time
-/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`], which includes default time zone
+/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`](super::ZonedDateTimeFormatter), which includes default time zone
 /// formatting according to the calendar.
 ///
 /// [`TimeZoneFormatter`] uses data from the [data provider] and the selected locale
@@ -65,7 +62,7 @@ where
 /// first, a computationally heavy construction of [`TimeZoneFormatter`], and then fast formatting
 /// of the time-zone data using the instance.
 ///
-/// [`CustomTimeZone`] can be used as formatting input.
+/// [`CustomTimeZone`](icu_timezone::CustomTimeZone) can be used as formatting input.
 ///
 /// # Examples
 ///
@@ -75,7 +72,7 @@ where
 ///
 /// ```
 /// use icu::calendar::DateTime;
-/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, IanaToBcp47Mapper};
+/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
 /// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
 /// use icu::locid::locale;
 /// use tinystr::tinystr;
@@ -90,7 +87,7 @@ where
 /// // Set up the Metazone calculator, time zone ID mapper,
 /// // and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::new();
-/// let mapper = IanaToBcp47Mapper::new();
+/// let mapper = TimeZoneIdMapper::new();
 /// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 ///
@@ -105,7 +102,7 @@ where
 ///
 /// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
+/// time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
@@ -142,7 +139,6 @@ where
 /// ```
 ///
 /// [data provider]: icu_provider
-/// [`CustomTimeZone`]: icu_timezone::CustomTimeZone
 #[derive(Debug)]
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,

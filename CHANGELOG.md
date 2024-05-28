@@ -10,12 +10,15 @@
   - `icu_calendar`
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
+    - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
   - `icu_datetime`
     - `FormattedDateTime` and `FormattedZonedDateTime` now implement `Clone` and `Copy` (https://github.com/unicode-org/icu4x/pull/4476)
   - `icu_locid`
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_locid_transform`
     - Add `LocaleExpander::minimize_favor_script` (https://github.com/unicode-org/icu4x/pull/4752)
+  - `icu_plurals`
+    - Added support for `CompactDecimal` (https://github.com/unicode-org/icu4x/pull/4828)
   - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
     - Mark additional constructors as `const` (https://github.com/unicode-org/icu4x/pull/4584, https://github.com/unicode-org/icu4x/pull/4574)
@@ -23,6 +26,8 @@
     - Implement Hangul_Syllable_Type property (https://github.com/unicode-org/icu4x/pull/4885)
   - `icu_segmenter`
     - Fix Unicode 15.0 line breaking (https://github.com/unicode-org/icu4x/pull/4389)
+  - `icu_timezone`
+    - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
   - `icu_datagen`
     - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
@@ -39,6 +44,7 @@
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
+      - Add `day_of_year` getter (https://github.com/unicode-org/icu4x/issues/4891)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
       - Changed file extensions for better compatibility with nodejs modules (https://github.com/rust-diplomat/diplomat/pull/387)
@@ -52,6 +58,8 @@
         - Deprecate `Hebrew::new_always_precomputing()`, `Date::try_new_hebrew_date_with_calendar()`, `DateTime::try_new_hebrew_datetime_with_calendar()`. The new implementation of the Hebrew calendar is faster and we do not need APIs for precomputation. (https://github.com/unicode-org/icu4x/pulls/4532)
     - `databake`
         - Add `impl Bake for PhantomData<T>` (https://github.com/unicode-org/icu4x/pull/4663)
+    - `fixed_decimal`
+        - Changed type of compact exponent from `i16` to `u8` (https://github.com/unicode-org/icu4x/pull/4828)
     - `litemap`
         - Add `impl IntoIterator for LiteMap` by splitting `StoreIterableMut` trait (https://github.com/unicode-org/icu4x/pull/4359)
     - `yoke`

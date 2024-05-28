@@ -31,16 +31,15 @@ use crate::{
 
 size_test!(TimeFormatter, time_formatter_size, 1200);
 
-/// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
+/// [`TimeFormatter`] is a structure of the [`icu::datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
 ///
 /// For that reason, one should think of the process of formatting a time in two steps - first, a computational
 /// heavy construction of [`TimeFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
-///
 #[doc = time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TimeFormatter
 ///
 /// # Examples
@@ -202,10 +201,9 @@ size_test!(
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateInput`] data using the instance.
-///
 #[doc = typed_date_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
@@ -422,10 +420,9 @@ size_test!(
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`TypedDateTimeFormatter`], and then fast formatting of [`DateInput`] data using the instance.
-///
 #[doc = typed_date_time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateTimeFormatter
 ///
 /// # Examples
@@ -801,7 +798,8 @@ where {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::{components, length}, TypedDateTimeFormatter,
+    ///     options::{components, length},
+    ///     TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///

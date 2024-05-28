@@ -11,6 +11,7 @@ use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
+use std::str::FromStr;
 
 pub(in crate::provider) static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> =
     OnceCell::new();
@@ -135,7 +136,7 @@ fn optional_convert<'a, B: Borrow<Option<String>>>(
     pattern
         .borrow()
         .as_ref()
-        .map(|s| SingularSubPattern::try_from_str(s))
+        .map(|s| SingularSubPattern::from_str(s))
         .transpose()
 }
 
@@ -150,7 +151,7 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for PluralRulesCatego
             two: optional_convert(&pattern.two)?,
             few: optional_convert(&pattern.few)?,
             many: optional_convert(&pattern.many)?,
-            other: SingularSubPattern::try_from_str(&pattern.other)?,
+            other: SingularSubPattern::from_str(&pattern.other)?,
         })
     }
 }
@@ -185,14 +186,14 @@ make_data_provider!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     #[test]
     fn test_basic() {
         let provider = DatagenProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("en").into(),
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -212,7 +213,7 @@ mod tests {
         let provider = DatagenProvider::new_testing();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
-                locale: &locale!("ar").into(),
+                locale: &langid!("ar").into(),
                 metadata: Default::default(),
             })
             .unwrap()

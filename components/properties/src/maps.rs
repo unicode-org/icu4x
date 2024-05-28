@@ -11,11 +11,11 @@
 //!
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
+#[cfg(doc)]
+use super::*;
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::sets::CodePointSetData;
-#[cfg(doc)]
-use crate::*;
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
@@ -588,7 +588,7 @@ make_map_property! {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
-    /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
     /// to look up the Canonical_Combining_Class property by scalar value.
     ///
     /// # Example

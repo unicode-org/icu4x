@@ -67,7 +67,7 @@ impl serde::Serialize for SerdeDFA<'_> {
                     ))
                 })
         } else {
-            self.deref().to_bytes_little_endian().serialize(serializer)
+            serializer.serialize_bytes(&self.deref().to_bytes_little_endian())
         }
     }
 }
@@ -213,6 +213,17 @@ mod test {
 
         // Missing bytes lead to an error
         assert!(postcard::from_bytes::<OptionSerdeDFA>(&bytes[0..bytes.len() - 5]).is_err());
+    }
+
+    #[test]
+    fn test_rmp_serialization() {
+        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
+
+        let bytes = rmp_serde::to_vec(&matcher).unwrap();
+        assert_eq!(
+            rmp_serde::from_slice::<OptionSerdeDFA>(&bytes).unwrap().0,
+            Some(matcher)
+        );
     }
 
     #[test]

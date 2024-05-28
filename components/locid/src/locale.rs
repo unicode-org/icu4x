@@ -28,7 +28,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::{
+/// use icu::locid::{
 ///     extensions::unicode::{key, value},
 ///     locale,
 ///     subtags::{language, region},
