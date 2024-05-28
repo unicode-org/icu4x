@@ -32,7 +32,9 @@ pub struct NeoDateInputFields<C> {
     pub day_of_month: DayOfMonth,
     /// The day-of-week input.
     pub day_of_week: IsoWeekday,
-    /// The kind of calendar this date is for, if associated with [`AnyCalendar`]
+    /// The kind of calendar this date is for, if associated with [`AnyCalendar`].
+    ///
+    /// [`AnyCalendar`]: icu_calendar::AnyCalendar
     pub any_calendar_kind: Option<AnyCalendarKind>,
     /// A type representing the caledar this date is for.
     pub calendar: PhantomData<C>,
