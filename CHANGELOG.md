@@ -11,7 +11,7 @@
     - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
   - `icu_collections`
-    - Switch to WASMI engine in `icu_codepointtrie_builder` (unicode-org#4621)
+    - Switch from `wasmer` to `wasmi` in `icu_codepointtrie_builder` (https://github.com/unicode-org/icu4x/pull/4621)
   - `icu_normalizer`
     - Make UTS 46 normalization non-experimental (#4712)
   - `icu_datetime`
@@ -44,8 +44,6 @@
   - `icu_timezone`
     - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
-  - `icu_codepointtrie_builder`
-    - Switch from `wasmer` to `wasmi` (https://github.com/unicode-org/icu4x/pull/4621)
   - `icu_datagen`
     - Add new API structure to `DatagenDriver` to better express the different aspects of `FallbackMode` (https://github.com/unicode-org/icu4x/issues/4629)
     - Datagen shows elapsed time for keys that are slow to generate (https://github.com/unicode-org/icu4x/pull/4469)
