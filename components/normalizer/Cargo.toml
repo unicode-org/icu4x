@@ -5,16 +5,16 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-license = "Unicode-3.0"
 
-version.workspace = true
-rust-version.workspace = true
 authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-homepage.workspace = true
 categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
 include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true

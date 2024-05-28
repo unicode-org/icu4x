@@ -9,9 +9,9 @@ version = "0.1.4"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
-license = "Unicode-3.0"
 
 edition.workspace = true
+license.workspace = true
 repository.workspace = true
 
 [package.metadata.workspaces]

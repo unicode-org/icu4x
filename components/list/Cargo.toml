@@ -5,8 +5,8 @@
 [package]
 name = "icu_list"
 description = "ECMA-402 ListFormatter"
-license = "Unicode-3.0"
 
+license.workspace = true
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
