@@ -87,15 +87,16 @@ the metazone based on a certain local datetime:
 use icu::calendar::DateTime;
 use icu::timezone::CustomTimeZone;
 use icu::timezone::GmtOffset;
-use icu::timezone::TimeZoneIdMapper;
 use icu::timezone::MetazoneCalculator;
+use icu::timezone::TimeZoneIdMapper;
 use tinystr::{tinystr, TinyAsciiStr};
 
 // Create a time zone for America/Chicago at GMT-6:
 let mut time_zone = CustomTimeZone::new_empty();
 time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
 let mapper = TimeZoneIdMapper::new();
-time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+time_zone.time_zone_id =
+    mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 
 // Alternatively, set it directly from the BCP-47 ID
 assert_eq!(time_zone.time_zone_id, Some(tinystr!(8, "uschi").into()));

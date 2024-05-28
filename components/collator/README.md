@@ -26,8 +26,7 @@ use icu::locid::locale;
 let locale_es = locale!("es-u-co-trad").into();
 let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
-let collator_es: Collator =
-    Collator::try_new(&locale_es, options).unwrap();
+let collator_es: Collator = Collator::try_new(&locale_es, options).unwrap();
 
 // "pollo" > "polvo" in traditional Spanish
 assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
@@ -35,8 +34,7 @@ assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
 let locale_en = locale!("en").into();
 let mut options = CollatorOptions::new();
 options.strength = Some(Strength::Primary);
-let collator_en: Collator =
-    Collator::try_new(&locale_en, options).unwrap();
+let collator_en: Collator = Collator::try_new(&locale_en, options).unwrap();
 
 // "pollo" < "polvo" according to English rules
 assert_eq!(collator_en.compare("pollo", "polvo"), Ordering::Less);
