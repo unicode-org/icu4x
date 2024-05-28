@@ -178,7 +178,9 @@ impl FromStr for GmtOffset {
     }
 }
 
-/// A time zone variant: currently either daylight time or standard time.
+/// A time zone variant, representing the currently observed relative offset.
+/// The semantics vary from time zone to time zone and could represent concepts
+/// such as Standard time, Daylight time, Summer time, or Ramadan time.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
 #[repr(transparent)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone))]
@@ -195,15 +197,17 @@ impl FromStr for ZoneVariant {
 }
 
 impl ZoneVariant {
-    /// Return the standard time `ZoneVariant`.
+    /// Returns the variant corresponding to `"standard"` in CLDR.
     ///
-    /// Corresponds to the `"standard"` variant string in CLDR.
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Standard Time".
     pub const fn standard() -> Self {
         Self(tinystr!(2, "st"))
     }
-    /// Return the daylight time `ZoneVariant`
+    /// Returns the variant corresponding to `"daylight"` in CLDR.
     ///
-    /// Corresponds to the `"daylight"` variant string in CLDR.
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Daylight Time".
     pub const fn daylight() -> Self {
         Self(tinystr!(2, "dt"))
     }

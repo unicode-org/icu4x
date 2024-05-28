@@ -9,8 +9,7 @@
 //! use icu::calendar::{chinese::Chinese, Date, Iso};
 //!
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
-//! let chinese_date =
-//!     Date::new_from_iso(iso_date, Chinese::new());
+//! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
@@ -106,7 +105,10 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     let ny_offset = if let Ok(ny_offset) = u8::try_from(ny_offset) {
         ny_offset
     } else {
-        debug_assert!(false, "Expected small new years offset, got {ny_offset}");
+        debug_assert!(
+            false,
+            "Expected small new years offset, got {ny_offset} in ISO year {related_iso}"
+        );
         0
     };
     PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset)

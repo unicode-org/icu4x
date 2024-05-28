@@ -4,7 +4,10 @@
 
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::{NeoComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeSkeleton};
+use crate::neo_skeleton::{
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDayComponents, NeoSkeletonLength,
+    NeoTimeComponents, NeoTimeSkeleton,
+};
 use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
@@ -103,12 +106,8 @@ impl DatePatternSelectionData {
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
-        components: NeoComponents,
+        components: NeoDateComponents,
     ) -> Result<Self, DataError> {
-        let NeoComponents::Date(components) = components else {
-            // TODO: Refactor to eliminate the unreachable
-            unreachable!()
-        };
         let mut locale = locale.clone();
         let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
@@ -205,19 +204,12 @@ impl TimePatternSelectionData {
         Ok(Self::SingleTime(payload))
     }
 
-    pub(crate) fn try_new_with_skeleton<M>(
-        provider: &(impl DataProvider<M> + ?Sized),
+    pub(crate) fn try_new_with_skeleton(
+        provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
         length: NeoSkeletonLength,
-        components: NeoComponents,
-    ) -> Result<Self, DataError>
-    where
-        M: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
-    {
-        let NeoComponents::Time(components) = components else {
-            // TODO: Refactor to eliminate the unreachable
-            unreachable!()
-        };
+        components: NeoTimeComponents,
+    ) -> Result<Self, DataError> {
         let mut locale = locale.clone();
         let subtag = match Subtag::try_from_raw(*components.id_str().all_bytes()) {
             Ok(subtag) => subtag,
@@ -231,7 +223,7 @@ impl TimePatternSelectionData {
         };
         locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
         let payload = provider
-            .load(DataRequest {
+            .load_bound(DataRequest {
                 locale: &locale,
                 metadata: Default::default(),
             })?
@@ -320,6 +312,47 @@ impl DateTimeGluePatternSelectionData {
         Ok(Self { date, time, glue })
     }
 
+    pub(crate) fn try_new_with_skeleton(
+        date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
+        locale: &DataLocale,
+        length: NeoSkeletonLength,
+        day_components: NeoDayComponents,
+        time_components: NeoTimeComponents,
+    ) -> Result<Self, DataError> {
+        let date = DatePatternSelectionData::try_new_with_skeleton(
+            date_provider,
+            locale,
+            length,
+            NeoDateComponents::Day(day_components),
+        )?;
+        let time = TimePatternSelectionData::try_new_with_skeleton(
+            time_provider,
+            locale,
+            length,
+            time_components,
+        )?;
+        let mut locale = locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+            // According to UTS 35, use the date length here: use the glue
+            // pattern "whose type matches the type of the date pattern"
+            match length {
+                NeoSkeletonLength::Long => aux::PatternLength::Long,
+                NeoSkeletonLength::Medium => aux::PatternLength::Medium,
+                NeoSkeletonLength::Short => aux::PatternLength::Short,
+            },
+            None, // no hour cycle for date patterns
+        )));
+        let glue = glue_provider
+            .load_bound(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        Ok(Self { date, time, glue })
+    }
+
     /// Returns an iterator over the pattern items that may need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
@@ -330,6 +363,69 @@ impl DateTimeGluePatternSelectionData {
 }
 
 impl DateTimePatternSelectionData {
+    pub(crate) fn try_new_with_skeleton(
+        date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
+        locale: &DataLocale,
+        length: NeoSkeletonLength,
+        components: NeoComponents,
+    ) -> Result<Self, DataError> {
+        match components {
+            NeoComponents::Date(components) => {
+                let selection = DatePatternSelectionData::try_new_with_skeleton(
+                    date_provider,
+                    locale,
+                    length,
+                    components,
+                )?;
+                Ok(Self::Date(selection))
+            }
+            NeoComponents::Time(components) => {
+                let selection = TimePatternSelectionData::try_new_with_skeleton(
+                    time_provider,
+                    locale,
+                    length,
+                    components,
+                )?;
+                Ok(Self::Time(selection))
+            }
+            NeoComponents::DateTime(day_components, time_components) => {
+                let selection = DateTimeGluePatternSelectionData::try_new_with_skeleton(
+                    date_provider,
+                    time_provider,
+                    glue_provider,
+                    locale,
+                    length,
+                    day_components,
+                    time_components,
+                )?;
+                Ok(Self::DateTimeGlue(selection))
+            }
+        }
+    }
+
+    /// Returns an iterator over the pattern items that may need to be loaded.
+    #[inline]
+    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+        let (date, time) = match self {
+            DateTimePatternSelectionData::Date(date) => (Some(date), None),
+            DateTimePatternSelectionData::Time(time) => (None, Some(time)),
+            DateTimePatternSelectionData::DateTimeGlue(DateTimeGluePatternSelectionData {
+                date,
+                time,
+                glue: _,
+            }) => (Some(date), Some(time)),
+        };
+        let date_items = date
+            .into_iter()
+            .flat_map(|x| x.pattern_items_for_data_loading());
+        let time_items = time
+            .into_iter()
+            .flat_map(|x| x.pattern_items_for_data_loading());
+        date_items.chain(time_items)
+    }
+
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> DateTimePatternDataBorrowed {
         match self {

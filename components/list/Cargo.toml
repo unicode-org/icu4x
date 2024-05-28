@@ -35,6 +35,7 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 postcard = { workspace = true, features = ["use-std"] }
+rmp-serde = { workspace = true }
 serde_json = { workspace = true }
 
 

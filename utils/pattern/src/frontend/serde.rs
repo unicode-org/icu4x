@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn test_json() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_json = serde_json::to_string(&pattern_cow).unwrap();
@@ -96,13 +96,29 @@ mod tests {
 
     #[test]
     fn test_postcard() {
-        let pattern_owned = SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
         let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
         assert_eq!(pattern_postcard, b"\x09\x08Hello, !");
         let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
             postcard::from_bytes(&pattern_postcard).unwrap();
+        assert_eq!(pattern_cow, pattern_deserialized);
+        assert!(matches!(
+            pattern_deserialized.take_store(),
+            Cow::Borrowed(_)
+        ));
+    }
+
+    #[test]
+    fn test_rmp() {
+        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
+        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
+            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_rmp = rmp_serde::to_vec(&pattern_cow).unwrap();
+        assert_eq!(pattern_rmp, b"\xA9\x08Hello, !");
+        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
+            rmp_serde::from_slice(&pattern_rmp).unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
         assert!(matches!(
             pattern_deserialized.take_store(),
@@ -132,7 +148,7 @@ mod tests {
 
     #[test]
     fn test_serde_stores() {
-        let store = SinglePlaceholderPattern::try_from_str("Hello, {0}!")
+        let store = SinglePlaceholderPattern::from_str("Hello, {0}!")
             .unwrap()
             .take_store();
 

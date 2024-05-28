@@ -48,11 +48,11 @@ const DECIMAL_PREFIXES_TRIE: ZeroTrieSimpleAscii<[u8; 167]> =
 /// NOTE:
 ///    if the prefix is found, the function will return (power, part without the prefix).
 ///    if the prefix is not found, the function will return (0, part).
-fn get_si_prefix_base_ten(part: &str) -> (i8, &str) {
+fn get_si_prefix_base_ten(part: &[u8]) -> (i8, &[u8]) {
     let mut cursor = DECIMAL_PREFIXES_TRIE.cursor();
 
     let mut longest_match = (0_i8, part);
-    for (i, b) in part.bytes().enumerate() {
+    for (i, &b) in part.iter().enumerate() {
         cursor.step(b);
         if cursor.is_empty() {
             break;
@@ -84,10 +84,10 @@ const BINARY_TRIE: ZeroTrieSimpleAscii<[u8; 55]> = ZeroTrieSimpleAscii::from_sor
 /// NOTE:
 ///     if the prefix is found, the function will return (power, part without the prefix).
 ///     if the prefix is not found, the function will return (0, part).
-fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
+fn get_si_prefix_base_two(part: &[u8]) -> (i8, &[u8]) {
     let mut cursor = BINARY_TRIE.cursor();
     let mut longest_match = (0, part);
-    for (i, b) in part.bytes().enumerate() {
+    for (i, &b) in part.iter().enumerate() {
         cursor.step(b);
         if cursor.is_empty() {
             break;
@@ -105,7 +105,7 @@ fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
 /// NOTE:
 ///    if the prefix is found, the function will return (SiPrefix, part without the prefix string).
 ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
-pub fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
+pub fn get_si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
     let (si_prefix_base_10, part) = get_si_prefix_base_ten(part);
     if si_prefix_base_10 != 0 {
         return (

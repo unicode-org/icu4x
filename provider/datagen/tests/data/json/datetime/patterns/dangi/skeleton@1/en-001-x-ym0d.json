@@ -5,8 +5,8 @@
     "has_plurals": false
   },
   "patterns": [
-    "d MMMM y",
-    "d MMM y",
-    "dd/MM/y"
+    "d MMMM r(U)",
+    "d MMM r",
+    "r-MM-dd"
   ]
 }

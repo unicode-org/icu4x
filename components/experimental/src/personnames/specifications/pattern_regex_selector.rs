@@ -215,7 +215,7 @@ impl FromStr for NameField {
 pub fn to_person_name_pattern(value: &str) -> Result<PersonNamePattern, PersonNamesFormatterError> {
     let mut name_fields_map: Vec<(NameField, Cow<str>)> = Vec::new();
 
-    let parsed_pattern = MultiNamedPlaceholderPattern::try_from_str(value)?;
+    let parsed_pattern = MultiNamedPlaceholderPattern::from_str(value)?;
 
     let mut current_name_field = None;
     let mut current_literal = None;

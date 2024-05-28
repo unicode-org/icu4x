@@ -6,7 +6,7 @@
   },
   "patterns": [
     "d MMMM",
-    "dd MMM",
-    "MM/dd"
+    "d MMM",
+    "dd/MM"
   ]
 }

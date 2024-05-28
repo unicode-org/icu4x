@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(deprecated)] // these APIs are deprecated in Rust
+
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;

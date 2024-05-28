@@ -14,6 +14,7 @@
 class ICU4XCustomTimeZone;
 #include "ICU4XError.hpp"
 class ICU4XIanaToBcp47Mapper;
+class ICU4XTimeZoneIdMapper;
 class ICU4XMetazoneCalculator;
 class ICU4XIsoDateTime;
 
@@ -142,6 +143,14 @@ class ICU4XCustomTimeZone {
   diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, const std::string_view id);
 
   /**
+   * Sets the `time_zone_id` field from an IANA string by looking up
+   * the corresponding BCP-47 string.
+   * 
+   * Errors if the string is not a valid BCP-47 time zone ID.
+   */
+  diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id_2(const ICU4XTimeZoneIdMapper& mapper, const std::string_view id);
+
+  /**
    * Clears the `time_zone_id` field.
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
@@ -257,7 +266,8 @@ class ICU4XCustomTimeZone {
   diplomat::result<std::string, ICU4XError> zone_variant() const;
 
   /**
-   * Sets the `zone_variant` field to standard time.
+   * Sets the `zone_variant` field to "standard" time, which may or may
+   * not correspond to a display name with "Standard" in its name.
    * 
    * See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
    * 
@@ -266,7 +276,8 @@ class ICU4XCustomTimeZone {
   void set_standard_time();
 
   /**
-   * Sets the `zone_variant` field to daylight time.
+   * Sets the `zone_variant` field to "daylight" time, which may or may
+   * not correspond to a display name with "Daylight" in its name.
    * 
    * See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
    * 
@@ -315,6 +326,7 @@ class ICU4XCustomTimeZone {
 };
 
 #include "ICU4XIanaToBcp47Mapper.hpp"
+#include "ICU4XTimeZoneIdMapper.hpp"
 #include "ICU4XMetazoneCalculator.hpp"
 #include "ICU4XIsoDateTime.hpp"
 
@@ -409,6 +421,16 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_iana_time_zone_id(this->inner.get(), mapper.AsFFI(), id.data(), id.size());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_iana_time_zone_id_2(const ICU4XTimeZoneIdMapper& mapper, const std::string_view id) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(this->inner.get(), mapper.AsFFI(), id.data(), id.size());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());

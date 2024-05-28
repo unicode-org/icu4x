@@ -46,8 +46,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3137c640d2bac491dbfca7f9945c948f888dd8c95bdf7ee6b164fbdfa5d3efc2"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -57,16 +58,18 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5124bed7f5a5bc993adc24b2ef2df45514f005c31c198e62fceb1b2fe8cdf9a9"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat_core"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=3167e39e89ae612233706f1ade3d9e8a5c6ad358#3167e39e89ae612233706f1ade3d9e8a5c6ad358"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5d86a70d2e21480f7ecd11e69b517de5c04fa6708510d6e26f75ad35d6d0eb14"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -179,7 +182,6 @@ dependencies = [
  "displaydoc",
  "icu_collator_data",
  "icu_collections",
- "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
  "icu_properties",
@@ -236,7 +238,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
- "icu_locid",
  "icu_locid_transform",
  "icu_provider",
  "writeable",
@@ -269,6 +270,7 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "zerofrom",
  "zerotrie",
  "zerovec",
 ]
@@ -357,7 +359,6 @@ version = "1.4.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
- "icu_locid",
  "icu_locid_transform",
  "icu_plurals_data",
  "icu_provider",
@@ -446,7 +447,6 @@ version = "1.4.0"
 dependencies = [
  "displaydoc",
  "icu_calendar",
- "icu_locid",
  "icu_provider",
  "icu_timezone_data",
  "tinystr",
@@ -531,6 +531,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg",
+ "num-bigint",
  "num-integer",
  "num-traits",
 ]

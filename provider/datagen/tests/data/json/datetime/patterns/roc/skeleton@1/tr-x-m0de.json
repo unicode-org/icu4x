@@ -7,6 +7,6 @@
   "patterns": [
     "d MMMM EEEE",
     "d MMM E",
-    "d/MM E"
+    "dd/MM E"
   ]
 }
