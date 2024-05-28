@@ -53,6 +53,8 @@ Once the release checklist is complete, the assigned release driver will perform
 * Announce the release to public
   * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * Submit to This Week In Rust
+* Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
+  * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
 
 ## Patch Releases
 
@@ -91,7 +93,7 @@ This can all be done in a separate PR to chunk out the work but there should be 
 
 ## Writing a changelog
 
-In general, the *Unreleased* section of the changelog should be updated which each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
+In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
 
 Out-of-cycle changelogs should use a single entry for each individual crate released, e.g. something like this:
 
