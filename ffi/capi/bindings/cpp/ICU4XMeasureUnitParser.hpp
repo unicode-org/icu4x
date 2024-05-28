@@ -39,16 +39,6 @@ class ICU4XMeasureUnitParser {
    * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
    */
   diplomat::result<ICU4XMeasureUnit, ICU4XError> parse_unit_identifier(const std::string_view unit_id) const;
-
-  /**
-   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-   * Returns an error if the unit identifier is not valid.
-   * 
-   * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
-   * 
-   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
-   */
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> parse_valid_utf8_unit_identifier(const std::string_view unit_id) const;
   inline const capi::ICU4XMeasureUnitParser* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XMeasureUnitParser* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XMeasureUnitParser(capi::ICU4XMeasureUnitParser* i) : inner(i) {}
@@ -63,16 +53,6 @@ class ICU4XMeasureUnitParser {
 
 inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XMeasureUnitParser::parse_unit_identifier(const std::string_view unit_id) const {
   auto diplomat_result_raw_out_value = capi::ICU4XMeasureUnitParser_parse_unit_identifier(this->inner.get(), unit_id.data(), unit_id.size());
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnit>(ICU4XMeasureUnit(diplomat_result_raw_out_value.ok));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
-}
-inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XMeasureUnitParser::parse_valid_utf8_unit_identifier(const std::string_view unit_id) const {
-  auto diplomat_result_raw_out_value = capi::ICU4XMeasureUnitParser_parse_valid_utf8_unit_identifier(this->inner.get(), unit_id.data(), unit_id.size());
   diplomat::result<ICU4XMeasureUnit, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnit>(ICU4XMeasureUnit(diplomat_result_raw_out_value.ok));
