@@ -80,10 +80,8 @@ pub mod ffi {
             &self,
             unit_id: &'text DiplomatStr,
         ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            let unit_id = core::str::from_utf8(unit_id)
-                .map_err(|_| ICU4XError::InvalidCldrUnitIdentifierError)?;
             Ok(Box::new(ICU4XMeasureUnit(
-                self.0.try_from_identifier(unit_id.as_bytes())?,
+                self.0.try_from_identifier(unit_id)?,
             )))
         }
     }
