@@ -10,6 +10,13 @@
     - Improved approximation for Persian calendrical calculations (https://github.com/unicode-org/icu4x/issues/4713)
     - Fix weekday calculations in negative ISO years (https://github.com/unicode-org/icu4x/pull/4894)
     - New `DateTime::local_unix_epoch()` convenience constructor (https://github.com/unicode-org/icu4x/pull/4479)
+    - Add caching for all islamic calendars (https://github.com/unicode-org/icu4x/pull/4785)
+    - Add caching for chinese based calendars (https://github.com/unicode-org/icu4x/pull/4411, https://github.com/unicode-org/icu4x/pull/4468)
+    - Switch Hebrew to faster keviyah/Four Gates calculations (https://github.com/unicode-org/icu4x/pull/4504)
+    - Replace 2820-year with 33-year cycle in Persian calendar, with override table (https://github.com/unicode-org/icu4x/pull/4770, https://github.com/unicode-org/icu4x/pull/4775, https://github.com/unicode-org/icu4x/pull/4796)
+    - Fix bugs in several calendars with new continuity test (https://github.com/unicode-org/icu4x/pull/4904)
+    - Fix year 2319 in the Chinese calendar (https://github.com/unicode-org/icu4x/pull/4929)
+    - Fix ISO weekday calculations in negative years (https://github.com/unicode-org/icu4x/pull/4894)
   - `icu_collections`
     - Switch from `wasmer` to `wasmi` in `icu_codepointtrie_builder` (https://github.com/unicode-org/icu4x/pull/4621)
   - `icu_normalizer`
