@@ -12,8 +12,8 @@
 //!
 //! ```
 //! use icu_datagen::prelude::*;
-//! use icu_provider_fs::export::*;
 //! use icu_provider::hello_world::*;
+//! use icu_provider_fs::export::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);

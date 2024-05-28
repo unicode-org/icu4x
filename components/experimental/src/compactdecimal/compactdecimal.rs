@@ -657,14 +657,15 @@ impl CompactDecimalFormatter {
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locid::locale;
     ///
-    /// let [long_french, long_japanese, long_bangla] =
-    ///     [locale!("fr").into(), locale!("ja").into(), locale!("bn").into()].map(|locale| {
-    ///         CompactDecimalFormatter::try_new_long(
-    ///             &locale,
-    ///             Default::default(),
-    ///         )
+    /// let [long_french, long_japanese, long_bangla] = [
+    ///     locale!("fr").into(),
+    ///     locale!("ja").into(),
+    ///     locale!("bn").into(),
+    /// ]
+    /// .map(|locale| {
+    ///     CompactDecimalFormatter::try_new_long(&locale, Default::default())
     ///         .unwrap()
-    ///     });
+    /// });
     /// /// French uses millions.
     /// assert_eq!(long_french.compact_exponent_for_magnitude(6), 6);
     /// /// Bangla uses lakhs.

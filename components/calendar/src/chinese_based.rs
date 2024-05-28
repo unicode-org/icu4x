@@ -9,8 +9,7 @@
 //! use icu::calendar::{chinese::Chinese, Date, Iso};
 //!
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
-//! let chinese_date =
-//!     Date::new_from_iso(iso_date, Chinese::new());
+//! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));

@@ -35,7 +35,6 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateTimeFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
-///
 #[doc = date_time_formatter_size!()]
 ///
 /// [`icu::datetime`]: crate
@@ -462,7 +461,7 @@ impl DateTimeFormatter {
     ///
     /// let df = DateFormatter::try_new_with_length(
     ///     &locale!("en-u-ca-gregory").into(),
-    ///     length::Date::Medium
+    ///     length::Date::Medium,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///

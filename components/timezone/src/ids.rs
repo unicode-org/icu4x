@@ -81,10 +81,7 @@ use crate::{
 ///
 /// // We can recover the canonical identifier from the mapper:
 /// assert_eq!(
-///     mapper
-///         .canonicalize_iana("Australia/Victoria")
-///         .unwrap()
-///         .0,
+///     mapper.canonicalize_iana("Australia/Victoria").unwrap().0,
 ///     "Australia/Melbourne"
 /// );
 /// ```

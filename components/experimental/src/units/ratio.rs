@@ -220,32 +220,46 @@ impl FromStr for IcuRatio {
     /// Converts a string representation of a ratio into an `IcuRatio`.
     /// Supported string formats include:
     /// ```
+    /// use core::str::FromStr;
     /// use icu::experimental::units::ratio::IcuRatio;
     /// use num_bigint::BigInt;
-    /// use core::str::FromStr;
-    /// use num_traits::identities::Zero;
     /// use num_rational::Ratio;
-    ///
+    /// use num_traits::identities::Zero;
     ///
     /// // Fractional notation
     /// let ratio = IcuRatio::from_str("1/2").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(2))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::new(BigInt::from(1), BigInt::from(2)))
+    /// );
     ///
     /// // Decimal notation
     /// let ratio = IcuRatio::from_str("1.5").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(3), BigInt::from(2))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::new(BigInt::from(3), BigInt::from(2)))
+    /// );
     ///
     /// // Scientific notation
     /// let ratio = IcuRatio::from_str("1.5E6").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(1500000))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::from_integer(BigInt::from(1500000)))
+    /// );
     ///
     /// // Scientific notation with negative exponent
     /// let ratio = IcuRatio::from_str("1.5E-6").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(15), BigInt::from(10000000))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::new(BigInt::from(15), BigInt::from(10000000)))
+    /// );
     ///
     /// // Scientific notation with commas
     /// let ratio = IcuRatio::from_str("1,500E6").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(1500000000))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::from_integer(BigInt::from(1500000000)))
+    /// );
     ///
     /// // Integer notation
     /// let ratio = IcuRatio::from_str("1").unwrap();
@@ -253,23 +267,38 @@ impl FromStr for IcuRatio {
     ///
     /// // Fractional notation with exponent
     /// let ratio = IcuRatio::from_str("1/2E5").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(50000))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::from_integer(BigInt::from(50000)))
+    /// );
     ///
     /// // Negative numbers in fractional notation
     /// let ratio = IcuRatio::from_str("-1/2").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(-1), BigInt::from(2))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::new(BigInt::from(-1), BigInt::from(2)))
+    /// );
     ///
     /// // Negative numbers in decimal notation
     /// let ratio = IcuRatio::from_str("-1.5").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::new(BigInt::from(-3), BigInt::from(2))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::new(BigInt::from(-3), BigInt::from(2)))
+    /// );
     ///
     /// // Negative numbers in scientific notation
     /// let ratio = IcuRatio::from_str("-1.5E6").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000)))
+    /// );
     ///
     /// // Negative numbers in scientific notation with commas
     /// let ratio = IcuRatio::from_str("-1,500E6").unwrap();
-    /// assert_eq!(ratio, IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000000))));
+    /// assert_eq!(
+    ///     ratio,
+    ///     IcuRatio::from(Ratio::from_integer(BigInt::from(-1500000000)))
+    /// );
     ///
     /// // Corner cases
     ///

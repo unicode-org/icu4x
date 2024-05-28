@@ -30,8 +30,8 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 /// From int
 ///
 /// ```
-/// use icu::plurals::PluralOperands;
 /// use icu::plurals::rules::RawPluralOperands;
+/// use icu::plurals::PluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
@@ -49,8 +49,8 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 /// From &str
 ///
 /// ```
-/// use icu::plurals::PluralOperands;
 /// use icu::plurals::rules::RawPluralOperands;
+/// use icu::plurals::PluralOperands;
 ///
 /// assert_eq!(
 ///     Ok(PluralOperands::from(RawPluralOperands {
@@ -69,8 +69,8 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu::plurals::PluralOperands;
 /// use icu::plurals::rules::RawPluralOperands;
+/// use icu::plurals::PluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {

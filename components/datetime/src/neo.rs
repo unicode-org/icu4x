@@ -126,7 +126,6 @@ size_test!(
 ///
 /// For the difference between this and [`DateFormatter`](crate::DateFormatter), please
 /// read the [crate root docs][crate].
-///
 #[doc = typed_neo_date_formatter_size!()]
 ///
 /// <div class="stab unstable">
@@ -278,7 +277,6 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
-///
 #[doc = typed_neo_year_month_day_formatter_size!()]
 ///
 /// <div class="stab unstable">
@@ -444,7 +442,6 @@ size_test!(
 /// a calendar selected at runtime.
 ///
 /// For more details, please read the [crate root docs][crate].
-///
 #[doc = neo_year_month_day_formatter_size!()]
 ///
 /// <div class="stab unstable">
@@ -1121,7 +1118,6 @@ size_test!(NeoTimeFormatter, neo_time_formatter_size, 312);
 
 /// [`NeoTimeFormatter`] can format times of day.
 /// It supports both 12-hour and 24-hour formats.
-///
 #[doc = neo_time_formatter_size!()]
 ///
 /// <div class="stab unstable">
@@ -1299,7 +1295,6 @@ size_test!(
 ///
 /// For the difference between this and [`DateTimeFormatter`](crate::DateTimeFormatter), please
 /// read the [crate root docs][crate].
-///
 #[doc = typed_neo_date_time_formatter_size!()]
 ///
 /// <div class="stab unstable">
@@ -1716,7 +1711,6 @@ size_test!(NeoDateTimeFormatter, neo_date_time_formatter_size, 632);
 /// [`NeoDateTimeFormatter`] is a formatter capable of formatting dates from any calendar, selected
 /// at runtime. For the difference between this and [`TypedNeoDateFormatter`], please read the
 /// [crate root docs][crate].
-///
 #[doc = neo_date_time_formatter_size!()]
 ///
 /// <div class="stab unstable">
