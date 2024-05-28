@@ -85,10 +85,7 @@ impl<'data> MeasureUnitParser<'data> {
     /// Returns:
     ///    - Ok(MeasureUnit) if the identifier is valid.
     ///    - Err(ConversionError::InvalidUnit) if the identifier is invalid.
-    pub fn try_from_identifier(
-        &self,
-        identifier: &'data [u8],
-    ) -> Result<MeasureUnit, ConversionError> {
+    pub fn try_from_bytes(&self, identifier: &'data [u8]) -> Result<MeasureUnit, ConversionError> {
         if identifier.starts_with(b"-") || identifier.ends_with(b"-") {
             return Err(ConversionError::InvalidUnit);
         }
