@@ -188,7 +188,7 @@ where
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
                 .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
-            #[cfg(feature = "experimental")]
+            #[cfg(any(feature = "datagen", feature = "experimental"))]
             #[allow(clippy::panic)] // explicit panic in experimental mode
             _ => panic!("Non-experimental constructor cannot handle experimental options"),
         }

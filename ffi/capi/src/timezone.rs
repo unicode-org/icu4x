@@ -146,7 +146,8 @@ pub mod ffi {
         )]
         pub fn try_set_time_zone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
-                tinystr::TinyAsciiStr::from_bytes(id)?,
+                tinystr::TinyAsciiStr::from_bytes(id)
+                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }
@@ -227,9 +228,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::MetazoneId::from_str, FnInStruct, hidden)]
         pub fn try_set_metazone_id(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
-            self.0.metazone_id = Some(icu_timezone::MetazoneId(tinystr::TinyAsciiStr::from_bytes(
-                id,
-            )?));
+            self.0.metazone_id = Some(icu_timezone::MetazoneId(
+                tinystr::TinyAsciiStr::from_bytes(id)
+                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
+            ));
             Ok(())
         }
 
@@ -268,7 +270,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.zone_variant = Some(icu_timezone::ZoneVariant(
-                tinystr::TinyAsciiStr::from_bytes(id)?,
+                tinystr::TinyAsciiStr::from_bytes(id)
+                    .map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }

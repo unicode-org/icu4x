@@ -169,14 +169,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_harfbuzz_tutorial"
-version = "0.0.0"
-dependencies = [
- "harfbuzz",
- "icu_harfbuzz",
-]
-
-[[package]]
 name = "icu_locid"
 version = "1.4.0"
 dependencies = [
@@ -358,6 +350,14 @@ version = "0.7.5"
 dependencies = [
  "displaydoc",
  "zerovec",
+]
+
+[[package]]
+name = "tutorial_harfbuzz"
+version = "0.0.0"
+dependencies = [
+ "harfbuzz",
+ "icu_harfbuzz",
 ]
 
 [[package]]

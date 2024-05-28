@@ -2,14 +2,9 @@
   "index_info": {
     "has_long": false,
     "has_medium": false,
-    "has_plurals": true
+    "has_plurals": false
   },
   "patterns": [
-    "'linggo' w 'ng' Y",
-    "'ika-'w 'linggo ng' Y",
-    "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y"
+    "Y w"
   ]
 }

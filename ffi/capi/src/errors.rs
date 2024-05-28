@@ -36,7 +36,6 @@ use icu_provider::{DataError, DataErrorKind};
 use icu_segmenter::SegmenterError;
 #[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 use icu_timezone::TimeZoneError;
-use tinystr::TinyStrError;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -141,6 +140,7 @@ pub mod ffi {
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
 
+        // dead
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
         TinyStrContainsNullError = 0x9_01,
@@ -379,18 +379,6 @@ impl From<ParserError> for ICU4XError {
             ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
             ParserError::DuplicatedExtension => ICU4XError::LocaleParserExtensionError,
-            _ => ICU4XError::UnknownError,
-        }
-        .log_original(&e)
-    }
-}
-
-impl From<TinyStrError> for ICU4XError {
-    fn from(e: TinyStrError) -> Self {
-        match e {
-            TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
-            TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
-            TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)

@@ -6,7 +6,7 @@
   },
   "patterns": [
     "EEEE, d 'de' MMMM",
-    "E, d MMM",
+    "E, d 'de' MMM",
     "E d-M"
   ]
 }

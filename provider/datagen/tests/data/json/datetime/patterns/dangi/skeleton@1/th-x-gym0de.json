@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "EEEEที่ d MMMM GGGG y",
-    "E d MMM GGG y"
+    "r(U) MMMM d, EEEE",
+    "r MMM d, E"
   ]
 }
