@@ -304,9 +304,12 @@ where
                 .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
-            let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
+            let bytes = <&[u8]>::deserialize(deserializer)?;
+            let (tag, trie_bytes) = bytes
+                .split_first()
+                .ok_or(D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
             let store = Store::from(trie_bytes);
-            let zerotrie = match flags {
+            let zerotrie = match *tag {
                 ZeroTrieSimpleAscii::<u8>::FLAGS => {
                     ZeroTrieSimpleAscii::from_store(store).into_zerotrie()
                 }
@@ -316,7 +319,7 @@ where
                 ZeroTrieExtendedCapacity::<u8>::FLAGS => {
                     ZeroTrieExtendedCapacity::from_store(store).into_zerotrie()
                 }
-                _ => return Err(D::Error::custom("invalid ZeroTrie flags")),
+                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
             };
             Ok(zerotrie)
         }
@@ -339,15 +342,17 @@ where
                 .collect::<LiteMap<_, _>>();
             lm.serialize(serializer)
         } else {
-            let (flags, bytes) = match &self.0 {
+            let (tag, bytes) = match &self.0 {
                 ZeroTrieFlavor::SimpleAscii(t) => (ZeroTrieSimpleAscii::<u8>::FLAGS, t.as_bytes()),
                 ZeroTrieFlavor::PerfectHash(t) => (ZeroTriePerfectHash::<u8>::FLAGS, t.as_bytes()),
                 ZeroTrieFlavor::ExtendedCapacity(t) => {
                     (ZeroTrieExtendedCapacity::<u8>::FLAGS, t.as_bytes())
                 }
             };
-            // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
-            (flags, ByteStr::from_bytes(bytes)).serialize(serializer)
+            let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
+            all_in_one_vec.push(tag);
+            all_in_one_vec.extend(bytes);
+            serializer.serialize_bytes(&all_in_one_vec)
         }
     }
 }
@@ -525,7 +530,7 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
-        assert_eq!(&bincode_bytes[0..9], &[0, 26, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[0..9], &[27, 0, 0, 0, 0, 0, 0, 0, 0]);
         assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_ASCII);
 
         let json_recovered: ZeroTrieAnyCow = serde_json::from_str(&json_str).unwrap();
@@ -550,7 +555,7 @@ mod tests {
         let bincode_bytes = bincode::serialize(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_UNICODE);
-        assert_eq!(&bincode_bytes[0..9], &[3, 39, 0, 0, 0, 0, 0, 0, 0]);
+        assert_eq!(&bincode_bytes[0..9], &[40, 0, 0, 0, 0, 0, 0, 0, 3]);
         assert_eq!(&bincode_bytes[9..], testdata::basic::BINCODE_BYTES_UNICODE);
 
         let json_recovered: ZeroTrieAnyCow = serde_json::from_str(&json_str).unwrap();
