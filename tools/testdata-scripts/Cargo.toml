@@ -4,6 +4,7 @@
 
 [package]
 name = "icu_testdata_scripts"
+version = "0.0.0"
 publish = false
 edition = "2021"
 

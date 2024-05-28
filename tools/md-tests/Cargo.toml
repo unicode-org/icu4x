@@ -4,6 +4,7 @@
 
 [package]
 name = "md-tests"
+version = "0.0.0"
 publish = false
 edition = "2021"
 

@@ -4,6 +4,7 @@
 
 [package]
 name = "diplomat-gen"
+version = "0.0.0"
 publish = false
 
 rust-version.workspace = true
