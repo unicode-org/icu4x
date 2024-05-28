@@ -215,8 +215,6 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::Locale;
-    use std::str::FromStr;
     use writeable::Writeable;
 
     /// Unicode extension keywords take part in fallback, but [auxiliary keys] are not modified.
@@ -486,7 +484,7 @@ mod tests {
                 };
                 let mut it = fallbacker
                     .for_config(config)
-                    .fallback_for(Locale::from_str(cas.input).unwrap().into());
+                    .fallback_for(cas.input.parse().unwrap());
                 for &expected in expected_chain {
                     assert_eq!(
                         expected,

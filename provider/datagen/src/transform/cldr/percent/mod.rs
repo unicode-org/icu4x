@@ -108,13 +108,13 @@ fn extract_percent_essentials<'data>(
 #[test]
 fn test_basic() {
     use icu_experimental::dimension::provider::percent::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
 
     let provider = DatagenProvider::new_testing();
 
     let en: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("en").into(),
+            locale: &langid!("en").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -137,7 +137,7 @@ fn test_basic() {
 
     let fr: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("fr").into(),
+            locale: &langid!("fr").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -160,7 +160,7 @@ fn test_basic() {
 
     let tr: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("tr").into(),
+            locale: &langid!("tr").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -183,7 +183,7 @@ fn test_basic() {
 
     let ar_eg: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("ar-EG").into(),
+            locale: &langid!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

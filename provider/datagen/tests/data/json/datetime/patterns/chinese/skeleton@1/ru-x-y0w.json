@@ -5,6 +5,6 @@
     "has_plurals": false
   },
   "patterns": [
-    "w-я неделя Y г."
+    "Y w"
   ]
 }

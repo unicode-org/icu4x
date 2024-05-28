@@ -8,6 +8,7 @@ use displaydoc::Display;
 
 #[non_exhaustive]
 #[derive(PartialEq, Display, Clone, Copy, Debug)]
+/// The error returned by `ixdtf`'s parsers.
 pub enum ParserError {
     #[displaydoc("Implementation error: this error must not throw.")]
     ImplAssert,

@@ -118,10 +118,10 @@ impl CustomTimeZone {
     /// # Examples
     ///
     /// ```
+    /// use icu::calendar::DateTime;
     /// use icu::timezone::provider::{MetazoneId, TimeZoneBcp47Id};
     /// use icu::timezone::CustomTimeZone;
     /// use icu::timezone::MetazoneCalculator;
-    /// use icu::calendar::DateTime;
     /// use tinystr::tinystr;
     ///
     /// let mzc = MetazoneCalculator::new();

@@ -5,7 +5,7 @@
     "has_plurals": false
   },
   "patterns": [
-    "GGGG y MMMM",
-    "GGG y MMM"
+    "r(U) MMMM",
+    "r MMM"
   ]
 }

@@ -95,7 +95,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-FR")),
+            locale: &langid!("und-FR").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -106,7 +106,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-IQ")),
+            locale: &langid!("und-IQ").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -121,7 +121,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-GG")),
+            locale: &langid!("und-GG").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -226,7 +226,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let fr_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-FR")),
+            locale: &langid!("und-FR").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -241,7 +241,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let iq_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-IQ")),
+            locale: &langid!("und-IQ").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -260,7 +260,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let gg_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-GG")),
+            locale: &langid!("und-GG").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -279,7 +279,7 @@ fn test_basic_cldr_week_data_v2() {
 
     let ir_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-IR")),
+            locale: &langid!("und-IR").into(),
             metadata: Default::default(),
         })
         .unwrap()

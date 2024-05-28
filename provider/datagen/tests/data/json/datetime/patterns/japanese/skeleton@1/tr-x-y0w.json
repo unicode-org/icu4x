@@ -5,6 +5,6 @@
     "has_plurals": false
   },
   "patterns": [
-    "Y 'yılının' w'. haftası'"
+    "Y w"
   ]
 }

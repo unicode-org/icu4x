@@ -134,6 +134,13 @@ pub mod ffi {
             self.0.time.nanosecond.into()
         }
 
+        /// Returns the 1-indexed day in the year for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
+        pub fn day_of_year(&self) -> u16 {
+            self.0.date.day_of_year_info().day_of_year
+        }
+
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
@@ -261,8 +268,12 @@ pub mod ffi {
             nanosecond: u32,
             calendar: &ICU4XCalendar,
         ) -> Result<Box<ICU4XDateTime>, ICU4XError> {
-            let era = TinyAsciiStr::from_bytes(era_code)?.into();
-            let month = TinyAsciiStr::from_bytes(month_code)?.into();
+            let era = TinyAsciiStr::from_bytes(era_code)
+                .map_err(|_| ICU4XError::CalendarUnknownEraError)?
+                .into();
+            let month = TinyAsciiStr::from_bytes(month_code)
+                .map_err(|_| ICU4XError::CalendarUnknownMonthCodeError)?
+                .into();
             let cal = calendar.0.clone();
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
@@ -335,6 +346,13 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
+        }
+
+        /// Returns the 1-indexed day in the year for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
+        #[diplomat::attr(supports = accessors, getter)]
+        pub fn day_of_year(&self) -> u16 {
+            self.0.date.day_of_year_info().day_of_year
         }
 
         /// Returns the 1-indexed day in the month for this date

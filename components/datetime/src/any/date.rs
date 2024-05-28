@@ -30,7 +30,6 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
-///
 #[doc = date_formatter_size!()]
 ///
 /// [`icu::datetime`]: crate
@@ -38,7 +37,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// # Examples
 ///
 /// ```
-/// use icu::calendar:: Date;
+/// use icu::calendar::Date;
 /// use icu::datetime::{options::length, DateFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
@@ -86,9 +85,9 @@ impl DateFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
-    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    /// let df = DateFormatter::try_new_with_length(&locale, length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =

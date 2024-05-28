@@ -320,7 +320,7 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::langid;
     use icu_properties::sets::UnicodeSetData;
 
     #[test]
@@ -511,7 +511,7 @@ mod tests {
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(locale!("en-001")),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })
             .unwrap()

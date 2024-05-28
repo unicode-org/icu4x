@@ -82,7 +82,7 @@ zerovec = { workspace = true, features = ["serde", "yoke"], optional = true }
 ## External dependencies
 either = { workspace = true, optional = true }
 elsa = { workspace = true, optional = true }
-itertools = { workspace = true, features = ["use_alloc"], optional = true }
+itertools = { workspace = true, optional = true }
 ndarray = { workspace = true, optional = true }
 num-bigint = { workspace = true, optional = true }
 num-rational = { workspace = true, optional = true }
@@ -92,12 +92,12 @@ serde_json = { workspace = true, optional = true }
 serde-aux = { workspace = true, optional = true }
 toml = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
-ureq = { workspace = true, features = ["tls"], optional = true }
+ureq = { workspace = true, optional = true }
 zip = { workspace = true, features = ["deflate"], optional = true }
 
 # "bin" feature
-clap = { workspace = true, optional = true, features = ["derive", "std"] }
-eyre = { workspace = true, optional = true, features = ["default"] }
+clap = { workspace = true, optional = true, features = ["derive"] }
+eyre = { workspace = true, optional = true }
 simple_logger = { workspace = true, optional = true }
 
 [dev-dependencies]

@@ -219,7 +219,6 @@ impl_from_unsigned_integer_type!(u8);
 /// Increment used in a rounding operation.
 ///
 /// Forces a rounding operation to round to only multiples of the specified increment.
-///
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[non_exhaustive]
 pub enum RoundingIncrement {

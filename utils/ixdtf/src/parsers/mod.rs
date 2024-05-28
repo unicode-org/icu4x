@@ -39,9 +39,36 @@ macro_rules! assert_syntax {
 /// `IxdtfParser` is the primary parser implementation of `ixdtf`.
 ///
 /// This parser provides various options for parsing date/time strings with the extended notation
-/// laid out in [sedate's IXDTF][ixdtf-draft] along with other variations laid out in the [`Temporal`][temporal-proposal].
+/// laid out in [RFC9557][rfc9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
-/// [ixdtf-draft]: https://datatracker.ietf.org/doc/draft-ietf-sedate-datetime-extended/
+/// ```rust
+/// use ixdtf::parsers::{
+///     records::{Sign, TimeZoneRecord, UTCOffsetRecord},
+///     IxdtfParser,
+/// };
+///
+/// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
+///
+/// let result = IxdtfParser::new(ixdtf_str).parse().unwrap();
+///
+/// let date = result.date.unwrap();
+/// let time = result.time.unwrap();
+/// let offset = result.offset.unwrap();
+/// let tz_annotation = result.tz.unwrap();
+///
+/// assert_eq!(date.year, 2024);
+/// assert_eq!(date.month, 3);
+/// assert_eq!(date.day, 2);
+/// assert_eq!(time.hour, 8);
+/// assert_eq!(time.minute, 48);
+/// assert_eq!(offset.sign, Sign::Negative);
+/// assert_eq!(offset.hour, 5);
+/// assert_eq!(offset.minute, 0);
+/// assert!(!tz_annotation.critical);
+/// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+/// ```
+///
+/// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
 pub struct IxdtfParser<'a> {
@@ -56,26 +83,21 @@ impl<'a> IxdtfParser<'a> {
         }
     }
 
-    /// Parses the source as an annotated [DateTime string][temporal-dt].
+    /// Parses the source as an [extended Date/Time string][rfc9557].
     ///
-    /// This is the baseline parser where the TimeRecord, UTCOffset, and all annotations are optional.
+    /// This is the baseline parse method for `ixdtf`. For this method, the
+    /// TimeRecord, UTCOffsetRecord, and all annotations are optional.
     ///
-    /// [temporal-dt]: https://tc39.es/proposal-temporal/#prod-TemporalDateTimeString
+    /// # Example
+    ///
+    /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
     pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated DateTime string with an Annotation handler.
+    /// Parses the source as an extended Date/Time string with an Annotation handler.
     ///
-    /// # Annotation Handling
-    ///
-    /// The annotation handler provides a parsed annotation to the callback and expects a return
-    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
-    /// returns. Returning None will ignore the standard checks for that annotation.
-    ///
-    /// Unless the user's application has a specific reason to bypass action on an annotation, such
-    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
-    /// it's critical flag, it is recommended to return the annotation value.
+    /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
@@ -83,22 +105,33 @@ impl<'a> IxdtfParser<'a> {
         datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
 
-    /// Parses the source as an annotated YearMonth string.
+    /// Parses the source as an extended [YearMonth string][temporal-ym].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::IxdtfParser;
+    ///
+    /// let extended_year_month = "2020-11[u-ca=iso8601]";
+    ///
+    /// let result = IxdtfParser::new(extended_year_month)
+    ///     .parse_year_month()
+    ///     .unwrap();
+    ///
+    /// let date = result.date.unwrap();
+    ///
+    /// assert_eq!(date.year, 2020);
+    /// assert_eq!(date.month, 11);
+    /// ```
+    ///
+    /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
     pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated YearMonth string with an Annotation handler.
+    /// Parses the source as an extended YearMonth string with an Annotation handler.
     ///
-    /// # Annotation Handling
-    ///
-    /// The annotation handler provides a parsed annotation to the callback and expects a return
-    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
-    /// returns. Returning None will ignore the standard checks for that annotation.
-    ///
-    /// Unless the user's application has a specific use case to bypass action on an annotation, such
-    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
-    /// it's critical flag, it is recommended to return the annotation value.
+    /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_year_month_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
@@ -106,22 +139,32 @@ impl<'a> IxdtfParser<'a> {
         datetime::parse_annotated_year_month(&mut self.cursor, handler)
     }
 
-    /// Parses the source as an annotated MonthDay string.
+    /// Parses the source as an extended [MonthDay string][temporal-md].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::IxdtfParser;
+    /// let extended_month_day = "1107[+04:00]";
+    ///
+    /// let result = IxdtfParser::new(extended_month_day)
+    ///     .parse_month_day()
+    ///     .unwrap();
+    ///
+    /// let date = result.date.unwrap();
+    ///
+    /// assert_eq!(date.month, 11);
+    /// assert_eq!(date.day, 7);
+    /// ```
+    ///
+    /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
     pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated MonthDay string with an Annotation handler.
+    /// Parses the source as an extended MonthDay string with an Annotation handler.
     ///
-    /// # Annotation Handling
-    ///
-    /// The annotation handler provides a parsed annotation to the callback and expects a return
-    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
-    /// returns. Returning None will ignore the standard checks for that annotation.
-    ///
-    /// Unless the user's application has a specific reason to bypass action on an annotation, such
-    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
-    /// it's critical flag, it is recommended to return the annotation value.
+    /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_month_day_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
@@ -129,22 +172,38 @@ impl<'a> IxdtfParser<'a> {
         datetime::parse_annotated_month_day(&mut self.cursor, handler)
     }
 
-    /// Parses the source as an annotated Time string.
+    /// Parses the source as an extended [Time string][temporal-time].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
+    /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
+    ///
+    /// let result = IxdtfParser::new(extended_time).parse_time().unwrap();
+    ///
+    /// let time = result.time.unwrap();
+    /// let offset = result.offset.unwrap();
+    /// let tz_annotation = result.tz.unwrap();
+    ///
+    /// assert_eq!(time.hour, 12);
+    /// assert_eq!(time.minute, 1);
+    /// assert_eq!(time.second, 4);
+    /// assert_eq!(offset.sign, Sign::Negative);
+    /// assert_eq!(offset.hour, 5);
+    /// assert_eq!(offset.minute, 0);
+    /// assert!(!tz_annotation.critical);
+    /// assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York"));
+    /// ```
+    ///
+    /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
     pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
         self.parse_time_with_annotation_handler(Some)
     }
 
-    /// Parses the source as an annotated Time string with an Annotation handler.
+    /// Parses the source as an extended Time string with an Annotation handler.
     ///
-    /// # Annotation Handling
-    ///
-    /// The annotation handler provides a parsed annotation to the callback and expects a return
-    /// of an annotation or None. `ixdtf` performs baseline annotation checks once the handler
-    /// returns. Returning None will ignore the standard checks for that annotation.
-    ///
-    /// Unless the user's application has a specific reason to bypass action on an annotation, such
-    /// as, not throwing an error on an unknown key's criticality or superceding a calendar based on
-    /// it's critical flag, it is recommended to return the annotation value.
+    /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_time_with_annotation_handler(
         &mut self,
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
@@ -153,25 +212,42 @@ impl<'a> IxdtfParser<'a> {
     }
 }
 
-/// A parser for Duration strings.
+/// A parser for ISO8601 Duration strings.
 ///
-/// # Exmaple
+/// ✨ *Enabled with the `duration` Cargo feature.*
 ///
-/// ```
-/// use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
+/// # Example
 ///
-/// let duration_str = "P1Y2M3W1D";
+/// ```rust
+/// use ixdtf::parsers::{IsoDurationParser, records::{Sign, DurationParseRecord, TimeDurationRecord}};
+///
+/// let duration_str = "P1Y2M1DT2H10M30S";
 ///
 /// let result = IsoDurationParser::new(duration_str).parse().unwrap();
 ///
 /// let date_duration = result.date.unwrap();
 ///
+/// let (hours, minutes, seconds, fraction) = match result.time {
+///     // Hours variant is defined as { hours: u32, fraction: u64 }
+///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
+///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
+///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
+///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction as u64),
+///     None => (0,0,0,0),
+/// };
+///
+/// assert_eq!(result.sign, Sign::Positive);
 /// assert_eq!(date_duration.years, 1);
 /// assert_eq!(date_duration.months, 2);
-/// assert_eq!(date_duration.weeks, 3);
-/// assert_eq!(date_duration.days, 1);
-///
+/// assert_eq!(date_duration.weeks, 0);
+/// assert_eq!(date_duration.days, 1);//
+/// assert_eq!(hours, 2);
+/// assert_eq!(minutes, 10);
+/// assert_eq!(seconds, 30);
+/// assert_eq!(fraction, 0);
 /// ```
+///
 #[cfg(feature = "duration")]
 #[derive(Debug)]
 pub struct IsoDurationParser<'a> {
@@ -188,6 +264,49 @@ impl<'a> IsoDurationParser<'a> {
     }
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
+    ///
+    /// # Examples
+    ///
+    /// ## Parsing a date duration
+    ///
+    /// ```
+    /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
+    /// let date_duration = "P1Y2M3W1D";
+    ///
+    /// let result = IsoDurationParser::new(date_duration).parse().unwrap();
+    ///
+    /// let date_duration = result.date.unwrap();
+    ///
+    /// assert!(result.time.is_none());
+    /// assert_eq!(date_duration.years, 1);
+    /// assert_eq!(date_duration.months, 2);
+    /// assert_eq!(date_duration.weeks, 3);
+    /// assert_eq!(date_duration.days, 1);
+    /// ```
+    ///
+    /// ## Parsing a time duration
+    ///
+    /// ```rust
+    /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
+    /// let time_duration = "PT2H10M30S";
+    ///
+    /// let result = IsoDurationParser::new(time_duration).parse().unwrap();
+    ///
+    /// let (hours, minutes, seconds, fraction) = match result.time {
+    ///     // Hours variant is defined as { hours: u32, fraction: u64 }
+    ///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
+    ///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+    ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
+    ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
+    ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction as u64),
+    ///     None => (0,0,0,0),
+    /// };
+    /// assert!(result.date.is_none());
+    /// assert_eq!(hours, 2);
+    /// assert_eq!(minutes, 10);
+    /// assert_eq!(seconds, 30);
+    /// assert_eq!(fraction, 0);
+    /// ```
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)
     }

@@ -107,7 +107,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locid::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::NeverMarker;
@@ -117,7 +117,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
-///         locale: &locale!("en").into(),
+///         locale: &langid!("en").into(),
 ///         metadata: Default::default(),
 ///     },
 /// );
@@ -154,7 +154,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locid::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::NeverMarker;
@@ -166,7 +166,7 @@ where
 /// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
 ///     &MyProvider,
 ///     DataRequest {
-///         locale: &locale!("und").into(),
+///         locale: &langid!("und").into(),
 ///         metadata: Default::default(),
 ///     },
 /// );

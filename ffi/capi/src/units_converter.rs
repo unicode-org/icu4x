@@ -80,7 +80,7 @@ pub mod ffi {
             unit_id: &str,
         ) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
             Ok(Box::new(ICU4XMeasureUnit(
-                self.0.try_from_identifier(unit_id)?,
+                self.0.try_from_bytes(unit_id.as_bytes())?,
             )))
         }
     }

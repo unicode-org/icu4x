@@ -47,6 +47,7 @@ postcard = { workspace = true, features = ["use-std"] }
 rand = { workspace = true }
 rand_distr = { workspace = true }
 rand_pcg = { workspace = true }
+rmp-serde = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 yoke = { path = "../../utils/yoke", features = ["derive"] }

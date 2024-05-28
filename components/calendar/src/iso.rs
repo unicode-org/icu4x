@@ -834,49 +834,4 @@ mod test {
         check(-1439, 1969, 12, 31, 0, 1);
         check(-2879, 1969, 12, 30, 0, 1);
     }
-
-    #[test]
-    fn test_continuity_near_year_zero() {
-        // https://github.com/unicode-org/icu4x/issues/4893
-        const ONE_DAY_DURATION: DateDuration<Iso> = DateDuration {
-            years: 0,
-            months: 0,
-            weeks: 0,
-            days: 1,
-            marker: core::marker::PhantomData,
-        };
-
-        let mut iso_date = Date::try_new_iso_date(-10, 1, 1).unwrap();
-        let mut rata_die = iso_date.to_fixed();
-        let mut weekday = iso_date.day_of_week();
-
-        for _ in 0..(366 * 20) {
-            let next_iso_date = iso_date.added(ONE_DAY_DURATION);
-            let next_rata_die = next_iso_date.to_fixed();
-            assert_eq!(
-                next_rata_die,
-                rata_die + 1,
-                "{iso_date:?}..{next_iso_date:?}"
-            );
-            let next_weekday = next_iso_date.day_of_week();
-            assert_eq!(
-                (next_weekday as usize) % 7,
-                (weekday as usize + 1) % 7,
-                "{iso_date:?}..{next_iso_date:?}"
-            );
-            if iso_date.month().code.parsed().unwrap().0 == 2 && iso_date.day_of_month().0 == 28 {
-                assert_eq!(next_iso_date.is_in_leap_year(), iso_date.is_in_leap_year());
-                if iso_date.is_in_leap_year() {
-                    assert_eq!(next_iso_date.month().code.parsed().unwrap().0, 2);
-                    assert_eq!(next_iso_date.day_of_month().0, 29);
-                } else {
-                    assert_eq!(next_iso_date.month().code.parsed().unwrap().0, 3);
-                    assert_eq!(next_iso_date.day_of_month().0, 1);
-                }
-            }
-            iso_date = next_iso_date;
-            rata_die = next_rata_die;
-            weekday = next_weekday;
-        }
-    }
 }

@@ -84,7 +84,6 @@ fn to_mask(ordering: &str, size: &str, referring: &str, formality: &str) -> Resu
 /// Transform the JSON Resource into a single PersonNamesFormattingDefinitionV1
 ///
 /// The JSON Structure is expected to be perfect and all combination should be provided.
-///
 impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
     type Error = DataError;
     fn try_from(other: &'_ Resource) -> Result<Self, Self::Error> {
@@ -153,7 +152,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
+    use icu_locid::langid;
     use zerofrom::ZeroFrom;
 
     use super::*;
@@ -164,7 +163,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("en-001")),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -187,7 +186,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("en-001")),
+                locale: &langid!("en-001").into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -235,7 +234,7 @@ mod tests {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(&locale!("es")),
+                locale: &langid!("es").into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;

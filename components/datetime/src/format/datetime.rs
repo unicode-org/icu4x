@@ -209,8 +209,36 @@ where
     DS: DateSymbols<'data>,
     TS: TimeSymbols,
 {
+    try_write_pattern_items(
+        pattern.metadata,
+        pattern.items.iter(),
+        datetime,
+        date_symbols,
+        time_symbols,
+        week_data,
+        fixed_decimal_format,
+        w,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn try_write_pattern_items<'data, W, DS, TS>(
+    pattern_metadata: PatternMetadata,
+    pattern_items: impl Iterator<Item = PatternItem>,
+    datetime: &ExtractedDateTimeInput,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
+    week_data: Option<&'data WeekCalculator>,
+    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    w: &mut W,
+) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+where
+    W: writeable::PartsWrite + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
+{
     let mut r = Ok(());
-    let mut iter = pattern.items.iter().peekable();
+    let mut iter = pattern_items.peekable();
     while let Some(item) = iter.next() {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
@@ -218,7 +246,7 @@ where
                 r = r.and(try_write_field(
                     field,
                     &mut iter,
-                    pattern.metadata,
+                    pattern_metadata,
                     datetime,
                     date_symbols,
                     time_symbols,
@@ -822,7 +850,6 @@ mod tests {
     use super::*;
     use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
-    use icu_locid::Locale;
     use tinystr::tinystr;
 
     #[test]
@@ -832,8 +859,8 @@ mod tests {
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
-        let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoDateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+        let locale = "en-u-ca-japanese".parse().unwrap();
+        let dtf = NeoDateFormatter::try_new_with_length(&locale, length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
@@ -859,7 +886,7 @@ mod tests {
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse().unwrap();
         let req = DataRequest {
             locale: &locale,
             metadata: Default::default(),
