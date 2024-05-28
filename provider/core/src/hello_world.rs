@@ -108,7 +108,7 @@ impl HelloWorldProvider {
         ("de-AT", "Servus Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
-        ("en-001", "Hello from 🗺️"),           // WORLD
+        ("en-001", "Hello from 🗺️"),            // WORLD
         ("en-002", "Hello from 🌍"),           // AFRICA
         ("en-019", "Hello from 🌎"),           // AMERICAS
         ("en-142", "Hello from 🌏"),           // ASIA
