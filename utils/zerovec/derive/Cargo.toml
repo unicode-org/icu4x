@@ -5,13 +5,13 @@
 [package]
 name = "zerovec-derive"
 description = "Custom derive for the zerovec crate"
-version = "0.10.1"
+version = "0.10.2"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
-license = "Unicode-3.0"
 
 edition.workspace = true
+license.workspace = true
 repository.workspace = true
 
 [package.metadata.workspaces]

@@ -111,7 +111,6 @@ enum struct ICU4XAnyCalendarKind {
   Roc = 17,
 };
 class ICU4XLocale;
-#include "ICU4XError.hpp"
 
 #include "ICU4XLocale.hpp"
 #endif

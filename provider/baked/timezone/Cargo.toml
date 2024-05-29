@@ -6,7 +6,7 @@
 name = "icu_timezone_data"
 description = "Data for the icu_timezone crate"
 license = "Unicode-3.0"
-version = "1.4.0"
+version = "1.5.0"
 
 authors.workspace = true
 categories.workspace = true

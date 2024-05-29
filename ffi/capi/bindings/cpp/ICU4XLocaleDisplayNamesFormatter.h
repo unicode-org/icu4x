@@ -18,7 +18,6 @@ typedef struct ICU4XLocaleDisplayNamesFormatter ICU4XLocaleDisplayNamesFormatter
 #include "ICU4XLocale.h"
 #include "ICU4XDisplayNamesOptionsV1.h"
 #include "diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -26,7 +25,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
 
-diplomat_result_void_ICU4XError ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWriteable* write);
+void ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWriteable* write);
 void ICU4XLocaleDisplayNamesFormatter_destroy(ICU4XLocaleDisplayNamesFormatter* self);
 
 #ifdef __cplusplus

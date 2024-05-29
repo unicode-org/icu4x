@@ -83,13 +83,8 @@ pub mod ffi {
 
         /// Returns the locale-specific display name of a locale.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::of, FnInStruct)]
-        pub fn of(
-            &self,
-            locale: &ICU4XLocale,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.of(&locale.0).write_to(write)?;
-            Ok(())
+        pub fn of(&self, locale: &ICU4XLocale, write: &mut DiplomatWriteable) {
+            let _infallible = self.0.of(&locale.0).write_to(write);
         }
     }
 
@@ -121,10 +116,11 @@ pub mod ffi {
             region: &DiplomatStr,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0
+            let _infallible = self
+                .0
                 .of(Region::try_from_bytes(region)?)
                 .unwrap_or("")
-                .write_to(write)?;
+                .write_to(write);
             Ok(())
         }
     }

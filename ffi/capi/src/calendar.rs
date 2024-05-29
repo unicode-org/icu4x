@@ -88,12 +88,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_string, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_value, FnInEnum, hidden)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn bcp47(
-            self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        pub fn bcp47(self, write: &mut diplomat_runtime::DiplomatWriteable) {
             let kind = AnyCalendarKind::from(self);
-            Ok(write.write_str(kind.as_bcp47_string())?)
+            let _infallible = write.write_str(kind.as_bcp47_string());
         }
     }
 

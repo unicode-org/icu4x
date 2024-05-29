@@ -16,8 +16,8 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
 
     // Test setters
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
-    diplomat_result_void_ICU4XError result = ICU4XLocale_to_string(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_to_string(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for %s is \"%s\"\n", message, output);
@@ -48,8 +48,8 @@ int main() {
         return 1;
     }
     ICU4XLocale* locale = locale_result.ok;
-    diplomat_result_void_ICU4XError result = ICU4XLocale_to_string(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_to_string(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for a basic locale is %s\n", output);
@@ -67,8 +67,8 @@ int main() {
         return 1;
     }
     locale = locale_result.ok;
-    result = ICU4XLocale_language(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_language(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for the language is %s\n", output);
@@ -79,8 +79,8 @@ int main() {
     }
 
     write = diplomat_simple_writeable(output, 40);
-    result = ICU4XLocale_region(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_region(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for the region is %s\n", output);
@@ -91,8 +91,8 @@ int main() {
     }
 
     write = diplomat_simple_writeable(output, 40);
-    result = ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for the extension is %s\n", output);
@@ -102,8 +102,8 @@ int main() {
         return 1;
     }
 
-    result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
-    if (!(!result.is_ok && result.err == ICU4XError_LocaleUndefinedSubtagError)) {
+    diplomat_result_void_ICU4XError result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
+    if (!(!result.is_ok && result.err == ICU4XError_LocaleUndefinedSubtagError) || write.grow_failed) {
         return 1;
     }
 
@@ -206,8 +206,8 @@ int main() {
     }
     locale = locale_result.ok;
     ICU4XLocaleExpander_maximize(le, locale);
-    result = ICU4XLocale_to_string(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_to_string(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for maximizing is %s\n", output);
@@ -227,8 +227,8 @@ int main() {
     }
     locale = locale_result.ok;
     ICU4XLocaleExpander_minimize(le, locale);
-    result = ICU4XLocale_to_string(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_to_string(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for minimizing is %s\n", output);
@@ -248,8 +248,8 @@ int main() {
     }
     locale = locale_result.ok;
     ICU4XLocaleCanonicalizer_canonicalize(lc, locale);
-    result = ICU4XLocale_to_string(locale, &write);
-    if (!result.is_ok) {
+    ICU4XLocale_to_string(locale, &write);
+    if (write.grow_failed) {
         return 1;
     }
     printf("Output for canonicalizing is %s\n", output);

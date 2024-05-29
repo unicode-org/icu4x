@@ -52,7 +52,7 @@ class ICU4XDecomposingNormalizer {
    * 
    * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> normalize_to_writeable(const std::string_view s, W& write) const;
+  template<typename W> void normalize_to_writeable(const std::string_view s, W& write) const;
 
   /**
    * Normalize a string
@@ -62,7 +62,7 @@ class ICU4XDecomposingNormalizer {
    * 
    * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
-  diplomat::result<std::string, ICU4XError> normalize(const std::string_view s) const;
+  std::string normalize(const std::string_view s) const;
 
   /**
    * Check if a string is normalized
@@ -105,28 +105,15 @@ inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposing
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDecomposingNormalizer::normalize_to_writeable(const std::string_view s, W& write) const {
+template<typename W> inline void ICU4XDecomposingNormalizer::normalize_to_writeable(const std::string_view s, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XDecomposingNormalizer::normalize(const std::string_view s) const {
+inline std::string ICU4XDecomposingNormalizer::normalize(const std::string_view s) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 inline bool ICU4XDecomposingNormalizer::is_normalized(const std::string_view s) const {
   return capi::ICU4XDecomposingNormalizer_is_normalized(this->inner.get(), s.data(), s.size());

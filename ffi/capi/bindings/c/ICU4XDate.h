@@ -20,7 +20,6 @@ typedef struct ICU4XDate ICU4XDate;
 #include "ICU4XIsoWeekday.h"
 #include "ICU4XWeekCalculator.h"
 #include "diplomat_result_ICU4XWeekOf_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -46,11 +45,11 @@ diplomat_result_ICU4XWeekOf_ICU4XError ICU4XDate_week_of_year(const ICU4XDate* s
 
 uint32_t ICU4XDate_ordinal_month(const ICU4XDate* self);
 
-diplomat_result_void_ICU4XError ICU4XDate_month_code(const ICU4XDate* self, DiplomatWriteable* write);
+void ICU4XDate_month_code(const ICU4XDate* self, DiplomatWriteable* write);
 
 int32_t ICU4XDate_year_in_era(const ICU4XDate* self);
 
-diplomat_result_void_ICU4XError ICU4XDate_era(const ICU4XDate* self, DiplomatWriteable* write);
+void ICU4XDate_era(const ICU4XDate* self, DiplomatWriteable* write);
 
 uint8_t ICU4XDate_months_in_year(const ICU4XDate* self);
 

@@ -52,21 +52,29 @@ class ICU4XTimeZoneIdMapper {
 
   /**
    * See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> normalize_iana_to_writeable(const std::string_view value, W& write) const;
 
   /**
    * See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> normalize_iana(const std::string_view value) const;
 
   /**
    * See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> canonicalize_iana_to_writeable(const std::string_view value, W& write) const;
 
   /**
    * See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
   diplomat::result<std::string, ICU4XError> canonicalize_iana(const std::string_view value) const;
 

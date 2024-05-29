@@ -44,14 +44,14 @@ class ICU4XLocaleDisplayNamesFormatter {
    * 
    * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const ICU4XLocale& locale, W& write) const;
+  template<typename W> void of_to_writeable(const ICU4XLocale& locale, W& write) const;
 
   /**
    * Returns the locale-specific display name of a locale.
    * 
    * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
-  diplomat::result<std::string, ICU4XError> of(const ICU4XLocale& locale) const;
+  std::string of(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleDisplayNamesFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleDisplayNamesFormatter* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XLocaleDisplayNamesFormatter(capi::ICU4XLocaleDisplayNamesFormatter* i) : inner(i) {}
@@ -77,27 +77,14 @@ inline diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> ICU4XLocal
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLocaleDisplayNamesFormatter::of_to_writeable(const ICU4XLocale& locale, W& write) const {
+template<typename W> inline void ICU4XLocaleDisplayNamesFormatter::of_to_writeable(const ICU4XLocale& locale, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XLocaleDisplayNamesFormatter::of(const ICU4XLocale& locale) const {
+inline std::string ICU4XLocaleDisplayNamesFormatter::of(const ICU4XLocale& locale) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 #endif

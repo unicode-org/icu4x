@@ -44,29 +44,37 @@ class ICU4XCaseMapper {
    * Returns the full lowercase mapping of the given string
    * 
    * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> lowercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
+  template<typename W> void lowercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
 
   /**
    * Returns the full lowercase mapping of the given string
    * 
    * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  diplomat::result<std::string, ICU4XError> lowercase(const std::string_view s, const ICU4XLocale& locale) const;
+  std::string lowercase(const std::string_view s, const ICU4XLocale& locale) const;
 
   /**
    * Returns the full uppercase mapping of the given string
    * 
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> uppercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
+  template<typename W> void uppercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const;
 
   /**
    * Returns the full uppercase mapping of the given string
    * 
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  diplomat::result<std::string, ICU4XError> uppercase(const std::string_view s, const ICU4XLocale& locale) const;
+  std::string uppercase(const std::string_view s, const ICU4XLocale& locale) const;
 
   /**
    * Returns the full titlecase mapping of the given string, performing head adjustment without
@@ -76,8 +84,10 @@ class ICU4XCaseMapper {
    * The `v1` refers to the version of the options struct, which may change as we add more options
    * 
    * See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> titlecase_segment_with_only_case_data_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const;
+  template<typename W> void titlecase_segment_with_only_case_data_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const;
 
   /**
    * Returns the full titlecase mapping of the given string, performing head adjustment without
@@ -87,38 +97,48 @@ class ICU4XCaseMapper {
    * The `v1` refers to the version of the options struct, which may change as we add more options
    * 
    * See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  diplomat::result<std::string, ICU4XError> titlecase_segment_with_only_case_data_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
+  std::string titlecase_segment_with_only_case_data_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const;
 
   /**
    * Case-folds the characters in the given string
    * 
    * See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> fold_to_writeable(const std::string_view s, W& write) const;
+  template<typename W> void fold_to_writeable(const std::string_view s, W& write) const;
 
   /**
    * Case-folds the characters in the given string
    * 
    * See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  diplomat::result<std::string, ICU4XError> fold(const std::string_view s) const;
+  std::string fold(const std::string_view s) const;
 
   /**
    * Case-folds the characters in the given string
    * using Turkic (T) mappings for dotted/dotless I.
    * 
    * See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> fold_turkic_to_writeable(const std::string_view s, W& write) const;
+  template<typename W> void fold_turkic_to_writeable(const std::string_view s, W& write) const;
 
   /**
    * Case-folds the characters in the given string
    * using Turkic (T) mappings for dotted/dotless I.
    * 
    * See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
+   * 
+   * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  diplomat::result<std::string, ICU4XError> fold_turkic(const std::string_view s) const;
+  std::string fold_turkic(const std::string_view s) const;
 
   /**
    * Adds all simple case mappings and the full case folding for `c` to `builder`.
@@ -214,122 +234,57 @@ inline diplomat::result<ICU4XCaseMapper, ICU4XError> ICU4XCaseMapper::create(con
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::lowercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const {
+template<typename W> inline void ICU4XCaseMapper::lowercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_lowercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XCaseMapper_lowercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::lowercase(const std::string_view s, const ICU4XLocale& locale) const {
+inline std::string ICU4XCaseMapper::lowercase(const std::string_view s, const ICU4XLocale& locale) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_lowercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XCaseMapper_lowercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::uppercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const {
+template<typename W> inline void ICU4XCaseMapper::uppercase_to_writeable(const std::string_view s, const ICU4XLocale& locale, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_uppercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XCaseMapper_uppercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::uppercase(const std::string_view s, const ICU4XLocale& locale) const {
+inline std::string ICU4XCaseMapper::uppercase(const std::string_view s, const ICU4XLocale& locale) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_uppercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XCaseMapper_uppercase(this->inner.get(), s.data(), s.size(), locale.AsFFI(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::titlecase_segment_with_only_case_data_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const {
+template<typename W> inline void ICU4XCaseMapper::titlecase_segment_with_only_case_data_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const {
   ICU4XTitlecaseOptionsV1 diplomat_wrapped_struct_options = options;
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::titlecase_segment_with_only_case_data_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const {
+inline std::string ICU4XCaseMapper::titlecase_segment_with_only_case_data_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const {
   ICU4XTitlecaseOptionsV1 diplomat_wrapped_struct_options = options;
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::fold_to_writeable(const std::string_view s, W& write) const {
+template<typename W> inline void ICU4XCaseMapper::fold_to_writeable(const std::string_view s, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold(this->inner.get(), s.data(), s.size(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XCaseMapper_fold(this->inner.get(), s.data(), s.size(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold(const std::string_view s) const {
+inline std::string ICU4XCaseMapper::fold(const std::string_view s) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XCaseMapper_fold(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCaseMapper::fold_turkic_to_writeable(const std::string_view s, W& write) const {
+template<typename W> inline void ICU4XCaseMapper::fold_turkic_to_writeable(const std::string_view s, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold_turkic(this->inner.get(), s.data(), s.size(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XCaseMapper_fold_turkic(this->inner.get(), s.data(), s.size(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCaseMapper::fold_turkic(const std::string_view s) const {
+inline std::string ICU4XCaseMapper::fold_turkic(const std::string_view s) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCaseMapper_fold_turkic(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XCaseMapper_fold_turkic(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 inline void ICU4XCaseMapper::add_case_closure_to(char32_t c, ICU4XCodePointSetBuilder& builder) const {
   capi::ICU4XCaseMapper_add_case_closure_to(this->inner.get(), c, builder.AsFFIMut());

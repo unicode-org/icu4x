@@ -8,9 +8,8 @@
 
 [package]
 name = "tutorial_sync"
-version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "1.4", features = ["sync"] }
+icu = { version = "1.5", features = ["sync"] }
