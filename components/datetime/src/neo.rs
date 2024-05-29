@@ -406,8 +406,8 @@ impl<C: CldrCalendar, R: HasNeoComponents<C>> TypedNeoFormatter<C, R> {
             &<R::D as DateMarkers<C>>::MonthNamesV1Marker::bind(provider), // month
             &<R::D as DateMarkers<C>>::WeekdayNamesV1Marker::bind(provider), // weekday
             &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider), // day period
-            Some(loader),                                              // fixed decimal formatter
-            Some(loader),                                              // week calculator
+            Some(loader),                                                 // fixed decimal formatter
+            Some(loader),                                                 // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;

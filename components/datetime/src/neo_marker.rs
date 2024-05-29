@@ -255,7 +255,8 @@ pub trait TimeMarkers: private::Sealed {
 
 /// A struct implementing traits for never loading data.
 #[derive(Debug)]
-pub struct NeoNeverMarker;
+#[allow(clippy::exhaustive_enums)] // empty marker enum
+pub enum NeoNeverMarker {}
 
 impl private::Sealed for NeoNeverMarker {}
 
@@ -596,7 +597,7 @@ macro_rules! impl_day_marker {
         impl HasDayComponents for $type {
             const COMPONENTS: NeoDayComponents = $components;
         }
-    }
+    };
 }
 
 macro_rules! impl_time_marker {
