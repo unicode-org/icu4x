@@ -11,7 +11,9 @@ use crate::format::datetime::{try_write_pattern, try_write_pattern_items};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
-use crate::neo_marker::{TypedDateMarkers, TypedNeoFormatterMarker, NeoFormatterMarker, TimeMarkers};
+use crate::neo_marker::{
+    DateMarkers, NeoFormatterMarker, TimeMarkers, TypedDateMarkers, TypedNeoFormatterMarker,
+};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::NeoSkeletonLength;
 use crate::options::length;
@@ -405,9 +407,9 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             &<R::D as TypedDateMarkers<C>>::YearNamesV1Marker::bind(provider), // year
             &<R::D as TypedDateMarkers<C>>::MonthNamesV1Marker::bind(provider), // month
             &<R::D as TypedDateMarkers<C>>::WeekdayNamesV1Marker::bind(provider), // weekday
-            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider), // day period
-            Some(loader),                                                 // fixed decimal formatter
-            Some(loader),                                                 // week calculator
+            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),    // day period
+            Some(loader), // fixed decimal formatter
+            Some(loader), // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -468,7 +470,8 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
         T: ?Sized,
-        for<'a> &'a T: Into<<R::D as TypedDateMarkers<C>>::DateInputMarker>
+        for<'a> &'a T: Into<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
+            + Into<<R::D as TypedDateMarkers<C>>::DateInputMarker>
             + Into<<R::D as TypedDateMarkers<C>>::WeekInputMarker>
             + Into<<R::T as TimeMarkers>::TimeInputMarker>,
     {
@@ -554,61 +557,61 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
-            // Date formatting keys
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Indian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Persian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Roc>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
-            + DataProvider<R::WeekdayNamesV1Marker>
-            + DataProvider<R::DayPeriodNamesV1Marker>
-            + DataProvider<R::TimeSkeletonPatternsV1Marker>
+    // Date formatting keys
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Roc>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
+            + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -635,72 +638,72 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Indian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Persian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Roc>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
-            + DataProvider<R::WeekdayNamesV1Marker>
-            + DataProvider<R::DayPeriodNamesV1Marker>
-            + DataProvider<R::TimeSkeletonPatternsV1Marker>
+    // Date formatting keys
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Roc>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
+            + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
-            // AnyCalendar constructor keys
+    // AnyCalendar constructor keys
             + DataProvider<ChineseCacheV1Marker>
             + DataProvider<DangiCacheV1Marker>
             + DataProvider<IslamicObservationalCacheV1Marker>
             + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
-            // FixedDecimalFormatter keys
+    // FixedDecimalFormatter keys
             + DataProvider<DecimalSymbolsV1Marker>
-            // WeekCalculator keys
+    // WeekCalculator keys
             + DataProvider<WeekDataV2Marker>,
     {
         Self::try_new_internal(provider, &ExternalLoaderUnstable(provider), locale, length)
@@ -714,69 +717,69 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
-            // Date formatting keys
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Indian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Persian>
-            + DataProvider<<R::Year as CalMarkers<YearNamesV1Marker>>::Roc>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
-            + DataProvider<<R::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
-            + DataProvider<<R::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
-            + DataProvider<R::WeekdayNamesV1Marker>
-            + DataProvider<R::DayPeriodNamesV1Marker>
-            + DataProvider<R::TimeSkeletonPatternsV1Marker>
+    // Date formatting keys
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Roc>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Month as CalMarkers<MonthNamesV1Marker>>::Roc>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Buddhist>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Chinese>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Coptic>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Dangi>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Ethiopian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::EthiopianAmeteAlem>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Gregorian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Hebrew>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Indian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicCivil>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicObservational>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicTabular>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::IslamicUmmAlQura>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Japanese>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::JapaneseExtended>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Persian>
+            + DataProvider<<<R::D as DateMarkers>::Skel as CalMarkers<SkeletaV1Marker>>::Roc>
+            + DataProvider<<R::D as DateMarkers>::WeekdayNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader + AnyCalendarLoader,
     {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
         let selection = DateTimePatternSelectionData::try_new_with_skeleton(
-            &AnyCalendarProvider::<R::Skel, _>::new(provider, kind),
-            &R::TimeSkeletonPatternsV1Marker::bind(provider),
+            &AnyCalendarProvider::<<R::D as DateMarkers>::Skel, _>::new(provider, kind),
+            &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::DateTimePatternV1Marker::bind(provider),
             locale,
             length,
@@ -785,12 +788,12 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern(
-            &AnyCalendarProvider::<R::Year, _>::new(provider, kind), // year
-            &AnyCalendarProvider::<R::Month, _>::new(provider, kind), // month
-            &R::WeekdayNamesV1Marker::bind(provider),                // weekday
-            &R::DayPeriodNamesV1Marker::bind(provider),              // day period
-            Some(loader),                                            // fixed decimal formatter
-            Some(loader),                                            // week calculator
+            &AnyCalendarProvider::<<R::D as DateMarkers>::Year, _>::new(provider, kind), // year
+            &AnyCalendarProvider::<<R::D as DateMarkers>::Month, _>::new(provider, kind), // month
+            &<R::D as DateMarkers>::WeekdayNamesV1Marker::bind(provider),                // weekday
+            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider), // day period
+            Some(loader), // fixed decimal formatter
+            Some(loader), // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -826,6 +829,17 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
             datetime,
             names: self.names.as_borrowed(),
         })
+    }
+
+    /// TODO
+    pub fn format_neo<T>(&self, _datetime: &T) -> FormattedNeoDateTime
+    where
+        T: ?Sized,
+        for<'a> &'a T: Into<<R::D as DateMarkers>::DateInputMarker>
+            + Into<<R::D as DateMarkers>::WeekInputMarker>
+            + Into<<R::T as TimeMarkers>::TimeInputMarker>,
+    {
+        todo!()
     }
 
     /// Infallibly formats a datetime after first converting it

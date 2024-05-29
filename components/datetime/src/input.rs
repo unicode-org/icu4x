@@ -246,8 +246,8 @@ impl ExtractedDateTimeInput {
     }
     /// Construct given neo date input instances.
     #[cfg(feature = "experimental")]
-    pub(crate) fn extract_from_neo_input<C>(
-        neo_date: Option<NeoDateInputFields<C>>,
+    pub(crate) fn extract_from_neo_input(
+        neo_date: Option<NeoDateInputFields>,
         neo_week: Option<NeoWeekInputFields>,
         neo_time: Option<NeoTimeInputFields>,
     ) -> Self {
