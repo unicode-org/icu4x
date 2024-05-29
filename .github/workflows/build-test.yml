@@ -196,35 +196,6 @@ jobs:
     - name: Run `cargo make ci-job-testdata`
       run: cargo make ci-job-testdata
 
-
-  # ci-job-testdata-legacy
-  testdata-legacy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-ci-toolchain
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Job-specific dependencies
-    - name: Install cargo-binstall 
-      uses: taiki-e/install-action@cargo-binstall
-    - name: Install cargo-all-features
-      run: cargo-binstall -y cargo-all-features
-
-    # Actual job
-    - name: Run `cargo make ci-job-testdata-legacy`
-      run: cargo make ci-job-testdata-legacy
-
-
   # ci-job-full-datagen
   full-datagen:
     runs-on: ubuntu-latest
@@ -561,7 +532,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, testdata-legacy, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:

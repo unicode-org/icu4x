@@ -39,16 +39,15 @@ export class ICU4XLocale {
 
   /**
 
-   * Write a string representation of the `LanguageIdentifier` part of {@link ICU4XLocale `ICU4XLocale`} to `write`.
+   * Returns a string representation of the `LanguageIdentifier` part of {@link ICU4XLocale `ICU4XLocale`}.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id Rust documentation for `id`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  basename(): string | never;
+  basename(): string;
 
   /**
 
-   * Write a string representation of the unicode extension to `write`
+   * Returns a string representation of the unicode extension.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.extensions Rust documentation for `extensions`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -57,12 +56,11 @@ export class ICU4XLocale {
 
   /**
 
-   * Write a string representation of {@link ICU4XLocale `ICU4XLocale`} language to `write`
+   * Returns a string representation of {@link ICU4XLocale `ICU4XLocale`} language.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id Rust documentation for `id`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  language(): string | never;
+  language(): string;
 
   /**
 
@@ -75,7 +73,7 @@ export class ICU4XLocale {
 
   /**
 
-   * Write a string representation of {@link ICU4XLocale `ICU4XLocale`} region to `write`
+   * Returns a string representation of {@link ICU4XLocale `ICU4XLocale`} region.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id Rust documentation for `id`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -93,7 +91,7 @@ export class ICU4XLocale {
 
   /**
 
-   * Write a string representation of {@link ICU4XLocale `ICU4XLocale`} script to `write`
+   * Returns a string representation of {@link ICU4XLocale `ICU4XLocale`} script.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id Rust documentation for `id`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -122,12 +120,11 @@ export class ICU4XLocale {
 
   /**
 
-   * Write a string representation of {@link ICU4XLocale `ICU4XLocale`} to `write`
+   * Returns a string representation of {@link ICU4XLocale `ICU4XLocale`}.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.write_to Rust documentation for `write_to`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  to_string(): string | never;
+  to_string(): string;
 
   /**
 

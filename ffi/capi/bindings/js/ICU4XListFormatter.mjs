@@ -70,20 +70,7 @@ export class ICU4XListFormatter {
 
   format(arg_list) {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XListFormatter_format(diplomat_receive_buffer, this.underlying, arg_list.underlying, writeable);
-        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-        if (is_ok) {
-          const ok_value = {};
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          return ok_value;
-        } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          throw new diplomatRuntime.FFIError(throw_value);
-        }
-      })();
+      return wasm.ICU4XListFormatter_format(this.underlying, arg_list.underlying, writeable);
     });
   }
 }

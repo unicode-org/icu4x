@@ -935,14 +935,13 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
             provider: &ICU4XDataProvider,
-            property_name: &DiplomatStr,
+            property_name: &str,
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
-            let name = str::from_utf8(property_name)?;
             Ok(Box::new(ICU4XCodePointSetData(call_constructor_unstable!(
                 sets::load_for_ecma262 [r => r.map(|r| r.static_to_owned())],
                 sets::load_for_ecma262_unstable,
                 provider,
-                name
+                property_name
             )?)))
         }
     }

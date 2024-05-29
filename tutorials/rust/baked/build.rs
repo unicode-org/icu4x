@@ -12,12 +12,15 @@ fn main() {
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
     DatagenDriver::new()
-        .with_locales([langid!("ru")])
+        .with_locales_and_fallback([LocaleFamily::single(langid!("ru"))], {
+            let mut options = FallbackOptions::default();
+            options.runtime_fallback_location = Some(RuntimeFallbackLocation::External);
+            options
+        })
         // These are the keys required by `PluralRules::try_new_cardinal_unstable`. Compilation will
         // discard unused keys and fail if required keys are not generated, but explicitly listing the
         // keys will speed up the datagen.
         .with_keys([icu::plurals::provider::CardinalV1Marker::KEY])
-        .with_fallback_mode(FallbackMode::RuntimeManual)
         .export(
             &DatagenProvider::new_latest_tested(),
             BakedExporter::new(mod_directory, {

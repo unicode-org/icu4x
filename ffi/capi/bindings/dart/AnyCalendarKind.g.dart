@@ -93,14 +93,9 @@ enum AnyCalendarKind {
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
-  ///
-  /// Throws [Error] on failure.
   String get bcp47 {
     final writeable = _Writeable();
-    final result = _ICU4XAnyCalendarKind_bcp47(index, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
+    _ICU4XAnyCalendarKind_bcp47(index, writeable._ffi);
     return writeable.finalize();
   }
 }
@@ -116,6 +111,6 @@ external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_locale(ffi.Pointer<ffi.O
 external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_bcp47(ffi.Pointer<ffi.Uint8> sData, int sLength);
 
 @meta.ResourceIdentifier('ICU4XAnyCalendarKind_bcp47')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
+@ffi.Native<ffi.Void Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> writeable);

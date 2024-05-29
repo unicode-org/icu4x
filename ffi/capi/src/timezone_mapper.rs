@@ -11,6 +11,7 @@ pub mod ffi {
         TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneIdMapperWithFastCanonicalization,
     };
     use tinystr::TinyAsciiStr;
+    use writeable::Writeable;
 
     /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
     ///
@@ -48,30 +49,26 @@ pub mod ffi {
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            if let Some(s) = handle.iana_bytes_to_bcp47(value) {
-                Ok(s.0.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let bcp47 = handle
+                .iana_bytes_to_bcp47(value)
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = bcp47.0.write_to(write);
+            Ok(())
         }
 
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapperBorrowed::normalize_iana, FnInStruct)]
         pub fn normalize_iana(
             &self,
-            value: &DiplomatStr,
+            value: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            // Validate the UTF-8 here because it gets echoed back to the writeable
-            let value = core::str::from_utf8(value)?;
-            if let Some(s) = handle.normalize_iana(value) {
-                Ok(s.0.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let iana = handle
+                .normalize_iana(value)
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = iana.0.write_to(write);
+            Ok(())
         }
 
         #[diplomat::rust_link(
@@ -80,18 +77,15 @@ pub mod ffi {
         )]
         pub fn canonicalize_iana(
             &self,
-            value: &DiplomatStr,
+            value: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            // Validate the UTF-8 here because it gets echoed back to the writeable
-            let value = core::str::from_utf8(value)?;
-            if let Some(s) = handle.canonicalize_iana(value) {
-                Ok(s.0.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let iana = handle
+                .canonicalize_iana(value)
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = iana.0.write_to(write);
+            Ok(())
         }
 
         #[diplomat::rust_link(
@@ -103,16 +97,13 @@ pub mod ffi {
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            let bcp47_id = TimeZoneBcp47Id(
-                TinyAsciiStr::from_bytes(value).map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
-            );
-            if let Some(s) = handle.find_canonical_iana_from_bcp47(bcp47_id) {
-                Ok(s.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let iana = TinyAsciiStr::from_bytes(value)
+                .ok()
+                .and_then(|s| handle.find_canonical_iana_from_bcp47(TimeZoneBcp47Id(s)))
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = iana.write_to(write);
+            Ok(())
         }
     }
 
@@ -171,18 +162,15 @@ pub mod ffi {
         )]
         pub fn canonicalize_iana(
             &self,
-            value: &DiplomatStr,
+            value: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            // Validate the UTF-8 here because it gets echoed back to the writeable
-            let value = core::str::from_utf8(value)?;
-            if let Some(s) = handle.canonicalize_iana(value) {
-                Ok(s.0.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let iana = handle
+                .canonicalize_iana(value)
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = iana.0.write_to(write);
+            Ok(())
         }
 
         #[diplomat::rust_link(
@@ -194,16 +182,14 @@ pub mod ffi {
             value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            let bcp47_id = TimeZoneBcp47Id(
-                TinyAsciiStr::from_bytes(value).map_err(|_| ICU4XError::TimeZoneInvalidIdError)?,
-            );
-            if let Some(s) = handle.canonical_iana_from_bcp47(bcp47_id) {
-                Ok(s.write_to(write)?)
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
-            }
+            let iana = TinyAsciiStr::from_bytes(value)
+                .ok()
+                .map(TimeZoneBcp47Id)
+                .and_then(|t| handle.canonical_iana_from_bcp47(t))
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            let _infallible = iana.write_to(write);
+            Ok(())
         }
     }
 }

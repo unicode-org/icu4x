@@ -33,9 +33,9 @@ int main(int argc, char *argv[]) {
 
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
 
-    bool success = ICU4XFixedDecimalFormatter_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormatter::format to string.\n");
+    ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
+    if (write.grow_failed) {
+        printf("format overflowed the string.\n");
         return 1;
     }
     printf("Output is %s\n", output);

@@ -113,7 +113,7 @@ class ICU4XTimeZoneFormatter {
    * 
    * See the [Rust documentation for `format_to_string`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> format_custom_time_zone_to_writeable(const ICU4XCustomTimeZone& value, W& write) const;
+  template<typename W> void format_custom_time_zone_to_writeable(const ICU4XCustomTimeZone& value, W& write) const;
 
   /**
    * Formats a [`ICU4XCustomTimeZone`] to a string.
@@ -122,7 +122,7 @@ class ICU4XTimeZoneFormatter {
    * 
    * See the [Rust documentation for `format_to_string`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
    */
-  diplomat::result<std::string, ICU4XError> format_custom_time_zone(const ICU4XCustomTimeZone& value) const;
+  std::string format_custom_time_zone(const ICU4XCustomTimeZone& value) const;
 
   /**
    * Formats a [`ICU4XCustomTimeZone`] to a string, performing no fallback
@@ -244,28 +244,15 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::format_custom_time_zone_to_writeable(const ICU4XCustomTimeZone& value, W& write) const {
+template<typename W> inline void ICU4XTimeZoneFormatter::format_custom_time_zone_to_writeable(const ICU4XCustomTimeZone& value, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_format_custom_time_zone(this->inner.get(), value.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XTimeZoneFormatter_format_custom_time_zone(this->inner.get(), value.AsFFI(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XTimeZoneFormatter::format_custom_time_zone(const ICU4XCustomTimeZone& value) const {
+inline std::string ICU4XTimeZoneFormatter::format_custom_time_zone(const ICU4XCustomTimeZone& value) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_format_custom_time_zone(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XTimeZoneFormatter_format_custom_time_zone(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::format_custom_time_zone_no_fallback_to_writeable(const ICU4XCustomTimeZone& value, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);

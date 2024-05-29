@@ -57,13 +57,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(
-            &self,
-            s: &DiplomatStr,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.normalize_utf8_to(s, write)?;
-            Ok(())
+        pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWriteable) {
+            let _infallible = self.0.normalize_utf8_to(s, write);
         }
 
         /// Check if a string is normalized
@@ -134,13 +129,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(
-            &self,
-            s: &DiplomatStr,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.normalize_utf8_to(s, write)?;
-            Ok(())
+        pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWriteable) {
+            let _infallible = self.0.normalize_utf8_to(s, write);
         }
 
         /// Check if a string is normalized

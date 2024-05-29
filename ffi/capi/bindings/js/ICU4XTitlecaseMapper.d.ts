@@ -26,7 +26,6 @@ export class ICU4XTitlecaseMapper {
    * The `v1` refers to the version of the options struct, which may change as we add more options
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment Rust documentation for `titlecase_segment`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  titlecase_segment_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string | never;
+  titlecase_segment_v1(s: string, locale: ICU4XLocale, options: ICU4XTitlecaseOptionsV1): string;
 }

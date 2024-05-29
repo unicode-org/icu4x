@@ -105,9 +105,8 @@ pub mod ffi {
             &self,
             value: &ICU4XFixedDecimal,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.format(&value.0).write_to(write)?;
-            Ok(())
+        ) {
+            let _infallible = self.0.format(&value.0).write_to(write);
         }
     }
 }

@@ -297,6 +297,8 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///
     /// # Examples
     ///
+    /// Basic usage:
+    ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
@@ -416,14 +418,62 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
         })
     }
 
-    /// Formats a date.
+    /// Formats a datetime. Calendars and fields must match at compile time.
     ///
-    /// For an example, see [`TypedNeoDateFormatter`].
-    pub fn format<T>(&self, date: &T) -> FormattedNeoDateTime
+    /// # Examples
+    ///
+    /// Mismatched calendars will not compile:
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::Date;
+    /// use icu::calendar::buddhist::Buddhist;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locid::locale;
+    ///
+    /// let formatter =
+    ///     TypedNeoFormatter::<Buddhist, NeoYearMonthDayMarker>::try_new(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Long,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // type mismatch resolving `<Gregorian as AsCalendar>::Calendar == Buddhist`
+    /// formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap());
+    /// ```
+    ///
+    /// A time cannot be passed into the formatter when a date is expected:
+    ///
+    /// ```compile_fail
+    /// use icu::calendar::Time;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locid::locale;
+    ///
+    /// let formatter =
+    ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Long,
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // the trait `for<'a> From<&'a icu::icu_calendar::Time>` is not implemented
+    /// // for `NeoDateInputFields<icu::icu_calendar::Gregorian>`
+    /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// ```
+    pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
-        T: DateInput<Calendar = C>,
+        for<'a> &'a T:
+            Into<R::DateInputMarker> + Into<R::WeekInputMarker> + Into<R::TimeInputMarker>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_date(date);
+        let datetime = ExtractedDateTimeInput::extract_from_neo_input(
+            Into::<R::DateInputMarker>::into(datetime).into(),
+            Into::<R::WeekInputMarker>::into(datetime).into(),
+            Into::<R::TimeInputMarker>::into(datetime).into(),
+        );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -470,7 +520,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, Date};
+    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -486,7 +536,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     ///         .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
-    ///     Date::try_new_iso_date(2024, 5, 8).expect("Failed to construct Date.");
+    ///     DateTime::try_new_iso_datetime(2024, 5, 8, 0, 0, 0).expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_try_writeable_eq!(
@@ -748,25 +798,26 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
         })
     }
 
-    /// Formats a date, checking that the calendar system is correct.
+    /// Formats a datetime, checking that the calendar system is correct.
     ///
-    /// If the date is in neither ISO-8601 nor the same calendar system as the formatter,
+    /// If the datetime is in neither ISO-8601 nor the same calendar system as the formatter,
     /// an error is returned.
     ///
     /// For an example, see [`NeoDateFormatter`].
     pub fn format<T>(
         &self,
-        date: &T,
+        datetime: &T,
     ) -> Result<FormattedNeoDateTime, crate::MismatchedCalendarError>
     where
-        T: DateInput<Calendar = AnyCalendar>,
+        T: DateTimeInput<Calendar = AnyCalendar>,
     {
-        let datetime =
-            if let Some(converted) = crate::calendar::convert_if_necessary(&self.calendar, date)? {
-                ExtractedDateTimeInput::extract_from_date(&converted)
-            } else {
-                ExtractedDateTimeInput::extract_from_date(date)
-            };
+        let datetime = if let Some(converted) =
+            crate::calendar::convert_datetime_if_necessary(&self.calendar, datetime)?
+        {
+            ExtractedDateTimeInput::extract_from(&converted)
+        } else {
+            ExtractedDateTimeInput::extract_from(datetime)
+        };
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,

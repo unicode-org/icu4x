@@ -124,13 +124,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(*, disable)]
-        pub fn format(
-            &self,
-            list: &ICU4XList,
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.format(list.0.iter()).write_to(write)?;
-            Ok(())
+        pub fn format(&self, list: &ICU4XList, write: &mut DiplomatWriteable) {
+            let _infallible = self.0.format(list.0.iter()).write_to(write);
         }
 
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
@@ -138,13 +133,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::skip_if_ast]
-        pub fn format_valid_utf8(
-            &self,
-            list: &[&str],
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.format(list.iter()).write_to(write)?;
-            Ok(())
+        pub fn format_valid_utf8(&self, list: &[&str], write: &mut DiplomatWriteable) {
+            let _infallible = self.0.format(list.iter()).write_to(write);
         }
 
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
@@ -152,20 +142,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::skip_if_ast]
-        pub fn format_utf8(
-            &self,
-            list: &[&DiplomatStr],
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0
+        pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWriteable) {
+            let _infallible = self
+                .0
                 .format(
                     list.iter()
                         .copied()
                         .map(crate::utf::PotentiallyInvalidUtf8)
                         .map(crate::utf::LossyWrap),
                 )
-                .write_to(write)?;
-            Ok(())
+                .write_to(write);
         }
 
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
@@ -173,20 +159,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(dart, rename = "format")]
         #[diplomat::skip_if_ast]
-        pub fn format_utf16(
-            &self,
-            list: &[&DiplomatStr16],
-            write: &mut DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0
+        pub fn format_utf16(&self, list: &[&DiplomatStr16], write: &mut DiplomatWriteable) {
+            let _infallible = self
+                .0
                 .format(
                     list.iter()
                         .copied()
                         .map(crate::utf::PotentiallyInvalidUtf16)
                         .map(crate::utf::LossyWrap),
                 )
-                .write_to(write)?;
-            Ok(())
+                .write_to(write);
         }
     }
 }

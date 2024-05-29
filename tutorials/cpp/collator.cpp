@@ -26,7 +26,7 @@ int main() {
   ICU4XOrdering actual = collator.compare(manna, manana);
 
   if (actual != ICU4XOrdering::Greater) {
-    std::cout << "Expected manna > mañana for locale " << locale.to_string().ok().value() << std::endl;
+    std::cout << "Expected manna > mañana for locale " << locale.to_string() << std::endl;
     return 1;
   }
 
@@ -35,7 +35,7 @@ int main() {
   actual = collator.compare(manna, manana);
 
   if (actual != ICU4XOrdering::Less) {
-    std::cout << "Expected manna < mañana for locale " << locale.to_string().ok().value()<< std::endl;
+    std::cout << "Expected manna < mañana for locale " << locale.to_string() << std::endl;
     return 1;
   }
 
@@ -50,7 +50,7 @@ int main() {
   actual = collator.compare(as, graveAs);
 
   if (actual != ICU4XOrdering::Equal) {
-    std::cout << "Expected as = às for primary strength, locale " << locale.to_string().ok().value()<< std::endl;
+    std::cout << "Expected as = às for primary strength, locale " << locale.to_string() << std::endl;
     return 1;
   }
 
@@ -59,7 +59,7 @@ int main() {
   actual = collator.compare(as, graveAs);
 
   if (actual != ICU4XOrdering::Less) {
-    std::cout << "Expected as < às for secondary strength, locale " << locale.to_string().ok().value()<< std::endl;
+    std::cout << "Expected as < às for secondary strength, locale " << locale.to_string() << std::endl;
     return 1;
   }
 

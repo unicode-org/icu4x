@@ -45,44 +45,35 @@ pub mod ffi {
             Box::new(ICU4XLocale(self.0.clone()))
         }
 
-        /// Write a string representation of the `LanguageIdentifier` part of
-        /// [`ICU4XLocale`] to `write`.
+        /// Returns a string representation of the `LanguageIdentifier` part of
+        /// [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn basename(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.id.write_to(write)?;
-            Ok(())
+        pub fn basename(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+            let _infallible = self.0.id.write_to(write);
         }
 
-        /// Write a string representation of the unicode extension to `write`
+        /// Returns a string representation of the unicode extension.
         #[diplomat::rust_link(icu::locid::Locale::extensions, StructField)]
         pub fn get_unicode_extension(
             &self,
             bytes: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0
-                .extensions
-                .unicode
-                .keywords
-                .get(&Key::try_from_bytes(bytes)?)
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)?
-                .write_to(write)?;
-            Ok(())
+            Key::try_from_bytes(bytes)
+                .ok()
+                .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
+                .map(|v| {
+                    let _infallible = v.write_to(write);
+                })
+                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
-        /// Write a string representation of [`ICU4XLocale`] language to `write`
+        /// Returns a string representation of [`ICU4XLocale`] language.
         #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn language(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.id.language.write_to(write)?;
-            Ok(())
+        pub fn language(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+            let _infallible = self.0.id.language.write_to(write);
         }
 
         /// Set the language part of the [`ICU4XLocale`].
@@ -97,19 +88,20 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Write a string representation of [`ICU4XLocale`] region to `write`
+        /// Returns a string representation of [`ICU4XLocale`] region.
         #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
         pub fn region(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            if let Some(region) = self.0.id.region {
-                region.write_to(write)?;
-                Ok(())
-            } else {
-                Err(ICU4XError::LocaleUndefinedSubtagError)
-            }
+            self.0
+                .id
+                .region
+                .map(|region| {
+                    let _infallible = region.write_to(write);
+                })
+                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
         /// Set the region part of the [`ICU4XLocale`].
@@ -124,19 +116,20 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Write a string representation of [`ICU4XLocale`] script to `write`
+        /// Returns a string representation of [`ICU4XLocale`] script.
         #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
         pub fn script(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            if let Some(script) = self.0.id.script {
-                script.write_to(write)?;
-                Ok(())
-            } else {
-                Err(ICU4XError::LocaleUndefinedSubtagError)
-            }
+            self.0
+                .id
+                .script
+                .map(|script| {
+                    let _infallible = script.write_to(write);
+                })
+                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
@@ -159,18 +152,14 @@ pub mod ffi {
             bytes: &DiplomatStr,
             write: &mut DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            Locale::canonicalize(bytes)?.write_to(write)?;
+            let _infallible = Locale::canonicalize(bytes)?.write_to(write);
             Ok(())
         }
-        /// Write a string representation of [`ICU4XLocale`] to `write`
+        /// Returns a string representation of [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::write_to, FnInStruct)]
         #[diplomat::attr(supports = stringifiers, stringifier)]
-        pub fn to_string(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.write_to(write)?;
-            Ok(())
+        pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+            let _infallible = self.0.write_to(write);
         }
 
         #[diplomat::rust_link(icu::locid::Locale::normalizing_eq, FnInStruct)]

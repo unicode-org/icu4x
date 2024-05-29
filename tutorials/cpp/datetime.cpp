@@ -22,13 +22,13 @@
 int main() {
     ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create_from_string("es").ok().value();
-    std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
+    std::cout << "Running test for locale " << locale.to_string() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
 
     ICU4XIsoDateTime date = ICU4XIsoDateTime::create(2022, 07, 11, 13, 06, 42, 0).ok().value();
 
     ICU4XTimeFormatter tf = ICU4XTimeFormatter::create_with_length(dp, locale, ICU4XTimeLength::Short).ok().value();
-    std::string out = tf.format_iso_datetime(date).ok().value();
+    std::string out = tf.format_iso_datetime(date);
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "13:06") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -36,7 +36,7 @@ int main() {
     }
 
     ICU4XGregorianDateFormatter df = ICU4XGregorianDateFormatter::create_with_length(dp, locale, ICU4XDateLength::Full).ok().value();
-    out = df.format_iso_datetime(date).ok().value();
+    out = df.format_iso_datetime(date);
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "lunes, 11 de julio de 2022") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -44,7 +44,7 @@ int main() {
     }
 
     ICU4XGregorianDateTimeFormatter dtf = ICU4XGregorianDateTimeFormatter::create_with_lengths(dp, locale, ICU4XDateLength::Medium, ICU4XTimeLength::Short).ok().value();
-    out = dtf.format_iso_datetime(date).ok().value();
+    out = dtf.format_iso_datetime(date);
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 jul 2022, 13:06") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -113,7 +113,7 @@ int main() {
     }
 
     ICU4XGregorianZonedDateTimeFormatter gzdtf = ICU4XGregorianZonedDateTimeFormatter::create_with_lengths(dp, locale, ICU4XDateLength::Full, ICU4XTimeLength::Full).ok().value();
-    out = gzdtf.format_iso_datetime_with_custom_time_zone(date, time_zone).ok().value();
+    out = gzdtf.format_iso_datetime_with_custom_time_zone(date, time_zone);
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "Monday, July 11, 2022, 1:06:42\u202fPM Central Daylight Time") {
         std::cout << "Output does not match expected output" << std::endl;
