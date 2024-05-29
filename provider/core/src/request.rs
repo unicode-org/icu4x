@@ -52,6 +52,9 @@ impl fmt::Display for DataRequest<'_> {
 pub struct DataRequestMetadata {
     /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
     pub silent: bool,
+    /// Whether to drop the payload from the [`DataResponse`](crate::DataResponse). This can be used
+    /// for exploratory queries where the returned data is not of interest.
+    pub drop_payload: bool,
 }
 
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
@@ -243,6 +246,22 @@ impl FromStr for DataLocale {
                 .with_display_context(&e)
         })?;
         Ok(DataLocale::from(locale))
+    }
+}
+
+impl PartialOrd for DataLocale {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for DataLocale {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.langid
+            .as_tuple()
+            .cmp(&other.langid.as_tuple())
+            .then_with(|| self.keywords.cmp(&other.keywords))
+            .then_with(|| self.aux.cmp(&other.aux))
     }
 }
 
@@ -829,6 +848,22 @@ impl Hash for AuxiliaryKeysInner {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl PartialOrd for AuxiliaryKeysInner {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.deref().partial_cmp(other.deref())
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl Ord for AuxiliaryKeysInner {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.deref().cmp(other.deref())
     }
 }
 
