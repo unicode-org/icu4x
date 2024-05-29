@@ -201,6 +201,99 @@ impl From<NeverFields> for Option<NeoTimeInputFields> {
     }
 }
 
+// pub struct TypedNeoFormatter<D, T> where Target: TypedNeoFormatterTrait<D, T> {}
+
+// pub trait TypedNeoFormatterTrait<D, T> {}
+
+pub trait HasDateComponents {
+    const COMPONENTS: NeoDateComponents;
+}
+
+pub trait HasDayComponents {
+    const COMPONENTS: NeoDayComponents;
+}
+
+pub trait HasTimeComponents {
+    const COMPONENTS: NeoTimeComponents;
+}
+
+pub trait DateTypes {
+    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+}
+
+pub trait TimeTypes {
+    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+}
+
+#[derive(Debug)]
+pub struct NeoNeverMarker;
+
+impl DateTypes for NeoNeverMarker {
+    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+}
+
+impl TimeTypes for NeoNeverMarker {
+    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+}
+
+pub trait HasNeoComponents {
+    const COMPONENTS: NeoComponents;
+    type D: DateTypes;
+    type T: TimeTypes;
+}
+
+struct TypedNeoFormatter<DTZ: HasNeoComponents> {
+    _marker: PhantomData<DTZ>,
+}
+
+
+#[derive(Debug)]
+pub struct TypedNeoComponents<D, T> {
+    _d: PhantomData<D>,
+    _t: PhantomData<T>,
+}
+
+// type MonthDayHour = TypedNeoComponents<MonthDay, Hour>;
+
+impl<D> HasNeoComponents for TypedNeoComponents<D, NeoNeverMarker> where D: HasDateComponents + DateTypes {
+    const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
+    type D = D;
+    type T = NeoNeverMarker;
+}
+
+impl<T> HasNeoComponents for TypedNeoComponents<NeoNeverMarker, T> where T: HasTimeComponents + TimeTypes {
+    const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
+    type D = NeoNeverMarker;
+    type T = T;
+}
+
+impl<D, T> HasNeoComponents for TypedNeoComponents<D, T> where D: HasDayComponents + DateTypes, T: HasTimeComponents + TimeTypes {
+    const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
+    type D = D;
+    type T = T;
+}
+
+
+// pub struct GenericDTMarker<D, T, Z> {}
+
+// impl TypedNeoFormatterTrait for GenericDTMarker<D: DayMarker, T: TimeMarker, Z: ZoneMarker> {
+
+//     const COMPONENTS  (DateTime(D::COMPONENTS, T::COMPONENTS), Z...)
+
+
+// }
+
+// TypedNeoFormatter<Gregorian, DayMonthTime>
+
+// or 
+
+// struct TypedNeoFormatter<Calendar, D, T, Z> where GenericDTMarker<D, T, Z>: TypedNeoFormatterTrait
+
+
 /// A collection of types and constants for specific variants of [`TypedNeoFormatter`].
 ///
 /// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
