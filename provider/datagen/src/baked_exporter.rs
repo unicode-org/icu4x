@@ -30,7 +30,6 @@
 //!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
 //!         options
 //!     })
-//!     .with_fallback_mode(FallbackMode::Hybrid)
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
