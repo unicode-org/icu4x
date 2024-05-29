@@ -64,58 +64,53 @@ export class ICU4XCustomTimeZone {
 
    * Returns the value of the `gmt_offset` field as offset seconds.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds Rust documentation for `offset_seconds`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  gmt_offset_seconds(): i32 | never;
+  gmt_offset_seconds(): i32 | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field is positive.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive Rust documentation for `is_positive`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_gmt_offset_positive(): boolean | never;
+  is_gmt_offset_positive(): boolean | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field is zero.
 
-   * Errors if the `gmt_offset` field is empty (which is not the same as zero).
+   * Returns null if the `gmt_offset` field is empty (which is not the same as zero).
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero Rust documentation for `is_zero`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_gmt_offset_zero(): boolean | never;
+  is_gmt_offset_zero(): boolean | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field has nonzero minutes.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes Rust documentation for `has_minutes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  gmt_offset_has_minutes(): boolean | never;
+  gmt_offset_has_minutes(): boolean | undefined;
 
   /**
 
    * Returns whether the `gmt_offset` field has nonzero seconds.
 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds Rust documentation for `has_seconds`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  gmt_offset_has_seconds(): boolean | never;
+  gmt_offset_has_seconds(): boolean | undefined;
 
   /**
 

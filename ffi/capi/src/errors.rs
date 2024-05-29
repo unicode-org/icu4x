@@ -134,7 +134,6 @@ pub mod ffi {
         // timezone errors
         TimeZoneOffsetOutOfBoundsError = 0xA_00,
         TimeZoneInvalidOffsetError = 0xA_01,
-        TimeZoneMissingInputError = 0xA_02,
         TimeZoneInvalidIdError = 0xA_03,
 
         // normalizer errors

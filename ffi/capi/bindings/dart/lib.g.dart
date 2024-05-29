@@ -545,16 +545,13 @@ final class _ResultBoolInt32 extends ffi.Struct {
   external bool isOk;
 }
 
-final class _ResultInt32Int32Union extends ffi.Union {
-  @ffi.Int32()
-  external int ok;
-
-  @ffi.Int32()
-  external int err;
+final class _ResultBoolVoidUnion extends ffi.Union {
+  @ffi.Bool()
+  external bool ok;
 }
 
-final class _ResultInt32Int32 extends ffi.Struct {
-  external _ResultInt32Int32Union union;
+final class _ResultBoolVoid extends ffi.Struct {
+  external _ResultBoolVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;

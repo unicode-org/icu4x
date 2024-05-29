@@ -77,49 +77,49 @@ class ICU4XCustomTimeZone {
   /**
    * Returns the value of the `gmt_offset` field as offset seconds.
    * 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
    * 
    * See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
    */
-  diplomat::result<int32_t, ICU4XError> gmt_offset_seconds() const;
+  std::optional<int32_t> gmt_offset_seconds() const;
 
   /**
    * Returns whether the `gmt_offset` field is positive.
    * 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
    * 
    * See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
    */
-  diplomat::result<bool, ICU4XError> is_gmt_offset_positive() const;
+  std::optional<bool> is_gmt_offset_positive() const;
 
   /**
    * Returns whether the `gmt_offset` field is zero.
    * 
-   * Errors if the `gmt_offset` field is empty (which is not the same as zero).
+   * Returns null if the `gmt_offset` field is empty (which is not the same as zero).
    * 
    * See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
    */
-  diplomat::result<bool, ICU4XError> is_gmt_offset_zero() const;
+  std::optional<bool> is_gmt_offset_zero() const;
 
   /**
    * Returns whether the `gmt_offset` field has nonzero minutes.
    * 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
    * 
    * See the [Rust documentation for `has_minutes`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
    */
-  diplomat::result<bool, ICU4XError> gmt_offset_has_minutes() const;
+  std::optional<bool> gmt_offset_has_minutes() const;
 
   /**
    * Returns whether the `gmt_offset` field has nonzero seconds.
    * 
-   * Errors if the `gmt_offset` field is empty.
+   * Returns null if the `gmt_offset` field is empty.
    * 
    * See the [Rust documentation for `has_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
    */
-  diplomat::result<bool, ICU4XError> gmt_offset_has_seconds() const;
+  std::optional<bool> gmt_offset_has_seconds() const;
 
   /**
    * Sets the `time_zone_id` field from a BCP-47 string.
@@ -359,53 +359,53 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 inline void ICU4XCustomTimeZone::clear_gmt_offset() {
   capi::ICU4XCustomTimeZone_clear_gmt_offset(this->inner.get());
 }
-inline diplomat::result<int32_t, ICU4XError> ICU4XCustomTimeZone::gmt_offset_seconds() const {
+inline std::optional<int32_t> ICU4XCustomTimeZone::gmt_offset_seconds() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_gmt_offset_seconds(this->inner.get());
-  diplomat::result<int32_t, ICU4XError> diplomat_result_out_value;
+  std::optional<int32_t> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<int32_t>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<int32_t>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::is_gmt_offset_positive() const {
+inline std::optional<bool> ICU4XCustomTimeZone::is_gmt_offset_positive() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_is_gmt_offset_positive(this->inner.get());
-  diplomat::result<bool, ICU4XError> diplomat_result_out_value;
+  std::optional<bool> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<bool>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<bool>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::is_gmt_offset_zero() const {
+inline std::optional<bool> ICU4XCustomTimeZone::is_gmt_offset_zero() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_is_gmt_offset_zero(this->inner.get());
-  diplomat::result<bool, ICU4XError> diplomat_result_out_value;
+  std::optional<bool> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<bool>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<bool>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::gmt_offset_has_minutes() const {
+inline std::optional<bool> ICU4XCustomTimeZone::gmt_offset_has_minutes() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_gmt_offset_has_minutes(this->inner.get());
-  diplomat::result<bool, ICU4XError> diplomat_result_out_value;
+  std::optional<bool> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<bool>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<bool>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::gmt_offset_has_seconds() const {
+inline std::optional<bool> ICU4XCustomTimeZone::gmt_offset_has_seconds() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_gmt_offset_has_seconds(this->inner.get());
-  diplomat::result<bool, ICU4XError> diplomat_result_out_value;
+  std::optional<bool> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<bool>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<bool>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }

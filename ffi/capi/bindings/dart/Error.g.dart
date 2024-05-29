@@ -108,8 +108,6 @@ enum Error {
 
   timeZoneInvalidOffsetError,
 
-  timeZoneMissingInputError,
-
   timeZoneInvalidIdError,
 
   normalizerFutureExtensionError,
@@ -214,8 +212,6 @@ enum Error {
         return 2560;
       case timeZoneInvalidOffsetError:
         return 2561;
-      case timeZoneMissingInputError:
-        return 2562;
       case timeZoneInvalidIdError:
         return 2563;
       case normalizerFutureExtensionError:

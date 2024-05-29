@@ -73,62 +73,57 @@ pub mod ffi {
 
         /// Returns the value of the `gmt_offset` field as offset seconds.
         ///
-        /// Errors if the `gmt_offset` field is empty.
+        /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn gmt_offset_seconds(&self) -> Result<i32, ICU4XError> {
+        pub fn gmt_offset_seconds(&self) -> Option<i32> {
             self.0
                 .gmt_offset
-                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .map(GmtOffset::offset_seconds)
         }
 
         /// Returns whether the `gmt_offset` field is positive.
         ///
-        /// Errors if the `gmt_offset` field is empty.
+        /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_positive, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn is_gmt_offset_positive(&self) -> Result<bool, ICU4XError> {
+        pub fn is_gmt_offset_positive(&self) -> Option<bool> {
             self.0
                 .gmt_offset
-                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .map(GmtOffset::is_positive)
         }
 
         /// Returns whether the `gmt_offset` field is zero.
         ///
-        /// Errors if the `gmt_offset` field is empty (which is not the same as zero).
+        /// Returns null if the `gmt_offset` field is empty (which is not the same as zero).
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_zero, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn is_gmt_offset_zero(&self) -> Result<bool, ICU4XError> {
+        pub fn is_gmt_offset_zero(&self) -> Option<bool> {
             self.0
                 .gmt_offset
-                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .map(GmtOffset::is_zero)
         }
 
         /// Returns whether the `gmt_offset` field has nonzero minutes.
         ///
-        /// Errors if the `gmt_offset` field is empty.
+        /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_minutes, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn gmt_offset_has_minutes(&self) -> Result<bool, ICU4XError> {
+        pub fn gmt_offset_has_minutes(&self) -> Option<bool> {
             self.0
                 .gmt_offset
-                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .map(GmtOffset::has_minutes)
         }
 
         /// Returns whether the `gmt_offset` field has nonzero seconds.
         ///
-        /// Errors if the `gmt_offset` field is empty.
+        /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_seconds, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn gmt_offset_has_seconds(&self) -> Result<bool, ICU4XError> {
+        pub fn gmt_offset_has_seconds(&self) -> Option<bool> {
             self.0
                 .gmt_offset
-                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .map(GmtOffset::has_seconds)
         }
 

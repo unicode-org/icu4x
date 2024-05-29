@@ -82,77 +82,67 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   /// Returns the value of the `gmt_offset` field as offset seconds.
   ///
-  /// Errors if the `gmt_offset` field is empty.
+  /// Returns null if the `gmt_offset` field is empty.
   ///
   /// See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
-  ///
-  /// Throws [Error] on failure.
-  int get gmtOffsetSeconds {
+  int? get gmtOffsetSeconds {
     final result = _ICU4XCustomTimeZone_gmt_offset_seconds(_ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
     return result.union.ok;
   }
 
   /// Returns whether the `gmt_offset` field is positive.
   ///
-  /// Errors if the `gmt_offset` field is empty.
+  /// Returns null if the `gmt_offset` field is empty.
   ///
   /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
-  ///
-  /// Throws [Error] on failure.
-  bool get isGmtOffsetPositive {
+  bool? get isGmtOffsetPositive {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_positive(_ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
     return result.union.ok;
   }
 
   /// Returns whether the `gmt_offset` field is zero.
   ///
-  /// Errors if the `gmt_offset` field is empty (which is not the same as zero).
+  /// Returns null if the `gmt_offset` field is empty (which is not the same as zero).
   ///
   /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
-  ///
-  /// Throws [Error] on failure.
-  bool get isGmtOffsetZero {
+  bool? get isGmtOffsetZero {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_zero(_ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
     return result.union.ok;
   }
 
   /// Returns whether the `gmt_offset` field has nonzero minutes.
   ///
-  /// Errors if the `gmt_offset` field is empty.
+  /// Returns null if the `gmt_offset` field is empty.
   ///
   /// See the [Rust documentation for `has_minutes`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
-  ///
-  /// Throws [Error] on failure.
-  bool get gmtOffsetHasMinutes {
+  bool? get gmtOffsetHasMinutes {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_minutes(_ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
     return result.union.ok;
   }
 
   /// Returns whether the `gmt_offset` field has nonzero seconds.
   ///
-  /// Errors if the `gmt_offset` field is empty.
+  /// Returns null if the `gmt_offset` field is empty.
   ///
   /// See the [Rust documentation for `has_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
-  ///
-  /// Throws [Error] on failure.
-  bool get gmtOffsetHasSeconds {
+  bool? get gmtOffsetHasSeconds {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_seconds(_ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      return null;
     }
     return result.union.ok;
   }
@@ -429,29 +419,29 @@ external _ResultVoidInt32 _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ffi.Po
 external void _ICU4XCustomTimeZone_clear_gmt_offset(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_gmt_offset_seconds')
-@ffi.Native<_ResultInt32Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_gmt_offset_seconds')
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_gmt_offset_seconds')
 // ignore: non_constant_identifier_names
-external _ResultInt32Int32 _ICU4XCustomTimeZone_gmt_offset_seconds(ffi.Pointer<ffi.Opaque> self);
+external _ResultInt32Void _ICU4XCustomTimeZone_gmt_offset_seconds(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_is_gmt_offset_positive')
-@ffi.Native<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_is_gmt_offset_positive')
+@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_is_gmt_offset_positive')
 // ignore: non_constant_identifier_names
-external _ResultBoolInt32 _ICU4XCustomTimeZone_is_gmt_offset_positive(ffi.Pointer<ffi.Opaque> self);
+external _ResultBoolVoid _ICU4XCustomTimeZone_is_gmt_offset_positive(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_is_gmt_offset_zero')
-@ffi.Native<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_is_gmt_offset_zero')
+@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_is_gmt_offset_zero')
 // ignore: non_constant_identifier_names
-external _ResultBoolInt32 _ICU4XCustomTimeZone_is_gmt_offset_zero(ffi.Pointer<ffi.Opaque> self);
+external _ResultBoolVoid _ICU4XCustomTimeZone_is_gmt_offset_zero(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_gmt_offset_has_minutes')
-@ffi.Native<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_gmt_offset_has_minutes')
+@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_gmt_offset_has_minutes')
 // ignore: non_constant_identifier_names
-external _ResultBoolInt32 _ICU4XCustomTimeZone_gmt_offset_has_minutes(ffi.Pointer<ffi.Opaque> self);
+external _ResultBoolVoid _ICU4XCustomTimeZone_gmt_offset_has_minutes(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_gmt_offset_has_seconds')
-@ffi.Native<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_gmt_offset_has_seconds')
+@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_gmt_offset_has_seconds')
 // ignore: non_constant_identifier_names
-external _ResultBoolInt32 _ICU4XCustomTimeZone_gmt_offset_has_seconds(ffi.Pointer<ffi.Opaque> self);
+external _ResultBoolVoid _ICU4XCustomTimeZone_gmt_offset_has_seconds(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('ICU4XCustomTimeZone_try_set_time_zone_id')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCustomTimeZone_try_set_time_zone_id')

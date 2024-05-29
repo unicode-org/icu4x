@@ -16,10 +16,11 @@ typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
 #endif
 #include "diplomat_result_box_ICU4XCustomTimeZone_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
-#include "diplomat_result_int32_t_ICU4XError.h"
-#include "diplomat_result_bool_ICU4XError.h"
+#include "diplomat_result_int32_t_void.h"
+#include "diplomat_result_bool_void.h"
 #include "ICU4XIanaToBcp47Mapper.h"
 #include "ICU4XTimeZoneIdMapper.h"
+#include "diplomat_result_bool_ICU4XError.h"
 #include "ICU4XMetazoneCalculator.h"
 #include "ICU4XIsoDateTime.h"
 #ifdef __cplusplus
@@ -37,15 +38,15 @@ diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_gmt_offset_seconds(I
 
 void ICU4XCustomTimeZone_clear_gmt_offset(ICU4XCustomTimeZone* self);
 
-diplomat_result_int32_t_ICU4XError ICU4XCustomTimeZone_gmt_offset_seconds(const ICU4XCustomTimeZone* self);
+diplomat_result_int32_t_void ICU4XCustomTimeZone_gmt_offset_seconds(const ICU4XCustomTimeZone* self);
 
-diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_is_gmt_offset_positive(const ICU4XCustomTimeZone* self);
+diplomat_result_bool_void ICU4XCustomTimeZone_is_gmt_offset_positive(const ICU4XCustomTimeZone* self);
 
-diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_is_gmt_offset_zero(const ICU4XCustomTimeZone* self);
+diplomat_result_bool_void ICU4XCustomTimeZone_is_gmt_offset_zero(const ICU4XCustomTimeZone* self);
 
-diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_gmt_offset_has_minutes(const ICU4XCustomTimeZone* self);
+diplomat_result_bool_void ICU4XCustomTimeZone_gmt_offset_has_minutes(const ICU4XCustomTimeZone* self);
 
-diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_gmt_offset_has_seconds(const ICU4XCustomTimeZone* self);
+diplomat_result_bool_void ICU4XCustomTimeZone_gmt_offset_has_seconds(const ICU4XCustomTimeZone* self);
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_time_zone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 

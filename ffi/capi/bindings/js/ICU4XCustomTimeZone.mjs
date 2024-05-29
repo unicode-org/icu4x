@@ -70,83 +70,73 @@ export class ICU4XCustomTimeZone {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCustomTimeZone_gmt_offset_seconds(diplomat_receive_buffer, this.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = (new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0];
+      if (!is_ok) {
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
+        return;
       }
+      const value = (new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0];
+      wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+      return value;
     })();
   }
 
   is_gmt_offset_positive() {
     return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
       wasm.ICU4XCustomTimeZone_is_gmt_offset_positive(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 1);
+      if (!is_ok) {
+        wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+        return;
       }
+      const value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
+      wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+      return value;
     })();
   }
 
   is_gmt_offset_zero() {
     return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
       wasm.ICU4XCustomTimeZone_is_gmt_offset_zero(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 1);
+      if (!is_ok) {
+        wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+        return;
       }
+      const value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
+      wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+      return value;
     })();
   }
 
   gmt_offset_has_minutes() {
     return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
       wasm.ICU4XCustomTimeZone_gmt_offset_has_minutes(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 1);
+      if (!is_ok) {
+        wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+        return;
       }
+      const value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
+      wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+      return value;
     })();
   }
 
   gmt_offset_has_seconds() {
     return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(2, 1);
       wasm.ICU4XCustomTimeZone_gmt_offset_has_seconds(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 1);
+      if (!is_ok) {
+        wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+        return;
       }
+      const value = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0] == 1;
+      wasm.diplomat_free(diplomat_receive_buffer, 2, 1);
+      return value;
     })();
   }
 
