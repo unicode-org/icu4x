@@ -8,16 +8,22 @@ use core::marker::PhantomData;
 
 use crate::{format::neo::*, neo::_internal::*, neo_skeleton::*, provider::neo::*, CldrCalendar};
 use icu_calendar::{
-    types::{
+    any_calendar::IntoAnyCalendar, types::{
         DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
         IsoSecond, IsoWeekday, NanoSecond,
-    },
-    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Time,
+    }, AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time
 };
 use icu_provider::{prelude::*, NeverMarker};
 
 mod private {
     pub trait Sealed {}
+}
+
+/// A type that can be converted from another across calendar systems.
+pub trait FromInCalendar<T> {
+    /// Projects the given value into the given calendar
+    /// and returns the result as an instance of [`Self`].
+    fn from_in_calendar(value: T, calendar: &AnyCalendar) -> Self;
 }
 
 /// An input associated with a specific calendar.
@@ -30,7 +36,7 @@ pub struct NeoTypedInput<C> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoTypedInput<C> {
     fn from(_: &Date<A>) -> Self {
         Self {
-            _calendar: PhantomData
+            _calendar: PhantomData,
         }
     }
 }
@@ -38,7 +44,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoTypedInput<
 impl<C> From<&Time> for NeoTypedInput<C> {
     fn from(_: &Time) -> Self {
         Self {
-            _calendar: PhantomData
+            _calendar: PhantomData,
         }
     }
 }
@@ -46,7 +52,7 @@ impl<C> From<&Time> for NeoTypedInput<C> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoTypedInput<C> {
     fn from(_: &DateTime<A>) -> Self {
         Self {
-            _calendar: PhantomData
+            _calendar: PhantomData,
         }
     }
 }
@@ -101,6 +107,12 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFi
     }
 }
 
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&Date<A>> for NeoDateInputFields {
+    fn from_in_calendar(value: &Date<A>, calendar: &AnyCalendar) -> Self {
+        Self::from(&value.to_any().to_calendar(Ref(calendar)))
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInputFields {
     fn from(value: &DateTime<A>) -> Self {
         Self {
@@ -110,6 +122,12 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
             day_of_week: value.date.day_of_week(),
             any_calendar_kind: value.date.calendar().any_calendar_kind(),
         }
+    }
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&DateTime<A>> for NeoDateInputFields {
+    fn from_in_calendar(value: &DateTime<A>, calendar: &AnyCalendar) -> Self {
+        Self::from(&value.to_any().to_calendar(Ref(calendar)))
     }
 }
 
@@ -136,11 +154,23 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoWeekInputFi
     }
 }
 
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&Date<A>> for NeoWeekInputFields {
+    fn from_in_calendar(value: &Date<A>, calendar: &AnyCalendar) -> Self {
+        Self::from(&value.to_any().to_calendar(Ref(calendar)))
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoWeekInputFields {
     fn from(value: &DateTime<A>) -> Self {
         Self {
             day_of_year_info: value.date.day_of_year_info(),
         }
+    }
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&DateTime<A>> for NeoWeekInputFields {
+    fn from_in_calendar(value: &DateTime<A>, calendar: &AnyCalendar) -> Self {
+        Self::from(&value.to_any().to_calendar(Ref(calendar)))
     }
 }
 
@@ -210,6 +240,13 @@ impl<T> From<&T> for NeverFields {
     }
 }
 
+impl<T> FromInCalendar<&T> for NeverFields {
+    #[inline]
+    fn from_in_calendar(_: &T, _: &AnyCalendar) -> Self {
+        NeverFields
+    }
+}
+
 impl<C> From<NeverFields> for Option<NeoTypedInput<C>> {
     #[inline]
     fn from(_: NeverFields) -> Self {
@@ -224,9 +261,23 @@ impl From<NeverFields> for Option<NeoDateInputFields> {
     }
 }
 
+impl FromInCalendar<NeverFields> for Option<NeoDateInputFields> {
+    #[inline]
+    fn from_in_calendar(_: NeverFields, _: &AnyCalendar) -> Self {
+        None
+    }
+}
+
 impl From<NeverFields> for Option<NeoWeekInputFields> {
     #[inline]
     fn from(_: NeverFields) -> Self {
+        None
+    }
+}
+
+impl FromInCalendar<NeverFields> for Option<NeoWeekInputFields> {
+    #[inline]
+    fn from_in_calendar(_: NeverFields, _: &AnyCalendar) -> Self {
         None
     }
 }

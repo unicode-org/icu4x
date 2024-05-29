@@ -12,7 +12,8 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_marker::{
-    DateMarkers, NeoFormatterMarker, TimeMarkers, TypedDateMarkers, TypedNeoFormatterMarker,
+    DateMarkers, FromInCalendar, NeoFormatterMarker, TimeMarkers, TypedDateMarkers,
+    TypedNeoFormatterMarker,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::NeoSkeletonLength;
@@ -27,7 +28,7 @@ use icu_calendar::provider::{
     IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV2Marker,
 };
-use icu_calendar::{AnyCalendar, Iso};
+use icu_calendar::AnyCalendar;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use writeable::TryWriteable;
@@ -470,15 +471,15 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
         T: ?Sized,
-        for<'a> &'a T: Into<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
-            + Into<<R::D as TypedDateMarkers<C>>::DateInputMarker>
-            + Into<<R::D as TypedDateMarkers<C>>::WeekInputMarker>
-            + Into<<R::T as TimeMarkers>::TimeInputMarker>,
+        for<'a> <R::D as TypedDateMarkers<C>>::TypedInputMarker: From<&'a T>,
+        for<'a> <R::D as TypedDateMarkers<C>>::DateInputMarker: From<&'a T>,
+        for<'a> <R::D as TypedDateMarkers<C>>::WeekInputMarker: From<&'a T>,
+        for<'a> <R::T as TimeMarkers>::TimeInputMarker: From<&'a T>,
     {
         let datetime = ExtractedDateTimeInput::extract_from_neo_input(
-            Into::<<R::D as TypedDateMarkers<C>>::DateInputMarker>::into(datetime).into(),
-            Into::<<R::D as TypedDateMarkers<C>>::WeekInputMarker>::into(datetime).into(),
-            Into::<<R::T as TimeMarkers>::TimeInputMarker>::into(datetime).into(),
+            <R::D as TypedDateMarkers<C>>::DateInputMarker::from(datetime).into(),
+            <R::D as TypedDateMarkers<C>>::WeekInputMarker::from(datetime).into(),
+            <R::T as TimeMarkers>::TimeInputMarker::from(datetime).into(),
         );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
@@ -831,33 +832,20 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
         })
     }
 
-    /// TODO
-    pub fn format_neo<T>(&self, _datetime: &T) -> FormattedNeoDateTime
-    where
-        T: ?Sized,
-        for<'a> &'a T: Into<<R::D as DateMarkers>::DateInputMarker>
-            + Into<<R::D as DateMarkers>::WeekInputMarker>
-            + Into<<R::T as TimeMarkers>::TimeInputMarker>,
-    {
-        todo!()
-    }
-
     /// Infallibly formats a datetime after first converting it
     /// to the formatter's calendar.
     pub fn convert_and_format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
-        T: DateTimeInput<Calendar = Iso>,
+        T: ?Sized,
+        for<'a> <R::D as DateMarkers>::DateInputMarker: FromInCalendar<&'a T>,
+        for<'a> <R::D as DateMarkers>::WeekInputMarker: FromInCalendar<&'a T>,
+        for<'a> <R::T as TimeMarkers>::TimeInputMarker: From<&'a T>,
     {
-        let calendar = icu_calendar::Ref(&self.calendar);
-        let date = icu_calendar::Date::new_from_iso(datetime.to_iso(), calendar);
-        let time = icu_calendar::Time::new(
-            datetime.hour().unwrap_or_default(),
-            datetime.minute().unwrap_or_default(),
-            datetime.second().unwrap_or_default(),
-            datetime.nanosecond().unwrap_or_default(),
+        let datetime = ExtractedDateTimeInput::extract_from_neo_input(
+            <R::D as DateMarkers>::DateInputMarker::from_in_calendar(datetime, &self.calendar).into(),
+            <R::D as DateMarkers>::WeekInputMarker::from_in_calendar(datetime, &self.calendar).into(),
+            <R::T as TimeMarkers>::TimeInputMarker::from(datetime).into(),
         );
-        let datetime = icu_calendar::DateTime::new(date, time);
-        let datetime = ExtractedDateTimeInput::extract_from(&datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
