@@ -23,7 +23,7 @@ mod private {
 /// Input data fields required for formatting dates.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub struct NeoDateInputFields<C> {
+pub struct NeoDateInputFields {
     /// The era and year input.
     pub year: FormattableYear,
     /// The month input.
@@ -36,11 +36,9 @@ pub struct NeoDateInputFields<C> {
     ///
     /// [`AnyCalendar`]: icu_calendar::AnyCalendar
     pub any_calendar_kind: Option<AnyCalendarKind>,
-    /// A type representing the caledar this date is for.
-    pub calendar: PhantomData<C>,
 }
 
-impl<C> NeoDateInputFields<C> {
+impl NeoDateInputFields {
     /// Constructor for [`NeoDateInputFields`] with all required fields.
     ///
     /// Optional fields such as [`Self::any_calendar_kind`] should be populated manually.
@@ -56,12 +54,11 @@ impl<C> NeoDateInputFields<C> {
             day_of_month,
             day_of_week,
             any_calendar_kind: None,
-            calendar: PhantomData,
         }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFields<C> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFields {
     fn from(value: &Date<A>) -> Self {
         Self {
             year: value.year(),
@@ -69,12 +66,11 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFi
             day_of_month: value.day_of_month(),
             day_of_week: value.day_of_week(),
             any_calendar_kind: value.calendar().any_calendar_kind(),
-            calendar: PhantomData,
         }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInputFields<C> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInputFields {
     fn from(value: &DateTime<A>) -> Self {
         Self {
             year: value.date.year(),
@@ -82,7 +78,6 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
             day_of_month: value.date.day_of_month(),
             day_of_week: value.date.day_of_week(),
             any_calendar_kind: value.date.calendar().any_calendar_kind(),
-            calendar: PhantomData,
         }
     }
 }
@@ -90,37 +85,30 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
 /// Input data fields required for formatting weeks of the year.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub struct NeoWeekInputFields<C> {
+pub struct NeoWeekInputFields {
     /// Information on the position of the day within the year.
     pub day_of_year_info: DayOfYearInfo,
-    /// A type representing the caledar this date is for.
-    pub calendar: PhantomData<C>,
 }
 
-impl<C> NeoWeekInputFields<C> {
+impl NeoWeekInputFields {
     /// Constructor for [`NeoWeekInputFields`] with all required fields.
     pub fn new_with_info(day_of_year_info: DayOfYearInfo) -> Self {
-        Self {
-            day_of_year_info,
-            calendar: PhantomData,
-        }
+        Self { day_of_year_info }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoWeekInputFields<C> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoWeekInputFields {
     fn from(value: &Date<A>) -> Self {
         Self {
             day_of_year_info: value.day_of_year_info(),
-            calendar: PhantomData,
         }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoWeekInputFields<C> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoWeekInputFields {
     fn from(value: &DateTime<A>) -> Self {
         Self {
             day_of_year_info: value.date.day_of_year_info(),
-            calendar: PhantomData,
         }
     }
 }
@@ -180,14 +168,14 @@ impl<T> From<&T> for NeverFields {
     }
 }
 
-impl<C> From<NeverFields> for Option<NeoDateInputFields<C>> {
+impl From<NeverFields> for Option<NeoDateInputFields> {
     #[inline]
     fn from(_: NeverFields) -> Self {
         None
     }
 }
 
-impl<C> From<NeverFields> for Option<NeoWeekInputFields<C>> {
+impl From<NeverFields> for Option<NeoWeekInputFields> {
     #[inline]
     fn from(_: NeverFields) -> Self {
         None
@@ -201,10 +189,6 @@ impl From<NeverFields> for Option<NeoTimeInputFields> {
     }
 }
 
-// pub struct TypedNeoFormatter<D, T> where Target: TypedNeoFormatterTrait<D, T> {}
-
-// pub trait TypedNeoFormatterTrait<D, T> {}
-
 pub trait HasDateComponents {
     const COMPONENTS: NeoDateComponents;
 }
@@ -217,39 +201,65 @@ pub trait HasTimeComponents {
     const COMPONENTS: NeoTimeComponents;
 }
 
-pub trait DateTypes {
+// TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
+
+pub trait DateTypes: private::Sealed {
+    /// Marker for loading date skeleton patterns.
+    type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    /// Marker for resolving date fields from the input.
+    type DateInputMarker: Into<Option<NeoDateInputFields>>;
+    /// Marker for resolving week-of-year fields from the input.
+    type WeekInputMarker: Into<Option<NeoWeekInputFields>>;
+    /// Marker for loading year names.
     type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    /// Marker for loading month names.
     type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    /// Marker for loading weekday names.
+    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-pub trait TimeTypes {
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
+pub trait TimeTypes: private::Sealed {
+    /// Marker for resolving time fields from the input.
+    type TimeInputMarker: Into<Option<NeoTimeInputFields>>;
+    /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    /// Marker for loading day period names.
+    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
 #[derive(Debug)]
 pub struct NeoNeverMarker;
 
+impl private::Sealed for NeoNeverMarker {}
+
 impl DateTypes for NeoNeverMarker {
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DateInputMarker = NeverFields;
+    type WeekInputMarker = NeverFields;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
 impl TimeTypes for NeoNeverMarker {
-    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type TimeInputMarker = NeverFields;
     type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
+    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-pub trait HasNeoComponents {
+pub trait HasNeoComponents: private::Sealed {
     const COMPONENTS: NeoComponents;
     type D: DateTypes;
     type T: TimeTypes;
+    /// Fields for [`TypedDateTimeNames`].
+    type DateTimeNamesMarker: DateTimeNamesMarker;
+    /// Marker for loading the date/time glue pattern.
+    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
 struct TypedNeoFormatter<DTZ: HasNeoComponents> {
     _marker: PhantomData<DTZ>,
 }
-
 
 #[derive(Debug)]
 pub struct TypedNeoComponents<D, T> {
@@ -257,42 +267,43 @@ pub struct TypedNeoComponents<D, T> {
     _t: PhantomData<T>,
 }
 
+impl<D, T> private::Sealed for TypedNeoComponents<D, T> {}
+
 // type MonthDayHour = TypedNeoComponents<MonthDay, Hour>;
 
-impl<D> HasNeoComponents for TypedNeoComponents<D, NeoNeverMarker> where D: HasDateComponents + DateTypes {
+impl<D> HasNeoComponents for TypedNeoComponents<D, NeoNeverMarker>
+where
+    D: HasDateComponents + DateTypes,
+{
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
     type D = D;
     type T = NeoNeverMarker;
+    type DateTimeNamesMarker = DateMarker;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
-impl<T> HasNeoComponents for TypedNeoComponents<NeoNeverMarker, T> where T: HasTimeComponents + TimeTypes {
+impl<T> HasNeoComponents for TypedNeoComponents<NeoNeverMarker, T>
+where
+    T: HasTimeComponents + TimeTypes,
+{
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
     type D = NeoNeverMarker;
     type T = T;
+    type DateTimeNamesMarker = TimeMarker;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
-impl<D, T> HasNeoComponents for TypedNeoComponents<D, T> where D: HasDayComponents + DateTypes, T: HasTimeComponents + TimeTypes {
+impl<D, T> HasNeoComponents for TypedNeoComponents<D, T>
+where
+    D: HasDayComponents + DateTypes,
+    T: HasTimeComponents + TimeTypes,
+{
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
     type D = D;
     type T = T;
+    type DateTimeNamesMarker = DateTimeMarker;
+    type DateTimePatternV1Marker = DateTimePatternV1Marker;
 }
-
-
-// pub struct GenericDTMarker<D, T, Z> {}
-
-// impl TypedNeoFormatterTrait for GenericDTMarker<D: DayMarker, T: TimeMarker, Z: ZoneMarker> {
-
-//     const COMPONENTS  (DateTime(D::COMPONENTS, T::COMPONENTS), Z...)
-
-
-// }
-
-// TypedNeoFormatter<Gregorian, DayMonthTime>
-
-// or 
-
-// struct TypedNeoFormatter<Calendar, D, T, Z> where GenericDTMarker<D, T, Z>: TypedNeoFormatterTrait
-
 
 /// A collection of types and constants for specific variants of [`TypedNeoFormatter`].
 ///
@@ -319,9 +330,9 @@ pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
     /// Marker for resolving date fields from the input.
-    type DateInputMarker: Into<Option<NeoDateInputFields<C>>>;
+    type DateInputMarker: Into<Option<NeoDateInputFields>>;
     /// Marker for resolving week-of-year fields from the input.
-    type WeekInputMarker: Into<Option<NeoWeekInputFields<C>>>;
+    type WeekInputMarker: Into<Option<NeoWeekInputFields>>;
     /// Marker for resolving time fields from the input.
     type TimeInputMarker: Into<Option<NeoTimeInputFields>>;
     // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
@@ -406,13 +417,13 @@ macro_rules! datetime_marker_helper {
         NeverMarker<DateTimePatternV1<'static>>
     };
     (@dateinput, yes) => {
-        NeoDateInputFields<C>
+        NeoDateInputFields
     };
     (@dateinput, no) => {
         NeverFields
     };
     (@weekinput, yes) => {
-        NeoWeekInputFields<C>
+        NeoWeekInputFields
     };
     (@weekinput, no) => {
         NeverFields
