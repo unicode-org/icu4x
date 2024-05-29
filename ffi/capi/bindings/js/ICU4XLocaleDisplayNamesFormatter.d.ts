@@ -24,7 +24,6 @@ export class ICU4XLocaleDisplayNamesFormatter {
    * Returns the locale-specific display name of a locale.
 
    * See the {@link https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of Rust documentation for `of`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  of(locale: ICU4XLocale): string | never;
+  of(locale: ICU4XLocale): string;
 }

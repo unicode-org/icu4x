@@ -29,6 +29,7 @@ typedef struct DiplomatWriteable {
     char* buf;
     size_t len;
     size_t cap;
+    bool grow_failed;
     void (*flush)(struct DiplomatWriteable*);
     bool (*grow)(struct DiplomatWriteable*, size_t);
 } DiplomatWriteable;

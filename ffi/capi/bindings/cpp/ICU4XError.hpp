@@ -29,13 +29,6 @@ enum struct ICU4XError {
   UnknownError = 0,
 
   /**
-   * An error arising from writing to a string
-   * Typically found when not enough space is allocated
-   * Most APIs that return a string may return this error
-   */
-  WriteableError = 1,
-
-  /**
    * Some input was out of bounds
    */
   OutOfBoundsError = 2,

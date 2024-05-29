@@ -40,14 +40,9 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   /// Formats a [`FixedDecimal`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
-  ///
-  /// Throws [Error] on failure.
   String format(FixedDecimal value) {
     final writeable = _Writeable();
-    final result = _ICU4XFixedDecimalFormatter_format(_ffi, value._ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
+    _ICU4XFixedDecimalFormatter_format(_ffi, value._ffi, writeable._ffi);
     return writeable.finalize();
   }
 }
@@ -63,6 +58,6 @@ external void _ICU4XFixedDecimalFormatter_destroy(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int groupingStrategy);
 
 @meta.ResourceIdentifier('ICU4XFixedDecimalFormatter_format')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_format')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_format')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XFixedDecimalFormatter_format(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XFixedDecimalFormatter_format(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);

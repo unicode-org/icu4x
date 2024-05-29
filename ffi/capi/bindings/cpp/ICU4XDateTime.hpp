@@ -171,7 +171,7 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const;
+  template<typename W> void month_code_to_writeable(W& write) const;
 
   /**
    * Returns the month code for this date. Typically something
@@ -179,7 +179,7 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
    */
-  diplomat::result<std::string, ICU4XError> month_code() const;
+  std::string month_code() const;
 
   /**
    * Returns the year number in the current era for this date
@@ -193,14 +193,14 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const;
+  template<typename W> void era_to_writeable(W& write) const;
 
   /**
    * Returns the era for this date,
    * 
    * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
    */
-  diplomat::result<std::string, ICU4XError> era() const;
+  std::string era() const;
 
   /**
    * Returns the number of months in the year represented by this date
@@ -319,54 +319,28 @@ inline diplomat::result<ICU4XWeekOf, ICU4XError> ICU4XDateTime::week_of_year(con
 inline uint32_t ICU4XDateTime::ordinal_month() const {
   return capi::ICU4XDateTime_ordinal_month(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDateTime::month_code_to_writeable(W& write) const {
+template<typename W> inline void ICU4XDateTime::month_code_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_month_code(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XDateTime_month_code(this->inner.get(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XDateTime::month_code() const {
+inline std::string ICU4XDateTime::month_code() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_month_code(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XDateTime_month_code(this->inner.get(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 inline int32_t ICU4XDateTime::year_in_era() const {
   return capi::ICU4XDateTime_year_in_era(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XDateTime::era_to_writeable(W& write) const {
+template<typename W> inline void ICU4XDateTime::era_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_era(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XDateTime_era(this->inner.get(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XDateTime::era() const {
+inline std::string ICU4XDateTime::era() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_era(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XDateTime_era(this->inner.get(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 inline uint8_t ICU4XDateTime::months_in_year() const {
   return capi::ICU4XDateTime_months_in_year(this->inner.get());

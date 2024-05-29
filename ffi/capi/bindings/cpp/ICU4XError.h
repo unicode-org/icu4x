@@ -12,7 +12,6 @@ namespace capi {
 
 typedef enum ICU4XError {
   ICU4XError_UnknownError = 0,
-  ICU4XError_WriteableError = 1,
   ICU4XError_OutOfBoundsError = 2,
   ICU4XError_DataMissingDataKeyError = 256,
   ICU4XError_DataMissingVariantError = 257,

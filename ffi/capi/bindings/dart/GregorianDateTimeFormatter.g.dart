@@ -41,14 +41,9 @@ final class GregorianDateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`IsoDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
-  ///
-  /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
-    final result = _ICU4XGregorianDateTimeFormatter_format_iso_datetime(_ffi, value._ffi, writeable._ffi);
-    if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
-    }
+    _ICU4XGregorianDateTimeFormatter_format_iso_datetime(_ffi, value._ffi, writeable._ffi);
     return writeable.finalize();
   }
 }
@@ -64,6 +59,6 @@ external void _ICU4XGregorianDateTimeFormatter_destroy(ffi.Pointer<ffi.Void> sel
 external _ResultOpaqueInt32 _ICU4XGregorianDateTimeFormatter_create_with_lengths(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int dateLength, int timeLength);
 
 @meta.ResourceIdentifier('ICU4XGregorianDateTimeFormatter_format_iso_datetime')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianDateTimeFormatter_format_iso_datetime')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianDateTimeFormatter_format_iso_datetime')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XGregorianDateTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XGregorianDateTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
