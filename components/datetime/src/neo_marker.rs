@@ -277,7 +277,7 @@ impl TimeMarkers for NeoNeverMarker {
 
 /// A trait associating constants and types implementing various other traits
 /// required for datetime formatting.
-pub trait HasNeoComponents<C>: private::Sealed {
+pub trait TypedNeoFormatterMarker<C>: private::Sealed {
     /// The associated components.
     const COMPONENTS: NeoComponents;
     /// Associated types for date formatting.
@@ -304,7 +304,7 @@ impl<D, T> private::Sealed for DateTimeCombo<D, T> {}
 
 // type MonthDayHour = DateTimeCombo<MonthDay, Hour>;
 
-impl<C, D> HasNeoComponents<C> for DateTimeCombo<D, NeoNeverMarker>
+impl<C, D> TypedNeoFormatterMarker<C> for DateTimeCombo<D, NeoNeverMarker>
 where
     D: HasDateComponents + DateMarkers<C>,
 {
@@ -315,7 +315,7 @@ where
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
-impl<C, T> HasNeoComponents<C> for DateTimeCombo<NeoNeverMarker, T>
+impl<C, T> TypedNeoFormatterMarker<C> for DateTimeCombo<NeoNeverMarker, T>
 where
     T: HasTimeComponents + TimeMarkers,
 {
@@ -326,7 +326,7 @@ where
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
-impl<C, D, T> HasNeoComponents<C> for DateTimeCombo<D, T>
+impl<C, D, T> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T>
 where
     D: HasDayComponents + DateMarkers<C>,
     T: HasTimeComponents + TimeMarkers,
@@ -513,7 +513,7 @@ macro_rules! impl_date_marker {
             type DateInputMarker = datetime_marker_helper!(@dateinput, $dateinput_yesno);
             type WeekInputMarker = datetime_marker_helper!(@weekinput, $weekinput_yesno);
         }
-        impl<C: CldrCalendar> HasNeoComponents<C> for $type {
+        impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
             type D = Self;
             type T = NeoNeverMarker;
@@ -638,7 +638,7 @@ macro_rules! impl_time_marker {
             type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
             type TimeInputMarker = datetime_marker_helper!(@timeinput, $timeinput_yesno);
         }
-        impl<C> HasNeoComponents<C> for $type {
+        impl<C> TypedNeoFormatterMarker<C> for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
             type D = NeoNeverMarker;
             type T = Self;

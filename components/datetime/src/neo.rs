@@ -11,7 +11,7 @@ use crate::format::datetime::{try_write_pattern, try_write_pattern_items};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
-use crate::neo_marker::{DateMarkers, HasNeoComponents, NeoFormatterMarker, TimeMarkers};
+use crate::neo_marker::{DateMarkers, TypedNeoFormatterMarker, NeoFormatterMarker, TimeMarkers};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::NeoSkeletonLength;
 use crate::options::length;
@@ -286,13 +286,13 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
 #[derive(Debug)]
-pub struct TypedNeoFormatter<C: CldrCalendar, R: HasNeoComponents<C>> {
+pub struct TypedNeoFormatter<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> {
     selection: DateTimePatternSelectionData,
     names: RawDateTimeNames<R::DateTimeNamesMarker>,
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, R: HasNeoComponents<C>> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     /// Creates a [`TypedNeoFormatter`] for a date skeleton.
     ///
     /// # Examples
