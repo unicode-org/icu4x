@@ -99,10 +99,9 @@ pub mod ffi {
             datetime: &ICU4XIsoDateTime,
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        ) {
             let greg = DateTime::new_from_iso(datetime.0, Gregorian);
-            self.0.format(&greg, &time_zone.0).write_to(write)?;
-            Ok(())
+            let _infallible = self.0.format(&greg, &time_zone.0).write_to(write);
         }
     }
 
@@ -178,7 +177,7 @@ pub mod ffi {
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0.format(&datetime.0, &time_zone.0)?.write_to(write)?;
+            let _infallible = self.0.format(&datetime.0, &time_zone.0)?.write_to(write);
             Ok(())
         }
 
@@ -195,9 +194,10 @@ pub mod ffi {
             time_zone: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0
+            let _infallible = self
+                .0
                 .format(&datetime.0.to_any(), &time_zone.0)?
-                .write_to(write)?;
+                .write_to(write);
             Ok(())
         }
     }

@@ -16,7 +16,6 @@ typedef struct ICU4XComposingNormalizer ICU4XComposingNormalizer;
 #endif
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XComposingNormalizer_ICU4XError.h"
-#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -26,7 +25,7 @@ diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer
 
 diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfkc(const ICU4XDataProvider* provider);
 
-diplomat_result_void_ICU4XError ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
+void ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
 
 bool ICU4XComposingNormalizer_is_normalized(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len);
 void ICU4XComposingNormalizer_destroy(ICU4XComposingNormalizer* self);

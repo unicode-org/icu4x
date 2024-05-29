@@ -9,7 +9,7 @@
 
 static bool test_locale(ICU4XLocale &locale, std::string_view expectedString,
                         const char *message) {
-  std::string actualString = locale.to_string().ok().value();
+  std::string actualString = locale.to_string();
   std::cout << message << ": \"" << actualString << "\"" << std::endl;
   if (actualString != expectedString) {
     std::cout << "Locale did not match expected: \"" << expectedString << "\""
@@ -52,7 +52,7 @@ int main() {
     return 1;
   }
 
-  if (!test_string(locale.language().ok().value(), "en",
+  if (!test_string(locale.language(), "en",
                    "The language can be accessed")) {
     return 1;
   }
@@ -93,7 +93,7 @@ int main() {
                    "The unicode extension can be accessed")) {
     return 1;
   }
-  if (!test_string(locale.basename().ok().value(), "en-US",
+  if (!test_string(locale.basename(), "en-US",
                    "The basename can be accessed")) {
     return 1;
   }

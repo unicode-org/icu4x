@@ -162,14 +162,11 @@ pub mod ffi {
             mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
             id: &DiplomatStr,
         ) -> Result<(), ICU4XError> {
-            let id = core::str::from_utf8(id).map_err(|_| ICU4XError::TimeZoneInvalidIdError)?;
-            self.0.time_zone_id = Some(
-                mapper
-                    .0
-                    .as_borrowed()
-                    .get(id)
-                    .ok_or(ICU4XError::TimeZoneInvalidIdError)?,
-            );
+            let id = core::str::from_utf8(id)
+                .ok()
+                .and_then(|s| mapper.0.as_borrowed().get(s))
+                .ok_or(ICU4XError::TimeZoneInvalidIdError)?;
+            self.0.time_zone_id = Some(id);
             Ok(())
         }
 
@@ -211,13 +208,13 @@ pub mod ffi {
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            write.write_str(
+            let _infallible = write.write_str(
                 self.0
                     .time_zone_id
                     .ok_or(ICU4XError::TimeZoneMissingInputError)?
                     .0
                     .as_str(),
-            )?;
+            );
             Ok(())
         }
 
@@ -252,13 +249,13 @@ pub mod ffi {
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            write.write_str(
+            let _infallible = write.write_str(
                 self.0
                     .metazone_id
                     .ok_or(ICU4XError::TimeZoneMissingInputError)?
                     .0
                     .as_str(),
-            )?;
+            );
             Ok(())
         }
 
@@ -293,13 +290,13 @@ pub mod ffi {
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            write.write_str(
+            let _infallible = write.write_str(
                 self.0
                     .zone_variant
                     .ok_or(ICU4XError::TimeZoneMissingInputError)?
                     .0
                     .as_str(),
-            )?;
+            );
             Ok(())
         }
 

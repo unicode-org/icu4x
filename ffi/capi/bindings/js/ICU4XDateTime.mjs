@@ -137,20 +137,7 @@ export class ICU4XDateTime {
 
   month_code() {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XDateTime_month_code(diplomat_receive_buffer, this.underlying, writeable);
-        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-        if (is_ok) {
-          const ok_value = {};
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          return ok_value;
-        } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          throw new diplomatRuntime.FFIError(throw_value);
-        }
-      })();
+      return wasm.ICU4XDateTime_month_code(this.underlying, writeable);
     });
   }
 
@@ -160,20 +147,7 @@ export class ICU4XDateTime {
 
   era() {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XDateTime_era(diplomat_receive_buffer, this.underlying, writeable);
-        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-        if (is_ok) {
-          const ok_value = {};
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          return ok_value;
-        } else {
-          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-          throw new diplomatRuntime.FFIError(throw_value);
-        }
-      })();
+      return wasm.ICU4XDateTime_era(this.underlying, writeable);
     });
   }
 

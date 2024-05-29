@@ -49,14 +49,14 @@ class ICU4XGregorianDateTimeFormatter {
    * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const;
+  template<typename W> void format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] to a string.
    * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
    */
-  diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
+  std::string format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XGregorianDateTimeFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGregorianDateTimeFormatter* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XGregorianDateTimeFormatter(capi::ICU4XGregorianDateTimeFormatter* i) : inner(i) {}
@@ -81,27 +81,14 @@ inline diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> ICU4XGregor
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XGregorianDateTimeFormatter::format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const {
+template<typename W> inline void ICU4XGregorianDateTimeFormatter::format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTimeFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XGregorianDateTimeFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XGregorianDateTimeFormatter::format_iso_datetime(const ICU4XIsoDateTime& value) const {
+inline std::string ICU4XGregorianDateTimeFormatter::format_iso_datetime(const ICU4XIsoDateTime& value) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTimeFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XGregorianDateTimeFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 #endif

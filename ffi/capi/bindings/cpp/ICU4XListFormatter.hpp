@@ -57,12 +57,12 @@ class ICU4XListFormatter {
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_writeable(const ICU4XList& list, W& write) const;
+  template<typename W> void format_to_writeable(const ICU4XList& list, W& write) const;
 
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
-  diplomat::result<std::string, ICU4XError> format(const ICU4XList& list) const;
+  std::string format(const ICU4XList& list) const;
   inline const capi::ICU4XListFormatter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XListFormatter* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XListFormatter(capi::ICU4XListFormatter* i) : inner(i) {}
@@ -107,27 +107,14 @@ inline diplomat::result<ICU4XListFormatter, ICU4XError> ICU4XListFormatter::crea
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XListFormatter::format_to_writeable(const ICU4XList& list, W& write) const {
+template<typename W> inline void ICU4XListFormatter::format_to_writeable(const ICU4XList& list, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value;
+  capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &write_writer);
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XListFormatter::format(const ICU4XList& list) const {
+inline std::string ICU4XListFormatter::format(const ICU4XList& list) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &diplomat_writeable_out);
+  return diplomat_writeable_string;
 }
 #endif

@@ -3,7 +3,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs"
 
 export const ICU4XError_js_to_rust = {
   "UnknownError": 0,
-  "WriteableError": 1,
   "OutOfBoundsError": 2,
   "DataMissingDataKeyError": 256,
   "DataMissingVariantError": 257,
@@ -62,7 +61,6 @@ export const ICU4XError_js_to_rust = {
 
 export const ICU4XError_rust_to_js = {
   [0]: "UnknownError",
-  [1]: "WriteableError",
   [2]: "OutOfBoundsError",
   [256]: "DataMissingDataKeyError",
   [257]: "DataMissingVariantError",
@@ -121,7 +119,6 @@ export const ICU4XError_rust_to_js = {
 
 export const ICU4XError = {
   "UnknownError": "UnknownError",
-  "WriteableError": "WriteableError",
   "OutOfBoundsError": "OutOfBoundsError",
   "DataMissingDataKeyError": "DataMissingDataKeyError",
   "DataMissingVariantError": "DataMissingVariantError",

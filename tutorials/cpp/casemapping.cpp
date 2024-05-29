@@ -21,20 +21,20 @@ int main() {
 
     ICU4XTitlecaseOptionsV1 tc_options = ICU4XTitlecaseOptionsV1::default_options();
 
-    std::string out = cm.lowercase("hEllO WorLd", und).ok().value();
+    std::string out = cm.lowercase("hEllO WorLd", und);
     std::cout << "Lowercased value is " << out << std::endl;
     if (out != "hello world") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
-    out = cm.uppercase("hEllO WorLd", und).ok().value();
+    out = cm.uppercase("hEllO WorLd", und);
     std::cout << "Uppercased value is " << out << std::endl;
     if (out != "HELLO WORLD") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    out = cm.titlecase_segment_with_only_case_data_v1("hEllO WorLd", und, tc_options).ok().value();
+    out = cm.titlecase_segment_with_only_case_data_v1("hEllO WorLd", und, tc_options);
     std::cout << "Titlecased value is " << out << std::endl;
     if (out != "Hello world") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -44,28 +44,28 @@ int main() {
 
     // locale-specific behavior
 
-    out = cm.uppercase("Γειά σου Κόσμε", und).ok().value();
+    out = cm.uppercase("Γειά σου Κόσμε", und);
     std::cout << "Uppercased value is " << out << std::endl;
     if (out != "ΓΕΙΆ ΣΟΥ ΚΌΣΜΕ") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    out = cm.uppercase("Γειά σου Κόσμε", greek).ok().value();
+    out = cm.uppercase("Γειά σου Κόσμε", greek);
     std::cout << "Uppercased value is " << out << std::endl;
     if (out != "ΓΕΙΑ ΣΟΥ ΚΟΣΜΕ") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    out = cm.uppercase("istanbul", und).ok().value();
+    out = cm.uppercase("istanbul", und);
     std::cout << "Uppercased value is " << out << std::endl;
     if (out != "ISTANBUL") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    out = cm.uppercase("istanbul", turkish).ok().value();
+    out = cm.uppercase("istanbul", turkish);
     std::cout << "Uppercased value is " << out << std::endl;
     if (out != "İSTANBUL") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -73,14 +73,14 @@ int main() {
     }
 
 
-    out = cm.fold("ISTANBUL").ok().value();
+    out = cm.fold("ISTANBUL");
     std::cout << "Folded value is " << out << std::endl;
     if (out != "istanbul") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    out = cm.fold_turkic("ISTANBUL").ok().value();
+    out = cm.fold_turkic("ISTANBUL");
     std::cout << "Turkic-folded value is " << out << std::endl;
     if (out != "ıstanbul") {
         std::cout << "Output does not match expected output" << std::endl;

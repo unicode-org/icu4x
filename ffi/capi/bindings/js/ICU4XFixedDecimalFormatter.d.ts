@@ -37,7 +37,6 @@ export class ICU4XFixedDecimalFormatter {
    * Formats a {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} to a string.
 
    * See the {@link https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format Rust documentation for `format`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format(value: ICU4XFixedDecimal): string | never;
+  format(value: ICU4XFixedDecimal): string;
 }

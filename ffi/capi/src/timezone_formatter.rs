@@ -283,9 +283,8 @@ pub mod ffi {
             &self,
             value: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            self.0.format(&value.0).write_to(write)?;
-            Ok(())
+        ) {
+            let _infallible = self.0.format(&value.0).write_to(write);
         }
 
         /// Formats a [`ICU4XCustomTimeZone`] to a string, performing no fallback
@@ -295,7 +294,7 @@ pub mod ffi {
             value: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            self.0.format(&value.0).write_no_fallback(write)??;
+            let _infallible = self.0.format(&value.0).write_no_fallback(write)?;
             Ok(())
         }
     }

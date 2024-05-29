@@ -12,7 +12,7 @@ const std::string_view path = "../../provider/datagen/tests/data/json/";
 int main() {
     ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create_from_string("ar").ok().value();
-    std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
+    std::cout << "Running test for locale " << locale.to_string() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).ok().value();
     ICU4XPluralRules pr = ICU4XPluralRules::create_cardinal(dp, locale).ok().value();
 

@@ -12,11 +12,6 @@ enum Error {
   /// Please file a bug
   unknownError,
 
-  /// An error arising from writing to a string
-  /// Typically found when not enough space is allocated
-  /// Most APIs that return a string may return this error
-  writeableError,
-
   /// Some input was out of bounds
   outOfBoundsError,
 
@@ -133,8 +128,6 @@ enum Error {
     switch (this) {
       case unknownError:
         return 0;
-      case writeableError:
-        return 1;
       case outOfBoundsError:
         return 2;
       case dataMissingDataKeyError:

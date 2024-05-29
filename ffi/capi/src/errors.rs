@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use self::ffi::ICU4XError;
-use core::fmt;
 #[cfg(feature = "icu_decimal")]
 use fixed_decimal::FixedDecimalError;
 #[cfg(any(
@@ -68,10 +67,6 @@ pub mod ffi {
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
         UnknownError = 0x00,
-        /// An error arising from writing to a string
-        /// Typically found when not enough space is allocated
-        /// Most APIs that return a string may return this error
-        WriteableError = 0x01,
         /// Some input was out of bounds
         OutOfBoundsError = 0x02,
 
@@ -181,12 +176,6 @@ impl ICU4XError {
     }
 }
 
-impl From<fmt::Error> for ICU4XError {
-    fn from(e: fmt::Error) -> Self {
-        ICU4XError::WriteableError.log_original(&e)
-    }
-}
-
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
         match e.kind {
@@ -275,7 +264,6 @@ impl From<DateTimeError> for ICU4XError {
     fn from(e: DateTimeError) -> Self {
         match e {
             DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
-            DateTimeError::Format(err) => err.into(),
             DateTimeError::Data(err) => err.into(),
             DateTimeError::MissingInputField(_) => ICU4XError::DateTimeMissingInputFieldError,
             // TODO(#1324): Add back skeleton errors
