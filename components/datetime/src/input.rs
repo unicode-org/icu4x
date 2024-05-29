@@ -5,6 +5,8 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
+#[cfg(feature = "experimental")]
+use crate::neo_marker::{NeoDateInputFields, NeoTimeInputFields, NeoWeekInputFields};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
@@ -152,6 +154,7 @@ pub trait DateTimeInput: DateInput + IsoTimeInput {}
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
 
 /// A formattable calendar date and ISO time that takes the locale into account.
+#[deprecated(since = "1.5.0", note = "not used in any ICU4X APIs")]
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// A reference to this instance's [`DateTimeInput`].
     fn datetime(&self) -> &T;
@@ -239,6 +242,28 @@ impl ExtractedDateTimeInput {
             second: input.second(),
             nanosecond: input.nanosecond(),
             ..Default::default()
+        }
+    }
+    /// Construct given neo date input instances.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_from_neo_input<C>(
+        neo_date: Option<NeoDateInputFields<C>>,
+        neo_week: Option<NeoWeekInputFields>,
+        neo_time: Option<NeoTimeInputFields>,
+    ) -> Self {
+        Self {
+            year: neo_date.as_ref().map(|fields| fields.year),
+            month: neo_date.as_ref().map(|fields| fields.month),
+            day_of_month: neo_date.as_ref().map(|fields| fields.day_of_month),
+            iso_weekday: neo_date.as_ref().map(|fields| fields.day_of_week),
+            any_calendar_kind: neo_date
+                .as_ref()
+                .and_then(|fields| fields.any_calendar_kind),
+            day_of_year_info: neo_week.as_ref().map(|fields| fields.day_of_year_info),
+            hour: neo_time.as_ref().map(|fields| fields.hour),
+            minute: neo_time.as_ref().map(|fields| fields.minute),
+            second: neo_time.as_ref().map(|fields| fields.second),
+            nanosecond: neo_time.as_ref().map(|fields| fields.nanosecond),
         }
     }
 }

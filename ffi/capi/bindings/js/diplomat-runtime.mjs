@@ -13,6 +13,9 @@ export function withWriteable(wasm, callback) {
   try {
     callback(writeable);
     const outStringPtr = wasm.diplomat_buffer_writeable_get_bytes(writeable);
+    if (outStringPtr == null) {
+      throw FFIError("Out of memory");
+    }
     const outStringLen = wasm.diplomat_buffer_writeable_len(writeable);
     return readString8(wasm, outStringPtr, outStringLen);
   } finally {

@@ -24,9 +24,7 @@ pub mod ffi {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed::contains, FnInStruct)]
         pub fn contains(&self, s: &DiplomatStr) -> bool {
-            let s = if let Ok(s) = str::from_utf8(s) {
-                s
-            } else {
+            let Ok(s) = str::from_utf8(s) else {
                 return false;
             };
             self.0.as_borrowed().contains(s)

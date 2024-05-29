@@ -29,11 +29,19 @@ typedef struct DiplomatWriteable {
     char* buf;
     size_t len;
     size_t cap;
+    bool grow_failed;
     void (*flush)(struct DiplomatWriteable*);
     bool (*grow)(struct DiplomatWriteable*, size_t);
 } DiplomatWriteable;
 
 DiplomatWriteable diplomat_simple_writeable(char* buf, size_t buf_size);
+
+DiplomatWriteable* diplomat_buffer_writeable_create(size_t cap);
+char* diplomat_buffer_writeable_get_bytes(DiplomatWriteable* t);
+size_t diplomat_buffer_writeable_len(DiplomatWriteable* t);
+void diplomat_buffer_writeable_destroy(DiplomatWriteable* t);
+
+bool diplomat_is_str(char* buf, size_t len);
 
 #define MAKE_SLICES(name, c_ty) \
     typedef struct Diplomat##name##View { \

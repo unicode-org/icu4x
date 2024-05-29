@@ -28,7 +28,7 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
-* [ ] Start work on a changelog (see below)
+* [ ] Get all contributors to complete the changelog (see below)
 * [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email.
 * [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
 
@@ -36,11 +36,11 @@ This is a checklist of things that should be done in the weeks leading to the re
 
 Once the release checklist is complete, the assigned release driver will perform the following steps, in order:
 
+* Land the changelog (see below)
+  * Note: Do this _before_ tagging the release so that it is included in the tag
 * Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
 * Release utils (see section below). Get the version bumps reviewed and checked in before releasing.
 * Update ICU4X package versions as needed. Most of this can be done by updating `workspace.package` in the root `Cargo.toml` and the `workspace.dependencies` entries there. Some `icu_*` crates do not follow the ICU4X versioning scheme like `icu_codepointtrie_builder` or experimental crates.
-* Temporarily add `icu_testdata` back to the workspace
-  * To build, run `cargo make testdata-legacy-gen` to generate the gitignored data
 * Get this reviewed and checked in before continuing
 * Publish each `icu_*` crate
   * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order if you would like
@@ -48,8 +48,6 @@ Once the release checklist is complete, the assigned release driver will perform
     * `cargo owner -a github:unicode-org:icu4x-release`
 * Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
   * If there are any errors, please fix them before advertising the release
-* Land the changelog (see below)
-  * Note: Do this _before_ tagging the release because the changelog is included in the tag
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
 * Create a branch named `release/x.y` on the release tag and push it to the upstream
 * Announce the release to public
@@ -95,58 +93,12 @@ This can all be done in a separate PR to chunk out the work but there should be 
 
 ## Writing a changelog
 
-For semver major and minor ICU4X releases (ICU4X 1.x and ICU4X 2.x but not ICU4X 1.x.y) we add a new changelog entry for the overall release, including any utils releases. Out of cycle releases can  be combined under a changelog entry for "`1.2.x`" (etc).
-
-The changelog format can be copied from that used for ICU4X 1.2. The skeleton used is below. Crates with no changes other than the "general" ones should say "no other changes". Suffix changelog bullet points with `(#issuenumber)` where possible. Utils crates should mention the versions changed, e.g. `databake: 1.1.1 -> 1.1.2`.
-
-A useful tool for going through the diff for a crate is to use something like `git log icu@1.2.0.. -- components/calendar` to get a log you can scroll through. You can also use `--oneline` to make it compact. Be sure to compare it against the last changelogged release (which will usually be `icu@something` but could also be `ind/cratename@something`) if there were out of cycle releases.
-
-```markdown
-- General
-  - All updated crates:
-    - ... (things that apply to all crates)
-  - ... (other changes that apply to the project as a whole)
-- Data model and providers
-  - `icu_provider`:
-    - Frobbed the foobar (#1234)
-    - ...
-  - `icu_datagen`: (includes patch updates 1.1.1 and 1.1.2)
-    - ...
-    - (Do use `(lib)` and `(cli)` to denote changes specific to the library or binary)
-  - ... (other crates in `provider/)
-- Components:
-  - Cross component:
-    - (changes that apply to all components)
-  - `icu_calendar`
-    - ...
-  - ...
- - Utils:
-  - `crlify`: No change (still at 1.0.1)
-  - `databake`: 1.1.3 -> 1.1.4
-    - ...
-  - ...
- - FFI:
-    - Feature support
-      - ...
-    - ... (other non-feature FFI improvements)
- - Experimental:
-   - ... (same format as utils)
-
-```
+In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
 
 Out-of-cycle changelogs should use a single entry for each individual crate released, e.g. something like this:
 
 ```markdown
 - `databake`: 0.1.5
   - Fixed [#3356](https://github.com/unicode-org/icu4x/pull/3356), adding `allow` for clippy false-positives
-- `icu_capi` 1.2.1
-  - Fixed [#3344](https://github.com/unicode-org/icu4x/pull/3344), `buffer_provider` feature accidentally pulling in extra crates
-- `icu_capi` 1.2.2
-  - Use `intptr_t` instead of `ssize_t` for portability ([diplomat #326](https://github.com/rust-diplomat/diplomat/issues/326))
-- `icu_datagen` 1.2.1
-  - Fixed [#3339](https://github.com/unicode-org/icu4x/pull/3339), incorrect Cargo features
-- `icu_datagen` 1.2.3
-  - Fixed [#3355](https://github.com/unicode-org/icu4x/pull/3355), adding MSRV annotations to generated code
-  - Fixed [#3369](https://github.com/unicode-org/icu4x/pull/3369), making datagen call `rustfmt` directly instead of using the `rust-format` dependency
 ```
 

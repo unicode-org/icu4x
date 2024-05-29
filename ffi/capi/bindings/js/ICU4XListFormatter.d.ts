@@ -41,7 +41,6 @@ export class ICU4XListFormatter {
   /**
 
    * See the {@link https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format Rust documentation for `format`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format(list: ICU4XList): string | never;
+  format(list: ICU4XList): string;
 }

@@ -15,19 +15,9 @@ export enum ICU4XError {
   UnknownError = 'UnknownError',
   /**
 
-   * An error arising from writing to a string Typically found when not enough space is allocated Most APIs that return a string may return this error
-   */
-  WriteableError = 'WriteableError',
-  /**
-
    * Some input was out of bounds
    */
   OutOfBoundsError = 'OutOfBoundsError',
-  /**
-
-   * Input expected to be UTF-8 was ill-formed
-   */
-  Utf8Error = 'Utf8Error',
   /**
    */
   DataMissingDataKeyError = 'DataMissingDataKeyError',

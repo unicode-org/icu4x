@@ -281,7 +281,9 @@ pub mod ffi {
 
             let reordered = info.reorder_line(para, range_start..range_end);
 
-            Ok(out.write_str(&reordered)?)
+            let _infallible = out.write_str(&reordered);
+
+            Ok(())
         }
 
         /// Get the BIDI level at a particular byte index in this paragraph.

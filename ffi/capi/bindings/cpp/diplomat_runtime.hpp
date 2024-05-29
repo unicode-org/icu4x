@@ -36,6 +36,8 @@ inline capi::DiplomatWriteable WriteableFromString(std::string& string) {
   // Same as length, since C++ strings are not supposed
   // to be written to past their len; you resize *first*
   w.cap = string.length();
+  // Will never become true, as Grow is infallible.
+  w.grow_failed = false;
   w.flush = Flush;
   w.grow = Grow;
   return w;
@@ -131,6 +133,7 @@ public:
   }
 };
 
+class Utf8Error {};
 
 // Use custom std::span on C++17, otherwise use std::span
 #if __cplusplus >= 202002L

@@ -739,9 +739,15 @@ final class _Writeable {
   _Writeable() : _ffi = _diplomat_buffer_writeable_create(0);
   
   String finalize() {
-    final string = Utf8Decoder().convert(_diplomat_buffer_writeable_get_bytes(_ffi).asTypedList(_diplomat_buffer_writeable_len(_ffi)));
-    _diplomat_buffer_writeable_destroy(_ffi);
-    return string;
+    try {
+      final buf = _diplomat_buffer_writeable_get_bytes(_ffi);
+      if (buf == ffi.Pointer.fromAddress(0)) {
+        throw core.OutOfMemoryError();
+      }
+      return Utf8Decoder().convert(buf.asTypedList(_diplomat_buffer_writeable_len(_ffi)));
+    } finally {
+      _diplomat_buffer_writeable_destroy(_ffi);
+    }
   }
 }
 
