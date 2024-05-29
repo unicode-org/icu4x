@@ -338,39 +338,6 @@ where
     type DateTimePatternV1Marker = DateTimePatternV1Marker;
 }
 
-/// A collection of types and constants for specific variants of [`TypedNeoFormatter`].
-///
-/// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
-///
-/// [`TypedNeoFormatter`]: crate::neo::TypedNeoFormatter
-pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
-    /// Components in the neo skeleton.
-    const COMPONENTS: NeoComponents;
-    /// Fields for [`TypedDateTimeNames`].
-    type DateTimeNamesMarker: DateTimeNamesMarker;
-    /// Marker for loading year names.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
-    /// Marker for loading month names.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
-    /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
-    /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
-    /// Marker for loading the date/time glue pattern.
-    type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
-    /// Marker for resolving date fields from the input.
-    type DateInputMarker: Into<Option<NeoDateInputFields<C>>>;
-    /// Marker for resolving week-of-year fields from the input.
-    type WeekInputMarker: Into<Option<NeoWeekInputFields>>;
-    /// Marker for resolving time fields from the input.
-    type TimeInputMarker: Into<Option<NeoTimeInputFields>>;
-    // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
-}
-
 /// A collection of types and constants for specific variants of [`NeoFormatter`].
 ///
 /// Individual fields can be [`NeverMarker`] if they are not needed for the specific variant.
