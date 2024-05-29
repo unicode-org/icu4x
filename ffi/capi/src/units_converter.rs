@@ -77,7 +77,11 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<ICU4XMeasureUnit>> {
-            self.0.try_from_bytes(unit_id).ok().map(ICU4XMeasureUnit).map(Box::new)
+            self.0
+                .try_from_bytes(unit_id)
+                .ok()
+                .map(ICU4XMeasureUnit)
+                .map(Box::new)
         }
     }
 

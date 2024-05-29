@@ -90,16 +90,10 @@ pub mod ffi {
         /// Returns a string representation of [`ICU4XLocale`] region.
         #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn region(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Option<()> {
-            self.0
-                .id
-                .region
-                .map(|region| {
-                    let _infallible = region.write_to(write);
-                })
+        pub fn region(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> Option<()> {
+            self.0.id.region.map(|region| {
+                let _infallible = region.write_to(write);
+            })
         }
 
         /// Set the region part of the [`ICU4XLocale`].
@@ -117,16 +111,10 @@ pub mod ffi {
         /// Returns a string representation of [`ICU4XLocale`] script.
         #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn script(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Option<()> {
-            self.0
-                .id
-                .script
-                .map(|script| {
-                    let _infallible = script.write_to(write);
-                })
+        pub fn script(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> Option<()> {
+            self.0.id.script.map(|script| {
+                let _infallible = script.write_to(write);
+            })
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.

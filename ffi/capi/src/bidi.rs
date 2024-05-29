@@ -228,11 +228,7 @@ pub mod ffi {
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
         pub fn set_paragraph_in_text(&mut self, n: usize) -> Option<()> {
-            let para = self
-                .0
-                .info
-                .paragraphs
-                .get(n)?;
+            let para = self.0.info.paragraphs.get(n)?;
             self.0 = Paragraph::new(self.0.info, para);
             Some(())
         }
