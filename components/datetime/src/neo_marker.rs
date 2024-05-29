@@ -227,7 +227,7 @@ pub trait HasTimeComponents {
 
 /// A trait associating types implementing various other traits
 /// required for date formatting.
-pub trait DateMarkers<C>: private::Sealed {
+pub trait TypedDateMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for resolving date fields from the input.
@@ -260,7 +260,7 @@ pub enum NeoNeverMarker {}
 
 impl private::Sealed for NeoNeverMarker {}
 
-impl<C> DateMarkers<C> for NeoNeverMarker {
+impl<C> TypedDateMarkers<C> for NeoNeverMarker {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type DateInputMarker = NeverFields;
     type WeekInputMarker = NeverFields;
@@ -281,7 +281,7 @@ pub trait TypedNeoFormatterMarker<C>: private::Sealed {
     /// The associated components.
     const COMPONENTS: NeoComponents;
     /// Associated types for date formatting.
-    type D: DateMarkers<C>;
+    type D: TypedDateMarkers<C>;
     /// Associated types for time formatting.
     type T: TimeMarkers;
     /// Fields for [`TypedDateTimeNames`].
@@ -306,7 +306,7 @@ impl<D, T> private::Sealed for DateTimeCombo<D, T> {}
 
 impl<C, D> TypedNeoFormatterMarker<C> for DateTimeCombo<D, NeoNeverMarker>
 where
-    D: HasDateComponents + DateMarkers<C>,
+    D: HasDateComponents + TypedDateMarkers<C>,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
     type D = D;
@@ -328,7 +328,7 @@ where
 
 impl<C, D, T> TypedNeoFormatterMarker<C> for DateTimeCombo<D, T>
 where
-    D: HasDayComponents + DateMarkers<C>,
+    D: HasDayComponents + TypedDateMarkers<C>,
     T: HasTimeComponents + TimeMarkers,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
@@ -505,7 +505,7 @@ macro_rules! impl_date_marker {
         impl HasDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
         }
-        impl<C: CldrCalendar> DateMarkers<C> for $type {
+        impl<C: CldrCalendar> TypedDateMarkers<C> for $type {
             type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
             type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
             type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
