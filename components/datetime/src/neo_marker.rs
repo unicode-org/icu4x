@@ -23,7 +23,7 @@ mod private {
 /// Input data fields required for formatting dates.
 #[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
-pub struct NeoDateInputFields {
+pub struct NeoDateInputFields<C> {
     /// The era and year input.
     pub year: FormattableYear,
     /// The month input.
@@ -36,9 +36,11 @@ pub struct NeoDateInputFields {
     ///
     /// [`AnyCalendar`]: icu_calendar::AnyCalendar
     pub any_calendar_kind: Option<AnyCalendarKind>,
+    /// The phantom calendar marker.
+    _calendar: PhantomData<C>,
 }
 
-impl NeoDateInputFields {
+impl<C> NeoDateInputFields<C> {
     /// Constructor for [`NeoDateInputFields`] with all required fields.
     ///
     /// Optional fields such as [`Self::any_calendar_kind`] should be populated manually.
@@ -54,11 +56,12 @@ impl NeoDateInputFields {
             day_of_month,
             day_of_week,
             any_calendar_kind: None,
+            _calendar: PhantomData,
         }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFields {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFields<C> {
     fn from(value: &Date<A>) -> Self {
         Self {
             year: value.year(),
@@ -66,11 +69,12 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFi
             day_of_month: value.day_of_month(),
             day_of_week: value.day_of_week(),
             any_calendar_kind: value.calendar().any_calendar_kind(),
+            _calendar: PhantomData,
         }
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInputFields {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInputFields<C> {
     fn from(value: &DateTime<A>) -> Self {
         Self {
             year: value.date.year(),
@@ -78,6 +82,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
             day_of_month: value.date.day_of_month(),
             day_of_week: value.date.day_of_week(),
             any_calendar_kind: value.date.calendar().any_calendar_kind(),
+            _calendar: PhantomData,
         }
     }
 }
@@ -168,7 +173,7 @@ impl<T> From<&T> for NeverFields {
     }
 }
 
-impl From<NeverFields> for Option<NeoDateInputFields> {
+impl<C> From<NeverFields> for Option<NeoDateInputFields<C>> {
     #[inline]
     fn from(_: NeverFields) -> Self {
         None
@@ -189,25 +194,33 @@ impl From<NeverFields> for Option<NeoTimeInputFields> {
     }
 }
 
+/// A trait associating [`NeoDateComponents`].
 pub trait HasDateComponents {
+    /// The associated components.
     const COMPONENTS: NeoDateComponents;
 }
 
+/// A trait associating [`HasDayComponents`].
 pub trait HasDayComponents {
+    /// The associated components.
     const COMPONENTS: NeoDayComponents;
 }
 
+/// A trait associating [`NeoTimeComponents`].
 pub trait HasTimeComponents {
+    /// The associated components.
     const COMPONENTS: NeoTimeComponents;
 }
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
-pub trait DateTypes: private::Sealed {
+/// A trait associating types implementing various other traits
+/// required for date formatting.
+pub trait DateMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: KeyedDataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
     /// Marker for resolving date fields from the input.
-    type DateInputMarker: Into<Option<NeoDateInputFields>>;
+    type DateInputMarker: Into<Option<NeoDateInputFields<C>>>;
     /// Marker for resolving week-of-year fields from the input.
     type WeekInputMarker: Into<Option<NeoWeekInputFields>>;
     /// Marker for loading year names.
@@ -218,7 +231,9 @@ pub trait DateTypes: private::Sealed {
     type WeekdayNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
-pub trait TimeTypes: private::Sealed {
+/// A trait associating types implementing various other traits
+/// required for time formatting.
+pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving time fields from the input.
     type TimeInputMarker: Into<Option<NeoTimeInputFields>>;
     /// Marker for loading time skeleton patterns.
@@ -227,12 +242,13 @@ pub trait TimeTypes: private::Sealed {
     type DayPeriodNamesV1Marker: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>;
 }
 
+/// A struct implementing traits for never loading data.
 #[derive(Debug)]
 pub struct NeoNeverMarker;
 
 impl private::Sealed for NeoNeverMarker {}
 
-impl DateTypes for NeoNeverMarker {
+impl<C> DateMarkers<C> for NeoNeverMarker {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type DateInputMarker = NeverFields;
     type WeekInputMarker = NeverFields;
@@ -241,39 +257,44 @@ impl DateTypes for NeoNeverMarker {
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-impl TimeTypes for NeoNeverMarker {
+impl TimeMarkers for NeoNeverMarker {
     type TimeInputMarker = NeverFields;
     type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
-pub trait HasNeoComponents: private::Sealed {
+/// A trait associating constants and types implementing various other traits
+/// required for datetime formatting.
+pub trait HasNeoComponents<C>: private::Sealed {
+    /// The associated components.
     const COMPONENTS: NeoComponents;
-    type D: DateTypes;
-    type T: TimeTypes;
+    /// Associated types for date formatting.
+    type D: DateMarkers<C>;
+    /// Associated types for time formatting.
+    type T: TimeMarkers;
     /// Fields for [`TypedDateTimeNames`].
     type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
 }
 
-struct TypedNeoFormatter<DTZ: HasNeoComponents> {
-    _marker: PhantomData<DTZ>,
-}
-
+/// A struct that supports formatting both a date and a time.
+///
+/// It should be composed from types implementing [`HasDayComponents`]
+/// and [`HasTimeComponents`].
 #[derive(Debug)]
-pub struct TypedNeoComponents<D, T> {
+pub struct DateTimeCombo<D, T> {
     _d: PhantomData<D>,
     _t: PhantomData<T>,
 }
 
-impl<D, T> private::Sealed for TypedNeoComponents<D, T> {}
+impl<D, T> private::Sealed for DateTimeCombo<D, T> {}
 
-// type MonthDayHour = TypedNeoComponents<MonthDay, Hour>;
+// type MonthDayHour = DateTimeCombo<MonthDay, Hour>;
 
-impl<D> HasNeoComponents for TypedNeoComponents<D, NeoNeverMarker>
+impl<C, D> HasNeoComponents<C> for DateTimeCombo<D, NeoNeverMarker>
 where
-    D: HasDateComponents + DateTypes,
+    D: HasDateComponents + DateMarkers<C>,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Date(D::COMPONENTS);
     type D = D;
@@ -282,9 +303,9 @@ where
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
-impl<T> HasNeoComponents for TypedNeoComponents<NeoNeverMarker, T>
+impl<C, T> HasNeoComponents<C> for DateTimeCombo<NeoNeverMarker, T>
 where
-    T: HasTimeComponents + TimeTypes,
+    T: HasTimeComponents + TimeMarkers,
 {
     const COMPONENTS: NeoComponents = NeoComponents::Time(T::COMPONENTS);
     type D = NeoNeverMarker;
@@ -293,10 +314,10 @@ where
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
 }
 
-impl<D, T> HasNeoComponents for TypedNeoComponents<D, T>
+impl<C, D, T> HasNeoComponents<C> for DateTimeCombo<D, T>
 where
-    D: HasDayComponents + DateTypes,
-    T: HasTimeComponents + TimeTypes,
+    D: HasDayComponents + DateMarkers<C>,
+    T: HasTimeComponents + TimeMarkers,
 {
     const COMPONENTS: NeoComponents = NeoComponents::DateTime(D::COMPONENTS, T::COMPONENTS);
     type D = D;
@@ -330,7 +351,7 @@ pub trait TypedNeoFormatterMarker<C: CldrCalendar>: private::Sealed {
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
     /// Marker for resolving date fields from the input.
-    type DateInputMarker: Into<Option<NeoDateInputFields>>;
+    type DateInputMarker: Into<Option<NeoDateInputFields<C>>>;
     /// Marker for resolving week-of-year fields from the input.
     type WeekInputMarker: Into<Option<NeoWeekInputFields>>;
     /// Marker for resolving time fields from the input.
@@ -417,7 +438,7 @@ macro_rules! datetime_marker_helper {
         NeverMarker<DateTimePatternV1<'static>>
     };
     (@dateinput, yes) => {
-        NeoDateInputFields
+        NeoDateInputFields<C>
     };
     (@dateinput, no) => {
         NeverFields
@@ -436,8 +457,19 @@ macro_rules! datetime_marker_helper {
     };
 }
 
-macro_rules! impl_datetime_marker {
-    ($type:ident, $components:expr, description = $description:literal, expectation = $expectation:literal, names = $namemarker:path, years = $years_yesno:ident, months = $months_yesno:ident, dates = $dates_yesno:ident, weekdays = $weekdays_yesno:ident, dayperiods = $dayperiods_yesno:ident, times = $times_yesno:ident, datetimes = $datetimes_yesno:ident, dateinput = $dateinput_yesno:ident, weekinput = $weekinput_yesno:ident, timeinput = $timeinput_yesno:ident,) => {
+macro_rules! impl_date_marker {
+    (
+        $type:ident,
+        $components:expr,
+        description = $description:literal,
+        expectation = $expectation:literal,
+        years = $years_yesno:ident,
+        months = $months_yesno:ident,
+        dates = $dates_yesno:ident,
+        weekdays = $weekdays_yesno:ident,
+        dateinput = $dateinput_yesno:ident,
+        weekinput = $weekinput_yesno:ident,
+    ) => {
         #[doc = concat!("Marker for ", $description, ": ", $expectation)]
         ///
         /// # Examples
@@ -467,6 +499,201 @@ macro_rules! impl_datetime_marker {
         /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
         ///
         /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::Gregorian;
+        /// use icu::datetime::neo::TypedNeoFormatter;
+        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+        /// use icu::locid::locale;
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
+        ///     &locale!("en").into(),
+        ///     NeoSkeletonLength::Medium,
+        /// )
+        /// .unwrap();
+        /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
+        ///
+        /// assert_try_writeable_eq!(
+        ///     fmt.format(&dt),
+        #[doc = concat!("    \"", $expectation, "\"")]
+        /// );
+        /// ```
+        #[derive(Debug)]
+        #[allow(clippy::exhaustive_enums)] // empty enum
+        pub enum $type {}
+        impl private::Sealed for $type {}
+        impl HasDateComponents for $type {
+            const COMPONENTS: NeoDateComponents = $components;
+        }
+        impl<C: CldrCalendar> DateMarkers<C> for $type {
+            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
+            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
+            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
+            type DateInputMarker = datetime_marker_helper!(@dateinput, $dateinput_yesno);
+            type WeekInputMarker = datetime_marker_helper!(@weekinput, $weekinput_yesno);
+        }
+        impl<C: CldrCalendar> HasNeoComponents<C> for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+            type D = Self;
+            type T = NeoNeverMarker;
+            type DateTimeNamesMarker = DateMarker;
+            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+        }
+        impl NeoFormatterMarker for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::Date($components);
+            type DateTimeNamesMarker = DateMarker;
+
+            type Year = datetime_marker_helper!(@calmarkers, $years_yesno);
+            type Month = datetime_marker_helper!(@calmarkers, $months_yesno);
+            type Skel = datetime_marker_helper!(@calmarkers, $dates_yesno);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
+
+            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, no);
+            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, no);
+            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+        }
+    };
+}
+
+macro_rules! impl_day_marker {
+    (
+        $type:ident,
+        $components:expr,
+        description = $description:literal,
+        expectation = $expectation:literal,
+        years = $years_yesno:ident,
+        months = $months_yesno:ident,
+        dates = $dates_yesno:ident,
+        weekdays = $weekdays_yesno:ident,
+        dateinput = $dateinput_yesno:ident,
+        weekinput = $weekinput_yesno:ident,
+    ) => {
+        impl_date_marker!(
+            $type,
+            NeoDateComponents::Day($components),
+            description = $description,
+            expectation = $expectation,
+            years = $years_yesno,
+            months = $months_yesno,
+            dates = $dates_yesno,
+            weekdays = $weekdays_yesno,
+            dateinput = $dateinput_yesno,
+            weekinput = $weekinput_yesno,
+        );
+        impl HasDayComponents for $type {
+            const COMPONENTS: NeoDayComponents = $components;
+        }
+    }
+}
+
+macro_rules! impl_time_marker {
+    (
+        $type:ident,
+        $components:expr,
+        description = $description:literal,
+        expectation = $expectation:literal,
+        dayperiods = $dayperiods_yesno:ident,
+        times = $times_yesno:ident,
+        timeinput = $timeinput_yesno:ident,
+    ) => {
+        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        ///
+        /// # Examples
+        ///
+        /// In [`NeoFormatter`](crate::neo::NeoFormatter):
+        ///
+        /// ```
+        /// use icu::calendar::DateTime;
+        /// use icu::datetime::neo::NeoFormatter;
+        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+        /// use icu::locid::locale;
+        /// use writeable::assert_try_writeable_eq;
+        #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
+        ///     &locale!("en").into(),
+        ///     NeoSkeletonLength::Medium,
+        /// )
+        /// .unwrap();
+        /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+        ///
+        /// assert_try_writeable_eq!(
+        ///     fmt.convert_and_format(&dt),
+        #[doc = concat!("    \"", $expectation, "\"")]
+        /// );
+        /// ```
+        ///
+        /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
+        ///
+        /// ```
+        /// use icu::calendar::Time;
+        /// use icu::calendar::Gregorian;
+        /// use icu::datetime::neo::TypedNeoFormatter;
+        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+        /// use icu::locid::locale;
+        /// use writeable::assert_try_writeable_eq;
+        ///
+        #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
+        ///     &locale!("en").into(),
+        ///     NeoSkeletonLength::Medium,
+        /// )
+        /// .unwrap();
+        /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
+        ///
+        /// assert_try_writeable_eq!(
+        ///     fmt.format(&dt),
+        #[doc = concat!("    \"", $expectation, "\"")]
+        /// );
+        /// ```
+        #[derive(Debug)]
+        #[allow(clippy::exhaustive_enums)] // empty enum
+        pub enum $type {}
+        impl private::Sealed for $type {}
+        impl HasTimeComponents for $type {
+            const COMPONENTS: NeoTimeComponents = $components;
+        }
+        impl TimeMarkers for $type {
+            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $dayperiods_yesno);
+            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
+            type TimeInputMarker = datetime_marker_helper!(@timeinput, $timeinput_yesno);
+        }
+        impl<C> HasNeoComponents<C> for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::Time($components);
+            type D = NeoNeverMarker;
+            type T = Self;
+            type DateTimeNamesMarker = TimeMarker;
+            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+        }
+        impl NeoFormatterMarker for $type {
+            const COMPONENTS: NeoComponents = NeoComponents::Time($components);
+            type DateTimeNamesMarker = TimeMarker;
+
+            type Year = datetime_marker_helper!(@calmarkers, no);
+            type Month = datetime_marker_helper!(@calmarkers, no);
+            type Skel = datetime_marker_helper!(@calmarkers, no);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, no);
+            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $dayperiods_yesno);
+            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
+            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+        }
+    };
+}
+
+macro_rules! impl_datetime_marker {
+    (
+        $type:ident,
+        description = $description:literal,
+        expectation = $expectation:literal,
+        date = $date:path,
+        time = $time:path,
+    ) => {
+        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        ///
+        /// # Examples
+        ///
+        /// ```
         /// use icu::calendar::DateTime;
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::neo::TypedNeoFormatter;
@@ -487,144 +714,76 @@ macro_rules! impl_datetime_marker {
         #[doc = concat!("    \"", $expectation, "\"")]
         /// );
         /// ```
-        #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
-        impl private::Sealed for $type {}
-        impl<C: Calendar + CldrCalendar> TypedNeoFormatterMarker<C> for $type {
-            const COMPONENTS: NeoComponents = $components;
-            type DateTimeNamesMarker = $namemarker;
-
-            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
-            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
-            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $dayperiods_yesno);
-            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, $datetimes_yesno);
-            type DateInputMarker = datetime_marker_helper!(@dateinput, $dateinput_yesno);
-            type WeekInputMarker = datetime_marker_helper!(@weekinput, $weekinput_yesno);
-            type TimeInputMarker = datetime_marker_helper!(@timeinput, $timeinput_yesno);
-        }
-        impl NeoFormatterMarker for $type {
-            const COMPONENTS: NeoComponents = $components;
-            type DateTimeNamesMarker = $namemarker;
-
-            type Year = datetime_marker_helper!(@calmarkers, $years_yesno);
-            type Month = datetime_marker_helper!(@calmarkers, $months_yesno);
-            type Skel = datetime_marker_helper!(@calmarkers, $dates_yesno);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
-            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $dayperiods_yesno);
-            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
-            type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, $datetimes_yesno);
-        }
-    };
+        pub type NeoAutoDateTimeMarker = DateTimeCombo<$date, $time>;
+    }
 }
 
-impl_datetime_marker!(
+impl_day_marker!(
     NeoYearMonthDayMarker,
-    { NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::YearMonthDay)) },
+    NeoDayComponents::YearMonthDay,
     description = "a Year/Month/Day format",
     expectation = "May 17, 2024",
-    names = DateMarker,
     years = yes,
     months = yes,
     dates = yes,
     weekdays = yes,
-    dayperiods = no,
-    times = no,
-    datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no,
 );
 
-impl_datetime_marker!(
+impl_day_marker!(
     NeoEraYearMonthMarker,
-    { NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::EraYearMonthDay)) },
+    NeoDayComponents::EraYearMonthDay,
     description = "an Era/Year/Month/Day format",
     expectation = "May 17, 2024 AD",
-    names = DateMarker,
     years = yes,
     months = yes,
     dates = yes,
     weekdays = no,
-    dayperiods = no,
-    times = no,
-    datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no,
 );
 
-impl_datetime_marker!(
+impl_day_marker!(
     NeoAutoDateMarker,
-    { NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto)) },
+    NeoDayComponents::Auto,
     description = "locale-dependent date fields",
     expectation = "May 17, 2024",
-    names = DateMarker,
     years = yes,
     months = yes,
     dates = yes,
     weekdays = yes,
-    dayperiods = no,
-    times = no,
-    datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no,
 );
 
-impl_datetime_marker!(
+impl_time_marker!(
     NeoAutoTimeMarker,
-    { NeoComponents::Time(NeoTimeComponents::Auto) },
+    NeoTimeComponents::Auto,
     description = "locale-dependent time fields",
     expectation = "3:47:50 PM",
-    names = TimeMarker,
-    years = no,
-    months = no,
-    dates = no,
-    weekdays = no,
     dayperiods = yes,
     times = yes,
-    datetimes = no,
-    dateinput = no,
-    weekinput = no,
     timeinput = yes,
 );
 
 impl_datetime_marker!(
     NeoAutoDateTimeMarker,
-    { NeoComponents::DateTime(NeoDayComponents::Auto, NeoTimeComponents::Auto) },
     description = "locale-dependent date and time fields",
     expectation = "May 17, 2024, 3:47:50 PM",
-    names = DateTimeMarker,
-    years = yes,
-    months = yes,
-    dates = yes,
-    weekdays = yes,
-    dayperiods = yes,
-    times = yes,
-    datetimes = yes,
-    dateinput = yes,
-    weekinput = no,
-    timeinput = yes,
+    date = NeoAutoDateMarker,
+    time = NeoAutoTimeMarker,
 );
 
-impl_datetime_marker!(
+impl_date_marker!(
     NeoYearMonthMarker,
-    { NeoComponents::Date(NeoDateComponents::YearMonth) },
+    NeoDateComponents::YearMonth,
     description = "a Year/Month format",
     expectation = "May 2024",
-    names = DateMarker,
     years = yes,
     months = yes,
     dates = yes,
     weekdays = no,
-    dayperiods = no,
-    times = no,
-    datetimes = no,
     dateinput = yes,
     weekinput = no,
-    timeinput = no,
 );

@@ -11,7 +11,7 @@ use crate::format::datetime::{try_write_pattern, try_write_pattern_items};
 use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
-use crate::neo_marker::{NeoFormatterMarker, TypedNeoFormatterMarker};
+use crate::neo_marker::{DateMarkers, HasNeoComponents, NeoFormatterMarker, TimeMarkers};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::NeoSkeletonLength;
 use crate::options::length;
@@ -286,13 +286,13 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
 /// </div>
 #[derive(Debug)]
-pub struct TypedNeoFormatter<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> {
+pub struct TypedNeoFormatter<C: CldrCalendar, R: HasNeoComponents<C>> {
     selection: DateTimePatternSelectionData,
     names: RawDateTimeNames<R::DateTimeNamesMarker>,
     _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
+impl<C: CldrCalendar, R: HasNeoComponents<C>> TypedNeoFormatter<C, R> {
     /// Creates a [`TypedNeoFormatter`] for a date skeleton.
     ///
     /// # Examples
@@ -325,12 +325,12 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     where
         crate::provider::Baked: Sized
             // Date formatting keys
-            + DataProvider<R::YearNamesV1Marker>
-            + DataProvider<R::MonthNamesV1Marker>
-            + DataProvider<R::DateSkeletonPatternsV1Marker>
-            + DataProvider<R::WeekdayNamesV1Marker>
-            + DataProvider<R::DayPeriodNamesV1Marker>
-            + DataProvider<R::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::YearNamesV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::MonthNamesV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
     {
         Self::try_new_internal(
@@ -358,12 +358,12 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     where
         P: ?Sized
             // Date formatting keys
-            + DataProvider<R::YearNamesV1Marker>
-            + DataProvider<R::MonthNamesV1Marker>
-            + DataProvider<R::DateSkeletonPatternsV1Marker>
-            + DataProvider<R::WeekdayNamesV1Marker>
-            + DataProvider<R::DayPeriodNamesV1Marker>
-            + DataProvider<R::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::YearNamesV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::MonthNamesV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>
             // FixedDecimalFormatter keys
             + DataProvider<DecimalSymbolsV1Marker>
@@ -382,18 +382,18 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     where
         P: ?Sized
             // Date formatting keys
-            + DataProvider<R::YearNamesV1Marker>
-            + DataProvider<R::MonthNamesV1Marker>
-            + DataProvider<R::DateSkeletonPatternsV1Marker>
-            + DataProvider<R::WeekdayNamesV1Marker>
-            + DataProvider<R::DayPeriodNamesV1Marker>
-            + DataProvider<R::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::YearNamesV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::MonthNamesV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<R::D as DateMarkers<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
             + DataProvider<R::DateTimePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
         let selection = DateTimePatternSelectionData::try_new_with_skeleton(
-            &R::DateSkeletonPatternsV1Marker::bind(provider),
-            &R::TimeSkeletonPatternsV1Marker::bind(provider),
+            &<R::D as DateMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
+            &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::DateTimePatternV1Marker::bind(provider),
             locale,
             length,
@@ -402,12 +402,12 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
         names.load_for_pattern(
-            &R::YearNamesV1Marker::bind(provider),      // year
-            &R::MonthNamesV1Marker::bind(provider),     // month
-            &R::WeekdayNamesV1Marker::bind(provider),   // weekday
-            &R::DayPeriodNamesV1Marker::bind(provider), // day period
-            Some(loader),                               // fixed decimal formatter
-            Some(loader),                               // week calculator
+            &<R::D as DateMarkers<C>>::YearNamesV1Marker::bind(provider), // year
+            &<R::D as DateMarkers<C>>::MonthNamesV1Marker::bind(provider), // month
+            &<R::D as DateMarkers<C>>::WeekdayNamesV1Marker::bind(provider), // weekday
+            &<R::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider), // day period
+            Some(loader),                                              // fixed decimal formatter
+            Some(loader),                                              // week calculator
             locale,
             selection.pattern_items_for_data_loading(),
         )?;
@@ -460,19 +460,22 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///     )
     ///     .unwrap();
     ///
-    /// // the trait `for<'a> From<&'a icu::icu_calendar::Time>` is not implemented
-    /// // for `NeoDateInputFields<icu::icu_calendar::Gregorian>`
+    /// // the trait `for<'a> From<&'a icu::icu_calendar::Time>` is not
+    /// // implemented for `NeoDateInputFields`, which is required by
+    /// // `for<'a> &'a _: Into<NeoDateInputFields>`
     /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
     pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
     where
-        for<'a> &'a T:
-            Into<R::DateInputMarker> + Into<R::WeekInputMarker> + Into<R::TimeInputMarker>,
+        T: ?Sized,
+        for<'a> &'a T: Into<<R::D as DateMarkers<C>>::DateInputMarker>
+            + Into<<R::D as DateMarkers<C>>::WeekInputMarker>
+            + Into<<R::T as TimeMarkers>::TimeInputMarker>,
     {
         let datetime = ExtractedDateTimeInput::extract_from_neo_input(
-            Into::<R::DateInputMarker>::into(datetime).into(),
-            Into::<R::WeekInputMarker>::into(datetime).into(),
-            Into::<R::TimeInputMarker>::into(datetime).into(),
+            Into::<<R::D as DateMarkers<C>>::DateInputMarker>::into(datetime).into(),
+            Into::<<R::D as DateMarkers<C>>::WeekInputMarker>::into(datetime).into(),
+            Into::<<R::T as TimeMarkers>::TimeInputMarker>::into(datetime).into(),
         );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
