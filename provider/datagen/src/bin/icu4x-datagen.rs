@@ -467,9 +467,7 @@ fn main() -> eyre::Result<()> {
         };
         let mut options = FallbackOptions::default();
         options.deduplication_strategy = match cli.deduplication {
-            Some(Deduplication::Maximal) => {
-                Some(icu_datagen::DeduplicationStrategy::Maximal)
-            }
+            Some(Deduplication::Maximal) => Some(icu_datagen::DeduplicationStrategy::Maximal),
             Some(Deduplication::RetainBaseLanguages) => {
                 Some(icu_datagen::DeduplicationStrategy::RetainBaseLanguages)
             }
