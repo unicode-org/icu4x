@@ -159,20 +159,19 @@ export class ICU4XCustomTimeZone {
 
    * Writes the value of the `time_zone_id` field as a string.
 
-   * Errors if the `time_zone_id` field is empty.
+   * Returns null if the `time_zone_id` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  time_zone_id(): string | never;
+  time_zone_id(): string | undefined;
 
   /**
 
    * Sets the `metazone_id` field from a string.
 
-   * Errors if the string is not a valid BCP-47 metazone ID.
+   * Returns null if the string is not a valid BCP-47 metazone ID.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
@@ -195,27 +194,25 @@ export class ICU4XCustomTimeZone {
 
    * Writes the value of the `metazone_id` field as a string.
 
-   * Errors if the `metazone_id` field is empty.
+   * Returns null if the `metazone_id` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  metazone_id(): string | never;
+  metazone_id(): string | undefined;
 
   /**
 
    * Sets the `zone_variant` field from a string.
 
-   * Errors if the string is not a valid zone variant.
+   * Returns null if the string is not a valid zone variant.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant Rust documentation for `zone_variant`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  try_set_zone_variant(id: string): void | never;
+  try_set_zone_variant(id: string): void | undefined;
 
   /**
 
@@ -231,14 +228,13 @@ export class ICU4XCustomTimeZone {
 
    * Writes the value of the `zone_variant` field as a string.
 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant Rust documentation for `zone_variant`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  zone_variant(): string | never;
+  zone_variant(): string | undefined;
 
   /**
 
@@ -264,27 +260,25 @@ export class ICU4XCustomTimeZone {
 
    * Returns whether the `zone_variant` field is standard time.
 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard Rust documentation for `standard`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_standard_time(): boolean | never;
+  is_standard_time(): boolean | undefined;
 
   /**
 
    * Returns whether the `zone_variant` field is daylight time.
 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
 
    * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight Rust documentation for `daylight`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant 1}
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  is_daylight_time(): boolean | never;
+  is_daylight_time(): boolean | undefined;
 
   /**
 

@@ -162,29 +162,29 @@ class ICU4XCustomTimeZone {
   /**
    * Writes the value of the `time_zone_id` field as a string.
    * 
-   * Errors if the `time_zone_id` field is empty.
+   * Returns null if the `time_zone_id` field is empty.
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> time_zone_id_to_writeable(W& write) const;
+  template<typename W> std::optional<std::monostate> time_zone_id_to_writeable(W& write) const;
 
   /**
    * Writes the value of the `time_zone_id` field as a string.
    * 
-   * Errors if the `time_zone_id` field is empty.
+   * Returns null if the `time_zone_id` field is empty.
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
-  diplomat::result<std::string, ICU4XError> time_zone_id() const;
+  std::optional<std::string> time_zone_id() const;
 
   /**
    * Sets the `metazone_id` field from a string.
    * 
-   * Errors if the string is not a valid BCP-47 metazone ID.
+   * Returns null if the string is not a valid BCP-47 metazone ID.
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
@@ -204,35 +204,35 @@ class ICU4XCustomTimeZone {
   /**
    * Writes the value of the `metazone_id` field as a string.
    * 
-   * Errors if the `metazone_id` field is empty.
+   * Returns null if the `metazone_id` field is empty.
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> metazone_id_to_writeable(W& write) const;
+  template<typename W> std::optional<std::monostate> metazone_id_to_writeable(W& write) const;
 
   /**
    * Writes the value of the `metazone_id` field as a string.
    * 
-   * Errors if the `metazone_id` field is empty.
+   * Returns null if the `metazone_id` field is empty.
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
    */
-  diplomat::result<std::string, ICU4XError> metazone_id() const;
+  std::optional<std::string> metazone_id() const;
 
   /**
    * Sets the `zone_variant` field from a string.
    * 
-   * Errors if the string is not a valid zone variant.
+   * Returns null if the string is not a valid zone variant.
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
-  diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id);
+  std::optional<std::monostate> try_set_zone_variant(const std::string_view id);
 
   /**
    * Clears the `zone_variant` field.
@@ -246,24 +246,24 @@ class ICU4XCustomTimeZone {
   /**
    * Writes the value of the `zone_variant` field as a string.
    * 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> zone_variant_to_writeable(W& write) const;
+  template<typename W> std::optional<std::monostate> zone_variant_to_writeable(W& write) const;
 
   /**
    * Writes the value of the `zone_variant` field as a string.
    * 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
-  diplomat::result<std::string, ICU4XError> zone_variant() const;
+  std::optional<std::string> zone_variant() const;
 
   /**
    * Sets the `zone_variant` field to "standard" time, which may or may
@@ -288,24 +288,24 @@ class ICU4XCustomTimeZone {
   /**
    * Returns whether the `zone_variant` field is standard time.
    * 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
    * 
    * See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
-  diplomat::result<bool, ICU4XError> is_standard_time() const;
+  std::optional<bool> is_standard_time() const;
 
   /**
    * Returns whether the `zone_variant` field is daylight time.
    * 
-   * Errors if the `zone_variant` field is empty.
+   * Returns null if the `zone_variant` field is empty.
    * 
    * See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
    * 
    * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
-  diplomat::result<bool, ICU4XError> is_daylight_time() const;
+  std::optional<bool> is_daylight_time() const;
 
   /**
    * Sets the metazone based on the time zone and the local timestamp.
@@ -442,28 +442,28 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 inline void ICU4XCustomTimeZone::clear_time_zone_id() {
   capi::ICU4XCustomTimeZone_clear_time_zone_id(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::time_zone_id_to_writeable(W& write) const {
+template<typename W> inline std::optional<std::monostate> ICU4XCustomTimeZone::time_zone_id_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_time_zone_id(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCustomTimeZone::time_zone_id() const {
+inline std::optional<std::string> ICU4XCustomTimeZone::time_zone_id() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_time_zone_id(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_metazone_id(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_metazone_id(this->inner.get(), id.data(), id.size());
@@ -478,64 +478,64 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 inline void ICU4XCustomTimeZone::clear_metazone_id() {
   capi::ICU4XCustomTimeZone_clear_metazone_id(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::metazone_id_to_writeable(W& write) const {
+template<typename W> inline std::optional<std::monostate> ICU4XCustomTimeZone::metazone_id_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_metazone_id(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCustomTimeZone::metazone_id() const {
+inline std::optional<std::string> ICU4XCustomTimeZone::metazone_id() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_metazone_id(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
 }
-inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_zone_variant(const std::string_view id) {
+inline std::optional<std::monostate> ICU4XCustomTimeZone::try_set_zone_variant(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_zone_variant(this->inner.get(), id.data(), id.size());
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
 inline void ICU4XCustomTimeZone::clear_zone_variant() {
   capi::ICU4XCustomTimeZone_clear_zone_variant(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::zone_variant_to_writeable(W& write) const {
+template<typename W> inline std::optional<std::monostate> ICU4XCustomTimeZone::zone_variant_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_zone_variant(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCustomTimeZone::zone_variant() const {
+inline std::optional<std::string> ICU4XCustomTimeZone::zone_variant() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_zone_variant(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
+    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
 }
 inline void ICU4XCustomTimeZone::set_standard_time() {
   capi::ICU4XCustomTimeZone_set_standard_time(this->inner.get());
@@ -543,23 +543,23 @@ inline void ICU4XCustomTimeZone::set_standard_time() {
 inline void ICU4XCustomTimeZone::set_daylight_time() {
   capi::ICU4XCustomTimeZone_set_daylight_time(this->inner.get());
 }
-inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::is_standard_time() const {
+inline std::optional<bool> ICU4XCustomTimeZone::is_standard_time() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_is_standard_time(this->inner.get());
-  diplomat::result<bool, ICU4XError> diplomat_result_out_value;
+  std::optional<bool> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<bool>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<bool>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::is_daylight_time() const {
+inline std::optional<bool> ICU4XCustomTimeZone::is_daylight_time() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_is_daylight_time(this->inner.get());
-  diplomat::result<bool, ICU4XError> diplomat_result_out_value;
+  std::optional<bool> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<bool>(diplomat_result_raw_out_value.ok);
+    diplomat_result_out_value = std::optional<bool>(diplomat_result_raw_out_value.ok);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = std::nullopt;
   }
   return diplomat_result_out_value;
 }
