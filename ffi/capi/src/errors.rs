@@ -17,8 +17,6 @@ use icu_collator::CollatorError;
 use icu_datetime::DateTimeError;
 #[cfg(any(feature = "icu_decimal", feature = "icu_datetime"))]
 use icu_decimal::DecimalError;
-#[cfg(feature = "experimental_components")]
-use icu_experimental::units::ConversionError;
 #[cfg(feature = "icu_list")]
 use icu_list::ListError;
 use icu_locid::ParserError;
@@ -61,14 +59,10 @@ pub mod ffi {
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     #[diplomat::rust_link(icu::segmenter::SegmenterError, Enum, compact)]
     #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
-    #[diplomat::rust_link(icu_experimental::units::ConversionError, Enum, compact)]
     pub enum ICU4XError {
-        // general errors
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
         UnknownError = 0x00,
-        /// Some input was out of bounds
-        OutOfBoundsError = 0x02,
 
         // general data errors
         // See DataError
@@ -88,8 +82,6 @@ pub mod ffi {
         DataMismatchedAnyBufferError = 0x1_0D,
 
         // locale errors
-        /// The subtag being requested was not set
-        LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
         LocaleParserLanguageError = 0x2_01,
         LocaleParserSubtagError = 0x2_02,
@@ -148,10 +140,6 @@ pub mod ffi {
         // normalizer errors
         NormalizerFutureExtensionError = 0xB_00,
         NormalizerValidationError = 0xB_01,
-
-        // Units errors
-        #[cfg(feature = "experimental_components")]
-        InvalidCldrUnitIdentifierError = 0x0C_00,
     }
 }
 
@@ -388,15 +376,5 @@ impl From<NormalizerError> for ICU4XError {
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)
-    }
-}
-
-#[cfg(feature = "experimental_components")]
-impl From<ConversionError> for ICU4XError {
-    fn from(value: ConversionError) -> Self {
-        match value {
-            ConversionError::InvalidUnit => ICU4XError::InvalidCldrUnitIdentifierError,
-            _ => ICU4XError::UnknownError,
-        }
     }
 }

@@ -12,7 +12,6 @@
 #include "ICU4XMeasureUnitParser.h"
 
 class ICU4XMeasureUnit;
-#include "ICU4XError.hpp"
 
 /**
  * A destruction policy for using ICU4XMeasureUnitParser with std::unique_ptr.
@@ -33,12 +32,12 @@ class ICU4XMeasureUnitParser {
  public:
 
   /**
-   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-   * Returns an error if the unit identifier is not valid.
+   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`],
+   * if the identifier is valid.
    * 
    * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
    */
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> parse(const std::string_view unit_id) const;
+  std::optional<ICU4XMeasureUnit> parse(const std::string_view unit_id) const;
   inline const capi::ICU4XMeasureUnitParser* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XMeasureUnitParser* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XMeasureUnitParser(capi::ICU4XMeasureUnitParser* i) : inner(i) {}
@@ -51,14 +50,14 @@ class ICU4XMeasureUnitParser {
 
 #include "ICU4XMeasureUnit.hpp"
 
-inline diplomat::result<ICU4XMeasureUnit, ICU4XError> ICU4XMeasureUnitParser::parse(const std::string_view unit_id) const {
-  auto diplomat_result_raw_out_value = capi::ICU4XMeasureUnitParser_parse(this->inner.get(), unit_id.data(), unit_id.size());
-  diplomat::result<ICU4XMeasureUnit, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XMeasureUnit>(ICU4XMeasureUnit(diplomat_result_raw_out_value.ok));
+inline std::optional<ICU4XMeasureUnit> ICU4XMeasureUnitParser::parse(const std::string_view unit_id) const {
+  auto diplomat_optional_raw_out_value = capi::ICU4XMeasureUnitParser_parse(this->inner.get(), unit_id.data(), unit_id.size());
+  std::optional<ICU4XMeasureUnit> diplomat_optional_out_value;
+  if (diplomat_optional_raw_out_value != nullptr) {
+    diplomat_optional_out_value = ICU4XMeasureUnit(diplomat_optional_raw_out_value);
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_optional_out_value = std::nullopt;
   }
-  return diplomat_result_out_value;
+  return diplomat_optional_out_value;
 }
 #endif

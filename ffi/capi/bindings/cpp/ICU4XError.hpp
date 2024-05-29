@@ -18,7 +18,7 @@
  * 
  * The error names are stable and can be checked against as strings in the JS API
  * 
- * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locid/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locid_transform/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html), [16](https://docs.rs/icu_experimental/latest/icu_experimental/units/enum.ConversionError.html)
+ * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locid/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locid_transform/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html)
  */
 enum struct ICU4XError {
 
@@ -27,11 +27,6 @@ enum struct ICU4XError {
    * Please file a bug
    */
   UnknownError = 0,
-
-  /**
-   * Some input was out of bounds
-   */
-  OutOfBoundsError = 2,
   DataMissingDataKeyError = 256,
   DataMissingVariantError = 257,
   DataMissingLocaleError = 258,
@@ -46,11 +41,6 @@ enum struct ICU4XError {
   DataIoError = 267,
   DataUnavailableBufferFormatError = 268,
   DataMismatchedAnyBufferError = 269,
-
-  /**
-   * The subtag being requested was not set
-   */
-  LocaleUndefinedSubtagError = 512,
 
   /**
    * The locale or subtag string failed to parse
@@ -96,7 +86,6 @@ enum struct ICU4XError {
   TimeZoneInvalidIdError = 2563,
   NormalizerFutureExtensionError = 2816,
   NormalizerValidationError = 2817,
-  InvalidCldrUnitIdentifierError = 3072,
 };
 
 #endif

@@ -6,14 +6,11 @@ part of 'lib.g.dart';
 ///
 /// The error names are stable and can be checked against as strings in the JS API
 ///
-/// Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locid/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locid_transform/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html), [16](https://docs.rs/icu_experimental/latest/icu_experimental/units/enum.ConversionError.html)
+/// Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locid/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locid_transform/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html)
 enum Error {
   /// The error is not currently categorized as ICU4XError.
   /// Please file a bug
   unknownError,
-
-  /// Some input was out of bounds
-  outOfBoundsError,
 
   dataMissingDataKeyError,
 
@@ -42,9 +39,6 @@ enum Error {
   dataUnavailableBufferFormatError,
 
   dataMismatchedAnyBufferError,
-
-  /// The subtag being requested was not set
-  localeUndefinedSubtagError,
 
   /// The locale or subtag string failed to parse
   localeParserLanguageError,
@@ -120,16 +114,12 @@ enum Error {
 
   normalizerFutureExtensionError,
 
-  normalizerValidationError,
-
-  invalidCldrUnitIdentifierError;
+  normalizerValidationError;
 
   int get _ffi {
     switch (this) {
       case unknownError:
         return 0;
-      case outOfBoundsError:
-        return 2;
       case dataMissingDataKeyError:
         return 256;
       case dataMissingVariantError:
@@ -158,8 +148,6 @@ enum Error {
         return 268;
       case dataMismatchedAnyBufferError:
         return 269;
-      case localeUndefinedSubtagError:
-        return 512;
       case localeParserLanguageError:
         return 513;
       case localeParserSubtagError:
@@ -234,8 +222,6 @@ enum Error {
         return 2816;
       case normalizerValidationError:
         return 2817;
-      case invalidCldrUnitIdentifierError:
-        return 3072;
     }
   }
 }

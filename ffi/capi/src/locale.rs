@@ -59,14 +59,13 @@ pub mod ffi {
             &self,
             bytes: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        ) -> Option<()> {
             Key::try_from_bytes(bytes)
                 .ok()
                 .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
                 .map(|v| {
                     let _infallible = v.write_to(write);
                 })
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
         /// Returns a string representation of [`ICU4XLocale`] language.
@@ -94,14 +93,13 @@ pub mod ffi {
         pub fn region(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        ) -> Option<()> {
             self.0
                 .id
                 .region
                 .map(|region| {
                     let _infallible = region.write_to(write);
                 })
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
         /// Set the region part of the [`ICU4XLocale`].
@@ -122,14 +120,13 @@ pub mod ffi {
         pub fn script(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
+        ) -> Option<()> {
             self.0
                 .id
                 .script
                 .map(|script| {
                     let _infallible = script.write_to(write);
                 })
-                .ok_or(ICU4XError::LocaleUndefinedSubtagError)
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.

@@ -60,14 +60,14 @@ int main() {
     }
 
 
-    std::string reordered = para.reorder_line(0, 9).ok().value();
+    std::string reordered = para.reorder_line(0, 9).value();
     std::cout << "Reordered paragraph: " << reordered << std::endl;
 
     if (reordered != reordered) {
         std::cout << "Found incorrect reordering, expected: " << reordered << std::endl;
     }
 
-    para.set_paragraph_in_text(1).ok().value();
+    para.set_paragraph_in_text(1).value();
 
     size = para.size();
     if (size != 9) {
@@ -82,7 +82,7 @@ int main() {
         std::cout << "Expected level at index 0 to be LTR" << std::endl;
         return 1;
     }
-    reordered = para.reorder_line(10, 19).ok().value();
+    reordered = para.reorder_line(10, 19).value();
     std::cout << "Reordered paragraph: " << reordered << std::endl;
 
     if (reordered != reordered) {

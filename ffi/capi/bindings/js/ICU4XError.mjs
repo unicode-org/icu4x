@@ -3,7 +3,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs"
 
 export const ICU4XError_js_to_rust = {
   "UnknownError": 0,
-  "OutOfBoundsError": 2,
   "DataMissingDataKeyError": 256,
   "DataMissingVariantError": 257,
   "DataMissingLocaleError": 258,
@@ -18,7 +17,6 @@ export const ICU4XError_js_to_rust = {
   "DataIoError": 267,
   "DataUnavailableBufferFormatError": 268,
   "DataMismatchedAnyBufferError": 269,
-  "LocaleUndefinedSubtagError": 512,
   "LocaleParserLanguageError": 513,
   "LocaleParserSubtagError": 514,
   "LocaleParserExtensionError": 515,
@@ -56,12 +54,10 @@ export const ICU4XError_js_to_rust = {
   "TimeZoneInvalidIdError": 2563,
   "NormalizerFutureExtensionError": 2816,
   "NormalizerValidationError": 2817,
-  "InvalidCldrUnitIdentifierError": 3072,
 };
 
 export const ICU4XError_rust_to_js = {
   [0]: "UnknownError",
-  [2]: "OutOfBoundsError",
   [256]: "DataMissingDataKeyError",
   [257]: "DataMissingVariantError",
   [258]: "DataMissingLocaleError",
@@ -76,7 +72,6 @@ export const ICU4XError_rust_to_js = {
   [267]: "DataIoError",
   [268]: "DataUnavailableBufferFormatError",
   [269]: "DataMismatchedAnyBufferError",
-  [512]: "LocaleUndefinedSubtagError",
   [513]: "LocaleParserLanguageError",
   [514]: "LocaleParserSubtagError",
   [515]: "LocaleParserExtensionError",
@@ -114,12 +109,10 @@ export const ICU4XError_rust_to_js = {
   [2563]: "TimeZoneInvalidIdError",
   [2816]: "NormalizerFutureExtensionError",
   [2817]: "NormalizerValidationError",
-  [3072]: "InvalidCldrUnitIdentifierError",
 };
 
 export const ICU4XError = {
   "UnknownError": "UnknownError",
-  "OutOfBoundsError": "OutOfBoundsError",
   "DataMissingDataKeyError": "DataMissingDataKeyError",
   "DataMissingVariantError": "DataMissingVariantError",
   "DataMissingLocaleError": "DataMissingLocaleError",
@@ -134,7 +127,6 @@ export const ICU4XError = {
   "DataIoError": "DataIoError",
   "DataUnavailableBufferFormatError": "DataUnavailableBufferFormatError",
   "DataMismatchedAnyBufferError": "DataMismatchedAnyBufferError",
-  "LocaleUndefinedSubtagError": "LocaleUndefinedSubtagError",
   "LocaleParserLanguageError": "LocaleParserLanguageError",
   "LocaleParserSubtagError": "LocaleParserSubtagError",
   "LocaleParserExtensionError": "LocaleParserExtensionError",
@@ -172,5 +164,4 @@ export const ICU4XError = {
   "TimeZoneInvalidIdError": "TimeZoneInvalidIdError",
   "NormalizerFutureExtensionError": "NormalizerFutureExtensionError",
   "NormalizerValidationError": "NormalizerValidationError",
-  "InvalidCldrUnitIdentifierError": "InvalidCldrUnitIdentifierError",
 };

@@ -41,9 +41,13 @@ int main() {
     ICU4XLogger_init_simple_logger();
     char output[40];
 
+    diplomat_result_void_void void_option;
+    diplomat_result_box_ICU4XLocale_ICU4XError locale_result;
+    diplomat_result_void_ICU4XError void_result;
+
     // Test creating a locale.
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string("ar", 2);
+    locale_result = ICU4XLocale_create_from_string("ar", 2);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -91,8 +95,8 @@ int main() {
     }
 
     write = diplomat_simple_writeable(output, 40);
-    ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
-    if (write.grow_failed) {
+    void_option = ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
+    if (!void_option.is_ok || write.grow_failed) {
         return 1;
     }
     printf("Output for the extension is %s\n", output);
@@ -102,8 +106,9 @@ int main() {
         return 1;
     }
 
-    diplomat_result_void_ICU4XError result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
-    if (!(!result.is_ok && result.err == ICU4XError_LocaleUndefinedSubtagError) || write.grow_failed) {
+    write = diplomat_simple_writeable(output, 40);
+    void_option = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
+    if (void_option.is_ok || write.grow_failed) {
         return 1;
     }
 
@@ -117,8 +122,8 @@ int main() {
     }
     locale = locale_result.ok;
     str = "zh";
-    result = ICU4XLocale_set_language(locale, str, strlen(str));
-    if (!result.is_ok) {
+    void_result = ICU4XLocale_set_language(locale, str, strlen(str));
+    if (!void_result.is_ok) {
         printf("Could not set the language tag.");
         return 1;
     }
@@ -140,8 +145,8 @@ int main() {
         return 1;
     }
     str = "MX";
-    result = ICU4XLocale_set_region(locale, str, strlen(str));
-    if (!result.is_ok) {
+    void_result = ICU4XLocale_set_region(locale, str, strlen(str));
+    if (!void_result.is_ok) {
         printf("Could not set the region.");
         return 1;
     }
@@ -163,16 +168,16 @@ int main() {
         return 1;
     }
     str = "Latn";
-    result = ICU4XLocale_set_script(locale, str, strlen(str));
-    if (!result.is_ok) {
+    void_result = ICU4XLocale_set_script(locale, str, strlen(str));
+    if (!void_result.is_ok) {
         printf("Could not set the script.");
         return 1;
     }
     if (!test_locale(locale, "setting the script", "en-Latn-US")) {
         return 1;
     }
-    result = ICU4XLocale_set_script(locale, "", 0);
-    if (!result.is_ok) {
+    void_result = ICU4XLocale_set_script(locale, "", 0);
+    if (!void_result.is_ok) {
         printf("Could not set the script.");
         return 1;
     }
