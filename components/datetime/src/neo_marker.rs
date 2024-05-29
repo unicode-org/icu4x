@@ -12,7 +12,7 @@ use icu_calendar::{
         DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
         IsoSecond, IsoWeekday, NanoSecond,
     },
-    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime,
+    AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Time,
 };
 use icu_provider::{prelude::*, NeverMarker};
 
@@ -157,6 +157,17 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoTimeInp
             minute: value.time.minute,
             second: value.time.second,
             nanosecond: value.time.nanosecond,
+        }
+    }
+}
+
+impl From<&Time> for NeoTimeInputFields {
+    fn from(value: &Time) -> Self {
+        Self {
+            hour: value.hour,
+            minute: value.minute,
+            second: value.second,
+            nanosecond: value.nanosecond,
         }
     }
 }
