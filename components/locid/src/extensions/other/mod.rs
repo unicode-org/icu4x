@@ -85,7 +85,7 @@ impl Other {
 
         let mut keys = ShortBoxSlice::new();
         while let Some(subtag) = iter.peek() {
-            if subtag.len() < 2 {
+            if !Subtag::valid_key(subtag) {
                 break;
             }
             if let Ok(key) = Subtag::try_from_bytes(subtag) {

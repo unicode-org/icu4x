@@ -91,6 +91,12 @@ impl_tinystr_subtag!(
     ["f", "toolooong"],
 );
 
+impl Subtag {
+    pub(crate) const fn valid_key(v: &[u8]) -> bool {
+        2 <= v.len() && v.len() <= 8
+    }
+}
+
 impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
     type Error = crate::parser::errors::ParserError;
 
