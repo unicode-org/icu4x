@@ -60,3 +60,68 @@ pub use script::{script, Script};
 #[doc(inline)]
 pub use variant::{variant, Variant};
 pub use variants::Variants;
+
+impl_tinystr_subtag!(
+    /// A generic subtag.
+    ///
+    /// The subtag has to be an ASCII alphanumerical string no shorter than
+    /// two characters and no longer than eight.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Subtag;
+    ///
+    /// let subtag1: Subtag = "Foo".parse()
+    ///     .expect("Failed to parse a Subtag.");
+    ///
+    /// assert_eq!(subtag1.as_str(), "foo");
+    /// ```
+    Subtag,
+    subtags,
+    subtag,
+    subtags_subtag,
+    2..=8,
+    s,
+    s.is_ascii_alphanumeric(),
+    s.to_ascii_lowercase(),
+    s.is_ascii_alphanumeric() && s.is_ascii_lowercase(),
+    InvalidSubtag,
+    ["foo12"],
+    ["f", "toolooong"],
+);
+
+impl Subtag {
+    pub(crate) const fn valid_key(v: &[u8]) -> bool {
+        2 <= v.len() && v.len() <= 8
+    }
+}
+
+impl<const N: usize> TryFrom<tinystr::TinyAsciiStr<N>> for Subtag {
+    type Error = crate::parser::errors::ParserError;
+
+    fn try_from(value: tinystr::TinyAsciiStr<N>) -> Result<Self, Self::Error> {
+        Self::try_from_bytes(value.as_bytes())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tinystr::tinystr;
+
+    #[test]
+    fn test_subtag() {
+        let subtag = subtag!("foo");
+        assert_eq!(subtag.as_str(), "foo");
+    }
+
+    #[test]
+    fn test_subtag_from_tinystr() {
+        let subtag = Subtag::try_from(tinystr!(3, "foo"));
+        assert!(subtag.is_ok());
+
+        let subtag = Subtag::try_from(tinystr!(1, "f"));
+        assert!(subtag.is_err());
+    }
+}

@@ -19,14 +19,11 @@
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
 
-mod subtag;
-
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
+use crate::subtags::Subtag;
 use alloc::vec::Vec;
-#[doc(inline)]
-pub use subtag::{subtag, Subtag};
 
 /// A list of [`Other Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -37,7 +34,8 @@ pub use subtag::{subtag, Subtag};
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::other::{Other, Subtag};
+/// use icu::locid::extensions::other::Other;
+/// use icu::locid::subtags::Subtag;
 ///
 /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -64,7 +62,8 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::{Other, Subtag};
+    /// use icu::locid::extensions::other::Other;
+    /// use icu::locid::subtags::Subtag;
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
