@@ -92,11 +92,6 @@ members = [
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
 exclude = [
-    # Testdata will still be published in the 1.x stream, but is deprecated
-    # and we don't use it anymore. As we don't want to keep the actual data
-    # in the repo it doesn't build without running `cargo make testdata-legacy`
-    # first.
-    "provider/testdata",
     # Tutorials are tested outside the workspace to simulate external users
     "tutorials",
 ]
