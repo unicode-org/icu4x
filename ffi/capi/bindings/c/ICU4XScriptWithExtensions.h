@@ -12,7 +12,7 @@
 #include "ICU4XDataProvider.h"
 #include "ICU4XScriptWithExtensionsBorrowed.d.h"
 #include "ICU4XScriptWithExtensionsBorrowed.h"
-#include "diplomat_result_box_ICU4XScriptWithExtensions_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XScriptWithExtensions_ICU4XDataError.d.h"
 
 #include "ICU4XScriptWithExtensions.d.h"
 
@@ -22,7 +22,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XScriptWithExtensions_ICU4XError ICU4XScriptWithExtensions_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XScriptWithExtensions_ICU4XDataError ICU4XScriptWithExtensions_create(const ICU4XDataProvider* provider);
 
 uint16_t ICU4XScriptWithExtensions_get_script_val(const ICU4XScriptWithExtensions* self, uint32_t code_point);
 

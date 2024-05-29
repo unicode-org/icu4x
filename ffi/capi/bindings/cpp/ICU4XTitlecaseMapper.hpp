@@ -10,16 +10,16 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XTitlecaseMapper.h"
 #include "ICU4XTitlecaseOptionsV1.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XError> ICU4XTitlecaseMapper::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XDataError> ICU4XTitlecaseMapper::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XTitlecaseMapper_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XTitlecaseMapper>>(std::unique_ptr<ICU4XTitlecaseMapper>(ICU4XTitlecaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XTitlecaseMapper>>(std::unique_ptr<ICU4XTitlecaseMapper>(ICU4XTitlecaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XTitlecaseMapper>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> ICU4XTitlecaseMapper::titlecase_segment_v1(std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const {

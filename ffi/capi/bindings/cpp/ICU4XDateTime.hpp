@@ -11,9 +11,9 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCalendar.hpp"
+#include "ICU4XCalendarError.hpp"
 #include "ICU4XDate.hpp"
 #include "ICU4XDateTime.h"
-#include "ICU4XError.hpp"
 #include "ICU4XIsoDateTime.hpp"
 #include "ICU4XIsoWeekday.hpp"
 #include "ICU4XTime.hpp"
@@ -21,7 +21,7 @@
 #include "ICU4XWeekOf.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError> ICU4XDateTime::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
+inline diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError> ICU4XDateTime::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
   auto result = capi::ICU4XDateTime_create_from_iso_in_calendar(year,
     month,
     day,
@@ -30,10 +30,10 @@ inline diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError> ICU4XDateTim
     second,
     nanosecond,
     calendar.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDateTime>>(std::unique_ptr<ICU4XDateTime>(ICU4XDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError>(diplomat::Ok<std::unique_ptr<ICU4XDateTime>>(std::unique_ptr<ICU4XDateTime>(ICU4XDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError>(diplomat::Err<ICU4XCalendarError>(ICU4XCalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError> ICU4XDateTime::create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
+inline diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError> ICU4XDateTime::create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
   auto result = capi::ICU4XDateTime_create_from_codes_in_calendar(era_code.data(),
     era_code.size(),
     year,
@@ -45,7 +45,7 @@ inline diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError> ICU4XDateTim
     second,
     nanosecond,
     calendar.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XDateTime>>(std::unique_ptr<ICU4XDateTime>(ICU4XDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError>(diplomat::Ok<std::unique_ptr<ICU4XDateTime>>(std::unique_ptr<ICU4XDateTime>(ICU4XDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XDateTime>, ICU4XCalendarError>(diplomat::Err<ICU4XCalendarError>(ICU4XCalendarError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<ICU4XDateTime> ICU4XDateTime::create_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time) {

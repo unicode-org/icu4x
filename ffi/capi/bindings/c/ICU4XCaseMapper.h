@@ -14,7 +14,7 @@
 #include "ICU4XLocale.h"
 #include "ICU4XTitlecaseOptionsV1.d.h"
 #include "ICU4XTitlecaseOptionsV1.h"
-#include "diplomat_result_box_ICU4XCaseMapper_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XCaseMapper_ICU4XDataError.d.h"
 
 #include "ICU4XCaseMapper.d.h"
 
@@ -24,7 +24,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XCaseMapper_ICU4XError ICU4XCaseMapper_create(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCaseMapper_ICU4XDataError ICU4XCaseMapper_create(const ICU4XDataProvider* provider);
 
 void ICU4XCaseMapper_lowercase(const ICU4XCaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, DiplomatWrite* write);
 

@@ -15,7 +15,7 @@ pub mod ffi {
     use unicode_bidi::Level;
     use unicode_bidi::Paragraph;
 
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::ICU4XDataError;
     use crate::provider::ffi::ICU4XDataProvider;
 
     pub enum ICU4XBidiDirection {
@@ -34,7 +34,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XError> {
+        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XDataError> {
             Ok(Box::new(ICU4XBidi(call_constructor_unstable!(
                 maps::bidi_class [m => Ok(m.static_to_owned())],
                 maps::load_bidi_class,
@@ -223,7 +223,7 @@ pub mod ffi {
 
     impl<'info> ICU4XBidiParagraph<'info> {
         /// Given a paragraph index `n` within the surrounding text, this sets this
-        /// object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
+        /// object to the paragraph at that index. Returns `ICU4XDataError::OutOfBoundsError` when out of bounds.
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object

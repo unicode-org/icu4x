@@ -9,7 +9,7 @@ export class ICU4XBidiParagraph {
 
   /**
 
-   * Given a paragraph index `n` within the surrounding text, this sets this object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
+   * Given a paragraph index `n` within the surrounding text, this sets this object to the paragraph at that index. Returns `ICU4XDataError::OutOfBoundsError` when out of bounds.
 
    * This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't create a new object
    */

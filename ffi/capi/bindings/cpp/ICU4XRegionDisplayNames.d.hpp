@@ -8,20 +8,22 @@
 #include <memory>
 #include <optional>
 #include "diplomat_runtime.hpp"
-#include "ICU4XError.d.hpp"
+#include "ICU4XDataError.d.hpp"
+#include "ICU4XLocaleParseError.d.hpp"
 #include "ICU4XRegionDisplayNames.d.h"
 
 class ICU4XDataProvider;
 class ICU4XLocale;
-class ICU4XError;
+class ICU4XDataError;
+class ICU4XLocaleParseError;
 
 
 class ICU4XRegionDisplayNames {
 public:
 
-  inline static diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  inline static diplomat::result<std::unique_ptr<ICU4XRegionDisplayNames>, ICU4XDataError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
-  inline diplomat::result<std::string, ICU4XError> of(std::string_view region) const;
+  inline diplomat::result<std::string, ICU4XLocaleParseError> of(std::string_view region) const;
 
   inline const capi::ICU4XRegionDisplayNames* AsFFI() const;
   inline capi::ICU4XRegionDisplayNames* AsFFI();

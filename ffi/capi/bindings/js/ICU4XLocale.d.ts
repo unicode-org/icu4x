@@ -1,5 +1,5 @@
 import { FFIError } from "./diplomat-runtime"
-import { ICU4XError } from "./ICU4XError";
+import { ICU4XLocaleParseError } from "./ICU4XLocaleParseError";
 import { ICU4XOrdering } from "./ICU4XOrdering";
 
 /**
@@ -17,7 +17,7 @@ export class ICU4XLocale {
    * This will run the complete locale parsing algorithm. If code size and performance are critical and the locale is of a known shape (such as `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XLocaleParseError}>
    */
   static create_from_string(name: string): ICU4XLocale | never;
 
@@ -66,7 +66,7 @@ export class ICU4XLocale {
    * Set the language part of the {@link ICU4XLocale `ICU4XLocale`}.
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XLocaleParseError}>
    */
   set_language(bytes: string): void | never;
 
@@ -83,7 +83,7 @@ export class ICU4XLocale {
    * Set the region part of the {@link ICU4XLocale `ICU4XLocale`}.
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XLocaleParseError}>
    */
   set_region(bytes: string): void | never;
 
@@ -100,7 +100,7 @@ export class ICU4XLocale {
    * Set the script part of the {@link ICU4XLocale `ICU4XLocale`}. Pass an empty string to remove the script.
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XLocaleParseError}>
    */
   set_script(bytes: string): void | never;
 
@@ -111,7 +111,7 @@ export class ICU4XLocale {
    * Use ICU4XLocaleCanonicalizer for better control and functionality
 
    * See the {@link https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.canonicalize Rust documentation for `canonicalize`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XLocaleParseError}>
    */
   static canonicalize(bytes: string): string | never;
 

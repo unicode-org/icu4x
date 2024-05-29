@@ -28,11 +28,11 @@ final class Time implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory Time(int hour, int minute, int second, int nanosecond) {
     final result = _ICU4XTime_create(hour, minute, second, nanosecond);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return Time._fromFfi(result.union.ok, []);
   }
@@ -41,11 +41,11 @@ final class Time implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.midnight) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [CalendarError] on failure.
   factory Time.midnight() {
     final result = _ICU4XTime_create_midnight();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw CalendarError.values[result.union.err];
     }
     return Time._fromFfi(result.union.ok, []);
   }

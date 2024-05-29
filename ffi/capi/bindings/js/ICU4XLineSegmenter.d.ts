@@ -1,6 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLineBreakIteratorLatin1 } from "./ICU4XLineBreakIteratorLatin1";
 import { ICU4XLineBreakIteratorUtf16 } from "./ICU4XLineBreakIteratorUtf16";
 import { ICU4XLineBreakIteratorUtf8 } from "./ICU4XLineBreakIteratorUtf8";
@@ -19,7 +19,7 @@ export class ICU4XLineSegmenter {
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto Rust documentation for `new_auto`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_auto(provider: ICU4XDataProvider): ICU4XLineSegmenter | never;
 
@@ -28,7 +28,7 @@ export class ICU4XLineSegmenter {
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm Rust documentation for `new_lstm`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_lstm(provider: ICU4XDataProvider): ICU4XLineSegmenter | never;
 
@@ -37,7 +37,7 @@ export class ICU4XLineSegmenter {
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options and dictionary payload data for Burmese, Khmer, Lao, and Thai..
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary Rust documentation for `new_dictionary`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_dictionary(provider: ICU4XDataProvider): ICU4XLineSegmenter | never;
 
@@ -46,7 +46,7 @@ export class ICU4XLineSegmenter {
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options Rust documentation for `new_auto_with_options`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_auto_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineSegmenter | never;
 
@@ -55,7 +55,7 @@ export class ICU4XLineSegmenter {
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options Rust documentation for `new_lstm_with_options`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_lstm_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineSegmenter | never;
 
@@ -64,7 +64,7 @@ export class ICU4XLineSegmenter {
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options and dictionary payload data for Burmese, Khmer, Lao, and Thai.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options Rust documentation for `new_dictionary_with_options`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create_dictionary_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineSegmenter | never;
 

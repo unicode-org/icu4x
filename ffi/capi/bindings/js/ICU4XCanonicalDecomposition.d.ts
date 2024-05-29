@@ -1,8 +1,8 @@
 import { char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XDecomposed } from "./ICU4XDecomposed";
-import { ICU4XError } from "./ICU4XError";
 
 /**
 
@@ -19,7 +19,7 @@ export class ICU4XCanonicalDecomposition {
    * Construct a new ICU4XCanonicalDecomposition instance for NFC
 
    * See the {@link https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCanonicalDecomposition | never;
 

@@ -1,8 +1,8 @@
 import { char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCodePointSetBuilder } from "./ICU4XCodePointSetBuilder";
+import { ICU4XDataError } from "./ICU4XDataError";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
-import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XTitlecaseOptionsV1 } from "./ICU4XTitlecaseOptionsV1";
 
@@ -17,7 +17,7 @@ export class ICU4XCaseMapper {
    * Construct a new ICU4XCaseMapper instance
 
    * See the {@link https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new Rust documentation for `new`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * @throws {@link FFIError}<{@link ICU4XDataError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XCaseMapper | never;
 

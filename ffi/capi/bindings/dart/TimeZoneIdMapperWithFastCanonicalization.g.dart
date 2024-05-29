@@ -29,18 +29,18 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory TimeZoneIdMapperWithFastCanonicalization(DataProvider provider) {
     final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_create(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return TimeZoneIdMapperWithFastCanonicalization._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonicalize_iana) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   String canonicalizeIana(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
@@ -48,14 +48,14 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
     final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     return write.finalize();
   }
 
   /// See the [Rust documentation for `canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalizationBorrowed.html#method.canonical_iana_from_bcp47) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   String canonicalIanaFromBcp47(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
@@ -63,7 +63,7 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
     final result = _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError.values[result.union.err];
     }
     return write.finalize();
   }

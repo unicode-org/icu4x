@@ -6,7 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-#include "diplomat_result_box_ICU4XTime_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XTime_ICU4XCalendarError.d.h"
 
 #include "ICU4XTime.d.h"
 
@@ -16,9 +16,9 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+diplomat_result_box_ICU4XTime_ICU4XCalendarError ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create_midnight();
+diplomat_result_box_ICU4XTime_ICU4XCalendarError ICU4XTime_create_midnight();
 
 uint8_t ICU4XTime_hour(const ICU4XTime* self);
 

@@ -11,13 +11,13 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "ICU4XCanonicalComposition.h"
+#include "ICU4XDataError.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XError.hpp"
 
 
-inline diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XError> ICU4XCanonicalComposition::create(const ICU4XDataProvider& provider) {
+inline diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError> ICU4XCanonicalComposition::create(const ICU4XDataProvider& provider) {
   auto result = capi::ICU4XCanonicalComposition_create(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalComposition>>(std::unique_ptr<ICU4XCanonicalComposition>(ICU4XCanonicalComposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XError>(diplomat::Err<ICU4XError>(ICU4XError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError>(diplomat::Ok<std::unique_ptr<ICU4XCanonicalComposition>>(std::unique_ptr<ICU4XCanonicalComposition>(ICU4XCanonicalComposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ICU4XCanonicalComposition>, ICU4XDataError>(diplomat::Err<ICU4XDataError>(ICU4XDataError::FromFFI(result.err)));
 }
 
 inline char32_t ICU4XCanonicalComposition::compose(char32_t starter, char32_t second) const {

@@ -20,7 +20,7 @@
 #include "ICU4XWeekCalculator.h"
 #include "ICU4XWeekOf.d.h"
 #include "ICU4XWeekOf.h"
-#include "diplomat_result_box_ICU4XIsoDateTime_ICU4XError.d.h"
+#include "diplomat_result_box_ICU4XIsoDateTime_ICU4XCalendarError.d.h"
 
 #include "ICU4XIsoDateTime.d.h"
 
@@ -30,7 +30,7 @@ extern "C" {
 #endif // __cplusplus
 
 
-diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+diplomat_result_box_ICU4XIsoDateTime_ICU4XCalendarError ICU4XIsoDateTime_create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
 ICU4XIsoDateTime* ICU4XIsoDateTime_crate_from_date_and_time(const ICU4XIsoDate* date, const ICU4XTime* time);
 

@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
+    use crate::{errors::ffi::ICU4XDataError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
     use icu_normalizer::properties::{
         CanonicalCombiningClassMap, CanonicalComposition, CanonicalDecomposition, Decomposed,
@@ -24,7 +24,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
+        ) -> Result<Box<ICU4XCanonicalCombiningClassMap>, ICU4XDataError> {
             Ok(Box::new(ICU4XCanonicalCombiningClassMap(
                 call_constructor!(
                     CanonicalCombiningClassMap::new [r => Ok(r)],
@@ -76,7 +76,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCanonicalComposition>, ICU4XError> {
+        ) -> Result<Box<ICU4XCanonicalComposition>, ICU4XDataError> {
             Ok(Box::new(ICU4XCanonicalComposition(call_constructor!(
                 CanonicalComposition::new [r => Ok(r)],
                 CanonicalComposition::try_new_with_any_provider,
@@ -123,7 +123,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
+        ) -> Result<Box<ICU4XCanonicalDecomposition>, ICU4XDataError> {
             Ok(Box::new(ICU4XCanonicalDecomposition(call_constructor!(
                 CanonicalDecomposition::new [r => Ok(r)],
                 CanonicalDecomposition::try_new_with_any_provider,

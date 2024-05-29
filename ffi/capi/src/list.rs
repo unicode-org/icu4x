@@ -5,7 +5,8 @@
 #[diplomat::bridge]
 pub mod ffi {
     use crate::{
-        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XDataError, locale_core::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
     };
     use alloc::boxed::Box;
     use alloc::string::String;
@@ -72,7 +73,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XListLength,
-        ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
                 ListFormatter::try_new_and_with_length,
@@ -90,7 +91,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XListLength,
-        ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
                 ListFormatter::try_new_or_with_length,
@@ -108,7 +109,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XListLength,
-        ) -> Result<Box<ICU4XListFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XListFormatter>, ICU4XDataError> {
             let locale = locale.to_datalocale();
             Ok(Box::new(ICU4XListFormatter(call_constructor!(
                 ListFormatter::try_new_unit_with_length,
