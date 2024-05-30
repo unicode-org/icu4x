@@ -5,8 +5,7 @@ version = 3
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3137c640d2bac491dbfca7f9945c948f888dd8c95bdf7ee6b164fbdfa5d3efc2"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bcf0fc679266bb5ee0c7b25a371398158e81a7e1#bcf0fc679266bb5ee0c7b25a371398158e81a7e1"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -17,14 +16,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5124bed7f5a5bc993adc24b2ef2df45514f005c31c198e62fceb1b2fe8cdf9a9"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bcf0fc679266bb5ee0c7b25a371398158e81a7e1#bcf0fc679266bb5ee0c7b25a371398158e81a7e1"
 
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d86a70d2e21480f7ecd11e69b517de5c04fa6708510d6e26f75ad35d6d0eb14"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bcf0fc679266bb5ee0c7b25a371398158e81a7e1#bcf0fc679266bb5ee0c7b25a371398158e81a7e1"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -128,9 +125,9 @@ version = "0.7.3"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.81"
+version = "1.0.84"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d1597b0c024618f09a9c3b8655b7e430397a36d23fdafec26d6965e9eec3eba"
+checksum = "ec96c6a92621310b51366f1e28d05ef11489516e93be030060e5fc12024a49d6"
 dependencies = [
  "unicode-ident",
 ]
@@ -146,18 +143,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.198"
+version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9846a40c979031340571da2545a4e5b7c4163bdae79b301d5f86d03979451fcc"
+checksum = "7253ab4de971e72fb7be983802300c30b5a7f0c2e56fab8abfc6a214307c0094"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.198"
+version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e88edab869b01783ba905e7d0153f9fc1a6505a96e4ad3018011eedb838566d9"
+checksum = "500cbc0ebeb6f46627f50f3f5811ccf6bf00643be300b4c3eabc0ef55dc5b5ba"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -194,9 +191,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.60"
+version = "2.0.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "909518bc7b1c9b779f1bbf07f2929d35af9f0f37e47c6e9ef7f9dddc1e1821f3"
+checksum = "c42f3f41a2de00b01c0aaad383c5a45241efc8b2d1eda5661812fda5f3cdcff5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -296,7 +293,7 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.2.1"
+version = "0.2.2"
 
 [[patch.unused]]
 name = "crlify"
@@ -396,7 +393,7 @@ version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
-version = "0.6.0"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "icu_list"
@@ -420,7 +417,7 @@ version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_pattern"
-version = "0.1.0"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "icu_plurals"

@@ -6,3 +6,10 @@
 quick = "make quick"
 tidy = "make tidy"
 clippy-all = "clippy --all-features --all-targets -- -D warnings"
+
+[unstable]
+# Use `cargo +nightly update` to update MSRV-aware
+msrv-policy = true
+
+[resolver]
+something-like-precedence = 'something-like-rust-version'
