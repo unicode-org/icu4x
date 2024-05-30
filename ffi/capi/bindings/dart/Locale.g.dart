@@ -99,7 +99,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  void setLanguage(String bytes) {
+  set language(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_language(_ffi, bytesView.allocIn(temp), bytesView.length);
@@ -155,7 +155,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   ///
   /// Throws [Error] on failure.
-  set script(String bytes) {
+  void setScript(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_script(_ffi, bytesView.allocIn(temp), bytesView.length);

@@ -77,7 +77,7 @@ pub mod ffi {
 
         /// Set the language part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "language")]
+        #[diplomat::attr(supports = accessors, setter = "language")]
         pub fn set_language(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.id.language = if bytes.is_empty() {
                 Language::UND
@@ -119,7 +119,7 @@ pub mod ffi {
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, setter = "script")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
         pub fn set_script(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.id.script = if bytes.is_empty() {
                 None
