@@ -20,7 +20,7 @@ icu_datetime = { path = "../components/datetime" }
 icu_decimal = { path = "../components/decimal" }
 icu_experimental = { path = "../components/experimental" }
 icu_list = { path = "../components/list" }
-icu_locid = { path = "../components/locid" }
+icu_locale_core = { path = "../components/locale_core" }
 icu_locale = { path = "../components/locale" }
 icu_normalizer = { path = "../components/normalizer" }
 icu_plurals = { path = "../components/plurals" }

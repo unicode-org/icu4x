@@ -267,7 +267,7 @@ impl DatagenProvider {
     pub fn locales_for_coverage_levels(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<impl IntoIterator<Item = icu_locid::LanguageIdentifier>, DataError> {
+    ) -> Result<impl IntoIterator<Item = icu_locale_core::LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
 

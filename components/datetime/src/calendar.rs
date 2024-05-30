@@ -13,7 +13,7 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
 };
-use icu_locid::extensions::unicode::{value, Value};
+use icu_locale_core::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
 

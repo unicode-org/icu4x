@@ -85,7 +85,7 @@ pub enum Strength {
     /// assert_eq!(collator.compare("e", "ｅ"), // Full-width e
     ///            core::cmp::Ordering::Less);
     ///
-    /// let locale = icu::locid::locale!("ja").into();
+    /// let locale = icu::locale_core::locale!("ja").into();
     /// let ja_collator =
     ///   Collator::try_new(&locale, options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
@@ -115,7 +115,7 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Quaternary);
     ///
-    /// let ja_locale = icu::locid::locale!("ja").into();
+    /// let ja_locale = icu::locale_core::locale!("ja").into();
     /// let ja_collator =
     ///   Collator::try_new(&ja_locale, options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
@@ -151,7 +151,7 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Identical);
     ///
-    /// let ja_locale = icu::locid::locale!("ja").into();
+    /// let ja_locale = icu::locale_core::locale!("ja").into();
     /// let ja_collator =
     ///   Collator::try_new(&ja_locale, options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),

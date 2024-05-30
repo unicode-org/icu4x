@@ -6,7 +6,7 @@ use crate::provider::calendar::*;
 use crate::provider::neo::*;
 use alloc::vec;
 use icu_calendar::types::MonthCode;
-use icu_locid::extensions::private::{subtag, Subtag};
+use icu_locale_core::extensions::private::{subtag, Subtag};
 use icu_provider::prelude::*;
 
 mod subtag_consts {
@@ -469,7 +469,7 @@ impl_data_provider_adapter!(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     #[test]
     fn test_adapter_months_numeric() {

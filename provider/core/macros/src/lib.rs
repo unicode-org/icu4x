@@ -60,9 +60,9 @@ mod tests;
 /// #       pub use icu_provider::_internal::LocaleFallbackPriority;
 /// #     }
 /// #   }
-/// #   pub use icu_provider::_internal::locid;
+/// #   pub use icu_provider::_internal::locale_core;
 /// # }
-/// use icu::locid::extensions::unicode::key;
+/// use icu::locale_core::extensions::unicode::key;
 /// use icu::locale::fallback::*;
 /// use icu_provider::yoke;
 /// use icu_provider::zerofrom;
@@ -372,7 +372,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
             let extension_key_expr = if let Some(extension_key_lit) = extension_key {
-                quote! {Some(icu_provider::_internal::locid::extensions::unicode::key!(#extension_key_lit))}
+                quote! {Some(icu_provider::_internal::locale_core::extensions::unicode::key!(#extension_key_lit))}
             } else {
                 quote! {None}
             };

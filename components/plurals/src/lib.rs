@@ -24,7 +24,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::locale;
+//! use icu::locale_core::locale;
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
 //! let pr =
@@ -139,7 +139,7 @@ pub enum PluralRuleType {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
 /// let pr =
@@ -270,7 +270,7 @@ impl PluralCategory {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
 /// let pr =
@@ -306,7 +306,7 @@ impl PluralRules {
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralRuleType, PluralRules};
         ///
         /// let _ = PluralRules::try_new(
@@ -352,7 +352,7 @@ impl PluralRules {
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralCategory, PluralRules};
         ///
         /// let rules = PluralRules::try_new_cardinal(&locale!("ru").into()).expect("locale should be present");
@@ -409,7 +409,7 @@ impl PluralRules {
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralCategory, PluralRules};
         ///
         /// let rules = PluralRules::try_new_ordinal(
@@ -454,7 +454,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
     /// let pr =
@@ -479,7 +479,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
     /// #
@@ -517,7 +517,7 @@ impl PluralRules {
     }
 
     /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
-    /// based on the [`LanguageIdentifier`](icu::locid::{LanguageIdentifier}) and [`PluralRuleType`].
+    /// based on the [`LanguageIdentifier`](icu::locale_core::{LanguageIdentifier}) and [`PluralRuleType`].
     ///
     /// The [`Plural Categories`] are returned in UTS 35 sorted order.
     ///
@@ -526,7 +526,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
     /// let pr =
@@ -577,7 +577,7 @@ impl PluralRules {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::plurals::{PluralCategory, PluralOperands};
 /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
 ///
@@ -620,7 +620,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
         ///
         /// let _ = PluralRulesWithRanges::try_new(
@@ -661,7 +661,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
         ///
         /// let rules = PluralRulesWithRanges::try_new_cardinal(&locale!("ru").into())
@@ -704,7 +704,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
         ///
         /// let rules = PluralRulesWithRanges::try_new_ordinal(
@@ -758,7 +758,7 @@ where
         /// # Examples
         ///
         /// ```
-        /// use icu::locid::locale;
+        /// use icu::locale_core::locale;
         /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges, PluralRules};
         ///
         /// let rules = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
@@ -798,7 +798,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
     ///
     /// let ranges = PluralRulesWithRanges::try_new_cardinal(&locale!("en").into())
@@ -821,7 +821,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::plurals::{
     ///     PluralCategory, PluralOperands, PluralRuleType, PluralRulesWithRanges,
     /// };
@@ -864,7 +864,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesWithRanges};
     ///
     /// let ranges = PluralRulesWithRanges::try_new(

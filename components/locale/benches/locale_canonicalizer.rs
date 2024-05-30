@@ -5,7 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_locale::LocaleCanonicalizer;
 use icu_locale::LocaleExpander;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 
 fn canonicalize_bench(c: &mut Criterion) {
     let lc = LocaleCanonicalizer::new();

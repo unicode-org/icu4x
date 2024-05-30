@@ -269,7 +269,7 @@ pub use zerofrom;
 #[doc(hidden)]
 pub mod _internal {
     pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
-    pub use icu_locid as locid;
+    pub use icu_locale_core as locale_core;
 
     #[cfg(feature = "logging")]
     pub use log;

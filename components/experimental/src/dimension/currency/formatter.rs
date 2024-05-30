@@ -121,7 +121,7 @@ impl CurrencyFormatter {
     /// use icu::experimental::dimension::currency::formatter::{
     ///     CurrencyCode, CurrencyFormatter,
     /// };
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///

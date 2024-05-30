@@ -5,7 +5,7 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use icu_calendar::provider::*;
-use icu_locid::langid;
+use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;

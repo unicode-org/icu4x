@@ -4,8 +4,8 @@
 
 use crate::{provider::*, LocaleTransformError};
 
-use icu_locid::subtags::{Language, Region, Script};
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::subtags::{Language, Region, Script};
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 use crate::TransformResult;
@@ -18,7 +18,7 @@ use crate::TransformResult;
 /// Add likely subtags:
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::locale::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new();
@@ -35,7 +35,7 @@ use crate::TransformResult;
 /// Remove likely subtags:
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::localeExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new();
@@ -53,7 +53,7 @@ use crate::TransformResult;
 /// locales for maximization, use [`try_new_extended`](Self::try_new_extended_unstable):
 ///
 /// ```
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::localeExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new_extended();
@@ -396,7 +396,7 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -415,7 +415,7 @@ impl LocaleExpander {
     /// more languages.
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -501,7 +501,7 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -531,7 +531,7 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -653,7 +653,7 @@ impl LocaleExpander {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     struct RejectByKeyProvider {
         keys: Vec<DataKey>,

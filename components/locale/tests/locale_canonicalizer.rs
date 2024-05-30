@@ -5,7 +5,7 @@
 mod fixtures;
 
 use icu_locale::{LocaleCanonicalizer, LocaleExpander, TransformResult};
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use writeable::assert_writeable_eq;
 
 #[test]

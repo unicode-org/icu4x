@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use icu_locid::subtags::{Language, Region, Script, Variant};
+use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap, ZeroSlice};

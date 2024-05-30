@@ -6,8 +6,8 @@
 pub mod ffi {
     use crate::{
         errors::ffi::ICU4XError,
-        locid::ffi::ICU4XLocale,
         locale::ffi::ICU4XLocaleExpander,
+        locale_core::ffi::ICU4XLocale,
         provider::{ffi::ICU4XDataProvider, ICU4XDataProviderInner},
     };
     use alloc::boxed::Box;

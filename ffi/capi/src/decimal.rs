@@ -15,7 +15,7 @@ pub mod ffi {
 
     use crate::{
         data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XError,
-        fixed_decimal::ffi::ICU4XFixedDecimal, locid::ffi::ICU4XLocale,
+        fixed_decimal::ffi::ICU4XFixedDecimal, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
 

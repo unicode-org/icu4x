@@ -7,7 +7,7 @@ extern crate alloc;
 use icu_experimental::personnames::api::*;
 use icu_experimental::personnames::provided_struct::DefaultPersonName;
 use icu_experimental::personnames::PersonNamesFormatter;
-use icu_locid::locale;
+use icu_locale_core::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 

@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use icu_locid::extensions::unicode::Key;
-use icu_locid::subtags::{region, script, Language, Region, Script};
+use icu_locale_core::extensions::unicode::Key;
+use icu_locale_core::subtags::{region, script, Language, Region, Script};
 use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;

@@ -20,7 +20,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_decimal",
     "icu_list",
     "icu_locale",
-    "icu_locid",
+    "icu_locale_core",
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",

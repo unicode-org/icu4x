@@ -12,7 +12,7 @@ pub mod ffi {
     use icu_locale::LocaleFallbacker;
 
     use crate::{
-        errors::ffi::ICU4XError, locid::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
 
     /// An object that runs the ICU4X locale fallback algorithm.
@@ -150,7 +150,7 @@ pub mod ffi {
         #[diplomat::skip_if_ast]
         pub fn next(&mut self) -> Option<Box<ICU4XLocale>> {
             let current = self.get();
-            if current.0 == icu_locid::Locale::UND {
+            if current.0 == icu_locale_core::Locale::UND {
                 None
             } else {
                 self.step();
@@ -167,7 +167,9 @@ impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>> for icu_locale::fallback::Local
         result.priority = other.priority.into();
         result.extension_key = match other.extension_key {
             b"" => None,
-            s => Some(icu_locid::extensions::unicode::Key::try_from_bytes(s)?),
+            s => Some(icu_locale_core::extensions::unicode::Key::try_from_bytes(
+                s,
+            )?),
         };
         result.fallback_supplement = match other.fallback_supplement {
             ffi::ICU4XLocaleFallbackSupplement::None => None,

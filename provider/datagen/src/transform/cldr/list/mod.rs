@@ -6,7 +6,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_list::provider::*;
-use icu_locid::subtags::language;
+use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::borrow::Cow;

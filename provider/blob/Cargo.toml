@@ -30,7 +30,7 @@ zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 log = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid", default-features = false, features = ["serde"] }
+icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
 icu_datetime = { path = "../../components/datetime", default-features = false, features = ["datagen", "experimental"] }
 icu_datetime_data = { path = "../../provider/baked/datetime" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }

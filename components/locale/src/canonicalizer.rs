@@ -11,9 +11,9 @@ use core::cmp::Ordering;
 
 use crate::LocaleExpander;
 use crate::TransformResult;
-use icu_locid::extensions::Extensions;
-use icu_locid::subtags::{Language, Region, Script};
-use icu_locid::{
+use icu_locale_core::extensions::Extensions;
+use icu_locale_core::subtags::{Language, Region, Script};
+use icu_locale_core::{
     extensions::unicode::key,
     subtags::{language, Variant, Variants},
     LanguageIdentifier, Locale,
@@ -26,7 +26,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
+/// use icu::locale_core::Locale;
 /// use icu::locale::{LocaleCanonicalizer, TransformResult};
 ///
 /// let lc = LocaleCanonicalizer::new();
@@ -326,7 +326,7 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
+    /// use icu::locale_core::Locale;
     /// use icu::localeCanonicalizer, TransformResult};
     ///
     /// let lc = LocaleCanonicalizer::new();
@@ -633,7 +633,7 @@ mod test {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     struct RejectByKeyProvider {
         keys: Vec<DataKey>,

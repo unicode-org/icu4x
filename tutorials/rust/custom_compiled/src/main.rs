@@ -18,7 +18,7 @@
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::locid::locale;
+use icu::locale_core::locale;
 use icu::plurals::PluralCategory;
 use icu::plurals::PluralRules;
 

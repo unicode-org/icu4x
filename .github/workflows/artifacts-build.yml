@@ -313,7 +313,7 @@ jobs:
           - components/collections
           - components/datetime
           # - components/experimental
-          - components/locid
+          - components/locale_core
           - components/locale
           - components/plurals
           - components/segmenter

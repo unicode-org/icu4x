@@ -17,7 +17,7 @@
 
 mod canonicalizer;
 pub use canonicalizer::*;
-use icu_locid::subtags::Language;
+use icu_locale_core::subtags::Language;
 mod directionality;
 pub use directionality::*;
 mod expander;
@@ -40,7 +40,7 @@ pub struct Baked;
 const _: () = {
     pub mod icu {
         pub use crate as locale;
-        pub use icu_locid as locid;
+        pub use icu_locale_core as locale_core;
     }
     icu_locale_data::make_provider!(Baked);
     icu_locale_data::impl_fallback_likelysubtags_v1!(Baked);

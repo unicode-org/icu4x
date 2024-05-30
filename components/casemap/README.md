@@ -11,7 +11,7 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 ```rust
 use icu::casemap::CaseMapper;
-use icu::locid::langid;
+use icu::locale_core::langid;
 
 let cm = CaseMapper::new();
 

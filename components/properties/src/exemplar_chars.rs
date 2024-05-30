@@ -16,7 +16,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::locale;
+//! use icu::locale_core::locale;
 //! use icu::properties::exemplar_chars;
 //!
 //! let locale = locale!("en-001").into();
@@ -95,7 +95,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data = exemplar_chars::exemplars_main(&locale!("en").into())
@@ -127,7 +127,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
@@ -160,7 +160,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
@@ -194,7 +194,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =
@@ -228,7 +228,7 @@ make_exemplar_chars_unicode_set_property!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::properties::exemplar_chars;
     ///
     /// let data =

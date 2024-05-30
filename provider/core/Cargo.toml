@@ -21,7 +21,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-icu_locid = { workspace = true }
+icu_locale_core = { workspace = true }
 stable_deref_trait = { workspace = true }
 writeable = { workspace = true }
 tinystr = { workspace = true }
@@ -56,7 +56,7 @@ criterion = { workspace = true }
 
 [features]
 bench = []
-std = ["icu_locid/std"]
+std = ["icu_locale_core/std"]
 sync = []
 experimental = []
 macros = ["dep:icu_provider_macros"]

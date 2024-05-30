@@ -6,9 +6,9 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid::extensions::unicode::key;
-use icu_locid::extensions::unicode::Value;
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::extensions::unicode::key;
+use icu_locale_core::extensions::unicode::Value;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 

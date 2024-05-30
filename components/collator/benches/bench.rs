@@ -5,7 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 
 use icu::collator::*;
-use icu::locid::Locale;
+use icu::locale_core::Locale;
 use icu_provider::DataLocale;
 
 fn to_data_locale(locale_str: &str) -> DataLocale {

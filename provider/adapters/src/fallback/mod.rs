@@ -21,7 +21,7 @@ pub use icu_provider::fallback::LocaleFallbackConfig;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -125,7 +125,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::langid;
+    /// use icu_locale_core::langid;
     /// use icu_locale::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;

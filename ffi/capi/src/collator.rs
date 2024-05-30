@@ -8,7 +8,7 @@ pub mod ffi {
     use icu_collator::{Collator, CollatorOptions};
 
     use crate::{
-        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locid::ffi::ICU4XLocale,
+        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
 

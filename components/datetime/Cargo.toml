@@ -25,7 +25,7 @@ either = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
-icu_locid = { workspace = true }
+icu_locale_core = { workspace = true }
 icu_plurals = { workspace = true }
 icu_provider = { workspace = true, features = ["macros", "experimental"] }
 icu_timezone = { workspace = true }
@@ -63,7 +63,7 @@ default = ["compiled_data"]
 std = [
     "icu_calendar/std",
     "icu_decimal/std",
-    "icu_locid/std",
+    "icu_locale_core/std",
     "icu_plurals/std",
     "icu_provider/std",
     "icu_timezone/std",

@@ -12,7 +12,7 @@ use icu_locale::provider::{
     LikelySubtagsForScriptRegionV1Marker,
 };
 use icu_locale::LocaleExpander;
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
@@ -86,7 +86,7 @@ impl CldrCache {
     pub(in crate::provider) fn locales(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+    ) -> Result<Vec<icu_locale_core::LanguageIdentifier>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache

@@ -21,9 +21,9 @@ use crate::{
     types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
 };
 
-use icu_locid::extensions::unicode::{key, value, Value};
-use icu_locid::subtags::language;
-use icu_locid::Locale;
+use icu_locale_core::extensions::unicode::{key, value, Value};
+use icu_locale_core::subtags::language;
+use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -41,7 +41,7 @@ use core::fmt;
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
 /// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time};
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// # use std::rc::Rc;
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar

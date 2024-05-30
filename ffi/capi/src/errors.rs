@@ -21,9 +21,9 @@ use icu_decimal::DecimalError;
 use icu_experimental::units::ConversionError;
 #[cfg(feature = "icu_list")]
 use icu_list::ListError;
-use icu_locid::ParserError;
 #[cfg(feature = "icu_locale")]
 use icu_locale::LocaleTransformError;
+use icu_locale_core::ParserError;
 #[cfg(feature = "icu_normalizer")]
 use icu_normalizer::NormalizerError;
 #[cfg(any(feature = "icu_plurals", feature = "icu_datetime"))]

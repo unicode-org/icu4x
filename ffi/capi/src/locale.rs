@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_locale::{LocaleCanonicalizer, LocaleExpander, TransformResult};
 
-    use crate::{locid::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
+    use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
     use crate::errors::ffi::ICU4XError;
 

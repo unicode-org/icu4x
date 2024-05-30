@@ -11,7 +11,7 @@ pub mod ffi {
     use icu_calendar::{AnyCalendar, AnyCalendarKind};
 
     use crate::errors::ffi::ICU4XError;
-    use crate::locid::ffi::ICU4XLocale;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
 
     /// The various calendar types currently supported by [`ICU4XCalendar`]

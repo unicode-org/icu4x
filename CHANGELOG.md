@@ -33,7 +33,7 @@
       - Added `CurrencyFormatter`, which can format any currency based on the locale and the width (short and narrow are supported for now).
     - New experimental component `units` (#4605)
       - Added `UnitsConverter`, which can convert any single or compound units (such as `meter` and `square-meter-per-second`) to any compatible single or compound units.
-  - `icu_locid`
+  - `icu_locale_core`
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
   - `icu_locale`
     - Add `LocaleExpander::minimize_favor_script` (https://github.com/unicode-org/icu4x/pull/4752)
@@ -132,7 +132,7 @@
     - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
     - `icu_calendar`
       - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
-    - `icu_locid`
+    - `icu_locale_core`
       - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
     - `icu_plurals`
         - Experimental `PluralRulesWithRanges` for selecting the plural category for ranges (https://github.com/unicode-org/icu4x/issues/3012)
@@ -247,8 +247,8 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - No additional changes
   - `icu_list`
     - No additional changes
-  - `icu_locid`
-    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locid::extensions::unicode::value` now works, instead of `use icu::locid::extensions_unicode_value`
+  - `icu_locale_core`
+    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locale_core::extensions::unicode::value` now works, instead of `use icu::locale_core::extensions_unicode_value`
   - `icu_locale`
     - New home of `LocaleFallbacker` and `fallback` module previously found in `icu_provider_adapters`
     - New `LocaleDirectionality` to access the right-to-left status of locales
@@ -405,7 +405,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Add `From<GroupingStrategy>` for `FixedDecimalFormatterOptions` (#3045)
   - `icu_list`
     - `ListJoinerPattern::from_parts_unchecked()` is now `from_parts()` and panics when necessary (#3052)
-  - `icu_locid`
+  - `icu_locale_core`
     - Reduce size of internal `ShortVec` abstraction (#3200)
     - Use `Box` in place of `Vec` in `ShortVec` (#3220)
   - `icu_locale`
@@ -522,7 +522,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   * Not allocating `Writeable`s for regex evaluation (#2991)
   * doc improvements
 
-* `icu_locid`
+* `icu_locale_core`
   * Reject duplicated extensions (#2893)
   * More borrowing in locid's `write_to_string` (#2693)
   * doc improvements
@@ -1042,7 +1042,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Initial release of ICU4X.
   - Initial release of:
     - `icu`
-    - `icu_locid`
+    - `icu_locale_core`
     - `icu_plurals`
     - `icu_datetime`
     - `icu_uniset`

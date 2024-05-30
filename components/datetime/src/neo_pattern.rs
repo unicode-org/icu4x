@@ -32,7 +32,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::options::length;
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 ///
 /// let custom_pattern =
 ///     DateTimePattern::try_from_pattern_str("d MMM y").unwrap();

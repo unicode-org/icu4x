@@ -17,7 +17,7 @@ use super::provider::{
     PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
 };
 use super::specifications;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
 use zerofrom::ZeroFrom;
 

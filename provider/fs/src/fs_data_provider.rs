@@ -18,7 +18,7 @@ use std::path::PathBuf;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_fs::FsDataProvider;
 /// use writeable::assert_writeable_eq;

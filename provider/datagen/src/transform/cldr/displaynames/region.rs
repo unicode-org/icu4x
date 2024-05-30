@@ -7,7 +7,7 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use core::convert::TryFrom;
 use icu_experimental::displaynames::provider::*;
-use icu_locid::subtags::Region;
+use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
@@ -61,7 +61,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 const SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
-    type Error = icu_locid::ParserError;
+    type Error = icu_locale_core::ParserError;
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
@@ -91,7 +91,7 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{langid, subtags::region};
+    use icu_locale_core::{langid, subtags::region};
 
     #[test]
     fn test_basic() {

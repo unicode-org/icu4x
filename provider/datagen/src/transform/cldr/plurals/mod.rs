@@ -170,7 +170,7 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 
@@ -202,7 +202,7 @@ fn test_basic() {
 
 #[test]
 fn test_ranges() {
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 

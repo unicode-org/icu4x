@@ -52,7 +52,7 @@ use crate::{
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
 /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// use icu::timezone::CustomTimeZone;
 /// use std::str::FromStr;
 /// use writeable::assert_writeable_eq;
@@ -95,7 +95,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
@@ -232,7 +232,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
@@ -362,7 +362,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -403,7 +403,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale_core::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///

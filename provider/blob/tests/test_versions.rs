@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datagen::prelude::*;
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;

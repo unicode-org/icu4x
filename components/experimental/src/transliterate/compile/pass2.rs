@@ -9,7 +9,7 @@ use alloc::collections::BTreeMap;
 use alloc::string::ToString;
 use core::fmt::{self, Display, Formatter};
 use icu_collections::codepointinvlist::CodePointInversionList;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use zerovec::VarZeroVec;
 
 type Result<T> = core::result::Result<T, CompileError>;

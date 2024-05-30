@@ -29,7 +29,7 @@
 //!
 //! ```
 //! use icu::datetime::DateTimeFormatter;
-//! use icu::locid::locale;
+//! use icu::locale_core::locale;
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     &locale!("es-US").into(),
@@ -52,7 +52,7 @@
 //!
 //! ```no_run
 //! use icu::datetime::DateTimeFormatter;
-//! use icu::locid::locale;
+//! use icu::locale_core::locale;
 //! use icu_provider_adapters::fallback::LocaleFallbackProvider;
 //! use icu_provider_blob::BlobDataProvider;
 //!
@@ -125,7 +125,7 @@
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 //! [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-//! [`Locale`]: crate::locid::Locale
+//! [`Locale`]: crate::locale_core::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 //! [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
@@ -172,7 +172,7 @@ pub use icu_list as list;
 pub use icu_locale as locale;
 
 #[doc(inline)]
-pub use icu_locid as locid;
+pub use icu_locale_core as locale_core;
 
 #[doc(inline)]
 pub use icu_normalizer as normalizer;

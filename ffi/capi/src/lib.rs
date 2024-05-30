@@ -61,7 +61,7 @@ extern crate libc_alloc;
 pub mod common;
 pub mod data_struct;
 pub mod errors;
-pub mod locid;
+pub mod locale_core;
 #[cfg(feature = "logging")]
 pub mod logging;
 #[macro_use]

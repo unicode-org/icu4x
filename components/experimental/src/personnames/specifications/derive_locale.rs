@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::subtags::script;
-use icu_locid::{subtags, Locale};
+use icu_locale_core::subtags::script;
+use icu_locale_core::{subtags, Locale};
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed;
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 
@@ -104,7 +104,7 @@ where
 #[cfg(test)]
 mod tests {
     use icu_locale::LocaleExpander;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use litemap::LiteMap;
 
     use super::{effective_locale, likely_person_name_locale};

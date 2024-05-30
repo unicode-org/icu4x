@@ -6,7 +6,7 @@
 use crate::provider::CaseMapV1Marker;
 use crate::CaseMapper;
 use alloc::string::String;
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::GeneralCategoryV1Marker;
 use icu_properties::{GeneralCategory, GeneralCategoryGroup, PropertiesError};
@@ -21,7 +21,7 @@ use writeable::Writeable;
 /// ```rust
 /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
 /// use icu::casemap::TitlecaseMapper;
-/// use icu::locid::langid;
+/// use icu::locale_core::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -66,7 +66,7 @@ pub enum TrailingCase {
 /// ```rust
 /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
 /// use icu::casemap::TitlecaseMapper;
-/// use icu::locid::langid;
+/// use icu::locale_core::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -174,7 +174,7 @@ pub struct TitlecaseOptions {
 ///
 /// ```rust
 /// use icu::casemap::TitlecaseMapper;
-/// use icu::locid::langid;
+/// use icu::locale_core::langid;
 ///
 /// let cm = TitlecaseMapper::new();
 /// let root = langid!("und");
@@ -348,7 +348,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// ```rust
     /// use icu::casemap::TitlecaseMapper;
-    /// use icu::locid::langid;
+    /// use icu::locale_core::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
@@ -378,7 +378,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// ```rust
     /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
     /// use icu::casemap::TitlecaseMapper;
-    /// use icu::locid::langid;
+    /// use icu::locale_core::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");
@@ -418,7 +418,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// ```rust
     /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
     /// use icu::casemap::TitlecaseMapper;
-    /// use icu::locid::langid;
+    /// use icu::locale_core::langid;
     ///
     /// let cm = TitlecaseMapper::new();
     /// let root = langid!("und");

@@ -50,7 +50,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::subtags::script;
+    use icu_locale_core::subtags::script;
 
     let provider = DatagenProvider::new_testing();
     let data: DataPayload<ScriptDirectionV1Marker> = provider

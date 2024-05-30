@@ -45,7 +45,7 @@ use writeable::{Part, Writeable};
 /// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::TypedDateTimeFormatter;
-/// use icu::locid::locale;
+/// use icu::locale_core::locale;
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 ///     &locale!("en").into(),
 ///     Default::default(),
@@ -937,7 +937,7 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locid::locale!("en").into(),
+            &icu_locale_core::locale!("en").into(),
             fixed_decimal_format_options,
         )
         .unwrap();

@@ -46,7 +46,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! # macro_rules! include {
@@ -85,7 +85,7 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! let formatter =

@@ -27,7 +27,7 @@ icu_collections = { workspace = true }
 icu_datetime = { workspace = true }
 icu_decimal = { workspace = true }
 icu_list = { workspace = true }
-icu_locid = { workspace = true }
+icu_locale_core = { workspace = true }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
@@ -70,7 +70,7 @@ std = [
     "icu_decimal/std",
     "icu_list/std",
     "icu_locale/std",
-    "icu_locid/std",
+    "icu_locale_core/std",
     "icu_normalizer/std",
     "icu_plurals/std",
     "icu_properties/std",
@@ -87,7 +87,7 @@ serde = [
     "icu_decimal/serde",
     "icu_list/serde",
     "icu_locale/serde",
-    "icu_locid/serde",
+    "icu_locale_core/serde",
     "icu_normalizer/serde",
     "icu_plurals/serde",
     "icu_properties/serde",

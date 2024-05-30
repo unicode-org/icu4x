@@ -9,7 +9,7 @@ pub mod ffi {
     use fixed_decimal::FixedDecimal;
     use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 
-    use crate::{locid::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
+    use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
     use crate::errors::ffi::ICU4XError;
 

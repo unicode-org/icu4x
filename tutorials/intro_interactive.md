@@ -60,7 +60,7 @@ First, we will use Rust APIs to accept a string from user input on the command l
 
 ```rust,no_run
 // At the top of the file:
-use icu::locid::Locale;
+use icu::locale_core::Locale;
 
 // In the main() function:
 print!("Enter your locale: ");
@@ -147,7 +147,7 @@ use icu::calendar::{Date, Iso};
 use icu::datetime::options::length;
 use icu::datetime::DateFormatter;
 
-let locale = icu::locid::Locale::UND; // to make this example compile
+let locale = icu::locale_core::Locale::UND; // to make this example compile
 
 /// Helper function to create an ICU4X DateTime for the current local time:
 fn get_current_date() -> Date<Iso> {

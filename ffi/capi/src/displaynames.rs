@@ -5,13 +5,13 @@
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
-    use crate::locid::ffi::ICU4XLocale;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-specific
     use icu_experimental::displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
     use icu_experimental::displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
-    use icu_locid::subtags::Region;
+    use icu_locale_core::subtags::Region;
     use writeable::Writeable;
 
     #[diplomat::opaque]

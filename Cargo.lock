@@ -884,7 +884,7 @@ dependencies = [
  "icu_experimental",
  "icu_list",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -939,7 +939,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_calendar_data",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "serde",
  "serde_json",
@@ -969,7 +969,7 @@ dependencies = [
  "icu_experimental",
  "icu_list",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -999,7 +999,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_casemap_data",
  "icu_collections",
- "icu_locid",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -1036,7 +1036,7 @@ dependencies = [
  "icu_collator_data",
  "icu_collections",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -1094,7 +1094,7 @@ dependencies = [
  "icu_experimental",
  "icu_list",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -1147,7 +1147,7 @@ dependencies = [
  "icu_datetime_data",
  "icu_decimal",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
@@ -1179,7 +1179,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_decimal_data",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
  "rand",
@@ -1210,8 +1210,8 @@ dependencies = [
  "icu_decimal",
  "icu_experimental_data",
  "icu_locale",
+ "icu_locale_core",
  "icu_locale_data",
- "icu_locid",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -1302,8 +1302,8 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
+ "icu_locale_core",
  "icu_locale_data",
- "icu_locid",
  "icu_provider",
  "serde",
  "serde_json",
@@ -1313,11 +1313,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locale_data"
-version = "1.5.0"
-
-[[package]]
-name = "icu_locid"
+name = "icu_locale_core"
 version = "1.5.0"
 dependencies = [
  "criterion",
@@ -1334,6 +1330,10 @@ dependencies = [
  "writeable",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_locale_data"
+version = "1.5.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -1392,7 +1392,7 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_plurals_data",
  "icu_provider",
  "serde",
@@ -1436,7 +1436,7 @@ dependencies = [
  "erased-serde",
  "icu",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider_adapters",
  "icu_provider_macros",
  "log",
@@ -1457,7 +1457,7 @@ version = "1.5.0"
 dependencies = [
  "databake",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_fs",
@@ -1476,7 +1476,7 @@ dependencies = [
  "icu_datetime",
  "icu_datetime_data",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
  "log",
@@ -1498,7 +1498,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_datagen",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "log",
  "postcard",
@@ -1529,7 +1529,7 @@ dependencies = [
  "icu",
  "icu_collections",
  "icu_locale",
- "icu_locid",
+ "icu_locale_core",
  "icu_properties",
  "icu_provider",
  "icu_segmenter_data",
@@ -1556,7 +1556,7 @@ dependencies = [
  "crlify",
  "eyre",
  "icu_datagen",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "log",
  "simple_logger",
@@ -1698,7 +1698,7 @@ dependencies = [
  "criterion",
  "databake",
  "icu_benchmark_macros",
- "icu_locid",
+ "icu_locale_core",
  "postcard",
  "rkyv",
  "serde",
@@ -3310,7 +3310,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_benchmark_macros",
- "icu_locid",
+ "icu_locale_core",
  "litemap",
  "postcard",
  "rand",
