@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu_locid::langid;
+        use icu_locale_core::langid;
 
         let provider = DatagenProvider::new_testing();
 

@@ -11,7 +11,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 
 fn triangular_nums(range: f64) -> Vec<isize> {

@@ -5,11 +5,11 @@
 use crate::rayon_prelude::*;
 use crate::FallbackMode;
 use displaydoc::Display;
-use icu_locid::extensions::unicode::key;
-use icu_locid::LanguageIdentifier;
-use icu_locid::ParserError;
-use icu_locid_transform::fallback::LocaleFallbackIterator;
-use icu_locid_transform::LocaleFallbacker;
+use icu_locale::fallback::LocaleFallbackIterator;
+use icu_locale::LocaleFallbacker;
+use icu_locale_core::extensions::unicode::key;
+use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::ParserError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -1180,7 +1180,7 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu_locid::langid;
+    use icu_locale_core::langid;
     use std::collections::BTreeSet;
 
     #[derive(Debug)]

@@ -12,7 +12,7 @@ pub mod ffi {
     use crate::{
         datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XIsoDateTime,
         datetime_formatter::ffi::ICU4XDateLength, datetime_formatter::ffi::ICU4XTimeLength,
-        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
         timezone::ffi::ICU4XCustomTimeZone, timezone_formatter::ffi::ICU4XIsoTimeZoneOptions,
     };
 

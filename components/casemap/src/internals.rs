@@ -16,7 +16,7 @@ use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSink;
 use crate::titlecase::TrailingCase;
 use core::fmt;
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use writeable::Writeable;
 
 const ACUTE: char = '\u{301}';
@@ -660,7 +660,7 @@ pub enum CaseMapLocale {
 
 impl CaseMapLocale {
     pub const fn from_langid(langid: &LanguageIdentifier) -> Self {
-        use icu_locid::subtags::{language, Language};
+        use icu_locale_core::subtags::{language, Language};
         const TR: Language = language!("tr");
         const AZ: Language = language!("az");
         const LT: Language = language!("lt");

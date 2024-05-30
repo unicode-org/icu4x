@@ -9,7 +9,7 @@ use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::cell::RefCell;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
@@ -103,7 +103,7 @@ impl RuleCollection {
     /// Add a new transliteration source to the collection.
     pub fn register_source<'a>(
         &mut self,
-        id: &icu_locid::Locale,
+        id: &icu_locale_core::Locale,
         source: String,
         aliases: impl IntoIterator<Item = &'a str>,
         reverse: bool,
@@ -595,7 +595,7 @@ mod tests {
 
     use super::*;
     use crate::transliterate::provider as ds;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use std::collections::HashSet;
     use zerovec::VarZeroVec;
 

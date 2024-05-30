@@ -7,7 +7,7 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 
 use icu_experimental::displaynames::provider::*;
-use icu_locid::subtags::Language;
+use icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use zerovec::ule::UnvalidatedStr;
@@ -201,7 +201,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{langid, subtags::language};
+    use icu_locale_core::{langid, subtags::language};
 
     #[test]
     fn test_basic_lang_display_names() {

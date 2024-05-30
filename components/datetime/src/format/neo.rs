@@ -160,7 +160,7 @@ size_test!(
 /// use icu::datetime::fields::FieldLength;
 /// use icu::datetime::fields;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -191,7 +191,7 @@ size_test!(
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -442,7 +442,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
@@ -503,7 +503,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
@@ -571,7 +571,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
@@ -632,7 +632,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::SingleLoadError;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
@@ -682,7 +682,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
@@ -789,7 +789,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
@@ -1264,7 +1264,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
@@ -1314,7 +1314,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::datetime::TypedDateTimeNames;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
@@ -1541,7 +1541,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
 mod tests {
     use super::*;
     use icu_calendar::{DateTime, Gregorian};
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use writeable::assert_try_writeable_eq;
 
     #[test]

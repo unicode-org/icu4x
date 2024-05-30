@@ -16,7 +16,7 @@ pub mod ffi {
         datetime::ffi::ICU4XDateTime,
         datetime::ffi::ICU4XIsoDateTime,
         errors::ffi::ICU4XError,
-        locale::ffi::ICU4XLocale,
+        locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
         time::ffi::ICU4XTime,
     };

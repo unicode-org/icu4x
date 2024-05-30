@@ -11,7 +11,7 @@ use crate::provider::IterableDataProviderInternal;
 use icu_calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -81,7 +81,7 @@ impl DataProvider<WeekDataV1Marker> for DatagenProvider {
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 
@@ -208,7 +208,7 @@ impl IterableDataProviderInternal<WeekDataV2Marker> for DatagenProvider {
 fn test_basic_cldr_week_data_v2() {
     use icu_calendar::provider::WeekdaySet;
     use icu_calendar::types::IsoWeekday::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 

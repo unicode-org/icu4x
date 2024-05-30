@@ -196,7 +196,7 @@ pub struct DataKeyMetadata {
     /// What to prioritize when fallbacking on this [`DataKey`].
     pub fallback_priority: LocaleFallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
-    pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+    pub extension_key: Option<icu_locale_core::extensions::unicode::Key>,
     /// Optional choice for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
@@ -221,7 +221,7 @@ impl DataKeyMetadata {
     #[doc(hidden)]
     pub const fn construct_internal(
         fallback_priority: LocaleFallbackPriority,
-        extension_key: Option<icu_locid::extensions::unicode::Key>,
+        extension_key: Option<icu_locale_core::extensions::unicode::Key>,
         fallback_supplement: Option<LocaleFallbackSupplement>,
         singleton: bool,
     ) -> Self {

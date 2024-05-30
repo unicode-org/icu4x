@@ -24,7 +24,7 @@ use crate::provider::neo::SimpleSubstitutionPattern;
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
-use icu_locid::extensions::unicode::Value;
+use icu_locale_core::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
 pub(crate) enum GetSymbolForMonthError {
@@ -346,7 +346,7 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locid::extensions::unicode::{key, value};
+        use icu_locale_core::extensions::unicode::{key, value};
         use tinystr::tinystr;
         let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental

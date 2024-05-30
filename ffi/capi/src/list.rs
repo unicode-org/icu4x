@@ -5,7 +5,7 @@
 #[diplomat::bridge]
 pub mod ffi {
     use crate::{
-        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XError, locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
     use alloc::boxed::Box;
     use alloc::string::String;

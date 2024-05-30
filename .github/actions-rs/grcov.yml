@@ -8,7 +8,7 @@ ignore:
   - "/*"
   - "C:/*"
   - "../*"
-  - "components/locid/macros"
+  - "components/locale_core/macros"
   - "**/tests/**"
   - "**/benches/**"
   - "**/examples/**"

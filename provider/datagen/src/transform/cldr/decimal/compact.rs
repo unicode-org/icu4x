@@ -6,7 +6,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_experimental::compactdecimal::provider::*;
-use icu_locid::extensions::unicode::key;
+use icu_locale_core::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -123,7 +123,7 @@ impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for Data
 
 mod tests {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
     use std::borrow::Cow;
     use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;

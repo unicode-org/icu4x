@@ -743,7 +743,7 @@ where
     /// Change the results of a particular request based on key:
     ///
     /// ```
-    /// use icu_locid::locale;
+    /// use icu_locale_core::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///

@@ -37,7 +37,7 @@ use icu_datetime::{
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{
+use icu_locale_core::{
     extensions::unicode::{key, value},
     locale, LanguageIdentifier, Locale,
 };

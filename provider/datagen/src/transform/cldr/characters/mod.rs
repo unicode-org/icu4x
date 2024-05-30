@@ -320,7 +320,7 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
     use icu_properties::sets::UnicodeSetData;
 
     #[test]

@@ -17,7 +17,7 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 ```rust
 use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
 let fdf = FixedDecimalFormatter::try_new(
@@ -36,7 +36,7 @@ assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 ```rust
 use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
-use icu::locid::Locale;
+use icu::locale::Locale;
 use writeable::assert_writeable_eq;
 
 let fdf =
@@ -56,7 +56,7 @@ symbols for that numbering system.
 ```rust
 use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
 let fdf = FixedDecimalFormatter::try_new(
