@@ -488,7 +488,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     }
 
     /// Formats a date/time value.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -509,7 +509,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///         NeoSkeletonLength::Long,
     ///     )
     ///     .unwrap();
-    /// 
+    ///
     /// let input = MonthInput {
     ///     month: FormattableMonth {
     ///         ordinal: 5,
@@ -517,7 +517,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///     },
     ///     calendar: Gregorian.into(),
     /// };
-    /// 
+    ///
     /// assert_try_writeable_eq!(
     ///     formatter.format_narrow(input),
     ///     "mayo"

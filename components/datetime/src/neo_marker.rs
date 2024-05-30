@@ -651,10 +651,41 @@ macro_rules! datetime_marker_helper {
     };
 }
 
+macro_rules! field_type_helper {
+    (year) => {
+        FormattableYear
+    };
+    (month) => {
+        FormattableMonth
+    };
+    (day_of_month) => {
+        DayOfMonth
+    };
+    (day_of_week) => {
+        IsoWeekday
+    };
+    (day_of_year_info) => {
+        DayOfYearInfo
+    };
+    (hour) => {
+        IsoHour
+    };
+    (minute) => {
+        IsoMinute
+    };
+    (second) => {
+        IsoSecond
+    };
+    (nanosecond) => {
+        NanoSecond
+    };
+}
+
 macro_rules! impl_date_marker {
     (
         $type:ident,
         $components:expr,
+        [$($field:ident),+],
         description = $description:literal,
         expectation = $expectation:literal,
         years = $years_yesno:ident,
@@ -714,8 +745,10 @@ macro_rules! impl_date_marker {
         /// );
         /// ```
         #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
+        #[allow(clippy::exhaustive_structs)]
+        pub struct $type {
+            $($field: field_type_helper!($field)),+
+        }
         impl private::Sealed for $type {}
         impl HasDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
@@ -754,7 +787,10 @@ macro_rules! impl_date_marker {
         }
         impl From<$type> for AllInputFields {
             fn from(value: $type) -> Self {
-                todo!()
+                AllInputFields {
+                    $($field: Some(value.$field)),+,
+                    ..Default::default()
+                }
             }
         }
     };
@@ -764,6 +800,7 @@ macro_rules! impl_day_marker {
     (
         $type:ident,
         $components:expr,
+        [$($field:ident),+],
         description = $description:literal,
         expectation = $expectation:literal,
         years = $years_yesno:ident,
@@ -776,6 +813,7 @@ macro_rules! impl_day_marker {
         impl_date_marker!(
             $type,
             NeoDateComponents::Day($components),
+            [$($field),+],
             description = $description,
             expectation = $expectation,
             years = $years_yesno,
@@ -795,6 +833,7 @@ macro_rules! impl_time_marker {
     (
         $type:ident,
         $components:expr,
+        [$($field:ident),+],
         description = $description:literal,
         expectation = $expectation:literal,
         dayperiods = $dayperiods_yesno:ident,
@@ -851,8 +890,10 @@ macro_rules! impl_time_marker {
         /// );
         /// ```
         #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
+        #[allow(clippy::exhaustive_structs)]
+        pub struct $type {
+            $($field: field_type_helper!($field)),+
+        }
         impl private::Sealed for $type {}
         impl HasTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
@@ -879,7 +920,10 @@ macro_rules! impl_time_marker {
         }
         impl From<$type> for AllInputFields {
             fn from(value: $type) -> Self {
-                todo!()
+                AllInputFields {
+                    $($field: Some(value.$field)),+,
+                    ..Default::default()
+                }
             }
         }
     };
@@ -925,6 +969,7 @@ macro_rules! impl_datetime_marker {
 impl_day_marker!(
     NeoYearMonthDayMarker,
     NeoDayComponents::YearMonthDay,
+    [year, month, day_of_month],
     description = "a Year/Month/Day format",
     expectation = "May 17, 2024",
     years = yes,
@@ -938,6 +983,7 @@ impl_day_marker!(
 impl_day_marker!(
     NeoEraYearMonthMarker,
     NeoDayComponents::EraYearMonthDay,
+    [year, month, day_of_month],
     description = "an Era/Year/Month/Day format",
     expectation = "May 17, 2024 AD",
     years = yes,
@@ -951,6 +997,7 @@ impl_day_marker!(
 impl_day_marker!(
     NeoAutoDateMarker,
     NeoDayComponents::Auto,
+    [year, month, day_of_month],
     description = "locale-dependent date fields",
     expectation = "May 17, 2024",
     years = yes,
@@ -964,6 +1011,7 @@ impl_day_marker!(
 impl_time_marker!(
     NeoAutoTimeMarker,
     NeoTimeComponents::Auto,
+    [hour, minute, second],
     description = "locale-dependent time fields",
     expectation = "3:47:50 PM",
     dayperiods = yes,
@@ -982,6 +1030,7 @@ impl_datetime_marker!(
 impl_date_marker!(
     NeoYearMonthMarker,
     NeoDateComponents::YearMonth,
+    [year, month],
     description = "a Year/Month format",
     expectation = "May 2024",
     years = yes,
