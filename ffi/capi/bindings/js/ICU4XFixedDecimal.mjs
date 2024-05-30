@@ -265,8 +265,8 @@ export class ICU4XFixedDecimal {
   }
 
   to_string() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XFixedDecimal_to_string(this.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XFixedDecimal_to_string(this.underlying, write);
     });
   }
 }

@@ -44,12 +44,12 @@ final class DateTimeFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String formatDatetime(DateTime value) {
-    final writeable = _Writeable();
-    final result = _ICU4XDateTimeFormatter_format_datetime(_ffi, value._ffi, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XDateTimeFormatter_format_datetime(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Formats a [`IsoDateTime`] to a string.
@@ -60,12 +60,12 @@ final class DateTimeFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
-    final writeable = _Writeable();
-    final result = _ICU4XDateTimeFormatter_format_iso_datetime(_ffi, value._ffi, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XDateTimeFormatter_format_iso_datetime(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
@@ -82,9 +82,9 @@ external _ResultOpaqueInt32 _ICU4XDateTimeFormatter_create_with_lengths(ffi.Poin
 @meta.ResourceIdentifier('ICU4XDateTimeFormatter_format_datetime')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTimeFormatter_format_datetime')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDateTimeFormatter_format_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XDateTimeFormatter_format_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XDateTimeFormatter_format_iso_datetime')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDateTimeFormatter_format_iso_datetime')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDateTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XDateTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

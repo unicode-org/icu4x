@@ -136,9 +136,9 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   String get monthCode {
-    final writeable = _Writeable();
-    _ICU4XDate_month_code(_ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XDate_month_code(_ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Returns the year number in the current era for this date
@@ -155,9 +155,9 @@ final class Date implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
   String get era {
-    final writeable = _Writeable();
-    _ICU4XDate_era(_ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XDate_era(_ffi, write._ffi);
+    return write.finalize();
   }
 
   /// Returns the number of months in the year represented by this date
@@ -251,7 +251,7 @@ external int _ICU4XDate_ordinal_month(ffi.Pointer<ffi.Opaque> self);
 @meta.ResourceIdentifier('ICU4XDate_month_code')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_month_code')
 // ignore: non_constant_identifier_names
-external void _ICU4XDate_month_code(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XDate_month_code(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XDate_year_in_era')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_year_in_era')
@@ -261,7 +261,7 @@ external int _ICU4XDate_year_in_era(ffi.Pointer<ffi.Opaque> self);
 @meta.ResourceIdentifier('ICU4XDate_era')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_era')
 // ignore: non_constant_identifier_names
-external void _ICU4XDate_era(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XDate_era(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XDate_months_in_year')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_months_in_year')

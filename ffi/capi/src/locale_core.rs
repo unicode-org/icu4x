@@ -49,7 +49,7 @@ pub mod ffi {
         /// [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn basename(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+        pub fn basename(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.id.write_to(write);
         }
 
@@ -58,7 +58,7 @@ pub mod ffi {
         pub fn get_unicode_extension(
             &self,
             bytes: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             Key::try_from_bytes(bytes)
                 .ok()
@@ -72,7 +72,7 @@ pub mod ffi {
         /// Returns a string representation of [`ICU4XLocale`] language.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn language(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+        pub fn language(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.id.language.write_to(write);
         }
 
@@ -93,7 +93,7 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn region(
             &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             self.0
                 .id
@@ -121,7 +121,7 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn script(
             &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             self.0
                 .id
@@ -150,7 +150,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::canonicalize, FnInStruct)]
         pub fn canonicalize(
             bytes: &DiplomatStr,
-            write: &mut DiplomatWriteable,
+            write: &mut DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = Locale::canonicalize(bytes)?.write_to(write);
             Ok(())
@@ -158,7 +158,7 @@ pub mod ffi {
         /// Returns a string representation of [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locale::Locale::write_to, FnInStruct)]
         #[diplomat::attr(supports = stringifiers, stringifier)]
-        pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+        pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.write_to(write);
         }
 

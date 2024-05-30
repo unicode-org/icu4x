@@ -15,7 +15,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
     char output[40];
 
     // Test setters
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
     ICU4XLocale_to_string(locale, &write);
     if (write.grow_failed) {
         return 1;
@@ -42,7 +42,7 @@ int main() {
     char output[40];
 
     // Test creating a locale.
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
     diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string("ar", 2);
     if (!locale_result.is_ok) {
         return 1;
@@ -61,7 +61,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Test some accessors.
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     locale_result = ICU4XLocale_create_from_string("fr-FR-u-hc-h23", 14);
     if (!locale_result.is_ok) {
         return 1;
@@ -78,7 +78,7 @@ int main() {
         return 1;
     }
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     ICU4XLocale_region(locale, &write);
     if (write.grow_failed) {
         return 1;
@@ -90,7 +90,7 @@ int main() {
         return 1;
     }
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
     if (write.grow_failed) {
         return 1;
@@ -108,7 +108,7 @@ int main() {
     }
 
     // Test setting the language
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     const char* str = "fr-FR-u-hc-h23";
     locale_result = ICU4XLocale_create_from_string(str, strlen(str));
     if (!locale_result.is_ok) {
@@ -128,7 +128,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Test setting the region
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     str = "es-ES-u-hc-h23";
     locale_result = ICU4XLocale_create_from_string(str, strlen(str));
     if (!locale_result.is_ok) {
@@ -151,7 +151,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
      // Test setting the script
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     str = "en-US";
     locale_result = ICU4XLocale_create_from_string(str, strlen(str));
     if (!locale_result.is_ok) {
@@ -198,7 +198,7 @@ int main() {
     ICU4XLocaleExpander* le = result3.ok;
 
     // Test maximize.
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     locale_result = ICU4XLocale_create_from_string("und", 3);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
@@ -219,7 +219,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Test minimize.
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     locale_result = ICU4XLocale_create_from_string("zh-Hant", 7);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
@@ -240,7 +240,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     // Test canonicalize.
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     locale_result = ICU4XLocale_create_from_string("no-nynorsk", 10);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");

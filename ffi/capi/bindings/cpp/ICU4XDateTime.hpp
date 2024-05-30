@@ -171,7 +171,7 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
    */
-  template<typename W> void month_code_to_writeable(W& write) const;
+  template<typename W> void month_code_to_write(W& write) const;
 
   /**
    * Returns the month code for this date. Typically something
@@ -193,7 +193,7 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
    */
-  template<typename W> void era_to_writeable(W& write) const;
+  template<typename W> void era_to_write(W& write) const;
 
   /**
    * Returns the era for this date,
@@ -319,28 +319,28 @@ inline diplomat::result<ICU4XWeekOf, ICU4XError> ICU4XDateTime::week_of_year(con
 inline uint32_t ICU4XDateTime::ordinal_month() const {
   return capi::ICU4XDateTime_ordinal_month(this->inner.get());
 }
-template<typename W> inline void ICU4XDateTime::month_code_to_writeable(W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XDateTime::month_code_to_write(W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XDateTime_month_code(this->inner.get(), &write_writer);
 }
 inline std::string ICU4XDateTime::month_code() const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XDateTime_month_code(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XDateTime_month_code(this->inner.get(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 inline int32_t ICU4XDateTime::year_in_era() const {
   return capi::ICU4XDateTime_year_in_era(this->inner.get());
 }
-template<typename W> inline void ICU4XDateTime::era_to_writeable(W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XDateTime::era_to_write(W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XDateTime_era(this->inner.get(), &write_writer);
 }
 inline std::string ICU4XDateTime::era() const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XDateTime_era(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XDateTime_era(this->inner.get(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 inline uint8_t ICU4XDateTime::months_in_year() const {
   return capi::ICU4XDateTime_months_in_year(this->inner.get());

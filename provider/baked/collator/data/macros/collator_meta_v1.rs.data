@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_collator_meta_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1Marker>, icu_provider::DataError> {
                 static FR_CA: <icu::collator::provider::CollationMetadataV1Marker as icu_provider::DataMarker>::Yokeable = icu::collator::provider::CollationMetadataV1 { bits: 129u32 };
@@ -51,7 +51,7 @@ macro_rules! __impl_collator_meta_v1 {
 #[macro_export]
 macro_rules! __impliterable_collator_meta_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
                 Ok(["af", "am", "ar", "as", "az", "be", "bg", "bn", "br", "bs", "ceb", "chr", "cs", "cy", "da", "de-AT-u-co-phonebk", "de-u-co-phonebk", "dsb", "el", "en-US-posix", "eo", "es", "et", "fa", "ff-Adlm", "fi", "fil", "fo", "fr-CA", "fy", "gl", "gu", "ha", "he", "hi", "hr", "hsb", "hu", "hy", "ig", "is", "ja", "ka", "kk", "km", "kn", "ko", "kok", "ku", "ky", "lo", "lt", "lv", "mk", "ml", "mn", "mr", "mt", "my", "ne", "no", "or", "pa", "pl", "ps", "ro", "ru", "si", "sk", "sl", "sq", "sr", "sv", "ta", "te", "th", "tk", "to", "tr", "ug", "uk", "und", "ur", "uz", "vi", "wo", "yo", "zh"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())

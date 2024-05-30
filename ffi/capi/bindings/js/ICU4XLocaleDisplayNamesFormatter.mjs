@@ -40,8 +40,8 @@ export class ICU4XLocaleDisplayNamesFormatter {
   }
 
   of(arg_locale) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XLocaleDisplayNamesFormatter_of(this.underlying, arg_locale.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XLocaleDisplayNamesFormatter_of(this.underlying, arg_locale.underlying, write);
     });
   }
 }

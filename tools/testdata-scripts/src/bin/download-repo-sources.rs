@@ -230,14 +230,12 @@ fn main() -> eyre::Result<()> {
 use crate::provider::source::{{AbstractFs, SerdeCache}};
 use crate::provider::transform::cldr::source::CldrCache;
 use crate::provider::DatagenProvider;
-use std::sync::Arc;
-
+use std::sync::{{Arc, OnceLock}};
 impl DatagenProvider {{
     // This is equivalent to `new_latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {{
         // Singleton so that all instantiations share the same cache.
-        static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
-            once_cell::sync::OnceCell::new();
+        static SINGLETON: OnceLock<DatagenProvider> = OnceLock::new();
         SINGLETON
             .get_or_init(|| Self {{
                 cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::Memory(

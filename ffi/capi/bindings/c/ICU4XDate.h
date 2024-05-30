@@ -45,11 +45,11 @@ diplomat_result_ICU4XWeekOf_ICU4XError ICU4XDate_week_of_year(const ICU4XDate* s
 
 uint32_t ICU4XDate_ordinal_month(const ICU4XDate* self);
 
-void ICU4XDate_month_code(const ICU4XDate* self, DiplomatWriteable* write);
+void ICU4XDate_month_code(const ICU4XDate* self, DiplomatWrite* write);
 
 int32_t ICU4XDate_year_in_era(const ICU4XDate* self);
 
-void ICU4XDate_era(const ICU4XDate* self, DiplomatWriteable* write);
+void ICU4XDate_era(const ICU4XDate* self, DiplomatWrite* write);
 
 uint8_t ICU4XDate_months_in_year(const ICU4XDate* self);
 

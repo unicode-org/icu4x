@@ -53,7 +53,7 @@ pub mod ffi {
         pub fn get(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let s = handle
@@ -99,7 +99,7 @@ pub mod ffi {
         pub fn get(
             &self,
             value: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let handle = self.0.as_borrowed();
             let iana = tinystr::TinyAsciiStr::from_bytes(value)

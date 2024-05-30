@@ -94,9 +94,9 @@ enum AnyCalendarKind {
   ///
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
   String get bcp47 {
-    final writeable = _Writeable();
-    _ICU4XAnyCalendarKind_bcp47(index, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XAnyCalendarKind_bcp47(index, write._ffi);
+    return write.finalize();
   }
 }
 
@@ -113,4 +113,4 @@ external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_bcp47(ffi.Pointer<ffi.Ui
 @meta.ResourceIdentifier('ICU4XAnyCalendarKind_bcp47')
 @ffi.Native<ffi.Void Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
 // ignore: non_constant_identifier_names
-external void _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> write);

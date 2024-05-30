@@ -296,7 +296,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
    */
-  template<typename W> void to_string_to_writeable(W& to) const;
+  template<typename W> void to_string_to_write(W& to) const;
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
@@ -486,14 +486,14 @@ inline diplomat::result<std::monostate, std::monostate> ICU4XFixedDecimal::conca
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XFixedDecimal::to_string_to_writeable(W& to) const {
-  capi::DiplomatWriteable to_writer = diplomat::WriteableTrait<W>::Construct(to);
+template<typename W> inline void ICU4XFixedDecimal::to_string_to_write(W& to) const {
+  capi::DiplomatWrite to_writer = diplomat::WriteTrait<W>::Construct(to);
   capi::ICU4XFixedDecimal_to_string(this->inner.get(), &to_writer);
 }
 inline std::string ICU4XFixedDecimal::to_string() const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XFixedDecimal_to_string(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XFixedDecimal_to_string(this->inner.get(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 #endif

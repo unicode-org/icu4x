@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_datetime_symbols_islamic_months_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::IslamicMonthNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::IslamicMonthNamesV1Marker>, icu_provider::DataError> {
                 static UND_X_4: <icu::datetime::provider::neo::IslamicMonthNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::MonthNamesV1::Linear(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\x0B\0\r\x00123456789101112") });
@@ -32,7 +32,7 @@ macro_rules! __impl_datetime_symbols_islamic_months_v1 {
 #[macro_export]
 macro_rules! __impliterable_datetime_symbols_islamic_months_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::IslamicMonthNamesV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
                 Ok(["und-x-3", "und-x-3s", "und-x-4", "und-x-4s", "und-x-5", "und-x-5s"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())

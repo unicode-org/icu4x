@@ -12,12 +12,12 @@ use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::ParserError;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
 use std::hash::Hash;
 use std::str::FromStr;
+use std::sync::OnceLock;
 use std::time::Duration;
 use std::time::Instant;
 use writeable::Writeable;
@@ -717,8 +717,15 @@ impl DatagenDriver {
             }
         };
 
-        let fallbacker =
-            Lazy::new(|| LocaleFallbacker::try_new_with_any_provider(&provider.as_any_provider()));
+        let fallbacker = OnceLock::new();
+        let fallbacker = || {
+            fallbacker
+                .get_or_init(|| {
+                    LocaleFallbacker::try_new_with_any_provider(&provider.as_any_provider())
+                })
+                .as_ref()
+                .map_err(|&e| e)
+        };
 
         let load_with_fallback = |key, locale: &_| {
             log::trace!("Generating key/locale: {key}/{locale:}");
@@ -755,7 +762,7 @@ impl DatagenDriver {
                             }
                             iter.step();
                         } else {
-                            match fallbacker.as_ref() {
+                            match fallbacker() {
                                 Ok(fallbacker) => {
                                     locale_iter = Some(
                                         fallbacker
@@ -763,7 +770,7 @@ impl DatagenDriver {
                                             .fallback_for(locale.clone()),
                                     )
                                 }
-                                Err(e) => return Some(Err(*e)),
+                                Err(e) => return Some(Err(e)),
                             }
                         }
                     }
@@ -816,7 +823,7 @@ impl DatagenDriver {
                 &locales_fallback,
                 &additional_collations,
                 &segmenter_models,
-                &fallbacker,
+                fallbacker,
             )?;
 
             let (slowest_duration, slowest_locale) = match deduplication_strategy {
@@ -829,8 +836,7 @@ impl DatagenDriver {
                                 .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
-                    let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                    deduplicate_payloads::<true>(key, &payloads, fallbacker, sink)?
+                    deduplicate_payloads::<true>(key, &payloads, fallbacker()?, sink)?
                 }
                 DeduplicationStrategy::RetainBaseLanguages => {
                     let payloads = locales_to_export
@@ -841,8 +847,7 @@ impl DatagenDriver {
                                 .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
-                    let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                    deduplicate_payloads::<false>(key, &payloads, fallbacker, sink)?
+                    deduplicate_payloads::<false>(key, &payloads, fallbacker()?, sink)?
                 }
                 DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
@@ -905,16 +910,13 @@ impl DatagenDriver {
 
 /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-fn select_locales_for_key(
+fn select_locales_for_key<'a>(
     provider: &dyn ExportableProvider,
     key: DataKey,
     locales_fallback: &LocalesWithOrWithoutFallback,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
-    fallbacker: &Lazy<
-        Result<LocaleFallbacker, DataError>,
-        impl FnOnce() -> Result<LocaleFallbacker, DataError>,
-    >,
+    fallbacker: impl Fn() -> Result<&'a LocaleFallbacker, DataError>,
 ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
     // Map from all supported LanguageIdentifiers to their
     // corresponding supported DataLocales.
@@ -1012,8 +1014,7 @@ fn select_locales_for_key(
     }
 
     // Need the fallbacker now.
-    let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-    let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+    let fallbacker_with_config = fallbacker()?.for_config(key.fallback_config());
 
     // The "candidate" langids that could be exported is the union of requested and supported.
     let all_candidate_langids = supported_map
@@ -1258,6 +1259,7 @@ fn test_collation_filtering() {
             expected: &["und", "und-u-co-emoji", "und-u-co-eor"],
         },
     ];
+    let fallbacker = LocaleFallbacker::new_without_data();
     for cas in cases {
         let resolved_locales = select_locales_for_key(
             &crate::provider::DatagenProvider::new_testing(),
@@ -1267,7 +1269,7 @@ fn test_collation_filtering() {
             },
             &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
             &[],
-            &once_cell::sync::Lazy::new(|| Ok(LocaleFallbacker::new_without_data())),
+            || Ok(&fallbacker),
         )
         .unwrap()
         .into_iter()

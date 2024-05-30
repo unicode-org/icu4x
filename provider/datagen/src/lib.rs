@@ -201,8 +201,8 @@ macro_rules! cb {
         /// );
         /// ```
         pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-            use once_cell::sync::OnceCell;
-            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            use std::sync::OnceLock;
+            static LOOKUP: OnceLock<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
                 [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),

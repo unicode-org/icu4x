@@ -85,8 +85,7 @@ impl DatagenProvider {
     #[cfg(feature = "networking")]
     pub fn new_latest_tested() -> Self {
         // Singleton so that all instantiations share the same cache.
-        static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
-            once_cell::sync::OnceCell::new();
+        static SINGLETON: std::sync::OnceLock<DatagenProvider> = std::sync::OnceLock::new();
         SINGLETON
             .get_or_init(|| {
                 Self::new_custom()

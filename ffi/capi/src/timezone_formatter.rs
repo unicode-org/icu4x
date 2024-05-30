@@ -282,7 +282,7 @@ pub mod ffi {
         pub fn format_custom_time_zone(
             &self,
             value: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
@@ -292,7 +292,7 @@ pub mod ffi {
         pub fn format_custom_time_zone_no_fallback(
             &self,
             value: &ICU4XCustomTimeZone,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = self.0.format(&value.0).write_no_fallback(write)?;
             Ok(())

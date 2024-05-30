@@ -62,9 +62,9 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, CustomTimeZone timeZone) {
-    final writeable = _Writeable();
-    _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(_ffi, datetime._ffi, timeZone._ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
+    return write.finalize();
   }
 }
 
@@ -86,4 +86,4 @@ external _ResultOpaqueInt32 _ICU4XGregorianZonedDateTimeFormatter_create_with_le
 @meta.ResourceIdentifier('ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
 // ignore: non_constant_identifier_names
-external void _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);

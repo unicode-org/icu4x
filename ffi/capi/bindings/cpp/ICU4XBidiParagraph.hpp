@@ -68,7 +68,7 @@ class ICU4XBidiParagraph {
    * 
    * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const;
+  template<typename W> diplomat::result<std::monostate, ICU4XError> reorder_line_to_write(size_t range_start, size_t range_end, W& out) const;
 
   /**
    * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
@@ -121,8 +121,8 @@ inline size_t ICU4XBidiParagraph::range_start() const {
 inline size_t ICU4XBidiParagraph::range_end() const {
   return capi::ICU4XBidiParagraph_range_end(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBidiParagraph::reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const {
-  capi::DiplomatWriteable out_writer = diplomat::WriteableTrait<W>::Construct(out);
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBidiParagraph::reorder_line_to_write(size_t range_start, size_t range_end, W& out) const {
+  capi::DiplomatWrite out_writer = diplomat::WriteTrait<W>::Construct(out);
   auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_reorder_line(this->inner.get(), range_start, range_end, &out_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
@@ -133,16 +133,16 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBi
   return diplomat_result_out_value;
 }
 inline diplomat::result<std::string, ICU4XError> ICU4XBidiParagraph::reorder_line(size_t range_start, size_t range_end) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_reorder_line(this->inner.get(), range_start, range_end, &diplomat_writeable_out);
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_reorder_line(this->inner.get(), range_start, range_end, &diplomat_write_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_write_string));
 }
 inline uint8_t ICU4XBidiParagraph::level_at(size_t pos) const {
   return capi::ICU4XBidiParagraph_level_at(this->inner.get(), pos);

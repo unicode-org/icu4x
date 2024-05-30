@@ -26,7 +26,7 @@ int main() {
     }
 
     std::string out2;
-    fdf.format_to_writeable(decimal, out2);
+    fdf.format_to_write(decimal, out2);
     std::cout << "Formatted writeable value is " << out2 << std::endl;
     if (out2 != "১০,০০,০০৭") {
         std::cout << "Output does not match expected output" << std::endl;

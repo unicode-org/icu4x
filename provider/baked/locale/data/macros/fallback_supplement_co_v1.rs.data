@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_fallback_supplement_co_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_FALLBACK_SUPPLEMENT_CO_V1: &'static <icu::locale::provider::CollationFallbackSupplementV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locale::provider::LocaleFallbackSupplementV1 {
@@ -22,7 +22,7 @@ macro_rules! __impl_fallback_supplement_co_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::locale::provider::CollationFallbackSupplementV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::CollationFallbackSupplementV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {
@@ -41,7 +41,7 @@ macro_rules! __impl_fallback_supplement_co_v1 {
 #[macro_export]
 macro_rules! __impliterable_fallback_supplement_co_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::locale::provider::CollationFallbackSupplementV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
                 Ok([icu_provider::DataLocale::default()].into())
