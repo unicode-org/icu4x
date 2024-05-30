@@ -108,7 +108,7 @@ postcard = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]
-default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
+default = ["bin", "use_wasm", "networking", "rayon", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
 provider = [
     "icu_calendar/datagen",
     "icu_casemap/datagen",
