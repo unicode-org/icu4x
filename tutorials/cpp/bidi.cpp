@@ -67,7 +67,7 @@ int main() {
         std::cout << "Found incorrect reordering, expected: " << reordered << std::endl;
     }
 
-    para.set_paragraph_in_text(1).value();
+    para.set_paragraph_in_text(1).ok().value();
 
     size = para.size();
     if (size != 9) {
