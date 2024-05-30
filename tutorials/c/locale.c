@@ -106,7 +106,7 @@ int main() {
         return 1;
     }
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
     void_option = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
     if (void_option.is_ok || write.grow_failed) {
         return 1;
