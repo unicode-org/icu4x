@@ -35,7 +35,7 @@ class ICU4XBidiParagraph {
    * This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
    * create a new object
    */
-  std::optional<std::monostate> set_paragraph_in_text(size_t n);
+  diplomat::result<std::monostate, std::monostate> set_paragraph_in_text(size_t n);
 
   /**
    * The primary direction of this paragraph
@@ -98,13 +98,13 @@ class ICU4XBidiParagraph {
 };
 
 
-inline std::optional<std::monostate> ICU4XBidiParagraph::set_paragraph_in_text(size_t n) {
+inline diplomat::result<std::monostate, std::monostate> ICU4XBidiParagraph::set_paragraph_in_text(size_t n) {
   auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_set_paragraph_in_text(this->inner.get(), n);
-  std::optional<std::monostate> diplomat_result_out_value;
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = std::optional<std::monostate>(std::monostate());
+    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
-    diplomat_result_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err<std::monostate>(std::monostate());
   }
   return diplomat_result_out_value;
 }
@@ -141,7 +141,7 @@ inline std::optional<std::string> ICU4XBidiParagraph::reorder_line(size_t range_
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 inline uint8_t ICU4XBidiParagraph::level_at(size_t pos) const {
   return capi::ICU4XBidiParagraph_level_at(this->inner.get(), pos);

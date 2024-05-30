@@ -1,4 +1,5 @@
 import { u8, usize } from "./diplomat-runtime"
+import { FFIError } from "./diplomat-runtime"
 import { ICU4XBidiDirection } from "./ICU4XBidiDirection";
 
 /**
@@ -12,8 +13,9 @@ export class ICU4XBidiParagraph {
    * Given a paragraph index `n` within the surrounding text, this sets this object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
 
    * This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't create a new object
+   * @throws {@link FFIError}<void>
    */
-  set_paragraph_in_text(n: usize): void | undefined;
+  set_paragraph_in_text(n: usize): void | never;
 
   /**
 

@@ -463,7 +463,7 @@ inline std::optional<std::string> ICU4XCustomTimeZone::time_zone_id() const {
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_metazone_id(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_metazone_id(this->inner.get(), id.data(), id.size());
@@ -499,7 +499,7 @@ inline std::optional<std::string> ICU4XCustomTimeZone::metazone_id() const {
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 inline std::optional<std::monostate> ICU4XCustomTimeZone::try_set_zone_variant(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_zone_variant(this->inner.get(), id.data(), id.size());
@@ -535,7 +535,7 @@ inline std::optional<std::string> ICU4XCustomTimeZone::zone_variant() const {
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 inline void ICU4XCustomTimeZone::set_standard_time() {
   capi::ICU4XCustomTimeZone_set_standard_time(this->inner.get());

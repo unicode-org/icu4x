@@ -268,7 +268,7 @@ inline std::optional<std::string> ICU4XLocale::get_unicode_extension(const std::
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 template<typename W> inline void ICU4XLocale::language_to_write(W& write) const {
   capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
@@ -311,7 +311,7 @@ inline std::optional<std::string> ICU4XLocale::region() const {
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_region(const std::string_view bytes) {
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_region(this->inner.get(), bytes.data(), bytes.size());
@@ -344,7 +344,7 @@ inline std::optional<std::string> ICU4XLocale::script() const {
   } else {
     diplomat_result_out_value = std::nullopt;
   }
-  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_writeable_string)} : std::nullopt;
+  return diplomat_result_out_value.has_value() ? std::optional<std::string>{std::move(diplomat_write_string)} : std::nullopt;
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_script(const std::string_view bytes) {
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_script(this->inner.get(), bytes.data(), bytes.size());
