@@ -227,10 +227,12 @@ pub mod ffi {
         ///
         /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
         /// create a new object
-        pub fn set_paragraph_in_text(&mut self, n: usize) -> Result<(), ()> {
-            let para = self.0.info.paragraphs.get(n).ok_or(())?;
+        pub fn set_paragraph_in_text(&mut self, n: usize) -> bool {
+            let Some(para) = self.0.info.paragraphs.get(n) else {
+                return false;
+            };
             self.0 = Paragraph::new(self.0.info, para);
-            Ok(())
+            true
         }
 
         #[diplomat::rust_link(unicode_bidi::Paragraph::level_at, FnInStruct)]

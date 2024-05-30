@@ -17,12 +17,7 @@ export class ICU4XBidiParagraph {
   }
 
   set_paragraph_in_text(arg_n) {
-    return (() => {
-      const is_ok = wasm.ICU4XBidiParagraph_set_paragraph_in_text(this.underlying, arg_n) == 1;
-      if (!is_ok) {
-        throw new diplomatRuntime.FFIError(undefined);
-      }
-    })();
+    return wasm.ICU4XBidiParagraph_set_paragraph_in_text(this.underlying, arg_n);
   }
 
   direction() {

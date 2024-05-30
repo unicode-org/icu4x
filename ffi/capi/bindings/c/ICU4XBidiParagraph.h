@@ -14,14 +14,14 @@ typedef struct ICU4XBidiParagraph ICU4XBidiParagraph;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "diplomat_result_void_void.h"
 #include "ICU4XBidiDirection.h"
+#include "diplomat_result_void_void.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_void_void ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
+bool ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
 
 ICU4XBidiDirection ICU4XBidiParagraph_direction(const ICU4XBidiParagraph* self);
 

@@ -31,7 +31,7 @@ final class BidiParagraph implements ffi.Finalizable {
   /// create a new object
   bool setParagraphInText(int n) {
     final result = _ICU4XBidiParagraph_set_paragraph_in_text(_ffi, n);
-    return result.isOk;
+    return result;
   }
 
   /// The primary direction of this paragraph
@@ -94,9 +94,9 @@ final class BidiParagraph implements ffi.Finalizable {
 external void _ICU4XBidiParagraph_destroy(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('ICU4XBidiParagraph_set_paragraph_in_text')
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_set_paragraph_in_text')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_set_paragraph_in_text')
 // ignore: non_constant_identifier_names
-external _ResultVoidVoid _ICU4XBidiParagraph_set_paragraph_in_text(ffi.Pointer<ffi.Opaque> self, int n);
+external bool _ICU4XBidiParagraph_set_paragraph_in_text(ffi.Pointer<ffi.Opaque> self, int n);
 
 @meta.ResourceIdentifier('ICU4XBidiParagraph_direction')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_direction')

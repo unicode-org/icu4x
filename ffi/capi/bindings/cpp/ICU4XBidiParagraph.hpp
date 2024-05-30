@@ -35,7 +35,7 @@ class ICU4XBidiParagraph {
    * This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
    * create a new object
    */
-  diplomat::result<std::monostate, std::monostate> set_paragraph_in_text(size_t n);
+  bool set_paragraph_in_text(size_t n);
 
   /**
    * The primary direction of this paragraph
@@ -98,15 +98,8 @@ class ICU4XBidiParagraph {
 };
 
 
-inline diplomat::result<std::monostate, std::monostate> ICU4XBidiParagraph::set_paragraph_in_text(size_t n) {
-  auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_set_paragraph_in_text(this->inner.get(), n);
-  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<std::monostate>(std::monostate());
-  }
-  return diplomat_result_out_value;
+inline bool ICU4XBidiParagraph::set_paragraph_in_text(size_t n) {
+  return capi::ICU4XBidiParagraph_set_paragraph_in_text(this->inner.get(), n);
 }
 inline ICU4XBidiDirection ICU4XBidiParagraph::direction() const {
   return static_cast<ICU4XBidiDirection>(capi::ICU4XBidiParagraph_direction(this->inner.get()));
