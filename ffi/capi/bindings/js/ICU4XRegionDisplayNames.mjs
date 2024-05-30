@@ -35,10 +35,10 @@ export class ICU4XRegionDisplayNames {
 
   of(arg_region) {
     const buf_arg_region = diplomatRuntime.DiplomatBuf.str8(wasm, arg_region);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XRegionDisplayNames_of(diplomat_receive_buffer, this.underlying, buf_arg_region.ptr, buf_arg_region.size, writeable);
+        wasm.ICU4XRegionDisplayNames_of(diplomat_receive_buffer, this.underlying, buf_arg_region.ptr, buf_arg_region.size, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

@@ -74,12 +74,12 @@ final class BidiParagraph implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String reorderLine(int rangeStart, int rangeEnd) {
-    final writeable = _Writeable();
-    final result = _ICU4XBidiParagraph_reorder_line(_ffi, rangeStart, rangeEnd, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XBidiParagraph_reorder_line(_ffi, rangeStart, rangeEnd, write._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Get the BIDI level at a particular byte index in this paragraph.
@@ -128,7 +128,7 @@ external int _ICU4XBidiParagraph_range_end(ffi.Pointer<ffi.Opaque> self);
 @meta.ResourceIdentifier('ICU4XBidiParagraph_reorder_line')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_reorder_line')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XBidiParagraph_reorder_line(ffi.Pointer<ffi.Opaque> self, int rangeStart, int rangeEnd, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XBidiParagraph_reorder_line(ffi.Pointer<ffi.Opaque> self, int rangeStart, int rangeEnd, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XBidiParagraph_level_at')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_level_at')

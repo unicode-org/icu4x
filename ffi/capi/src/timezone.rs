@@ -206,7 +206,7 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn time_zone_id(
             &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = write.write_str(
                 self.0
@@ -247,7 +247,7 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn metazone_id(
             &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = write.write_str(
                 self.0
@@ -288,7 +288,7 @@ pub mod ffi {
         #[diplomat::attr(supports = accessors, getter)]
         pub fn zone_variant(
             &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = write.write_str(
                 self.0

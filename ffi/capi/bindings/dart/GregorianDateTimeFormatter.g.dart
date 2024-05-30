@@ -42,9 +42,9 @@ final class GregorianDateTimeFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetime(IsoDateTime value) {
-    final writeable = _Writeable();
-    _ICU4XGregorianDateTimeFormatter_format_iso_datetime(_ffi, value._ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XGregorianDateTimeFormatter_format_iso_datetime(_ffi, value._ffi, write._ffi);
+    return write.finalize();
   }
 }
 
@@ -61,4 +61,4 @@ external _ResultOpaqueInt32 _ICU4XGregorianDateTimeFormatter_create_with_lengths
 @meta.ResourceIdentifier('ICU4XGregorianDateTimeFormatter_format_iso_datetime')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGregorianDateTimeFormatter_format_iso_datetime')
 // ignore: non_constant_identifier_names
-external void _ICU4XGregorianDateTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XGregorianDateTimeFormatter_format_iso_datetime(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

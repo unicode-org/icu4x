@@ -57,7 +57,7 @@ class ICU4XListFormatter {
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
-  template<typename W> void format_to_writeable(const ICU4XList& list, W& write) const;
+  template<typename W> void format_to_write(const ICU4XList& list, W& write) const;
 
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
@@ -107,14 +107,14 @@ inline diplomat::result<ICU4XListFormatter, ICU4XError> ICU4XListFormatter::crea
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XListFormatter::format_to_writeable(const ICU4XList& list, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XListFormatter::format_to_write(const ICU4XList& list, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &write_writer);
 }
 inline std::string ICU4XListFormatter::format(const ICU4XList& list) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XListFormatter_format(this->inner.get(), list.AsFFI(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 #endif

@@ -110,7 +110,7 @@ void ICU4XFixedDecimal_half_even_to_increment(ICU4XFixedDecimal* self, int16_t p
 
 diplomat_result_void_void ICU4XFixedDecimal_concatenate_end(ICU4XFixedDecimal* self, ICU4XFixedDecimal* other);
 
-void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWriteable* to);
+void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWrite* to);
 void ICU4XFixedDecimal_destroy(ICU4XFixedDecimal* self);
 
 #ifdef __cplusplus

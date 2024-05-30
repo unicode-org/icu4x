@@ -68,14 +68,14 @@ pub mod ffi {
         /// Returns the full lowercase mapping of the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
-        pub fn lowercase(&self, s: &str, locale: &ICU4XLocale, write: &mut DiplomatWriteable) {
+        pub fn lowercase(&self, s: &str, locale: &ICU4XLocale, write: &mut DiplomatWrite) {
             let _infallible = self.0.lowercase(s, &locale.0.id).write_to(write);
         }
 
         /// Returns the full uppercase mapping of the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase_to_string, FnInStruct, hidden)]
-        pub fn uppercase(&self, s: &str, locale: &ICU4XLocale, write: &mut DiplomatWriteable) {
+        pub fn uppercase(&self, s: &str, locale: &ICU4XLocale, write: &mut DiplomatWrite) {
             let _infallible = self.0.uppercase(s, &locale.0.id).write_to(write);
         }
 
@@ -99,7 +99,7 @@ pub mod ffi {
             s: &str,
             locale: &ICU4XLocale,
             options: ICU4XTitlecaseOptionsV1,
-            write: &mut DiplomatWriteable,
+            write: &mut DiplomatWrite,
         ) {
             let _infallible = self
                 .0
@@ -110,14 +110,14 @@ pub mod ffi {
         /// Case-folds the characters in the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
-        pub fn fold(&self, s: &str, write: &mut DiplomatWriteable) {
+        pub fn fold(&self, s: &str, write: &mut DiplomatWrite) {
             let _infallible = self.0.fold(s).write_to(write);
         }
         /// Case-folds the characters in the given string
         /// using Turkic (T) mappings for dotted/dotless I.
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic_string, FnInStruct, hidden)]
-        pub fn fold_turkic(&self, s: &str, write: &mut DiplomatWriteable) {
+        pub fn fold_turkic(&self, s: &str, write: &mut DiplomatWrite) {
             let _infallible = self.0.fold_turkic(s).write_to(write);
         }
 
@@ -288,7 +288,7 @@ pub mod ffi {
             s: &str,
             locale: &ICU4XLocale,
             options: ICU4XTitlecaseOptionsV1,
-            write: &mut DiplomatWriteable,
+            write: &mut DiplomatWrite,
         ) {
             let _infallible = self
                 .0

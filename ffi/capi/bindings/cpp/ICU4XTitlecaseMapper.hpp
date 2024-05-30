@@ -48,7 +48,7 @@ class ICU4XTitlecaseMapper {
    * 
    * Warning: Passing ill-formed UTF-8 is undefined behavior (and may be memory-unsafe).
    */
-  template<typename W> void titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const;
+  template<typename W> void titlecase_segment_v1_to_write(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const;
 
   /**
    * Returns the full titlecase mapping of the given string
@@ -84,16 +84,16 @@ inline diplomat::result<ICU4XTitlecaseMapper, ICU4XError> ICU4XTitlecaseMapper::
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XTitlecaseMapper::titlecase_segment_v1_to_writeable(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const {
+template<typename W> inline void ICU4XTitlecaseMapper::titlecase_segment_v1_to_write(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options, W& write) const {
   ICU4XTitlecaseOptionsV1 diplomat_wrapped_struct_options = options;
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XTitlecaseMapper_titlecase_segment_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &write_writer);
 }
 inline std::string ICU4XTitlecaseMapper::titlecase_segment_v1(const std::string_view s, const ICU4XLocale& locale, ICU4XTitlecaseOptionsV1 options) const {
   ICU4XTitlecaseOptionsV1 diplomat_wrapped_struct_options = options;
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XTitlecaseMapper_titlecase_segment_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XTitlecaseMapper_titlecase_segment_v1(this->inner.get(), s.data(), s.size(), locale.AsFFI(), capi::ICU4XTitlecaseOptionsV1{ .leading_adjustment = static_cast<capi::ICU4XLeadingAdjustment>(diplomat_wrapped_struct_options.leading_adjustment), .trailing_case = static_cast<capi::ICU4XTrailingCase>(diplomat_wrapped_struct_options.trailing_case) }, &diplomat_write_out);
+  return diplomat_write_string;
 }
 #endif

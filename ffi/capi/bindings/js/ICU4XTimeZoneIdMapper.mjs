@@ -35,10 +35,10 @@ export class ICU4XTimeZoneIdMapper {
 
   iana_to_bcp47(arg_value) {
     const buf_arg_value = diplomatRuntime.DiplomatBuf.str8(wasm, arg_value);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XTimeZoneIdMapper_iana_to_bcp47(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, writeable);
+        wasm.ICU4XTimeZoneIdMapper_iana_to_bcp47(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -57,10 +57,10 @@ export class ICU4XTimeZoneIdMapper {
 
   normalize_iana(arg_value) {
     const buf_arg_value = diplomatRuntime.DiplomatBuf.str8(wasm, arg_value);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XTimeZoneIdMapper_normalize_iana(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, writeable);
+        wasm.ICU4XTimeZoneIdMapper_normalize_iana(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -79,10 +79,10 @@ export class ICU4XTimeZoneIdMapper {
 
   canonicalize_iana(arg_value) {
     const buf_arg_value = diplomatRuntime.DiplomatBuf.str8(wasm, arg_value);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XTimeZoneIdMapper_canonicalize_iana(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, writeable);
+        wasm.ICU4XTimeZoneIdMapper_canonicalize_iana(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -101,10 +101,10 @@ export class ICU4XTimeZoneIdMapper {
 
   find_canonical_iana_from_bcp47(arg_value) {
     const buf_arg_value = diplomatRuntime.DiplomatBuf.str8(wasm, arg_value);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, writeable);
+        wasm.ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(diplomat_receive_buffer, this.underlying, buf_arg_value.ptr, buf_arg_value.size, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

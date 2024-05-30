@@ -44,13 +44,13 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
   String ianaToBcp47(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_iana_to_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XTimeZoneIdMapper_iana_to_bcp47(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
@@ -59,13 +59,13 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
   String normalizeIana(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_normalize_iana(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XTimeZoneIdMapper_normalize_iana(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
@@ -74,13 +74,13 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
   String canonicalizeIana(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_canonicalize_iana(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XTimeZoneIdMapper_canonicalize_iana(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// See the [Rust documentation for `find_canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.find_canonical_iana_from_bcp47) for more information.
@@ -89,13 +89,13 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
   String findCanonicalIanaFromBcp47(String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
@@ -112,19 +112,19 @@ external _ResultOpaqueInt32 _ICU4XTimeZoneIdMapper_create(ffi.Pointer<ffi.Opaque
 @meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_iana_to_bcp47')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_iana_to_bcp47')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_iana_to_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_iana_to_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_normalize_iana')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_normalize_iana')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_normalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_normalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_canonicalize_iana')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_canonicalize_iana')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_canonicalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_canonicalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> write);

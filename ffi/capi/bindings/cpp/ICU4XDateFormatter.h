@@ -30,13 +30,13 @@ extern "C" {
 
 diplomat_result_box_ICU4XDateFormatter_ICU4XError ICU4XDateFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_date(const ICU4XDateFormatter* self, const ICU4XDate* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XDateFormatter_format_date(const ICU4XDateFormatter* self, const ICU4XDate* value, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_iso_date(const ICU4XDateFormatter* self, const ICU4XIsoDate* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XDateFormatter_format_iso_date(const ICU4XDateFormatter* self, const ICU4XIsoDate* value, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_datetime(const ICU4XDateFormatter* self, const ICU4XDateTime* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XDateFormatter_format_datetime(const ICU4XDateFormatter* self, const ICU4XDateTime* value, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XDateFormatter_format_iso_datetime(const ICU4XDateFormatter* self, const ICU4XIsoDateTime* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XDateFormatter_format_iso_datetime(const ICU4XDateFormatter* self, const ICU4XIsoDateTime* value, DiplomatWrite* write);
 void ICU4XDateFormatter_destroy(ICU4XDateFormatter* self);
 
 #ifdef __cplusplus
