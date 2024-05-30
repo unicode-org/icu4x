@@ -16,7 +16,7 @@ use core::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::subtags::{variant, Variants};
+/// use icu::locale::subtags::{variant, Variants};
 ///
 /// let mut v = vec![variant!("posix"), variant!("macos")];
 /// v.sort();
@@ -34,7 +34,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Variants;
+    /// use icu::locale::subtags::Variants;
     ///
     /// assert_eq!(Variants::new(), Variants::default());
     /// ```
@@ -48,7 +48,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::{variant, Variants};
+    /// use icu::locale::subtags::{variant, Variants};
     ///
     /// let variants = Variants::from_variant(variant!("posix"));
     /// ```
@@ -64,7 +64,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::{variant, Variants};
+    /// use icu::locale::subtags::{variant, Variants};
     ///
     /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();
@@ -91,7 +91,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::{variant, Variants};
+    /// use icu::locale::subtags::{variant, Variants};
     ///
     /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();

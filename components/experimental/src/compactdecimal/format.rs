@@ -27,7 +27,7 @@ impl FormattedCompactDecimal<'_> {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(

@@ -29,7 +29,7 @@ Compiled data is exposed through idiomatic Rust constructors like `new` or `try_
 
 ```rust
 use icu::datetime::DateTimeFormatter;
-use icu::locale_core::locale;
+use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
     &locale!("es-US").into(),
@@ -52,7 +52,7 @@ special constructors:
 
 ```rust
 use icu::datetime::DateTimeFormatter;
-use icu::locale_core::locale;
+use icu::locale::locale;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 

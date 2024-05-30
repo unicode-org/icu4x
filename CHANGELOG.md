@@ -248,7 +248,7 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
   - `icu_list`
     - No additional changes
   - `icu_locale_core`
-    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locale_core::extensions::unicode::value` now works, instead of `use icu::locale_core::extensions_unicode_value`
+    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locale::extensions::unicode::value` now works, instead of `use icu::locale::extensions_unicode_value`
   - `icu_locale`
     - New home of `LocaleFallbacker` and `fallback` module previously found in `icu_provider_adapters`
     - New `LocaleDirectionality` to access the right-to-left status of locales

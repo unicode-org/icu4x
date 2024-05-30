@@ -22,7 +22,7 @@ This minimize method returns a new Locale that is the result of running the
 ## Examples
 
 ```rust
-use icu::locale_core::Locale;
+use icu::locale::Locale;
 use icu::locale::{LocaleCanonicalizer, TransformResult};
 
 let lc = LocaleCanonicalizer::new();
@@ -35,7 +35,7 @@ assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 ```
 
 ```rust
-use icu::locale_core::locale;
+use icu::locale::locale;
 use icu::localeExpander, TransformResult};
 
 let lc = LocaleExpander::new();
@@ -50,7 +50,7 @@ assert_eq!(locale, locale!("zh-Hant-TW"));
 ```
 
 ```rust
-use icu::locale_core::locale;
+use icu::locale::locale;
 use icu::localeExpander, TransformResult};
 use writeable::assert_writeable_eq;
 

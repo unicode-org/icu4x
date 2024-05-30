@@ -11,7 +11,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::Key;
+    /// use icu::locale::extensions::transform::Key;
     ///
     /// let key1: Key = "k0".parse().expect("Failed to parse a Key.");
     ///

@@ -15,7 +15,7 @@ use core::cmp::Ordering;
 /// Check whether a stream of subtags contains two expected locales back-to-back:
 ///
 /// ```
-/// use icu::locale_core::{locale, SubtagOrderingResult};
+/// use icu::locale::{locale, SubtagOrderingResult};
 /// use std::cmp::Ordering;
 ///
 /// let subtags = b"en-US-it-IT".split(|b| *b == b'-');

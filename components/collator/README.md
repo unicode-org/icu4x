@@ -21,7 +21,7 @@ As its most basic purpose, `Collator` offers locale-aware ordering:
 ```rust
 use core::cmp::Ordering;
 use icu::collator::*;
-use icu::locale_core::locale;
+use icu::locale::locale;
 
 let locale_es = locale!("es-u-co-trad").into();
 let mut options = CollatorOptions::new();

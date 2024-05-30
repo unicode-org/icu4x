@@ -207,7 +207,7 @@ impl Transliterator {
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```ignore
     /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     /// use core::ops::Range;
     ///
     /// #[derive(Debug)]

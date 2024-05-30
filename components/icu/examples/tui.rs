@@ -10,7 +10,7 @@
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::time_zone::TimeZoneFormatterOptions;
 use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
-use icu::locale_core::locale;
+use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;

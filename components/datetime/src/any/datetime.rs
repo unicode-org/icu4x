@@ -44,7 +44,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
@@ -74,7 +74,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// ```
 /// use icu::calendar::{AnyCalendar, DateTime, Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 /// # use std::rc::Rc;
 ///
@@ -132,7 +132,7 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(
@@ -311,7 +311,7 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::components, DateTimeFormatter};
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -456,7 +456,7 @@ impl DateTimeFormatter {
     /// use icu::datetime::{
     ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
     /// };
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let df = DateFormatter::try_new_with_length(
@@ -548,7 +548,7 @@ where {
     ///     options::{components, length},
     ///     DateTimeFormatter,
     /// };
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
@@ -574,7 +574,7 @@ where {
 mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locale_core::locale;
+    use icu::locale::locale;
     use icu_provider::DataLocale;
 
     fn test_format(datetime: &DateTime<AnyCalendar>, locale: DataLocale, expected: &str) {
@@ -636,7 +636,7 @@ mod tests {
 fn buffer_constructor() {
     use icu::calendar::DateTime;
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locale_core::locale;
+    use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
     let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(

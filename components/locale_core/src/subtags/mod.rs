@@ -23,7 +23,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::subtags::{Language, Region, Script, Variant};
+//! use icu::locale::subtags::{Language, Region, Script, Variant};
 //!
 //! let language: Language =
 //!     "en".parse().expect("Failed to parse a language subtag.");
@@ -70,7 +70,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Subtag;
+    /// use icu::locale::subtags::Subtag;
     ///
     /// let subtag1: Subtag = "Foo".parse()
     ///     .expect("Failed to parse a Subtag.");

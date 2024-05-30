@@ -62,7 +62,7 @@ pub struct LocaleFallbackConfig {
     /// Retain the language and script subtags until the final step:
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
     /// use icu::locale::LocaleFallbacker;
@@ -90,7 +90,7 @@ pub struct LocaleFallbackConfig {
     /// Retain the region subtag until the final step:
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
     /// use icu::locale::LocaleFallbacker;
@@ -120,14 +120,14 @@ pub struct LocaleFallbackConfig {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
     /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_key = Some(icu::locale_core::extensions::unicode::key!("nu"));
+    /// config.extension_key = Some(icu::locale::extensions::unicode::key!("nu"));
     /// let mut fallback_iterator = fallbacker
     ///     .for_config(config)
     ///     .fallback_for(locale!("ar-EG-u-nu-latn").into());
@@ -155,7 +155,7 @@ pub struct LocaleFallbackConfig {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::locale::fallback::LocaleFallbackConfig;
     /// use icu::locale::fallback::LocaleFallbackPriority;
     /// use icu::locale::fallback::LocaleFallbackSupplement;

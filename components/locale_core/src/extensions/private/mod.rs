@@ -13,8 +13,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::extensions::private::subtag;
-//! use icu::locale_core::{locale, Locale};
+//! use icu::locale::extensions::private::subtag;
+//! use icu::locale::{locale, Locale};
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
@@ -48,7 +48,7 @@ use crate::shortvec::ShortBoxSlice;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::private::{Private, Subtag};
+/// use icu::locale::extensions::private::{Private, Subtag};
 ///
 /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -68,7 +68,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::private::Private;
+    /// use icu::locale::extensions::private::Private;
     ///
     /// assert_eq!(Private::new(), Private::default());
     /// ```
@@ -82,7 +82,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::private::{Private, Subtag};
+    /// use icu::locale::extensions::private::{Private, Subtag};
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -99,7 +99,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::private::{Private, Subtag};
+    /// use icu::locale::extensions::private::{Private, Subtag};
     ///
     /// let subtag: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     ///
@@ -115,7 +115,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::private::{Private, Subtag};
+    /// use icu::locale::extensions::private::{Private, Subtag};
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");

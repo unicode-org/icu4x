@@ -18,7 +18,7 @@ use crate::TransformResult;
 /// Add likely subtags:
 ///
 /// ```
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use icu::locale::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new();
@@ -35,7 +35,7 @@ use crate::TransformResult;
 /// Remove likely subtags:
 ///
 /// ```
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use icu::localeExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new();
@@ -53,7 +53,7 @@ use crate::TransformResult;
 /// locales for maximization, use [`try_new_extended`](Self::try_new_extended_unstable):
 ///
 /// ```
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use icu::localeExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::new_extended();
@@ -396,7 +396,7 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -415,7 +415,7 @@ impl LocaleExpander {
     /// more languages.
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -501,7 +501,7 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();
@@ -531,7 +531,7 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::localeExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::new();

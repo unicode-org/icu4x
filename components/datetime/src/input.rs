@@ -109,7 +109,7 @@ pub trait TimeZoneInput {
 /// use icu::datetime::{DateTimeWriteError, TypedDateTimeNames};
 /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// struct Empty;

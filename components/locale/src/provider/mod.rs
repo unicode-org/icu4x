@@ -40,7 +40,6 @@ pub struct Baked;
 const _: () = {
     pub mod icu {
         pub use crate as locale;
-        pub use icu_locale_core as locale_core;
     }
     icu_locale_data::make_provider!(Baked);
     icu_locale_data::impl_fallback_likelysubtags_v1!(Baked);

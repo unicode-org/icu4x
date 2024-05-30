@@ -28,7 +28,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{
+/// use icu::locale::{
 ///     extensions::unicode::{key, value},
 ///     locale,
 ///     subtags::{language, region},
@@ -64,7 +64,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{subtags::*, Locale};
+/// use icu::locale::{subtags::*, Locale};
 ///
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
 ///     .parse()
@@ -117,7 +117,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// Locale::try_from_bytes(b"en-US-u-hc-h12").unwrap();
     /// ```
@@ -130,7 +130,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// assert_eq!(Locale::default(), Locale::UND);
     /// ```
@@ -147,7 +147,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// assert_eq!(
     ///     Locale::canonicalize("pL_latn_pl-U-HC-H12").as_deref(),
@@ -170,7 +170,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
@@ -247,7 +247,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use std::cmp::Ordering;
     ///
     /// let subtags: &[&[u8]] =
@@ -301,7 +301,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "pl-LaTn-pL",
@@ -467,8 +467,8 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::Locale;
-/// use icu::locale_core::{locale, subtags::language};
+/// use icu::locale::Locale;
+/// use icu::locale::{locale, subtags::language};
 ///
 /// assert_eq!(Locale::from(language!("en")), locale!("en"));
 /// ```
@@ -484,8 +484,8 @@ impl From<subtags::Language> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::Locale;
-/// use icu::locale_core::{locale, subtags::script};
+/// use icu::locale::Locale;
+/// use icu::locale::{locale, subtags::script};
 ///
 /// assert_eq!(Locale::from(Some(script!("latn"))), locale!("und-Latn"));
 /// ```
@@ -501,8 +501,8 @@ impl From<Option<subtags::Script>> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::Locale;
-/// use icu::locale_core::{locale, subtags::region};
+/// use icu::locale::Locale;
+/// use icu::locale::{locale, subtags::region};
 ///
 /// assert_eq!(Locale::from(Some(region!("US"))), locale!("und-US"));
 /// ```
@@ -518,8 +518,8 @@ impl From<Option<subtags::Region>> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::Locale;
-/// use icu::locale_core::{
+/// use icu::locale::Locale;
+/// use icu::locale::{
 ///     locale,
 ///     subtags::{language, region, script},
 /// };

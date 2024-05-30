@@ -24,7 +24,7 @@ use super::Value;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::transform::{key, Fields, Value};
+/// use icu::locale::extensions::transform::{key, Fields, Value};
 ///
 /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
 /// let fields = [(key!("h0"), value)].into_iter().collect::<Fields>();
@@ -40,7 +40,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::Fields;
+    /// use icu::locale::extensions::transform::Fields;
     ///
     /// assert_eq!(Fields::new(), Fields::default());
     /// ```
@@ -54,8 +54,8 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc1 = Locale::try_from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = locale!("und-u-ca-buddhist");
@@ -74,7 +74,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::{key, Fields, Value};
+    /// use icu::locale::extensions::transform::{key, Fields, Value};
     ///
     /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
     /// let mut fields = [(key!("h0"), value)].into_iter().collect::<Fields>();
@@ -95,7 +95,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::{Fields, Key, Value};
+    /// use icu::locale::extensions::transform::{Fields, Key, Value};
     ///
     /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
@@ -118,7 +118,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::{key, Fields, Value};
+    /// use icu::locale::extensions::transform::{key, Fields, Value};
     ///
     /// let value = "hybrid".parse::<Value>().unwrap();
     /// let fields = [(key!("h0"), value.clone())]
@@ -140,8 +140,8 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::{key, Value};
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::extensions::transform::{key, Value};
+    /// use icu::locale::Locale;
     ///
     /// let lower = "lower".parse::<Value>().expect("valid extension subtag");
     /// let casefold = "casefold".parse::<Value>().expect("valid extension subtag");
@@ -163,8 +163,8 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::key;
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::extensions::transform::key;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();
     ///

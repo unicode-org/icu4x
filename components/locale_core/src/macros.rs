@@ -9,7 +9,7 @@
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{langid, LanguageIdentifier};
+/// use icu::locale::{langid, LanguageIdentifier};
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
@@ -22,13 +22,13 @@
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail,E0080
-/// icu::locale_core::langid!("und-variant1-variant2");
+/// icu::locale::langid!("und-variant1-variant2");
 /// ```
 ///
 /// Use runtime parsing instead:
 /// ```
 /// "und-variant1-variant2"
-///     .parse::<icu::locale_core::LanguageIdentifier>()
+///     .parse::<icu::locale::LanguageIdentifier>()
 ///     .unwrap();
 /// ```
 ///
@@ -62,7 +62,7 @@ macro_rules! langid {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{locale, Locale};
+/// use icu::locale::{locale, Locale};
 ///
 /// const DE_AT: Locale = locale!("de_at");
 ///
@@ -76,45 +76,45 @@ macro_rules! langid {
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail,E0080
-/// icu::locale_core::locale!("sl-IT-rozaj-biske-1994");
+/// icu::locale::locale!("sl-IT-rozaj-biske-1994");
 /// ```
 /// Use runtime parsing instead:
 /// ```
 /// "sl-IT-rozaj-biske-1994"
-///     .parse::<icu::locale_core::Locale>()
+///     .parse::<icu::locale::Locale>()
 ///     .unwrap();
 /// ```
 ///
 /// Locales with multiple keys are not supported
 /// ```compile_fail,E0080
-/// icu::locale_core::locale!("th-TH-u-ca-buddhist-nu-thai");
+/// icu::locale::locale!("th-TH-u-ca-buddhist-nu-thai");
 /// ```
 /// Use runtime parsing instead:
 /// ```
 /// "th-TH-u-ca-buddhist-nu-thai"
-///     .parse::<icu::locale_core::Locale>()
+///     .parse::<icu::locale::Locale>()
 ///     .unwrap();
 /// ```
 ///
 /// Locales with attributes are not supported
 /// ```compile_fail,E0080
-/// icu::locale_core::locale!("en-US-u-foobar-ca-buddhist");
+/// icu::locale::locale!("en-US-u-foobar-ca-buddhist");
 /// ```
 /// Use runtime parsing instead:
 /// ```
 /// "en-US-u-foobar-ca-buddhist"
-///     .parse::<icu::locale_core::Locale>()
+///     .parse::<icu::locale::Locale>()
 ///     .unwrap();
 /// ```
 ///
 /// Locales with single key but multiple types are not supported
 /// ```compile_fail,E0080
-/// icu::locale_core::locale!("en-US-u-ca-islamic-umalqura");
+/// icu::locale::locale!("en-US-u-ca-islamic-umalqura");
 /// ```
 /// Use runtime parsing instead:
 /// ```
 /// "en-US-u-ca-islamic-umalqura"
-///     .parse::<icu::locale_core::Locale>()
+///     .parse::<icu::locale::Locale>()
 ///     .unwrap();
 /// ```
 /// [`Locale`]: crate::Locale

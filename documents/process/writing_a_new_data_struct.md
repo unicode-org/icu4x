@@ -176,7 +176,7 @@ The above example is an abridged definition for `DecimalSymbolsV1`. Note how the
 
 
 ```rust
-use icu::locale_core::LanguageIdentifier;
+use icu::locale::LanguageIdentifier;
 use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;

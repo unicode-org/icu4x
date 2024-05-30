@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::extensions::unicode::{attribute, key, value, Unicode};
-//! use icu::locale_core::Locale;
+//! use icu::locale::extensions::unicode::{attribute, key, value, Unicode};
+//! use icu::locale::Locale;
 //!
 //! let loc: Locale = "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
 //!
@@ -64,8 +64,8 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::unicode::{key, value};
-/// use icu::locale_core::Locale;
+/// use icu::locale::extensions::unicode::{key, value};
+/// use icu::locale::Locale;
 ///
 /// let loc: Locale =
 ///     "de-u-hc-h12-ca-buddhist".parse().expect("Parsing failed.");
@@ -91,7 +91,7 @@ impl Unicode {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::Unicode;
+    /// use icu::locale::extensions::unicode::Unicode;
     ///
     /// assert_eq!(Unicode::new(), Unicode::default());
     /// ```
@@ -108,7 +108,7 @@ impl Unicode {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
@@ -124,7 +124,7 @@ impl Unicode {
     /// # Example
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale =
     ///     "und-t-mul-u-hello-ca-buddhist-hc-h12".parse().unwrap();

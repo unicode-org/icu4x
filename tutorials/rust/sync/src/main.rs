@@ -8,7 +8,7 @@
 
 use icu::list::ListFormatter;
 use icu::list::ListLength;
-use icu::locale_core::locale;
+use icu::locale::locale;
 use std::sync::OnceLock;
 
 static SPANISH_LIST_FORMATTER: OnceLock<ListFormatter> = OnceLock::new();

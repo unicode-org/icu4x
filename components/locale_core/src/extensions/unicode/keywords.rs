@@ -31,7 +31,7 @@ use crate::shortvec::ShortBoxSlice;
 /// Manually build up a [`Keywords`] object:
 ///
 /// ```
-/// use icu::locale_core::extensions::unicode::{key, value, Keywords};
+/// use icu::locale::extensions::unicode::{key, value, Keywords};
 ///
 /// let keywords = [(key!("hc"), value!("h23"))]
 ///     .into_iter()
@@ -43,7 +43,7 @@ use crate::shortvec::ShortBoxSlice;
 /// Access a [`Keywords`] object from a [`Locale`]:
 ///
 /// ```
-/// use icu::locale_core::{
+/// use icu::locale::{
 ///     extensions::unicode::{key, value},
 ///     Locale,
 /// };
@@ -73,7 +73,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::Keywords;
+    /// use icu::locale::extensions::unicode::Keywords;
     ///
     /// assert_eq!(Keywords::new(), Keywords::default());
     /// ```
@@ -95,8 +95,8 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc1 = Locale::try_from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = locale!("und-u-ca-buddhist");
@@ -114,7 +114,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::{key, value, Keywords};
+    /// use icu::locale::extensions::unicode::{key, value, Keywords};
     ///
     /// let keywords = [(key!("ca"), value!("gregory"))]
     ///     .into_iter()
@@ -136,7 +136,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::{key, value, Keywords};
+    /// use icu::locale::extensions::unicode::{key, value, Keywords};
     ///
     /// let keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
@@ -159,7 +159,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::{key, value, Keywords};
+    /// use icu::locale::extensions::unicode::{key, value, Keywords};
     ///
     /// let mut keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
@@ -183,8 +183,8 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::{key, value};
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::extensions::unicode::{key, value};
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
@@ -207,8 +207,8 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::key;
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::extensions::unicode::key;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
@@ -227,7 +227,7 @@ impl Keywords {
     /// # Example
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12".parse().unwrap();
     /// loc.extensions.unicode.keywords.clear();
@@ -242,8 +242,8 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::key;
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::extensions::unicode::key;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "und-u-ca-buddhist-hc-h12-ms-metric".parse().unwrap();
     ///
@@ -277,7 +277,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] =
@@ -311,7 +311,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use std::cmp::Ordering;
     ///
     /// let subtags: &[&[u8]] = &[b"ca", b"buddhist"];

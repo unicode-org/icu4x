@@ -23,7 +23,7 @@ use zerovec::ule::UnvalidatedStr;
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, RegionDisplayNames,
 /// };
-/// use icu::locale_core::{locale, subtags::region};
+/// use icu::locale::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -98,7 +98,7 @@ impl RegionDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, ScriptDisplayNames,
 /// };
-/// use icu::locale_core::{locale, subtags::script};
+/// use icu::locale::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -173,7 +173,7 @@ impl ScriptDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, VariantDisplayNames,
 /// };
-/// use icu::locale_core::{locale, subtags::variant};
+/// use icu::locale::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -243,7 +243,7 @@ impl VariantDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, LanguageDisplayNames,
 /// };
-/// use icu::locale_core::{locale, subtags::language};
+/// use icu::locale::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -324,7 +324,7 @@ impl LanguageDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
 /// };
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();

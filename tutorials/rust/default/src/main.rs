@@ -6,7 +6,7 @@
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::locale_core::locale;
+use icu::locale::locale;
 use icu::plurals::PluralCategory;
 use icu::plurals::PluralRules;
 

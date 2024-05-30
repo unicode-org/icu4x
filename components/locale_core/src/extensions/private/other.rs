@@ -11,7 +11,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::private::Subtag;
+    /// use icu::locale::extensions::private::Subtag;
     ///
     /// let subtag1: Subtag = "Foo".parse()
     ///     .expect("Failed to parse a Subtag.");
@@ -23,8 +23,8 @@ impl_tinystr_subtag!(
     /// which is between two and eight characters.
     ///
     /// ```
-    /// use icu::locale_core::extensions::private;
-    /// use icu::locale_core::subtags;
+    /// use icu::locale::extensions::private;
+    /// use icu::locale::subtags;
     ///
     /// let subtag: Result<private::Subtag, _> = "f".parse();
     /// assert!(subtag.is_ok());

@@ -20,7 +20,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{
+/// use icu::locale::{
 ///     langid,
 ///     subtags::{language, region},
 /// };
@@ -50,7 +50,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{
+/// use icu::locale::{
 ///     langid,
 ///     subtags::{language, region, script, variant},
 /// };
@@ -84,7 +84,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::LanguageIdentifier;
+    /// use icu::locale::LanguageIdentifier;
     ///
     /// LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed");
     /// ```
@@ -116,7 +116,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::{langid, LanguageIdentifier};
+    /// use icu::locale::{langid, LanguageIdentifier};
     ///
     /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix")
     ///     .expect("Parsing failed.");
@@ -135,7 +135,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::LanguageIdentifier;
+    /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(LanguageIdentifier::default(), LanguageIdentifier::UND);
     /// ```
@@ -154,7 +154,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::LanguageIdentifier;
+    /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
     ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
@@ -177,7 +177,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::LanguageIdentifier;
+    /// use icu::locale::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
@@ -234,7 +234,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::LanguageIdentifier;
+    /// use icu::locale::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
     /// let subtags: &[&[u8]] = &[b"ca", b"ES", b"valencia"];
@@ -287,7 +287,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::LanguageIdentifier;
+    /// use icu::locale::LanguageIdentifier;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "pl-LaTn-pL",
@@ -475,7 +475,7 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{langid, subtags::language, LanguageIdentifier};
+/// use icu::locale::{langid, subtags::language, LanguageIdentifier};
 ///
 /// assert_eq!(LanguageIdentifier::from(language!("en")), langid!("en"));
 /// ```
@@ -491,7 +491,7 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{langid, subtags::script, LanguageIdentifier};
+/// use icu::locale::{langid, subtags::script, LanguageIdentifier};
 ///
 /// assert_eq!(
 ///     LanguageIdentifier::from(Some(script!("latn"))),
@@ -510,7 +510,7 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{langid, subtags::region, LanguageIdentifier};
+/// use icu::locale::{langid, subtags::region, LanguageIdentifier};
 ///
 /// assert_eq!(
 ///     LanguageIdentifier::from(Some(region!("US"))),
@@ -531,7 +531,7 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{
+/// use icu::locale::{
 ///     langid,
 ///     subtags::{language, region, script},
 ///     LanguageIdentifier,
@@ -573,7 +573,7 @@ impl
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::{
+/// use icu::locale::{
 ///     langid,
 ///     subtags::{language, region, script},
 /// };

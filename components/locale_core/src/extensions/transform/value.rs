@@ -18,7 +18,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::transform::Value;
+/// use icu::locale::extensions::transform::Value;
 ///
 /// "hybrid".parse::<Value>().expect("Valid Value.");
 ///
@@ -39,7 +39,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::Value;
+    /// use icu::locale::extensions::transform::Value;
     ///
     /// let value = Value::try_from_bytes(b"hybrid").expect("Parsing failed.");
     /// ```

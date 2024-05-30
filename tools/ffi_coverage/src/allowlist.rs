@@ -225,11 +225,11 @@ lazy_static::lazy_static! {
         "icu::list::parts",
 
         // Not planned until someone needs them
-        "icu::locale_core::extensions",
-        "icu::locale_core::subtags",
+        "icu::locale::extensions",
+        "icu::locale::subtags",
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
-        "icu::locale_core::LanguageIdentifier",
+        "icu::locale::LanguageIdentifier",
 
         // Doesn't make sense to expose through `icu_normalizer`
         "icu::normalizer::uts46::Uts46Mapper",
@@ -366,7 +366,7 @@ lazy_static::lazy_static! {
         "icu::decimal::Error",
         "icu::list::Error",
         "icu::locale::Error",
-        "icu::locale_core::Error",
+        "icu::locale::Error",
         "icu::normalizer::Error",
         "icu::plurals::Error",
         "icu::properties::Error",
@@ -435,8 +435,8 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralCategory::all",
 
         // locale_core comparison iteration
-        "icu::locale_core::Locale::strict_cmp_iter",
-        "icu::locale_core::SubtagOrderingResult",
+        "icu::locale::Locale::strict_cmp_iter",
+        "icu::locale::SubtagOrderingResult",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
@@ -454,18 +454,18 @@ lazy_static::lazy_static! {
         "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
 
         // macros
-        "icu::locale_core::langid",
-        "icu::locale_core::locale",
-        "icu::locale_core::extensions::other::subtag",
-        "icu::locale_core::extensions::private::subtag",
-        "icu::locale_core::extensions::transform::key",
-        "icu::locale_core::extensions::unicode::attribute",
-        "icu::locale_core::extensions::unicode::key",
-        "icu::locale_core::extensions::unicode::value",
-        "icu::locale_core::subtags::language",
-        "icu::locale_core::subtags::region",
-        "icu::locale_core::subtags::script",
-        "icu::locale_core::subtags::variant",
+        "icu::locale::langid",
+        "icu::locale::locale",
+        "icu::locale::extensions::other::subtag",
+        "icu::locale::extensions::private::subtag",
+        "icu::locale::extensions::transform::key",
+        "icu::locale::extensions::unicode::attribute",
+        "icu::locale::extensions::unicode::key",
+        "icu::locale::extensions::unicode::value",
+        "icu::locale::subtags::language",
+        "icu::locale::subtags::region",
+        "icu::locale::subtags::script",
+        "icu::locale::subtags::variant",
         "icu_provider_adapters::make_forking_provider",
 
         // assoc types

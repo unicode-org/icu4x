@@ -22,7 +22,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::Locale;
+//! use icu::locale::Locale;
 //! use icu::locale::{LocaleCanonicalizer, TransformResult};
 //!
 //! let lc = LocaleCanonicalizer::new();
@@ -35,7 +35,7 @@
 //! ```
 //!
 //! ```
-//! use icu::locale_core::locale;
+//! use icu::locale::locale;
 //! use icu::localeExpander, TransformResult};
 //!
 //! let lc = LocaleExpander::new();
@@ -50,7 +50,7 @@
 //! ```
 //!
 //! ```
-//! use icu::locale_core::locale;
+//! use icu::locale::locale;
 //! use icu::localeExpander, TransformResult};
 //! use writeable::assert_writeable_eq;
 //!
@@ -94,6 +94,8 @@ mod error;
 mod expander;
 pub mod fallback;
 pub mod provider;
+
+pub use icu_locale_core::*;
 
 pub use canonicalizer::LocaleCanonicalizer;
 pub use directionality::{Direction, LocaleDirectionality};

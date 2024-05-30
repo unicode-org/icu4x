@@ -11,7 +11,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Variant;
+    /// use icu::locale::subtags::Variant;
     ///
     /// let variant: Variant =
     ///     "macos".parse().expect("Failed to parse a variant subtag.");

@@ -29,7 +29,7 @@
 //!
 //! ```
 //! use icu::datetime::DateTimeFormatter;
-//! use icu::locale_core::locale;
+//! use icu::locale::locale;
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     &locale!("es-US").into(),
@@ -52,7 +52,7 @@
 //!
 //! ```no_run
 //! use icu::datetime::DateTimeFormatter;
-//! use icu::locale_core::locale;
+//! use icu::locale::locale;
 //! use icu_provider_adapters::fallback::LocaleFallbackProvider;
 //! use icu_provider_blob::BlobDataProvider;
 //!
@@ -170,9 +170,6 @@ pub use icu_list as list;
 
 #[doc(inline)]
 pub use icu_locale as locale;
-
-#[doc(inline)]
-pub use icu_locale_core as locale_core;
 
 #[doc(inline)]
 pub use icu_normalizer as normalizer;

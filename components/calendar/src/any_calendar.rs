@@ -41,7 +41,7 @@ use core::fmt;
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
 /// use icu::calendar::{AnyCalendar, DateTime, japanese::Japanese, Time};
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// # use std::rc::Rc;
 ///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar

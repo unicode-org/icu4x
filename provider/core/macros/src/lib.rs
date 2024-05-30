@@ -62,7 +62,7 @@ mod tests;
 /// #   }
 /// #   pub use icu_provider::_internal::locale_core;
 /// # }
-/// use icu::locale_core::extensions::unicode::key;
+/// use icu::locale::extensions::unicode::key;
 /// use icu::locale::fallback::*;
 /// use icu_provider::yoke;
 /// use icu_provider::zerofrom;

@@ -12,7 +12,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::Key;
+    /// use icu::locale::extensions::unicode::Key;
     ///
     /// assert!("ca".parse::<Key>().is_ok());
     /// ```

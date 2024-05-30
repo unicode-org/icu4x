@@ -289,7 +289,7 @@ impl From<&CompactDecimal> for PluralOperands {
     /// ```
     /// use fixed_decimal::CompactDecimal;
     /// use fixed_decimal::FixedDecimal;
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::plurals::rules::RawPluralOperands;
     /// use icu::plurals::PluralCategory;
     /// use icu::plurals::PluralOperands;

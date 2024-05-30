@@ -20,8 +20,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::extensions::unicode::{Key, Value};
-//! use icu::locale_core::Locale;
+//! use icu::locale::extensions::unicode::{Key, Value};
+//! use icu::locale::Locale;
 //!
 //! let loc: Locale = "en-US-u-ca-buddhist-t-en-us-h0-hybrid-x-foo"
 //!     .parse()
@@ -123,7 +123,7 @@ impl Extensions {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::Extensions;
+    /// use icu::locale::extensions::Extensions;
     ///
     /// assert_eq!(Extensions::new(), Extensions::default());
     /// ```
@@ -154,7 +154,7 @@ impl Extensions {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
@@ -207,8 +207,8 @@ impl Extensions {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::ExtensionType;
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::extensions::ExtensionType;
+    /// use icu::locale::Locale;
     ///
     /// let loc: Locale =
     ///     "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();

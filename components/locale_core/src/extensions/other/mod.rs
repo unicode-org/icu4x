@@ -13,8 +13,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::extensions::other::Other;
-//! use icu::locale_core::Locale;
+//! use icu::locale::extensions::other::Other;
+//! use icu::locale::Locale;
 //!
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
@@ -34,8 +34,8 @@ use alloc::vec::Vec;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::other::Other;
-/// use icu::locale_core::subtags::Subtag;
+/// use icu::locale::extensions::other::Other;
+/// use icu::locale::subtags::Subtag;
 ///
 /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -62,8 +62,8 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::other::Other;
-    /// use icu::locale_core::subtags::Subtag;
+    /// use icu::locale::extensions::other::Other;
+    /// use icu::locale::subtags::Subtag;
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -102,7 +102,7 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];
@@ -118,7 +118,7 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];
@@ -133,7 +133,7 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];

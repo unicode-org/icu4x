@@ -20,7 +20,7 @@ use writeable::Writeable;
 ///
 /// ```rust
 /// use icu::casemap::CaseMapper;
-/// use icu::locale_core::langid;
+/// use icu::locale::langid;
 ///
 /// let cm = CaseMapper::new();
 ///
@@ -62,7 +62,7 @@ impl CaseMapper {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapper;
-    /// use icu::locale_core::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = CaseMapper::new();
     ///
@@ -253,7 +253,7 @@ impl CaseMapper {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapper;
-    /// use icu::locale_core::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");
@@ -283,7 +283,7 @@ impl CaseMapper {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapper;
-    /// use icu::locale_core::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");
@@ -332,7 +332,7 @@ impl CaseMapper {
     ///
     /// ```rust
     /// use icu::casemap::CaseMapper;
-    /// use icu::locale_core::langid;
+    /// use icu::locale::langid;
     ///
     /// let cm = CaseMapper::new();
     /// let root = langid!("und");

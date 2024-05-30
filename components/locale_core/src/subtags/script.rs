@@ -11,7 +11,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Script;
+    /// use icu::locale::subtags::Script;
     ///
     /// let script: Script =
     ///     "Latn".parse().expect("Failed to parse a script subtag.");

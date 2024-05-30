@@ -74,7 +74,7 @@ where
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
 /// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
 ///
@@ -419,7 +419,7 @@ impl TimeZoneFormatter {
         /// use icu::datetime::time_zone::{
         ///     TimeZoneFormatter, TimeZoneFormatterOptions,
         /// };
-        /// use icu::locale_core::locale;
+        /// use icu::locale::locale;
         /// use icu::timezone::CustomTimeZone;
         /// use writeable::assert_writeable_eq;
         ///
@@ -689,7 +689,7 @@ impl TimeZoneFormatter {
     /// use icu::datetime::time_zone::{
     ///     TimeZoneFormatter, TimeZoneFormatterOptions,
     /// };
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///

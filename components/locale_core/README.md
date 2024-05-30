@@ -22,8 +22,8 @@ If in doubt, use [`Locale`].
 ## Examples
 
 ```rust
-use icu::locale_core::Locale;
-use icu::locale_core::{
+use icu::locale::Locale;
+use icu::locale::{
     locale,
     subtags::{language, region},
 };

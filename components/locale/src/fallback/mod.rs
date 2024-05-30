@@ -26,7 +26,7 @@ mod algorithms;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use icu::locale::fallback::LocaleFallbacker;
 ///
 /// // Set up a LocaleFallbacker with data.
@@ -54,7 +54,7 @@ mod algorithms;
 ///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
-/// [language identifier]: icu::locale_core::LanguageIdentifier
+/// [language identifier]: icu::locale::LanguageIdentifier
 #[doc(hidden)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {

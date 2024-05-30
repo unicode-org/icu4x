@@ -26,7 +26,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::Locale;
+/// use icu::locale::Locale;
 /// use icu::locale::{LocaleCanonicalizer, TransformResult};
 ///
 /// let lc = LocaleCanonicalizer::new();
@@ -326,7 +326,7 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     /// use icu::localeCanonicalizer, TransformResult};
     ///
     /// let lc = LocaleCanonicalizer::new();

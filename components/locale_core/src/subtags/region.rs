@@ -11,7 +11,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Region;
+    /// use icu::locale::subtags::Region;
     ///
     /// let region: Region =
     ///     "DE".parse().expect("Failed to parse a region subtag.");
@@ -50,7 +50,7 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Region;
+    /// use icu::locale::subtags::Region;
     ///
     /// let region = Region::try_from_bytes(b"us").expect("Parsing failed.");
     ///

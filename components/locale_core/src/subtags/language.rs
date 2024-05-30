@@ -11,7 +11,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Language;
+    /// use icu::locale::subtags::Language;
     ///
     /// let language: Language =
     ///     "en".parse().expect("Failed to parse a language subtag.");
@@ -23,7 +23,7 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Language;
+    /// use icu::locale::subtags::Language;
     ///
     /// assert_eq!(Language::default().as_str(), "und");
     /// ```
@@ -53,7 +53,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Language;
+    /// use icu::locale::subtags::Language;
     ///
     /// assert_eq!(Language::default(), Language::UND);
     /// ```
@@ -64,7 +64,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::{language, Language};
+    /// use icu::locale::subtags::{language, Language};
     ///
     /// let mut lang = language!("csb");
     ///
@@ -84,7 +84,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::subtags::Language;
+    /// use icu::locale::subtags::Language;
     ///
     /// let mut lang = Language::UND;
     ///

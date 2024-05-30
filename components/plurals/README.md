@@ -24,7 +24,7 @@ appropriate [`PluralCategory`].
 ## Examples
 
 ```rust
-use icu::locale_core::locale;
+use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 let pr =

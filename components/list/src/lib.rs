@@ -13,7 +13,7 @@
 //!
 //! ```
 //! # use icu::list::{ListFormatter, ListLength};
-//! # use icu::locale_core::locale;
+//! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_and_with_length(
@@ -38,7 +38,7 @@
 //!
 //! ```
 //! # use icu::list::{ListFormatter, ListLength};
-//! # use icu::locale_core::locale;
+//! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_or_with_length(
@@ -55,7 +55,7 @@
 //!
 //! ```
 //! # use icu::list::{ListFormatter, ListLength};
-//! # use icu::locale_core::locale;
+//! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_unit_with_length(

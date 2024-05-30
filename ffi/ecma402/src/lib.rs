@@ -42,7 +42,7 @@ impl DataLocale {
         Self(
             other
                 .to_string()
-                .parse::<icu::locale_core::Locale>()
+                .parse::<icu::locale::Locale>()
                 .unwrap()
                 .into(),
         )

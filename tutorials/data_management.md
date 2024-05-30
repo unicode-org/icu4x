@@ -94,7 +94,7 @@ We can use the generate code with the `include!` macro. The `impl_data_provider!
 
 ```rust,compile_fail
 extern crate alloc; // required as my-data is written for #[no_std]
-use icu::locale_core::{locale, Locale};
+use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 
@@ -154,7 +154,7 @@ Note that fallback comes at a cost, as fallbacking code and data has to be inclu
 We can then use the provider in our code:
 
 ```rust,no_run
-use icu::locale_core::{locale, Locale};
+use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -203,7 +203,7 @@ But there is more to optimize. You might have noticed this in the output of the 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
-use icu::locale_core::{locale, Locale};
+use icu::locale::{locale, Locale};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;

@@ -12,8 +12,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale_core::extensions::transform::{Fields, Key, Transform, Value};
-//! use icu::locale_core::{LanguageIdentifier, Locale};
+//! use icu::locale::extensions::transform::{Fields, Key, Transform, Value};
+//! use icu::locale::{LanguageIdentifier, Locale};
 //!
 //! let mut loc: Locale =
 //!     "en-US-t-es-ar-h0-hybrid".parse().expect("Parsing failed.");
@@ -58,8 +58,8 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::transform::{Key, Value};
-/// use icu::locale_core::{LanguageIdentifier, Locale};
+/// use icu::locale::extensions::transform::{Key, Value};
+/// use icu::locale::{LanguageIdentifier, Locale};
 ///
 /// let mut loc: Locale =
 ///     "de-t-en-us-h0-hybrid".parse().expect("Parsing failed.");
@@ -90,7 +90,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::transform::Transform;
+    /// use icu::locale::extensions::transform::Transform;
     ///
     /// assert_eq!(Transform::new(), Transform::default());
     /// ```
@@ -107,7 +107,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "en-US-t-es-ar".parse().expect("Parsing failed.");
     ///
@@ -122,7 +122,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::Locale;
+    /// use icu::locale::Locale;
     ///
     /// let mut loc: Locale = "en-US-t-es-ar".parse().unwrap();
     /// loc.extensions.transform.clear();

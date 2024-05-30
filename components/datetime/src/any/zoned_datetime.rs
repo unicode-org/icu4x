@@ -54,7 +54,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use icu::timezone::CustomTimeZone;
 /// use writeable::assert_writeable_eq;
 ///
@@ -87,7 +87,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6248);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
-/// use icu::locale_core::locale;
+/// use icu::locale::locale;
 /// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
 /// use tinystr::TinyAsciiStr;
 /// use writeable::assert_writeable_eq;
@@ -153,7 +153,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::options::components;
     /// use icu::datetime::ZonedDateTimeFormatter;
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -328,7 +328,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::ZonedDateTimeFormatter;
-    /// use icu::locale_core::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -574,7 +574,7 @@ fn buffer_constructor() {
     use icu::calendar::DateTime;
     use icu::datetime::options::length;
     use icu::datetime::ZonedDateTimeFormatter;
-    use icu::locale_core::locale;
+    use icu::locale::locale;
     use icu::timezone::CustomTimeZone;
     use std::str::FromStr;
     use writeable::assert_writeable_eq;

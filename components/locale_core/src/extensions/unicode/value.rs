@@ -19,7 +19,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::unicode::{value, Value};
+/// use icu::locale::extensions::unicode::{value, Value};
 /// use writeable::assert_writeable_eq;
 ///
 /// assert_writeable_eq!(value!("gregory"), "gregory");
@@ -44,7 +44,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::Value;
+    /// use icu::locale::extensions::unicode::Value;
     ///
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
@@ -67,7 +67,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale_core::extensions::unicode::Value;
+    /// use icu::locale::extensions::unicode::Value;
     ///
     /// Value::try_from_single_subtag(b"buddhist").expect("valid subtag");
     /// Value::try_from_single_subtag(b"#####").expect_err("invalid subtag");
@@ -158,8 +158,8 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 /// # Examples
 ///
 /// ```
-/// use icu::locale_core::extensions::unicode::{key, value};
-/// use icu::locale_core::Locale;
+/// use icu::locale::extensions::unicode::{key, value};
+/// use icu::locale::Locale;
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///
