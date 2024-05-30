@@ -5,4 +5,3 @@
 //! Experimental.
 
 pub mod currency;
-pub mod provider;

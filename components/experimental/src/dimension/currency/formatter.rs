@@ -9,7 +9,7 @@ use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
-use super::super::provider::currency::CurrencyEssentialsV1Marker;
+use super::super::currency::provider::currency::CurrencyEssentialsV1Marker;
 use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 
@@ -88,7 +88,7 @@ impl CurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
+            + DataProvider<CurrencyEssentialsV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(

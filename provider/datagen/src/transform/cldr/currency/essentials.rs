@@ -25,12 +25,12 @@ use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::Pattern;
 use icu_pattern::PatternItemCow;
 
-use icu_experimental::dimension::provider::ule::MAX_PLACEHOLDER_INDEX;
+use icu_experimental::dimension::currency::provider::ule::MAX_PLACEHOLDER_INDEX;
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
 
-use icu_experimental::dimension::provider::currency::*;
+use icu_experimental::dimension::currency::provider::currency::*;
 use icu_provider::prelude::*;
 
 /// Returns the pattern selection for a currency.
@@ -349,7 +349,7 @@ fn test_basic() {
         (short_placeholder, narrow_placeholder)
     }
 
-    use icu_experimental::dimension::provider::currency::*;
+    use icu_experimental::dimension::currency::provider::currency::*;
     use icu_locid::langid;
 
     let provider = DatagenProvider::new_testing();

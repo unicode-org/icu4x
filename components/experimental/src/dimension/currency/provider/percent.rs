@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::percent),
+    databake(path = icu_experimental::dimension::currency::provider::percent),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PercentEssentialsV1<'data> {
@@ -51,7 +51,7 @@ pub struct PercentEssentialsV1<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::percent),
+    databake(path = icu_experimental::dimension::currency::provider::percent),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PercentAffixesV1<'data> {
