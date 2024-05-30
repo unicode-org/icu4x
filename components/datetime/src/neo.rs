@@ -486,6 +486,51 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
             names: self.names.as_borrowed(),
         }
     }
+
+    /// Formats a date/time value.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::types::FormattableMonth;
+    /// use icu::calendar::types::MonthCode;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::MonthInput;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locid::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter =
+    ///     TypedNeoFormatter::<Gregorian, MonthInput<Gregorian>>::try_new(
+    ///         &locale!("es-MX").into(),
+    ///         NeoSkeletonLength::Long,
+    ///     )
+    ///     .unwrap();
+    /// 
+    /// let input = MonthInput {
+    ///     month: FormattableMonth {
+    ///         ordinal: 5,
+    ///         code: MonthCode(tinystr!(4, "M05"))
+    ///     },
+    ///     calendar: Gregorian.into(),
+    /// };
+    /// 
+    /// assert_try_writeable_eq!(
+    ///     formatter.format_narrow(input),
+    ///     "mayo"
+    /// );
+    /// ```
+    pub fn format_narrow(&self, value: R::Input) -> FormattedNeoDateTime {
+        let datetime = ExtractedDateTimeInput::extract_from_all_input_fields(value.into());
+        FormattedNeoDateTime {
+            pattern: self.selection.select(&datetime),
+            datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
 }
 
 size_test!(

@@ -475,6 +475,7 @@ pub trait TypedNeoFormatterMarker<C>: private::Sealed {
     type DateTimeNamesMarker: DateTimeNamesMarker;
     /// Marker for loading the date/time glue pattern.
     type DateTimePatternV1Marker: KeyedDataMarker<Yokeable = DateTimePatternV1<'static>>;
+    type Input: Into<AllInputFields>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -513,6 +514,7 @@ where
     type T = NeoNeverMarker;
     type DateTimeNamesMarker = DateMarker;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type Input = Self;
 }
 
 impl<D> NeoFormatterMarker for DateTimeCombo<D, NeoNeverMarker>
@@ -535,6 +537,7 @@ where
     type T = T;
     type DateTimeNamesMarker = TimeMarker;
     type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type Input = Self;
 }
 
 impl<T> NeoFormatterMarker for DateTimeCombo<NeoNeverMarker, T>
@@ -558,6 +561,7 @@ where
     type T = T;
     type DateTimeNamesMarker = DateTimeMarker;
     type DateTimePatternV1Marker = DateTimePatternV1Marker;
+    type Input = Self;
 }
 
 impl<D, T> NeoFormatterMarker for DateTimeCombo<D, T>
@@ -739,6 +743,7 @@ macro_rules! impl_date_marker {
             type T = NeoNeverMarker;
             type DateTimeNamesMarker = DateMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type Input = Self;
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
@@ -746,6 +751,11 @@ macro_rules! impl_date_marker {
             type T = NeoNeverMarker;
             type DateTimeNamesMarker = DateMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+        }
+        impl From<$type> for AllInputFields {
+            fn from(value: $type) -> Self {
+                todo!()
+            }
         }
     };
 }
@@ -858,6 +868,7 @@ macro_rules! impl_time_marker {
             type T = Self;
             type DateTimeNamesMarker = TimeMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+            type Input = Self;
         }
         impl NeoFormatterMarker for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
@@ -865,6 +876,11 @@ macro_rules! impl_time_marker {
             type T = Self;
             type DateTimeNamesMarker = TimeMarker;
             type DateTimePatternV1Marker = datetime_marker_helper!(@datetimes, no);
+        }
+        impl From<$type> for AllInputFields {
+            fn from(value: $type) -> Self {
+                todo!()
+            }
         }
     };
 }
@@ -975,3 +991,96 @@ impl_date_marker!(
     dateinput = yes,
     weekinput = no,
 );
+
+#[derive(Debug, Copy, Clone, Default)]
+#[non_exhaustive]
+pub struct AllInputFields {
+    /// The era and year input.
+    pub year: Option<FormattableYear>,
+    /// The month input.
+    pub month: Option<FormattableMonth>,
+    /// The day-of-month input.
+    pub day_of_month: Option<DayOfMonth>,
+    /// The day-of-week input.
+    pub day_of_week: Option<IsoWeekday>,
+    /// Information on the position of the day within the year.
+    pub day_of_year_info: Option<DayOfYearInfo>,
+    /// 0-based hour.
+    pub hour: Option<IsoHour>,
+    /// 0-based minute.
+    pub minute: Option<IsoMinute>,
+    /// 0-based second.
+    pub second: Option<IsoSecond>,
+    /// Fractional second
+    pub nanosecond: Option<NanoSecond>,
+    /// The kind of calendar this date is for, if associated with [`AnyCalendar`].
+    ///
+    /// [`AnyCalendar`]: icu_calendar::AnyCalendar
+    pub any_calendar_kind: Option<AnyCalendarKind>,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct CalendarInput<C> {
+    any_calendar_kind: Option<AnyCalendarKind>,
+    _marker: PhantomData<C>,
+}
+
+impl<C: IntoAnyCalendar> From<C> for CalendarInput<C> {
+    #[inline]
+    fn from(value: C) -> Self {
+        Self::from(&value)
+    }
+}
+
+impl<C: IntoAnyCalendar> From<&C> for CalendarInput<C> {
+    #[inline]
+    fn from(value: &C) -> Self {
+        Self {
+            any_calendar_kind: Some(value.kind()),
+            _marker: PhantomData,
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct MonthInput<C> {
+    pub month: FormattableMonth,
+    pub calendar: CalendarInput<C>,
+}
+
+impl<C> private::Sealed for MonthInput<C> {}
+
+impl<C> From<MonthInput<C>> for AllInputFields {
+    fn from(value: MonthInput<C>) -> Self {
+        Self {
+            month: Some(value.month),
+            any_calendar_kind: value.calendar.any_calendar_kind,
+            ..Default::default()
+        }
+    }
+}
+
+impl<D, T> From<DateTimeCombo<D, T>> for AllInputFields {
+    fn from(value: DateTimeCombo<D, T>) -> Self {
+        todo!()
+    }
+}
+
+impl<C: CldrCalendar> TypedDateMarkers<C> for MonthInput<C> {
+    type YearNamesV1Marker = datetime_marker_helper!(@years/typed, no);
+    type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, yes);
+    type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
+    type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, no);
+    type TypedInputMarker = datetime_marker_helper!(@typedinput, yes);
+    type DateInputMarker = datetime_marker_helper!(@dateinput, yes);
+    type WeekInputMarker = datetime_marker_helper!(@weekinput, no);
+}
+
+impl<C: CldrCalendar> TypedNeoFormatterMarker<C> for MonthInput<C> {
+    const COMPONENTS: NeoComponents = NeoComponents::Date(NeoDateComponents::Month);
+    type D = Self;
+    type T = NeoNeverMarker;
+    type DateTimeNamesMarker = DateMarker;
+    type DateTimePatternV1Marker = NeverMarker<DateTimePatternV1<'static>>;
+    type Input = Self;
+}

@@ -6,7 +6,7 @@
 //! formatting operations.
 
 #[cfg(feature = "experimental")]
-use crate::neo_marker::{NeoDateInputFields, NeoTimeInputFields, NeoWeekInputFields};
+use crate::neo_marker::{NeoDateInputFields, NeoTimeInputFields, NeoWeekInputFields, AllInputFields};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
@@ -264,6 +264,22 @@ impl ExtractedDateTimeInput {
             minute: neo_time.as_ref().map(|fields| fields.minute),
             second: neo_time.as_ref().map(|fields| fields.second),
             nanosecond: neo_time.as_ref().map(|fields| fields.nanosecond),
+        }
+    }
+    /// Construct given [`AllInputFields`] instances
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_from_all_input_fields(value: AllInputFields) -> Self {
+        Self {
+            year: value.year,
+            month: value.month,
+            day_of_month: value.day_of_month,
+            iso_weekday: value.day_of_week,
+            day_of_year_info: value.day_of_year_info,
+            any_calendar_kind: value.any_calendar_kind,
+            hour: value.hour,
+            minute: value.minute,
+            second: value.second,
+            nanosecond: value.nanosecond,
         }
     }
 }
