@@ -1436,7 +1436,6 @@ dependencies = [
  "icu",
  "icu_locale",
  "icu_locale_core",
- "icu_provider_adapters",
  "icu_provider_macros",
  "log",
  "postcard",

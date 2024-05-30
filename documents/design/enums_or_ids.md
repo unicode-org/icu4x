@@ -109,7 +109,7 @@ Using a new type means that any instance of an identifier is guaranteed to be va
 
 Examples of entities that are represented by strings:
 
-1. [`Language`](https://unicode-org.github.io/icu4x/rustdoc/icu_locale_core/subtags/struct.Language.html):
+1. [`Language`](https://unicode-org.github.io/icu4x/rustdoc/icu_locid/subtags/struct.Language.html):
     - New languages are frequently added to CLDR
     - Thousands of possible language codes
 2. [Time zones](https://unicode-org.github.io/icu4x/rustdoc/icu_datetime/date/trait.TimeZoneInput.html):

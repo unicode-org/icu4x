@@ -25,8 +25,7 @@ pub enum Direction {
 /// # Examples
 ///
 /// ```
-/// use icu::locale::locale;
-/// use icu::locale::{Direction, LocaleDirectionality};
+/// use icu::locale::{locale, Direction, LocaleDirectionality};
 ///
 /// let ld = LocaleDirectionality::new();
 ///
@@ -92,9 +91,8 @@ impl LocaleDirectionality {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::locale;
-    /// use icu::locale
-    ///     Direction, LocaleDirectionality, LocaleExpander,
+    /// use icu::locale::{
+    ///     locale, Direction, LocaleDirectionality, LocaleExpander,
     /// };
     ///
     /// let ld_default = LocaleDirectionality::new();
@@ -152,8 +150,7 @@ impl LocaleDirectionality {
     /// Using an existing locale:
     ///
     /// ```
-    /// use icu::locale::locale;
-    /// use icu::localeion, LocaleDirectionality};
+    /// use icu::locale::{locale, Direction, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///
@@ -170,8 +167,7 @@ impl LocaleDirectionality {
     ///
     /// ```
     /// use icu::locale::subtags::script;
-    /// use icu::locale::Locale;
-    /// use icu::localeion, LocaleDirectionality};
+    /// use icu::locale::{Locale, Direction, LocaleDirectionality};
     ///
     /// let ld = LocaleDirectionality::new();
     ///

@@ -37,29 +37,29 @@ class ICU4XLocaleExpander {
   /**
    * Create a new [`ICU4XLocaleExpander`].
    * 
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleExpander, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Create a new [`ICU4XLocaleExpander`] with extended data.
    * 
-   * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.new_extended) for more information.
+   * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
    */
   static diplomat::result<ICU4XLocaleExpander, ICU4XError> create_extended(const ICU4XDataProvider& provider);
 
   /**
-   * See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.maximize) for more information.
+   * See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
    */
   ICU4XTransformResult maximize(ICU4XLocale& locale) const;
 
   /**
-   * See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.minimize) for more information.
+   * See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
    */
   ICU4XTransformResult minimize(ICU4XLocale& locale) const;
 
   /**
-   * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.minimize_favor_script) for more information.
+   * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
    */
   ICU4XTransformResult minimize_favor_script(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleExpander* AsFFI() const { return this->inner.get(); }

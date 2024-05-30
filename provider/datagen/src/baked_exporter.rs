@@ -253,6 +253,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
+                .replace("icu::locale_core", "icu_locale_core")
                 .replace("icu::pattern", "icu_pattern");
         }
 

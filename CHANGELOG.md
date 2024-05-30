@@ -33,9 +33,9 @@
       - Added `CurrencyFormatter`, which can format any currency based on the locale and the width (short and narrow are supported for now).
     - New experimental component `units` (#4605)
       - Added `UnitsConverter`, which can convert any single or compound units (such as `meter` and `square-meter-per-second`) to any compatible single or compound units.
-  - `icu_locale_core`
+  - `icu_locid`
     - Added `total_cmp` functions to `Locale` and other types to make them easier to use in `BTreeSet` (https://github.com/unicode-org/icu4x/pull/4608)
-  - `icu_locale`
+  - `icu_locid_transform`
     - Add `LocaleExpander::minimize_favor_script` (https://github.com/unicode-org/icu4x/pull/4752)
   - `icu_plurals`
     - Added support for `CompactDecimal` (https://github.com/unicode-org/icu4x/pull/4828)
@@ -132,7 +132,7 @@
     - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
     - `icu_calendar`
       - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
-    - `icu_locale_core`
+    - `icu_locid`
       - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
     - `icu_plurals`
         - Experimental `PluralRulesWithRanges` for selecting the plural category for ranges (https://github.com/unicode-org/icu4x/issues/3012)
@@ -188,7 +188,7 @@ Some crates received additional 1.3.x patch releases:
 
 ## icu4x 1.3.1
 
-A subset of crates received a 1.3.1 patch release, to incorporate documentation fixes (https://github.com/unicode-org/icu4x/pull/4096, https://github.com/unicode-org/icu4x/pull/4097, https://github.com/unicode-org/icu4x/pull/4099, https://github.com/unicode-org/icu4x/pull/4101). These crates were: `icu_calendar`, `icu_casemap`, `icu_datetime`, `icu_locale`, `icu_provider`.
+A subset of crates received a 1.3.1 patch release, to incorporate documentation fixes (https://github.com/unicode-org/icu4x/pull/4096, https://github.com/unicode-org/icu4x/pull/4097, https://github.com/unicode-org/icu4x/pull/4099, https://github.com/unicode-org/icu4x/pull/4101). These crates were: `icu_calendar`, `icu_casemap`, `icu_datetime`, `icu_locid_transform`, `icu_provider`.
 
 ## icu4x 1.3 (Sep 25, 2023)
 
@@ -214,7 +214,7 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Consume CLDR-JSON resources keyed with default script (https://github.com/unicode-org/icu4x/pull/3772, https://github.com/unicode-org/icu4x/pull/3786)
     - (cli) Warn for `--locales all` (https://github.com/unicode-org/icu4x/pull/3691)
   - `icu_provider_adapters`: 
-    - Deprecated `LocaleFallbacker`, use through `icu_locale`
+    - Deprecated `LocaleFallbacker`, use through `icu_locid_transform`
   - `icu_provider_blob`:
     - Returning `ExtraneousLocale` in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3562)
     - Fix empty keys in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3551) 
@@ -247,9 +247,9 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - No additional changes
   - `icu_list`
     - No additional changes
-  - `icu_locale_core`
-    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locale::extensions::unicode::value` now works, instead of `use icu::locale::extensions_unicode_value`
-  - `icu_locale`
+  - `icu_locid`
+    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locid::extensions::unicode::value` now works, instead of `use icu::locid::extensions_unicode_value`
+  - `icu_locid_transform`
     - New home of `LocaleFallbacker` and `fallback` module previously found in `icu_provider_adapters`
     - New `LocaleDirectionality` to access the right-to-left status of locales
   - `icu_normalizer`
@@ -352,7 +352,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Remove dependency on `clap`'s `"cargo"` feature to better support non-Cargo users (#3388)
 - `icu_datagen` 1.2.5
   - Remove runtime dependency on segmenter data pulled from the cargo cache (#3391)
-- `icu_locale` 1.2.1
+- `icu_locid_transform` 1.2.1
   - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
 - `icu_segmenter` 1.2.1
   - Fixed [#3341](https://github.com/unicode-org/icu4x/pull/3341), incorrect results on some strings with mixed scripts
@@ -405,10 +405,10 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Add `From<GroupingStrategy>` for `FixedDecimalFormatterOptions` (#3045)
   - `icu_list`
     - `ListJoinerPattern::from_parts_unchecked()` is now `from_parts()` and panics when necessary (#3052)
-  - `icu_locale_core`
+  - `icu_locid`
     - Reduce size of internal `ShortVec` abstraction (#3200)
     - Use `Box` in place of `Vec` in `ShortVec` (#3220)
-  - `icu_locale`
+  - `icu_locid_transform`
     - The default set of likely subtags is now only the subset of languages that have a basic or greater CLDR coverage level; the full set is much larger in CLDR 43 and can be accessed via new constructors (#3148, #3158, #3197)
   - `icu_normalizer`: No other changes
   - `icu_plurals`: No other changes
@@ -522,12 +522,12 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   * Not allocating `Writeable`s for regex evaluation (#2991)
   * doc improvements
 
-* `icu_locale_core`
+* `icu_locid`
   * Reject duplicated extensions (#2893)
   * More borrowing in locid's `write_to_string` (#2693)
   * doc improvements
 
-* `icu_locale`
+* `icu_locid_transform`
   * Clean up dependency specifications so `serde` isn't pulled in by default (#2696)
   * doc improvements
 
@@ -737,7 +737,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     -  Enable `locale` macro to support single unicode key value pair extension (#2382)
     -  Reducing `locid_id` API surface (#2484)
     -  `private::Key` and `other::Key` to `::Subtag` (#2632)
-  - `locale`
+  - `locid_transform`
     - Rename from `icu::locale_canonicalizer` (#2381)
     - `LocaleCanonicalizer`/`LocaleExpander` refactor (#2338)
   - `normalizer`
@@ -1042,7 +1042,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Initial release of ICU4X.
   - Initial release of:
     - `icu`
-    - `icu_locale_core`
+    - `icu_locid`
     - `icu_plurals`
     - `icu_datetime`
     - `icu_uniset`

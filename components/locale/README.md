@@ -35,8 +35,7 @@ assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 ```
 
 ```rust
-use icu::locale::locale;
-use icu::localeExpander, TransformResult};
+use icu::locale::{locale, LocaleExpander, TransformResult};
 
 let lc = LocaleExpander::new();
 
@@ -50,8 +49,7 @@ assert_eq!(locale, locale!("zh-Hant-TW"));
 ```
 
 ```rust
-use icu::locale::locale;
-use icu::localeExpander, TransformResult};
+use icu::locale::{locale, LocaleExpander, TransformResult};
 use writeable::assert_writeable_eq;
 
 let lc = LocaleExpander::new();

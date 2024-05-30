@@ -26,7 +26,7 @@ final class LocaleExpander implements ffi.Finalizable {
 
   /// Create a new [`LocaleExpander`].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleExpander(DataProvider provider) {
@@ -39,7 +39,7 @@ final class LocaleExpander implements ffi.Finalizable {
 
   /// Create a new [`LocaleExpander`] with extended data.
   ///
-  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.new_extended) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleExpander.extended(DataProvider provider) {
@@ -50,19 +50,19 @@ final class LocaleExpander implements ffi.Finalizable {
     return LocaleExpander._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.maximize) for more information.
+  /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
   TransformResult maximize(Locale locale) {
     final result = _ICU4XLocaleExpander_maximize(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 
-  /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.minimize) for more information.
+  /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
   TransformResult minimize(Locale locale) {
     final result = _ICU4XLocaleExpander_minimize(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 
-  /// See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/localeocaleExpander.html#method.minimize_favor_script) for more information.
+  /// See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
   TransformResult minimizeFavorScript(Locale locale) {
     final result = _ICU4XLocaleExpander_minimize_favor_script(_ffi, locale._ffi);
     return TransformResult.values[result];

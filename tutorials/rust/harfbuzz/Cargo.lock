@@ -169,7 +169,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid"
+name = "icu_locale"
+version = "1.5.0"
+dependencies = [
+ "displaydoc",
+ "icu_locale_core",
+ "icu_locale_data",
+ "icu_provider",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_core"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
@@ -180,19 +192,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid_transform"
-version = "1.5.0"
-dependencies = [
- "displaydoc",
- "icu_locid",
- "icu_locid_transform_data",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_locid_transform_data"
+name = "icu_locale_data"
 version = "1.5.0"
 
 [[package]]
@@ -221,7 +221,7 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
- "icu_locid_transform",
+ "icu_locale",
  "icu_properties_data",
  "icu_provider",
  "tinystr",
@@ -237,7 +237,7 @@ name = "icu_provider"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider_macros",
  "stable_deref_trait",
  "tinystr",
@@ -575,7 +575,7 @@ version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_pattern"
-version = "0.1.0"
+version = "0.2.0"
 
 [[patch.unused]]
 name = "icu_plurals"

@@ -125,7 +125,7 @@
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 //! [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-//! [`Locale`]: crate::locale_core::Locale
+//! [`Locale`]: crate::locale::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 //! [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime

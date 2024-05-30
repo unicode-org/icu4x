@@ -50,7 +50,7 @@ icu_datetime_data = { path = "../provider/baked/datetime" }
 icu_decimal_data = { path = "../provider/baked/decimal" }
 icu_experimental_data = { path = "../provider/baked/experimental" }
 icu_list_data = { path = "../provider/baked/list" }
-icu_locale_data = { path = "../provider/baked/locale
+icu_locale_data = { path = "../provider/baked/locale" }
 icu_normalizer_data = { path = "../provider/baked/normalizer" }
 icu_plurals_data = { path = "../provider/baked/plurals" }
 icu_properties_data = { path = "../provider/baked/properties"}

@@ -33,14 +33,14 @@ class ICU4XLocaleFallbackIterator {
   /**
    * Gets a snapshot of the current state of the locale.
    * 
-   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locale/struct.LocaleFallbackIterator.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
    */
   ICU4XLocale get() const;
 
   /**
    * Performs one step of the fallback algorithm, mutating the locale.
    * 
-   * See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locale/struct.LocaleFallbackIterator.html#method.step) for more information.
+   * See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
    */
   void step();
   inline const capi::ICU4XLocaleFallbackIterator* AsFFI() const { return this->inner.get(); }

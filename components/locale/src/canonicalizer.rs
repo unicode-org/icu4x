@@ -326,8 +326,7 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu::locale::Locale;
-    /// use icu::localeCanonicalizer, TransformResult};
+    /// use icu::locale::{Locale, LocaleCanonicalizer, TransformResult};
     ///
     /// let lc = LocaleCanonicalizer::new();
     ///

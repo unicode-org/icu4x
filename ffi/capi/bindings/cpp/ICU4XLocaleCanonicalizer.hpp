@@ -37,19 +37,19 @@ class ICU4XLocaleCanonicalizer {
   /**
    * Create a new [`ICU4XLocaleCanonicalizer`].
    * 
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/localeocaleCanonicalizer.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
    * 
-   * See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/localeocaleCanonicalizer.html#method.new_with_expander) for more information.
+   * See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
    */
   static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create_extended(const ICU4XDataProvider& provider);
 
   /**
-   * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/localeocaleCanonicalizer.html#method.canonicalize) for more information.
+   * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
   ICU4XTransformResult canonicalize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }

@@ -26,7 +26,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 
   /// Create a new [`LocaleCanonicalizer`].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/localeocaleCanonicalizer.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleCanonicalizer(DataProvider provider) {
@@ -39,7 +39,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
 
   /// Create a new [`LocaleCanonicalizer`] with extended data.
   ///
-  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/localeocaleCanonicalizer.html#method.new_with_expander) for more information.
+  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleCanonicalizer.extended(DataProvider provider) {
@@ -50,7 +50,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     return LocaleCanonicalizer._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/localeocaleCanonicalizer.html#method.canonicalize) for more information.
+  /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
   TransformResult canonicalize(Locale locale) {
     final result = _ICU4XLocaleCanonicalizer_canonicalize(_ffi, locale._ffi);
     return TransformResult.values[result];

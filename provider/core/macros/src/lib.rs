@@ -59,8 +59,8 @@ mod tests;
 /// #     pub mod fallback {
 /// #       pub use icu_provider::_internal::LocaleFallbackPriority;
 /// #     }
+/// #     pub use icu_provider::_internal::locale_core::*;
 /// #   }
-/// #   pub use icu_provider::_internal::locale_core;
 /// # }
 /// use icu::locale::extensions::unicode::key;
 /// use icu::locale::fallback::*;

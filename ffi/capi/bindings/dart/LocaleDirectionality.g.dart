@@ -24,7 +24,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
 
   /// Construct a new ICU4XLocaleDirectionality instance
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleDirectionality(DataProvider provider) {
@@ -37,7 +37,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
 
   /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
   ///
-  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.new_with_expander) for more information.
+  /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleDirectionality.withExpander(DataProvider provider, LocaleExpander expander) {
@@ -48,19 +48,19 @@ final class LocaleDirectionality implements ffi.Finalizable {
     return LocaleDirectionality._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.get) for more information.
   LocaleDirection operator [](Locale locale) {
     final result = _ICU4XLocaleDirectionality_get(_ffi, locale._ffi);
     return LocaleDirection.values[result];
   }
 
-  /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.is_left_to_right) for more information.
+  /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
   bool isLeftToRight(Locale locale) {
     final result = _ICU4XLocaleDirectionality_is_left_to_right(_ffi, locale._ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.is_right_to_left) for more information.
+  /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
   bool isRightToLeft(Locale locale) {
     final result = _ICU4XLocaleDirectionality_is_right_to_left(_ffi, locale._ffi);
     return result;

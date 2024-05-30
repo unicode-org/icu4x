@@ -52,7 +52,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct, hidden)]
     #[diplomat::rust_link(icu::decimal::DecimalError, Enum, compact)]
     #[diplomat::rust_link(icu::list::ListError, Enum, compact)]
-    #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
+    #[diplomat::rust_link(icu::locale::ParserError, Enum, compact)]
     #[diplomat::rust_link(icu::locale::LocaleTransformError, Enum, compact)]
     #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
     #[diplomat::rust_link(icu::plurals::PluralsError, Enum, compact)]

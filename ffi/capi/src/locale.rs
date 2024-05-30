@@ -19,13 +19,13 @@ pub mod ffi {
     }
 
     /// A locale canonicalizer.
-    #[diplomat::rust_link(icu::localeanonicalizer, Struct)]
+    #[diplomat::rust_link(icu::locale::LocaleCanonicalizer, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer);
 
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
-        #[diplomat::rust_link(icu::localeanonicalizer::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
@@ -39,7 +39,7 @@ pub mod ffi {
         }
 
         /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
-        #[diplomat::rust_link(icu::localeanonicalizer::new_with_expander, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
         pub fn create_extended(
             provider: &ICU4XDataProvider,
@@ -59,20 +59,20 @@ pub mod ffi {
             )?)))
         }
 
-        #[diplomat::rust_link(icu::localeanonicalizer::canonicalize, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::canonicalize, FnInStruct)]
         pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
             self.0.canonicalize(&mut locale.0).into()
         }
     }
 
     /// A locale expander.
-    #[diplomat::rust_link(icu::localexpander, Struct)]
+    #[diplomat::rust_link(icu::locale::LocaleExpander, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XLocaleExpander(pub LocaleExpander);
 
     impl ICU4XLocaleExpander {
         /// Create a new [`ICU4XLocaleExpander`].
-        #[diplomat::rust_link(icu::localexpander::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
@@ -86,7 +86,7 @@ pub mod ffi {
         }
 
         /// Create a new [`ICU4XLocaleExpander`] with extended data.
-        #[diplomat::rust_link(icu::localexpander::new_extended, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
         pub fn create_extended(
             provider: &ICU4XDataProvider,
@@ -99,17 +99,17 @@ pub mod ffi {
             )?)))
         }
 
-        #[diplomat::rust_link(icu::localexpander::maximize, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleExpander::maximize, FnInStruct)]
         pub fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
             self.0.maximize(&mut locale.0).into()
         }
 
-        #[diplomat::rust_link(icu::localexpander::minimize, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleExpander::minimize, FnInStruct)]
         pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
             self.0.minimize(&mut locale.0).into()
         }
 
-        #[diplomat::rust_link(icu::localexpander::minimize_favor_script, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleExpander::minimize_favor_script, FnInStruct)]
         pub fn minimize_favor_script(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
             self.0.minimize_favor_script(&mut locale.0).into()
         }

@@ -48,7 +48,6 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 [dev-dependencies]
 serde_json = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
-icu_provider_adapters = { path = "../adapters" }
 icu_locale = { path = "../../components/locale" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
