@@ -1122,10 +1122,14 @@ pub trait IntoAnyCalendar: Calendar + Sized {
     /// You should not need to call this method directly
     fn to_any(self) -> AnyCalendar;
 
+    /// The [`AnyCalendarKind`] enum variant associated with this calendar
+    fn kind(&self) -> AnyCalendarKind;
+
     /// Convert this calendar into an [`AnyCalendar`], cloning it
     ///
     /// You should not need to call this method directly
     fn to_any_cloned(&self) -> AnyCalendar;
+
     /// Convert a date for this calendar into an [`AnyDateInner`]
     ///
     /// You should not need to call this method directly
@@ -1133,48 +1137,76 @@ pub trait IntoAnyCalendar: Calendar + Sized {
 }
 
 impl IntoAnyCalendar for Buddhist {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Buddhist(Buddhist)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Buddhist
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Buddhist(Buddhist)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Buddhist(*d)
     }
 }
 
 impl IntoAnyCalendar for Chinese {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Chinese(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Chinese
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Chinese(self.clone())
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Chinese(*d)
     }
 }
 
 impl IntoAnyCalendar for Coptic {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Coptic(Coptic)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Coptic
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Coptic(Coptic)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Coptic(*d)
     }
 }
 
 impl IntoAnyCalendar for Dangi {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Dangi(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Dangi
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Dangi(self.clone())
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Dangi(*d)
     }
@@ -1182,156 +1214,251 @@ impl IntoAnyCalendar for Dangi {
 
 impl IntoAnyCalendar for Ethiopian {
     // Amete Mihret calendars are the default
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Ethiopian(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        if self.0 {
+            AnyCalendarKind::EthiopianAmeteAlem
+        } else {
+            AnyCalendarKind::Ethiopian
+        }
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Ethiopian(*self)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Ethiopian(*d)
     }
 }
 
 impl IntoAnyCalendar for Gregorian {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Gregorian(Gregorian)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Gregorian
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Gregorian(Gregorian)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Gregorian(*d)
     }
 }
 
 impl IntoAnyCalendar for Hebrew {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Hebrew(Hebrew)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Hebrew
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Hebrew(Hebrew)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Hebrew(*d)
     }
 }
 
 impl IntoAnyCalendar for Indian {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Indian(Indian)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Indian
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Indian(Indian)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Indian(*d)
     }
 }
 
 impl IntoAnyCalendar for IslamicCivil {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::IslamicCivil(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::IslamicCivil
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::IslamicCivil(*self)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicCivil(*d)
     }
 }
 
 impl IntoAnyCalendar for IslamicObservational {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::IslamicObservational(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::IslamicObservational
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::IslamicObservational(self.clone())
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicObservational(*d)
     }
 }
 
 impl IntoAnyCalendar for IslamicTabular {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::IslamicTabular(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::IslamicTabular
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::IslamicTabular(*self)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicTabular(*d)
     }
 }
 
 impl IntoAnyCalendar for IslamicUmmAlQura {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::IslamicUmmAlQura(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::IslamicUmmAlQura
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::IslamicUmmAlQura(self.clone())
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::IslamicUmmAlQura(*d)
     }
 }
 
 impl IntoAnyCalendar for Iso {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Iso
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Iso(*d)
     }
 }
 
 impl IntoAnyCalendar for Japanese {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Japanese(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Japanese
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Japanese(self.clone())
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Japanese(*d)
     }
 }
 
 impl IntoAnyCalendar for JapaneseExtended {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::JapaneseExtended(self)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::JapaneseExtended
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::JapaneseExtended(self.clone())
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::JapaneseExtended(*d)
     }
 }
 
 impl IntoAnyCalendar for Persian {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Persian(Persian)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Persian
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Persian(Persian)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Persian(*d)
     }
 }
 
 impl IntoAnyCalendar for Roc {
+    #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Roc(Roc)
     }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Roc
+    }
+    #[inline]
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Roc(Roc)
     }
+    #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Roc(*d)
     }
