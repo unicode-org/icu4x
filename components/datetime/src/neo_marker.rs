@@ -8,10 +8,12 @@ use core::marker::PhantomData;
 
 use crate::{format::neo::*, neo::_internal::*, neo_skeleton::*, provider::neo::*, CldrCalendar};
 use icu_calendar::{
-    any_calendar::IntoAnyCalendar, types::{
+    any_calendar::IntoAnyCalendar,
+    types::{
         DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
         IsoSecond, IsoWeekday, NanoSecond,
-    }, AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time
+    },
+    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
 use icu_provider::{prelude::*, NeverMarker};
 
@@ -24,6 +26,34 @@ pub trait FromInCalendar<T> {
     /// Projects the given value into the given calendar
     /// and returns the result as an instance of [`Self`].
     fn from_in_calendar(value: T, calendar: &AnyCalendar) -> Self;
+}
+
+/// A type that might be compatible with a specific calendar system.
+///
+/// All formattable types should implement this trait.
+pub trait IsAnyCalendarKind {
+    /// Whether this type is compatible with the given calendar.
+    ///
+    /// Types that are agnostic to calendar systems should return `true`.
+    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool;
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for &Date<A> {
+    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
+        self.calendar().any_calendar_kind() == Some(any_calendar_kind)
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for &DateTime<A> {
+    fn is_any_calendar_kind(&self, any_calendar_kind: AnyCalendarKind) -> bool {
+        self.date.calendar().any_calendar_kind() == Some(any_calendar_kind)
+    }
+}
+
+impl IsAnyCalendarKind for &Time {
+    fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
+        true
+    }
 }
 
 /// An input associated with a specific calendar.
@@ -56,6 +86,42 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoTypedIn
         }
     }
 }
+
+// /// Input data fields required for formatting dates in calendars.
+// ///
+// /// Conversions into this struct should always be implemented on input types;
+// /// they should return `None` if the receiver does not have an
+// /// [`AnyCalendarKind`].
+// pub struct AnyCalendarKindInputField {
+//     /// The kind of calendar this date is for, if associated with [`AnyCalendar`].
+//     ///
+//     /// [`AnyCalendar`]: icu_calendar::AnyCalendar
+//     pub any_calendar_kind: Option<AnyCalendarKind>,
+// }
+
+// impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for AnyCalendarKindInputField {
+//     fn from(value: &Date<A>) -> Self {
+//         Self {
+//             any_calendar_kind: value.calendar().any_calendar_kind(),
+//         }
+//     }
+// }
+
+// impl From<&Time> for AnyCalendarKindInputField {
+//     fn from(_: &Time) -> Self {
+//         Self {
+//             any_calendar_kind: None,
+//         }
+//     }
+// }
+
+// impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for AnyCalendarKindInputField {
+//     fn from(value: &DateTime<A>) -> Self {
+//         Self {
+//             any_calendar_kind: value.date.calendar().any_calendar_kind(),
+//         }
+//     }
+// }
 
 /// Input data fields required for formatting dates.
 #[derive(Debug, Copy, Clone)]
@@ -107,7 +173,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoDateInputFi
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&Date<A>> for NeoDateInputFields {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&Date<A>>
+    for NeoDateInputFields
+{
     fn from_in_calendar(value: &Date<A>, calendar: &AnyCalendar) -> Self {
         Self::from(&value.to_any().to_calendar(Ref(calendar)))
     }
@@ -125,7 +193,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoDateInp
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&DateTime<A>> for NeoDateInputFields {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&DateTime<A>>
+    for NeoDateInputFields
+{
     fn from_in_calendar(value: &DateTime<A>, calendar: &AnyCalendar) -> Self {
         Self::from(&value.to_any().to_calendar(Ref(calendar)))
     }
@@ -154,7 +224,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&Date<A>> for NeoWeekInputFi
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&Date<A>> for NeoWeekInputFields {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&Date<A>>
+    for NeoWeekInputFields
+{
     fn from_in_calendar(value: &Date<A>, calendar: &AnyCalendar) -> Self {
         Self::from(&value.to_any().to_calendar(Ref(calendar)))
     }
@@ -168,7 +240,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> From<&DateTime<A>> for NeoWeekInp
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&DateTime<A>> for NeoWeekInputFields {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> FromInCalendar<&DateTime<A>>
+    for NeoWeekInputFields
+{
     fn from_in_calendar(value: &DateTime<A>, calendar: &AnyCalendar) -> Self {
         Self::from(&value.to_any().to_calendar(Ref(calendar)))
     }
