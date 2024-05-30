@@ -441,33 +441,6 @@ impl DatagenDriver {
         }
     }
 
-    /// Sets this driver to generate the given locales.
-    ///
-    /// Use the [`langid!`] macro from the prelude to create an
-    /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
-    ///
-    /// [`langid!`]: crate::prelude::langid
-    /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
-    #[deprecated(
-        since = "1.5.0",
-        note = "use `with_locales_and_fallback` or `with_locales_no_fallback`"
-    )]
-    pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
-        Self {
-            legacy_locales: Some(Some(locales.into_iter().collect())),
-            ..self
-        }
-    }
-
-    /// Sets this driver to generate all available locales.
-    #[deprecated(since = "1.5.0", note = "use `with_locales_and_fallback`")]
-    pub fn with_all_locales(self) -> Self {
-        Self {
-            legacy_locales: Some(None),
-            ..self
-        }
-    }
-
     /// Sets this driver to generate the given locales assuming no runtime fallback.
     ///
     /// Use the [`langid!`] macro from the prelude to create an
@@ -508,20 +481,6 @@ impl DatagenDriver {
                 families: locales.into_iter().map(LocaleFamily::into_parts).collect(),
                 options,
             }),
-            ..self
-        }
-    }
-
-    /// Sets the fallback type that the data should be generated for.
-    ///
-    /// If locale fallback is used at runtime, smaller data can be generated.
-    #[deprecated(
-        since = "1.5.0",
-        note = "use `with_locales_and_fallback` or `with_locales_no_fallback`"
-    )]
-    pub fn with_fallback_mode(self, fallback: FallbackMode) -> Self {
-        Self {
-            legacy_fallback_mode: fallback,
             ..self
         }
     }

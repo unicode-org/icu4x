@@ -41,9 +41,9 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
   String of(Locale locale) {
-    final writeable = _Writeable();
-    _ICU4XLocaleDisplayNamesFormatter_of(_ffi, locale._ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XLocaleDisplayNamesFormatter_of(_ffi, locale._ffi, write._ffi);
+    return write.finalize();
   }
 }
 
@@ -60,4 +60,4 @@ external _ResultOpaqueInt32 _ICU4XLocaleDisplayNamesFormatter_create(ffi.Pointer
 @meta.ResourceIdentifier('ICU4XLocaleDisplayNamesFormatter_of')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_of')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleDisplayNamesFormatter_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XLocaleDisplayNamesFormatter_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);

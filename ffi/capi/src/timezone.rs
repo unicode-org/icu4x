@@ -189,7 +189,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn time_zone_id(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> Option<()> {
+        pub fn time_zone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.time_zone_id?.0.as_str());
             Some(())
         }
@@ -221,7 +221,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn metazone_id(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> Option<()> {
+        pub fn metazone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.metazone_id?.0.as_str());
             Some(())
         }
@@ -252,7 +252,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> Option<()> {
+        pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.zone_variant?.0.as_str());
             Some(())
         }

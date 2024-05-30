@@ -57,7 +57,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWriteable) {
+        pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWrite) {
             let _infallible = self.0.normalize_utf8_to(s, write);
         }
 
@@ -129,7 +129,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWriteable) {
+        pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWrite) {
             let _infallible = self.0.normalize_utf8_to(s, write);
         }
 

@@ -44,7 +44,7 @@ class ICU4XLocaleDisplayNamesFormatter {
    * 
    * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
-  template<typename W> void of_to_writeable(const ICU4XLocale& locale, W& write) const;
+  template<typename W> void of_to_write(const ICU4XLocale& locale, W& write) const;
 
   /**
    * Returns the locale-specific display name of a locale.
@@ -77,14 +77,14 @@ inline diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> ICU4XLocal
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XLocaleDisplayNamesFormatter::of_to_writeable(const ICU4XLocale& locale, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XLocaleDisplayNamesFormatter::of_to_write(const ICU4XLocale& locale, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &write_writer);
 }
 inline std::string ICU4XLocaleDisplayNamesFormatter::of(const ICU4XLocale& locale) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XLocaleDisplayNamesFormatter_of(this->inner.get(), locale.AsFFI(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 #endif

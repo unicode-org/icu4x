@@ -205,9 +205,9 @@ export class ICU4XCustomTimeZone {
   }
 
   time_zone_id() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
-        const is_ok = wasm.ICU4XCustomTimeZone_time_zone_id(this.underlying, writeable) == 1;
+        const is_ok = wasm.ICU4XCustomTimeZone_time_zone_id(this.underlying, write) == 1;
         if (!is_ok) return;
       })();
     });
@@ -238,9 +238,9 @@ export class ICU4XCustomTimeZone {
   }
 
   metazone_id() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
-        const is_ok = wasm.ICU4XCustomTimeZone_metazone_id(this.underlying, writeable) == 1;
+        const is_ok = wasm.ICU4XCustomTimeZone_metazone_id(this.underlying, write) == 1;
         if (!is_ok) return;
       })();
     });
@@ -261,9 +261,9 @@ export class ICU4XCustomTimeZone {
   }
 
   zone_variant() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
-        const is_ok = wasm.ICU4XCustomTimeZone_zone_variant(this.underlying, writeable) == 1;
+        const is_ok = wasm.ICU4XCustomTimeZone_zone_variant(this.underlying, write) == 1;
         if (!is_ok) return;
       })();
     });

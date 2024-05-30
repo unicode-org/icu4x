@@ -59,10 +59,10 @@ export class ICU4XZonedDateTimeFormatter {
   }
 
   format_datetime_with_custom_time_zone(arg_datetime, arg_time_zone) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(diplomat_receive_buffer, this.underlying, arg_datetime.underlying, arg_time_zone.underlying, writeable);
+        wasm.ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(diplomat_receive_buffer, this.underlying, arg_datetime.underlying, arg_time_zone.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -78,10 +78,10 @@ export class ICU4XZonedDateTimeFormatter {
   }
 
   format_iso_datetime_with_custom_time_zone(arg_datetime, arg_time_zone) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(diplomat_receive_buffer, this.underlying, arg_datetime.underlying, arg_time_zone.underlying, writeable);
+        wasm.ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(diplomat_receive_buffer, this.underlying, arg_datetime.underlying, arg_time_zone.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

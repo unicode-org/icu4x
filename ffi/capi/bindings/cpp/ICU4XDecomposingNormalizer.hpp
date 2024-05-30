@@ -52,7 +52,7 @@ class ICU4XDecomposingNormalizer {
    * 
    * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
-  template<typename W> void normalize_to_writeable(const std::string_view s, W& write) const;
+  template<typename W> void normalize_to_write(const std::string_view s, W& write) const;
 
   /**
    * Normalize a string
@@ -105,15 +105,15 @@ inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposing
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XDecomposingNormalizer::normalize_to_writeable(const std::string_view s, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XDecomposingNormalizer::normalize_to_write(const std::string_view s, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &write_writer);
 }
 inline std::string ICU4XDecomposingNormalizer::normalize(const std::string_view s) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XDecomposingNormalizer_normalize(this->inner.get(), s.data(), s.size(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 inline bool ICU4XDecomposingNormalizer::is_normalized(const std::string_view s) const {
   return capi::ICU4XDecomposingNormalizer_is_normalized(this->inner.get(), s.data(), s.size());

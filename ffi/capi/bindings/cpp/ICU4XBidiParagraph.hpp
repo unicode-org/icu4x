@@ -67,7 +67,7 @@ class ICU4XBidiParagraph {
    * 
    * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
-  template<typename W> std::optional<std::monostate> reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const;
+  template<typename W> std::optional<std::monostate> reorder_line_to_write(size_t range_start, size_t range_end, W& out) const;
 
   /**
    * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
@@ -120,8 +120,8 @@ inline size_t ICU4XBidiParagraph::range_start() const {
 inline size_t ICU4XBidiParagraph::range_end() const {
   return capi::ICU4XBidiParagraph_range_end(this->inner.get());
 }
-template<typename W> inline std::optional<std::monostate> ICU4XBidiParagraph::reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const {
-  capi::DiplomatWriteable out_writer = diplomat::WriteableTrait<W>::Construct(out);
+template<typename W> inline std::optional<std::monostate> ICU4XBidiParagraph::reorder_line_to_write(size_t range_start, size_t range_end, W& out) const {
+  capi::DiplomatWrite out_writer = diplomat::WriteTrait<W>::Construct(out);
   auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_reorder_line(this->inner.get(), range_start, range_end, &out_writer);
   std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
@@ -132,9 +132,9 @@ template<typename W> inline std::optional<std::monostate> ICU4XBidiParagraph::re
   return diplomat_result_out_value;
 }
 inline std::optional<std::string> ICU4XBidiParagraph::reorder_line(size_t range_start, size_t range_end) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_reorder_line(this->inner.get(), range_start, range_end, &diplomat_writeable_out);
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XBidiParagraph_reorder_line(this->inner.get(), range_start, range_end, &diplomat_write_out);
   std::optional<std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = std::optional<std::monostate>(std::monostate());

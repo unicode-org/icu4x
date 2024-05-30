@@ -36,10 +36,10 @@ export class ICU4XDateTimeFormatter {
   }
 
   format_datetime(arg_value) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XDateTimeFormatter_format_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, writeable);
+        wasm.ICU4XDateTimeFormatter_format_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -55,10 +55,10 @@ export class ICU4XDateTimeFormatter {
   }
 
   format_iso_datetime(arg_value) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XDateTimeFormatter_format_iso_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, writeable);
+        wasm.ICU4XDateTimeFormatter_format_iso_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

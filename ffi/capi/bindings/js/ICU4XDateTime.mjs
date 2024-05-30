@@ -136,8 +136,8 @@ export class ICU4XDateTime {
   }
 
   month_code() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XDateTime_month_code(this.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XDateTime_month_code(this.underlying, write);
     });
   }
 
@@ -146,8 +146,8 @@ export class ICU4XDateTime {
   }
 
   era() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XDateTime_era(this.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XDateTime_era(this.underlying, write);
     });
   }
 

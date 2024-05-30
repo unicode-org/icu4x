@@ -31,7 +31,7 @@ size_t ICU4XBidiParagraph_range_start(const ICU4XBidiParagraph* self);
 
 size_t ICU4XBidiParagraph_range_end(const ICU4XBidiParagraph* self);
 
-diplomat_result_void_void ICU4XBidiParagraph_reorder_line(const ICU4XBidiParagraph* self, size_t range_start, size_t range_end, DiplomatWriteable* out);
+diplomat_result_void_void ICU4XBidiParagraph_reorder_line(const ICU4XBidiParagraph* self, size_t range_start, size_t range_end, DiplomatWrite* out);
 
 uint8_t ICU4XBidiParagraph_level_at(const ICU4XBidiParagraph* self, size_t pos);
 void ICU4XBidiParagraph_destroy(ICU4XBidiParagraph* self);

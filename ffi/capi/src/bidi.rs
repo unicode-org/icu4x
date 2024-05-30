@@ -265,7 +265,7 @@ pub mod ffi {
             &self,
             range_start: usize,
             range_end: usize,
-            out: &mut DiplomatWriteable,
+            out: &mut DiplomatWrite,
         ) -> Option<()> {
             if range_start < self.range_start() || range_end > self.range_end() {
                 return None;

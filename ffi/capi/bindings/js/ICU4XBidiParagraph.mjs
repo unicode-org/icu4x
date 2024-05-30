@@ -40,9 +40,9 @@ export class ICU4XBidiParagraph {
   }
 
   reorder_line(arg_range_start, arg_range_end) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
-        const is_ok = wasm.ICU4XBidiParagraph_reorder_line(this.underlying, arg_range_start, arg_range_end, writeable) == 1;
+        const is_ok = wasm.ICU4XBidiParagraph_reorder_line(this.underlying, arg_range_start, arg_range_end, write) == 1;
         if (!is_ok) return;
       })();
     });

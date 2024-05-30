@@ -413,7 +413,7 @@ pub mod ffi {
         /// like "M01", "M02", but can be more complicated for lunar calendars.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+        pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let code = self.0.date.month().code;
             let _infallible = write.write_str(&code.0);
         }
@@ -428,7 +428,7 @@ pub mod ffi {
         /// Returns the era for this date,
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn era(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
+        pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let era = self.0.date.year().era;
             let _infallible = write.write_str(&era.0);
         }
