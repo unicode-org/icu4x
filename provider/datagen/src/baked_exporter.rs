@@ -46,7 +46,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! # macro_rules! include {
@@ -85,7 +85,7 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! let formatter =
@@ -253,6 +253,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
+                .replace("icu::locale_core", "icu_locale_core")
                 .replace("icu::pattern", "icu_pattern");
         }
 
@@ -549,8 +550,7 @@ impl BakedExporter {
                     }
                 }
                 Some(BuiltInFallbackMode::Standard) => {
-                    self.dependencies
-                        .insert("icu_locid_transform/compiled_data");
+                    self.dependencies.insert("icu_locale/compiled_data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
                     quote! {
@@ -561,8 +561,8 @@ impl BakedExporter {
                         let payload =  if let Ok(payload) = #search_direct {
                             payload
                         } else {
-                            const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
-                                icu_locid_transform::fallback::LocaleFallbacker::new()
+                            const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
+                                icu_locale::fallback::LocaleFallbacker::new()
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {

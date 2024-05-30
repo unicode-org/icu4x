@@ -151,7 +151,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoDateFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
@@ -305,7 +305,7 @@ impl<C: CldrCalendar, R: HasNeoComponents<C>> TypedNeoFormatter<C, R> {
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
@@ -430,7 +430,7 @@ impl<C: CldrCalendar, R: HasNeoComponents<C>> TypedNeoFormatter<C, R> {
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let formatter =
     ///     TypedNeoFormatter::<Buddhist, NeoYearMonthDayMarker>::try_new(
@@ -451,7 +451,7 @@ impl<C: CldrCalendar, R: HasNeoComponents<C>> TypedNeoFormatter<C, R> {
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let formatter =
     ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
@@ -527,7 +527,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -887,7 +887,7 @@ impl NeoDateFormatter {
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date};
     /// use icu::datetime::{neo::NeoDateFormatter, options::length};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     /// use writeable::assert_try_writeable_eq;
@@ -1195,7 +1195,7 @@ impl NeoTimeFormatter {
     /// use icu::calendar::Time;
     /// use icu::datetime::neo::NeoTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoTimeFormatter::try_new_with_length(
@@ -1374,7 +1374,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
@@ -1480,7 +1480,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
@@ -1572,7 +1572,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoDateTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter =
@@ -1796,7 +1796,7 @@ impl NeoDateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoDateTimeFormatter::try_new_with_date_length(
@@ -2010,7 +2010,7 @@ impl NeoDateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoDateTimeFormatter::try_new_with_time_length(
@@ -2115,7 +2115,7 @@ impl NeoDateTimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::neo::NeoDateTimeFormatter;
     /// use icu::datetime::options::length;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoDateTimeFormatter::try_new_with_lengths(

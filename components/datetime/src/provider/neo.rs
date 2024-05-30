@@ -27,7 +27,7 @@ use core::ops::Range;
 #[allow(missing_docs)]
 pub mod aux {
     use crate::pattern::CoarseHourCycle;
-    use icu_locid::extensions::private::{subtag, Subtag};
+    use icu_locale_core::extensions::private::{subtag, Subtag};
 
     pub const NUMERIC: Subtag = subtag!("1");
     pub const ABBR: Subtag = subtag!("3");

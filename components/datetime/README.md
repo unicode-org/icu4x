@@ -35,7 +35,7 @@ use icu::datetime::{
     options::length, DateTimeFormatter, DateTimeFormatterOptions,
     TypedDateTimeFormatter,
 };
-use icu::locid::{locale, Locale};
+use icu::locale::{locale, Locale};
 use std::str::FromStr;
 use writeable::assert_writeable_eq;
 
@@ -85,7 +85,7 @@ use icu::calendar::Gregorian;
 use icu::datetime::{
     options::length, DateTimeFormatterOptions, TypedDateTimeFormatter,
 };
-use icu::locid::locale;
+use icu::locale::locale;
 let options = length::Bag::from_date_time_style(
     length::Date::Medium,
     length::Time::Short,

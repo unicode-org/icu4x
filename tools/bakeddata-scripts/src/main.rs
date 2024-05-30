@@ -17,11 +17,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("datetime", icu::datetime::provider::KEYS, REPO_VERSION),
     ("decimal", icu::decimal::provider::KEYS, REPO_VERSION),
     ("list", icu::list::provider::KEYS, REPO_VERSION),
-    (
-        "locid_transform",
-        icu::locid_transform::provider::KEYS,
-        REPO_VERSION,
-    ),
+    ("locale", icu::locale::provider::KEYS, REPO_VERSION),
     ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
     ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
     ("properties", icu::properties::provider::KEYS, REPO_VERSION),

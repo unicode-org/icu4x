@@ -14,9 +14,9 @@ use icu_datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, Ti
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::neo::*;
 use icu_datetime::DateTimeFormatterOptions;
-use icu_locid::extensions::private::Subtag;
-use icu_locid::extensions::unicode::{value, Value};
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::extensions::private::Subtag;
+use icu_locale_core::extensions::unicode::{value, Value};
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 

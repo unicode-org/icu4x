@@ -45,16 +45,16 @@ checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
 
 [[package]]
 name = "anstream"
-version = "0.3.2"
+version = "0.6.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ca84f3628370c59db74ee214b3263d58f9aadd9b4fe7e711fd87dc452b7f163"
+checksum = "418c75fa768af9c03be99d17643f93f79bbba589895012a80e3452a19ddda15b"
 dependencies = [
  "anstyle",
  "anstyle-parse",
  "anstyle-query",
  "anstyle-wincon",
  "colorchoice",
- "is-terminal",
+ "is_terminal_polyfill",
  "utf8parse",
 ]
 
@@ -84,12 +84,12 @@ dependencies = [
 
 [[package]]
 name = "anstyle-wincon"
-version = "1.0.2"
+version = "3.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c677ab05e09154296dd37acecd46420c17b9713e8366facafa8fc0885167cf4c"
+checksum = "61a38449feb7068f52bb06c12759005cf459ee52bb4adc1d5a7c4322d716fb19"
 dependencies = [
  "anstyle",
- "windows-sys 0.48.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -364,20 +364,19 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.3.24"
+version = "4.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fb690e81c7840c0d7aade59f242ea3b41b9bc27bcd5997890e7702ae4b32e487"
+checksum = "1e578d6ec4194633722ccf9544794b71b1385c3c027efe0c55db226fc880865c"
 dependencies = [
  "clap_builder",
  "clap_derive",
- "once_cell",
 ]
 
 [[package]]
 name = "clap_builder"
-version = "4.3.24"
+version = "4.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ed2e96bc16d8d740f6f48d663eddf4b8a0983e79210fd55479b7bcd0a69860e"
+checksum = "4df4df40ec50c46000231c914968278b1eb05098cf8f1b3a518a95030e71d1c7"
 dependencies = [
  "anstream",
  "anstyle",
@@ -387,9 +386,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.3.12"
+version = "4.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54a9bb5758fc5dfe728d1019941681eccaf0cf8a4189b692a0ee2f2ecf90a050"
+checksum = "cf9804afaaf59a91e75b022a30fb7229a7901f60c755489cc61c9b423b836442"
 dependencies = [
  "heck 0.4.1",
  "proc-macro2",
@@ -399,9 +398,9 @@ dependencies = [
 
 [[package]]
 name = "clap_lex"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2da6da31387c7e4ef160ffab6d5e7f00c42626fe39aea70a7b0f1773f7dd6c1b"
+checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 
 [[package]]
 name = "cobs"
@@ -417,11 +416,10 @@ checksum = "0b6a852b24ab71dffc585bcb46eaf7959d175cb865a7152e35b348d1b2960422"
 
 [[package]]
 name = "colored"
-version = "2.0.4"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2674ec482fbc38012cf31e6c42ba0177b431a0cb6f15fe40efa5aab1bda516f6"
+checksum = "cbf2150cce219b664a8a70df7a1f933836724b503f8a413af9365b4dcc4d90b8"
 dependencies = [
- "is-terminal",
  "lazy_static",
  "windows-sys 0.48.0",
 ]
@@ -814,10 +812,11 @@ checksum = "40ecd4077b5ae9fd2e9e169b102c6c330d0605168eb0e8bf79952b256dbefffd"
 
 [[package]]
 name = "half"
-version = "2.2.1"
+version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02b4af3693f1b705df946e9fe5631932443781d0aabb423b62fcd4d73f6d2fd0"
+checksum = "6dd08c532ae367adf81c312a4580bc67f1d0fe8bc9c460520283f4c0ff277888"
 dependencies = [
+ "cfg-if",
  "crunchy",
 ]
 
@@ -884,8 +883,7 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -939,8 +937,8 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_calendar_data",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider",
  "serde",
  "serde_json",
@@ -969,8 +967,8 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1000,7 +998,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_casemap_data",
  "icu_collections",
- "icu_locid",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -1036,8 +1034,8 @@ dependencies = [
  "icu",
  "icu_collator_data",
  "icu_collections",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -1094,8 +1092,8 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -1114,7 +1112,6 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
- "once_cell",
  "postcard",
  "proc-macro2",
  "rayon",
@@ -1147,8 +1144,8 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_plurals",
  "icu_provider",
  "icu_provider_adapters",
@@ -1179,8 +1176,8 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_decimal_data",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
  "rand",
@@ -1210,9 +1207,9 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
- "icu_locid",
- "icu_locid_transform",
- "icu_locid_transform_data",
+ "icu_locale",
+ "icu_locale_core",
+ "icu_locale_data",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -1281,7 +1278,7 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_list_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "postcard",
  "regex-automata 0.2.0",
@@ -1296,7 +1293,25 @@ name = "icu_list_data"
 version = "1.5.0"
 
 [[package]]
-name = "icu_locid"
+name = "icu_locale"
+version = "1.5.0"
+dependencies = [
+ "criterion",
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_locale_core",
+ "icu_locale_data",
+ "icu_provider",
+ "serde",
+ "serde_json",
+ "tinystr",
+ "writeable",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_core"
 version = "1.5.0"
 dependencies = [
  "criterion",
@@ -1315,25 +1330,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid_transform"
-version = "1.5.0"
-dependencies = [
- "criterion",
- "databake",
- "displaydoc",
- "icu",
- "icu_locid",
- "icu_locid_transform_data",
- "icu_provider",
- "serde",
- "serde_json",
- "tinystr",
- "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_locid_transform_data"
+name = "icu_locale_data"
 version = "1.5.0"
 
 [[package]]
@@ -1392,8 +1389,8 @@ dependencies = [
  "fixed_decimal",
  "icu",
  "icu_benchmark_macros",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_plurals_data",
  "icu_provider",
  "serde",
@@ -1413,7 +1410,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
- "icu_locid_transform",
+ "icu_locale",
  "icu_properties_data",
  "icu_provider",
  "serde",
@@ -1436,9 +1433,8 @@ dependencies = [
  "displaydoc",
  "erased-serde",
  "icu",
- "icu_locid",
- "icu_locid_transform",
- "icu_provider_adapters",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider_macros",
  "log",
  "postcard",
@@ -1457,8 +1453,8 @@ name = "icu_provider_adapters"
 version = "1.5.0"
 dependencies = [
  "databake",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_fs",
@@ -1476,8 +1472,8 @@ dependencies = [
  "icu_datagen",
  "icu_datetime",
  "icu_datetime_data",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
  "log",
@@ -1499,7 +1495,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_datagen",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "log",
  "postcard",
@@ -1529,8 +1525,8 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_properties",
  "icu_provider",
  "icu_segmenter_data",
@@ -1557,7 +1553,7 @@ dependencies = [
  "crlify",
  "eyre",
  "icu_datagen",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "log",
  "simple_logger",
@@ -1629,6 +1625,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "is_terminal_polyfill"
+version = "1.70.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f8478577c03552c21db0e2724ffb8986a5ce7af88107e6be5d2ee6e158c12800"
+
+[[package]]
 name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1693,7 +1695,7 @@ dependencies = [
  "criterion",
  "databake",
  "icu_benchmark_macros",
- "icu_locid",
+ "icu_locale_core",
  "postcard",
  "rkyv",
  "serde",
@@ -2318,9 +2320,9 @@ dependencies = [
 
 [[package]]
 name = "rustdoc-types"
-version = "0.19.0"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd62550e9cd1e785b22928008446bdecc4e5b093abecc74186cbf45dee5adf12"
+checksum = "5c7a12c7506980eaac5c9851a04e90e0062eb4417aa188a512bf7a64a1ef290f"
 dependencies = [
  "serde",
 ]
@@ -3201,7 +3203,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_benchmark_macros",
- "icu_locid",
+ "icu_locale_core",
  "litemap",
  "postcard",
  "rand",

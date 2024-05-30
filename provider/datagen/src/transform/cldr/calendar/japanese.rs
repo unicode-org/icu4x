@@ -5,12 +5,13 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use icu_calendar::provider::*;
-use icu_locid::langid;
+use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
 use std::str::FromStr;
+use std::sync::OnceLock;
 use tinystr::tinystr;
 use tinystr::TinyStr16;
 
@@ -192,8 +193,7 @@ impl IterableDataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
 
 /// Computes the japanese era code map or loads from static cache
 pub(in crate::provider) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
-    static MAP: once_cell::sync::OnceCell<BTreeMap<String, TinyStr16>> =
-        once_cell::sync::OnceCell::new();
+    static MAP: OnceLock<BTreeMap<String, TinyStr16>> = OnceLock::new();
 
     MAP.get_or_init(|| {
         let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)

@@ -6,7 +6,7 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_decimal::provider::*;
-use icu_locid::extensions::unicode::key;
+use icu_locale_core::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -98,7 +98,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     let provider = DatagenProvider::new_testing();
 

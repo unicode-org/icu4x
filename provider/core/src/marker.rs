@@ -107,7 +107,7 @@ pub trait KeyedDataMarker: DataMarker {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::NeverMarker;
@@ -154,7 +154,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::NeverMarker;

@@ -128,7 +128,7 @@ pub mod prelude {
         NoFallbackOptions, RuntimeFallbackLocation,
     };
     #[doc(no_inline)]
-    pub use icu_locid::{langid, LanguageIdentifier};
+    pub use icu_locale_core::{langid, LanguageIdentifier};
     #[doc(no_inline)]
     pub use icu_provider::{datagen::DataExporter, DataKey, KeyedDataMarker};
 }
@@ -201,8 +201,8 @@ macro_rules! cb {
         /// );
         /// ```
         pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-            use once_cell::sync::OnceCell;
-            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            use std::sync::OnceLock;
+            static LOOKUP: OnceLock<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
                 [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),
@@ -435,7 +435,7 @@ fn keys_from_bin_inner(bytes: &[u8]) -> Vec<DataKey> {
     result
 }
 
-use icu_locid::langid;
+use icu_locale_core::langid;
 
 #[cfg(feature = "provider")]
 fn lstm_model_name_to_data_locale(name: &str) -> Option<DataLocale> {

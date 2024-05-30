@@ -15,7 +15,7 @@
 
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::TypedDateTimeFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {

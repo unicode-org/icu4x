@@ -55,7 +55,7 @@ const _: () = {
         pub use crate as collator;
         pub use icu_collections as collections;
         #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_collator_data::make_provider!(Baked);
     icu_collator_data::impl_collator_data_v1!(Baked);

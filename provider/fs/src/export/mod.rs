@@ -38,7 +38,7 @@
 //! The resulting files can now be used like this:
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_fs::FsDataProvider;

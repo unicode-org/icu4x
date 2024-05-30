@@ -68,7 +68,7 @@ where
     /// ```
     /// use icu::datetime::time_zone::TimeZoneFormatter;
     /// use icu::datetime::DateTimeError;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use tinystr::tinystr;
     ///

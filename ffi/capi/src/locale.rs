@@ -4,207 +4,120 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    use core::str;
-    use icu_locid::extensions::unicode::Key;
-    use icu_locid::subtags::{Language, Region, Script};
-    use icu_locid::Locale;
-    use writeable::Writeable;
+    use icu_locale::{LocaleCanonicalizer, LocaleExpander, TransformResult};
 
-    use crate::common::ffi::ICU4XOrdering;
+    use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
+    use crate::errors::ffi::ICU4XError;
+
+    #[diplomat::rust_link(icu::locale::TransformResult, Enum)]
+    #[diplomat::enum_convert(TransformResult)]
+    pub enum ICU4XTransformResult {
+        Modified,
+        Unmodified,
+    }
+
+    /// A locale canonicalizer.
+    #[diplomat::rust_link(icu::locale::LocaleCanonicalizer, Struct)]
     #[diplomat::opaque]
-    /// An ICU4X Locale, capable of representing strings like `"en-US"`.
-    #[diplomat::rust_link(icu::locid::Locale, Struct)]
-    pub struct ICU4XLocale(pub Locale);
+    pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer);
 
-    impl ICU4XLocale {
-        /// Construct an [`ICU4XLocale`] from an locale identifier.
-        ///
-        /// This will run the complete locale parsing algorithm. If code size and
-        /// performance are critical and the locale is of a known shape (such as
-        /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
-        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::rust_link(icu::locid::Locale::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(name: &DiplomatStr) -> Result<Box<ICU4XLocale>, ICU4XError> {
-            Ok(Box::new(ICU4XLocale(Locale::try_from_bytes(name)?)))
+    impl ICU4XLocaleCanonicalizer {
+        /// Create a new [`ICU4XLocaleCanonicalizer`].
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
+            Ok(Box::new(ICU4XLocaleCanonicalizer(call_constructor!(
+                LocaleCanonicalizer::new [r => Ok(r)],
+                LocaleCanonicalizer::try_new_with_any_provider,
+                LocaleCanonicalizer::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
-        /// Construct a default undefined [`ICU4XLocale`] "und".
-        #[diplomat::rust_link(icu::locid::Locale::UND, AssociatedConstantInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "und")]
-        pub fn create_und() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(Locale::UND))
+        /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
+        #[diplomat::rust_link(
+            icu::locale::LocaleCanonicalizer::new_with_expander,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
+        pub fn create_extended(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
+            let expander = call_constructor!(
+                LocaleExpander::new_extended [r => Ok(r)],
+                LocaleExpander::try_new_with_any_provider,
+                LocaleExpander::try_new_with_buffer_provider,
+                provider,
+            )?;
+            Ok(Box::new(ICU4XLocaleCanonicalizer(call_constructor!(
+                LocaleCanonicalizer::new_with_expander [r => Ok(r)],
+                LocaleCanonicalizer::try_new_with_expander_with_any_provider,
+                LocaleCanonicalizer::try_new_with_expander_with_buffer_provider,
+                provider,
+                expander
+            )?)))
         }
 
-        /// Clones the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale, Struct)]
-        pub fn clone(&self) -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(self.0.clone()))
-        }
-
-        /// Returns a string representation of the `LanguageIdentifier` part of
-        /// [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn basename(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let _infallible = self.0.id.write_to(write);
-        }
-
-        /// Returns a string representation of the unicode extension.
-        #[diplomat::rust_link(icu::locid::Locale::extensions, StructField)]
-        pub fn get_unicode_extension(
-            &self,
-            bytes: &DiplomatStr,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Option<()> {
-            Key::try_from_bytes(bytes)
-                .ok()
-                .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
-                .map(|v| {
-                    let _infallible = v.write_to(write);
-                })
-        }
-
-        /// Returns a string representation of [`ICU4XLocale`] language.
-        #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn language(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let _infallible = self.0.id.language.write_to(write);
-        }
-
-        /// Set the language part of the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, setter = "language")]
-        pub fn set_language(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
-            self.0.id.language = if bytes.is_empty() {
-                Language::UND
-            } else {
-                Language::try_from_bytes(bytes)?
-            };
-            Ok(())
-        }
-
-        /// Returns a string representation of [`ICU4XLocale`] region.
-        #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn region(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            self.0.id.region.map(|region| {
-                let _infallible = region.write_to(write);
-            })
-        }
-
-        /// Set the region part of the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
-        pub fn set_region(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
-            self.0.id.region = if bytes.is_empty() {
-                None
-            } else {
-                Some(Region::try_from_bytes(bytes)?)
-            };
-            Ok(())
-        }
-
-        /// Returns a string representation of [`ICU4XLocale`] script.
-        #[diplomat::rust_link(icu::locid::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn script(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            self.0.id.script.map(|script| {
-                let _infallible = script.write_to(write);
-            })
-        }
-
-        /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
-        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
-        pub fn set_script(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
-            self.0.id.script = if bytes.is_empty() {
-                None
-            } else {
-                Some(Script::try_from_bytes(bytes)?)
-            };
-            Ok(())
-        }
-
-        /// Best effort locale canonicalizer that doesn't need any data
-        ///
-        /// Use ICU4XLocaleCanonicalizer for better control and functionality
-        #[diplomat::rust_link(icu::locid::Locale::canonicalize, FnInStruct)]
-        pub fn canonicalize(
-            bytes: &DiplomatStr,
-            write: &mut DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
-            let _infallible = Locale::canonicalize(bytes)?.write_to(write);
-            Ok(())
-        }
-        /// Returns a string representation of [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale::write_to, FnInStruct)]
-        #[diplomat::attr(supports = stringifiers, stringifier)]
-        pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let _infallible = self.0.write_to(write);
-        }
-
-        #[diplomat::rust_link(icu::locid::Locale::normalizing_eq, FnInStruct)]
-        pub fn normalizing_eq(&self, other: &DiplomatStr) -> bool {
-            if let Ok(other) = str::from_utf8(other) {
-                self.0.normalizing_eq(other)
-            } else {
-                // invalid UTF8 won't be allowed in locales anyway
-                false
-            }
-        }
-
-        #[diplomat::rust_link(icu::locid::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn strict_cmp(&self, other: &DiplomatStr) -> ICU4XOrdering {
-            self.0.strict_cmp(other).into()
-        }
-
-        #[diplomat::rust_link(icu::locid::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(dart, rename = "compareToString")]
-        pub fn strict_cmp_(&self, other: &DiplomatStr) -> core::cmp::Ordering {
-            self.0.strict_cmp(other)
-        }
-
-        #[diplomat::rust_link(icu::locid::Locale::total_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn total_cmp(&self, other: &Self) -> ICU4XOrdering {
-            self.0.total_cmp(&other.0).into()
-        }
-
-        #[diplomat::rust_link(icu::locid::Locale::total_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(supports = comparators, comparison)]
-        pub fn total_cmp_(&self, other: &Self) -> core::cmp::Ordering {
-            self.0.total_cmp(&other.0)
-        }
-
-        /// Deprecated
-        ///
-        /// Use `create_from_string("en").
-        #[cfg(feature = "provider_test")]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_en() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("en")))
-        }
-
-        /// Deprecated
-        ///
-        /// Use `create_from_string("bn").
-        #[cfg(feature = "provider_test")]
-        #[diplomat::attr(supports = constructors, disable)]
-        pub fn create_bn() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::canonicalize, FnInStruct)]
+        pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+            self.0.canonicalize(&mut locale.0).into()
         }
     }
-}
 
-impl ffi::ICU4XLocale {
-    pub fn to_datalocale(&self) -> icu_provider::DataLocale {
-        (&self.0).into()
+    /// A locale expander.
+    #[diplomat::rust_link(icu::locale::LocaleExpander, Struct)]
+    #[diplomat::opaque]
+    pub struct ICU4XLocaleExpander(pub LocaleExpander);
+
+    impl ICU4XLocaleExpander {
+        /// Create a new [`ICU4XLocaleExpander`].
+        #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
+            Ok(Box::new(ICU4XLocaleExpander(call_constructor!(
+                LocaleExpander::new [r => Ok(r)],
+                LocaleExpander::try_new_with_any_provider,
+                LocaleExpander::try_new_with_buffer_provider,
+                provider,
+            )?)))
+        }
+
+        /// Create a new [`ICU4XLocaleExpander`] with extended data.
+        #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
+        pub fn create_extended(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
+            Ok(Box::new(ICU4XLocaleExpander(call_constructor!(
+                LocaleExpander::new_extended [r => Ok(r)],
+                LocaleExpander::try_new_with_any_provider,
+                LocaleExpander::try_new_with_buffer_provider,
+                provider,
+            )?)))
+        }
+
+        #[diplomat::rust_link(icu::locale::LocaleExpander::maximize, FnInStruct)]
+        pub fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+            self.0.maximize(&mut locale.0).into()
+        }
+
+        #[diplomat::rust_link(icu::locale::LocaleExpander::minimize, FnInStruct)]
+        pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+            self.0.minimize(&mut locale.0).into()
+        }
+
+        #[diplomat::rust_link(
+            icu::locale::LocaleExpander::minimize_favor_script,
+            FnInStruct
+        )]
+        pub fn minimize_favor_script(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+            self.0.minimize_favor_script(&mut locale.0).into()
+        }
     }
 }

@@ -24,7 +24,7 @@
 //! for scenarios where the application stores information about user preferences they can be also provided via
 //! this bag (and if they are, they will take precedence over unicode extensions from the locale).
 //!
-//! [`Locale`]: icu_locid::Locale
+//! [`Locale`]: icu_locale_core::Locale
 //!
 //! # Examples
 //!
@@ -38,7 +38,7 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use icu_locid::extensions::unicode::key;
+use icu_locale_core::extensions::unicode::key;
 use icu_provider::DataLocale;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;

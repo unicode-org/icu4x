@@ -307,9 +307,9 @@ jobs:
     - name: Run apt-get update
       run: |
         apt-get update
-    - name: Install lld-15
+    - name: Install lld-16
       run: |
-        apt-get install -y lld-15
+        apt-get install -y lld-16
     - name: Install jq
       run: |
         apt-get install -y jq

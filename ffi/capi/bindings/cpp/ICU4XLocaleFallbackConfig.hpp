@@ -18,7 +18,7 @@
 /**
  * Collection of configurations for the ICU4X fallback algorithm.
  * 
- * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
  */
 struct ICU4XLocaleFallbackConfig {
  public:

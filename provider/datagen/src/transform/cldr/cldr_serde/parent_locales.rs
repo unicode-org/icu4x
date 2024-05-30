@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/parentLocales.json>
 
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
 

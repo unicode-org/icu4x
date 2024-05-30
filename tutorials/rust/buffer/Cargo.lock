@@ -82,8 +82,7 @@ dependencies = [
  "icu_decimal",
  "icu_experimental",
  "icu_list",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -99,8 +98,8 @@ dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar_data",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_provider",
  "serde",
  "tinystr",
@@ -119,7 +118,7 @@ dependencies = [
  "displaydoc",
  "icu_casemap_data",
  "icu_collections",
- "icu_locid",
+ "icu_locale_core",
  "icu_properties",
  "icu_provider",
  "serde",
@@ -138,7 +137,7 @@ dependencies = [
  "displaydoc",
  "icu_collator_data",
  "icu_collections",
- "icu_locid_transform",
+ "icu_locale",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -174,8 +173,8 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_plurals",
  "icu_provider",
  "icu_timezone",
@@ -198,7 +197,7 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "serde",
  "writeable",
@@ -217,8 +216,8 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
+ "icu_locale_core",
  "icu_normalizer",
  "icu_pattern",
  "icu_plurals",
@@ -248,7 +247,7 @@ dependencies = [
  "deduplicating_array",
  "displaydoc",
  "icu_list_data",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "regex-automata",
  "serde",
@@ -260,7 +259,20 @@ name = "icu_list_data"
 version = "1.5.0"
 
 [[package]]
-name = "icu_locid"
+name = "icu_locale"
+version = "1.5.0"
+dependencies = [
+ "displaydoc",
+ "icu_locale_core",
+ "icu_locale_data",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_core"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
@@ -272,20 +284,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid_transform"
-version = "1.5.0"
-dependencies = [
- "displaydoc",
- "icu_locid",
- "icu_locid_transform_data",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_locid_transform_data"
+name = "icu_locale_data"
 version = "1.5.0"
 
 [[package]]
@@ -327,7 +326,7 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
- "icu_locid_transform",
+ "icu_locale",
  "icu_plurals_data",
  "icu_provider",
  "serde",
@@ -344,7 +343,7 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
- "icu_locid_transform",
+ "icu_locale",
  "icu_properties_data",
  "icu_provider",
  "serde",
@@ -361,7 +360,7 @@ name = "icu_provider"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider_macros",
  "postcard",
  "serde",
@@ -401,7 +400,7 @@ dependencies = [
  "core_maths",
  "displaydoc",
  "icu_collections",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "icu_segmenter_data",
  "serde",

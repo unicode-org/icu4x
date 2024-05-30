@@ -11,7 +11,7 @@ use icu_datetime::pattern::{self, CoarseHourCycle};
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
 use icu_datetime::provider::neo::aux::{self, Context, Length, PatternLength};
 use icu_datetime::provider::neo::*;
-use icu_locid::{
+use icu_locale_core::{
     extensions::private::Subtag,
     extensions::unicode::{value, Value},
     LanguageIdentifier,

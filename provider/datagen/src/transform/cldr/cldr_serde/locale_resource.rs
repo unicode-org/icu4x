@@ -4,7 +4,7 @@
 
 use std::marker::PhantomData;
 
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::LanguageIdentifier;
 use serde::de::Error;
 use serde::de::MapAccess;
 use serde::de::Visitor;

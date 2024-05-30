@@ -42,7 +42,7 @@ const _: () = {
     pub mod icu {
         pub use crate as calendar;
         #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_locale as locale;
     }
     icu_calendar_data::make_provider!(Baked);
     icu_calendar_data::impl_calendar_chinesecache_v1!(Baked);
