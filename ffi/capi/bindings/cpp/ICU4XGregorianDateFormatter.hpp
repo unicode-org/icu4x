@@ -49,7 +49,7 @@ class ICU4XGregorianDateFormatter {
    * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
    */
-  template<typename W> void format_iso_date_to_writeable(const ICU4XIsoDate& value, W& write) const;
+  template<typename W> void format_iso_date_to_write(const ICU4XIsoDate& value, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDate`] to a string.
@@ -63,7 +63,7 @@ class ICU4XGregorianDateFormatter {
    * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
    */
-  template<typename W> void format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const;
+  template<typename W> void format_iso_datetime_to_write(const ICU4XIsoDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] to a string.
@@ -96,24 +96,24 @@ inline diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> ICU4XGregorianD
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XGregorianDateFormatter::format_iso_date_to_writeable(const ICU4XIsoDate& value, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XGregorianDateFormatter::format_iso_date_to_write(const ICU4XIsoDate& value, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XGregorianDateFormatter_format_iso_date(this->inner.get(), value.AsFFI(), &write_writer);
 }
 inline std::string ICU4XGregorianDateFormatter::format_iso_date(const ICU4XIsoDate& value) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XGregorianDateFormatter_format_iso_date(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XGregorianDateFormatter_format_iso_date(this->inner.get(), value.AsFFI(), &diplomat_write_out);
+  return diplomat_write_string;
 }
-template<typename W> inline void ICU4XGregorianDateFormatter::format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XGregorianDateFormatter::format_iso_datetime_to_write(const ICU4XIsoDateTime& value, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &write_writer);
 }
 inline std::string ICU4XGregorianDateFormatter::format_iso_datetime(const ICU4XIsoDateTime& value) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XGregorianDateFormatter_format_iso_datetime(this->inner.get(), value.AsFFI(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 #endif

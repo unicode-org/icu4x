@@ -24,7 +24,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XBcp47ToIanaMapper_ICU4XError ICU4XBcp47ToIanaMapper_create(const ICU4XDataProvider* provider);
 
-diplomat_result_void_ICU4XError ICU4XBcp47ToIanaMapper_get(const ICU4XBcp47ToIanaMapper* self, const char* value_data, size_t value_len, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XBcp47ToIanaMapper_get(const ICU4XBcp47ToIanaMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
 void ICU4XBcp47ToIanaMapper_destroy(ICU4XBcp47ToIanaMapper* self);
 
 #ifdef __cplusplus

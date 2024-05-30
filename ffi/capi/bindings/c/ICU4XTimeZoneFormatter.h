@@ -43,9 +43,9 @@ diplomat_result_void_ICU4XError ICU4XTimeZoneFormatter_include_localized_gmt_for
 
 diplomat_result_void_ICU4XError ICU4XTimeZoneFormatter_load_iso_8601_format(ICU4XTimeZoneFormatter* self, ICU4XIsoTimeZoneOptions options);
 
-void ICU4XTimeZoneFormatter_format_custom_time_zone(const ICU4XTimeZoneFormatter* self, const ICU4XCustomTimeZone* value, DiplomatWriteable* write);
+void ICU4XTimeZoneFormatter_format_custom_time_zone(const ICU4XTimeZoneFormatter* self, const ICU4XCustomTimeZone* value, DiplomatWrite* write);
 
-diplomat_result_void_ICU4XError ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback(const ICU4XTimeZoneFormatter* self, const ICU4XCustomTimeZone* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XTimeZoneFormatter_format_custom_time_zone_no_fallback(const ICU4XTimeZoneFormatter* self, const ICU4XCustomTimeZone* value, DiplomatWrite* write);
 void ICU4XTimeZoneFormatter_destroy(ICU4XTimeZoneFormatter* self);
 
 #ifdef __cplusplus

@@ -63,7 +63,7 @@ pub mod ffi {
         pub fn format_time(
             &self,
             value: &ICU4XTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
@@ -74,7 +74,7 @@ pub mod ffi {
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
@@ -85,7 +85,7 @@ pub mod ffi {
         pub fn format_iso_datetime(
             &self,
             value: &ICU4XIsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
@@ -137,7 +137,7 @@ pub mod ffi {
         pub fn format_iso_date(
             &self,
             value: &ICU4XIsoDate,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = Date::new_from_iso(value.0, Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
@@ -152,7 +152,7 @@ pub mod ffi {
         pub fn format_iso_datetime(
             &self,
             value: &ICU4XIsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = DateTime::new_from_iso(value.0, Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
@@ -201,7 +201,7 @@ pub mod ffi {
         pub fn format_iso_datetime(
             &self,
             value: &ICU4XIsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = DateTime::new_from_iso(value.0, Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
@@ -241,7 +241,7 @@ pub mod ffi {
         pub fn format_date(
             &self,
             value: &ICU4XDate,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = self.0.format(&value.0)?.write_to(write);
             Ok(())
@@ -255,7 +255,7 @@ pub mod ffi {
         pub fn format_iso_date(
             &self,
             value: &ICU4XIsoDate,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let any = value.0.to_any();
             let _infallible = self.0.format(&any)?.write_to(write);
@@ -268,7 +268,7 @@ pub mod ffi {
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = self.0.format(&value.0)?.write_to(write);
             Ok(())
@@ -282,7 +282,7 @@ pub mod ffi {
         pub fn format_iso_datetime(
             &self,
             value: &ICU4XIsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let any = value.0.to_any();
             let _infallible = self.0.format(&any)?.write_to(write);
@@ -331,7 +331,7 @@ pub mod ffi {
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let _infallible = self.0.format(&value.0)?.write_to(write);
             Ok(())
@@ -349,7 +349,7 @@ pub mod ffi {
         pub fn format_iso_datetime(
             &self,
             value: &ICU4XIsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), ICU4XError> {
             let any = value.0.to_any();
             let _infallible = self.0.format(&any)?.write_to(write);

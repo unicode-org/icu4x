@@ -29,7 +29,7 @@ diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalForma
 
 diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
-void ICU4XFixedDecimalFormatter_format(const ICU4XFixedDecimalFormatter* self, const ICU4XFixedDecimal* value, DiplomatWriteable* write);
+void ICU4XFixedDecimalFormatter_format(const ICU4XFixedDecimalFormatter* self, const ICU4XFixedDecimal* value, DiplomatWrite* write);
 void ICU4XFixedDecimalFormatter_destroy(ICU4XFixedDecimalFormatter* self);
 
 #ifdef __cplusplus

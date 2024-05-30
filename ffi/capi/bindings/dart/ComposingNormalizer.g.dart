@@ -57,10 +57,10 @@ final class ComposingNormalizer implements ffi.Finalizable {
   String normalize(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    _ICU4XComposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final write = _Write();
+    _ICU4XComposingNormalizer_normalize(_ffi, sView.allocIn(temp), sView.length, write._ffi);
     temp.releaseAll();
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Check if a string is normalized
@@ -96,7 +96,7 @@ external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfkc(ffi.Pointer<ff
 @meta.ResourceIdentifier('ICU4XComposingNormalizer_normalize')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_normalize')
 // ignore: non_constant_identifier_names
-external void _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XComposingNormalizer_normalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XComposingNormalizer_is_normalized')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XComposingNormalizer_is_normalized')

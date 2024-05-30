@@ -42,7 +42,7 @@ class ICU4XBcp47ToIanaMapper {
    * 
    * See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapperBorrowed.html#method.bcp47_to_iana) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> get_to_writeable(const std::string_view value, W& write) const;
+  template<typename W> diplomat::result<std::monostate, ICU4XError> get_to_write(const std::string_view value, W& write) const;
 
   /**
    * Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
@@ -72,8 +72,8 @@ inline diplomat::result<ICU4XBcp47ToIanaMapper, ICU4XError> ICU4XBcp47ToIanaMapp
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBcp47ToIanaMapper::get_to_writeable(const std::string_view value, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBcp47ToIanaMapper::get_to_write(const std::string_view value, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XBcp47ToIanaMapper_get(this->inner.get(), value.data(), value.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
@@ -84,15 +84,15 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBc
   return diplomat_result_out_value;
 }
 inline diplomat::result<std::string, ICU4XError> ICU4XBcp47ToIanaMapper::get(const std::string_view value) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XBcp47ToIanaMapper_get(this->inner.get(), value.data(), value.size(), &diplomat_writeable_out);
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XBcp47ToIanaMapper_get(this->inner.get(), value.data(), value.size(), &diplomat_write_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<std::monostate>(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_write_string));
 }
 #endif

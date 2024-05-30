@@ -25,7 +25,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XLocaleDisplayNamesFormatter_ICU4XError ICU4XLocaleDisplayNamesFormatter_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptionsV1 options);
 
-void ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWriteable* write);
+void ICU4XLocaleDisplayNamesFormatter_of(const ICU4XLocaleDisplayNamesFormatter* self, const ICU4XLocale* locale, DiplomatWrite* write);
 void ICU4XLocaleDisplayNamesFormatter_destroy(ICU4XLocaleDisplayNamesFormatter* self);
 
 #ifdef __cplusplus
