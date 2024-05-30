@@ -9,12 +9,12 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_experimental::relativetime::provider::*;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
+use std::sync::OnceLock;
 
-pub(in crate::provider) static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> =
-    OnceCell::new();
+pub(in crate::provider) static DATAKEY_FILTERS: OnceLock<HashMap<DataKey, &'static str>> =
+    OnceLock::new();
 
 fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
     DATAKEY_FILTERS.get_or_init(|| {

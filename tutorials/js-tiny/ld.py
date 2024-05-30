@@ -32,7 +32,7 @@ def main():
         else:
             new_argv += [arg]
             is_export = False
-    result = subprocess.run(["lld-15"] + new_argv, stdout=sys.stdout, stderr=sys.stderr)
+    result = subprocess.run(["lld-16"] + new_argv, stdout=sys.stdout, stderr=sys.stderr)
     return result.returncode
 
 if __name__ == "__main__":

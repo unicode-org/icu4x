@@ -39,7 +39,6 @@ icu_locid = { workspace = true, features = ["std"] }
 icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
 log = { workspace = true }
 memchr = { workspace = true }
-once_cell = { workspace = true, features = ["std"] }
 rayon = { workspace = true, optional = true }
 writeable = { workspace = true }
 

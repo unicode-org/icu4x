@@ -11,9 +11,9 @@ use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions::unicode::{key, value};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::sync::OnceLock;
 
 mod neo;
 mod neo_skeleton;
@@ -22,9 +22,9 @@ mod skeletons;
 mod symbols;
 pub(in crate::provider) mod week_data;
 
-pub(in crate::provider) static SUPPORTED_CALS: OnceCell<
+pub(in crate::provider) static SUPPORTED_CALS: OnceLock<
     HashMap<icu_locid::extensions::unicode::Value, &'static str>,
-> = OnceCell::new();
+> = OnceLock::new();
 
 fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {

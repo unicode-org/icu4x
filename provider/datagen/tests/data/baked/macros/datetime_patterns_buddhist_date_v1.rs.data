@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_datetime_patterns_buddhist_date_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::BuddhistDatePatternV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::BuddhistDatePatternV1Marker>, icu_provider::DataError> {
                 static UND_X_M: <icu::datetime::provider::neo::BuddhistDatePatternV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::DatePatternV1 { pattern: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0 \x80\x10\x01\0\0 \x80 \x03\0\0 \x80@\x01") }, metadata: icu::datetime::pattern::runtime::PatternMetadata::from_time_granularity(icu::datetime::pattern::TimeGranularity::None) } };
@@ -33,7 +33,7 @@ macro_rules! __impl_datetime_patterns_buddhist_date_v1 {
 #[macro_export]
 macro_rules! __impliterable_datetime_patterns_buddhist_date_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::BuddhistDatePatternV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
                 Ok(["und-x-f", "und-x-l", "und-x-m", "und-x-s"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
