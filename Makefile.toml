@@ -58,8 +58,8 @@ description = "Run all tests for the CI 'check' job"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.67 --profile minimal
-exec --fail-on-error cargo +1.67 check --all-targets --all-features
+exec --fail-on-error rustup install 1.70 --profile minimal
+exec --fail-on-error cargo +1.70 check --all-targets --all-features
 '''
 
 [tasks.ci-job-test]
@@ -165,8 +165,8 @@ description = "Run all tests for the CI 'msrv-features-1' job"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.67 --profile minimal
-exec --fail-on-error cargo +1.67 make check-all-features-chunked 1
+exec --fail-on-error rustup install 1.70 --profile minimal
+exec --fail-on-error cargo +1.70 make check-all-features-chunked 1
 '''
 
 [tasks.ci-job-msrv-features-2]
@@ -174,8 +174,8 @@ description = "Run all tests for the CI 'msrv-features-2' job"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.67 --profile minimal
-exec --fail-on-error cargo +1.67 make check-all-features-chunked 2
+exec --fail-on-error rustup install 1.70 --profile minimal
+exec --fail-on-error cargo +1.70 make check-all-features-chunked 2
 '''
 
 [tasks.ci-job-msrv-features-3]
@@ -183,8 +183,8 @@ description = "Run all tests for the CI 'msrv-features-3' job"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.67 --profile minimal
-exec --fail-on-error cargo +1.67 make check-all-features-chunked 3
+exec --fail-on-error rustup install 1.70 --profile minimal
+exec --fail-on-error cargo +1.70 make check-all-features-chunked 3
 '''
 
 [tasks.ci-job-msrv-features]

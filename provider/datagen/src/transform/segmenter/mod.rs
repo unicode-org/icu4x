@@ -19,6 +19,7 @@ use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::WordType;
 use std::fmt::Debug;
+use std::sync::OnceLock;
 use zerovec::ZeroVec;
 
 mod dictionary;
@@ -615,7 +616,7 @@ fn hardcoded_segmenter_provider() -> DatagenProvider {
         DatagenProvider,
     };
     // Singleton so that all instantiations share the same cache.
-    static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> = once_cell::sync::OnceCell::new();
+    static SINGLETON: OnceLock<DatagenProvider> = OnceLock::new();
     SINGLETON
         .get_or_init(|| {
             let mut provider = DatagenProvider::new_custom();

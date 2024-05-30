@@ -169,7 +169,6 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "num-complex",
     "num-integer",
     "num-traits",
-    "once_cell",
     "rawpointer",
     "regex-syntax",
     "ryu",
