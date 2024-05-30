@@ -22,8 +22,8 @@ use icu_experimental::units::ConversionError;
 #[cfg(feature = "icu_list")]
 use icu_list::ListError;
 use icu_locid::ParserError;
-#[cfg(feature = "icu_locid_transform")]
-use icu_locid_transform::LocaleTransformError;
+#[cfg(feature = "icu_locale")]
+use icu_locale::LocaleTransformError;
 #[cfg(feature = "icu_normalizer")]
 use icu_normalizer::NormalizerError;
 #[cfg(any(feature = "icu_plurals", feature = "icu_datetime"))]
@@ -53,7 +53,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::decimal::DecimalError, Enum, compact)]
     #[diplomat::rust_link(icu::list::ListError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
-    #[diplomat::rust_link(icu::locid_transform::LocaleTransformError, Enum, compact)]
+    #[diplomat::rust_link(icu::locale::LocaleTransformError, Enum, compact)]
     #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
     #[diplomat::rust_link(icu::plurals::PluralsError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
@@ -319,7 +319,7 @@ impl From<DecimalError> for ICU4XError {
     }
 }
 
-#[cfg(feature = "icu_locid_transform")]
+#[cfg(feature = "icu_locale")]
 impl From<LocaleTransformError> for ICU4XError {
     fn from(e: LocaleTransformError) -> Self {
         match e {

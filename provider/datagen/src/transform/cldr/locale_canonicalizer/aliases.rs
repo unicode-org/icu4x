@@ -4,11 +4,11 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
+use icu_locale::provider::*;
 use icu_locid::{
     subtags::{self, language},
     LanguageIdentifier,
 };
-use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;

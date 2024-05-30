@@ -314,7 +314,7 @@ jobs:
           - components/datetime
           # - components/experimental
           - components/locid
-          - components/locid_transform
+          - components/locale
           - components/plurals
           - components/segmenter
           - provider/blob

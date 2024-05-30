@@ -4,9 +4,9 @@ part of 'lib.g.dart';
 
 /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
 ///
-/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
+/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
 ///
-/// See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
+/// See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/struct.LocaleFallbackerWithConfig.html) for more information.
 final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
 
   /// Creates an iterator from a locale with each step of fallback.
   ///
-  /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+  /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
   LocaleFallbackIterator fallbackForLocale(Locale locale) {
     // This lifetime edge depends on lifetimes: 'a, 'b
     core.List<Object> aEdges = [this];

@@ -28,8 +28,8 @@ pub fn space_replacement<'lt>(
 
 #[cfg(test)]
 mod tests {
+    use icu_locale::LocaleExpander;
     use icu_locid::locale;
-    use icu_locid_transform::LocaleExpander;
 
     #[test]
     fn test_formatter_and_name_language_match() {

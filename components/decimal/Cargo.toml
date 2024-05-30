@@ -29,7 +29,7 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_decimal_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -50,7 +50,7 @@ std = ["fixed_decimal/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake"]
 bench = ["serde"]
-compiled_data = ["dep:icu_decimal_data", "dep:icu_locid_transform"]
+compiled_data = ["dep:icu_decimal_data", "dep:icu_locale"]
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

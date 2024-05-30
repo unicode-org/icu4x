@@ -169,7 +169,7 @@ pub use icu_decimal as decimal;
 pub use icu_list as list;
 
 #[doc(inline)]
-pub use icu_locid_transform as locid_transform;
+pub use icu_locale as locale;
 
 #[doc(inline)]
 pub use icu_locid as locid;

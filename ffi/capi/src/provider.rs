@@ -227,7 +227,7 @@ pub mod ffi {
             compact
         )]
         #[allow(unused_variables)] // feature-gated
-        #[cfg(feature = "icu_locid_transform")]
+        #[cfg(feature = "icu_locale")]
         pub fn enable_locale_fallback_with(
             &mut self,
             fallbacker: &crate::fallbacker::ffi::ICU4XLocaleFallbacker,

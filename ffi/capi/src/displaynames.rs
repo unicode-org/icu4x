@@ -5,7 +5,7 @@
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::locid::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     #[allow(unused_imports)] // feature-specific

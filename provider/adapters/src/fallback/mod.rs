@@ -5,11 +5,11 @@
 //! A data provider wrapper that performs locale fallback.
 
 use crate::helpers::result_is_err_missing_locale;
-use icu_locid_transform::provider::*;
+use icu_locale::provider::*;
 use icu_provider::prelude::*;
 
 #[doc(hidden)] // moved
-pub use icu_locid_transform::fallback::{
+pub use icu_locale::fallback::{
     LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,
 };
 #[doc(hidden)] // moved
@@ -126,7 +126,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// ```
     /// use icu_locid::langid;
-    /// use icu_locid_transform::LocaleFallbacker;
+    /// use icu_locale::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -143,7 +143,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///     .expect_err("No data for de-CH");
     ///
     /// // `HelloWorldProvider` does not contain fallback data,
-    /// // but we can construct a fallbacker with `icu_locid_transform`'s
+    /// // but we can construct a fallbacker with `icu_locale`'s
     /// // compiled data.
     /// let provider = LocaleFallbackProvider::new_with_fallbacker(
     ///     provider,

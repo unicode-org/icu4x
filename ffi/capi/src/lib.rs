@@ -61,7 +61,7 @@ extern crate libc_alloc;
 pub mod common;
 pub mod data_struct;
 pub mod errors;
-pub mod locale;
+pub mod locid;
 #[cfg(feature = "logging")]
 pub mod logging;
 #[macro_use]
@@ -102,7 +102,7 @@ pub mod datetime_formatter;
 pub mod decimal;
 #[cfg(feature = "experimental_components")]
 pub mod displaynames;
-#[cfg(feature = "icu_locid_transform")]
+#[cfg(feature = "icu_locale")]
 pub mod fallbacker;
 #[cfg(feature = "icu_decimal")]
 pub mod fixed_decimal;
@@ -110,10 +110,10 @@ pub mod fixed_decimal;
 pub mod iana_bcp47_mapper;
 #[cfg(feature = "icu_list")]
 pub mod list;
-#[cfg(feature = "icu_locid_transform")]
+#[cfg(feature = "icu_locale")]
+pub mod locale;
+#[cfg(feature = "icu_locale")]
 pub mod locale_directionality;
-#[cfg(feature = "icu_locid_transform")]
-pub mod locid_transform;
 #[cfg(feature = "icu_timezone")]
 pub mod metazone_calculator;
 #[cfg(feature = "icu_normalizer")]

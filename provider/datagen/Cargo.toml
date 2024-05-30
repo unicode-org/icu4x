@@ -58,7 +58,7 @@ icu_collator = { workspace = true }
 icu_datetime = { workspace = true }
 icu_decimal = { workspace = true }
 icu_list = { workspace = true }
-icu_locid_transform = { workspace = true }
+icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
@@ -117,7 +117,7 @@ provider = [
     "icu_decimal/datagen",
     "icu_experimental?/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_locid/serde",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
@@ -156,7 +156,7 @@ baked_exporter = [
     "icu_datetime/datagen",
     "icu_decimal/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",
@@ -173,7 +173,7 @@ blob_input = [
     "icu_datetime/datagen",
     "icu_decimal/datagen",
     "icu_list/datagen",
-    "icu_locid_transform/datagen",
+    "icu_locale/datagen",
     "icu_normalizer/datagen",
     "icu_plurals/datagen",
     "icu_properties/datagen",

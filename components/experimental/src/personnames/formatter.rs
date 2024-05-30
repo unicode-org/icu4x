@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locid_transform::LocaleFallbacker;
+use icu_locale::LocaleFallbacker;
 use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
 use icu_properties::script::ScriptWithExtensions;
 
@@ -46,10 +46,10 @@ impl PersonNamesFormatter {
         P: ?Sized
             + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>
-            + DataProvider<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>
-            + DataProvider<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>
+            + DataProvider<icu_locale::provider::LocaleFallbackLikelySubtagsV1Marker>
+            + DataProvider<icu_locale::provider::LocaleFallbackParentsV1Marker>
             // TODO: We shouldn't need the collation supplement here
-            + DataProvider<icu_locid_transform::provider::CollationFallbackSupplementV1Marker>,
+            + DataProvider<icu_locale::provider::CollationFallbackSupplementV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
         let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;

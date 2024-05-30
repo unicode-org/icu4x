@@ -55,7 +55,7 @@ mod tests;
 /// # // because that will rebuild the whole tree in proc macro mode
 /// # // when using cargo test --all-features --all-targets.
 /// # pub mod icu {
-/// #   pub mod locid_transform {
+/// #   pub mod locale {
 /// #     pub mod fallback {
 /// #       pub use icu_provider::_internal::LocaleFallbackPriority;
 /// #     }
@@ -63,7 +63,7 @@ mod tests;
 /// #   pub use icu_provider::_internal::locid;
 /// # }
 /// use icu::locid::extensions::unicode::key;
-/// use icu::locid_transform::fallback::*;
+/// use icu::locale::fallback::*;
 /// use icu_provider::yoke;
 /// use icu_provider::zerofrom;
 /// use icu_provider::KeyedDataMarker;

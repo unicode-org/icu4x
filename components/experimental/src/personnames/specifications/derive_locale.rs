@@ -103,8 +103,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use icu_locale::LocaleExpander;
     use icu_locid::locale;
-    use icu_locid_transform::LocaleExpander;
     use litemap::LiteMap;
 
     use super::{effective_locale, likely_person_name_locale};

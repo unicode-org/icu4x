@@ -28,7 +28,7 @@ struct ICU4XLocaleDirectionalityDeleter {
 };
 
 /**
- * See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html) for more information.
+ * See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html) for more information.
  */
 class ICU4XLocaleDirectionality {
  public:
@@ -36,29 +36,29 @@ class ICU4XLocaleDirectionality {
   /**
    * Construct a new ICU4XLocaleDirectionality instance
    * 
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleDirectionality, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Construct a new ICU4XLocaleDirectionality instance with a custom expander
    * 
-   * See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
+   * See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.new_with_expander) for more information.
    */
   static diplomat::result<ICU4XLocaleDirectionality, ICU4XError> create_with_expander(const ICU4XDataProvider& provider, const ICU4XLocaleExpander& expander);
 
   /**
-   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.get) for more information.
    */
   ICU4XLocaleDirection get(const ICU4XLocale& locale) const;
 
   /**
-   * See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
+   * See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.is_left_to_right) for more information.
    */
   bool is_left_to_right(const ICU4XLocale& locale) const;
 
   /**
-   * See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
+   * See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/localeocaleDirectionality.html#method.is_right_to_left) for more information.
    */
   bool is_right_to_left(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleDirectionality* AsFFI() const { return this->inner.get(); }

@@ -6,14 +6,14 @@
 pub mod ffi {
     use crate::{
         errors::ffi::ICU4XError,
-        locale::ffi::ICU4XLocale,
-        locid_transform::ffi::ICU4XLocaleExpander,
+        locid::ffi::ICU4XLocale,
+        locale::ffi::ICU4XLocaleExpander,
         provider::{ffi::ICU4XDataProvider, ICU4XDataProviderInner},
     };
     use alloc::boxed::Box;
-    use icu_locid_transform::{Direction, LocaleDirectionality};
+    use icu_locale::{Direction, LocaleDirectionality};
 
-    #[diplomat::rust_link(icu::locid_transform::Direction, Enum)]
+    #[diplomat::rust_link(icu::localeon, Enum)]
     pub enum ICU4XLocaleDirection {
         LeftToRight,
         RightToLeft,
@@ -21,12 +21,12 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::locid_transform::LocaleDirectionality, Struct)]
+    #[diplomat::rust_link(icu::localeirectionality, Struct)]
     pub struct ICU4XLocaleDirectionality(pub LocaleDirectionality);
 
     impl ICU4XLocaleDirectionality {
         /// Construct a new ICU4XLocaleDirectionality instance
-        #[diplomat::rust_link(icu::locid_transform::LocaleDirectionality::new, FnInStruct)]
+        #[diplomat::rust_link(icu::localeirectionality::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
@@ -40,10 +40,7 @@ pub mod ffi {
         }
 
         /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
-        #[diplomat::rust_link(
-            icu::locid_transform::LocaleDirectionality::new_with_expander,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::localeirectionality::new_with_expander, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_expander")]
         pub fn create_with_expander(
             provider: &ICU4XDataProvider,
@@ -75,7 +72,7 @@ pub mod ffi {
             })))
         }
 
-        #[diplomat::rust_link(icu::locid_transform::LocaleDirectionality::get, FnInStruct)]
+        #[diplomat::rust_link(icu::localeirectionality::get, FnInStruct)]
         #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, locale: &ICU4XLocale) -> ICU4XLocaleDirection {
             match self.0.get(&locale.0) {
@@ -85,18 +82,12 @@ pub mod ffi {
             }
         }
 
-        #[diplomat::rust_link(
-            icu::locid_transform::LocaleDirectionality::is_left_to_right,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::localeirectionality::is_left_to_right, FnInStruct)]
         pub fn is_left_to_right(&self, locale: &ICU4XLocale) -> bool {
             self.0.is_left_to_right(&locale.0)
         }
 
-        #[diplomat::rust_link(
-            icu::locid_transform::LocaleDirectionality::is_right_to_left,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::localeirectionality::is_right_to_left, FnInStruct)]
         pub fn is_right_to_left(&self, locale: &ICU4XLocale) -> bool {
             self.0.is_right_to_left(&locale.0)
         }

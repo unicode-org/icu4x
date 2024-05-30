@@ -4,8 +4,8 @@
 
 //! Options to define fallback behaviour.
 //!
-//! These options are consumed by the `LocaleFallbacker` in the `icu_locid_transforms` crate
-//! (or the `icu::locid_transforms` module), but are defined here because they are used by `DataKey`.
+//! These options are consumed by the `LocaleFallbacker` in the `icu_locales` crate
+//! (or the `icu::locales` module), but are defined here because they are used by `DataKey`.
 
 use icu_locid::extensions::unicode::Key;
 
@@ -63,9 +63,9 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu::locid::locale;
-    /// use icu::locid_transform::fallback::LocaleFallbackConfig;
-    /// use icu::locid_transform::fallback::LocaleFallbackPriority;
-    /// use icu::locid_transform::LocaleFallbacker;
+    /// use icu::locale::fallback::LocaleFallbackConfig;
+    /// use icu::locale::fallback::LocaleFallbackPriority;
+    /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
@@ -91,9 +91,9 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu::locid::locale;
-    /// use icu::locid_transform::fallback::LocaleFallbackConfig;
-    /// use icu::locid_transform::fallback::LocaleFallbackPriority;
-    /// use icu::locid_transform::LocaleFallbacker;
+    /// use icu::locale::fallback::LocaleFallbackConfig;
+    /// use icu::locale::fallback::LocaleFallbackPriority;
+    /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
@@ -121,8 +121,8 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu::locid::locale;
-    /// use icu::locid_transform::fallback::LocaleFallbackConfig;
-    /// use icu::locid_transform::LocaleFallbacker;
+    /// use icu::locale::fallback::LocaleFallbackConfig;
+    /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
@@ -156,10 +156,10 @@ pub struct LocaleFallbackConfig {
     ///
     /// ```
     /// use icu::locid::locale;
-    /// use icu::locid_transform::fallback::LocaleFallbackConfig;
-    /// use icu::locid_transform::fallback::LocaleFallbackPriority;
-    /// use icu::locid_transform::fallback::LocaleFallbackSupplement;
-    /// use icu::locid_transform::LocaleFallbacker;
+    /// use icu::locale::fallback::LocaleFallbackConfig;
+    /// use icu::locale::fallback::LocaleFallbackPriority;
+    /// use icu::locale::fallback::LocaleFallbackSupplement;
+    /// use icu::locale::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();

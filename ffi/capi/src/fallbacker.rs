@@ -5,34 +5,26 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_locid_transform::fallback::LocaleFallbackConfig;
-    use icu_locid_transform::fallback::LocaleFallbackIterator;
-    use icu_locid_transform::fallback::LocaleFallbackPriority;
-    use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
-    use icu_locid_transform::LocaleFallbacker;
+    use icu_locale::fallback::LocaleFallbackConfig;
+    use icu_locale::fallback::LocaleFallbackIterator;
+    use icu_locale::fallback::LocaleFallbackPriority;
+    use icu_locale::fallback::LocaleFallbackerWithConfig;
+    use icu_locale::LocaleFallbacker;
 
     use crate::{
-        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XError, locid::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
 
     /// An object that runs the ICU4X locale fallback algorithm.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker, Struct)]
-    #[diplomat::rust_link(
-        icu::locid_transform::fallback::LocaleFallbackerBorrowed,
-        Struct,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::locale::fallback::LocaleFallbacker, Struct)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackerBorrowed, Struct, hidden)]
     pub struct ICU4XLocaleFallbacker(pub LocaleFallbacker);
 
     /// Priority mode for the ICU4X fallback algorithm.
     #[diplomat::enum_convert(LocaleFallbackPriority, needs_wildcard)]
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackPriority, Enum)]
-    #[diplomat::rust_link(
-        icu::locid_transform::fallback::LocaleFallbackPriority::const_default,
-        FnInEnum,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackPriority, Enum)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackPriority::const_default, FnInEnum, hidden)]
     pub enum ICU4XLocaleFallbackPriority {
         Language = 0,
         Region = 1,
@@ -40,9 +32,9 @@ pub mod ffi {
     }
 
     /// What additional data is required to load when performing fallback.
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackSupplement, Enum)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackSupplement, Enum)]
     #[diplomat::rust_link(
-        icu::locid_transform::fallback::LocaleFallbackSupplement::const_default,
+        icu::localek::LocaleFallbackSupplement::const_default,
         FnInEnum,
         hidden
     )]
@@ -52,12 +44,8 @@ pub mod ffi {
     }
 
     /// Collection of configurations for the ICU4X fallback algorithm.
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackConfig, Struct)]
-    #[diplomat::rust_link(
-        icu::locid_transform::fallback::LocaleFallbackConfig::const_default,
-        FnInStruct,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackConfig, Struct)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackConfig::const_default, FnInStruct, hidden)]
     pub struct ICU4XLocaleFallbackConfig<'a> {
         /// Choice of priority mode.
         pub priority: ICU4XLocaleFallbackPriority,
@@ -69,18 +57,18 @@ pub mod ffi {
 
     /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker, Struct)]
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackerWithConfig, Struct)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbacker, Struct)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackerWithConfig, Struct)]
     pub struct ICU4XLocaleFallbackerWithConfig<'a>(pub LocaleFallbackerWithConfig<'a>);
 
     /// An iterator over the locale under fallback.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackIterator, Struct)]
+    #[diplomat::rust_link(icu::localek::LocaleFallbackIterator, Struct)]
     pub struct ICU4XLocaleFallbackIterator<'a>(pub LocaleFallbackIterator<'a, 'a>);
 
     impl ICU4XLocaleFallbacker {
         /// Creates a new `ICU4XLocaleFallbacker` from a data provider.
-        #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbacker::new, FnInStruct)]
+        #[diplomat::rust_link(icu::localek::LocaleFallbacker::new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
         pub fn create(
             provider: &ICU4XDataProvider,
@@ -94,22 +82,16 @@ pub mod ffi {
         }
 
         /// Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbacker::new_without_data,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::localek::LocaleFallbacker::new_without_data, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "without_data")]
         pub fn create_without_data() -> Box<ICU4XLocaleFallbacker> {
             Box::new(ICU4XLocaleFallbacker(LocaleFallbacker::new_without_data()))
         }
 
         /// Associates this `ICU4XLocaleFallbacker` with configuration options.
+        #[diplomat::rust_link(icu::localek::LocaleFallbacker::for_config, FnInStruct)]
         #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbacker::for_config,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbackerBorrowed::for_config,
+            icu::localek::LocaleFallbackerBorrowed::for_config,
             FnInStruct,
             hidden
         )]
@@ -125,17 +107,14 @@ pub mod ffi {
 
     impl<'a> ICU4XLocaleFallbackerWithConfig<'a> {
         /// Creates an iterator from a locale with each step of fallback.
+        #[diplomat::rust_link(icu::localek::LocaleFallbacker::fallback_for, FnInStruct)]
         #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbacker::fallback_for,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbackerBorrowed::fallback_for,
+            icu::localek::LocaleFallbackerBorrowed::fallback_for,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbackerWithConfig::fallback_for,
+            icu::localek::LocaleFallbackerWithConfig::fallback_for,
             FnInStruct,
             hidden
         )]
@@ -151,25 +130,15 @@ pub mod ffi {
 
     impl<'a> ICU4XLocaleFallbackIterator<'a> {
         /// Gets a snapshot of the current state of the locale.
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbackIterator::get,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbackIterator::take,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::localek::LocaleFallbackIterator::get, FnInStruct)]
+        #[diplomat::rust_link(icu::localek::LocaleFallbackIterator::take, FnInStruct, hidden)]
         #[diplomat::attr(*, disable)]
         pub fn get(&self) -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(self.0.get().clone().into_locale()))
         }
 
         /// Performs one step of the fallback algorithm, mutating the locale.
-        #[diplomat::rust_link(
-            icu::locid_transform::fallback::LocaleFallbackIterator::step,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::localek::LocaleFallbackIterator::step, FnInStruct)]
         #[diplomat::attr(*, disable)]
         pub fn step(&mut self) {
             self.0.step();
@@ -191,9 +160,7 @@ pub mod ffi {
     }
 }
 
-impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>>
-    for icu_locid_transform::fallback::LocaleFallbackConfig
-{
+impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>> for icu_locale::fallback::LocaleFallbackConfig {
     type Error = crate::errors::ffi::ICU4XError;
     fn try_from(other: ffi::ICU4XLocaleFallbackConfig) -> Result<Self, Self::Error> {
         let mut result = Self::default();
@@ -205,7 +172,7 @@ impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>>
         result.fallback_supplement = match other.fallback_supplement {
             ffi::ICU4XLocaleFallbackSupplement::None => None,
             ffi::ICU4XLocaleFallbackSupplement::Collation => {
-                Some(icu_locid_transform::fallback::LocaleFallbackSupplement::Collation)
+                Some(icu_locale::fallback::LocaleFallbackSupplement::Collation)
             }
         };
         Ok(result)

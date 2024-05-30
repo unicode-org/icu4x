@@ -33,7 +33,7 @@ serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 core_maths = { workspace = true, optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+icu_locale = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
