@@ -77,7 +77,7 @@ pub mod ffi {
 
         /// Set the language part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, setter = "language")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "language")]
         pub fn set_language(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.id.language = if bytes.is_empty() {
                 Language::UND
@@ -98,7 +98,7 @@ pub mod ffi {
 
         /// Set the region part of the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, setter = "region")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
         pub fn set_region(&mut self, bytes: &DiplomatStr) -> Result<(), ICU4XError> {
             self.0.id.region = if bytes.is_empty() {
                 None
