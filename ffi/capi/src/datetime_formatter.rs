@@ -60,11 +60,7 @@ pub mod ffi {
         /// Formats a [`ICU4XTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_string, FnInStruct, hidden)]
-        pub fn format_time(
-            &self,
-            value: &ICU4XTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        pub fn format_time(&self, value: &ICU4XTime, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
 
