@@ -30,7 +30,6 @@
 //! assert_eq!(persian_datetime.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
@@ -192,9 +191,9 @@ impl Calendar for Persian {
     fn debug_name(&self) -> &'static str {
         "Persian"
     }
-    // Missing any_calendar persian tests, the rest is completed
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Persian)
+
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
