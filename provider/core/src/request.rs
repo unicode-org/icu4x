@@ -117,7 +117,7 @@ pub struct DataRequestMetadata {
 pub struct DataLocale {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
-    aux: Option<AuxiliaryKeys>,
+    aux: Option<DataKeyAttributes>,
 }
 
 impl<'a> Default for &'a DataLocale {
@@ -195,7 +195,7 @@ impl From<Locale> for DataLocale {
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
-            aux: AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok(),
+            aux: DataKeyAttributes::try_from_iter(locale.extensions.private.iter().copied()).ok(),
         }
     }
 }
@@ -215,7 +215,7 @@ impl From<&Locale> for DataLocale {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
-            aux: AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok(),
+            aux: DataKeyAttributes::try_from_iter(locale.extensions.private.iter().copied()).ok(),
         }
     }
 }
@@ -634,7 +634,7 @@ impl DataLocale {
     /// Gets the auxiliary key for this [`DataLocale`].
     ///
     /// For more information and examples, see [`AuxiliaryKeys`].
-    pub fn get_aux(&self) -> Option<&AuxiliaryKeys> {
+    pub fn get_aux(&self) -> Option<&DataKeyAttributes> {
         self.aux.as_ref()
     }
 
@@ -650,7 +650,7 @@ impl DataLocale {
     /// Returns the previous auxiliary key if present.
     ///
     /// For more information and examples, see [`AuxiliaryKeys`].
-    pub fn set_aux(&mut self, value: AuxiliaryKeys) -> Option<AuxiliaryKeys> {
+    pub fn set_aux(&mut self, value: DataKeyAttributes) -> Option<DataKeyAttributes> {
         self.aux.replace(value)
     }
 
@@ -674,7 +674,7 @@ impl DataLocale {
     /// assert_writeable_eq!(data_locale, "ar-EG");
     /// assert_writeable_eq!(maybe_aux.unwrap(), "gbp");
     /// ```
-    pub fn remove_aux(&mut self) -> Option<AuxiliaryKeys> {
+    pub fn remove_aux(&mut self) -> Option<DataKeyAttributes> {
         self.aux.take()
     }
 }
@@ -744,19 +744,19 @@ impl DataLocale {
 ///
 /// [`Keywords`]: unicode_ext::Keywords
 #[derive(Debug, PartialEq, Clone, Eq, Hash, PartialOrd, Ord)]
-pub struct AuxiliaryKeys {
-    value: AuxiliaryKeysInner,
+pub struct DataKeyAttributes {
+    value: DataKeyAttributesInner,
 }
 
 #[derive(Clone)]
-enum AuxiliaryKeysInner {
+enum DataKeyAttributesInner {
     Boxed(alloc::boxed::Box<str>),
     Stack(TinyAsciiStr<23>),
     // NOTE: In the future, a `Static` variant could be added to allow `data_locale!("...")`
     // Static(&'static str),
 }
 
-impl Deref for AuxiliaryKeysInner {
+impl Deref for DataKeyAttributesInner {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
@@ -767,44 +767,44 @@ impl Deref for AuxiliaryKeysInner {
     }
 }
 
-impl PartialEq for AuxiliaryKeysInner {
+impl PartialEq for DataKeyAttributesInner {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.deref() == other.deref()
     }
 }
 
-impl Eq for AuxiliaryKeysInner {}
+impl Eq for DataKeyAttributesInner {}
 
-impl PartialOrd for AuxiliaryKeysInner {
+impl PartialOrd for DataKeyAttributesInner {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for AuxiliaryKeysInner {
+impl Ord for DataKeyAttributesInner {
     fn cmp(&self, other: &Self) -> Ordering {
         self.deref().cmp(other.deref())
     }
 }
 
-impl Debug for AuxiliaryKeysInner {
+impl Debug for DataKeyAttributesInner {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.deref().fmt(f)
     }
 }
 
-impl Hash for AuxiliaryKeysInner {
+impl Hash for DataKeyAttributesInner {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
     }
 }
 
-writeable::impl_display_with_writeable!(AuxiliaryKeys);
+writeable::impl_display_with_writeable!(DataKeyAttributes);
 
-impl Writeable for AuxiliaryKeys {
+impl Writeable for DataKeyAttributes {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         self.value.write_to(sink)
     }
@@ -816,7 +816,7 @@ impl Writeable for AuxiliaryKeys {
     }
 }
 
-impl FromStr for AuxiliaryKeys {
+impl FromStr for DataKeyAttributes {
     type Err = DataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -833,11 +833,11 @@ impl FromStr for AuxiliaryKeys {
             if s.len() <= 23 {
                 #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
                 Ok(Self {
-                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap()),
+                    value: DataKeyAttributesInner::Stack(s.parse().unwrap()),
                 })
             } else {
                 Ok(Self {
-                    value: AuxiliaryKeysInner::Boxed(s.into()),
+                    value: DataKeyAttributesInner::Boxed(s.into()),
                 })
             }
         } else {
@@ -848,7 +848,7 @@ impl FromStr for AuxiliaryKeys {
     }
 }
 
-impl AuxiliaryKeys {
+impl DataKeyAttributes {
     /// Creates an [`AuxiliaryKeys`] from an iterator of individual keys.
     ///
     /// # Examples
@@ -881,7 +881,7 @@ impl AuxiliaryKeys {
         let mut builder = String::new();
         for item in iter {
             if !builder.is_empty() {
-                builder.push(AuxiliaryKeys::separator());
+                builder.push(DataKeyAttributes::separator());
             }
             builder.push_str(item.as_str())
         }
@@ -891,11 +891,11 @@ impl AuxiliaryKeys {
         if builder.len() <= 23 {
             #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
             Ok(Self {
-                value: AuxiliaryKeysInner::Stack(builder.parse().unwrap()),
+                value: DataKeyAttributesInner::Stack(builder.parse().unwrap()),
             })
         } else {
             Ok(Self {
-                value: AuxiliaryKeysInner::Boxed(builder.into()),
+                value: DataKeyAttributesInner::Boxed(builder.into()),
             })
         }
     }
@@ -915,7 +915,7 @@ impl AuxiliaryKeys {
     /// ```
     pub const fn from_subtag(input: Subtag) -> Self {
         Self {
-            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
+            value: DataKeyAttributesInner::Stack(input.into_tinystr().resize()),
         }
     }
 
@@ -954,11 +954,11 @@ impl AuxiliaryKeys {
     }
 }
 
-impl From<Subtag> for AuxiliaryKeys {
+impl From<Subtag> for DataKeyAttributes {
     fn from(subtag: Subtag) -> Self {
         #[allow(clippy::expect_used)] // subtags definitely fit within auxiliary keys
         Self {
-            value: AuxiliaryKeysInner::Stack(
+            value: DataKeyAttributesInner::Stack(
                 TinyAsciiStr::from_bytes(subtag.as_str().as_bytes())
                     .expect("Subtags are capped to 8 elements, AuxiliaryKeys supports up to 23"),
             ),

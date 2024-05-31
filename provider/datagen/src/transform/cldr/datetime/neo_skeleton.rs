@@ -28,7 +28,7 @@ fn make_data_locale_with_tinystr_subtag(
 ) -> DataLocale {
     let mut data_locale = DataLocale::from(langid);
     let subtag = Subtag::try_from_raw(*subtag.all_bytes()).unwrap();
-    data_locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+    data_locale.set_aux(DataKeyAttributes::from_subtag(subtag));
     data_locale
 }
 

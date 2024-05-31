@@ -10,7 +10,7 @@ pub fn bcp47_to_data_locale(locale: &Locale) -> DataLocale {
     let mut data_locale = DataLocale::default();
     #[allow(clippy::unwrap_used)] // any BCP-47 locale is a valid aux key
     data_locale.set_aux(
-        AuxiliaryKeys::try_from_iter(
+        DataKeyAttributes::try_from_iter(
             locale
                 .write_to_string()
                 .split('-')
@@ -24,7 +24,7 @@ pub fn bcp47_to_data_locale(locale: &Locale) -> DataLocale {
 
 pub fn unparsed_bcp47_to_data_locale(dep: &str) -> Result<DataLocale, DataError> {
     let mut data_locale = DataLocale::default();
-    data_locale.set_aux(AuxiliaryKeys::try_from_iter(
+    data_locale.set_aux(DataKeyAttributes::try_from_iter(
         dep.split('-')
             .map(str::parse)
             // TODO: Bubble a potential subtag parse error out. Currently

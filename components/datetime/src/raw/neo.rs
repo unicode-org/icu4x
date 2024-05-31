@@ -83,7 +83,7 @@ impl DatePatternSelectionData {
         length: length::Date,
     ) -> Result<Self, DataError> {
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+        locale.set_aux(DataKeyAttributes::from_subtag(aux::pattern_subtag_for(
             match length {
                 length::Date::Full => aux::PatternLength::Full,
                 length::Date::Long => aux::PatternLength::Long,
@@ -119,7 +119,7 @@ impl DatePatternSelectionData {
                 return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+        locale.set_aux(DataKeyAttributes::from_subtag(subtag));
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -185,7 +185,7 @@ impl TimePatternSelectionData {
         P: DataProvider<TimePatternV1Marker> + ?Sized,
     {
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+        locale.set_aux(DataKeyAttributes::from_subtag(aux::pattern_subtag_for(
             match length {
                 length::Time::Full => aux::PatternLength::Full,
                 length::Time::Long => aux::PatternLength::Long,
@@ -221,7 +221,7 @@ impl TimePatternSelectionData {
                 return Err(DataError::custom("invalid neo skeleton components"));
             }
         };
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag));
+        locale.set_aux(DataKeyAttributes::from_subtag(subtag));
         let payload = provider
             .load_bound(DataRequest {
                 locale: &locale,
@@ -292,7 +292,7 @@ impl DateTimeGluePatternSelectionData {
         )?;
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+        locale.set_aux(DataKeyAttributes::from_subtag(aux::pattern_subtag_for(
             // According to UTS 35, use the date length here: use the glue
             // pattern "whose type matches the type of the date pattern"
             match date_length {
@@ -334,7 +334,7 @@ impl DateTimeGluePatternSelectionData {
             time_components,
         )?;
         let mut locale = locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::pattern_subtag_for(
+        locale.set_aux(DataKeyAttributes::from_subtag(aux::pattern_subtag_for(
             // According to UTS 35, use the date length here: use the glue
             // pattern "whose type matches the type of the date pattern"
             match length {
