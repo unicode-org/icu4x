@@ -1138,6 +1138,10 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                         return Ok(());
                     } else {
                         // Not a match: we must include this
+                        log::trace!(
+                            "Not a patch: {key}/{locale} (does not match {})",
+                            iter.get()
+                        );
                         break;
                     }
                 }

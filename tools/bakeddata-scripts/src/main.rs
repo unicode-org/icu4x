@@ -33,7 +33,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
 fn main() {
     simple_logger::SimpleLogger::new()
         .env()
-        .with_level(log::LevelFilter::Info)
+        .with_level(log::LevelFilter::Trace)
         .init()
         .unwrap();
 

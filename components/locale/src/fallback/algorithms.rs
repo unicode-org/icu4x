@@ -197,6 +197,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
     }
 
     fn get_explicit_parent(&self, locale: &DataLocale) -> Option<LanguageIdentifier> {
+        let mut locale = locale.clone();
+        locale.remove_aux();
         self.supplement
             .and_then(|supplement| {
                 supplement
