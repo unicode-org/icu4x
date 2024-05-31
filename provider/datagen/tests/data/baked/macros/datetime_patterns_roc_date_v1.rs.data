@@ -36,7 +36,7 @@ macro_rules! __impliterable_datetime_patterns_roc_date_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::RocDatePatternV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und-x-f", "und-x-l", "und-x-m", "und-x-s"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["und-x-f", "und-x-l", "und-x-m", "und-x-s"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

@@ -105,7 +105,7 @@ macro_rules! __impliterable_plurals_ranges_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["af", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["af", "ar", "bg", "ca", "en", "es", "et", "eu", "fa", "fi", "he", "ia", "ka", "lv", "mk", "no", "or", "pcm", "ro", "sd", "si", "sl", "sv", "und", "ur"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

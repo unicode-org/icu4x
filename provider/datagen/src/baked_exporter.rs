@@ -606,7 +606,7 @@ impl BakedExporter {
             let iterable_body = quote!(Ok(
                 [#(#keys),*]
                 .into_iter()
-                .filter_map(|s| DataRequest::legacy_decode(s))
+                .filter_map(icu_provider::DataRequest::legacy_decode)
                 .collect()
             ));
 

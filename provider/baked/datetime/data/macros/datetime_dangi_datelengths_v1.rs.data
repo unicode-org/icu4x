@@ -86,7 +86,7 @@ macro_rules! __impliterable_datetime_dangi_datelengths_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::DangiDateLengthsV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["br", "bs", "ca", "cs", "de", "en", "en-001", "en-AE", "en-CA", "en-CH", "es", "ff-Adlm", "fi", "fr", "fy", "gd", "hr", "id", "it", "ja", "kgp", "ko", "lb", "lo", "lt", "mn", "ms", "nl", "no", "pl", "pt", "pt-PT", "ru", "sc", "sv", "ta", "th", "ug", "und", "vi", "yrl", "yue", "yue-Hans", "zh", "zh-Hant", "zh-SG"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["br", "bs", "ca", "cs", "de", "en", "en-001", "en-AE", "en-CA", "en-CH", "es", "ff-Adlm", "fi", "fr", "fy", "gd", "hr", "id", "it", "ja", "kgp", "ko", "lb", "lo", "lt", "mn", "ms", "nl", "no", "pl", "pt", "pt-PT", "ru", "sc", "sv", "ta", "th", "ug", "und", "vi", "yrl", "yue", "yue-Hans", "zh", "zh-Hant", "zh-SG"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

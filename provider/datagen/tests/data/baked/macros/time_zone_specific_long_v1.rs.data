@@ -42,7 +42,7 @@ macro_rules! __impliterable_time_zone_specific_long_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["und"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

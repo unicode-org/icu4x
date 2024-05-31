@@ -35,7 +35,7 @@ macro_rules! __impliterable_datetime_skeletons_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::DateSkeletonPatternsV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und-u-ca-buddhist", "und-u-ca-chinese", "und-u-ca-coptic", "und-u-ca-dangi", "und-u-ca-ethiopic", "und-u-ca-gregory", "und-u-ca-hebrew", "und-u-ca-indian", "und-u-ca-islamic", "und-u-ca-islamicc", "und-u-ca-japanese", "und-u-ca-japanext", "und-u-ca-persian", "und-u-ca-roc", "und-u-ca-tbla", "und-u-ca-umalqura"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["und-u-ca-buddhist", "und-u-ca-chinese", "und-u-ca-coptic", "und-u-ca-dangi", "und-u-ca-ethiopic", "und-u-ca-gregory", "und-u-ca-hebrew", "und-u-ca-indian", "und-u-ca-islamic", "und-u-ca-islamicc", "und-u-ca-japanese", "und-u-ca-japanext", "und-u-ca-persian", "und-u-ca-roc", "und-u-ca-tbla", "und-u-ca-umalqura"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

@@ -75,7 +75,7 @@ macro_rules! __impliterable_collator_reord_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationReorderingV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["am", "ar", "as", "az", "be", "bg", "bn", "bs", "bs-Cyrl", "chr", "el", "fa", "gu", "he", "hi", "hr", "hy", "ja", "ka", "kk", "km", "kn", "ko", "kok", "ku", "ky", "lo", "mk", "ml", "mn", "mr", "my", "ne", "or", "pa", "ps", "ru", "si", "sr", "sr-Latn", "ta", "te", "th", "ug", "uk", "ur", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["am", "ar", "as", "az", "be", "bg", "bn", "bs", "bs-Cyrl", "chr", "el", "fa", "gu", "he", "hi", "hr", "hy", "ja", "ka", "kk", "km", "kn", "ko", "kok", "ku", "ky", "lo", "mk", "ml", "mn", "mr", "my", "ne", "or", "pa", "ps", "ru", "si", "sr", "sr-Latn", "ta", "te", "th", "ug", "uk", "ur", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

@@ -9,7 +9,6 @@ use icu_datagen::prelude::*;
 use icu_provider::datagen::ExportMarker;
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
-use writeable::Writeable;
 
 #[derive(Default)]
 pub struct TestingExporter(FrozenMap<(DataLocale, DataKeyAttributes), Vec<u8>>);

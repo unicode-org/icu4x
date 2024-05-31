@@ -69,7 +69,7 @@ macro_rules! __impliterable_plurals_ordinal_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::plurals::provider::OrdinalV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["as", "az", "be", "blo", "bn", "ca", "cy", "en", "fil", "fr", "ga", "gd", "gu", "hi", "hu", "hy", "it", "ka", "kk", "lij", "lo", "mk", "mr", "ms", "ne", "or", "ro", "sc", "sq", "sv", "tk", "uk", "und", "vec", "vi"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
+                Ok(["as", "az", "be", "blo", "bn", "ca", "cy", "en", "fil", "fr", "ga", "gd", "gu", "hi", "hu", "hy", "it", "ka", "kk", "lij", "lo", "mk", "mr", "ms", "ne", "or", "ro", "sc", "sq", "sv", "tk", "uk", "und", "vec", "vi"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };
