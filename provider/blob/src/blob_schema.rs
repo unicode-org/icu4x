@@ -100,15 +100,23 @@ impl<'data> BlobSchemaV1<'data> {
                 }
                 cursor
                     .get1_copied_by(|k| {
-                        let k = unsafe { core::str::from_utf8_unchecked(&k.0) };
-                        let mut iter = k.splitn(2, "-x-");
-                        #[allow(clippy::unwrap_used)] // split returns at least one item
-                        let l = iter.next().unwrap();
-                        let a = iter.next().unwrap_or("");
-                        req.locale
-                            .strict_cmp(l.as_bytes())
+                        struct A<'a>(&'a DataLocale, &'a DataKeyAttributes);
+                        impl writeable::Writeable for A<'_> {
+                            fn write_to<W: core::fmt::Write + ?Sized>(
+                                &self,
+                                sink: &mut W,
+                            ) -> core::fmt::Result {
+                                self.0.write_to(sink)?;
+                                if !self.1.is_empty() {
+                                    "-x-".write_to(sink)?;
+                                    self.1.write_to(sink)?;
+                                }
+                                Ok(())
+                            }
+                        }
+                        A(req.locale, req.key_attributes)
+                            .writeable_cmp_bytes(&k.0)
                             .reverse()
-                            .then_with(|| a.cmp(req.key_attributes))
                     })
                     .ok_or(DataErrorKind::MissingLocale)
             })

@@ -31,12 +31,13 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
                 key_attributes: &key_attributes,
                 ..Default::default()
             })
-            .unwrap()
+            .expect(&format!("{locale}/{}", &key_attributes as &str))
             .take_payload()
             .unwrap();
         let expected_result = hello_world_provider
             .load(DataRequest {
                 locale: &locale,
+                key_attributes: &key_attributes,
                 ..Default::default()
             })
             .unwrap()
