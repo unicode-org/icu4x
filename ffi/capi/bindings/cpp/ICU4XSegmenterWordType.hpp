@@ -1,25 +1,35 @@
 #ifndef ICU4XSegmenterWordType_HPP
 #define ICU4XSegmenterWordType_HPP
+
+#include "ICU4XSegmenterWordType.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XSegmenterWordType.h"
 
 
+inline capi::ICU4XSegmenterWordType ICU4XSegmenterWordType::AsFFI() const {
+  return static_cast<capi::ICU4XSegmenterWordType>(value);
+}
 
-/**
- * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
- */
-enum struct ICU4XSegmenterWordType {
-  None = 0,
-  Number = 1,
-  Letter = 2,
-};
+inline ICU4XSegmenterWordType ICU4XSegmenterWordType::FromFFI(capi::ICU4XSegmenterWordType c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XSegmenterWordType_None:
+    case capi::ICU4XSegmenterWordType_Number:
+    case capi::ICU4XSegmenterWordType_Letter:
+      return static_cast<ICU4XSegmenterWordType::Value>(c_enum);
+    default:
+      abort();
+  }
+}
 
-#endif
+inline bool ICU4XSegmenterWordType::is_word_like() {
+  auto result = capi::ICU4XSegmenterWordType_is_word_like(this->AsFFI());
+  return result;
+}
+#endif // ICU4XSegmenterWordType_HPP

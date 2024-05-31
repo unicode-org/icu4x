@@ -1,35 +1,26 @@
 #ifndef ICU4XPluralCategories_H
 #define ICU4XPluralCategories_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-namespace capi {
-#endif
+#include "ICU4XPluralCategories.d.h"
 
-typedef struct ICU4XPluralCategories {
-    bool zero;
-    bool one;
-    bool two;
-    bool few;
-    bool many;
-    bool other;
-} ICU4XPluralCategories;
-#ifdef __cplusplus
-} // namespace capi
-#endif
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
-#endif
+#endif // __cplusplus
 
-void ICU4XPluralCategories_destroy(ICU4XPluralCategories* self);
+
+// No Content
+
 
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // ICU4XPluralCategories_H

@@ -1,28 +1,31 @@
 #ifndef ICU4XRoundingIncrement_HPP
 #define ICU4XRoundingIncrement_HPP
+
+#include "ICU4XRoundingIncrement.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XRoundingIncrement.h"
 
 
+inline capi::ICU4XRoundingIncrement ICU4XRoundingIncrement::AsFFI() const {
+  return static_cast<capi::ICU4XRoundingIncrement>(value);
+}
 
-/**
- * Increment used in a rounding operation.
- * 
- * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
- */
-enum struct ICU4XRoundingIncrement {
-  MultiplesOf1 = 0,
-  MultiplesOf2 = 1,
-  MultiplesOf5 = 2,
-  MultiplesOf25 = 3,
-};
-
-#endif
+inline ICU4XRoundingIncrement ICU4XRoundingIncrement::FromFFI(capi::ICU4XRoundingIncrement c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XRoundingIncrement_MultiplesOf1:
+    case capi::ICU4XRoundingIncrement_MultiplesOf2:
+    case capi::ICU4XRoundingIncrement_MultiplesOf5:
+    case capi::ICU4XRoundingIncrement_MultiplesOf25:
+      return static_cast<ICU4XRoundingIncrement::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XRoundingIncrement_HPP

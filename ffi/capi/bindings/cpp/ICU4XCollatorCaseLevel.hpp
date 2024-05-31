@@ -1,25 +1,30 @@
 #ifndef ICU4XCollatorCaseLevel_HPP
 #define ICU4XCollatorCaseLevel_HPP
+
+#include "ICU4XCollatorCaseLevel.d.hpp"
+
+#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <algorithm>
 #include <memory>
-#include <variant>
 #include <optional>
 #include "diplomat_runtime.hpp"
-
 #include "ICU4XCollatorCaseLevel.h"
 
 
+inline capi::ICU4XCollatorCaseLevel ICU4XCollatorCaseLevel::AsFFI() const {
+  return static_cast<capi::ICU4XCollatorCaseLevel>(value);
+}
 
-/**
- * See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/enum.CaseLevel.html) for more information.
- */
-enum struct ICU4XCollatorCaseLevel {
-  Auto = 0,
-  Off = 1,
-  On = 2,
-};
-
-#endif
+inline ICU4XCollatorCaseLevel ICU4XCollatorCaseLevel::FromFFI(capi::ICU4XCollatorCaseLevel c_enum) {
+  switch (c_enum) {
+    case capi::ICU4XCollatorCaseLevel_Auto:
+    case capi::ICU4XCollatorCaseLevel_Off:
+    case capi::ICU4XCollatorCaseLevel_On:
+      return static_cast<ICU4XCollatorCaseLevel::Value>(c_enum);
+    default:
+      abort();
+  }
+}
+#endif // ICU4XCollatorCaseLevel_HPP

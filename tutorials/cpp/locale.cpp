@@ -32,74 +32,74 @@ static bool test_string(std::string_view actualString,
 
 int main() {
   ICU4XLogger::init_simple_logger();
-  ICU4XLocale locale = ICU4XLocale::create_from_string("es-ES").ok().value();
-  if (!test_locale(locale, "es-ES", "Created a locale")) {
+  std::unique_ptr<ICU4XLocale> locale = ICU4XLocale::create_from_string("es-ES").ok().value();
+  if (!test_locale(*locale.get(), "es-ES", "Created a locale")) {
     return 1;
   }
 
-  locale.set_language("en").ok();
-  if (!test_locale(locale, "en-ES", "The language can be updated")) {
+  locale->set_language("en").ok();
+  if (!test_locale(*locale.get(), "en-ES", "The language can be updated")) {
     return 1;
   }
 
-  locale.set_region("US").ok();
-  if (!test_locale(locale, "en-US", "The region can be updated")) {
+  locale->set_region("US").ok();
+  if (!test_locale(*locale.get(), "en-US", "The region can be updated")) {
     return 1;
   }
 
-  locale.set_script("Latn").ok();
-  if (!test_locale(locale, "en-Latn-US", "The script can be updated")) {
+  locale->set_script("Latn").ok();
+  if (!test_locale(*locale.get(), "en-Latn-US", "The script can be updated")) {
     return 1;
   }
 
-  if (!test_string(locale.language(), "en",
+  if (!test_string(locale->language(), "en",
                    "The language can be accessed")) {
     return 1;
   }
-  if (!test_string(locale.region().value(), "US",
+  if (!test_string(locale->region().value(), "US",
                    "The region can be accessed")) {
     return 1;
   }
-  if (!test_string(locale.script().value(), "Latn",
+  if (!test_string(locale->script().value(), "Latn",
                    "The script can be accessed")) {
     return 1;
   }
 
-  locale.set_language("").ok();
-  if (!test_locale(locale, "und-Latn-US", "Removed the language")) {
+  locale->set_language("").ok();
+  if (!test_locale(*locale.get(), "und-Latn-US", "Removed the language")) {
     return 1;
   }
 
-  locale.set_region("").ok();
-  if (locale.region().has_value()) {
+  locale->set_region("").ok();
+  if (locale->region().has_value()) {
     std::cout << "Expected region to be an err" << std::endl;
     return 1;
   }
-  if (!test_locale(locale, "und-Latn", "Removed the region")) {
+  if (!test_locale(*locale.get(), "und-Latn", "Removed the region")) {
     return 1;
   }
 
-  locale.set_script("").ok();
-  if (locale.script().has_value()) {
+  locale->set_script("").ok();
+  if (locale->script().has_value()) {
     std::cout << "Expected script to be an err" << std::endl;
     return 1;
   }
-  if (!test_locale(locale, "und", "Removed the script")) {
+  if (!test_locale(*locale.get(), "und", "Removed the script")) {
     return 1;
   }
 
   locale = ICU4XLocale::create_from_string("en-US-u-hc-h12").ok().value();
-  if (!test_string(locale.get_unicode_extension("hc").value(), "h12",
+  if (!test_string(locale->get_unicode_extension("hc").value(), "h12",
                    "The unicode extension can be accessed")) {
     return 1;
   }
-  if (!test_string(locale.basename(), "en-US",
+  if (!test_string(locale->basename(), "en-US",
                    "The basename can be accessed")) {
     return 1;
   }
 
   locale = ICU4XLocale::create_und();
-  if (!test_locale(locale, "und", "Created an undefined locale")) {
+  if (!test_locale(*locale.get(), "und", "Created an undefined locale")) {
     return 1;
   }
 
