@@ -43,13 +43,13 @@ impl TimeFormatter {
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeError> {
         let patterns = provider::date_time::pattern_for_time_length(
             &crate::provider::Baked,
-            locale,
+            &locale.id,
             length,
             preferences,
         )?;
@@ -61,7 +61,7 @@ impl TimeFormatter {
             Some(
                 crate::provider::Baked
                     .load(DataRequest {
-                        locale,
+                        locale: &(&locale.id).into(),
                         ..Default::default()
                     })?
                     .take_payload()?,
@@ -82,7 +82,7 @@ impl TimeFormatter {
     #[inline(never)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeError>
@@ -92,8 +92,12 @@ impl TimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        let patterns =
-            provider::date_time::pattern_for_time_length(provider, locale, length, preferences)?;
+        let patterns = provider::date_time::pattern_for_time_length(
+            provider,
+            &locale.id,
+            length,
+            preferences,
+        )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
@@ -102,7 +106,7 @@ impl TimeFormatter {
             Some(
                 provider
                     .load(DataRequest {
-                        locale,
+                        locale: &(&locale.id).into(),
                         ..Default::default()
                     })?
                     .take_payload()?,
@@ -171,7 +175,7 @@ impl DateFormatter {
     pub fn try_new(
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, DateTimeError> {
         let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
@@ -221,7 +225,7 @@ impl DateFormatter {
         provider: &D,
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, DateTimeError>
     where
@@ -243,7 +247,7 @@ impl DateFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
+                        locale: &(&locale.id).into(),
                         ..Default::default()
                     },
                 )?
@@ -381,13 +385,13 @@ impl DateTimeFormatter {
     pub fn try_new(
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, DateTimeError> {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            locale: &(&locale.id).into(),
             ..Default::default()
         };
 
@@ -436,7 +440,7 @@ impl DateTimeFormatter {
         provider: &D,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<TimeSymbolsV1Marker>
@@ -450,7 +454,7 @@ impl DateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            locale: &(&locale.id).into(),
             ..Default::default()
         };
 
@@ -459,7 +463,7 @@ impl DateTimeFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
+                        locale: &(&locale.id).into(),
                         ..Default::default()
                     },
                 )?

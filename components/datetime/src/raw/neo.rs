@@ -78,12 +78,12 @@ pub(crate) enum DateTimePatternDataBorrowed<'a> {
 impl DatePatternSelectionData {
     pub(crate) fn try_new_with_length(
         provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     match length {
                         length::Date::Full => key_attrs::PatternLength::Full,
@@ -102,13 +102,13 @@ impl DatePatternSelectionData {
 
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
         components: NeoDateComponents,
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
@@ -165,7 +165,7 @@ impl<'a> DatePatternDataBorrowed<'a> {
 impl TimePatternSelectionData {
     pub(crate) fn try_new_with_length<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, DataError>
     where
@@ -173,7 +173,7 @@ impl TimePatternSelectionData {
     {
         let payload = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     match length {
                         length::Time::Full => key_attrs::PatternLength::Full,
@@ -192,13 +192,13 @@ impl TimePatternSelectionData {
 
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 key_attributes: &DataKeyAttributes::from_tinystr(components.id_str()),
                 ..Default::default()
             })?
@@ -253,7 +253,7 @@ impl DateTimeGluePatternSelectionData {
     pub(crate) fn try_new_with_lengths<P>(
         date_pattern_provider: &(impl BoundDataProvider<DatePatternV1Marker> + ?Sized),
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, DataError>
@@ -268,7 +268,7 @@ impl DateTimeGluePatternSelectionData {
         let time = TimePatternSelectionData::try_new_with_length(provider, locale, time_length)?;
         let glue = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     // According to UTS 35, use the date length here: use the glue
                     // pattern "whose type matches the type of the date pattern"
@@ -290,7 +290,7 @@ impl DateTimeGluePatternSelectionData {
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
         day_components: NeoDayComponents,
         time_components: NeoTimeComponents,
@@ -309,7 +309,7 @@ impl DateTimeGluePatternSelectionData {
         )?;
         let glue = glue_provider
             .load_bound(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::pattern_key_attr_for(
                     // According to UTS 35, use the date length here: use the glue
                     // pattern "whose type matches the type of the date pattern"
@@ -340,7 +340,7 @@ impl DateTimePatternSelectionData {
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<DateTimePatternV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
         components: NeoComponents,
     ) -> Result<Self, DataError> {

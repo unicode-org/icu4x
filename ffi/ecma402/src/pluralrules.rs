@@ -245,7 +245,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     {
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
-        let rep = ipr::PluralRules::try_new(&crate::DataLocale::from_ecma_locale(l), rule_type)?;
+        let rep = ipr::PluralRules::try_new(&crate::Locale::from_ecma_locale(l), rule_type)?;
         Ok(Self { opts, rep })
     }
 

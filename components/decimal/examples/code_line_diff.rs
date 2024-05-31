@@ -24,7 +24,7 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), Default::default())
+    let fdf = FixedDecimalFormatter::try_new(&locale!("bn"), Default::default())
         .expect("locale should be present");
 
     for (removed, added) in LINES_REMOVED_ADDED {

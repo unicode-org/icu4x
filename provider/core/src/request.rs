@@ -11,7 +11,7 @@ use core::hash::Hash;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
 use icu_locale_core::subtags::{Language, Region, Script, Variants};
-use icu_locale_core::{LanguageIdentifier, Locale};
+use icu_locale_core::LanguageIdentifier;
 use writeable::{LengthHint, Writeable};
 
 use alloc::string::String;
@@ -214,15 +214,6 @@ impl From<LanguageIdentifier> for DataLocale {
     }
 }
 
-impl From<Locale> for DataLocale {
-    fn from(locale: Locale) -> Self {
-        Self {
-            langid: locale.id,
-            keywords: locale.extensions.unicode.keywords,
-        }
-    }
-}
-
 impl From<&LanguageIdentifier> for DataLocale {
     fn from(langid: &LanguageIdentifier) -> Self {
         Self {
@@ -232,19 +223,10 @@ impl From<&LanguageIdentifier> for DataLocale {
     }
 }
 
-impl From<&Locale> for DataLocale {
-    fn from(locale: &Locale) -> Self {
-        Self {
-            langid: locale.id.clone(),
-            keywords: locale.extensions.unicode.keywords.clone(),
-        }
-    }
-}
-
 impl FromStr for DataLocale {
     type Err = DataError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let locale = Locale::from_str(s).map_err(|e| {
+        let locale = LanguageIdentifier::from_str(s).map_err(|e| {
             DataErrorKind::KeyLocaleSyntax
                 .into_error()
                 .with_display_context(s)
@@ -471,38 +453,6 @@ impl DataLocale {
     #[inline]
     pub fn set_langid(&mut self, lid: LanguageIdentifier) {
         self.langid = lid;
-    }
-
-    /// Converts this [`DataLocale`] into a [`Locale`].
-    ///
-    /// See also [`DataLocale::get_langid()`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::{
-    ///     langid, locale,
-    ///     subtags::{language, region},
-    /// };
-    /// use icu_provider::prelude::*;
-    ///
-    /// let locale: DataLocale = locale!("it-IT-u-ca-coptic").into();
-    ///
-    /// assert_eq!(locale.get_langid(), langid!("it-IT"));
-    /// assert_eq!(locale.language(), language!("it"));
-    /// assert_eq!(locale.script(), None);
-    /// assert_eq!(locale.region(), Some(region!("IT")));
-    ///
-    /// let locale = locale.into_locale();
-    /// assert_eq!(locale, locale!("it-IT-u-ca-coptic"));
-    /// ```
-    pub fn into_locale(self) -> Locale {
-        let mut loc = Locale {
-            id: self.langid,
-            ..Default::default()
-        };
-        loc.extensions.unicode.keywords = self.keywords;
-        loc
     }
 
     /// Returns the [`Language`] for this [`DataLocale`].

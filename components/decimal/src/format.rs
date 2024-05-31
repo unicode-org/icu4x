@@ -74,8 +74,7 @@ mod tests {
 
     #[test]
     pub fn test_es_mx() {
-        let locale = locale!("es-MX").into();
-        let fmt = FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = FixedDecimalFormatter::try_new(&locale!("es-MX"), Default::default()).unwrap();
         let fd = "12345.67".parse().unwrap();
         assert_writeable_eq!(fmt.format(&fd), "12,345.67");
     }

@@ -37,10 +37,7 @@ use icu_datetime::{
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locale_core::{
-    extensions::unicode::{key, value},
-    locale, LanguageIdentifier, Locale,
-};
+use icu_locale_core::{locale, Locale};
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
@@ -269,17 +266,17 @@ fn assert_fixture_element<A>(
     #[cfg(feature = "experimental")]
     let (dtf, any_dtf) = {
         (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(&locale.into(), options)
+            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(locale, options)
                 .expect(description),
-            DateTimeFormatter::try_new_experimental(&locale.into(), options).expect(description),
+            DateTimeFormatter::try_new_experimental(locale, options).expect(description),
         )
     };
     #[cfg(not(feature = "experimental"))]
     let (dtf, any_dtf) = {
         (
-            TypedDateTimeFormatter::<A::Calendar>::try_new(&locale.into(), options.clone())
+            TypedDateTimeFormatter::<A::Calendar>::try_new(locale, options.clone())
                 .expect(description),
-            DateTimeFormatter::try_new(&locale.into(), options.clone()).expect(description),
+            DateTimeFormatter::try_new(locale, options.clone()).expect(description),
         )
     };
 
@@ -301,25 +298,21 @@ fn assert_fixture_element<A>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length(
-                &locale.into(),
-                bag.date.unwrap(),
-            )
-            .unwrap();
-            let tf = TimeFormatter::try_new_with_length(&locale.into(), bag.time.unwrap()).unwrap();
+            let df =
+                TypedDateFormatter::<A::Calendar>::try_new_with_length(locale, bag.date.unwrap())
+                    .unwrap();
+            let tf = TimeFormatter::try_new_with_length(locale, bag.time.unwrap()).unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length(
-                &locale.into(),
-                bag.date.unwrap(),
-            )
-            .unwrap();
+            let df =
+                TypedDateFormatter::<A::Calendar>::try_new_with_length(locale, bag.date.unwrap())
+                    .unwrap();
 
             assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_with_length(&locale.into(), bag.time.unwrap()).unwrap();
+            let tf = TimeFormatter::try_new_with_length(locale, bag.time.unwrap()).unwrap();
 
             assert_writeable_eq!(tf.format(input_value), output_value, "{}", description);
         }
@@ -352,11 +345,11 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let locale: Locale = locale.parse().unwrap();
+            let locale = locale.parse().unwrap();
             #[cfg(feature = "experimental")]
             let dtf = {
                 TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
-                    &locale.into(),
+                    &locale,
                     options,
                     TimeZoneFormatterOptions::default(),
                 )
@@ -365,7 +358,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
             #[cfg(not(feature = "experimental"))]
             let dtf = {
                 TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-                    &locale.into(),
+                    &locale,
                     options.clone(),
                     TimeZoneFormatterOptions::default(),
                 )
@@ -388,15 +381,10 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .0
     {
-        let mut locale: Locale = test.locale.parse().unwrap();
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), value!("gregory"));
-        let mut data_locale = DataLocale::from(&locale);
+        let locale: Locale = test.locale.parse().unwrap();
         let req = DataRequest {
-            locale: &data_locale,
+            locale: &(&locale.id).into(),
+            key_attributes: &DataKeyAttributes::from_tinystr(tinystr!(8, "gregory")),
             ..Default::default()
         };
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
@@ -440,10 +428,9 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        data_locale.retain_unicode_ext(|_| false);
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
-                locale: &data_locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })
             .unwrap()
@@ -486,7 +473,7 @@ fn test_dayperiod_patterns() {
                         ]);
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
                             &local_provider.as_downcasting(),
-                            &data_locale,
+                            &locale,
                             Default::default(),
                         )
                         .unwrap();
@@ -515,7 +502,7 @@ fn test_time_zone_format_configs() {
             .unwrap()
             .0
     {
-        let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
+        let locale = test.locale.parse().unwrap();
         let mut config = test.config;
         let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
@@ -531,7 +518,7 @@ fn test_time_zone_format_configs() {
             for &config_input in configs {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let mut tzf =
-                        TimeZoneFormatter::try_new(&data_locale, fallback_format.into()).unwrap();
+                        TimeZoneFormatter::try_new(&locale, fallback_format.into()).unwrap();
                     config_input.set_on_formatter(&mut tzf).unwrap();
                     assert_writeable_eq!(
                         tzf.format(&time_zone),
@@ -542,7 +529,7 @@ fn test_time_zone_format_configs() {
                     config: `{:?}`,\n\
                     fallback: `{:?}`\n
                     ",
-                        data_locale,
+                        locale,
                         test.datetime,
                         config_input,
                         fallback_format
@@ -563,7 +550,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
+    let tzf = TimeZoneFormatter::try_new(&locale!("en"), Default::default()).unwrap();
     tzf.format_to_string(&time_zone);
 }
 
@@ -576,7 +563,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
+    let tzf = TimeZoneFormatter::try_new(&locale!("en"), Default::default()).unwrap();
     assert_writeable_eq!(tzf.format(&time_zone), "GMT+?");
 }
 
@@ -587,15 +574,10 @@ fn test_time_zone_patterns() {
             .unwrap()
             .0
     {
-        let mut locale: Locale = test.locale.parse().unwrap();
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), value!("gregory"));
-        let data_locale = DataLocale::from(&locale);
+        let locale: Locale = test.locale.parse().unwrap();
         let req = DataRequest {
-            locale: &data_locale,
+            locale: &(&locale.id).into(),
+            key_attributes: &DataKeyAttributes::from_tinystr(tinystr!(8, "gregory")),
             ..Default::default()
         };
         let mut config = test.config;
@@ -737,7 +719,7 @@ fn test_time_zone_patterns() {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
                         &local_provider.as_downcasting(),
-                        &data_locale,
+                        &locale,
                         Default::default(),
                         fallback_format.into(),
                     )
@@ -865,7 +847,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     length_bag.time = Some(Time::Full); // Full has timezone symbols
     let options = DateTimeFormatterOptions::Length(length_bag);
 
-    let result = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options);
+    let result = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en"), options);
 
     assert!(result.is_err());
 }

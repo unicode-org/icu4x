@@ -55,7 +55,7 @@ impl CurrencyFormatter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let fixed_decimal_formatter =
@@ -68,7 +68,7 @@ impl CurrencyFormatter {
                 })?;
         let essential = crate::provider::Baked
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -83,7 +83,7 @@ impl CurrencyFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
@@ -102,7 +102,7 @@ impl CurrencyFormatter {
         })?;
         let essential = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;

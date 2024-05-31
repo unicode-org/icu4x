@@ -134,7 +134,7 @@ pub mod ffi {
             locale: &'temp ICU4XLocale,
         ) -> Box<ICU4XLocaleFallbackIterator<'a>> {
             Box::new(ICU4XLocaleFallbackIterator(
-                self.0.fallback_for((&locale.0).into()),
+                self.0.fallback_for((&locale.0.id).into()),
             ))
         }
     }
@@ -149,7 +149,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(*, disable)]
         pub fn get(&self) -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(self.0.get().clone().into_locale()))
+            Box::new(ICU4XLocale(self.0.get().get_langid().clone().into()))
         }
 
         /// Performs one step of the fallback algorithm, mutating the locale.

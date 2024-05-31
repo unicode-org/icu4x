@@ -46,12 +46,12 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
             provider: &(impl DataProvider<$marker> + ?Sized),
-            locale: &DataLocale,
+            locale: &Locale,
             length: ListLength,
         ) -> Result<Self, ListError> {
             let data = provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?.cast();

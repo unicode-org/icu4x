@@ -214,13 +214,13 @@ fn test_de() {
 
     {
         let locale: Locale = "de-AT-u-co-phonebk".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         check_expectations(&collator, &left, &right, &expect_de_at);
     }
 
     {
         let locale: Locale = "de-DE-u-co-phonebk".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         check_expectations(&collator, &left, &right, &expect_de_de);
     }
 }
@@ -424,7 +424,7 @@ fn test_en() {
 fn test_en_bugs() {
     // Adapted from encoll.cpp in ICU4C
     let bugs = ["a", "A", "e", "E", "é", "è", "ê", "ë", "ea", "x"];
-    // let locale = locale!("en").into();
+    // let locale = locale!("en");
     let locale = Default::default(); // English uses the root collation
 
     let mut options = CollatorOptions::new();
@@ -469,7 +469,7 @@ fn test_ja_tertiary() {
         Ordering::Less,
         Ordering::Less, // Prolonged sound mark sorts BEFORE equivalent vowel
     ];
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Tertiary);
@@ -486,7 +486,7 @@ fn test_ja_base() {
     // Adapted from `CollationKanaTest::TestBase` in jacoll.cpp of ICU4C.
     let cases = ["カ", "カキ", "キ", "キキ"];
 
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Primary);
@@ -506,7 +506,7 @@ fn test_ja_plain_dakuten_handakuten() {
     // Adapted from `CollationKanaTest::TestPlainDakutenHandakuten` in jacoll.cpp of ICU4C.
     let cases = ["ハカ", "バカ", "ハキ", "バキ"];
 
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Secondary);
@@ -526,7 +526,7 @@ fn test_ja_small_large() {
     // Adapted from `CollationKanaTest::TestSmallLarge` in jacoll.cpp of ICU4C.
     let cases = ["ッハ", "ツハ", "ッバ", "ツバ"];
 
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Tertiary);
@@ -547,7 +547,7 @@ fn test_ja_hiragana_katakana() {
     // Adapted from `CollationKanaTest::TestKatakanaHiragana` in jacoll.cpp of ICU4C.
     let cases = ["あッ", "アッ", "あツ", "アツ"];
 
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Quaternary);
@@ -573,7 +573,7 @@ fn test_ja_hiragana_katakana_utf16() {
         &[0x30A2u16, 0x30C4u16],
     ];
 
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Quaternary);
@@ -606,7 +606,7 @@ fn test_ja_chooon_kigoo() {
         "キイア",
     ];
 
-    let locale = locale!("ja").into();
+    let locale = locale!("ja");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Quaternary);
@@ -631,15 +631,15 @@ fn test_region_fallback() {
     // There's no explicit fi-FI data.
     let locale: Locale = "fi-u-co-standard".parse().unwrap();
 
-    // let locale = locale!("fi-FI").into();
+    // let locale = locale!("fi-FI");
 
-    let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     assert_eq!(collator.compare("ä", "z"), Ordering::Greater);
 }
 
 #[test]
 fn test_reordering() {
-    let locale = locale!("bn").into();
+    let locale = locale!("bn");
 
     // অ is Bangla
     // ऄ is Devanagari
@@ -663,7 +663,7 @@ fn test_reordering() {
 #[test]
 fn test_vi() {
     {
-        let locale = locale!("vi").into();
+        let locale = locale!("vi");
         let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
 
         assert_eq!(collator.compare("a", "b"), Ordering::Less);
@@ -679,7 +679,7 @@ fn test_vi() {
     }
 
     {
-        let collator = Collator::try_new(Default::default(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
 
         assert_eq!(collator.compare("a", "b"), Ordering::Less);
         assert_eq!(collator.compare("a", "á"), Ordering::Less);
@@ -712,7 +712,7 @@ fn test_zh() {
         assert_eq!(collator.compare("不", "把"), Ordering::Less);
     }
     {
-        let locale = locale!("zh").into(); // Defaults to -u-co-pinyin
+        let locale = locale!("zh"); // Defaults to -u-co-pinyin
         let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
@@ -725,7 +725,7 @@ fn test_zh() {
     }
     {
         let locale: Locale = "zh-u-co-pinyin".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -737,7 +737,7 @@ fn test_zh() {
     }
     {
         let locale: Locale = "zh-u-co-gb2312".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -751,7 +751,7 @@ fn test_zh() {
     }
     {
         let locale: Locale = "zh-u-co-stroke".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
@@ -763,7 +763,7 @@ fn test_zh() {
     }
     {
         let locale: Locale = "zh-u-co-zhuyin".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
@@ -775,7 +775,7 @@ fn test_zh() {
     }
     {
         let locale: Locale = "zh-u-co-unihan".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Less);
         assert_eq!(collator.compare("佰", "a"), Ordering::Less);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Less);
@@ -787,7 +787,7 @@ fn test_zh() {
     }
     {
         let locale: Locale = "zh-u-co-big5han".parse().unwrap();
-        let collator = Collator::try_new(&locale.into(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -816,7 +816,7 @@ fn test_es_tertiary() {
         Ordering::Less,
         Ordering::Less,
     ];
-    let locale = locale!("es").into();
+    let locale = locale!("es");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Tertiary);
@@ -838,7 +838,7 @@ fn test_es_primary() {
         Ordering::Less,
         Ordering::Equal,
     ];
-    let locale = locale!("es").into();
+    let locale = locale!("es");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Primary);
@@ -857,7 +857,7 @@ fn test_el_secondary() {
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Secondary);
 
-    let collator = Collator::try_new(&locale.into(), options).unwrap();
+    let collator = Collator::try_new(&locale, options).unwrap();
     assert_eq!(collator.compare("ϔ", "Ϋ"), Ordering::Equal);
 }
 
@@ -867,7 +867,7 @@ fn test_th_dictionary() {
     let dict = include_str!("data/riwords.txt")
         .strip_prefix('\u{FEFF}')
         .unwrap();
-    let locale = locale!("th").into();
+    let locale = locale!("th");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Quaternary);
@@ -952,7 +952,7 @@ fn test_th_corner_cases() {
         Ordering::Less,
         Ordering::Less,
     ];
-    let locale = locale!("th").into();
+    let locale = locale!("th");
     {
         // TODO(#2013): Check why the commented-out cases fail
         let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
@@ -990,7 +990,7 @@ fn test_th_reordering() {
         Ordering::Equal,
         // Ordering::Equal,
     ];
-    let locale = locale!("th").into();
+    let locale = locale!("th");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Secondary);
@@ -1016,7 +1016,7 @@ fn test_tr_tertiary() {
         Ordering::Less,
         Ordering::Greater,
     ];
-    let locale = locale!("tr").into();
+    let locale = locale!("tr");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Tertiary);
@@ -1033,7 +1033,7 @@ fn test_tr_primary() {
     let left = ["üoid", "voıd", "idea"];
     let right = ["void", "void", "Idea"];
     let expectations = [Ordering::Less, Ordering::Less, Ordering::Greater];
-    let locale = locale!("tr").into();
+    let locale = locale!("tr");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Tertiary);
@@ -1068,7 +1068,7 @@ fn test_lt_tertiary() {
         Ordering::Equal,
         Ordering::Greater,
     ];
-    let locale = locale!("lt").into();
+    let locale = locale!("lt");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Tertiary);
@@ -1085,7 +1085,7 @@ fn test_lt_primary() {
     let left = ["ž"];
     let right = ["z"];
     let expectations = [Ordering::Greater];
-    let locale = locale!("lt").into();
+    let locale = locale!("lt");
 
     let mut options = CollatorOptions::new();
     options.strength = Some(Strength::Primary);
@@ -1121,7 +1121,7 @@ fn test_fi() {
         Ordering::Greater,
         Ordering::Equal,
     ];
-    let locale = locale!("fi").into();
+    let locale = locale!("fi");
     let mut options = CollatorOptions::new();
 
     options.strength = Some(Strength::Tertiary);
@@ -1164,7 +1164,7 @@ fn test_sv() {
         Ordering::Greater,
         Ordering::Equal,
     ];
-    let locale = locale!("sv").into();
+    let locale = locale!("sv");
     let mut options = CollatorOptions::new();
 
     options.strength = Some(Strength::Tertiary);
@@ -1182,7 +1182,7 @@ fn test_nb_nn_no() {
     let expected = &["y", "ü", "ø", "å"];
 
     // Test "no" macro language WITH fallback (should equal expected)
-    let locale = locale!("no").into();
+    let locale = locale!("no");
     let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
@@ -1191,7 +1191,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             }
         )
@@ -1202,7 +1202,7 @@ fn test_nb_nn_no() {
     );
 
     // Now "nb" should work
-    let locale = locale!("nb").into();
+    let locale = locale!("nb");
     let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
@@ -1211,7 +1211,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             }
         )
@@ -1222,7 +1222,7 @@ fn test_nb_nn_no() {
     );
 
     // And "nn" should work, too
-    let locale = locale!("nn").into();
+    let locale = locale!("nn");
     let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
@@ -1231,7 +1231,7 @@ fn test_nb_nn_no() {
         DataProvider::<CollationDataV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                locale: &locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             }
         )
@@ -1375,7 +1375,7 @@ fn test_cantillation() {
     options.strength = Some(Strength::Quaternary);
 
     {
-        let collator = Collator::try_new(&(&locale).into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         assert_eq!(
             collator.compare(
                 "\u{05D3}\u{05D7}\u{05D9}\u{05AD}",
@@ -1388,7 +1388,7 @@ fn test_cantillation() {
     options.strength = Some(Strength::Identical);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         assert_eq!(
             collator.compare(
                 "\u{05D3}\u{05D7}\u{05D9}\u{05AD}",
@@ -1407,7 +1407,7 @@ fn test_cantillation_utf8() {
     options.strength = Some(Strength::Quaternary);
 
     {
-        let collator = Collator::try_new(&(&locale).into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         assert_eq!(
             collator.compare_utf8(
                 "\u{05D3}\u{05D7}\u{05D9}\u{05AD}".as_bytes(),
@@ -1420,7 +1420,7 @@ fn test_cantillation_utf8() {
     options.strength = Some(Strength::Identical);
 
     {
-        let collator = Collator::try_new(&locale.into(), options).unwrap();
+        let collator = Collator::try_new(&locale, options).unwrap();
         assert_eq!(
             collator.compare(
                 "\u{05D3}\u{05D7}\u{05D9}\u{05AD}",
@@ -1547,7 +1547,7 @@ fn test_default_resolved_options() {
 
 #[test]
 fn test_data_resolved_options_th() {
-    let locale = locale!("th").into();
+    let locale = locale!("th");
     let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
@@ -1565,7 +1565,7 @@ fn test_data_resolved_options_th() {
 
 #[test]
 fn test_data_resolved_options_da() {
-    let locale = locale!("da").into();
+    let locale = locale!("da");
     let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
@@ -1582,7 +1582,7 @@ fn test_data_resolved_options_da() {
 
 #[test]
 fn test_data_resolved_options_fr_ca() {
-    let locale = locale!("fr-CA").into();
+    let locale = locale!("fr-CA");
     let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
@@ -1602,7 +1602,7 @@ fn test_data_resolved_options_fr_ca() {
 
 #[test]
 fn test_manual_and_data_resolved_options_fr_ca() {
-    let locale = locale!("fr-CA").into();
+    let locale = locale!("fr-CA");
 
     let mut options = CollatorOptions::new();
     options.case_first = Some(CaseFirst::UpperFirst);
@@ -1626,7 +1626,7 @@ fn test_manual_and_data_resolved_options_fr_ca() {
 
 #[test]
 fn test_manual_resolved_options_da() {
-    let locale = locale!("da").into();
+    let locale = locale!("da");
 
     let mut options = CollatorOptions::new();
     options.case_first = Some(CaseFirst::Off);

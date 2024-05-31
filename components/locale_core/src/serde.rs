@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::LanguageIdentifier;
+use crate::{LanguageIdentifier, Locale};
 use alloc::string::ToString;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
@@ -20,9 +20,9 @@ impl<'de> Deserialize<'de> for LanguageIdentifier {
     where
         D: Deserializer<'de>,
     {
-        struct LanguageIdentifierVisitor;
+        struct Visitor;
 
-        impl<'de> serde::de::Visitor<'de> for LanguageIdentifierVisitor {
+        impl<'de> serde::de::Visitor<'de> for Visitor {
             type Value = LanguageIdentifier;
 
             fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -33,12 +33,46 @@ impl<'de> Deserialize<'de> for LanguageIdentifier {
             where
                 E: serde::de::Error,
             {
-                s.parse::<LanguageIdentifier>()
-                    .map_err(serde::de::Error::custom)
+                s.parse().map_err(serde::de::Error::custom)
             }
         }
 
-        deserializer.deserialize_string(LanguageIdentifierVisitor)
+        deserializer.deserialize_string(Visitor)
+    }
+}
+
+impl Serialize for Locale {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for Locale {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct Visitor;
+
+        impl<'de> serde::de::Visitor<'de> for Visitor {
+            type Value = Locale;
+
+            fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                write!(formatter, "a valid Unicode Locale")
+            }
+
+            fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                s.parse().map_err(serde::de::Error::custom)
+            }
+        }
+
+        deserializer.deserialize_string(Visitor)
     }
 }
 

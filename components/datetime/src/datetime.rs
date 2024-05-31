@@ -86,10 +86,10 @@ impl TimeFormatter {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, DateTimeError> {
-        let preferences = Some(preferences::Bag::from_data_locale(locale));
+        let preferences = Some(preferences::Bag::from_locale(locale));
 
         Ok(Self(raw::TimeFormatter::try_new(
             locale,
@@ -116,7 +116,7 @@ impl TimeFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, DateTimeError>
     where
@@ -125,7 +125,7 @@ impl TimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        let preferences = Some(preferences::Bag::from_data_locale(locale));
+        let preferences = Some(preferences::Bag::from_locale(locale));
 
         Ok(Self(raw::TimeFormatter::try_new_unstable(
             provider,
@@ -286,21 +286,21 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// [`DateFormatter`]: crate::DateFormatter
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, DateTimeError>
+    pub fn try_new_with_length(locale: &Locale, length: length::Date) -> Result<Self, DateTimeError>
     where
         crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + icu_provider::DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>,
     {
         Ok(Self(
             raw::DateFormatter::try_new(
-                calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+                calendar::load_lengths_for_cldr_calendar::<C, _>(
+                    &crate::provider::Baked,
+                    &locale.id,
+                )?,
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                     )
                 },
                 locale,
@@ -328,7 +328,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, DateTimeError>
     where
@@ -342,8 +342,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
         Ok(Self(
             raw::DateFormatter::try_new_unstable(
                 provider,
-                calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
                 locale,
                 length,
             )?,
@@ -532,7 +532,7 @@ where {
     /// [data provider]: icu_provider
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -541,7 +541,7 @@ where {
     {
         let patterns = PatternSelector::for_options(
             &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, &locale.id)?,
             locale,
             &options,
         )
@@ -555,7 +555,7 @@ where {
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                     )
                 },
                 locale,
@@ -582,7 +582,7 @@ where {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -597,7 +597,7 @@ where {
     {
         let patterns = PatternSelector::for_options(
             provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
             locale,
             &options,
         )
@@ -609,7 +609,7 @@ where {
             raw::DateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
                 locale,
             )?,
             PhantomData,
@@ -658,7 +658,7 @@ where {
     #[inline]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_experimental(
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -667,7 +667,7 @@ where {
     {
         let patterns = PatternSelector::for_options_experimental(
             &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, &locale.id)?,
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &options,
@@ -685,7 +685,7 @@ where {
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                     )
                 },
                 locale,
@@ -699,7 +699,7 @@ where {
     #[inline]
     pub fn try_new_experimental_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -715,7 +715,7 @@ where {
     {
         let patterns = PatternSelector::for_options_experimental(
             provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &options,
@@ -732,7 +732,7 @@ where {
             raw::DateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
                 locale,
             )?,
             PhantomData,
@@ -834,7 +834,7 @@ mod tests {
     #[test]
     fn works_with_default_options() {
         assert_eq!(
-            TypedDateTimeFormatter::<Gregorian>::try_new(Default::default(), Default::default(),)
+            TypedDateTimeFormatter::<Gregorian>::try_new(&Default::default(), Default::default(),)
                 .unwrap()
                 .format_to_string(
                     &DateTime::try_new_gregorian_datetime(2022, 9, 20, 0, 0, 0).unwrap()

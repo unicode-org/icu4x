@@ -68,7 +68,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_main,
                 exemplar_chars::load_exemplars_main,
@@ -88,7 +88,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_auxiliary,
                 exemplar_chars::load_exemplars_auxiliary,
@@ -108,7 +108,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_punctuation,
                 exemplar_chars::load_exemplars_punctuation,
@@ -124,7 +124,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_numbers,
                 exemplar_chars::load_exemplars_numbers,
@@ -140,7 +140,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XUnicodeSetData>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
             Ok(Box::new(ICU4XUnicodeSetData(call_constructor_unstable!(
                 exemplar_chars::exemplars_index,
                 exemplar_chars::load_exemplars_index,

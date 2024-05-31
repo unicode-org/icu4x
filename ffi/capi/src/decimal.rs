@@ -42,7 +42,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             let grouping_strategy = match grouping_strategy {
                 ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,

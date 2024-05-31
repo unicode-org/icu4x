@@ -21,7 +21,6 @@ use icu_calendar::provider::{
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
-use icu_provider::DataLocale;
 use writeable::Writeable;
 
 size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
@@ -159,7 +158,7 @@ impl DateTimeFormatter {
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError> {
         let calendar = AnyCalendar::new_for_locale(locale);
@@ -167,7 +166,11 @@ impl DateTimeFormatter {
 
         let patterns = PatternSelector::for_options(
             &crate::provider::Baked,
-            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(
+                &crate::provider::Baked,
+                &locale.id,
+                kind,
+            )?,
             locale,
             &options,
         )
@@ -182,7 +185,7 @@ impl DateTimeFormatter {
                 || {
                     calendar::load_symbols_for_any_calendar_kind(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                         kind,
                     )
                 },
@@ -196,7 +199,7 @@ impl DateTimeFormatter {
     #[inline]
     pub fn try_new_with_any_provider(
         provider: &impl AnyProvider,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError> {
         let downcasting = provider.as_downcasting();
@@ -208,7 +211,7 @@ impl DateTimeFormatter {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &impl BufferProvider,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError> {
         let deserializing = provider.as_deserializing();
@@ -220,7 +223,7 @@ impl DateTimeFormatter {
     #[inline(never)]
     pub fn try_new_experimental_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -269,7 +272,7 @@ impl DateTimeFormatter {
 
         let patterns = PatternSelector::for_options_experimental(
             provider,
-            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(provider, &locale.id, kind)?,
             locale,
             &kind.as_bcp47_value(),
             &options,
@@ -286,7 +289,7 @@ impl DateTimeFormatter {
             raw::DateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                || calendar::load_symbols_for_any_calendar_kind(provider, &locale.id, kind),
                 locale,
             )?,
             calendar,
@@ -337,7 +340,7 @@ impl DateTimeFormatter {
     #[cfg(feature = "compiled_data")]
     #[inline(never)]
     pub fn try_new_experimental(
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError> {
         let calendar = AnyCalendar::new_for_locale(locale);
@@ -345,7 +348,11 @@ impl DateTimeFormatter {
 
         let patterns = PatternSelector::for_options_experimental(
             &crate::provider::Baked,
-            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(
+                &crate::provider::Baked,
+                &locale.id,
+                kind,
+            )?,
             locale,
             &kind.as_bcp47_value(),
             &options,
@@ -364,7 +371,7 @@ impl DateTimeFormatter {
                 || {
                     calendar::load_symbols_for_any_calendar_kind(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                         kind,
                     )
                 },
@@ -378,7 +385,7 @@ impl DateTimeFormatter {
     #[inline(never)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -426,7 +433,7 @@ impl DateTimeFormatter {
 
         let patterns = PatternSelector::for_options(
             provider,
-            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(provider, &locale.id, kind)?,
             locale,
             &options,
         )
@@ -439,7 +446,7 @@ impl DateTimeFormatter {
             raw::DateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                || calendar::load_symbols_for_any_calendar_kind(provider, &locale.id, kind),
                 locale,
             )?,
             calendar,
@@ -574,10 +581,9 @@ where {
 mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locale::locale;
-    use icu_provider::DataLocale;
+    use icu::locale::{locale, Locale};
 
-    fn test_format(datetime: &DateTime<AnyCalendar>, locale: DataLocale, expected: &str) {
+    fn test_format(datetime: &DateTime<AnyCalendar>, locale: Locale, expected: &str) {
         let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
 
         let dtf = DateTimeFormatter::try_new(&locale, options.into()).unwrap();
@@ -593,23 +599,23 @@ mod tests {
         let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&datetime, locale!("fr").into(), "5 avril 2022, 12:33");
+        test_format(&datetime, locale!("fr"), "5 avril 2022, 12:33");
         test_format(
             &datetime,
-            locale!("fr-u-ca-blahblah").into(),
+            locale!("fr-u-ca-blahblah"),
             "5 avril 2022, 12:33",
         );
         // thai falls back to buddhist
         test_format(
             &datetime,
-            locale!("th-u-ca-buddhist").into(),
+            locale!("th-u-ca-buddhist"),
             "5 เมษายน 2565 12:33",
         );
-        test_format(&datetime, locale!("th").into(), "5 เมษายน 2565 12:33");
+        test_format(&datetime, locale!("th"), "5 เมษายน 2565 12:33");
         // except when overridden
         test_format(
             &datetime,
-            locale!("th-u-ca-gregory").into(),
+            locale!("th-u-ca-gregory"),
             "5 เมษายน ค.ศ. 2022 12:33",
         );
     }
@@ -618,7 +624,7 @@ mod tests {
     #[cfg(feature = "serde")]
     fn works_with_default_options() {
         assert_eq!(
-            DateTimeFormatter::try_new(Default::default(), Default::default(),)
+            DateTimeFormatter::try_new(&Default::default(), Default::default(),)
                 .unwrap()
                 .format_to_string(
                     &DateTime::try_new_iso_datetime(2022, 9, 20, 0, 0, 0)
@@ -646,7 +652,7 @@ fn buffer_constructor() {
 
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &provider,
-        &locale!("en").into(),
+        &locale!("en"),
         length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into(),
     )
     .unwrap();

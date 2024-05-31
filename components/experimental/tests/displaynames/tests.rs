@@ -82,7 +82,7 @@ fn test_concatenate() {
         let locale = locale!("en-001");
         let options: DisplayNamesOptions = Default::default();
 
-        let display_name = LocaleDisplayNamesFormatter::try_new(&locale.into(), options)
+        let display_name = LocaleDisplayNamesFormatter::try_new(&locale, options)
             .expect("Data should load successfully");
 
         let result = display_name.of(cas.input_1);

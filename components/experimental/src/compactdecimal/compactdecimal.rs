@@ -119,7 +119,7 @@ impl CompactDecimalFormatter {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_short(
-        locale: &DataLocale,
+        locale: &Locale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError> {
         Ok(Self {
@@ -131,7 +131,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 },
             )?
@@ -157,7 +157,7 @@ impl CompactDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
     pub fn try_new_short_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
     where
@@ -176,7 +176,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 },
             )?
@@ -206,7 +206,7 @@ impl CompactDecimalFormatter {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_long(
-        locale: &DataLocale,
+        locale: &Locale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError> {
         Ok(Self {
@@ -218,7 +218,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 &crate::provider::Baked,
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 },
             )?
@@ -244,7 +244,7 @@ impl CompactDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
     pub fn try_new_long_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
     where
@@ -263,7 +263,7 @@ impl CompactDecimalFormatter {
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
                 provider,
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 },
             )?
@@ -758,9 +758,9 @@ mod tests {
         ];
         for case in cases {
             let formatter = if case.short {
-                CompactDecimalFormatter::try_new_short(&locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_short(&locale!("en"), case.options.clone())
             } else {
-                CompactDecimalFormatter::try_new_long(&locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_long(&locale!("en"), case.options.clone())
             }
             .unwrap();
             let result1T = formatter.format_i64(1_000_000_000_000_000);

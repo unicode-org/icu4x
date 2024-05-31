@@ -31,34 +31,28 @@ pub mod pluralrules;
 /// [link]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat
 pub mod list;
 
-/// An adapter between [`DataLocale`] and [`ecma402_traits::Locale`].
+/// An adapter between [`Locale`] and [`ecma402_traits::Locale`].
 #[derive(Debug, Hash, Clone, PartialEq)]
-pub struct DataLocale(icu_provider::DataLocale);
+pub struct Locale(icu_provider::prelude::Locale);
 
-impl DataLocale {
-    /// Creates a `DataLocale` from any other [`ecma402_traits::Locale`]
+impl Locale {
+    /// Creates a `Locale` from any other [`ecma402_traits::Locale`]
     fn from_ecma_locale<L: ecma402_traits::Locale>(other: L) -> Self {
         #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
-        Self(
-            other
-                .to_string()
-                .parse::<icu::locale::Locale>()
-                .unwrap()
-                .into(),
-        )
+        Self(other.to_string().parse().unwrap())
     }
 }
 
-impl core::ops::Deref for DataLocale {
-    type Target = icu_provider::DataLocale;
+impl core::ops::Deref for Locale {
+    type Target = icu_provider::prelude::Locale;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl ecma402_traits::Locale for crate::DataLocale {}
+impl ecma402_traits::Locale for crate::Locale {}
 
-impl std::fmt::Display for crate::DataLocale {
+impl std::fmt::Display for crate::Locale {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
     }

@@ -139,12 +139,12 @@ impl FixedDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DecimalError> {
         let symbols = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;

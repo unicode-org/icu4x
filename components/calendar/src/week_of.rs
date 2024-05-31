@@ -52,20 +52,20 @@ impl WeekCalculator {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, CalendarError> {
+    pub fn try_new(locale: &Locale) -> Result<Self, CalendarError> {
         Self::try_new_unstable(&crate::provider::Baked, locale)
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, CalendarError> {
         Self::try_new_unstable(&provider.as_downcasting(), locale).or_else(|e| {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_downcasting(),
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 },
             )
@@ -79,13 +79,13 @@ impl WeekCalculator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, CalendarError> {
         Self::try_new_unstable(&provider.as_deserializing(), locale).or_else(|e| {
             DataProvider::<WeekDataV1Marker>::load(
                 &provider.as_deserializing(),
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 },
             )
@@ -96,13 +96,13 @@ impl WeekCalculator {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, CalendarError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &Locale) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
     {
         provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)
@@ -714,7 +714,7 @@ fn test_weekend() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und").into())
+        WeekCalculator::try_new(&locale!("und"))
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -722,7 +722,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-FR").into())
+        WeekCalculator::try_new(&locale!("und-FR"))
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -730,7 +730,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IQ").into())
+        WeekCalculator::try_new(&locale!("und-IQ"))
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -738,7 +738,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(&locale!("und-IR").into())
+        WeekCalculator::try_new(&locale!("und-IR"))
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),

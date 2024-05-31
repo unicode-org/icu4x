@@ -124,7 +124,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[inline]
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -134,7 +134,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options(
             &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, &locale.id)?,
             locale,
             &date_time_format_options,
         )
@@ -148,7 +148,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                     )
                 },
                 locale,
@@ -170,7 +170,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[inline]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -192,7 +192,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options(
             provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
             locale,
             &date_time_format_options,
         )
@@ -204,7 +204,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
                 locale,
                 time_zone_format_options,
             )?,
@@ -264,7 +264,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_new_experimental(
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -274,7 +274,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options_experimental(
             &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, &locale.id)?,
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
@@ -292,7 +292,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 || {
                     calendar::load_symbols_for_cldr_calendar::<C, _>(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                     )
                 },
                 locale,
@@ -307,7 +307,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     #[inline]
     pub fn try_new_experimental_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -330,7 +330,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         let patterns = PatternSelector::for_options_experimental(
             provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, &locale.id)?,
             locale,
             &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
@@ -346,7 +346,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, &locale.id),
                 locale,
                 time_zone_format_options,
             )?,

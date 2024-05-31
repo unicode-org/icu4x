@@ -247,6 +247,9 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::KeyedDataMarker;
 
+    pub use icu_locale_core::LanguageIdentifier;
+    pub use icu_locale_core::Locale;
+
     #[doc(hidden)]
     pub use yoke;
     #[doc(hidden)]

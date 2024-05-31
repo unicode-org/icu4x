@@ -84,7 +84,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
                 TimeZoneFormatter::try_new,
@@ -108,7 +108,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             options: ICU4XIsoTimeZoneOptions,
         ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
                 TimeZoneFormatter::try_new,

@@ -111,12 +111,12 @@ impl HelloWorldProvider {
         ("de-AT", "", "Servus Welt"),
         ("el", "", "Καλημέρα κόσμε"),
         ("en", "", "Hello World"),
-        ("en-001", "", "Hello from 🗺️"),            // WORLD
-        ("en-002", "", "Hello from 🌍"),           // AFRICA
-        ("en-019", "", "Hello from 🌎"),           // AMERICAS
-        ("en-142", "", "Hello from 🌏"),           // ASIA
-        ("en-GB", "", "Hello from 🇬🇧"),            // GREAT BRITAIN
-        ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
+        ("en-001", "", "Hello from 🗺️"),        // WORLD
+        ("en-002", "", "Hello from 🌍"),       // AFRICA
+        ("en-019", "", "Hello from 🌎"),       // AMERICAS
+        ("en-142", "", "Hello from 🌏"),       // ASIA
+        ("en-GB", "", "Hello from 🇬🇧"),        // GREAT BRITAIN
+        ("en-GB", "bri'ish", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
         ("en", "reverse", "Olleh Dlrow"),
         ("eo", "", "Saluton, Mondo"),
         ("fa", "", "سلام دنیا‎"),
@@ -272,7 +272,7 @@ impl HelloWorldFormatter {
     /// Creates a new [`HelloWorldFormatter`] for the specified locale.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
+    pub fn try_new(locale: &Locale) -> Result<Self, DataError> {
         Self::try_new_unstable(&HelloWorldProvider, locale)
     }
 
@@ -287,13 +287,13 @@ impl HelloWorldFormatter {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &Locale) -> Result<Self, DataError>
     where
         P: DataProvider<HelloWorldV1Marker>,
     {
         let data = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -334,38 +334,38 @@ writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 #[test]
 fn test_iter() {
     use crate::datagen::IterableDataProvider;
-    use icu_locale_core::locale;
+    use icu_locale_core::langid;
 
     assert_eq!(
         HelloWorldProvider.supported_requests().unwrap(),
         HashSet::from_iter([
-            (locale!("bn").into(), Default::default()),
-            (locale!("cs").into(), Default::default()),
-            (locale!("de").into(), Default::default()),
-            (locale!("de-AT").into(), Default::default()),
-            (locale!("el").into(), Default::default()),
-            (locale!("en").into(), Default::default()),
-            (locale!("en-001").into(), Default::default()),
-            (locale!("en-002").into(), Default::default()),
-            (locale!("en-019").into(), Default::default()),
-            (locale!("en-142").into(), Default::default()),
-            (locale!("en-GB").into(), Default::default()),
-            (locale!("en-GB-u-sd-gbeng").into(), Default::default()),
-            (locale!("en").into(), "reverse".parse().unwrap()),
-            (locale!("eo").into(), Default::default()),
-            (locale!("fa").into(), Default::default()),
-            (locale!("fi").into(), Default::default()),
-            (locale!("is").into(), Default::default()),
-            (locale!("ja").into(), Default::default()),
-            (locale!("ja").into(), "reverse".parse().unwrap()),
-            (locale!("la").into(), Default::default()),
-            (locale!("pt").into(), Default::default()),
-            (locale!("ro").into(), Default::default()),
-            (locale!("ru").into(), Default::default()),
-            (locale!("sr").into(), Default::default()),
-            (locale!("sr-Latn").into(), Default::default()),
-            (locale!("vi").into(), Default::default()),
-            (locale!("zh").into(), Default::default()),
+            (langid!("bn").into(), Default::default()),
+            (langid!("cs").into(), Default::default()),
+            (langid!("de").into(), Default::default()),
+            (langid!("de-AT").into(), Default::default()),
+            (langid!("el").into(), Default::default()),
+            (langid!("en").into(), Default::default()),
+            (langid!("en-001").into(), Default::default()),
+            (langid!("en-002").into(), Default::default()),
+            (langid!("en-019").into(), Default::default()),
+            (langid!("en-142").into(), Default::default()),
+            (langid!("en-GB").into(), Default::default()),
+            (langid!("en-GB").into(), "bri'ish".parse().unwrap()),
+            (langid!("en").into(), "reverse".parse().unwrap()),
+            (langid!("eo").into(), Default::default()),
+            (langid!("fa").into(), Default::default()),
+            (langid!("fi").into(), Default::default()),
+            (langid!("is").into(), Default::default()),
+            (langid!("ja").into(), Default::default()),
+            (langid!("ja").into(), "reverse".parse().unwrap()),
+            (langid!("la").into(), Default::default()),
+            (langid!("pt").into(), Default::default()),
+            (langid!("ro").into(), Default::default()),
+            (langid!("ru").into(), Default::default()),
+            (langid!("sr").into(), Default::default()),
+            (langid!("sr-Latn").into(), Default::default()),
+            (langid!("vi").into(), Default::default()),
+            (langid!("zh").into(), Default::default()),
         ])
     );
 }

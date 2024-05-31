@@ -41,14 +41,14 @@ impl ZonedDateTimeFormatter {
     pub fn try_new(
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &DataLocale,
+        locale: &Locale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError> {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            locale: &(&locale.id).into(),
             ..Default::default()
         };
 
@@ -112,7 +112,7 @@ impl ZonedDateTimeFormatter {
         provider: &P,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: &DataLocale,
+        locale: &Locale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -133,7 +133,7 @@ impl ZonedDateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
+            locale: &(&locale.id).into(),
             ..Default::default()
         };
 
@@ -142,7 +142,7 @@ impl ZonedDateTimeFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
+                        locale: &(&locale.id).into(),
                         ..Default::default()
                     },
                 )?

@@ -22,15 +22,15 @@ pub fn name_order_derive(
     // By default, uses language priority with no additional extension keywords.
     let mut fallback_iterator = fallbacker
         .for_config(Default::default())
-        .fallback_for(person_name_locale.into());
+        .fallback_for((&person_name_locale.id).into());
 
     loop {
-        let chain_locale = fallback_iterator.get().clone().into_locale();
+        let chain_locale = fallback_iterator.get().get_langid().clone();
         let chain_locale_str = chain_locale.write_to_string();
 
         // switch lookup with UND
         let mut chain_locale_und = chain_locale.clone();
-        chain_locale_und.id.language = Language::UND;
+        chain_locale_und.language = Language::UND;
         let chain_locale_und_str = chain_locale_und.write_to_string();
 
         if given_first

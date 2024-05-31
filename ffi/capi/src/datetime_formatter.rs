@@ -45,7 +45,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XTimeLength,
         ) -> Result<Box<ICU4XTimeFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             Ok(Box::new(ICU4XTimeFormatter(call_constructor!(
                 TimeFormatter::try_new_with_length,
@@ -111,7 +111,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XDateLength,
         ) -> Result<Box<ICU4XGregorianDateFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             Ok(Box::new(ICU4XGregorianDateFormatter(call_constructor!(
                 TypedDateFormatter::try_new_with_length,
@@ -171,7 +171,7 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> Result<Box<ICU4XGregorianDateTimeFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             let options = length::Bag::from_date_time_style(date_length.into(), time_length.into());
 
@@ -219,7 +219,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
         ) -> Result<Box<ICU4XDateFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
 
             Ok(Box::new(ICU4XDateFormatter(call_constructor!(
                 DateFormatter::try_new_with_length,
@@ -303,7 +303,7 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> Result<Box<ICU4XDateTimeFormatter>, ICU4XError> {
-            let locale = locale.to_datalocale();
+            let locale = locale.to_locale();
             let options = length::Bag::from_date_time_style(date_length.into(), time_length.into());
 
             Ok(Box::new(ICU4XDateTimeFormatter(call_constructor!(

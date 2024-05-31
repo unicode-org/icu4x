@@ -322,7 +322,7 @@ impl PluralRules {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralsError> {
         match rule_type {
@@ -374,12 +374,12 @@ impl PluralRules {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, PluralsError> {
         Ok(Self(
             provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?
@@ -436,12 +436,12 @@ impl PluralRules {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, PluralsError> {
         Ok(Self(
             provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?
@@ -636,7 +636,7 @@ impl PluralRulesWithRanges<PluralRules> {
               + DataProvider<CardinalV1Marker>
               + DataProvider<OrdinalV1Marker>
               + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralsError> {
         match rule_type {
@@ -681,7 +681,7 @@ impl PluralRulesWithRanges<PluralRules> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, PluralsError> {
         let rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
@@ -726,7 +726,7 @@ impl PluralRulesWithRanges<PluralRules> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
     ) -> Result<Self, PluralsError> {
         let rules = PluralRules::try_new_ordinal_unstable(provider, locale)?;
 
@@ -780,12 +780,12 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_rules)]
     pub fn try_new_with_rules_unstable(
         provider: &(impl DataProvider<PluralRangesV1Marker> + ?Sized),
-        locale: &DataLocale,
+        locale: &Locale,
         rules: R,
     ) -> Result<Self, PluralsError> {
         let ranges = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;

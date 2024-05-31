@@ -110,7 +110,7 @@ fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> P
 /// `time_h23_h24` provider data, and then manually modify the symbol in the pattern if needed.
 pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
-    locale: &'a DataLocale,
+    locale: &'a LanguageIdentifier,
     length: length::Time,
     preferences: Option<preferences::Bag>,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>, DataError>
@@ -119,7 +119,7 @@ where
 {
     Ok(data_provider
         .load(DataRequest {
-            locale,
+            locale: &locale.into(),
             ..Default::default()
         })?
         .take_payload()?
@@ -159,7 +159,7 @@ pub(crate) fn generic_pattern_for_date_length(
 pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
-    locale: &'a DataLocale,
+    locale: &'a LanguageIdentifier,
     #[allow(dead_code)] // non-experimental mode
     cal_val: Option<&'a Value>,
 }
@@ -176,18 +176,19 @@ where
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
-        locale: &'a DataLocale,
+        locale: &'a Locale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>, PatternForLengthError> {
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
-            locale,
+            locale: &locale.id,
             cal_val: None,
         };
         match options {
-            DateTimeFormatterOptions::Length(bag) => selector
-                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
+            DateTimeFormatterOptions::Length(bag) => {
+                selector.pattern_for_length_bag(bag, Some(preferences::Bag::from_locale(locale)))
+            }
             #[cfg(any(feature = "datagen", feature = "experimental"))]
             #[allow(clippy::panic)] // explicit panic in experimental mode
             _ => panic!("Non-experimental constructor cannot handle experimental options"),
@@ -229,7 +230,7 @@ where
         let time_patterns_data = self
             .data_provider
             .load(DataRequest {
-                locale: self.locale,
+                locale: &self.locale.into(),
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)
@@ -272,7 +273,7 @@ where
     pub(crate) fn for_options_experimental<'a>(
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
-        locale: &'a DataLocale,
+        locale: &'a Locale,
         cal_val: &'a Value,
         options: &DateTimeFormatterOptions,
     ) -> Result<
@@ -282,12 +283,12 @@ where
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
-            locale,
+            locale: &locale.id,
             cal_val: Some(cal_val),
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
-                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale)))
+                .pattern_for_length_bag(bag, Some(preferences::Bag::from_locale(locale)))
                 .map_err(|e| match e {
                     PatternForLengthError::Data(e) => {
                         UnsupportedOptionsOrDataOrPatternError::Data(e)
@@ -346,27 +347,28 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locale_core::extensions::unicode::{key, value};
+        use icu_locale_core::extensions::unicode::value;
         use tinystr::tinystr;
-        let mut locale = self.locale.clone();
         #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
+
         // Skeleton data for ethioaa is stored under ethiopic
-        if cal_val == &value!("ethioaa") {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+        let key_attributes = if cal_val == &value!("ethioaa") {
+            DataKeyAttributes::from_tinystr(tinystr!(8, "ethiopic"))
         } else if cal_val == &value!("islamic")
             || cal_val == &value!("islamicc")
             || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
-            locale.set_unicode_ext(key!("ca"), value!("islamic"));
+            DataKeyAttributes::from_tinystr(tinystr!(8, "islamic"))
         } else {
-            locale.set_unicode_ext(key!("ca"), cal_val.clone());
+            cal_val.to_string().parse().unwrap()
         };
 
         self.data_provider
             .load(DataRequest {
-                locale: &locale,
+                locale: &self.locale.into(),
+                key_attributes: &key_attributes,
                 ..Default::default()
             })
             .and_then(DataResponse::take_payload)

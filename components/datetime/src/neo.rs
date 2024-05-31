@@ -49,7 +49,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<P>(
             provider: &P,
-            locale: &DataLocale,
+            locale: &Locale,
             $($arg: $ty),+
         ) -> Result<Self, LoadError>
         where
@@ -66,7 +66,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
-            locale: &DataLocale,
+            locale: &Locale,
             $($arg: $ty),+
         ) -> Result<Self, LoadError>
         where
@@ -84,7 +84,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
         pub fn $any_fn<S, P>(
             provider: &P,
-            locale: &DataLocale,
+            locale: &Locale,
             $($arg: $ty),+
         ) -> Result<Self, LoadError>
         where
@@ -102,7 +102,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<S, P>(
             provider: &P,
-            locale: &DataLocale,
+            locale: &Locale,
             $($arg: $ty),+
         ) -> Result<Self, LoadError>
         where
@@ -169,7 +169,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(locale: &DataLocale, length: length::Date) -> Result<Self, LoadError>
+    pub fn try_new_with_length(locale: &Locale, length: length::Date) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Calendar-specific date formatting keys
@@ -196,7 +196,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -222,7 +222,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     fn try_new_with_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -324,7 +324,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new(locale: &Locale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Date formatting keys
@@ -355,7 +355,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -379,7 +379,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -558,7 +558,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, length: NeoSkeletonLength) -> Result<Self, LoadError>
+    pub fn try_new(locale: &Locale, length: NeoSkeletonLength) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
     // Date formatting keys
@@ -637,7 +637,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -716,7 +716,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: NeoSkeletonLength,
     ) -> Result<Self, LoadError>
     where
@@ -1029,10 +1029,7 @@ impl NeoDateFormatter {
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(
-        locale: &DataLocale,
-        length: length::Date,
-    ) -> Result<Self, LoadError> {
+    pub fn try_new_with_length(locale: &Locale, length: length::Date) -> Result<Self, LoadError> {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -1052,7 +1049,7 @@ impl NeoDateFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -1134,7 +1131,7 @@ impl NeoDateFormatter {
     fn try_new_with_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -1328,10 +1325,7 @@ impl NeoTimeFormatter {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_length(
-        locale: &DataLocale,
-        length: length::Time,
-    ) -> Result<Self, LoadError> {
+    pub fn try_new_with_length(locale: &Locale, length: length::Time) -> Result<Self, LoadError> {
         Self::try_new_with_length_internal(
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
@@ -1351,7 +1345,7 @@ impl NeoTimeFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_length)]
     pub fn try_new_with_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError>
     where
@@ -1373,7 +1367,7 @@ impl NeoTimeFormatter {
     fn try_new_with_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError>
     where
@@ -1512,7 +1506,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_date_length(
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -1541,7 +1535,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_date_length)]
     pub fn try_new_with_date_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -1567,7 +1561,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     fn try_new_with_date_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -1618,7 +1612,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_time_length(
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError> {
         Self::try_new_with_time_length_internal(
@@ -1640,7 +1634,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_time_length)]
     pub fn try_new_with_time_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError>
     where
@@ -1662,7 +1656,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     fn try_new_with_time_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError>
     where
@@ -1711,7 +1705,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_lengths(
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, LoadError>
@@ -1743,7 +1737,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_lengths)]
     pub fn try_new_with_lengths_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, LoadError>
@@ -1776,7 +1770,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     fn try_new_with_lengths_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, LoadError>
@@ -1834,7 +1828,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     /// </div>
     #[cfg(all(feature = "compiled_data", feature = "experimental"))]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         options: crate::DateTimeFormatterOptions,
     ) -> Result<Self, LoadError>
     where
@@ -1939,7 +1933,7 @@ impl NeoDateTimeFormatter {
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_date_length(
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError> {
         Self::try_new_with_date_length_internal(
@@ -1961,7 +1955,7 @@ impl NeoDateTimeFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_date_length)]
     pub fn try_new_with_date_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -2043,7 +2037,7 @@ impl NeoDateTimeFormatter {
     fn try_new_with_date_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Date,
     ) -> Result<Self, LoadError>
     where
@@ -2153,7 +2147,7 @@ impl NeoDateTimeFormatter {
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_time_length(
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError> {
         Self::try_new_with_time_length_internal(
@@ -2175,7 +2169,7 @@ impl NeoDateTimeFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_time_length)]
     pub fn try_new_with_time_length_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError>
     where
@@ -2204,7 +2198,7 @@ impl NeoDateTimeFormatter {
     fn try_new_with_time_length_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         length: length::Time,
     ) -> Result<Self, LoadError>
     where
@@ -2256,7 +2250,7 @@ impl NeoDateTimeFormatter {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_lengths(
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, LoadError> {
@@ -2281,7 +2275,7 @@ impl NeoDateTimeFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_lengths)]
     pub fn try_new_with_lengths_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, LoadError>
@@ -2370,7 +2364,7 @@ impl NeoDateTimeFormatter {
     fn try_new_with_lengths_internal<P, L>(
         provider: &P,
         loader: &L,
-        locale: &DataLocale,
+        locale: &Locale,
         date_length: length::Date,
         time_length: length::Time,
     ) -> Result<Self, LoadError>

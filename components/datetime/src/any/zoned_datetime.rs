@@ -35,7 +35,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6224);
 /// This is equivalently the composition of
 /// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`].
 ///
-/// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
+/// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
@@ -63,7 +63,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6224);
 ///     length::Time::Long,
 /// );
 /// let zdtf = ZonedDateTimeFormatter::try_new(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     options.into(),
 ///     Default::default(),
 /// )
@@ -97,7 +97,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6224);
 ///     length::Time::Full,
 /// );
 /// let zdtf = ZonedDateTimeFormatter::try_new(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     options.into(),
 ///     Default::default(),
 /// )
@@ -130,7 +130,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6224);
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
-    /// Constructor that takes a selected [`DataLocale`] and a list of [`DateTimeFormatterOptions`] and uses compiled data.
+    /// Constructor that takes a selected [`Locale`] and a list of [`DateTimeFormatterOptions`] and uses compiled data.
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
@@ -185,7 +185,7 @@ impl ZonedDateTimeFormatter {
     #[cfg(feature = "experimental")]
     #[cfg(feature = "compiled_data")]
     pub fn try_new_experimental(
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError> {
@@ -194,7 +194,11 @@ impl ZonedDateTimeFormatter {
 
         let patterns = PatternSelector::for_options_experimental(
             &crate::provider::Baked,
-            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(
+                &crate::provider::Baked,
+                &locale.id,
+                kind,
+            )?,
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
@@ -213,7 +217,7 @@ impl ZonedDateTimeFormatter {
                 || {
                     calendar::load_symbols_for_any_calendar_kind(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                         kind,
                     )
                 },
@@ -230,7 +234,7 @@ impl ZonedDateTimeFormatter {
     #[allow(clippy::too_many_arguments)]
     pub fn try_new_experimental_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -286,7 +290,7 @@ impl ZonedDateTimeFormatter {
 
         let patterns = PatternSelector::for_options_experimental(
             provider,
-            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(provider, &locale.id, kind)?,
             locale,
             &kind.as_bcp47_value(),
             &date_time_format_options,
@@ -303,7 +307,7 @@ impl ZonedDateTimeFormatter {
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                || calendar::load_symbols_for_any_calendar_kind(provider, &locale.id, kind),
                 locale,
                 time_zone_format_options,
             )?,
@@ -311,7 +315,7 @@ impl ZonedDateTimeFormatter {
         ))
     }
 
-    /// Constructor that takes a selected [`DataLocale`] and a list of [`DateTimeFormatterOptions`] and uses compiled data.
+    /// Constructor that takes a selected [`Locale`] and a list of [`DateTimeFormatterOptions`] and uses compiled data.
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
@@ -358,7 +362,7 @@ impl ZonedDateTimeFormatter {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError> {
@@ -367,7 +371,11 @@ impl ZonedDateTimeFormatter {
 
         let patterns = PatternSelector::for_options(
             &crate::provider::Baked,
-            calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(
+                &crate::provider::Baked,
+                &locale.id,
+                kind,
+            )?,
             locale,
             &date_time_format_options,
         )
@@ -382,7 +390,7 @@ impl ZonedDateTimeFormatter {
                 || {
                     calendar::load_symbols_for_any_calendar_kind(
                         &crate::provider::Baked,
-                        locale,
+                        &locale.id,
                         kind,
                     )
                 },
@@ -398,7 +406,7 @@ impl ZonedDateTimeFormatter {
     #[allow(clippy::too_many_arguments)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -453,7 +461,7 @@ impl ZonedDateTimeFormatter {
 
         let patterns = PatternSelector::for_options(
             provider,
-            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            calendar::load_lengths_for_any_calendar_kind(provider, &locale.id, kind)?,
             locale,
             &date_time_format_options,
         )
@@ -466,7 +474,7 @@ impl ZonedDateTimeFormatter {
             raw::ZonedDateTimeFormatter::try_new_unstable(
                 provider,
                 patterns,
-                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                || calendar::load_symbols_for_any_calendar_kind(provider, &locale.id, kind),
                 locale,
                 time_zone_format_options,
             )?,
@@ -478,7 +486,7 @@ impl ZonedDateTimeFormatter {
     #[inline]
     pub fn try_new_with_any_provider(
         provider: &impl AnyProvider,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError> {
@@ -491,7 +499,7 @@ impl ZonedDateTimeFormatter {
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &impl BufferProvider,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError> {
@@ -586,7 +594,7 @@ fn buffer_constructor() {
 
     let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
         &provider,
-        &locale!("en").into(),
+        &locale!("en"),
         length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into(),
         Default::default(),
     )

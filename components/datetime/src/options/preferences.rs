@@ -35,11 +35,11 @@
 //! ```
 use crate::fields;
 
+use icu_locale::Locale;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use icu_locale_core::extensions::unicode::key;
-use icu_provider::DataLocale;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
 
@@ -79,14 +79,17 @@ impl Bag {
         }
     }
 
-    /// Construct a [`Bag`] from a given [`DataLocale`]
-    pub(crate) fn from_data_locale(data_locale: &DataLocale) -> Self {
+    /// Construct a [`Bag`] from a given [`Locale`]
+    pub(crate) fn from_locale(locale: &Locale) -> Self {
         const H11: TinyAsciiStr<8> = tinystr!(8, "h11");
         const H12: TinyAsciiStr<8> = tinystr!(8, "h12");
         const H23: TinyAsciiStr<8> = tinystr!(8, "h23");
         const H24: TinyAsciiStr<8> = tinystr!(8, "h24");
-        let hour_cycle = match data_locale
-            .get_unicode_ext(&key!("hc"))
+        let hour_cycle = match locale
+            .extensions
+            .unicode
+            .keywords
+            .get(&key!("hc"))
             .and_then(|v| v.as_single_subtag().copied())
         {
             Some(H11) => Some(HourCycle::H11),

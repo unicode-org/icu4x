@@ -26,7 +26,7 @@ use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
-    locale: &DataLocale,
+    locale: &Locale,
     destination: &mut Option<DataPayload<D>>,
     provider: &P,
 ) -> Result<(), DateTimeError>
@@ -38,7 +38,7 @@ where
         *destination = Some(
             provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?,
@@ -141,7 +141,7 @@ where
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct TimeZoneFormatter {
-    pub(super) locale: DataLocale,
+    pub(super) locale: Locale,
     pub(super) data_payloads: TimeZoneDataPayloads,
     pub(super) format_units: SmallVec<[TimeZoneFormatterUnit; 3]>,
     pub(super) fallback_unit: FallbackTimeZoneFormatterUnit,
@@ -173,7 +173,7 @@ impl TimeZoneFormatter {
     /// format the given pattern into the given locale.
     pub(super) fn try_new_for_pattern<ZP>(
         zone_provider: &ZP,
-        locale: &DataLocale,
+        locale: &Locale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
@@ -190,7 +190,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?,
@@ -438,7 +438,7 @@ impl TimeZoneFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
-        locale: &DataLocale,
+        locale: &Locale,
         options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeError>
     where
@@ -448,7 +448,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?,

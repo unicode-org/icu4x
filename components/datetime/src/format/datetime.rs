@@ -884,11 +884,12 @@ mod tests {
     fn test_basic() {
         use crate::provider::calendar::{GregorianDateSymbolsV1Marker, TimeSymbolsV1Marker};
         use icu_calendar::DateTime;
+        use icu_locale::locale;
         use icu_provider::prelude::*;
 
-        let locale = "en-u-ca-gregory".parse().unwrap();
+        let locale = locale!("en-u-ca-gregory");
         let req = DataRequest {
-            locale: &locale,
+            locale: &(&locale.id).into(),
             ..Default::default()
         };
         let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
@@ -937,7 +938,7 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locale_core::locale!("en").into(),
+            &icu_locale_core::locale!("en"),
             fixed_decimal_format_options,
         )
         .unwrap();

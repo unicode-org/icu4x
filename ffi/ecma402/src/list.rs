@@ -21,7 +21,7 @@ impl ecma402_traits::listformat::Format for ListFormat {
         L: Locale,
         Self: Sized,
     {
-        let locale = crate::DataLocale::from_ecma_locale(locale);
+        let locale = crate::Locale::from_ecma_locale(locale);
 
         let style = match opts.style {
             Style::Long => icu::list::ListLength::Wide,

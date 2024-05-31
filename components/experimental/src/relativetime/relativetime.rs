@@ -119,7 +119,7 @@ macro_rules! constructor {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         #[cfg(feature = "compiled_data")]
         pub fn $baked(
-            locale: &DataLocale,
+            locale: &Locale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, RelativeTimeError> {
             let plural_rules = PluralRules::try_new_cardinal(locale)?;
@@ -130,7 +130,7 @@ macro_rules! constructor {
             )?;
             let rt: DataPayload<$marker> = crate::provider::Baked
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?;
@@ -161,7 +161,7 @@ macro_rules! constructor {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
             provider: &D,
-            locale: &DataLocale,
+            locale: &Locale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, RelativeTimeError>
         where
@@ -179,7 +179,7 @@ macro_rules! constructor {
             )?;
             let rt: DataPayload<$marker> = provider
                 .load(DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })?
                 .take_payload()?;

@@ -51,11 +51,11 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized),
-            locale: &DataLocale,
+            locale: &Locale,
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(provider.load(
                 DataRequest {
-                    locale,
+                    locale: &(&locale.id).into(),
                     ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
@@ -65,13 +65,13 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $(#[$attr])*
         #[cfg(feature = "compiled_data")]
         $vis2 fn $constname(
-            locale: &DataLocale,
+            locale: &Locale,
         ) -> Result<UnicodeSetData, PropertiesError> {
             Ok(UnicodeSetData::from_data(
                 DataProvider::<$keyed_data_marker>::load(
                     &crate::provider::Baked,
                     DataRequest {
-                        locale,
+                        locale: &(&locale.id).into(),
                         ..Default::default()
                     })
                     .and_then(DataResponse::take_payload)?

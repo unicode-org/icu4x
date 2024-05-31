@@ -17,8 +17,7 @@ use super::provider::{
     PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
 };
 use super::specifications;
-use icu_locale_core::Locale;
-use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
 pub struct PersonNamesFormatter {
@@ -87,7 +86,7 @@ impl PersonNamesFormatter {
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(effective_locale),
+                locale: &(&effective_locale.id).into(),
                 ..Default::default()
             })
             .map_err(PersonNamesFormatterError::Data)?

@@ -204,7 +204,7 @@ pub mod ffi {
 }
 
 impl ffi::ICU4XLocale {
-    pub fn to_datalocale(&self) -> icu_provider::DataLocale {
-        (&self.0).into()
+    pub fn to_locale(&self) -> &icu_locale_core::Locale {
+        &self.0
     }
 }

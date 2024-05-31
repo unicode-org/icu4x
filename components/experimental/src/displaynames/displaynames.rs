@@ -25,7 +25,7 @@ use zerovec::ule::UnvalidatedStr;
 /// };
 /// use icu::locale::{locale, subtags::region};
 ///
-/// let locale = locale!("en-001").into();
+/// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
 /// let display_name = RegionDisplayNames::try_new(&locale, options)
 ///     .expect("Data should load successfully");
@@ -60,12 +60,12 @@ impl RegionDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
         let region_data = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -135,12 +135,12 @@ impl ScriptDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
         let script_data = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -211,12 +211,12 @@ impl VariantDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<VariantDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
         let variant_data = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -280,12 +280,12 @@ impl LanguageDisplayNames {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
         let language_data = provider
             .load(DataRequest {
-                locale,
+                locale: &(&locale.id).into(),
                 ..Default::default()
             })?
             .take_payload()?;
@@ -374,7 +374,7 @@ impl LocaleDisplayNamesFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        locale: &Locale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError>
     where
@@ -386,7 +386,7 @@ impl LocaleDisplayNamesFormatter {
             + ?Sized,
     {
         let req = DataRequest {
-            locale,
+            locale: &(&locale.id).into(),
             ..Default::default()
         };
 
@@ -541,7 +541,7 @@ fn test_language_display() {
     use icu_locale_core::locale;
 
     let dialect = LocaleDisplayNamesFormatter::try_new(
-        &locale!("en").into(),
+        &locale!("en"),
         DisplayNamesOptions {
             language_display: LanguageDisplay::Dialect,
             ..Default::default()
@@ -549,7 +549,7 @@ fn test_language_display() {
     )
     .unwrap();
     let standard = LocaleDisplayNamesFormatter::try_new(
-        &locale!("en").into(),
+        &locale!("en"),
         DisplayNamesOptions {
             language_display: LanguageDisplay::Standard,
             ..Default::default()
