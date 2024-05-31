@@ -823,7 +823,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::MismatchedCalendarError;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
     ///     &locale!("en-u-ca-hebrew").into(),
@@ -846,7 +846,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
     ///     &locale!("es-MX").into(),
@@ -907,7 +907,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::datetime::MismatchedCalendarError;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
@@ -931,7 +931,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::datetime::neo::NeoFormatter;
     /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
     ///     &locale!("es-MX").into(),

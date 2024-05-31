@@ -156,11 +156,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo> for Da
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind> for Date<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind> for Date<A> {
     #[inline]
     fn get_field(&self) -> AnyCalendarKind {
-        // TODO: Remove the unwrap() with #4975
-        self.calendar().any_calendar_kind().unwrap()
+        self.calendar().kind()
     }
 }
 
@@ -227,11 +226,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo> for Da
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind> for DateTime<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind> for DateTime<A> {
     #[inline]
     fn get_field(&self) -> AnyCalendarKind {
-        // TODO: Remove the unwrap() with #4975
-        self.date.calendar().any_calendar_kind().unwrap()
+        self.date.calendar().kind()
     }
 }
 
