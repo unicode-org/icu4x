@@ -113,7 +113,7 @@ impl DatagenProvider {
         let attr = req
             .key_attributes
             .single()
-            .ok_or_else(|| DataError::custom("TODO"))?;
+            .ok_or_else(|| DataError::custom("Key attributes for datetime names must be single subtag"))?;
 
         let data = conversion(&langid, data, attr)?;
 
