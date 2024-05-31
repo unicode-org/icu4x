@@ -12,6 +12,7 @@ use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::Debug;
+#[cfg(feature = "datagen")]
 use std::collections::HashSet;
 use writeable::Writeable;
 use yoke::*;
