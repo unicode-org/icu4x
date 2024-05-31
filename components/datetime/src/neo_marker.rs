@@ -266,7 +266,21 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
 #[allow(clippy::exhaustive_structs)] // empty marker struct
 pub struct NeverField;
 
-impl<T> NeoGetField<NeverField> for T {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for Date<A> {
+    #[inline]
+    fn get_field(&self) -> NeverField {
+        NeverField
+    }
+}
+
+impl NeoGetField<NeverField> for Time {
+    #[inline]
+    fn get_field(&self) -> NeverField {
+        NeverField
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for DateTime<A> {
     #[inline]
     fn get_field(&self) -> NeverField {
         NeverField
