@@ -856,7 +856,7 @@ impl DatagenDriver {
                         let instant2 = Instant::now();
                         let result = load_with_fallback(key, &locale, Default::default())?;
                         let result = result
-                            .and_then(|payload| sink.put_payload(key, &locale, &payload))
+                            .and_then(|payload| sink.put_payload(key, &locale, Default::default(), &payload))
                             // Note: in Hybrid mode the elapsed time includes sink.put_payload.
                             // In Runtime mode the elapsed time is only load_with_fallback.
                             .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
@@ -1104,7 +1104,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
         .try_for_each(|(locale, (payload, _duration))| {
             // Always export `und`. This prevents calling `step` on an empty locale.
             if locale.is_und() {
-                return sink.put_payload(key, locale, payload).map_err(|e| {
+                return sink.put_payload(key, locale, Default::default(), payload).map_err(|e| {
                     e.with_req(
                         key,
                         DataRequest {
@@ -1144,7 +1144,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 }
             }
             // Did not find a match: export this payload
-            sink.put_payload(key, locale, payload).map_err(|e| {
+            sink.put_payload(key, locale, Default::default(), payload).map_err(|e| {
                 e.with_req(
                     key,
                     DataRequest {

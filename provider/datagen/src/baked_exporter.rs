@@ -356,11 +356,12 @@ impl DataExporter for BakedExporter {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let payload = payload.tokenize(&self.dependencies);
         let payload = payload.to_string();
-        let locale = locale.to_string();
+        let locale = locale.to_string() + key_attributes;
         self.data
             .lock()
             .expect("poison")

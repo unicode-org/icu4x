@@ -673,7 +673,7 @@ impl DataLocale {
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
-#[derive(Debug, PartialEq, Clone, Eq, Hash, PartialOrd, Ord)]
+#[derive(Clone)]
 pub struct DataKeyAttributes {
     value: DataKeyAttributesInner,
 }
@@ -696,64 +696,50 @@ impl<'a> Default for &'a DataKeyAttributes {
     }
 }
 
-impl Deref for DataKeyAttributesInner {
+impl Deref for DataKeyAttributes {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        match self {
-            Self::Empty => "",
-            Self::Boxed(s) => s.deref(),
-            Self::Stack(s) => s.as_str(),
+        match &self.value {
+            DataKeyAttributesInner::Empty => "",
+            DataKeyAttributesInner::Boxed(s) => s.deref(),
+            DataKeyAttributesInner::Stack(s) => s.as_str(),
         }
     }
 }
 
-impl PartialEq for DataKeyAttributesInner {
+impl PartialEq for DataKeyAttributes {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.deref() == other.deref()
     }
 }
 
-impl Eq for DataKeyAttributesInner {}
+impl Eq for DataKeyAttributes {}
 
-impl PartialOrd for DataKeyAttributesInner {
+impl PartialOrd for DataKeyAttributes {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for DataKeyAttributesInner {
+impl Ord for DataKeyAttributes {
     fn cmp(&self, other: &Self) -> Ordering {
         self.deref().cmp(other.deref())
     }
 }
 
-impl Debug for DataKeyAttributesInner {
+impl Debug for DataKeyAttributes {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.deref().fmt(f)
     }
 }
 
-impl Hash for DataKeyAttributesInner {
+impl Hash for DataKeyAttributes {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.deref().hash(state)
-    }
-}
-
-writeable::impl_display_with_writeable!(DataKeyAttributes);
-
-impl Writeable for DataKeyAttributes {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        self.value.write_to(sink)
-    }
-    fn writeable_length_hint(&self) -> LengthHint {
-        self.value.writeable_length_hint()
-    }
-    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-        self.value.write_to_string()
     }
 }
 
@@ -862,7 +848,7 @@ impl DataKeyAttributes {
 
     /// TODO
     pub fn single(&self) -> Option<TinyAsciiStr<8>> {
-        let mut iter = self.value.split('-').filter_map(|x| match x.parse() {
+        let mut iter = self.split('-').filter_map(|x| match x.parse() {
             Ok(x) => Some(x),
             Err(_) => {
                 debug_assert!(false, "failed to convert to subtag: {x}");

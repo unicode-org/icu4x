@@ -87,6 +87,7 @@ impl DataExporter for BlobExporter<'_> {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
@@ -108,7 +109,12 @@ impl DataExporter for BlobExporter<'_> {
             .expect("poison")
             .entry(key.hashed())
             .or_default()
-            .entry(locale.write_to_string().into_owned().into_bytes())
+            .entry(
+                (locale.write_to_string().into_owned()
+                    + if key_attributes.is_empty() { "" } else { "-x-" }
+                    + key_attributes)
+                    .into_bytes(),
+            )
             .or_insert(idx);
         Ok(())
     }

@@ -107,15 +107,16 @@ impl DataExporter for FilesystemExporter {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone().into_os_string();
-        write!(
-            &mut path_buf,
-            "/{key}/{locale}.{}",
-            self.manifest.file_extension
-        )
-        .expect("infallible");
+        write!(&mut path_buf, "/{key}").expect("infallible");
+        write!(&mut path_buf, "/{locale}").expect("infallible");
+        if !key_attributes.is_empty() {
+            write!(&mut path_buf, "-x-{}", &*key_attributes as &str).expect("infallible");
+        }
+        write!(&mut path_buf, ".{}", self.manifest.file_extension).expect("infallible");
 
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = Path::new(&path_buf).parent().unwrap();
