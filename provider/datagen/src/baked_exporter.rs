@@ -505,29 +505,33 @@ impl BakedExporter {
             for (bake, reqs) in values {
                 let (first_locale, first_key_attributes) = reqs.iter().next().unwrap();
                 let anchor = proc_macro2::Ident::new(
-                    &(first_locale.clone()
-                        + if first_key_attributes.is_empty() {
-                            ""
+                    &DataRequest {
+                        locale: &first_locale.parse().unwrap(),
+                        key_attributes: &first_key_attributes.parse().unwrap(),
+                        ..Default::default()
+                    }
+                    .legacy_encode()
+                    .chars()
+                    .map(|ch| {
+                        if ch == '-' {
+                            '_'
                         } else {
-                            "-x-"
+                            ch.to_ascii_uppercase()
                         }
-                        + first_key_attributes)
-                        .chars()
-                        .map(|ch| {
-                            if ch == '-' {
-                                '_'
-                            } else {
-                                ch.to_ascii_uppercase()
-                            }
-                        })
-                        .collect::<String>(),
+                    })
+                    .collect::<String>(),
                     proc_macro2::Span::call_site(),
                 );
                 let bake = bake.parse::<TokenStream>().unwrap();
                 statics.push(quote! { static #anchor: #struct_type = #bake; });
                 map.extend(reqs.into_iter().map(|(l, a)| {
                     (
-                        l + if a.is_empty() { "" } else { "-x-" } + &a,
+                        DataRequest {
+                            locale: &l.parse().unwrap(),
+                            key_attributes: &a.parse().unwrap(),
+                            ..Default::default()
+                        }
+                        .legacy_encode(),
                         anchor.clone(),
                     )
                 }));
@@ -540,24 +544,14 @@ impl BakedExporter {
             statics.push(quote!(static VALUES: [& #struct_type; #n] = [#(&#values),*];));
 
             statics.push(quote!(static KEYS: [&str; #n] = [#(#keys),*];));
-            let search = |locale| {
-                quote! {
-                    KEYS.binary_search_by(|k| {
-                            let mut iter = k.splitn(2, "-x-");
-                            let l = iter.next().unwrap();
-                            let a = iter.next().unwrap_or("");
-                            #locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
-                        })
-                        .map(|i| *unsafe { VALUES.get_unchecked(i) })
-                }
-            };
 
             let load_body = match fallback_mode {
                 None => {
-                    let search = search(quote!(req.locale));
                     quote! {
                         #(#statics)*
-                        if let Ok(payload) = #search {
+                        if let Ok(payload) = KEYS
+                                .binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse())
+                                .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             Ok(icu_provider::DataResponse {
                                 payload: Some(#into_data_payload),
                                 metadata: Default::default(),
@@ -569,14 +563,14 @@ impl BakedExporter {
                 }
                 Some(BuiltInFallbackMode::Standard) => {
                     self.dependencies.insert("icu_locale/compiled_data");
-                    let search_direct = search(quote!(req.locale));
-                    let search_iterator = search(quote!(fallback_iterator.get()));
                     quote! {
                         #(#statics)*
 
                         let mut metadata = icu_provider::DataResponseMetadata::default();
 
-                        let payload =  if let Ok(payload) = #search_direct {
+                        let payload =  if let Ok(payload) = KEYS
+                                .binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse())
+                                .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             payload
                         } else {
                             const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
@@ -584,7 +578,9 @@ impl BakedExporter {
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
-                                if let Ok(payload) = #search_iterator {
+                                if let Ok(payload) = KEYS
+                                        .binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse())
+                                        .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                                     metadata.locale = Some(fallback_iterator.take());
                                     break payload;
                                 }
@@ -610,12 +606,7 @@ impl BakedExporter {
             let iterable_body = quote!(Ok(
                 [#(#keys),*]
                 .into_iter()
-                .filter_map(|s| {
-                    let mut iter = s.splitn(2, "-x-");
-                    let l = iter.next().unwrap().parse().ok()?;
-                    let a = iter.next().unwrap_or("").parse().ok()?;
-                    Some((l, a))
-                })
+                .filter_map(|s| DataRequest::legacy_decode(s))
                 .collect()
             ));
 

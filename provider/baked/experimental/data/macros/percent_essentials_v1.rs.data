@@ -23,29 +23,13 @@ macro_rules! __impl_percent_essentials_v1 {
                 static VALUES: [&<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable; 59usize] = [&AR, &AR_SA, &AR_SA, &AS, &BE, &BLO, &AS, &BE, &AS, &BE, &BE, &BE, &BE, &BE, &DE_CH, &DE_CH, &BE, &BE, &BE, &BE, &BE, &AS, &BE, &BE, &DE_CH, &EU, &BE, &BE, &BE, &DE_CH, &BE, &AS, &AS, &BE, &BE, &KU, &BE, &BE, &BE, &BE, &BE, &OC, &AS, &BE, &BE, &BE, &BE, &AS, &BE, &BE, &BE, &AS, &DE_CH, &DE_CH, &BE, &KU, &BE, &DE_CH, &AS];
                 static KEYS: [&str; 59usize] = ["ar", "ar-SA", "ar-SO", "as", "be", "blo", "bn", "br", "brx", "ca", "cs", "cv", "da", "de", "de-CH", "de-LI", "dsb", "en-AT", "en-DE", "en-DK", "en-FI", "en-IN", "en-SE", "es", "es-419", "eu", "fi", "fo", "fr", "fr-CH", "gl", "gu", "hi", "hr", "hsb", "ku", "lb", "lt", "mk", "nds", "no", "oc", "pa", "qu", "rm", "ro", "ru", "sa", "sk", "sl", "sv", "ta", "ta-MY", "ta-SG", "tk", "tr", "tt", "und", "xnr"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS
-                    .binary_search_by(|k| {
-                        let mut iter = k.splitn(2, "-x-");
-                        let l = iter.next().unwrap();
-                        let a = iter.next().unwrap_or("");
-                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
-                    })
-                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
-                {
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS
-                            .binary_search_by(|k| {
-                                let mut iter = k.splitn(2, "-x-");
-                                let l = iter.next().unwrap();
-                                let a = iter.next().unwrap_or("");
-                                fallback_iterator.get().strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
-                            })
-                            .map(|i| *unsafe { VALUES.get_unchecked(i) })
-                        {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -70,15 +54,7 @@ macro_rules! __impliterable_percent_essentials_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["ar", "ar-SA", "ar-SO", "as", "be", "blo", "bn", "br", "brx", "ca", "cs", "cv", "da", "de", "de-CH", "de-LI", "dsb", "en-AT", "en-DE", "en-DK", "en-FI", "en-IN", "en-SE", "es", "es-419", "eu", "fi", "fo", "fr", "fr-CH", "gl", "gu", "hi", "hr", "hsb", "ku", "lb", "lt", "mk", "nds", "no", "oc", "pa", "qu", "rm", "ro", "ru", "sa", "sk", "sl", "sv", "ta", "ta-MY", "ta-SG", "tk", "tr", "tt", "und", "xnr"]
-                    .into_iter()
-                    .filter_map(|s| {
-                        let mut iter = s.splitn(2, "-x-");
-                        let l = iter.next().unwrap().parse().ok()?;
-                        let a = iter.next().unwrap_or("").parse().ok()?;
-                        Some((l, a))
-                    })
-                    .collect())
+                Ok(["ar", "ar-SA", "ar-SO", "as", "be", "blo", "bn", "br", "brx", "ca", "cs", "cv", "da", "de", "de-CH", "de-LI", "dsb", "en-AT", "en-DE", "en-DK", "en-FI", "en-IN", "en-SE", "es", "es-419", "eu", "fi", "fo", "fr", "fr-CH", "gl", "gu", "hi", "hr", "hsb", "ku", "lb", "lt", "mk", "nds", "no", "oc", "pa", "qu", "rm", "ro", "ru", "sa", "sk", "sl", "sv", "ta", "ta-MY", "ta-SG", "tk", "tr", "tt", "und", "xnr"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
             }
         }
     };

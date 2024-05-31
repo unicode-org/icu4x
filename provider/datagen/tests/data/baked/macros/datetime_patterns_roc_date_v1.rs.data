@@ -17,15 +17,7 @@ macro_rules! __impl_datetime_patterns_roc_date_v1 {
                 static UND_X_S: <icu::datetime::provider::neo::RocDatePatternV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::DatePatternV1 { pattern: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x05\0\0 \x80\x10\x01\0\0-\x80 \x02\0\0-\x80@\x02") }, metadata: icu::datetime::pattern::runtime::PatternMetadata::from_time_granularity(icu::datetime::pattern::TimeGranularity::None) } };
                 static VALUES: [&<icu::datetime::provider::neo::RocDatePatternV1Marker as icu_provider::DataMarker>::Yokeable; 4usize] = [&UND_X_F, &UND_X_L, &UND_X_M, &UND_X_S];
                 static KEYS: [&str; 4usize] = ["und-x-f", "und-x-l", "und-x-m", "und-x-s"];
-                if let Ok(payload) = KEYS
-                    .binary_search_by(|k| {
-                        let mut iter = k.splitn(2, "-x-");
-                        let l = iter.next().unwrap();
-                        let a = iter.next().unwrap_or("");
-                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
-                    })
-                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
-                {
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::RocDatePatternV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -44,15 +36,7 @@ macro_rules! __impliterable_datetime_patterns_roc_date_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::RocDatePatternV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und-x-f", "und-x-l", "und-x-m", "und-x-s"]
-                    .into_iter()
-                    .filter_map(|s| {
-                        let mut iter = s.splitn(2, "-x-");
-                        let l = iter.next().unwrap().parse().ok()?;
-                        let a = iter.next().unwrap_or("").parse().ok()?;
-                        Some((l, a))
-                    })
-                    .collect())
+                Ok(["und-x-f", "und-x-l", "und-x-m", "und-x-s"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
             }
         }
     };

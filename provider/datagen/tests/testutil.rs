@@ -44,9 +44,12 @@ impl TestingExporter {
             .into_iter()
             .map(|((locale, key_attributes), buffer)| {
                 (
-                    locale.write_to_string().into_owned()
-                        + if key_attributes.is_empty() { "" } else { "-x-" }
-                        + &*key_attributes,
+                    DataRequest {
+                        locale: &locale,
+                        key_attributes: &key_attributes,
+                        ..Default::default()
+                    }
+                    .legacy_encode(),
                     buffer,
                 )
             })

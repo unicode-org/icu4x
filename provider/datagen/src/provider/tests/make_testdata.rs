@@ -260,9 +260,12 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         self.size_hash.lock().expect("poison").insert(
             (
                 key,
-                locale.to_string()
-                    + if key_attributes.is_empty() { "" } else { "-x-" }
-                    + key_attributes,
+                DataRequest {
+                    locale,
+                    key_attributes,
+                    ..Default::default()
+                }
+                .legacy_encode(),
             ),
             (size, hash),
         );

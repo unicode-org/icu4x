@@ -10,7 +10,6 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
-use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::VarULE;
 use zerovec::vecs::Index32;
@@ -110,10 +109,13 @@ impl DataExporter for BlobExporter<'_> {
             .entry(key.hashed())
             .or_default()
             .entry(
-                (locale.write_to_string().into_owned()
-                    + if key_attributes.is_empty() { "" } else { "-x-" }
-                    + key_attributes)
-                    .into_bytes(),
+                DataRequest {
+                    locale,
+                    key_attributes,
+                    ..Default::default()
+                }
+                .legacy_encode()
+                .into_bytes(),
             )
             .or_insert(idx);
         Ok(())

@@ -23,15 +23,7 @@ macro_rules! __impl_time_zone_specific_short_v1 {
                 };
                 static VALUES: [&<icu::datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker as icu_provider::DataMarker>::Yokeable; 1usize] = [&UND];
                 static KEYS: [&str; 1usize] = ["und"];
-                if let Ok(payload) = KEYS
-                    .binary_search_by(|k| {
-                        let mut iter = k.splitn(2, "-x-");
-                        let l = iter.next().unwrap();
-                        let a = iter.next().unwrap_or("");
-                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
-                    })
-                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
-                {
+                if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -50,15 +42,7 @@ macro_rules! __impliterable_time_zone_specific_short_v1 {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker> for $provider {
             fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
-                Ok(["und"]
-                    .into_iter()
-                    .filter_map(|s| {
-                        let mut iter = s.splitn(2, "-x-");
-                        let l = iter.next().unwrap().parse().ok()?;
-                        let a = iter.next().unwrap_or("").parse().ok()?;
-                        Some((l, a))
-                    })
-                    .collect())
+                Ok(["und"].into_iter().filter_map(|s| DataRequest::legacy_decode(s)).collect())
             }
         }
     };

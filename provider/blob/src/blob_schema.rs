@@ -99,25 +99,7 @@ impl<'data> BlobSchemaV1<'data> {
                     return Err(DataErrorKind::ExtraneousLocale);
                 }
                 cursor
-                    .get1_copied_by(|k| {
-                        struct A<'a>(&'a DataLocale, &'a DataKeyAttributes);
-                        impl writeable::Writeable for A<'_> {
-                            fn write_to<W: core::fmt::Write + ?Sized>(
-                                &self,
-                                sink: &mut W,
-                            ) -> core::fmt::Result {
-                                self.0.write_to(sink)?;
-                                if !self.1.is_empty() {
-                                    "-x-".write_to(sink)?;
-                                    self.1.write_to(sink)?;
-                                }
-                                Ok(())
-                            }
-                        }
-                        A(req.locale, req.key_attributes)
-                            .writeable_cmp_bytes(&k.0)
-                            .reverse()
-                    })
+                    .get1_copied_by(|k| req.legacy_cmp(&k.0).reverse())
                     .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;
@@ -137,13 +119,7 @@ impl<'data> BlobSchemaV1<'data> {
             .ok_or_else(|| DataErrorKind::MissingDataKey.with_key(key))?
             .iter1_copied()
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
-            .filter_map(|s| {
-                let mut iter = s.splitn(2, "-x-");
-                #[allow(clippy::unwrap_used)] // at least one element
-                let l = iter.next().unwrap().parse().ok()?;
-                let a = iter.next().unwrap_or("").parse().ok()?;
-                Some((l, a))
-            })
+            .filter_map(DataRequest::legacy_decode)
             .collect())
     }
 
@@ -259,13 +235,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_key(key))?;
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
-            .filter_map(|(s, _)| {
-                let mut iter = s.splitn(2, "-x-");
-                #[allow(clippy::unwrap_used)] // at least one element
-                let l = iter.next().unwrap().parse().ok()?;
-                let a = iter.next().unwrap_or("").parse().ok()?;
-                Some((l, a))
-            })
+            .filter_map(|(s, _)| DataRequest::legacy_decode(&s))
             .collect())
     }
 
