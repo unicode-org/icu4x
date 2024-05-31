@@ -13,6 +13,7 @@ use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
+#[cfg(feature = "datagen")]
 use std::collections::HashSet;
 
 mod parse;

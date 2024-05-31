@@ -165,7 +165,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                key_attributes: &"und-Latn-t-s0-ascii".parse().unwrap(),
+                key_attributes: &"und-latn-t-s0-ascii".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()

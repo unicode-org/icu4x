@@ -500,7 +500,8 @@ mod tests {
             .unwrap();
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(), key_attributes: &"3".parse().unwrap(),
+                locale: &"en".parse().unwrap(),
+                key_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -525,7 +526,8 @@ mod tests {
             .unwrap();
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(), key_attributes: &"3".parse().unwrap(),
+                locale: &"en".parse().unwrap(),
+                key_attributes: &"3".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -550,7 +552,8 @@ mod tests {
             .unwrap();
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(), key_attributes: &"6s".parse().unwrap(),
+                locale: &"en".parse().unwrap(),
+                key_attributes: &"6s".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -575,7 +578,8 @@ mod tests {
             .unwrap();
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(), key_attributes: &"4".parse().unwrap(),
+                locale: &"en".parse().unwrap(),
+                key_attributes: &"4".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()
@@ -600,7 +604,8 @@ mod tests {
             .unwrap();
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
-                locale: &"en".parse().unwrap(), key_attributes: &"3s".parse().unwrap(),
+                locale: &"en".parse().unwrap(),
+                key_attributes: &"3s".parse().unwrap(),
                 ..Default::default()
             })
             .unwrap()

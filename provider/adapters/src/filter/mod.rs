@@ -44,7 +44,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::supported_locales_for_key`].
+/// by [`datagen::IterableDynamicDataProvider::supported_requests_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.

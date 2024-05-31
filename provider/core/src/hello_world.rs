@@ -88,7 +88,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &"en".parse().unwrap(), 
+///             locale: &"en".parse().unwrap(),
 ///             key_attributes: &"reverse".parse().unwrap(),
 ///             ..Default::default()
 ///         })
