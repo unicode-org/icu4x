@@ -21,11 +21,36 @@ mod private {
     pub trait Sealed {}
 }
 
-/// A type that can be converted from another across calendar systems.
-pub trait FromInCalendar<T> {
-    /// Projects the given value into the given calendar
-    /// and returns the result as an instance of [`Self`].
-    fn from_in_calendar(value: T, calendar: &AnyCalendar) -> Self;
+/// A type that can be converted into a specific calendar system.
+pub trait ConvertCalendar: Sized {
+    /// The converted type. This can be the same as the receiver type.
+    type Converted<'a>;
+    /// Converts `self` to the specified [`AnyCalendar`].
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a>;
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A> {
+    type Converted<'a> = Date<Ref<'a, AnyCalendar>>;
+    #[inline]
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        self.to_any().to_calendar(Ref(calendar))
+    }
+}
+
+impl ConvertCalendar for Time {
+    type Converted<'a> = Time;
+    #[inline]
+    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
+        *self
+    }
+}
+
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTime<A> {
+    type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
+    #[inline]
+    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
+        self.to_any().to_calendar(Ref(calendar))
+    }
 }
 
 /// A type that might be compatible with a specific calendar system.
@@ -90,40 +115,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeoTypedInput<C>> for
     }
 }
 
-pub trait ConvertCalendar: Sized {
-    type Converted<'a>;
-    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a>;
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A> {
-    type Converted<'a> = Date<Ref<'a, AnyCalendar>>;
-    #[inline]
-    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
-    }
-}
-
-impl ConvertCalendar for Time {
-    type Converted<'a> = Time;
-    #[inline]
-    fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
-        *self
-    }
-}
-
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTime<A> {
-    type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
-    #[inline]
-    fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-#[allow(clippy::exuastive_structs)] // unit struct
-pub struct NeoInputField<T>(pub T);
-
+/// A type that can return a certain field `T`.
 pub trait NeoGetField<T> {
+    /// Returns the value of this trait's field `T`.
     fn get_field(&self) -> T;
 }
 
@@ -269,91 +263,91 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
-/// Struct representing the absence of datetime formatting fields.
+/// Struct representing the absence of a datetime formatting field.
 #[derive(Debug, Copy, Clone)]
 #[allow(clippy::exhaustive_structs)] // empty marker struct
-pub struct NeverFields;
+pub struct NeverField;
 
-impl<T> NeoGetField<NeverFields> for T {
+impl<T> NeoGetField<NeverField> for T {
     #[inline]
-    fn get_field(&self) -> NeverFields {
-        NeverFields
+    fn get_field(&self) -> NeverField {
+        NeverField
     }
 }
 
-impl<C> From<NeverFields> for Option<NeoTypedInput<C>> {
+impl<C> From<NeverField> for Option<NeoTypedInput<C>> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<FormattableYear> {
+impl From<NeverField> for Option<FormattableYear> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<FormattableMonth> {
+impl From<NeverField> for Option<FormattableMonth> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<DayOfMonth> {
+impl From<NeverField> for Option<DayOfMonth> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<IsoWeekday> {
+impl From<NeverField> for Option<IsoWeekday> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<DayOfYearInfo> {
+impl From<NeverField> for Option<DayOfYearInfo> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<AnyCalendarKind> {
+impl From<NeverField> for Option<AnyCalendarKind> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<IsoHour> {
+impl From<NeverField> for Option<IsoHour> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<IsoMinute> {
+impl From<NeverField> for Option<IsoMinute> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<IsoSecond> {
+impl From<NeverField> for Option<IsoSecond> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverFields> for Option<NanoSecond> {
+impl From<NeverField> for Option<NanoSecond> {
     #[inline]
-    fn from(_: NeverFields) -> Self {
+    fn from(_: NeverField) -> Self {
         None
     }
 }
@@ -456,13 +450,13 @@ impl private::Sealed for NeoNeverMarker {}
 
 impl<C> TypedDateMarkers<C> for NeoNeverMarker {
     type DateSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
-    type TypedInputMarker = NeverFields;
-    type YearInput = NeverFields;
-    type MonthInput = NeverFields;
-    type DayOfMonthInput = NeverFields;
-    type DayOfWeekInput = NeverFields;
-    type DayOfYearInput = NeverFields;
-    type AnyCalendarKindInput = NeverFields;
+    type TypedInputMarker = NeverField;
+    type YearInput = NeverField;
+    type MonthInput = NeverField;
+    type DayOfMonthInput = NeverField;
+    type DayOfWeekInput = NeverField;
+    type DayOfYearInput = NeverField;
+    type AnyCalendarKindInput = NeverField;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
@@ -470,22 +464,22 @@ impl<C> TypedDateMarkers<C> for NeoNeverMarker {
 
 impl DateMarkers for NeoNeverMarker {
     type Skel = NoDataCalMarkers;
-    type YearInput = NeverFields;
-    type MonthInput = NeverFields;
-    type DayOfMonthInput = NeverFields;
-    type DayOfWeekInput = NeverFields;
-    type DayOfYearInput = NeverFields;
-    type AnyCalendarKindInput = NeverFields;
+    type YearInput = NeverField;
+    type MonthInput = NeverField;
+    type DayOfMonthInput = NeverField;
+    type DayOfWeekInput = NeverField;
+    type DayOfYearInput = NeverField;
+    type AnyCalendarKindInput = NeverField;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
     type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
 
 impl TimeMarkers for NeoNeverMarker {
-    type HourInput = NeverFields;
-    type MinuteInput = NeverFields;
-    type SecondInput = NeverFields;
-    type NanoSecondInput = NeverFields;
+    type HourInput = NeverField;
+    type MinuteInput = NeverField;
+    type SecondInput = NeverField;
+    type NanoSecondInput = NeverField;
     type TimeSkeletonPatternsV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
     type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
 }
@@ -683,7 +677,7 @@ macro_rules! datetime_marker_helper {
         NanoSecond
     };
     (@input/$any:ident, no) => {
-        NeverFields
+        NeverField
     };
 }
 
