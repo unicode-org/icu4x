@@ -198,7 +198,7 @@ mod tests {
         let dict_payload: DataPayload<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &icu_locale_core::langid!("ja").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

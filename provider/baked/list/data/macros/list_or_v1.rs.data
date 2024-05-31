@@ -109,13 +109,13 @@ macro_rules! __impl_list_or_v1 {
                 static VALUES: [&<icu::list::provider::OrListV1Marker as icu_provider::DataMarker>::Yokeable; 119usize] = [&AF, &AM, &AR, &AS, &AST, &AZ, &BE, &BG, &BLO, &BN, &BR, &BS, &AST, &CEB, &CHR, &CS, &CV, &CY, &DA, &DE, &DSB, &EL, &EN_001, &EN_001, &ES, &ET, &EU, &FA, &FF_ADLM, &FI, &CEB, &FO, &FR, &GA, &GD, &FR, &GU, &HA, &HE, &HI, &HI_LATN, &BS, &DSB, &HU, &HY, &AST, &ID, &IS, &AST, &JA, &JV, &KA, &AST, &KGP, &KK, &KM, &KN, &KO, &KOK, &KU, &KXV, &KY, &LO, &LT, &LV, &MI, &BG, &ML, &MN, &MR, &ID, &MY, &KOK, &AF, &NO, &OR, &PA, &PCM, &PL, &PS, &FR, &QU, &RM, &RO, &BG, &AST, &SD, &SI, &SK, &SL, &SO, &SQ, &BG, &BS, &NO, &SW, &SYR, &TA, &TE, &TH, &TI, &TK, &TO, &TR, &UK, &UND, &UR, &UZ, &CEB, &VI, &XH, &HI, &YO, &YO_BJ, &RM, &YUE, &YUE, &ZH, &ZH];
                 static KEYS: [&str; 119usize] = ["af", "am", "ar", "as", "ast", "az", "be", "bg", "blo", "bn", "br", "bs", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "dsb", "el", "en-001", "en-CA", "es", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "id", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ku", "kxv", "ky", "lo", "lt", "lv", "mi", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "no", "or", "pa", "pcm", "pl", "ps", "pt", "qu", "rm", "ro", "ru", "sc", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "sv", "sw", "syr", "ta", "te", "th", "ti", "tk", "to", "tr", "uk", "und", "ur", "uz", "vec", "vi", "xh", "xnr", "yo", "yo-BJ", "yrl", "yue", "yue-Hans", "zh", "zh-Hant"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::list::provider::OrListV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -139,8 +139,8 @@ macro_rules! __impliterable_list_or_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::list::provider::OrListV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["af", "am", "ar", "as", "ast", "az", "be", "bg", "blo", "bn", "br", "bs", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "dsb", "el", "en-001", "en-CA", "es", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "id", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ku", "kxv", "ky", "lo", "lt", "lv", "mi", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "no", "or", "pa", "pcm", "pl", "ps", "pt", "qu", "rm", "ro", "ru", "sc", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "sv", "sw", "syr", "ta", "te", "th", "ti", "tk", "to", "tr", "uk", "und", "ur", "uz", "vec", "vi", "xh", "xnr", "yo", "yo-BJ", "yrl", "yue", "yue-Hans", "zh", "zh-Hant"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["af", "am", "ar", "as", "ast", "az", "be", "bg", "blo", "bn", "br", "bs", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "dsb", "el", "en-001", "en-CA", "es", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hsb", "hu", "hy", "ia", "id", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ku", "kxv", "ky", "lo", "lt", "lv", "mi", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "no", "or", "pa", "pcm", "pl", "ps", "pt", "qu", "rm", "ro", "ru", "sc", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "sv", "sw", "syr", "ta", "te", "th", "ti", "tk", "to", "tr", "uk", "und", "ur", "uz", "vec", "vi", "xh", "xnr", "yo", "yo-BJ", "yrl", "yue", "yue-Hans", "zh", "zh-Hant"].into_iter().filter_map(icu_provider::DataRequest::legacy_decode).collect())
             }
         }
     };

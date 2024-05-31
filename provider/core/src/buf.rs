@@ -46,7 +46,7 @@ impl DataMarker for BufferMarker {
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("de").into(),
-///     metadata: Default::default(),
+///     ..Default::default()
 /// };
 ///
 /// // Deserializing manually

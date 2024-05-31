@@ -36,7 +36,7 @@ all-features = true
 # DatagenDriver
 displaydoc = { workspace = true }
 icu_locale_core = { workspace = true, features = ["std"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
+icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
 log = { workspace = true }
 memchr = { workspace = true }
 rayon = { workspace = true, optional = true }

@@ -44,7 +44,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::supported_locales_for_key`].
+/// by [`datagen::IterableDynamicDataProvider::supported_requests_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -142,22 +142,19 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_locales_for_key(
+    fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        self.inner.supported_locales_for_key(key).map(|vec| {
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.inner.supported_requests_for_key(key).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
-            vec.into_iter()
-                .filter_map(|locale| {
-                    if (self.predicate)(DataRequest {
-                        locale: &locale,
-                        metadata: Default::default(),
-                    }) {
-                        Some(locale)
-                    } else {
-                        None
-                    }
+            set.into_iter()
+                .filter(|(locale, key_attributes)| {
+                    (self.predicate)(DataRequest {
+                        locale,
+                        key_attributes,
+                        ..Default::default()
+                    })
                 })
                 .collect()
         })
@@ -171,19 +168,18 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
-    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        self.inner.supported_locales().map(|vec| {
+    fn supported_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.inner.supported_requests().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter_map(|locale| {
-                    if (self.predicate)(DataRequest {
-                        locale: &locale,
-                        metadata: Default::default(),
-                    }) {
-                        Some(locale)
-                    } else {
-                        None
-                    }
+                .filter(|(locale, key_attributes)| {
+                    (self.predicate)(DataRequest {
+                        locale,
+                        key_attributes,
+                        ..Default::default()
+                    })
                 })
                 .collect()
         })

@@ -10,7 +10,6 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
-use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::VarULE;
 use zerovec::vecs::Index32;
@@ -87,6 +86,7 @@ impl DataExporter for BlobExporter<'_> {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
@@ -108,7 +108,15 @@ impl DataExporter for BlobExporter<'_> {
             .expect("poison")
             .entry(key.hashed())
             .or_default()
-            .entry(locale.write_to_string().into_owned().into_bytes())
+            .entry(
+                DataRequest {
+                    locale,
+                    key_attributes,
+                    ..Default::default()
+                }
+                .legacy_encode()
+                .into_bytes(),
+            )
             .or_insert(idx);
         Ok(())
     }

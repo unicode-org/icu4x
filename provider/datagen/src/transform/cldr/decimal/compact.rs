@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_experimental::compactdecimal::provider::*;
 use icu_locale_core::extensions::unicode::key;
 use icu_provider::prelude::*;
@@ -107,14 +107,18 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
 
-impl IterableDataProviderInternal<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
@@ -136,7 +140,7 @@ mod tests {
         let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -202,7 +206,7 @@ mod tests {
         let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("ja").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

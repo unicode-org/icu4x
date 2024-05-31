@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_locale::provider::CollationFallbackSupplementV1Marker;
@@ -111,8 +111,10 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<CollationFallbackSupplementV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -232,8 +234,8 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProviderInternal<$marker> for DatagenProvider {
-                fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+            impl IterableDataProviderCached<$marker> for DatagenProvider {
+                fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     Ok(self
                         .icuexport()?
                         .list(&format!(
@@ -248,7 +250,7 @@ macro_rules! collation_provider {
                             })
                         })
                         .filter_map(|s| file_name_to_locale(&s, self.has_legacy_swedish_variants()))
-                        .map(DataLocale::from)
+                        .map(|l| (DataLocale::from(l), Default::default()))
                         .collect())
                 }
             }

@@ -160,8 +160,8 @@ pub struct BakedExporter {
     mod_directory: PathBuf,
     pretty: bool,
     use_separate_crates: bool,
-    // Temporary storage for put_payload: key -> (bake -> {locale})
-    data: Mutex<HashMap<DataKey, BTreeMap<SyncTokenStream, BTreeSet<String>>>>,
+    // Temporary storage for put_payload: key -> (bake -> {(locale, key_attributes)})
+    data: Mutex<HashMap<DataKey, BTreeMap<SyncTokenStream, BTreeSet<(String, String)>>>>,
     /// (Key, Marker) pairs to wire up in mod.rs. This is populated by `flush` and consumed by `close`.
     impl_data: Mutex<BTreeMap<DataKey, SyncTokenStream>>,
     // List of dependencies used by baking.
@@ -356,11 +356,13 @@ impl DataExporter for BakedExporter {
         &self,
         key: DataKey,
         locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let payload = payload.tokenize(&self.dependencies);
         let payload = payload.to_string();
         let locale = locale.to_string();
+        let key_attributes = key_attributes.to_string();
         self.data
             .lock()
             .expect("poison")
@@ -368,7 +370,7 @@ impl DataExporter for BakedExporter {
             .or_default()
             .entry(payload)
             .or_default()
-            .insert(locale);
+            .insert((locale, key_attributes));
         Ok(())
     }
 
@@ -414,8 +416,8 @@ impl DataExporter for BakedExporter {
         }, quote! {
             #maybe_msrv
             impl icu_provider::datagen::IterableDataProvider<#marker> for $provider {
-                fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                    Ok([icu_provider::DataLocale::default()].into())
+                fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
         }, key, marker)
@@ -494,30 +496,45 @@ impl BakedExporter {
         let (load_body, iterable_body) = if values.is_empty() {
             (
                 quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))),
-                quote!(Ok(vec![])),
+                quote!(Ok(Default::default())),
             )
         } else {
             let mut map = BTreeMap::new();
             let mut statics = Vec::new();
 
-            for (bake, locales) in values {
-                let first_locale = locales.iter().next().unwrap();
+            for (bake, reqs) in values {
+                let (first_locale, first_key_attributes) = reqs.iter().next().unwrap();
                 let anchor = proc_macro2::Ident::new(
-                    &first_locale
-                        .chars()
-                        .map(|ch| {
-                            if ch == '-' {
-                                '_'
-                            } else {
-                                ch.to_ascii_uppercase()
-                            }
-                        })
-                        .collect::<String>(),
+                    &DataRequest {
+                        locale: &first_locale.parse().unwrap(),
+                        key_attributes: &first_key_attributes.parse().unwrap(),
+                        ..Default::default()
+                    }
+                    .legacy_encode()
+                    .chars()
+                    .map(|ch| {
+                        if ch == '-' {
+                            '_'
+                        } else {
+                            ch.to_ascii_uppercase()
+                        }
+                    })
+                    .collect::<String>(),
                     proc_macro2::Span::call_site(),
                 );
                 let bake = bake.parse::<TokenStream>().unwrap();
                 statics.push(quote! { static #anchor: #struct_type = #bake; });
-                map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
+                map.extend(reqs.into_iter().map(|(l, a)| {
+                    (
+                        DataRequest {
+                            locale: &l.parse().unwrap(),
+                            key_attributes: &a.parse().unwrap(),
+                            ..Default::default()
+                        }
+                        .legacy_encode(),
+                        anchor.clone(),
+                    )
+                }));
             }
 
             let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
@@ -527,19 +544,14 @@ impl BakedExporter {
             statics.push(quote!(static VALUES: [& #struct_type; #n] = [#(&#values),*];));
 
             statics.push(quote!(static KEYS: [&str; #n] = [#(#keys),*];));
-            let search = |locale| {
-                quote! {
-                    KEYS.binary_search_by(|k| #locale.strict_cmp(k.as_bytes()).reverse())
-                        .map(|i| *unsafe { VALUES.get_unchecked(i) })
-                }
-            };
 
             let load_body = match fallback_mode {
                 None => {
-                    let search = search(quote!(req.locale));
                     quote! {
                         #(#statics)*
-                        if let Ok(payload) = #search {
+                        if let Ok(payload) = KEYS
+                                .binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse())
+                                .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             Ok(icu_provider::DataResponse {
                                 payload: Some(#into_data_payload),
                                 metadata: Default::default(),
@@ -551,14 +563,14 @@ impl BakedExporter {
                 }
                 Some(BuiltInFallbackMode::Standard) => {
                     self.dependencies.insert("icu_locale/compiled_data");
-                    let search_direct = search(quote!(req.locale));
-                    let search_iterator = search(quote!(fallback_iterator.get()));
                     quote! {
                         #(#statics)*
 
                         let mut metadata = icu_provider::DataResponseMetadata::default();
 
-                        let payload =  if let Ok(payload) = #search_direct {
+                        let payload =  if let Ok(payload) = KEYS
+                                .binary_search_by(|k| req.legacy_cmp(k.as_bytes()).reverse())
+                                .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                             payload
                         } else {
                             const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
@@ -566,7 +578,9 @@ impl BakedExporter {
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
-                                if let Ok(payload) = #search_iterator {
+                                if let Ok(payload) = KEYS
+                                        .binary_search_by(|k| icu_provider::DataRequest { locale: fallback_iterator.get(), ..req }.legacy_cmp(k.as_bytes()).reverse())
+                                        .map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                                     metadata.locale = Some(fallback_iterator.take());
                                     break payload;
                                 }
@@ -592,7 +606,7 @@ impl BakedExporter {
             let iterable_body = quote!(Ok(
                 [#(#keys),*]
                 .into_iter()
-                .map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap())
+                .filter_map(icu_provider::DataRequest::legacy_decode)
                 .collect()
             ));
 
@@ -614,7 +628,7 @@ impl BakedExporter {
             quote! {
                 #maybe_msrv
                 impl icu_provider::datagen::IterableDataProvider<#marker> for $provider {
-                    fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
+                    fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
                         #iterable_body
                     }
                 }

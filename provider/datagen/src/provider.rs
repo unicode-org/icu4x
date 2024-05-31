@@ -41,7 +41,8 @@ pub struct DatagenProvider {
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
-    supported_locales_cache: Arc<FrozenMap<DataKey, Box<Result<HashSet<DataLocale>, DataError>>>>,
+    supported_locales_cache:
+        Arc<FrozenMap<DataKey, Box<Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>>>>,
 }
 
 macro_rules! cb {
@@ -269,17 +270,6 @@ impl DatagenProvider {
     ) -> Result<impl IntoIterator<Item = icu_locale_core::LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
-
-    fn supported_locales_set<M>(&self) -> Result<&HashSet<DataLocale>, DataError>
-    where
-        M: KeyedDataMarker,
-        Self: IterableDataProviderInternal<M>,
-    {
-        self.supported_locales_cache
-            .insert_with(M::KEY, || Box::new(self.supported_locales_impl()))
-            .as_ref()
-            .map_err(|e| *e)
-    }
 }
 
 /// Specifies the collation Han database to use.
@@ -357,20 +347,31 @@ impl std::fmt::Display for TrieType {
     }
 }
 
-trait IterableDataProviderInternal<M: KeyedDataMarker>: DataProvider<M> {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError>;
+trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
 }
 
 impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
 where
-    DatagenProvider: IterableDataProviderInternal<M>,
+    DatagenProvider: IterableDataProviderCached<M>,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales_set()
-            .map(|v| v.iter().cloned().collect())
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.supported_locales_cache
+            .insert_with(M::KEY, || Box::new(self.supported_locales_cached()))
+            .clone()
     }
 
-    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
-        self.supported_locales_set().map(|v| v.contains(locale))
+    fn supports_request(
+        &self,
+        locale: &DataLocale,
+        key_attributes: &DataKeyAttributes,
+    ) -> Result<bool, DataError> {
+        self.supported_locales_cache
+            .insert_with(M::KEY, || Box::new(self.supported_locales_cached()))
+            .as_ref()
+            .map_err(|e| *e)
+            .map(|v| v.contains(&(locale.clone(), key_attributes.clone())))
     }
 }

@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_list::provider::*;
 use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
@@ -127,13 +127,15 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_locales_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()
                     .list_langs()?
-                    .map(DataLocale::from)
+                    .map(|l| (DataLocale::from(l), Default::default()))
                     .collect())
             }
         }

@@ -5,7 +5,7 @@
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::transform::cldr::decimal::decimal_pattern::DecimalPattern;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 
 use std::borrow::Cow;
 
@@ -106,13 +106,15 @@ impl DataProvider<CurrencyEssentialsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<CurrencyEssentialsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -357,7 +359,7 @@ fn test_basic() {
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -396,7 +398,7 @@ fn test_basic() {
     let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

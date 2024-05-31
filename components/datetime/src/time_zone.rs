@@ -39,7 +39,7 @@ where
             provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?,
         );
@@ -191,7 +191,7 @@ impl TimeZoneFormatter {
             zone_formats: zone_provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?,
             exemplar_cities: None,
@@ -449,7 +449,7 @@ impl TimeZoneFormatter {
             zone_formats: provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?,
             exemplar_cities: None,

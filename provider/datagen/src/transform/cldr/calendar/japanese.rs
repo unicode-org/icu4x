@@ -9,6 +9,7 @@ use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 use std::env;
 use std::str::FromStr;
 use std::sync::OnceLock;
@@ -180,14 +181,14 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 }
 
 impl IterableDataProvider<JapaneseErasV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
 impl IterableDataProvider<JapaneseExtendedErasV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 

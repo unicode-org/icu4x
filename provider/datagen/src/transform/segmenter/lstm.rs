@@ -10,7 +10,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use zerovec::{ule::UnvalidatedStr, ZeroVec};
 
@@ -207,7 +207,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
             "Khmer_codepoints_exclusive_model4_heavy",
@@ -216,6 +216,7 @@ impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
         ]
         .into_iter()
         .filter_map(crate::lstm_model_name_to_data_locale)
+        .map(|l| (l, Default::default()))
         .collect())
     }
 }

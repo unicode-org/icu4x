@@ -4,6 +4,7 @@
 
 use core::convert::TryFrom;
 use std::borrow::Cow;
+use std::collections::HashSet;
 
 use icu_experimental::personnames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
@@ -34,7 +35,7 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .personnames()
@@ -47,7 +48,7 @@ impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider 
                     .file_exists(langid, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -164,7 +165,7 @@ mod tests {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -187,7 +188,7 @@ mod tests {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -235,7 +236,7 @@ mod tests {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("es").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 

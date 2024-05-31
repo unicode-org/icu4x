@@ -7,6 +7,8 @@ use alloc::vec::Vec;
 #[cfg(feature = "datagen")]
 use icu_provider::datagen;
 use icu_provider::prelude::*;
+#[cfg(feature = "datagen")]
+use std::collections::HashSet;
 
 /// A provider that returns data from one of two child providers based on a predicate function.
 ///
@@ -107,14 +109,17 @@ where
     P1: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let result = self.0.supported_locales_for_key(key);
+    fn supported_requests_for_key(
+        &self,
+        key: DataKey,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        let result = self.0.supported_requests_for_key(key);
         match result {
             Ok(ok) => return Ok(ok),
             Err(err) if !self.2.test(key, None, err) => return Err(err),
             _ => (),
         };
-        self.1.supported_locales_for_key(key)
+        self.1.supported_requests_for_key(key)
     }
 }
 
@@ -233,10 +238,13 @@ where
     P: datagen::IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests_for_key(
+        &self,
+        key: DataKey,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_key(key);
         for provider in self.providers.iter() {
-            let result = provider.supported_locales_for_key(key);
+            let result = provider.supported_requests_for_key(key);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, None, err) => return Err(err),

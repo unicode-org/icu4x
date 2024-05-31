@@ -85,7 +85,7 @@ use predicates::MissingDataKeyPredicate;
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -121,7 +121,7 @@ use predicates::MissingDataKeyPredicate;
 /// let chinese_hello_world = provider
 ///     .load(DataRequest {
 ///         locale: &langid!("zh").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -133,7 +133,7 @@ use predicates::MissingDataKeyPredicate;
 /// provider
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// ```
@@ -192,7 +192,7 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// let chinese_hello_world = provider
 ///     .load(DataRequest {
 ///         locale: &langid!("zh").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -204,7 +204,7 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// provider
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// ```

@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 
 use icu_experimental::displaynames::provider::*;
 use icu_locale_core::subtags::Language;
@@ -51,8 +51,10 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -65,13 +67,15 @@ impl IterableDataProviderInternal<LanguageDisplayNamesV1Marker> for DatagenProvi
                     .file_exists(langid, "languages.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
 
-impl IterableDataProviderInternal<LocaleDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -84,7 +88,7 @@ impl IterableDataProviderInternal<LocaleDisplayNamesV1Marker> for DatagenProvide
                     .file_exists(langid, "languages.json")
                     .unwrap_or_default()
             })
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }
@@ -210,7 +214,7 @@ mod tests {
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -232,7 +236,7 @@ mod tests {
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -254,7 +258,7 @@ mod tests {
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -276,7 +280,7 @@ mod tests {
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -298,7 +302,7 @@ mod tests {
         let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

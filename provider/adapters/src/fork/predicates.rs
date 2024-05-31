@@ -92,7 +92,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 ///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &langid!("de").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -104,7 +104,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 ///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &langid!("ro").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -118,7 +118,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 ///     &provider.as_deserializing(),
 ///     DataRequest {
 ///         locale: &langid!("en").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     }
 /// )
 /// .expect_err("No English data");

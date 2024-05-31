@@ -34,8 +34,8 @@ macro_rules! __impliterable_time_zone_bcp47_to_iana_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::timezone::provider::names::Bcp47ToIanaMapV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok([icu_provider::DataLocale::default()].into())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     };
