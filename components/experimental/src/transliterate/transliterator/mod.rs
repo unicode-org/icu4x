@@ -1263,6 +1263,7 @@ impl<'a> VarTable<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
 
     use crate as icu_experimental;

@@ -31,7 +31,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
                 key_attributes: &key_attributes,
                 ..Default::default()
             })
-            .expect(&format!("{locale}/{}", &key_attributes as &str))
+            .unwrap()
             .take_payload()
             .unwrap();
         let expected_result = hello_world_provider
