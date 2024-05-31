@@ -1125,7 +1125,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
             // Always export `und`. This prevents calling `step` on an empty locale.
             if locale.is_und() {
                 return sink
-                    .put_payload(key, locale, &key_attributes, payload)
+                    .put_payload(key, locale, key_attributes, payload)
                     .map_err(|e| {
                         e.with_req(
                             key,
@@ -1168,7 +1168,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 }
             }
             // Did not find a match: export this payload
-            sink.put_payload(key, locale, &key_attributes, payload)
+            sink.put_payload(key, locale, key_attributes, payload)
                 .map_err(|e| {
                     e.with_req(
                         key,

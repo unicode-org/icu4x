@@ -927,8 +927,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale: &locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_subtag_for(
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     key_attrs::Context::Format,
                     match field_length {
                         FieldLength::Abbreviated => key_attrs::Length::Abbr,
@@ -975,8 +975,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale: &locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_subtag_for(
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     match field_symbol {
                         fields::Month::Format => key_attrs::Context::Format,
                         fields::Month::StandAlone => key_attrs::Context::Standalone,
@@ -1025,8 +1025,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let payload = R::DayPeriodNames::load_from(
             provider,
             DataRequest {
-                locale: &locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_subtag_for(
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     key_attrs::Context::Format,
                     match field_length {
                         FieldLength::Abbreviated => key_attrs::Length::Abbr,
@@ -1075,8 +1075,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         };
         let payload = provider
             .load_bound(DataRequest {
-                locale: &locale,
-                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_subtag_for(
+                locale,
+                key_attributes: &DataKeyAttributes::from_tinystr(key_attrs::symbol_attr_for(
                     match field_symbol {
                         // UTS 35 says that "e" and "E" have the same non-numeric names
                         fields::Weekday::Format | fields::Weekday::Local => {

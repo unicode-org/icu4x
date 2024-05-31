@@ -65,7 +65,9 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            fn supported_locales_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
@@ -122,7 +124,9 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<PluralRangesV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0

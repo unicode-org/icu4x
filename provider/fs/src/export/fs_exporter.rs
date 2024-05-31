@@ -114,7 +114,7 @@ impl DataExporter for FilesystemExporter {
         write!(&mut path_buf, "/{key}").expect("infallible");
         write!(&mut path_buf, "/{locale}").expect("infallible");
         if !key_attributes.is_empty() {
-            write!(&mut path_buf, "-x-{}", &*key_attributes as &str).expect("infallible");
+            write!(&mut path_buf, "-x-{}", key_attributes as &str).expect("infallible");
         }
         write!(&mut path_buf, ".{}", self.manifest.file_extension).expect("infallible");
 

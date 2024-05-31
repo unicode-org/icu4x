@@ -319,13 +319,13 @@ where
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(&req.key_attributes as &str) {
+        if let Some(response) = exclusive_data.1.get(req.key_attributes as &str) {
             return response.clone();
         };
 
         let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
             let Some((source, reverse, visible)) =
-                exclusive_data.0.remove(&req.key_attributes as &str)
+                exclusive_data.0.remove(req.key_attributes as &str)
             else {
                 return Err(
                     DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)

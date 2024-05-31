@@ -173,7 +173,7 @@ pub mod key_attrs {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_for(context: Context, length: Length) -> TinyAsciiStr<8> {
+    pub fn symbol_attr_for(context: Context, length: Length) -> TinyAsciiStr<8> {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,

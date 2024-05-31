@@ -112,7 +112,9 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<CollationFallbackSupplementV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

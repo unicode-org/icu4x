@@ -21,7 +21,7 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         HelloWorldProvider.supported_requests()
     }
 }

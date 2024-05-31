@@ -15,10 +15,10 @@ use icu_properties::{
     IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
 };
 use icu_provider::datagen::IterableDataProvider;
-use std::collections::HashSet;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::WordType;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::sync::OnceLock;
 use zerovec::ZeroVec;

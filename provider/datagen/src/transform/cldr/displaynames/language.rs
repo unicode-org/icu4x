@@ -52,7 +52,9 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()
@@ -71,7 +73,9 @@ impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for DatagenProvide
 }
 
 impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .displaynames()

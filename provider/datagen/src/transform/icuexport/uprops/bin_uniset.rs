@@ -8,8 +8,8 @@ use icu_collections::codepointinvliststringlist::CodePointInversionListAndString
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use zerovec::VarZeroVec;
 use std::collections::HashSet;
+use zerovec::VarZeroVec;
 
 impl DatagenProvider {
     fn get_binary_prop_for_unicodeset<'a>(

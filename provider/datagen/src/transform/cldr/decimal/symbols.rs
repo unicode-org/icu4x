@@ -50,7 +50,9 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<DecimalSymbolsV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }

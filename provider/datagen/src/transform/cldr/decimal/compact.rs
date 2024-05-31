@@ -108,13 +108,17 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProviderCached<ShortCompactDecimalFormatDataV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }
 
 impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for DatagenProvider {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }

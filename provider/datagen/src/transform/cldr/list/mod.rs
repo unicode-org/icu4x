@@ -128,7 +128,9 @@ macro_rules! implement {
         }
 
         impl IterableDataProviderCached<$marker> for DatagenProvider {
-            fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+            fn supported_locales_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .cldr()?
                     .misc()

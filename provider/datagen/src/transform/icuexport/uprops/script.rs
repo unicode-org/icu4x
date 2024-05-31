@@ -62,7 +62,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }

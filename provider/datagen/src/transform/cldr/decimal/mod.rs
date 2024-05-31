@@ -75,7 +75,9 @@ impl DatagenProvider {
             .collect())
     }
 
-    fn supported_locales_for_numbers(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+    fn supported_locales_for_numbers(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()

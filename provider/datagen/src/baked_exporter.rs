@@ -511,7 +511,7 @@ impl BakedExporter {
                         } else {
                             "-x-"
                         }
-                        + &first_key_attributes)
+                        + first_key_attributes)
                         .chars()
                         .map(|ch| {
                             if ch == '-' {

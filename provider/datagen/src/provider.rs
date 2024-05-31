@@ -348,7 +348,9 @@ impl std::fmt::Display for TrieType {
 }
 
 trait IterableDataProviderCached<M: KeyedDataMarker>: DataProvider<M> {
-    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>;
 }
 
 impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider

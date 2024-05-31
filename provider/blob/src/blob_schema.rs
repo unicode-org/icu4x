@@ -121,6 +121,7 @@ impl<'data> BlobSchemaV1<'data> {
             .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
                 let mut iter = s.splitn(2, "-x-");
+                #[allow(clippy::unwrap_used)] // at least one element
                 let l = iter.next().unwrap().parse().ok()?;
                 let a = iter.next().unwrap_or("").parse().ok()?;
                 Some((l, a))
@@ -235,6 +236,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .iter()
             .filter_map(|(s, _)| {
                 let mut iter = s.splitn(2, "-x-");
+                #[allow(clippy::unwrap_used)] // at least one element
                 let l = iter.next().unwrap().parse().ok()?;
                 let a = iter.next().unwrap_or("").parse().ok()?;
                 Some((l, a))
