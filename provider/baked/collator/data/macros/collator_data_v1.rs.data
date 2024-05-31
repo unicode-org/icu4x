@@ -103,13 +103,29 @@ macro_rules! __impl_collator_data_v1 {
                 static VALUES: [&<icu::collator::provider::CollationDataV1Marker as icu_provider::DataMarker>::Yokeable; 101usize] = [&AF, &AR, &AR_U_CO_COMPAT, &AS, &AZ, &BE, &BN, &BN_U_CO_TRAD, &BR, &BS, &BS_CYRL, &CEB, &CS, &CY, &DA, &DE_AT_U_CO_PHONEBK, &DE_U_CO_PHONEBK, &DSB, &EN_US_POSIX, &EO, &ES, &ES_U_CO_TRAD, &ET, &FA, &FA_AF, &FF_ADLM, &FI, &FI_U_CO_TRAD, &CEB, &FO, &FY, &ES, &GU, &HA, &HI, &BS, &HSB, &HU, &HY, &IG, &IS, &JA, &JA_U_CO_UNIHAN, &KK, &KM, &KN, &KN_U_CO_TRAD, &KO, &KO_U_CO_UNIHAN, &KOK, &KU, &KY, &LT, &LV, &MK, &ML, &MR, &MT, &MY, &NO, &OR, &PA, &PL, &FA_AF, &RO, &SI, &SI_U_CO_DICT, &SK, &SL, &SQ, &BS_CYRL, &BS, &SV, &SV_U_CO_TRAD, &TA, &TE, &TH, &TK, &TO, &TR, &UG, &UK, &UND, &UND_U_CO_EMOJI, &UND_U_CO_EOR, &UR, &UZ, &VI, &VI_U_CO_TRAD, &WO, &YO, &YUE_U_CO_STROKE, &YUE_U_CO_UNIHAN, &YUE_U_CO_ZHUYIN, &ZH, &YUE_U_CO_STROKE, &YUE_U_CO_UNIHAN, &YUE_U_CO_ZHUYIN, &YUE_U_CO_STROKE, &YUE_U_CO_UNIHAN, &YUE_U_CO_ZHUYIN];
                 static KEYS: [&str; 101usize] = ["af", "ar", "ar-u-co-compat", "as", "az", "be", "bn", "bn-u-co-trad", "br", "bs", "bs-Cyrl", "ceb", "cs", "cy", "da", "de-AT-u-co-phonebk", "de-u-co-phonebk", "dsb", "en-US-posix", "eo", "es", "es-u-co-trad", "et", "fa", "fa-AF", "ff-Adlm", "fi", "fi-u-co-trad", "fil", "fo", "fy", "gl", "gu", "ha", "hi", "hr", "hsb", "hu", "hy", "ig", "is", "ja", "ja-u-co-unihan", "kk", "km", "kn", "kn-u-co-trad", "ko", "ko-u-co-unihan", "kok", "ku", "ky", "lt", "lv", "mk", "ml", "mr", "mt", "my", "no", "or", "pa", "pl", "ps", "ro", "si", "si-u-co-dict", "sk", "sl", "sq", "sr", "sr-Latn", "sv", "sv-u-co-trad", "ta", "te", "th", "tk", "to", "tr", "ug", "uk", "und", "und-u-co-emoji", "und-u-co-eor", "ur", "uz", "vi", "vi-u-co-trad", "wo", "yo", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                let payload = if let Ok(payload) = KEYS
+                    .binary_search_by(|k| {
+                        let mut iter = k.splitn(2, "-x-");
+                        let l = iter.next().unwrap();
+                        let a = iter.next().unwrap_or("");
+                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
+                    })
+                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
+                {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::collator::provider::CollationDataV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS
+                            .binary_search_by(|k| {
+                                let mut iter = k.splitn(2, "-x-");
+                                let l = iter.next().unwrap();
+                                let a = iter.next().unwrap_or("");
+                                fallback_iterator.get().strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
+                            })
+                            .map(|i| *unsafe { VALUES.get_unchecked(i) })
+                        {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -133,8 +149,16 @@ macro_rules! __impliterable_collator_data_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["af", "ar", "ar-u-co-compat", "as", "az", "be", "bn", "bn-u-co-trad", "br", "bs", "bs-Cyrl", "ceb", "cs", "cy", "da", "de-AT-u-co-phonebk", "de-u-co-phonebk", "dsb", "en-US-posix", "eo", "es", "es-u-co-trad", "et", "fa", "fa-AF", "ff-Adlm", "fi", "fi-u-co-trad", "fil", "fo", "fy", "gl", "gu", "ha", "hi", "hr", "hsb", "hu", "hy", "ig", "is", "ja", "ja-u-co-unihan", "kk", "km", "kn", "kn-u-co-trad", "ko", "ko-u-co-unihan", "kok", "ku", "ky", "lt", "lv", "mk", "ml", "mr", "mt", "my", "no", "or", "pa", "pl", "ps", "ro", "si", "si-u-co-dict", "sk", "sl", "sq", "sr", "sr-Latn", "sv", "sv-u-co-trad", "ta", "te", "th", "tk", "to", "tr", "ug", "uk", "und", "und-u-co-emoji", "und-u-co-eor", "ur", "uz", "vi", "vi-u-co-trad", "wo", "yo", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["af", "ar", "ar-u-co-compat", "as", "az", "be", "bn", "bn-u-co-trad", "br", "bs", "bs-Cyrl", "ceb", "cs", "cy", "da", "de-AT-u-co-phonebk", "de-u-co-phonebk", "dsb", "en-US-posix", "eo", "es", "es-u-co-trad", "et", "fa", "fa-AF", "ff-Adlm", "fi", "fi-u-co-trad", "fil", "fo", "fy", "gl", "gu", "ha", "hi", "hr", "hsb", "hu", "hy", "ig", "is", "ja", "ja-u-co-unihan", "kk", "km", "kn", "kn-u-co-trad", "ko", "ko-u-co-unihan", "kok", "ku", "ky", "lt", "lv", "mk", "ml", "mr", "mt", "my", "no", "or", "pa", "pl", "ps", "ro", "si", "si-u-co-dict", "sk", "sl", "sq", "sr", "sr-Latn", "sv", "sv-u-co-trad", "ta", "te", "th", "tk", "to", "tr", "ug", "uk", "und", "und-u-co-emoji", "und-u-co-eor", "ur", "uz", "vi", "vi-u-co-trad", "wo", "yo", "yue-u-co-stroke", "yue-u-co-unihan", "yue-u-co-zhuyin", "zh", "zh-Hant-u-co-stroke", "zh-Hant-u-co-unihan", "zh-Hant-u-co-zhuyin", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"]
+                    .into_iter()
+                    .filter_map(|s| {
+                        let mut iter = s.splitn(2, "-x-");
+                        let l = iter.next().unwrap().parse().ok()?;
+                        let a = iter.next().unwrap_or("").parse().ok()?;
+                        Some((l, a))
+                    })
+                    .collect())
             }
         }
     };

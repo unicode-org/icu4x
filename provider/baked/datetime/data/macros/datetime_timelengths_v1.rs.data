@@ -77,13 +77,29 @@ macro_rules! __impl_datetime_timelengths_v1 {
                 static VALUES: [&<icu::datetime::provider::calendar::TimeLengthsV1Marker as icu_provider::DataMarker>::Yokeable; 223usize] = [&AF, &AF_NA, &AM, &AM, &AR_IL, &AR_KM, &AR_KM, &AS, &AF, &AF, &BE, &BG, &AM, &AM, &BLO, &AM, &AF, &BRX, &BS, &CA, &AF_NA, &AM, &CS, &AF, &AF, &DA, &AF, &AM, &DSB, &AF_NA, &AF_NA, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &DA, &EN_FI, &AF, &AF, &AF, &AF, &EN_ID, &AF, &EN_IL, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &AF, &CA, &AF_NA, &AF, &AF, &ES_CO, &ES_PH, &AF, &EU, &FA, &AM, &AM, &AM, &AM, &AM, &EN_FI, &AF_NA, &AF, &AF, &FR_BE, &FR_CA, &FR_CH, &FR_CM, &AF_NA, &AF_NA, &AF_NA, &AF_NA, &AF_NA, &AF_NA, &AF_NA, &AF, &AF, &GD, &AF, &GU, &HA, &AF_NA, &AR_IL, &AM, &HR, &HSB, &HU, &AF, &EN_ID, &AF, &AF, &JA, &AF, &KEA, &AF, &AF, &AM, &GU, &KO, &KO_CN, &AM, &AM, &KS_DEVA, &KU, &AF_NA, &AF, &HA, &LIJ, &LO, &LT, &AF, &AM, &AF_NA, &AF, &AM, &MN, &AM, &MR, &AF_NA, &EN_ID, &AF, &MY, &NDS, &AM, &NN, &AF, &OC, &AM, &AM, &PCM, &AF, &PRG, &FA, &AM, &AF, &AF_NA, &AF_NA, &AM, &AF, &AF, &AF, &AM, &AF, &AM, &AM, &AM, &SI, &EN_IL, &AF, &AF_NA, &LIJ, &SQ, &SQ_MK, &SQ_MK, &AF, &AF, &EN_FI, &AF, &SV_FI, &AF, &AM, &AM, &AR_KM, &AM, &AF, &TH, &AM, &AF, &AF_NA, &TR, &AF_NA, &EN_IL, &AF, &AR_KM, &AM, &UZ, &MN, &VEC, &AF, &AF, &AF, &AM, &YO, &AF, &AF_NA, &AF_NA, &YUE, &YUE_HANS, &ZA, &YUE_HANS, &YUE, &ZH_HANT, &YUE, &ZH_SG, &AF];
                 static KEYS: [&str; 223usize] = ["af", "af-NA", "am", "ar", "ar-IL", "ar-KM", "ar-MA", "as", "ast", "az", "be", "bg", "bgc", "bho", "blo", "bn", "br", "brx", "bs", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "doi", "dsb", "el", "en", "en-150", "en-AI", "en-BI", "en-BW", "en-BZ", "en-CC", "en-CK", "en-CM", "en-CX", "en-DG", "en-DK", "en-FI", "en-FK", "en-GB", "en-GG", "en-GI", "en-ID", "en-IE", "en-IL", "en-IM", "en-IO", "en-JE", "en-KE", "en-MG", "en-MS", "en-MT", "en-MU", "en-MV", "en-NF", "en-NG", "en-NR", "en-NU", "en-PN", "en-RW", "en-SC", "en-SH", "en-SX", "en-TK", "en-TV", "en-TZ", "en-UG", "en-ZA", "en-ZW", "es", "es-419", "es-BR", "es-BZ", "es-CO", "es-PH", "et", "eu", "fa", "ff-Adlm-GH", "ff-Adlm-GM", "ff-Adlm-LR", "ff-Adlm-MR", "ff-Adlm-SL", "fi", "fil", "fo", "fr", "fr-BE", "fr-CA", "fr-CH", "fr-CM", "fr-DJ", "fr-DZ", "fr-MR", "fr-SY", "fr-TD", "fr-TN", "fr-VU", "fy", "ga", "gd", "gl", "gu", "ha", "ha-GH", "he", "hi", "hr", "hsb", "hu", "ia", "id", "is", "it", "ja", "jv", "kea", "kgp", "kk", "km", "kn", "ko", "ko-CN", "kok", "ks", "ks-Deva", "ku", "kxv", "ky", "lb", "lij", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "ms-ID", "mt", "my", "nds", "ne-IN", "nn", "no", "oc", "or", "pa", "pcm", "pl", "prg", "ps", "ps-PK", "pt", "pt-MO", "qu", "raj", "rm", "ro", "ru", "sa", "sah", "sat", "sd", "sd-Deva", "si", "sk", "sl", "so", "so-KE", "sq", "sq-MK", "sq-XK", "sr", "sr-Latn", "su", "sv", "sv-FI", "sw", "syr", "ta", "ta-LK", "te", "tg", "th", "ti", "tk", "to", "tr", "tr-CY", "tt", "uk", "und", "ur", "uz", "uz-Cyrl", "vec", "vi", "wo", "xh", "xnr", "yo", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "za", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG", "zu"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                let payload = if let Ok(payload) = KEYS
+                    .binary_search_by(|k| {
+                        let mut iter = k.splitn(2, "-x-");
+                        let l = iter.next().unwrap();
+                        let a = iter.next().unwrap_or("");
+                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
+                    })
+                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
+                {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::TimeLengthsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
-                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                        if let Ok(payload) = KEYS
+                            .binary_search_by(|k| {
+                                let mut iter = k.splitn(2, "-x-");
+                                let l = iter.next().unwrap();
+                                let a = iter.next().unwrap_or("");
+                                fallback_iterator.get().strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
+                            })
+                            .map(|i| *unsafe { VALUES.get_unchecked(i) })
+                        {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -107,8 +123,16 @@ macro_rules! __impliterable_datetime_timelengths_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::TimeLengthsV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["af", "af-NA", "am", "ar", "ar-IL", "ar-KM", "ar-MA", "as", "ast", "az", "be", "bg", "bgc", "bho", "blo", "bn", "br", "brx", "bs", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "doi", "dsb", "el", "en", "en-150", "en-AI", "en-BI", "en-BW", "en-BZ", "en-CC", "en-CK", "en-CM", "en-CX", "en-DG", "en-DK", "en-FI", "en-FK", "en-GB", "en-GG", "en-GI", "en-ID", "en-IE", "en-IL", "en-IM", "en-IO", "en-JE", "en-KE", "en-MG", "en-MS", "en-MT", "en-MU", "en-MV", "en-NF", "en-NG", "en-NR", "en-NU", "en-PN", "en-RW", "en-SC", "en-SH", "en-SX", "en-TK", "en-TV", "en-TZ", "en-UG", "en-ZA", "en-ZW", "es", "es-419", "es-BR", "es-BZ", "es-CO", "es-PH", "et", "eu", "fa", "ff-Adlm-GH", "ff-Adlm-GM", "ff-Adlm-LR", "ff-Adlm-MR", "ff-Adlm-SL", "fi", "fil", "fo", "fr", "fr-BE", "fr-CA", "fr-CH", "fr-CM", "fr-DJ", "fr-DZ", "fr-MR", "fr-SY", "fr-TD", "fr-TN", "fr-VU", "fy", "ga", "gd", "gl", "gu", "ha", "ha-GH", "he", "hi", "hr", "hsb", "hu", "ia", "id", "is", "it", "ja", "jv", "kea", "kgp", "kk", "km", "kn", "ko", "ko-CN", "kok", "ks", "ks-Deva", "ku", "kxv", "ky", "lb", "lij", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "ms-ID", "mt", "my", "nds", "ne-IN", "nn", "no", "oc", "or", "pa", "pcm", "pl", "prg", "ps", "ps-PK", "pt", "pt-MO", "qu", "raj", "rm", "ro", "ru", "sa", "sah", "sat", "sd", "sd-Deva", "si", "sk", "sl", "so", "so-KE", "sq", "sq-MK", "sq-XK", "sr", "sr-Latn", "su", "sv", "sv-FI", "sw", "syr", "ta", "ta-LK", "te", "tg", "th", "ti", "tk", "to", "tr", "tr-CY", "tt", "uk", "und", "ur", "uz", "uz-Cyrl", "vec", "vi", "wo", "xh", "xnr", "yo", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "za", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG", "zu"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["af", "af-NA", "am", "ar", "ar-IL", "ar-KM", "ar-MA", "as", "ast", "az", "be", "bg", "bgc", "bho", "blo", "bn", "br", "brx", "bs", "ca", "ceb", "chr", "cs", "cv", "cy", "da", "de", "doi", "dsb", "el", "en", "en-150", "en-AI", "en-BI", "en-BW", "en-BZ", "en-CC", "en-CK", "en-CM", "en-CX", "en-DG", "en-DK", "en-FI", "en-FK", "en-GB", "en-GG", "en-GI", "en-ID", "en-IE", "en-IL", "en-IM", "en-IO", "en-JE", "en-KE", "en-MG", "en-MS", "en-MT", "en-MU", "en-MV", "en-NF", "en-NG", "en-NR", "en-NU", "en-PN", "en-RW", "en-SC", "en-SH", "en-SX", "en-TK", "en-TV", "en-TZ", "en-UG", "en-ZA", "en-ZW", "es", "es-419", "es-BR", "es-BZ", "es-CO", "es-PH", "et", "eu", "fa", "ff-Adlm-GH", "ff-Adlm-GM", "ff-Adlm-LR", "ff-Adlm-MR", "ff-Adlm-SL", "fi", "fil", "fo", "fr", "fr-BE", "fr-CA", "fr-CH", "fr-CM", "fr-DJ", "fr-DZ", "fr-MR", "fr-SY", "fr-TD", "fr-TN", "fr-VU", "fy", "ga", "gd", "gl", "gu", "ha", "ha-GH", "he", "hi", "hr", "hsb", "hu", "ia", "id", "is", "it", "ja", "jv", "kea", "kgp", "kk", "km", "kn", "ko", "ko-CN", "kok", "ks", "ks-Deva", "ku", "kxv", "ky", "lb", "lij", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "ms-ID", "mt", "my", "nds", "ne-IN", "nn", "no", "oc", "or", "pa", "pcm", "pl", "prg", "ps", "ps-PK", "pt", "pt-MO", "qu", "raj", "rm", "ro", "ru", "sa", "sah", "sat", "sd", "sd-Deva", "si", "sk", "sl", "so", "so-KE", "sq", "sq-MK", "sq-XK", "sr", "sr-Latn", "su", "sv", "sv-FI", "sw", "syr", "ta", "ta-LK", "te", "tg", "th", "ti", "tk", "to", "tr", "tr-CY", "tt", "uk", "und", "ur", "uz", "uz-Cyrl", "vec", "vi", "wo", "xh", "xnr", "yo", "yrl", "yrl-CO", "yrl-VE", "yue", "yue-Hans", "za", "zh", "zh-HK", "zh-Hant", "zh-MO", "zh-SG", "zu"]
+                    .into_iter()
+                    .filter_map(|s| {
+                        let mut iter = s.splitn(2, "-x-");
+                        let l = iter.next().unwrap().parse().ok()?;
+                        let a = iter.next().unwrap_or("").parse().ok()?;
+                        Some((l, a))
+                    })
+                    .collect())
             }
         }
     };
