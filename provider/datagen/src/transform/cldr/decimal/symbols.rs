@@ -6,7 +6,6 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use icu_decimal::provider::*;
-use icu_locale_core::extensions::unicode::key;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -25,13 +24,10 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
-            Some(v) => *v
-                .as_tinystr_slice()
-                .first()
-                .expect("expecting subtag if key is present"),
-            None => numbers.default_numbering_system,
-        };
+        let nsname = req
+            .key_attributes
+            .single()
+            .unwrap_or(numbers.default_numbering_system);
 
         let mut result =
             DecimalSymbolsV1::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {

@@ -7,13 +7,12 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderCached;
 use either::Either;
 use icu_datetime::provider::calendar::*;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::extensions::unicode::{key, value};
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::sync::OnceLock;
+use tinystr::{tinystr, TinyAsciiStr};
 
 mod neo;
 mod neo_skeleton;
@@ -22,29 +21,28 @@ mod skeletons;
 mod symbols;
 pub(in crate::provider) mod week_data;
 
-pub(in crate::provider) static SUPPORTED_CALS: OnceLock<
-    HashMap<icu_locale_core::extensions::unicode::Value, &'static str>,
-> = OnceLock::new();
+pub(in crate::provider) static SUPPORTED_CALS: OnceLock<HashMap<TinyAsciiStr<8>, &'static str>> =
+    OnceLock::new();
 
-fn supported_cals() -> &'static HashMap<icu_locale_core::extensions::unicode::Value, &'static str> {
+fn supported_cals() -> &'static HashMap<TinyAsciiStr<8>, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
         [
-            (value!("buddhist"), "buddhist"),
-            (value!("chinese"), "chinese"),
-            (value!("coptic"), "coptic"),
-            (value!("dangi"), "dangi"),
-            (value!("ethiopic"), "ethiopic"),
-            (value!("gregory"), "gregorian"),
-            (value!("hebrew"), "hebrew"),
-            (value!("indian"), "indian"),
-            (value!("islamic"), "islamic"),
-            (value!("islamicc"), "islamic"),
-            (value!("japanese"), "japanese"),
-            (value!("japanext"), "japanese"),
-            (value!("persian"), "persian"),
-            (value!("roc"), "roc"),
-            (value!("tbla"), "islamic"),
-            (value!("umalqura"), "islamic"),
+            (tinystr!(8, "buddhist"), "buddhist"),
+            (tinystr!(8, "chinese"), "chinese"),
+            (tinystr!(8, "coptic"), "coptic"),
+            (tinystr!(8, "dangi"), "dangi"),
+            (tinystr!(8, "ethiopic"), "ethiopic"),
+            (tinystr!(8, "gregory"), "gregorian"),
+            (tinystr!(8, "hebrew"), "hebrew"),
+            (tinystr!(8, "indian"), "indian"),
+            (tinystr!(8, "islamic"), "islamic"),
+            (tinystr!(8, "islamicc"), "islamic"),
+            (tinystr!(8, "japanese"), "japanese"),
+            (tinystr!(8, "japanext"), "japanese"),
+            (tinystr!(8, "persian"), "persian"),
+            (tinystr!(8, "roc"), "roc"),
+            (tinystr!(8, "tbla"), "islamic"),
+            (tinystr!(8, "umalqura"), "islamic"),
         ]
         .into_iter()
         .collect()
@@ -55,9 +53,9 @@ impl DatagenProvider {
     fn get_datetime_resources(
         &self,
         langid: &LanguageIdentifier,
-        calendar: Either<&Value, &str>,
+        calendar: Either<&TinyAsciiStr<8>, &str>,
     ) -> Result<cldr_serde::ca::Dates, DataError> {
-        let is_japanext = calendar == Either::Left(&value!("japanext"));
+        let is_japanext = calendar == Either::Left(&tinystr!(8, "japanext"));
         let cldr_cal = match calendar {
             Either::Left(value) => supported_cals()
                 .get(value)
@@ -207,11 +205,11 @@ macro_rules! impl_data_provider {
                 let langid = req.locale.get_langid();
 
                 let calendar = if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
-                    req.locale
-                        .get_unicode_ext(&key!("ca"))
+                    req.key_attributes
+                        .single()
                         .ok_or_else(|| DataErrorKind::NeedsLocale.into_error())?
                 } else {
-                    value!($calendar)
+                    tinystr!(8, $calendar)
                 };
 
                 let data = self.get_datetime_resources(&langid, Either::Left(&calendar))?;
@@ -233,16 +231,17 @@ macro_rules! impl_data_provider {
             ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 let mut r = HashSet::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
-                    for (cal_value, cldr_cal) in supported_cals() {
+                    for (&cal_value, cldr_cal) in supported_cals() {
                         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
-                            let mut locale = DataLocale::from(lid);
-                            locale.set_unicode_ext(key!("ca"), cal_value.clone());
-                            (locale, Default::default())
+                            (
+                                DataLocale::from(lid),
+                                DataKeyAttributes::from_tinystr(cal_value),
+                            )
                         }));
                     }
                 } else {
                     let cldr_cal = supported_cals()
-                        .get(&value!($calendar))
+                        .get(&tinystr!(8, $calendar))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
                     r.extend(
                         self.cldr()?

@@ -7,7 +7,6 @@ use crate::FallbackMode;
 use displaydoc::Display;
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
-use icu_locale_core::extensions::unicode::key;
 use icu_locale_core::LanguageIdentifier;
 use icu_locale_core::ParserError;
 use icu_provider::datagen::*;
@@ -966,18 +965,13 @@ fn select_locales_for_key<'a>(
         return Ok(supported_map.into_values().flatten().collect());
     } else if key.path().get().starts_with("collator/") {
         supported_map.retain(|_, locales| {
-            locales.retain(|(locale, _)| {
-                let Some(collation) = locale
-                    .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.as_single_subtag().copied())
-                else {
-                    return true;
-                };
-                additional_collations.contains(collation.as_str())
-                    || if collation.starts_with("search") {
+            locales.retain(|(_, key_attributes)| {
+                key_attributes.is_empty()
+                    || additional_collations.contains(key_attributes as &str)
+                    || if key_attributes.starts_with("search") {
                         additional_collations.contains("search*")
                     } else {
-                        !["big5han", "gb2312"].contains(&collation.as_str())
+                        !["big5han", "gb2312"].contains(&(key_attributes as &str))
                     }
             });
             !locales.is_empty()

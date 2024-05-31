@@ -6,8 +6,6 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locale_core::extensions::unicode::key;
-use icu_locale_core::extensions::unicode::Value;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -88,13 +86,10 @@ impl DatagenProvider {
                     .expect("All languages from list_langs should be present")
                     .into_iter()
                     .map(move |nsname| {
-                        let mut data_locale = DataLocale::from(&langid);
-                        data_locale.set_unicode_ext(
-                            key!("nu"),
-                            Value::try_from_single_subtag(nsname.as_bytes())
-                                .expect("CLDR should have valid numbering system names"),
-                        );
-                        (data_locale, Default::default())
+                        (
+                            DataLocale::from(&langid),
+                            DataKeyAttributes::from_tinystr(nsname),
+                        )
                     })
                     .chain([(last, Default::default())])
             })

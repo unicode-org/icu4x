@@ -11,7 +11,7 @@ use icu_collator::provider::*;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_locale::provider::CollationFallbackSupplementV1Marker;
 use icu_locale::provider::LocaleFallbackSupplementV1;
-use icu_locale_core::extensions::unicode::{key, value};
+use icu_locale_core::extensions::unicode::key;
 use icu_locale_core::subtags::language;
 use icu_locale_core::subtags::Language;
 use icu_locale_core::subtags::Region;
@@ -20,6 +20,7 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use tinystr::tinystr;
 use writeable::Writeable;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
@@ -52,10 +53,11 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for DatagenProvider {
                 .list(&format!("collation/{}", self.collation_han_database()))?
                 .filter_map(|s| {
                     Some(
-                        file_name_to_locale(
+                        file_name_to_req(
                             s.rsplit_once('_')?.0,
                             self.has_legacy_swedish_variants(),
                         )?
+                        .0
                         .language(),
                     )
                 })
@@ -133,7 +135,11 @@ impl DatagenProvider {
     }
 }
 
-fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
+fn req_to_file_name(
+    locale: &DataLocale,
+    key_attributes: &DataKeyAttributes,
+    has_legacy_swedish_variants: bool,
+) -> String {
     let mut s = if locale.get_langid() == LanguageIdentifier::UND {
         "root".to_owned()
     } else {
@@ -143,9 +149,10 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if let Some(extension) = &locale.get_unicode_ext(&key!("co")) {
+
+    if !key_attributes.is_empty() {
         s.push('_');
-        s.push_str(match extension.to_string().as_str() {
+        s.push_str(match key_attributes as &str {
             "trad" => "traditional",
             "phonebk" => "phonebook",
             "dict" => "dictionary",
@@ -166,9 +173,12 @@ fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -
     s
 }
 
-fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<DataLocale> {
+fn file_name_to_req(
+    file_name: &str,
+    has_legacy_swedish_variants: bool,
+) -> Option<(DataLocale, DataKeyAttributes)> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
-    let mut locale = if language == "root" {
+    let locale = if language == "root" {
         DataLocale::default()
     } else {
         language.parse().ok()?
@@ -177,29 +187,26 @@ fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Op
     // See above for the two special cases.
     if language == "zh" {
         if variant == "pinyin" {
-            return Some(locale);
+            return Some((locale, Default::default()));
         }
     } else if has_legacy_swedish_variants && language == "sv" {
         // TODO(#2856): Remove when dropping pre-42 support in 2.0
         if variant == "reformed" {
-            return Some(locale);
+            return Some((locale, Default::default()));
         }
     } else if variant == "standard" {
-        return Some(locale);
+        return Some((locale, Default::default()));
     }
 
-    locale.set_unicode_ext(
-        key!("co"),
-        match variant {
-            "traditional" => value!("trad"),
-            "phonebook" => value!("phonebk"),
-            "dictionary" => value!("dict"),
-            "gb2312han" => value!("gb2312"),
-            _ => variant.parse().unwrap(),
-        },
-    );
+    let key_attributes = match variant {
+        "traditional" => DataKeyAttributes::from_tinystr(tinystr!(8, "trad")),
+        "phonebook" => DataKeyAttributes::from_tinystr(tinystr!(8, "phonebk")),
+        "dictionary" => DataKeyAttributes::from_tinystr(tinystr!(8, "dict")),
+        "gb2312han" => DataKeyAttributes::from_tinystr(tinystr!(8, "gb2312")),
+        _ => variant.parse().unwrap(),
+    };
 
-    Some(locale)
+    Some((locale, key_attributes))
 }
 
 macro_rules! collation_provider {
@@ -213,7 +220,7 @@ macro_rules! collation_provider {
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
                             self.collation_han_database(),
-                            locale_to_file_name(&req.locale, self.has_legacy_swedish_variants()),
+                            req_to_file_name(&req.locale, &req.key_attributes, self.has_legacy_swedish_variants()),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -249,8 +256,7 @@ macro_rules! collation_provider {
                                 file_name
                             })
                         })
-                        .filter_map(|s| file_name_to_locale(&s, self.has_legacy_swedish_variants()))
-                        .map(|l| (DataLocale::from(l), Default::default()))
+                        .filter_map(|s| file_name_to_req(&s, self.has_legacy_swedish_variants()))
                         .collect())
                 }
             }

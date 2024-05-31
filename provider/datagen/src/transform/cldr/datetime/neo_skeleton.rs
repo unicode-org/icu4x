@@ -14,10 +14,9 @@ use icu_datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, Ti
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::neo::*;
 use icu_datetime::DateTimeFormatterOptions;
-use icu_locale_core::extensions::unicode::{value, Value};
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
+use tinystr::{TinyAsciiStr, tinystr};
 
 use super::supported_cals;
 
@@ -25,7 +24,7 @@ impl DatagenProvider {
     fn load_neo_skeletons_key<M, C>(
         &self,
         req: DataRequest,
-        calendar: Either<&Value, &str>,
+        calendar: Either<&TinyAsciiStr<8>, &str>,
         from_id_str: impl Fn(TinyAsciiStr<8>) -> Option<C>,
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
@@ -55,7 +54,7 @@ impl DatagenProvider {
     fn make_packed_skeleton_data<C>(
         &self,
         langid: &LanguageIdentifier,
-        calendar: Either<&Value, &str>,
+        calendar: Either<&TinyAsciiStr<8>, &str>,
         neo_components: C,
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
@@ -158,7 +157,7 @@ impl DatagenProvider {
 
     fn neo_date_skeleton_supported_locales(
         &self,
-        calendar: &Value,
+        calendar: &TinyAsciiStr<8>,
     ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
@@ -219,7 +218,7 @@ macro_rules! impl_neo_skeleton_datagen {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.load_neo_skeletons_key(
                     req,
-                    Either::Left(&value!($calendar)),
+                    Either::Left(&tinystr!(8, $calendar)),
                     |id_str| NeoDateComponents::from_id_str(id_str),
                     |length, neo_components| {
                         NeoDateSkeleton::for_length_and_components(length, *neo_components)
@@ -233,7 +232,7 @@ macro_rules! impl_neo_skeleton_datagen {
             fn supported_locales_cached(
                 &self,
             ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
-                self.neo_date_skeleton_supported_locales(&value!($calendar))
+                self.neo_date_skeleton_supported_locales(&tinystr!(8, $calendar))
             }
         }
     };
