@@ -15,7 +15,7 @@ pub mod ffi {
 
     use crate::{
         data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XError,
-        fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
+        fixed_decimal::ffi::ICU4XFixedDecimal, locale_core::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
     };
 
@@ -104,7 +104,7 @@ pub mod ffi {
         pub fn format(
             &self,
             value: &ICU4XFixedDecimal,
-            write: &mut diplomat_runtime::DiplomatWriteable,
+            write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }

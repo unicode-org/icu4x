@@ -50,7 +50,7 @@ use crate::AsCalendar;
 use crate::{
     chinese_based::ChineseBasedDateInner,
     types::{self, Era, FormattableYear},
-    AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso, Time,
+    Calendar, CalendarError, Date, DateTime, Iso, Time,
 };
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
@@ -287,7 +287,7 @@ impl Calendar for Dangi {
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(AnyCalendarKind::Dangi)
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

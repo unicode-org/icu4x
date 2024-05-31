@@ -11,7 +11,7 @@
 //!
 //! ```rust
 //! use icu::casemap::CaseMapper;
-//! use icu::locid::langid;
+//! use icu::locale::langid;
 //!
 //! let cm = CaseMapper::new();
 //!

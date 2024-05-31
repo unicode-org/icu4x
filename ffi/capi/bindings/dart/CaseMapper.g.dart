@@ -41,10 +41,10 @@ final class CaseMapper implements ffi.Finalizable {
   String lowercase(String s, Locale locale) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    _ICU4XCaseMapper_lowercase(_ffi, sView.allocIn(temp), sView.length, locale._ffi, writeable._ffi);
+    final write = _Write();
+    _ICU4XCaseMapper_lowercase(_ffi, sView.allocIn(temp), sView.length, locale._ffi, write._ffi);
     temp.releaseAll();
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Returns the full uppercase mapping of the given string
@@ -53,10 +53,10 @@ final class CaseMapper implements ffi.Finalizable {
   String uppercase(String s, Locale locale) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    _ICU4XCaseMapper_uppercase(_ffi, sView.allocIn(temp), sView.length, locale._ffi, writeable._ffi);
+    final write = _Write();
+    _ICU4XCaseMapper_uppercase(_ffi, sView.allocIn(temp), sView.length, locale._ffi, write._ffi);
     temp.releaseAll();
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Returns the full titlecase mapping of the given string, performing head adjustment without
@@ -69,10 +69,10 @@ final class CaseMapper implements ffi.Finalizable {
   String titlecaseSegmentWithOnlyCaseData(String s, Locale locale, TitlecaseOptions options) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_ffi, sView.allocIn(temp), sView.length, locale._ffi, options._toFfi(temp), writeable._ffi);
+    final write = _Write();
+    _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_ffi, sView.allocIn(temp), sView.length, locale._ffi, options._toFfi(temp), write._ffi);
     temp.releaseAll();
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Case-folds the characters in the given string
@@ -81,10 +81,10 @@ final class CaseMapper implements ffi.Finalizable {
   String fold(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    _ICU4XCaseMapper_fold(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final write = _Write();
+    _ICU4XCaseMapper_fold(_ffi, sView.allocIn(temp), sView.length, write._ffi);
     temp.releaseAll();
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Case-folds the characters in the given string
@@ -94,10 +94,10 @@ final class CaseMapper implements ffi.Finalizable {
   String foldTurkic(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final writeable = _Writeable();
-    _ICU4XCaseMapper_fold_turkic(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final write = _Write();
+    _ICU4XCaseMapper_fold_turkic(_ffi, sView.allocIn(temp), sView.length, write._ffi);
     temp.releaseAll();
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
@@ -189,27 +189,27 @@ external _ResultOpaqueInt32 _ICU4XCaseMapper_create(ffi.Pointer<ffi.Opaque> prov
 @meta.ResourceIdentifier('ICU4XCaseMapper_lowercase')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_lowercase')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapper_lowercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XCaseMapper_lowercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XCaseMapper_uppercase')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_uppercase')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapper_uppercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XCaseMapper_uppercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XCaseMapper_fold')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_fold')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapper_fold(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XCaseMapper_fold(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XCaseMapper_fold_turkic')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_fold_turkic')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapper_fold_turkic(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XCaseMapper_fold_turkic(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('ICU4XCaseMapper_add_case_closure_to')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_add_case_closure_to')

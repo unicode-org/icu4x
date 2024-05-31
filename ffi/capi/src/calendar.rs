@@ -11,7 +11,7 @@ pub mod ffi {
     use icu_calendar::{AnyCalendar, AnyCalendarKind};
 
     use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
 
     /// The various calendar types currently supported by [`ICU4XCalendar`]
@@ -88,7 +88,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_string, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_value, FnInEnum, hidden)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn bcp47(self, write: &mut diplomat_runtime::DiplomatWriteable) {
+        pub fn bcp47(self, write: &mut diplomat_runtime::DiplomatWrite) {
             let kind = AnyCalendarKind::from(self);
             let _infallible = write.write_str(kind.as_bcp47_string());
         }

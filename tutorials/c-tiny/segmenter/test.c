@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     ICU4XLineSegmenter* segmenter = segmenter_result.ok;
 
     char output[40];
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
 
     const char* data = "อักษรไทย เป็นอักษรที่ใช้เขียนภาษาไทยและภาษาของกลุ่มชาติพันธุ์ต่างๆ เช่น คำเมือง, อีสาน, ภาษาไทยใต้, มลายูปัตตานี เป็นต้น ในประเทศไทย มีพยัญชนะ 44 รูป สระ 21 รูป วรรณยุกต์ 4 รูป และเครื่องหมายอื่น ๆ อีกจำนวนหนึ่ง";
 

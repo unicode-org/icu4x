@@ -7,8 +7,8 @@ use icu_datetime::{
     options::{components, length, preferences},
     DateTimeFormatterOptions, TypedDateTimeFormatter,
 };
-use icu_locid::locale;
-use icu_locid::Locale;
+use icu_locale_core::locale;
+use icu_locale_core::Locale;
 
 fn assert_resolved_components(
     options: DateTimeFormatterOptions,

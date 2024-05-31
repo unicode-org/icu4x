@@ -17,8 +17,8 @@ components/experimental/src/compactdecimal/      @eggrobin
 components/experimental/src/displaynames/        @sffc @snktd
 components/experimental/src/relativetime/        @pdogr
 components/list/                  @robertbastian
-components/locid_transform/       @dminor @zbraniecki
-components/locid/                 @zbraniecki @nciric
+components/locale/                @dminor @zbraniecki
+components/locale_core/           @zbraniecki @nciric
 components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc

@@ -59,8 +59,8 @@ export class ICU4XGregorianZonedDateTimeFormatter {
   }
 
   format_iso_datetime_with_custom_time_zone(arg_datetime, arg_time_zone) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this.underlying, arg_datetime.underlying, arg_time_zone.underlying, writeable);
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this.underlying, arg_datetime.underlying, arg_time_zone.underlying, write);
     });
   }
 }

@@ -8,7 +8,7 @@ FORCE:
 ICU_CAPI := $(shell cargo metadata --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
 HEADERS := ${ICU_CAPI}/bindings/js
 ALL_HEADERS := $(wildcard ${HEADERS}/*)
-PINNED_CI_NIGHTLY ?= "nightly-2022-12-26"
+PINNED_CI_NIGHTLY ?= "nightly-2023-08-08"
 
 $(ALL_HEADERS):
 

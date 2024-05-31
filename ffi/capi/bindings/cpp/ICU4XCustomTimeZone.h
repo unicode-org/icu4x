@@ -55,19 +55,19 @@ diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_iana_time_zone_id_2(
 
 void ICU4XCustomTimeZone_clear_time_zone_id(ICU4XCustomTimeZone* self);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_time_zone_id(const ICU4XCustomTimeZone* self, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XCustomTimeZone_time_zone_id(const ICU4XCustomTimeZone* self, DiplomatWrite* write);
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_metazone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_metazone_id(ICU4XCustomTimeZone* self);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_metazone_id(const ICU4XCustomTimeZone* self, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XCustomTimeZone_metazone_id(const ICU4XCustomTimeZone* self, DiplomatWrite* write);
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_zone_variant(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_zone_variant(ICU4XCustomTimeZone* self);
 
-diplomat_result_void_ICU4XError ICU4XCustomTimeZone_zone_variant(const ICU4XCustomTimeZone* self, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XCustomTimeZone_zone_variant(const ICU4XCustomTimeZone* self, DiplomatWrite* write);
 
 void ICU4XCustomTimeZone_set_standard_time(ICU4XCustomTimeZone* self);
 

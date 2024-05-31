@@ -17,7 +17,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
@@ -36,7 +36,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::Locale;
+//! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf =
@@ -56,7 +56,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(

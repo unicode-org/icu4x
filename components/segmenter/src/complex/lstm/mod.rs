@@ -320,7 +320,7 @@ fn compute_hc<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
     use icu_provider::prelude::*;
     use serde::Deserialize;
 

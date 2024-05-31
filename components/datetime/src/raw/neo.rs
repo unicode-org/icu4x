@@ -12,7 +12,7 @@ use crate::options::length;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{runtime, PatternItem};
 use crate::provider::neo::*;
-use icu_locid::extensions::private::Subtag;
+use icu_locale_core::extensions::private::Subtag;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;

@@ -6,11 +6,11 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use icu_list::provider::*;
-use icu_locid::subtags::language;
+use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::borrow::Cow;
 use std::collections::HashSet;
+use std::sync::OnceLock;
 
 fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     selff: &DatagenProvider,
@@ -52,7 +52,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
     if langid.language == language!("es") {
         if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
-            static I_SOUND: OnceCell<SerdeDFA<'static>> = OnceCell::new();
+            static I_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
 
             // Starts with i or (hi but not hia/hie)
             let i_sound = I_SOUND.get_or_init(|| {
@@ -65,7 +65,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
                 .make_conditional("{0} y {1}", i_sound, "{0} e {1}")
                 .expect("valid pattern");
         } else if M::KEY == OrListV1Marker::KEY {
-            static O_SOUND: OnceCell<SerdeDFA<'static>> = OnceCell::new();
+            static O_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
             // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
             // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
             let o_sound = O_SOUND.get_or_init(|| {

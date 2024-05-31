@@ -51,10 +51,10 @@ export class ICU4XBidiParagraph {
   }
 
   reorder_line(arg_range_start, arg_range_end) {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XBidiParagraph_reorder_line(diplomat_receive_buffer, this.underlying, arg_range_start, arg_range_end, writeable);
+        wasm.ICU4XBidiParagraph_reorder_line(diplomat_receive_buffer, this.underlying, arg_range_start, arg_range_end, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

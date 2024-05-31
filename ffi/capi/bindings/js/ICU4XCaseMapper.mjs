@@ -37,8 +37,8 @@ export class ICU4XCaseMapper {
 
   lowercase(arg_s, arg_locale) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XCaseMapper_lowercase(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, writeable);
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XCaseMapper_lowercase(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, write);
     });
     buf_arg_s.free();
     return diplomat_out;
@@ -46,8 +46,8 @@ export class ICU4XCaseMapper {
 
   uppercase(arg_s, arg_locale) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XCaseMapper_uppercase(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, writeable);
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XCaseMapper_uppercase(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, write);
     });
     buf_arg_s.free();
     return diplomat_out;
@@ -57,8 +57,8 @@ export class ICU4XCaseMapper {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const field_leading_adjustment_arg_options = arg_options["leading_adjustment"];
     const field_trailing_case_arg_options = arg_options["trailing_case"];
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, ICU4XLeadingAdjustment_js_to_rust[field_leading_adjustment_arg_options], ICU4XTrailingCase_js_to_rust[field_trailing_case_arg_options], writeable);
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_locale.underlying, ICU4XLeadingAdjustment_js_to_rust[field_leading_adjustment_arg_options], ICU4XTrailingCase_js_to_rust[field_trailing_case_arg_options], write);
     });
     buf_arg_s.free();
     return diplomat_out;
@@ -66,8 +66,8 @@ export class ICU4XCaseMapper {
 
   fold(arg_s) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XCaseMapper_fold(this.underlying, buf_arg_s.ptr, buf_arg_s.size, writeable);
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XCaseMapper_fold(this.underlying, buf_arg_s.ptr, buf_arg_s.size, write);
     });
     buf_arg_s.free();
     return diplomat_out;
@@ -75,8 +75,8 @@ export class ICU4XCaseMapper {
 
   fold_turkic(arg_s) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
-      return wasm.ICU4XCaseMapper_fold_turkic(this.underlying, buf_arg_s.ptr, buf_arg_s.size, writeable);
+    const diplomat_out = diplomatRuntime.withDiplomatWrite(wasm, (write) => {
+      return wasm.ICU4XCaseMapper_fold_turkic(this.underlying, buf_arg_s.ptr, buf_arg_s.size, write);
     });
     buf_arg_s.free();
     return diplomat_out;

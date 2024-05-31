@@ -25,7 +25,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XTitlecaseMapper_ICU4XError ICU4XTitlecaseMapper_create(const ICU4XDataProvider* provider);
 
-void ICU4XTitlecaseMapper_titlecase_segment_v1(const ICU4XTitlecaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWriteable* write);
+void ICU4XTitlecaseMapper_titlecase_segment_v1(const ICU4XTitlecaseMapper* self, const char* s_data, size_t s_len, const ICU4XLocale* locale, ICU4XTitlecaseOptionsV1 options, DiplomatWrite* write);
 void ICU4XTitlecaseMapper_destroy(ICU4XTitlecaseMapper* self);
 
 #ifdef __cplusplus

@@ -6,11 +6,11 @@ use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
 
 use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
-use icu_locid::{
+use icu_locale::provider::*;
+use icu_locale_core::{
     subtags::{Language, Region, Script},
     LanguageIdentifier,
 };
-use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -163,7 +163,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu_locid::{
+    use icu_locale_core::{
         langid,
         subtags::{language, region, script},
     };

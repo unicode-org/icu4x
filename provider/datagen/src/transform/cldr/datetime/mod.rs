@@ -7,13 +7,13 @@ use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
 use either::Either;
 use icu_datetime::provider::calendar::*;
-use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions::unicode::{key, value};
-use icu_locid::LanguageIdentifier;
+use icu_locale_core::extensions::unicode::Value;
+use icu_locale_core::extensions::unicode::{key, value};
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-use once_cell::sync::OnceCell;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::sync::OnceLock;
 
 mod neo;
 mod neo_skeleton;
@@ -22,11 +22,11 @@ mod skeletons;
 mod symbols;
 pub(in crate::provider) mod week_data;
 
-pub(in crate::provider) static SUPPORTED_CALS: OnceCell<
-    HashMap<icu_locid::extensions::unicode::Value, &'static str>,
-> = OnceCell::new();
+pub(in crate::provider) static SUPPORTED_CALS: OnceLock<
+    HashMap<icu_locale_core::extensions::unicode::Value, &'static str>,
+> = OnceLock::new();
 
-fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
+fn supported_cals() -> &'static HashMap<icu_locale_core::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
         [
             (value!("buddhist"), "buddhist"),
@@ -253,8 +253,8 @@ macro_rules! impl_data_provider {
                 // TODO(#3212): Remove
                 if $marker::KEY == TimeLengthsV1Marker::KEY {
                     r.retain(|l| {
-                        l.get_langid() != icu_locid::langid!("byn")
-                            && l.get_langid() != icu_locid::langid!("ssy")
+                        l.get_langid() != icu_locale_core::langid!("byn")
+                            && l.get_langid() != icu_locale_core::langid!("ssy")
                     });
                 }
 
@@ -395,7 +395,7 @@ impl_data_provider!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_locid::langid;
+    use icu_locale_core::langid;
 
     #[test]
     fn test_basic_patterns() {

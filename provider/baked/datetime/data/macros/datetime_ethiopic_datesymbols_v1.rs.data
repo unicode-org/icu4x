@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker>, icu_provider::DataError> {
                 static FF_ADLM: <icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {
@@ -6145,7 +6145,7 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -6170,7 +6170,7 @@ macro_rules! __impl_datetime_ethiopic_datesymbols_v1 {
 #[macro_export]
 macro_rules! __impliterable_datetime_ethiopic_datesymbols_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
                 Ok(["af", "am", "ar", "as", "ast", "az", "be", "bg", "bgc", "bho", "blo", "bn", "bn-IN", "br", "brx", "bs", "bs-Cyrl", "ca", "ceb", "chr", "cs", "csw", "cv", "cy", "da", "de", "de-CH", "doi", "dsb", "el", "en", "en-AU", "eo", "es", "es-419", "es-CL", "es-CO", "es-PY", "es-VE", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fr-CA", "fy", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hi-Latn", "hr", "hr-BA", "hsb", "hu", "hy", "ia", "id", "ie", "ig", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ks", "ks-Deva", "ku", "kxv", "kxv-Deva", "kxv-Orya", "kxv-Telu", "ky", "lb", "lij", "lmo", "lo", "lt", "lv", "mai", "mi", "mk", "ml", "mn", "mni", "mr", "ms", "mt", "my", "nds", "ne", "nl", "nn", "no", "nqo", "oc", "or", "pa", "pcm", "pl", "prg", "ps", "pt", "pt-PT", "qu", "raj", "rm", "ro", "ro-MD", "ru", "sa", "sah", "sat", "sc", "sd", "sd-Deva", "si", "sk", "sl", "so", "sq", "sr", "sr-BA", "sr-Latn", "sr-Latn-BA", "sr-ME", "su", "sv", "sw", "syr", "szl", "ta", "te", "tg", "th", "ti", "tk", "to", "tr", "tt", "ug", "uk", "und", "ur", "uz", "uz-Cyrl", "vec", "vi", "vmw", "wo", "xh", "xnr", "yo", "yo-BJ", "yrl", "yue", "yue-Hans", "za", "zh", "zh-Hant", "zu"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())

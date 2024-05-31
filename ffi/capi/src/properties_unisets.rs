@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::locale::ffi::ICU4XLocale;
+    use crate::locale_core::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::str;

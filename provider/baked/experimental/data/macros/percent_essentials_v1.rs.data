@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_percent_essentials_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker>, icu_provider::DataError> {
                 static DE_CH: <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::experimental::dimension::provider::percent::PercentEssentialsV1 { number_index: 0u8, percent_sign_affixes: icu::experimental::dimension::provider::percent::PercentAffixesV1 { prefix: alloc::borrow::Cow::Borrowed(""), suffix: alloc::borrow::Cow::Borrowed("") }, percent_sign_symbol: alloc::borrow::Cow::Borrowed("%"), percent_symbol_index: 5u8, standard: alloc::borrow::Cow::Borrowed("#,##0%") };
@@ -26,7 +26,7 @@ macro_rules! __impl_percent_essentials_v1 {
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload
                 } else {
-                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                     loop {
                         if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
@@ -51,7 +51,7 @@ macro_rules! __impl_percent_essentials_v1 {
 #[macro_export]
 macro_rules! __impliterable_percent_essentials_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.67"]
+        #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker> for $provider {
             fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
                 Ok(["ar", "ar-SA", "ar-SO", "as", "be", "blo", "bn", "br", "brx", "ca", "cs", "cv", "da", "de", "de-CH", "de-LI", "dsb", "en-AT", "en-DE", "en-DK", "en-FI", "en-IN", "en-SE", "es", "es-419", "eu", "fi", "fo", "fr", "fr-CH", "gl", "gu", "hi", "hr", "hsb", "ku", "lb", "lt", "mk", "nds", "no", "oc", "pa", "qu", "rm", "ro", "ru", "sa", "sk", "sl", "sv", "ta", "ta-MY", "ta-SG", "tk", "tr", "tt", "und", "xnr"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())

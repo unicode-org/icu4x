@@ -60,7 +60,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
@@ -173,7 +173,7 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 /// # Examples
 ///
 /// ```
-/// use icu_locid::langid;
+/// use icu_locale_core::langid;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
@@ -234,7 +234,7 @@ icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 /// use writeable::assert_writeable_eq;
 ///
@@ -325,7 +325,7 @@ writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 #[test]
 fn test_iter() {
     use crate::datagen::IterableDataProvider;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     assert_eq!(
         HelloWorldProvider.supported_locales().unwrap(),

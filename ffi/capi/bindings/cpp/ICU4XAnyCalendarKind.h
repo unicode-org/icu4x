@@ -44,7 +44,7 @@ diplomat_result_ICU4XAnyCalendarKind_void ICU4XAnyCalendarKind_get_for_locale(co
 
 diplomat_result_ICU4XAnyCalendarKind_void ICU4XAnyCalendarKind_get_for_bcp47(const char* s_data, size_t s_len);
 
-void ICU4XAnyCalendarKind_bcp47(ICU4XAnyCalendarKind self, DiplomatWriteable* write);
+void ICU4XAnyCalendarKind_bcp47(ICU4XAnyCalendarKind self, DiplomatWrite* write);
 void ICU4XAnyCalendarKind_destroy(ICU4XAnyCalendarKind* self);
 
 #ifdef __cplusplus

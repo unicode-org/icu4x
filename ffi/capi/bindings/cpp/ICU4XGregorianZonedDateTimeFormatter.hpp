@@ -63,7 +63,7 @@ class ICU4XGregorianZonedDateTimeFormatter {
    * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format) for more information.
    */
-  template<typename W> void format_iso_datetime_with_custom_time_zone_to_writeable(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const;
+  template<typename W> void format_iso_datetime_with_custom_time_zone_to_write(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
@@ -108,14 +108,14 @@ inline diplomat::result<ICU4XGregorianZonedDateTimeFormatter, ICU4XError> ICU4XG
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline void ICU4XGregorianZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone_to_writeable(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+template<typename W> inline void ICU4XGregorianZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone_to_write(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const {
+  capi::DiplomatWrite write_writer = diplomat::WriteTrait<W>::Construct(write);
   capi::ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this->inner.get(), datetime.AsFFI(), time_zone.AsFFI(), &write_writer);
 }
 inline std::string ICU4XGregorianZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this->inner.get(), datetime.AsFFI(), time_zone.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  std::string diplomat_write_string;
+  capi::DiplomatWrite diplomat_write_out = diplomat::WriteFromString(diplomat_write_string);
+  capi::ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(this->inner.get(), datetime.AsFFI(), time_zone.AsFFI(), &diplomat_write_out);
+  return diplomat_write_string;
 }
 #endif

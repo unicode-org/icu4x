@@ -7,7 +7,7 @@ use crate::personnames::api::{
 };
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use litemap::LiteMap;
 
 ///

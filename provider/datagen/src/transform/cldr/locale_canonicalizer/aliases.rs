@@ -4,11 +4,11 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use icu_locid::{
+use icu_locale::provider::*;
+use icu_locale_core::{
     subtags::{self, language},
     LanguageIdentifier,
 };
-use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -282,10 +282,10 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
 
 #[test]
 fn test_appendix_c_cmp() {
-    let en = icu_locid::langid!("en-GB");
-    let ca = icu_locid::langid!("ca");
+    let en = icu_locale_core::langid!("en-GB");
+    let ca = icu_locale_core::langid!("ca");
     let und = "und-hepburn-heploc".parse::<LanguageIdentifier>().unwrap();
-    let fr = icu_locid::langid!("fr-CA");
+    let fr = icu_locale_core::langid!("fr-CA");
 
     let mut rules = vec![&en, &ca, &und, &fr];
     rules.sort_unstable_by_key(|&l| appendix_c_cmp(l));
@@ -295,7 +295,7 @@ fn test_appendix_c_cmp() {
 
 #[test]
 fn test_basic() {
-    use icu_locid::subtags::{language, region, script};
+    use icu_locale_core::subtags::{language, region, script};
 
     let provider = DatagenProvider::new_testing();
     let data: DataPayload<AliasesV2Marker> = provider

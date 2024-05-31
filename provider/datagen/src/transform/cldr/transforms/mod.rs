@@ -7,14 +7,14 @@ use super::source::CldrCache;
 use crate::provider::DatagenProvider;
 use icu_experimental::transliterate::provider::*;
 use icu_experimental::transliterate::RuleCollection;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::sync::Mutex;
 
 impl CldrCache {
     fn transforms(&self) -> Result<&Mutex<RuleCollection>, DataError> {
-        self.transforms.get_or_try_init(|| {
+        self.transforms.get_or_init(|| {
             fn find_bcp47(aliases: &[transforms::TransformAlias]) -> Option<&Locale> {
                 aliases
                     .iter()
@@ -109,6 +109,7 @@ impl CldrCache {
             }
             Ok(Mutex::new(provider))
         })
+        .as_ref().map_err(|&e| e)
     }
 }
 

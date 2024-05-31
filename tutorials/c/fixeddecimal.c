@@ -27,7 +27,7 @@ int main() {
     ICU4XFixedDecimalFormatter* fdf = fdf_result.ok;
     char output[40];
 
-    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    DiplomatWrite write = diplomat_simple_write(output, 40);
 
     ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
     if (write.grow_failed) {
@@ -46,7 +46,7 @@ int main() {
 
     ICU4XFixedDecimal_set_sign(decimal, ICU4XFixedDecimalSign_Negative);
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
 
     ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
     if (write.grow_failed) {
@@ -70,7 +70,7 @@ int main() {
     }
     decimal = fd_result.ok;
 
-    write = diplomat_simple_writeable(output, 40);
+    write = diplomat_simple_write(output, 40);
 
     ICU4XFixedDecimalFormatter_format(fdf, decimal, &write);
     if (write.grow_failed) {

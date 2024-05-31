@@ -292,9 +292,9 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
   @override
   String toString() {
-    final writeable = _Writeable();
-    _ICU4XFixedDecimal_to_string(_ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _ICU4XFixedDecimal_to_string(_ffi, write._ffi);
+    return write.finalize();
   }
 }
 
@@ -501,4 +501,4 @@ external _ResultVoidVoid _ICU4XFixedDecimal_concatenate_end(ffi.Pointer<ffi.Opaq
 @meta.ResourceIdentifier('ICU4XFixedDecimal_to_string')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_to_string')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _ICU4XFixedDecimal_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);

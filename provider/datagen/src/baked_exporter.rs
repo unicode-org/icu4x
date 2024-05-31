@@ -30,7 +30,6 @@
 //!         options.deduplication_strategy = Some(DeduplicationStrategy::None);
 //!         options
 //!     })
-//!     .with_fallback_mode(FallbackMode::Hybrid)
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -47,7 +46,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! # macro_rules! include {
@@ -86,7 +85,7 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
 //! let formatter =
@@ -139,8 +138,6 @@ pub struct Options {
     /// This is required when you are not using the `icu` crate, *and* you're building custom data providers;
     /// data for `compiled_data` constructors uses `icu` names.
     pub use_separate_crates: bool,
-    #[doc(hidden)] // deprecated, used by legacy testdata
-    pub insert_feature_gates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
     pub overwrite: bool,
 }
@@ -150,7 +147,6 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             pretty: false,
-            insert_feature_gates: false,
             use_separate_crates: false,
             overwrite: false,
         }
@@ -163,7 +159,6 @@ pub struct BakedExporter {
     // Input arguments
     mod_directory: PathBuf,
     pretty: bool,
-    insert_feature_gates: bool,
     use_separate_crates: bool,
     // Temporary storage for put_payload: key -> (bake -> {locale})
     data: Mutex<HashMap<DataKey, BTreeMap<SyncTokenStream, BTreeSet<String>>>>,
@@ -178,7 +173,6 @@ impl std::fmt::Debug for BakedExporter {
         f.debug_struct("BakedExporter")
             .field("mod_directory", &self.mod_directory)
             .field("pretty", &self.pretty)
-            .field("insert_feature_gates", &self.insert_feature_gates)
             .field("use_separate_crates", &self.use_separate_crates)
             // skip formatting intermediate data
             .finish()
@@ -190,7 +184,6 @@ impl BakedExporter {
     pub fn new(mod_directory: PathBuf, options: Options) -> Result<Self, DataError> {
         let Options {
             pretty,
-            insert_feature_gates,
             use_separate_crates,
             overwrite,
         } = options;
@@ -208,7 +201,6 @@ impl BakedExporter {
             mod_directory,
             pretty,
             use_separate_crates,
-            insert_feature_gates: insert_feature_gates && use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
@@ -261,6 +253,7 @@ impl BakedExporter {
             formatted = formatted
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider")
+                .replace("icu::locale_core", "icu_locale_core")
                 .replace("icu::pattern", "icu_pattern");
         }
 
@@ -557,8 +550,7 @@ impl BakedExporter {
                     }
                 }
                 Some(BuiltInFallbackMode::Standard) => {
-                    self.dependencies
-                        .insert("icu_locid_transform/compiled_data");
+                    self.dependencies.insert("icu_locale/compiled_data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
                     quote! {
@@ -569,8 +561,8 @@ impl BakedExporter {
                         let payload =  if let Ok(payload) = #search_direct {
                             payload
                         } else {
-                            const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
-                                icu_locid_transform::fallback::LocaleFallbacker::new()
+                            const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
+                                icu_locale::fallback::LocaleFallbacker::new()
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
@@ -636,28 +628,6 @@ impl BakedExporter {
         log::info!("Writing macros module...");
 
         let data = move_out!(self.impl_data).into_inner().expect("poison");
-
-        let features = data
-            .iter()
-            .map(|(key, marker)| {
-                if !self.insert_feature_gates {
-                    quote!()
-                } else if *key
-                    == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
-                    // neo keys are also experimental
-                    || key.path().contains("datetime/symbols") || key.path().contains("datetime/patterns")
-                {
-                    quote! { #[cfg(feature = "icu_datetime_experimental")] }
-                } else if *key == icu_plurals::provider::PluralRangesV1Marker::KEY {
-                    quote! { #[cfg(feature = "icu_plurals_experimental")] }
-                } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
-                    quote!()
-                } else {
-                    let feature = marker.split(" :: ").next().unwrap();
-                    quote! { #[cfg(feature = #feature)] }
-                }
-            })
-            .collect::<Vec<_>>();
 
         let markers = data
             .values()
@@ -747,7 +717,6 @@ impl BakedExporter {
                     ($provider:ty) => {
                         make_provider!($provider);
                         #(
-                            #features
                             #macro_idents ! ($provider);
                         )*
                     };
@@ -763,7 +732,6 @@ impl BakedExporter {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match key.hashed() {
                                     #(
-                                        #features
                                         h if h == <#markers as icu_provider::KeyedDataMarker>::KEY.hashed() =>
                                             icu_provider::DataProvider::<#markers>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                                     )*

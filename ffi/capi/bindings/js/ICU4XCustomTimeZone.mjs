@@ -215,10 +215,10 @@ export class ICU4XCustomTimeZone {
   }
 
   time_zone_id() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XCustomTimeZone_time_zone_id(diplomat_receive_buffer, this.underlying, writeable);
+        wasm.ICU4XCustomTimeZone_time_zone_id(diplomat_receive_buffer, this.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -258,10 +258,10 @@ export class ICU4XCustomTimeZone {
   }
 
   metazone_id() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XCustomTimeZone_metazone_id(diplomat_receive_buffer, this.underlying, writeable);
+        wasm.ICU4XCustomTimeZone_metazone_id(diplomat_receive_buffer, this.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -301,10 +301,10 @@ export class ICU4XCustomTimeZone {
   }
 
   zone_variant() {
-    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+    return diplomatRuntime.withDiplomatWrite(wasm, (write) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XCustomTimeZone_zone_variant(diplomat_receive_buffer, this.underlying, writeable);
+        wasm.ICU4XCustomTimeZone_zone_variant(diplomat_receive_buffer, this.underlying, write);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

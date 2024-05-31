@@ -20,7 +20,7 @@ use core::ops::Range;
 use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
@@ -207,7 +207,7 @@ impl Transliterator {
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```ignore
     /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
-    /// use icu::locid::Locale;
+    /// use icu::locale::Locale;
     /// use core::ops::Range;
     ///
     /// #[derive(Debug)]

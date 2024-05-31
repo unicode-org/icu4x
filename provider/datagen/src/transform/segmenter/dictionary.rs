@@ -4,7 +4,7 @@
 
 use crate::provider::DatagenProvider;
 use crate::provider::IterableDataProviderInternal;
-use icu_locid::langid;
+use icu_locale_core::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
@@ -30,16 +30,6 @@ impl DatagenProvider {
         let toml_data = self
             .icuexport()
             .and_then(|e| e.read_and_parse_toml::<SegmenterDictionaryData>(&filename));
-
-        #[cfg(feature = "legacy_api")]
-        #[allow(deprecated)]
-        let toml_data = toml_data.or_else(|e| {
-            self.source
-                .icuexport_dictionary_fallback
-                .as_ref()
-                .ok_or(e)?
-                .read_and_parse_toml(&filename)
-        });
 
         Ok(UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data?.trie_data),

@@ -47,13 +47,13 @@ final class IanaToBcp47Mapper implements ffi.Finalizable {
   String operator [](String value) {
     final temp = ffi2.Arena();
     final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XIanaToBcp47Mapper_get(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
+    final write = _Write();
+    final result = _ICU4XIanaToBcp47Mapper_get(_ffi, valueView.allocIn(temp), valueView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
@@ -70,4 +70,4 @@ external _ResultOpaqueInt32 _ICU4XIanaToBcp47Mapper_create(ffi.Pointer<ffi.Opaqu
 @meta.ResourceIdentifier('ICU4XIanaToBcp47Mapper_get')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_get')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XIanaToBcp47Mapper_get(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XIanaToBcp47Mapper_get(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> write);

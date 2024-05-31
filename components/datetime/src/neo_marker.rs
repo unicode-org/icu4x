@@ -709,7 +709,7 @@ macro_rules! impl_date_marker {
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locid::locale;
+        /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
@@ -732,7 +732,7 @@ macro_rules! impl_date_marker {
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locid::locale;
+        /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
@@ -859,7 +859,7 @@ macro_rules! impl_time_marker {
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locid::locale;
+        /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
@@ -882,7 +882,7 @@ macro_rules! impl_time_marker {
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locid::locale;
+        /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
@@ -947,7 +947,7 @@ macro_rules! impl_datetime_marker {
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locid::locale;
+        /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
