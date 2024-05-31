@@ -414,7 +414,6 @@ impl Transliterator {
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
         let req = DataRequest {
-            locale: Default::default(),
             key_attributes,
             ..Default::default()
         };
