@@ -180,11 +180,7 @@ pub mod ffi {
         #[diplomat::skip_if_ast]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(cpp, rename = "compare")]
-        pub fn compare_(
-            &self,
-            left: &DiplomatStr,
-            right: &DiplomatStr,
-        ) -> core::cmp::Ordering {
+        pub fn compare_(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
             self.0.compare_utf8(left, right)
         }
 
