@@ -111,10 +111,10 @@ impl RuleCollection {
         reverse: bool,
         visible: bool,
     ) {
-        self.data.borrow_mut().0.insert(
-            super::ids::bcp47_to_data_key_attributes(id).to_string(),
-            (source, reverse, visible),
-        );
+        self.data
+            .borrow_mut()
+            .0
+            .insert(id.to_string(), (source, reverse, visible));
 
         for alias in aliases.into_iter() {
             self.id_mapping
@@ -650,7 +650,11 @@ mod tests {
         let forward: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                key_attributes: &super::super::ids::bcp47_to_data_key_attributes(&locale!("fwd")),
+                key_attributes: &{
+                    let locale = &locale!("fwd");
+                    #[allow(clippy::unwrap_used)] // infallible
+                    locale.write_to_string().parse().unwrap()
+                },
                 ..Default::default()
             })
             .unwrap()
@@ -660,7 +664,11 @@ mod tests {
         let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                key_attributes: &super::super::ids::bcp47_to_data_key_attributes(&locale!("rev")),
+                key_attributes: &{
+                    let locale = &locale!("rev");
+                    #[allow(clippy::unwrap_used)] // infallible
+                    locale.write_to_string().parse().unwrap()
+                },
                 ..Default::default()
             })
             .unwrap()

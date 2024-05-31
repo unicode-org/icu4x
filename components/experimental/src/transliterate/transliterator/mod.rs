@@ -26,6 +26,7 @@ use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
+use writeable::Writeable;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -264,7 +265,12 @@ impl Transliterator {
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         let payload = Transliterator::load_rbt(
-            &super::ids::bcp47_to_data_key_attributes(&locale),
+            #[allow(clippy::unwrap_used)] // infallible
+            &locale
+                .write_to_string()
+                .to_ascii_lowercase()
+                .parse()
+                .unwrap(),
             transliterator_provider,
         )?;
         let rbt = payload.get();
@@ -319,7 +325,8 @@ impl Transliterator {
                     // c) the data
                     .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
-                            &super::ids::unparsed_bcp47_to_data_key_attributes(&dep)?,
+                            #[allow(clippy::unwrap_used)] // infallible
+                            &dep.parse().unwrap(),
                             transliterator_provider,
                         )?;
                         Ok(InternalTransliterator::RuleBased(rbt))

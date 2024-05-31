@@ -76,12 +76,11 @@ impl BufferProvider for FsDataProvider {
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingDataKey.with_req(key, req));
         }
-        write!(
-            &mut path,
-            "/{}.{}",
-            req.locale, self.manifest.file_extension
-        )
-        .expect("infallible");
+        write!(&mut path, "/{}", req.locale).expect("infallible");
+        if !req.key_attributes.is_empty() {
+            write!(&mut path, "-x-{}", req.key_attributes as &str).expect("infallible");
+        }
+        write!(&mut path, ".{}", self.manifest.file_extension).expect("infallible");
         if !Path::new(&path).exists() {
             return Err(DataErrorKind::MissingLocale.with_req(key, req));
         }

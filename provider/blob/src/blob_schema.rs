@@ -99,7 +99,16 @@ impl<'data> BlobSchemaV1<'data> {
                     return Err(DataErrorKind::ExtraneousLocale);
                 }
                 cursor
-                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
+                    .get1_copied_by(|k| {
+                        let k = unsafe { core::str::from_utf8_unchecked(&k.0) };
+                        let mut iter = k.splitn(2, "-x-");
+                        let l = iter.next().unwrap();
+                        let a = iter.next().unwrap_or("");
+                        req.locale
+                            .strict_cmp(l.as_bytes())
+                            .reverse()
+                            .then_with(|| a.cmp(req.key_attributes))
+                    })
                     .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;
@@ -208,6 +217,13 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
         #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
         req.locale.write_to(&mut cursor).unwrap();
+        if !req.key_attributes.is_empty() {
+            #[allow(clippy::unwrap_used)] // ASCII
+            "-x-".write_to(&mut cursor).unwrap();
+            req.key_attributes
+                .write_to(&mut cursor)
+                .map_err(|_| DataErrorKind::MissingLocale.with_req(key, req))?;
+        }
         let blob_index = cursor
             .take_value()
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;

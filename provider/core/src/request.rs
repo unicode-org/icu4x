@@ -660,7 +660,7 @@ impl Hash for DataKeyAttributes {
 }
 
 impl FromStr for DataKeyAttributes {
-    type Err = DataError;
+    type Err = core::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
@@ -680,7 +680,7 @@ impl FromStr for DataKeyAttributes {
 }
 
 impl DataKeyAttributes {
-    /// Creates an [`AuxiliaryKeys`] from an iterator of individual keys.
+    /// Creates a [`DataKeyAttributes`] from an iterator of individual keys.
     ///
     /// # Examples
     ///
@@ -689,14 +689,14 @@ impl DataKeyAttributes {
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc")]).unwrap();
-    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc")]).unwrap();
+    /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc"), subtag!("defg")])
+    /// let a = DataKeyAttributes::try_from_iter([subtag!("abc"), subtag!("defg")])
     ///     .unwrap();
-    /// let b = "abc-defg".parse::<AuxiliaryKeys>().unwrap();
+    /// let b = "abc-defg".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
     ///
@@ -705,7 +705,7 @@ impl DataKeyAttributes {
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// assert!(AuxiliaryKeys::try_from_iter([]).is_err());
+    /// assert!(DataKeyAttributes::try_from_iter([]).is_err());
     /// ```
     pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
         // TODO: Avoid the allocation when possible
@@ -731,7 +731,7 @@ impl DataKeyAttributes {
         }
     }
 
-    /// Creates an [`AuxiliaryKeys`] from a single subtag.
+    /// Creates a [`DataKeyAttributes`] from a single subtag.
     ///
     /// # Examples
     ///
@@ -740,8 +740,8 @@ impl DataKeyAttributes {
     /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
-    /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));
-    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// let a = DataKeyAttributes::from_tinystr("abc".parse().unwrap());
+    /// let b = "abc".parse::<DataKeyAttributes>().unwrap();
     /// assert_eq!(a, b);
     /// ```
     pub const fn from_tinystr(input: TinyAsciiStr<8>) -> Self {
