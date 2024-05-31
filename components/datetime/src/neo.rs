@@ -12,8 +12,8 @@ use crate::format::neo::*;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::{DateInput, DateTimeInput, IsoTimeInput};
 use crate::neo_marker::{
-    DateMarkers, FromInCalendar, IsAnyCalendarKind, NeoFormatterMarker, TimeMarkers,
-    TypedDateMarkers, TypedNeoFormatterMarker,
+    ConvertCalendar, DateMarkers, IsAnyCalendarKind, NeoFormatterMarker,
+    NeoGetField, TimeMarkers, TypedDateMarkers, TypedNeoFormatterMarker,
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::NeoSkeletonLength;
@@ -463,23 +463,27 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///     )
     ///     .unwrap();
     ///
-    /// // the trait `for<'a> From<&'a icu::icu_calendar::Time>`
-    /// // is not implemented for `NeoDateInputFields`
+    /// // the trait `NeoGetField<AnyCalendarKind>`
+    /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn format<T>(&self, datetime: &T) -> FormattedNeoDateTime
+    pub fn format<I>(&self, datetime: &I) -> FormattedNeoDateTime
     where
-        T: ?Sized,
-        for<'a> <R::D as TypedDateMarkers<C>>::TypedInputMarker: From<&'a T>,
-        for<'a> <R::D as TypedDateMarkers<C>>::DateInputMarker: From<&'a T>,
-        for<'a> <R::D as TypedDateMarkers<C>>::WeekInputMarker: From<&'a T>,
-        for<'a> <R::T as TimeMarkers>::TimeInputMarker: From<&'a T>,
+        I: ?Sized
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::YearInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::MonthInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfMonthInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfWeekInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfYearInput>
+            + NeoGetField<<R::D as TypedDateMarkers<C>>::AnyCalendarKindInput>
+            + NeoGetField<<R::T as TimeMarkers>::HourInput>
+            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_neo_input(
-            <R::D as TypedDateMarkers<C>>::DateInputMarker::from(datetime).into(),
-            <R::D as TypedDateMarkers<C>>::WeekInputMarker::from(datetime).into(),
-            <R::T as TimeMarkers>::TimeInputMarker::from(datetime).into(),
-        );
+        let datetime =
+            ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, I>(datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -850,34 +854,39 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// )
     /// .unwrap();
     ///
-    /// // the trait `for<'a> From<&'a icu::icu_calendar::Time>`
-    /// // is not implemented for `NeoDateInputFields`
+    /// // the trait `NeoGetField<AnyCalendarKind>`
+    /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.strict_format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn strict_format<T>(
+    pub fn strict_format<I>(
         &self,
-        datetime: &T,
+        datetime: &I,
     ) -> Result<FormattedNeoDateTime, crate::MismatchedCalendarError>
     where
-        T: ?Sized,
-        for<'a> &'a T: IsAnyCalendarKind,
-        for<'a> <R::D as DateMarkers>::DateInputMarker: From<&'a T>,
-        for<'a> <R::D as DateMarkers>::WeekInputMarker: From<&'a T>,
-        for<'a> <R::T as TimeMarkers>::TimeInputMarker: From<&'a T>,
+        I: ?Sized
+            + IsAnyCalendarKind
+            + NeoGetField<<R::D as DateMarkers>::YearInput>
+            + NeoGetField<<R::D as DateMarkers>::MonthInput>
+            + NeoGetField<<R::D as DateMarkers>::DayOfMonthInput>
+            + NeoGetField<<R::D as DateMarkers>::DayOfWeekInput>
+            + NeoGetField<<R::D as DateMarkers>::DayOfYearInput>
+            + NeoGetField<<R::D as DateMarkers>::AnyCalendarKindInput>
+            + NeoGetField<<R::T as TimeMarkers>::HourInput>
+            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>,
     {
         if !datetime.is_any_calendar_kind(self.calendar.kind()) {
             return Err(crate::MismatchedCalendarError {
                 this_kind: self.calendar.kind(),
-                date_kind: <R::D as DateMarkers>::DateInputMarker::from(datetime)
-                    .into()
-                    .and_then(|v| v.any_calendar_kind),
+                date_kind: NeoGetField::<<R::D as DateMarkers>::AnyCalendarKindInput>::get_field(
+                    datetime,
+                )
+                .into(),
             });
         }
-        let datetime = ExtractedDateTimeInput::extract_from_neo_input(
-            <R::D as DateMarkers>::DateInputMarker::from(datetime).into(),
-            <R::D as DateMarkers>::WeekInputMarker::from(datetime).into(),
-            <R::T as TimeMarkers>::TimeInputMarker::from(datetime).into(),
-        );
+        let datetime =
+            ExtractedDateTimeInput::extract_from_any_neo_input::<R::D, R::T, I>(datetime);
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,
@@ -930,24 +939,29 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// )
     /// .unwrap();
     ///
-    /// // the trait `for<'a> FromInCalendar<&'a icu::icu_calendar::Time>`
-    /// // is not implemented for `NeoDateInputFields`
+    /// // the trait `NeoGetField<AnyCalendarKind>`
+    /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.convert_and_format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn convert_and_format<T>(&self, datetime: &T) -> FormattedNeoDateTime
+    pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedNeoDateTime
     where
-        T: ?Sized,
-        for<'a> <R::D as DateMarkers>::DateInputMarker: FromInCalendar<&'a T>,
-        for<'a> <R::D as DateMarkers>::WeekInputMarker: FromInCalendar<&'a T>,
-        for<'a> <R::T as TimeMarkers>::TimeInputMarker: From<&'a T>,
+        I: ?Sized + ConvertCalendar,
+        I::Converted<'a>: NeoGetField<<R::D as DateMarkers>::YearInput>
+            + NeoGetField<<R::D as DateMarkers>::MonthInput>
+            + NeoGetField<<R::D as DateMarkers>::DayOfMonthInput>
+            + NeoGetField<<R::D as DateMarkers>::DayOfWeekInput>
+            + NeoGetField<<R::D as DateMarkers>::DayOfYearInput>
+            + NeoGetField<<R::D as DateMarkers>::AnyCalendarKindInput>
+            + NeoGetField<<R::T as TimeMarkers>::HourInput>
+            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_neo_input(
-            <R::D as DateMarkers>::DateInputMarker::from_in_calendar(datetime, &self.calendar)
-                .into(),
-            <R::D as DateMarkers>::WeekInputMarker::from_in_calendar(datetime, &self.calendar)
-                .into(),
-            <R::T as TimeMarkers>::TimeInputMarker::from(datetime).into(),
-        );
+        let datetime = datetime.to_calendar(&self.calendar);
+        let datetime =
+            ExtractedDateTimeInput::extract_from_any_neo_input::<R::D, R::T, I::Converted<'a>>(
+                &datetime,
+            );
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             datetime,

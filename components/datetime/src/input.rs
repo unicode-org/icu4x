@@ -6,7 +6,7 @@
 //! formatting operations.
 
 #[cfg(feature = "experimental")]
-use crate::neo_marker::{NeoDateInputFields, NeoTimeInputFields, NeoWeekInputFields};
+use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, TypedDateMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
@@ -246,24 +246,64 @@ impl ExtractedDateTimeInput {
     }
     /// Construct given neo date input instances.
     #[cfg(feature = "experimental")]
-    pub(crate) fn extract_from_neo_input(
-        neo_date: Option<NeoDateInputFields>,
-        neo_week: Option<NeoWeekInputFields>,
-        neo_time: Option<NeoTimeInputFields>,
-    ) -> Self {
+    pub(crate) fn extract_from_typed_neo_input<C, D, T, I>(input: &I) -> Self
+    where
+        D: TypedDateMarkers<C>,
+        T: TimeMarkers,
+        I: ?Sized
+            + NeoGetField<D::YearInput>
+            + NeoGetField<D::MonthInput>
+            + NeoGetField<D::DayOfMonthInput>
+            + NeoGetField<D::DayOfWeekInput>
+            + NeoGetField<D::DayOfYearInput>
+            + NeoGetField<D::AnyCalendarKindInput>
+            + NeoGetField<T::HourInput>
+            + NeoGetField<T::MinuteInput>
+            + NeoGetField<T::SecondInput>
+            + NeoGetField<T::NanoSecondInput>,
+    {
         Self {
-            year: neo_date.as_ref().map(|fields| fields.year),
-            month: neo_date.as_ref().map(|fields| fields.month),
-            day_of_month: neo_date.as_ref().map(|fields| fields.day_of_month),
-            iso_weekday: neo_date.as_ref().map(|fields| fields.day_of_week),
-            any_calendar_kind: neo_date
-                .as_ref()
-                .and_then(|fields| fields.any_calendar_kind),
-            day_of_year_info: neo_week.as_ref().map(|fields| fields.day_of_year_info),
-            hour: neo_time.as_ref().map(|fields| fields.hour),
-            minute: neo_time.as_ref().map(|fields| fields.minute),
-            second: neo_time.as_ref().map(|fields| fields.second),
-            nanosecond: neo_time.as_ref().map(|fields| fields.nanosecond),
+            year: NeoGetField::<D::YearInput>::get_field(input).into(),
+            month: NeoGetField::<D::MonthInput>::get_field(input).into(),
+            day_of_month: NeoGetField::<D::DayOfMonthInput>::get_field(input).into(),
+            iso_weekday: NeoGetField::<D::DayOfWeekInput>::get_field(input).into(),
+            day_of_year_info: NeoGetField::<D::DayOfYearInput>::get_field(input).into(),
+            any_calendar_kind: NeoGetField::<D::AnyCalendarKindInput>::get_field(input).into(),
+            hour: NeoGetField::<T::HourInput>::get_field(input).into(),
+            minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
+            second: NeoGetField::<T::SecondInput>::get_field(input).into(),
+            nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
+        }
+    }
+    /// Construct given neo date input instances.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_from_any_neo_input<D, T, I>(input: &I) -> Self
+    where
+        D: DateMarkers,
+        T: TimeMarkers,
+        I: ?Sized
+            + NeoGetField<D::YearInput>
+            + NeoGetField<D::MonthInput>
+            + NeoGetField<D::DayOfMonthInput>
+            + NeoGetField<D::DayOfWeekInput>
+            + NeoGetField<D::DayOfYearInput>
+            + NeoGetField<D::AnyCalendarKindInput>
+            + NeoGetField<T::HourInput>
+            + NeoGetField<T::MinuteInput>
+            + NeoGetField<T::SecondInput>
+            + NeoGetField<T::NanoSecondInput>,
+    {
+        Self {
+            year: NeoGetField::<D::YearInput>::get_field(input).into(),
+            month: NeoGetField::<D::MonthInput>::get_field(input).into(),
+            day_of_month: NeoGetField::<D::DayOfMonthInput>::get_field(input).into(),
+            iso_weekday: NeoGetField::<D::DayOfWeekInput>::get_field(input).into(),
+            day_of_year_info: NeoGetField::<D::DayOfYearInput>::get_field(input).into(),
+            any_calendar_kind: NeoGetField::<D::AnyCalendarKindInput>::get_field(input).into(),
+            hour: NeoGetField::<T::HourInput>::get_field(input).into(),
+            minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
+            second: NeoGetField::<T::SecondInput>::get_field(input).into(),
+            nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
         }
     }
 }
