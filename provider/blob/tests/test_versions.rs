@@ -23,7 +23,7 @@ fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
     let hello_world_provider = HelloWorldProvider;
-    for locale in hello_world_provider.supported_locales().unwrap() {
+    for locale in hello_world_provider.supported_requests().unwrap() {
         let blob_result = blob_provider
             .load(DataRequest {
                 locale: &locale,
@@ -141,7 +141,7 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
 impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         let mut vec = Vec::new();
         let mut bytes = [
             b'a', b'a', b'a', b'-', b'L', b'a', b't', b'n', b'-', b'0', b'0', b'1',

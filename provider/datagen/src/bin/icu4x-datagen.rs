@@ -607,8 +607,8 @@ where
     BlobDataProvider: AsDeserializingBufferProvider,
     for<'a> DeserializingBufferProvider<'a, BlobDataProvider>: DataProvider<M>,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.0.supported_locales_for_key(M::KEY)
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
+        self.0.supported_requests_for_key(M::KEY)
     }
 }
 

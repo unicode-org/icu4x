@@ -19,8 +19,8 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        HelloWorldProvider.supported_locales()
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
+        HelloWorldProvider.supported_requests()
     }
 }
 
@@ -31,7 +31,7 @@ impl DatagenProvider {
     {
         if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_locale(req.locale)? {
+        } else if !self.supports_request(req.locale)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())

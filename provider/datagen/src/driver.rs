@@ -785,7 +785,7 @@ impl DatagenDriver {
             let instant1 = Instant::now();
 
             if key.metadata().singleton {
-                if provider.supported_locales_for_key(key)? != [Default::default()] {
+                if provider.supported_requests_for_key(key)? != [Default::default()] {
                     return Err(
                         DataError::custom("Invalid supported locales for singleton key")
                             .with_key(key),
@@ -856,7 +856,9 @@ impl DatagenDriver {
                         let instant2 = Instant::now();
                         let result = load_with_fallback(key, &locale, Default::default())?;
                         let result = result
-                            .and_then(|payload| sink.put_payload(key, &locale, Default::default(), &payload))
+                            .and_then(|payload| {
+                                sink.put_payload(key, &locale, Default::default(), &payload)
+                            })
                             // Note: in Hybrid mode the elapsed time includes sink.put_payload.
                             // In Runtime mode the elapsed time is only load_with_fallback.
                             .map(|_| (instant2.elapsed(), locale.write_to_string().into_owned()))
@@ -923,7 +925,7 @@ fn select_locales_for_key<'a>(
     // corresponding supported DataLocales.
     let mut supported_map = HashMap::<LanguageIdentifier, HashSet<DataLocale>>::new();
     for locale in provider
-        .supported_locales_for_key(key)
+        .supported_requests_for_key(key)
         .map_err(|e| e.with_key(key))?
     {
         supported_map
@@ -1104,15 +1106,17 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
         .try_for_each(|(locale, (payload, _duration))| {
             // Always export `und`. This prevents calling `step` on an empty locale.
             if locale.is_und() {
-                return sink.put_payload(key, locale, Default::default(), payload).map_err(|e| {
-                    e.with_req(
-                        key,
-                        DataRequest {
-                            locale,
-                            ..Default::default()
-                        },
-                    )
-                });
+                return sink
+                    .put_payload(key, locale, Default::default(), payload)
+                    .map_err(|e| {
+                        e.with_req(
+                            key,
+                            DataRequest {
+                                locale,
+                                ..Default::default()
+                            },
+                        )
+                    });
             }
             let mut iter = fallbacker_with_config.fallback_for(locale.clone());
             loop {
@@ -1144,15 +1148,16 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 }
             }
             // Did not find a match: export this payload
-            sink.put_payload(key, locale, Default::default(), payload).map_err(|e| {
-                e.with_req(
-                    key,
-                    DataRequest {
-                        locale,
-                        ..Default::default()
-                    },
-                )
-            })
+            sink.put_payload(key, locale, Default::default(), payload)
+                .map_err(|e| {
+                    e.with_req(
+                        key,
+                        DataRequest {
+                            locale,
+                            ..Default::default()
+                        },
+                    )
+                })
         })?;
 
     // Slowest locale calculation:

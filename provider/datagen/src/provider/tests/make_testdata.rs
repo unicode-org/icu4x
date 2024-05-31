@@ -231,10 +231,12 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
         crate::registry!(cb);
 
         if payload_before != &payload_after {
-            self.rountrip_errors
-                .lock()
-                .expect("poison")
-                .insert((key, locale.to_string() + if key_attributes.is_empty() { "" } else { "-x" } + key_attributes));
+            self.rountrip_errors.lock().expect("poison").insert((
+                key,
+                locale.to_string()
+                    + if key_attributes.is_empty() { "" } else { "-x" }
+                    + key_attributes,
+            ));
         }
 
         if deallocated != allocated {
@@ -255,10 +257,15 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
                 .insert(key);
         }
 
-        self.size_hash
-            .lock()
-            .expect("poison")
-            .insert((key, locale.to_string() + if key_attributes.is_empty() { "" } else { "-x" } + key_attributes), (size, hash));
+        self.size_hash.lock().expect("poison").insert(
+            (
+                key,
+                locale.to_string()
+                    + if key_attributes.is_empty() { "" } else { "-x" }
+                    + key_attributes,
+            ),
+            (size, hash),
+        );
 
         Ok(())
     }

@@ -13,6 +13,7 @@ use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 
 mod parse;
 mod pass1;
@@ -472,16 +473,20 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let exclusive_data = self.collection.data.borrow();
-        #[allow(clippy::unwrap_used)] // the maps' keys are valid DataLocales
         Ok(exclusive_data
             .0
             .keys()
             .cloned()
             .chain(exclusive_data.1.keys().cloned())
-            .map(|s| s.parse().unwrap())
-            .collect::<Vec<_>>())
+            .filter_map(|s| {
+                let mut iter = s.splitn(2, "-x-");
+                let l = iter.next().unwrap().parse().ok()?;
+                let a = iter.next().unwrap_or("").parse().ok()?;
+                Some((l, a))
+            })
+            .collect())
     }
 }
 

@@ -48,7 +48,7 @@ impl DataProvider<CaseMapV1Marker> for DatagenProvider {
 }
 
 impl icu_provider::datagen::IterableDataProvider<CaseMapV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -75,7 +75,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
 }
 
 impl icu_provider::datagen::IterableDataProvider<CaseMapUnfoldV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

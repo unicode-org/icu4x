@@ -34,7 +34,7 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<PersonNamesFormatV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .cldr()?
             .personnames()

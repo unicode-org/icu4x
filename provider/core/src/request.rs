@@ -673,13 +673,14 @@ impl DataLocale {
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct DataKeyAttributes {
     value: DataKeyAttributesInner,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 enum DataKeyAttributesInner {
+    #[default]
     Empty,
     Boxed(alloc::boxed::Box<str>),
     Stack(TinyAsciiStr<23>),
@@ -768,9 +769,9 @@ impl FromStr for DataKeyAttributes {
                 })
             }
         } else {
-            Err(DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s))
+            Ok(Self {
+                value: DataKeyAttributesInner::Empty,
+            })
         }
     }
 }
@@ -883,10 +884,6 @@ fn test_data_locale_to_string() {
             locale: "en-ZA-u-cu-gbp",
             expected: "en-ZA-u-cu-gbp",
         },
-        TestCase {
-            locale: "en-ZA-u-nu-arab",
-            expected: "en-ZA-u-nu-arab-x-gbp",
-        },
     ] {
         let mut locale = cas.locale.parse::<DataLocale>().unwrap();
         writeable::assert_writeable_eq!(locale, cas.expected);
@@ -919,12 +916,8 @@ fn test_data_locale_from_string() {
             success: false,
         },
         TestCase {
-            input: "en-ZA-u-nu-arab-x-gbp",
+            input: "en-ZA-u-nu-arab",
             success: true,
-        },
-        TestCase {
-            input: "en-ZA-u-nu-arab-x-gbp",
-            success: false,
         },
     ] {
         let data_locale = match (DataLocale::from_str(cas.input), cas.success) {

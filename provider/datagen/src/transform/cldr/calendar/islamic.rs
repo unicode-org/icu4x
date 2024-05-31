@@ -35,7 +35,7 @@ impl DataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<IslamicObservationalCacheV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -55,7 +55,7 @@ impl DataProvider<IslamicUmmAlQuraCacheV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<IslamicUmmAlQuraCacheV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

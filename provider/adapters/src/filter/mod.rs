@@ -142,22 +142,19 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_locales_for_key(
+    fn supported_requests_for_key(
         &self,
         key: DataKey,
-    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        self.inner.supported_locales_for_key(key).map(|vec| {
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.inner.supported_requests_for_key(key).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
-            vec.into_iter()
-                .filter_map(|locale| {
-                    if (self.predicate)(DataRequest {
-                        locale: &locale,
+            set.into_iter()
+                .filter(|(locale, key_attributes)| {
+                    (self.predicate)(DataRequest {
+                        locale,
+                        key_attributes,
                         ..Default::default()
-                    }) {
-                        Some(locale)
-                    } else {
-                        None
-                    }
+                    })
                 })
                 .collect()
         })
@@ -171,19 +168,18 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
-    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
-        self.inner.supported_locales().map(|vec| {
+    fn supported_requests(
+        &self,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.inner.supported_requests().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter_map(|locale| {
-                    if (self.predicate)(DataRequest {
-                        locale: &locale,
+                .filter(|(locale, key_attributes)| {
+                    (self.predicate)(DataRequest {
+                        locale,
+                        key_attributes,
                         ..Default::default()
-                    }) {
-                        Some(locale)
-                    } else {
-                        None
-                    }
+                    })
                 })
                 .collect()
         })

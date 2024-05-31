@@ -420,7 +420,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(vec![Default::default()])
     }

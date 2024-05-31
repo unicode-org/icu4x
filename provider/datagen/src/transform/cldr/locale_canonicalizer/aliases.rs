@@ -30,7 +30,7 @@ impl DataProvider<AliasesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<AliasesV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -50,7 +50,7 @@ impl DataProvider<AliasesV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<AliasesV2Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

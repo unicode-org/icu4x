@@ -43,11 +43,14 @@ impl<'data> BlobSchema<'data> {
     }
 
     #[cfg(feature = "export")]
-    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    pub fn list_requests(
+        &self,
+        key: DataKey,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         match self {
-            BlobSchema::V001(s) => s.list_locales(key),
-            BlobSchema::V002(s) => s.list_locales(key),
-            BlobSchema::V002Bigger(s) => s.list_locales(key),
+            BlobSchema::V001(s) => s.list_requests(key),
+            BlobSchema::V002(s) => s.list_requests(key),
+            BlobSchema::V002Bigger(s) => s.list_requests(key),
         }
     }
 
@@ -106,13 +109,22 @@ impl<'data> BlobSchemaV1<'data> {
     }
 
     #[cfg(feature = "export")]
-    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    pub fn list_requests(
+        &self,
+        key: DataKey,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .keys
             .get0(&key.hashed())
             .ok_or_else(|| DataErrorKind::MissingDataKey.with_key(key))?
             .iter1_copied()
-            .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok()?.parse().ok())
+            .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
+            .filter_map(|s| {
+                let mut iter = s.splitn(2, "-x-");
+                let l = iter.next().unwrap().parse().ok()?;
+                let a = iter.next().unwrap_or("").parse().ok()?;
+                Some((l, a))
+            })
             .collect())
     }
 
@@ -206,7 +218,10 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
     }
 
     #[cfg(feature = "export")]
-    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    pub fn list_requests(
+        &self,
+        key: DataKey,
+    ) -> Result<std::collections::HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let key_index = self
             .keys
             .binary_search(&key.hashed())
@@ -218,7 +233,12 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_key(key))?;
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
-            .filter_map(|(s, _)| s.parse().ok())
+            .filter_map(|(s, _)| {
+                let mut iter = s.splitn(2, "-x-");
+                let l = iter.next().unwrap().parse().ok()?;
+                let a = iter.next().unwrap_or("").parse().ok()?;
+                Some((l, a))
+            })
             .collect())
     }
 

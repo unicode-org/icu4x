@@ -168,12 +168,12 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
+            fn supported_requests_for_key(&self, key: $crate::DataKey) -> Result<std::collections::HashSet<($crate::DataLocale, $crate::DataKeyAttributes)>, $crate::DataError> {
                 match key.hashed() {
                     $(
                         $(#[$cfg])?
                         h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
+                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_requests(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashSet;
+
 use crate::BlobDataProvider;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -17,7 +19,10 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
 }
 
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        self.data.get().list_locales(key)
+    fn supported_requests_for_key(
+        &self,
+        key: DataKey,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        self.data.get().list_requests(key)
     }
 }

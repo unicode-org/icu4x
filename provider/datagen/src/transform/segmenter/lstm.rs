@@ -207,7 +207,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok([
             "Burmese_codepoints_exclusive_model4_heavy",
             "Khmer_codepoints_exclusive_model4_heavy",

@@ -96,7 +96,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .0
             .keys()
@@ -106,19 +106,19 @@ impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
 }
 
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<CollationFallbackSupplementV1Marker> for TestingProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

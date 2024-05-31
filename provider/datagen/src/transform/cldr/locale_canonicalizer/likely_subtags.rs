@@ -25,7 +25,7 @@ impl DataProvider<LikelySubtagsV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -48,7 +48,7 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsExtendedV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -68,7 +68,7 @@ impl DataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -88,7 +88,7 @@ impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

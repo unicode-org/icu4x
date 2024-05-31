@@ -365,12 +365,12 @@ impl<M: KeyedDataMarker> IterableDataProvider<M> for DatagenProvider
 where
     DatagenProvider: IterableDataProviderInternal<M>,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         self.supported_locales_set()
             .map(|v| v.iter().cloned().collect())
     }
 
-    fn supports_locale(&self, locale: &DataLocale) -> Result<bool, DataError> {
+    fn supports_request(&self, locale: &DataLocale) -> Result<bool, DataError> {
         self.supported_locales_set().map(|v| v.contains(locale))
     }
 }

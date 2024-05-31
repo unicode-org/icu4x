@@ -101,7 +101,7 @@ impl DataProvider<UnitsInfoV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<UnitsInfoV1Marker> for DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
