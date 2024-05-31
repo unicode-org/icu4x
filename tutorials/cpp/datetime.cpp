@@ -63,7 +63,7 @@ int main() {
     }
 
     ICU4XCustomTimeZone time_zone = ICU4XCustomTimeZone::create_from_string("-06:00").ok().value();
-    int32_t offset = time_zone.gmt_offset_seconds().ok().value();
+    int32_t offset = time_zone.gmt_offset_seconds().value();
     if (offset != -21600) {
         std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;
@@ -71,7 +71,7 @@ int main() {
     ICU4XMetazoneCalculator mzcalc = ICU4XMetazoneCalculator::create(dp).ok().value();
     ICU4XTimeZoneIdMapper mapper = ICU4XTimeZoneIdMapper::create(dp).ok().value();
     time_zone.try_set_iana_time_zone_id_2(mapper, "america/chicago").ok().value();
-    std::string time_zone_id_return = time_zone.time_zone_id().ok().value();
+    std::string time_zone_id_return = time_zone.time_zone_id().value();
     if (time_zone_id_return != "uschi") {
         std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
         return 1;
@@ -99,14 +99,14 @@ int main() {
     }
     ICU4XIsoDateTime local_datetime = ICU4XIsoDateTime::create(2022, 8, 25, 0, 0, 0, 0).ok().value();
     time_zone.maybe_calculate_metazone(mzcalc, local_datetime);
-    std::string metazone_id_return = time_zone.metazone_id().ok().value();
+    std::string metazone_id_return = time_zone.metazone_id().value();
     if (metazone_id_return != "amce") {
         std::cout << "Metazone ID not calculated correctly; got " << metazone_id_return << std::endl;
         return 1;
     }
     // Note: The daylight time switch should normally come from TZDB calculations.
     time_zone.set_daylight_time();
-    std::string zone_variant_return = time_zone.zone_variant().ok().value();
+    std::string zone_variant_return = time_zone.zone_variant().value();
     if (zone_variant_return != "dt") {
         std::cout << "Zone variant not calculated correctly; got " << zone_variant_return << std::endl;
         return 1;
