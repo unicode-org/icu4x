@@ -155,7 +155,7 @@ impl Calendar for Buddhist {
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Buddhist)
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

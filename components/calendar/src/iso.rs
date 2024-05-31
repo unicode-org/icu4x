@@ -29,7 +29,6 @@
 //! assert_eq!(datetime_iso.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
@@ -229,8 +228,8 @@ impl Calendar for Iso {
         "ISO"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Iso)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

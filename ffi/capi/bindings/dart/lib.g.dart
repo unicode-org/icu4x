@@ -530,31 +530,13 @@ class _Float64ListView {
   int get length => _values.length;
 }
 
-final class _ResultBoolInt32Union extends ffi.Union {
+final class _ResultBoolVoidUnion extends ffi.Union {
   @ffi.Bool()
   external bool ok;
-
-  @ffi.Int32()
-  external int err;
 }
 
-final class _ResultBoolInt32 extends ffi.Struct {
-  external _ResultBoolInt32Union union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-final class _ResultInt32Int32Union extends ffi.Union {
-  @ffi.Int32()
-  external int ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultInt32Int32 extends ffi.Struct {
-  external _ResultInt32Int32Union union;
+final class _ResultBoolVoid extends ffi.Struct {
+  external _ResultBoolVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;

@@ -1,7 +1,5 @@
 import { u8, usize } from "./diplomat-runtime"
-import { FFIError } from "./diplomat-runtime"
 import { ICU4XBidiDirection } from "./ICU4XBidiDirection";
-import { ICU4XError } from "./ICU4XError";
 
 /**
 
@@ -14,9 +12,8 @@ export class ICU4XBidiParagraph {
    * Given a paragraph index `n` within the surrounding text, this sets this object to the paragraph at that index. Returns `ICU4XError::OutOfBoundsError` when out of bounds.
 
    * This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't create a new object
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  set_paragraph_in_text(n: usize): void | never;
+  set_paragraph_in_text(n: usize): boolean;
 
   /**
 
@@ -51,9 +48,8 @@ export class ICU4XBidiParagraph {
    * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained within this paragraph's range.
 
    * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at Rust documentation for `level_at`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  reorder_line(range_start: usize, range_end: usize): string | never;
+  reorder_line(range_start: usize, range_end: usize): string | undefined;
 
   /**
 

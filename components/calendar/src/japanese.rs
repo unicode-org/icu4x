@@ -41,7 +41,6 @@
 //! assert_eq!(datetime_japanese.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{EraStartDate, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
@@ -317,8 +316,8 @@ impl Calendar for Japanese {
         Self::DEBUG_NAME
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Japanese)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -406,8 +405,8 @@ impl Calendar for JapaneseExtended {
         Self::DEBUG_NAME
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::JapaneseExtended)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

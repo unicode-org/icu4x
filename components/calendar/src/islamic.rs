@@ -43,7 +43,6 @@ use crate::provider::islamic::{
     IslamicCacheV1, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
     PackedIslamicYearInfo,
 };
-use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
@@ -547,8 +546,8 @@ impl Calendar for IslamicObservational {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicObservational)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -779,8 +778,8 @@ impl Calendar for IslamicUmmAlQura {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicUmmAlQura)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -1009,8 +1008,9 @@ impl Calendar for IslamicCivil {
             next_year: Self::year_as_islamic(next_year),
         }
     }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicCivil)
+
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -1251,8 +1251,9 @@ impl Calendar for IslamicTabular {
             next_year: Self::year_as_islamic(next_year),
         }
     }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::IslamicTabular)
+
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 

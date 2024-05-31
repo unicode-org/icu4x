@@ -12,9 +12,6 @@ enum Error {
   /// Please file a bug
   unknownError,
 
-  /// Some input was out of bounds
-  outOfBoundsError,
-
   dataMissingDataKeyError,
 
   dataMissingVariantError,
@@ -42,9 +39,6 @@ enum Error {
   dataUnavailableBufferFormatError,
 
   dataMismatchedAnyBufferError,
-
-  /// The subtag being requested was not set
-  localeUndefinedSubtagError,
 
   /// The locale or subtag string failed to parse
   localeParserLanguageError,
@@ -90,18 +84,12 @@ enum Error {
 
   timeZoneInvalidOffsetError,
 
-  timeZoneMissingInputError,
-
-  timeZoneInvalidIdError,
-
-  invalidCldrUnitIdentifierError;
+  timeZoneInvalidIdError;
 
   int get _ffi {
     switch (this) {
       case unknownError:
         return 0;
-      case outOfBoundsError:
-        return 2;
       case dataMissingDataKeyError:
         return 256;
       case dataMissingVariantError:
@@ -130,8 +118,6 @@ enum Error {
         return 268;
       case dataMismatchedAnyBufferError:
         return 269;
-      case localeUndefinedSubtagError:
-        return 512;
       case localeParserLanguageError:
         return 513;
       case localeParserSubtagError:
@@ -174,12 +160,8 @@ enum Error {
         return 2056;
       case timeZoneInvalidOffsetError:
         return 2561;
-      case timeZoneMissingInputError:
-        return 2562;
       case timeZoneInvalidIdError:
         return 2563;
-      case invalidCldrUnitIdentifierError:
-        return 3072;
     }
   }
 }

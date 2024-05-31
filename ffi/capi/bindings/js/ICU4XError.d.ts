@@ -14,11 +14,6 @@ export enum ICU4XError {
    */
   UnknownError = 'UnknownError',
   /**
-
-   * Some input was out of bounds
-   */
-  OutOfBoundsError = 'OutOfBoundsError',
-  /**
    */
   DataMissingDataKeyError = 'DataMissingDataKeyError',
   /**
@@ -60,11 +55,6 @@ export enum ICU4XError {
   /**
    */
   DataMismatchedAnyBufferError = 'DataMismatchedAnyBufferError',
-  /**
-
-   * The subtag being requested was not set
-   */
-  LocaleUndefinedSubtagError = 'LocaleUndefinedSubtagError',
   /**
 
    * The locale or subtag string failed to parse
@@ -134,11 +124,5 @@ export enum ICU4XError {
   TimeZoneInvalidOffsetError = 'TimeZoneInvalidOffsetError',
   /**
    */
-  TimeZoneMissingInputError = 'TimeZoneMissingInputError',
-  /**
-   */
   TimeZoneInvalidIdError = 'TimeZoneInvalidIdError',
-  /**
-   */
-  InvalidCldrUnitIdentifierError = 'InvalidCldrUnitIdentifierError',
 }

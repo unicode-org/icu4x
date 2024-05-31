@@ -70,14 +70,18 @@ pub mod ffi {
     pub struct ICU4XMeasureUnitParser<'a>(pub MeasureUnitParser<'a>);
 
     impl<'a> ICU4XMeasureUnitParser<'a> {
-        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`].
-        /// Returns an error if the unit identifier is not valid.
+        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`ICU4XMeasureUnit`],
+        /// if the identifier is valid.
         #[diplomat::rust_link(
             icu::experimental::units::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse(&self, unit_id: &DiplomatStr) -> Result<Box<ICU4XMeasureUnit>, ICU4XError> {
-            Ok(Box::new(ICU4XMeasureUnit(self.0.try_from_bytes(unit_id)?)))
+        pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<ICU4XMeasureUnit>> {
+            self.0
+                .try_from_bytes(unit_id)
+                .ok()
+                .map(ICU4XMeasureUnit)
+                .map(Box::new)
         }
     }
 

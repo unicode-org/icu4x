@@ -27,11 +27,6 @@ enum struct ICU4XError {
    * Please file a bug
    */
   UnknownError = 0,
-
-  /**
-   * Some input was out of bounds
-   */
-  OutOfBoundsError = 2,
   DataMissingDataKeyError = 256,
   DataMissingVariantError = 257,
   DataMissingLocaleError = 258,
@@ -46,11 +41,6 @@ enum struct ICU4XError {
   DataIoError = 267,
   DataUnavailableBufferFormatError = 268,
   DataMismatchedAnyBufferError = 269,
-
-  /**
-   * The subtag being requested was not set
-   */
-  LocaleUndefinedSubtagError = 512,
 
   /**
    * The locale or subtag string failed to parse
@@ -80,9 +70,7 @@ enum struct ICU4XError {
   DateTimeFixedDecimalError = 2055,
   DateTimeMismatchedCalendarError = 2056,
   TimeZoneInvalidOffsetError = 2561,
-  TimeZoneMissingInputError = 2562,
   TimeZoneInvalidIdError = 2563,
-  InvalidCldrUnitIdentifierError = 3072,
 };
 
 #endif

@@ -26,12 +26,9 @@ pub mod ffi {
     #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
     #[diplomat::rust_link(icu_experimental::units::InvalidUnitError, Struct, compact)]
     pub enum ICU4XError {
-        // general errors
         /// The error is not currently categorized as ICU4XError.
         /// Please file a bug
         UnknownError = 0x00,
-        /// Some input was out of bounds
-        OutOfBoundsError = 0x02,
 
         // general data errors
         // See DataError
@@ -51,8 +48,6 @@ pub mod ffi {
         DataMismatchedAnyBufferError = 0x1_0D,
 
         // locale errors
-        /// The subtag being requested was not set
-        LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
         LocaleParserLanguageError = 0x2_01,
         LocaleParserSubtagError = 0x2_02,
@@ -90,12 +85,7 @@ pub mod ffi {
 
         // timezone errors
         TimeZoneInvalidOffsetError = 0xA_01,
-        TimeZoneMissingInputError = 0xA_02,
         TimeZoneInvalidIdError = 0xA_03,
-
-        // Units errors
-        #[cfg(feature = "experimental_components")]
-        InvalidCldrUnitIdentifierError = 0x0C_00,
     }
 }
 
@@ -262,12 +252,5 @@ impl From<icu_locale_core::ParseError> for ICU4XError {
 impl From<icu_timezone::InvalidOffsetError> for ICU4XError {
     fn from(e: icu_timezone::InvalidOffsetError) -> Self {
         ICU4XError::TimeZoneInvalidOffsetError.log_original(&e)
-    }
-}
-
-#[cfg(feature = "experimental_components")]
-impl From<icu_experimental::units::InvalidUnitError> for ICU4XError {
-    fn from(_: icu_experimental::units::InvalidUnitError) -> Self {
-        ICU4XError::InvalidCldrUnitIdentifierError
     }
 }

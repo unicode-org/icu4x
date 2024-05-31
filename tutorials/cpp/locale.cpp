@@ -56,11 +56,11 @@ int main() {
                    "The language can be accessed")) {
     return 1;
   }
-  if (!test_string(locale.region().ok().value(), "US",
+  if (!test_string(locale.region().value(), "US",
                    "The region can be accessed")) {
     return 1;
   }
-  if (!test_string(locale.script().ok().value(), "Latn",
+  if (!test_string(locale.script().value(), "Latn",
                    "The script can be accessed")) {
     return 1;
   }
@@ -71,7 +71,7 @@ int main() {
   }
 
   locale.set_region("").ok();
-  if (locale.region().is_ok()) {
+  if (locale.region().has_value()) {
     std::cout << "Expected region to be an err" << std::endl;
     return 1;
   }
@@ -80,7 +80,7 @@ int main() {
   }
 
   locale.set_script("").ok();
-  if (locale.script().is_ok()) {
+  if (locale.script().has_value()) {
     std::cout << "Expected script to be an err" << std::endl;
     return 1;
   }
@@ -89,7 +89,7 @@ int main() {
   }
 
   locale = ICU4XLocale::create_from_string("en-US-u-hc-h12").ok().value();
-  if (!test_string(locale.get_unicode_extension("hc").ok().value(), "h12",
+  if (!test_string(locale.get_unicode_extension("hc").value(), "h12",
                    "The unicode extension can be accessed")) {
     return 1;
   }
