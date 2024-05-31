@@ -163,7 +163,6 @@ pub use crate::key::DataKey;
 pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
-#[cfg(feature = "experimental")]
 pub use crate::request::AuxiliaryKeys;
 pub use crate::request::DataLocale;
 pub use crate::request::DataRequest;
@@ -212,8 +211,7 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::AsDynamicDataProviderAnyMarkerWrap;
     #[doc(no_inline)]
-    #[cfg(feature = "experimental")]
-    pub use crate::AuxiliaryKeys;
+        pub use crate::AuxiliaryKeys;
     #[doc(no_inline)]
     pub use crate::BoundDataProvider;
     #[doc(no_inline)]
