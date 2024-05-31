@@ -26,7 +26,6 @@ use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
-use writeable::Writeable;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -266,11 +265,7 @@ impl Transliterator {
     {
         let payload = Transliterator::load_rbt(
             #[allow(clippy::unwrap_used)] // infallible
-            &locale
-                .write_to_string()
-                .to_ascii_lowercase()
-                .parse()
-                .unwrap(),
+            &locale.to_string().to_ascii_lowercase().parse().unwrap(),
             transliterator_provider,
         )?;
         let rbt = payload.get();
@@ -326,7 +321,7 @@ impl Transliterator {
                     .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
                             #[allow(clippy::unwrap_used)] // infallible
-                            &dep.parse().unwrap(),
+                            &dep.to_ascii_lowercase().parse().unwrap(),
                             transliterator_provider,
                         )?;
                         Ok(InternalTransliterator::RuleBased(rbt))

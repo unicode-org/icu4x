@@ -111,10 +111,10 @@ impl RuleCollection {
         reverse: bool,
         visible: bool,
     ) {
-        self.data
-            .borrow_mut()
-            .0
-            .insert(id.to_string(), (source, reverse, visible));
+        self.data.borrow_mut().0.insert(
+            id.to_string().to_ascii_lowercase(),
+            (source, reverse, visible),
+        );
 
         for alias in aliases.into_iter() {
             self.id_mapping
@@ -653,7 +653,7 @@ mod tests {
                 key_attributes: &{
                     let locale = &locale!("fwd");
                     #[allow(clippy::unwrap_used)] // infallible
-                    locale.write_to_string().parse().unwrap()
+                    locale.to_string().to_ascii_lowercase().parse().unwrap()
                 },
                 ..Default::default()
             })
@@ -667,7 +667,7 @@ mod tests {
                 key_attributes: &{
                     let locale = &locale!("rev");
                     #[allow(clippy::unwrap_used)] // infallible
-                    locale.write_to_string().parse().unwrap()
+                    locale.to_string().to_ascii_lowercase().parse().unwrap()
                 },
                 ..Default::default()
             })

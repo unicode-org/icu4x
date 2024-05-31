@@ -102,6 +102,7 @@ impl<'data> BlobSchemaV1<'data> {
                     .get1_copied_by(|k| {
                         let k = unsafe { core::str::from_utf8_unchecked(&k.0) };
                         let mut iter = k.splitn(2, "-x-");
+                        #[allow(clippy::unwrap_used)] // split returns at least one item
                         let l = iter.next().unwrap();
                         let a = iter.next().unwrap_or("");
                         req.locale
