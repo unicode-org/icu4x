@@ -23,8 +23,16 @@ use zerovec::{VarZeroVec, ZeroMap2d};
 //     - one for the narrow width (e.g. "{0} m")
 //     - one for the DisplayNames (e.g. "meter")
 
-#[derive(Debug)]
-pub struct UnitsProvider<'data> {
+#[icu_provider::data_struct(UnitsDisplayNameV1Marker = "units-display-name/essentials@1")]
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::dimension::provider::currency),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct UnitsDisplayName<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     long_width: ZeroMap2d<'data, str, Count, str>,
 
