@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "datagen")]
 use std::collections::HashSet;
-
 use super::ForkByErrorPredicate;
 use alloc::vec::Vec;
 #[cfg(feature = "datagen")]

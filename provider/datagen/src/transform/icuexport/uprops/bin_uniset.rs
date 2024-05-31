@@ -9,6 +9,7 @@ use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
+use std::collections::HashSet;
 
 impl DatagenProvider {
     fn get_binary_prop_for_unicodeset<'a>(
@@ -60,12 +61,10 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for DatagenProvider {
-                fn supported_locales(
-                    &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                     self.get_binary_prop_for_unicodeset($prop_name)?;
 
-                    Ok(vec![Default::default()])
+                    Ok(HashSet::from_iter([Default::default()]))
                 }
             }
         )+

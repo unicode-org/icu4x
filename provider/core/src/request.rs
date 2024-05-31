@@ -885,7 +885,7 @@ fn test_data_locale_to_string() {
             expected: "en-ZA-u-cu-gbp",
         },
     ] {
-        let mut locale = cas.locale.parse::<DataLocale>().unwrap();
+        let locale = cas.locale.parse::<DataLocale>().unwrap();
         writeable::assert_writeable_eq!(locale, cas.expected);
     }
 }

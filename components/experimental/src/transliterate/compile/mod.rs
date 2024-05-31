@@ -95,7 +95,7 @@ pub struct RuleCollection {
     id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
     data: RefCell<(
-        BTreeMap<String, (String, bool, bool)>, // locale -> source/reverse/visible
+        BTreeMap<String, (String, bool, bool)>, // key-attributes -> source/reverse/visible
         BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
@@ -317,16 +317,16 @@ where
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        let locale = req.locale.to_string();
-
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(&locale) {
+        if let Some(response) = exclusive_data.1.get(&req.key_attributes as &str) {
             return response.clone();
         };
 
-        let result = |value: Option<(String, bool, bool)>| -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-            let Some((source, reverse, visible)) = value else {
+        let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+            let Some((source, reverse, visible)) =
+                exclusive_data.0.remove(&req.key_attributes as &str)
+            else {
                 return Err(
                     DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
                 );
@@ -377,9 +377,11 @@ where
                 metadata: Default::default(),
                 payload: Some(DataPayload::from_owned(transliterator)),
             })
-        }(exclusive_data.0.remove(&locale));
+        }();
 
-        exclusive_data.1.insert(locale, result.clone());
+        exclusive_data
+            .1
+            .insert(req.key_attributes.to_string(), result.clone());
 
         result
     }
@@ -480,12 +482,7 @@ where
             .keys()
             .cloned()
             .chain(exclusive_data.1.keys().cloned())
-            .filter_map(|s| {
-                let mut iter = s.splitn(2, "-x-");
-                let l = iter.next().unwrap().parse().ok()?;
-                let a = iter.next().unwrap_or("").parse().ok()?;
-                Some((l, a))
-            })
+            .filter_map(|s| Some((Default::default(), s.parse().ok()?)))
             .collect())
     }
 }

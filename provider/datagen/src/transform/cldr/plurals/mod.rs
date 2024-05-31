@@ -7,7 +7,7 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
 use icu_provider::prelude::*;
@@ -64,13 +64,13 @@ macro_rules! implement {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 Ok(self
                     .get_rules_for(<$marker>::KEY)?
                     .0
                     .keys()
-                    .map(DataLocale::from)
+                    .map(|l| (DataLocale::from(l), Default::default()))
                     .collect())
             }
         }
@@ -121,14 +121,14 @@ impl DataProvider<PluralRangesV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<PluralRangesV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<PluralRangesV1Marker> for DatagenProvider {
+    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .get_plural_ranges()?
             .0
             .keys()
-            .map(DataLocale::from)
-            .chain([DataLocale::default()]) // `und` is not included in the locales of plural ranges.
+            .map(|l| (DataLocale::from(l), Default::default()))
+            .chain([Default::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
     }
 }

@@ -10,6 +10,7 @@ use icu_experimental::transliterate::RuleCollection;
 use icu_locale_core::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::sync::Mutex;
 
 impl CldrCache {
@@ -130,7 +131,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for DatagenProvider {
     // Don't do caching for this one. It uses its own mutex
-    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
         self.cldr()?
             .transforms()?
             .lock()

@@ -13,6 +13,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
+use std::collections::HashSet;
 
 mod normalizer_serde;
 
@@ -35,8 +36,8 @@ macro_rules! normalization_provider {
         }
 
         impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(vec![DataLocale::default()])
+            fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     };

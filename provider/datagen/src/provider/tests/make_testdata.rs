@@ -100,7 +100,7 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         // put `und-*` but not any other locales
-        if locale.is_langid_und() && key_attributes.is_empty() {
+        if locale.is_langid_und() {
             self.0.put_payload(key, locale, key_attributes, payload)
         } else {
             Ok(())
@@ -261,7 +261,7 @@ impl<F: Write + Send + Sync> DataExporter for PostcardTestingExporter<F> {
             (
                 key,
                 locale.to_string()
-                    + if key_attributes.is_empty() { "" } else { "-x" }
+                    + if key_attributes.is_empty() { "" } else { "-x-" }
                     + key_attributes,
             ),
             (size, hash),

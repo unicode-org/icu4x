@@ -7,7 +7,7 @@ use crate::provider::transform::cldr::cldr_serde::{
     week_data::{Territory, DEFAULT_TERRITORY},
 };
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };
@@ -15,14 +15,16 @@ use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl IterableDataProviderInternal<WeekDataV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<WeekDataV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<DataLocale> = week_data
+        Ok(week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -32,9 +34,8 @@ impl IterableDataProviderInternal<WeekDataV1Marker> for DatagenProvider {
                 _ => None,
             })
             .map(LanguageIdentifier::from)
-            .map(DataLocale::from)
-            .collect();
-        Ok(regions.into_iter().collect())
+            .map(|l| (DataLocale::from(l), Default::default()))
+            .collect())
     }
 }
 
@@ -198,9 +199,11 @@ impl DataProvider<WeekDataV2Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<WeekDataV2Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
-        IterableDataProviderInternal::<WeekDataV1Marker>::supported_locales_impl(self)
+impl IterableDataProviderCached<WeekDataV2Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        IterableDataProviderCached::<WeekDataV1Marker>::supported_locales_cached(self)
     }
 }
 

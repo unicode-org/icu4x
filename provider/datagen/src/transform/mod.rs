@@ -6,6 +6,8 @@ pub(in crate::provider) mod cldr;
 pub(in crate::provider) mod icuexport;
 pub(in crate::provider) mod segmenter;
 
+use std::collections::HashSet;
+
 use crate::provider::DatagenProvider;
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;
@@ -19,7 +21,7 @@ impl DataProvider<HelloWorldV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
         HelloWorldProvider.supported_requests()
     }
 }
@@ -31,7 +33,7 @@ impl DatagenProvider {
     {
         if <M as KeyedDataMarker>::KEY.metadata().singleton && !req.locale.is_empty() {
             Err(DataErrorKind::ExtraneousLocale)
-        } else if !self.supports_request(req.locale)? {
+        } else if !self.supports_request(req.locale, req.key_attributes)? {
             Err(DataErrorKind::MissingLocale)
         } else {
             Ok(())

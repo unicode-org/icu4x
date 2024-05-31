@@ -15,6 +15,7 @@ use icu_properties::{
     IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
 };
 use icu_provider::datagen::IterableDataProvider;
+use std::collections::HashSet;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::WordType;
@@ -603,8 +604,8 @@ macro_rules! implement {
         }
 
         impl IterableDataProvider<$marker> for DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(vec![Default::default()])
+            fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
             }
         }
     }

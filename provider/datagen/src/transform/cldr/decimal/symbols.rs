@@ -4,7 +4,7 @@
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_decimal::provider::*;
 use icu_locale_core::extensions::unicode::key;
 use icu_provider::prelude::*;
@@ -49,8 +49,8 @@ impl DataProvider<DecimalSymbolsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<DecimalSymbolsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<DecimalSymbolsV1Marker> for DatagenProvider {
+    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.supported_locales_for_numbers()
     }
 }

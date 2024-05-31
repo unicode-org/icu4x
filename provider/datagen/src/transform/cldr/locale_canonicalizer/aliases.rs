@@ -11,7 +11,7 @@ use icu_locale_core::{
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
@@ -30,8 +30,8 @@ impl DataProvider<AliasesV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<AliasesV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
@@ -50,8 +50,8 @@ impl DataProvider<AliasesV2Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<AliasesV2Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 

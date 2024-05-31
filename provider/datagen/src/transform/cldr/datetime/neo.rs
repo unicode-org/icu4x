@@ -5,7 +5,7 @@
 use super::supported_cals;
 use crate::provider::transform::cldr::cldr_serde::ca;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 use icu_datetime::pattern::{self, CoarseHourCycle};
 
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
@@ -173,17 +173,18 @@ impl DatagenProvider {
         &self,
         calendar: Value,
         keylengths: &'static [TinyAsciiStr<8>],
-    ) -> Result<HashSet<DataLocale>, DataError> {
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
-            keylengths.iter().map(move |length| {
-                let mut locale = DataLocale::from(lid.clone());
-                // locale.set_aux((*length).into());
-                locale
+            keylengths.iter().map(move |&length| {
+                (
+                    DataLocale::from(lid.clone()),
+                    DataKeyAttributes::from_tinystr(length),
+                )
             })
         }));
 
@@ -670,55 +671,60 @@ impl DataProvider<TimePatternV1Marker> for DatagenProvider {
 // subtag actually should be produced (by returning a special error), then this code is no longer necessary
 // and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
 // in timepattern_convert
-impl IterableDataProviderInternal<TimePatternV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<TimePatternV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let calendar = value!("gregory");
-        let mut r = HashSet::new();
 
         let cldr_cal = supported_cals()
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
-            let data = self
-                .load_calendar_dates(&lid, &calendar)
-                .expect("list_langs returned a language that couldn't be loaded");
-            let tp = &data.time_formats;
 
-            let keylengths = [
-                key_attrs::PATTERN_FULL,
-                key_attrs::PATTERN_LONG,
-                key_attrs::PATTERN_MEDIUM,
-                key_attrs::PATTERN_SHORT,
-                nondefault_subtag(
-                    &tp.full,
-                    key_attrs::PATTERN_FULL12,
-                    key_attrs::PATTERN_FULL24,
-                ),
-                nondefault_subtag(
-                    &tp.long,
-                    key_attrs::PATTERN_LONG12,
-                    key_attrs::PATTERN_LONG24,
-                ),
-                nondefault_subtag(
-                    &tp.medium,
-                    key_attrs::PATTERN_MEDIUM12,
-                    key_attrs::PATTERN_MEDIUM24,
-                ),
-                nondefault_subtag(
-                    &tp.short,
-                    key_attrs::PATTERN_SHORT12,
-                    key_attrs::PATTERN_SHORT24,
-                ),
-            ];
-            keylengths.into_iter().map(move |length| {
-                let mut locale = DataLocale::from(lid.clone());
+        Ok(self
+            .cldr()?
+            .dates(cldr_cal)
+            .list_langs()?
+            .flat_map(|lid| {
+                let data = self
+                    .load_calendar_dates(&lid, &calendar)
+                    .expect("list_langs returned a language that couldn't be loaded");
+                let tp = &data.time_formats;
 
-                // locale.set_aux(length.into());
-                locale
+                let keylengths = [
+                    key_attrs::PATTERN_FULL,
+                    key_attrs::PATTERN_LONG,
+                    key_attrs::PATTERN_MEDIUM,
+                    key_attrs::PATTERN_SHORT,
+                    nondefault_subtag(
+                        &tp.full,
+                        key_attrs::PATTERN_FULL12,
+                        key_attrs::PATTERN_FULL24,
+                    ),
+                    nondefault_subtag(
+                        &tp.long,
+                        key_attrs::PATTERN_LONG12,
+                        key_attrs::PATTERN_LONG24,
+                    ),
+                    nondefault_subtag(
+                        &tp.medium,
+                        key_attrs::PATTERN_MEDIUM12,
+                        key_attrs::PATTERN_MEDIUM24,
+                    ),
+                    nondefault_subtag(
+                        &tp.short,
+                        key_attrs::PATTERN_SHORT12,
+                        key_attrs::PATTERN_SHORT24,
+                    ),
+                ];
+                keylengths.into_iter().map(move |length| {
+                    (
+                        DataLocale::from(lid.clone()),
+                        DataKeyAttributes::from_tinystr(length),
+                    )
+                })
             })
-        }));
-
-        Ok(r)
+            .collect())
     }
 }
 
@@ -730,8 +736,10 @@ macro_rules! impl_symbols_datagen {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_locales_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }
@@ -746,8 +754,10 @@ macro_rules! impl_pattern_datagen {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_locales_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
         }

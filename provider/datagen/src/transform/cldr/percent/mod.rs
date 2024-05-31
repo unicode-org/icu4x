@@ -6,7 +6,7 @@ use std::collections::HashSet;
 
 use crate::provider::transform::cldr::cldr_serde;
 use crate::provider::DatagenProvider;
-use crate::provider::IterableDataProviderInternal;
+use crate::provider::IterableDataProviderCached;
 
 use icu_experimental::dimension::provider::percent::*;
 use icu_provider::prelude::*;
@@ -32,13 +32,13 @@ impl DataProvider<PercentEssentialsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<PercentEssentialsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<PercentEssentialsV1Marker> for DatagenProvider {
+    fn supported_locales_cached(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(DataLocale::from)
+            .map(|l| (DataLocale::from(l), Default::default()))
             .collect())
     }
 }

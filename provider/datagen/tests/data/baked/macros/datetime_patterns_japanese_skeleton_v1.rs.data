@@ -29,7 +29,15 @@ macro_rules! __impl_datetime_patterns_japanese_skeleton_v1 {
                 static UND_X_A1E: <icu::datetime::provider::neo::JapaneseDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::PackedSkeletonDataV1 { index_info: icu::datetime::provider::neo::SkeletonDataIndex { has_long: true, has_medium: true, has_plurals: false }, patterns: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1F\0>\0\0\x80\0\x01\0\0 \x80\x10\x01\0\0 \x80 \x04\0\0 \x80@\x01\0\0,\0\0 \x80P\x04\0\x80\0\x01\0\0 \x80\x10\x01\0\0 \x80 \x03\0\0 \x80@\x01\0\0,\0\0 \x80P\x01\0\x80\0\x05\0\0 \x80\x10\x01\0\0-\x80 \x01\0\0-\x80@\x01\0\0,\0\0 \x80P\x01") } };
                 static VALUES: [&<icu::datetime::provider::neo::JapaneseDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::Yokeable; 17usize] = [&UND_X_A1, &UND_X_A1E, &UND_X_D, &UND_X_DE, &UND_X_E, &UND_X_GY, &UND_X_GYM0, &UND_X_GYM0D, &UND_X_GYM0DE, &UND_X_M0, &UND_X_M0D, &UND_X_M0DE, &UND_X_Y, &UND_X_Y0W, &UND_X_YM0, &UND_X_YM0D, &UND_X_A1E];
                 static KEYS: [&str; 17usize] = ["und-x-a1", "und-x-a1e", "und-x-d", "und-x-de", "und-x-e", "und-x-gy", "und-x-gym0", "und-x-gym0d", "und-x-gym0de", "und-x-m0", "und-x-m0d", "und-x-m0de", "und-x-y", "und-x-y0w", "und-x-ym0", "und-x-ym0d", "und-x-ym0de"];
-                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                if let Ok(payload) = KEYS
+                    .binary_search_by(|k| {
+                        let mut iter = k.splitn(2, "-x-");
+                        let l = iter.next().unwrap();
+                        let a = iter.next().unwrap_or("");
+                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
+                    })
+                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
+                {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::JapaneseDateNeoSkeletonPatternsV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -47,8 +55,16 @@ macro_rules! __impliterable_datetime_patterns_japanese_skeleton_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::JapaneseDateNeoSkeletonPatternsV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["und-x-a1", "und-x-a1e", "und-x-d", "und-x-de", "und-x-e", "und-x-gy", "und-x-gym0", "und-x-gym0d", "und-x-gym0de", "und-x-m0", "und-x-m0d", "und-x-m0de", "und-x-y", "und-x-y0w", "und-x-ym0", "und-x-ym0d", "und-x-ym0de"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["und-x-a1", "und-x-a1e", "und-x-d", "und-x-de", "und-x-e", "und-x-gy", "und-x-gym0", "und-x-gym0d", "und-x-gym0de", "und-x-m0", "und-x-m0d", "und-x-m0de", "und-x-y", "und-x-y0w", "und-x-ym0", "und-x-ym0d", "und-x-ym0de"]
+                    .into_iter()
+                    .filter_map(|s| {
+                        let mut iter = s.splitn(2, "-x-");
+                        let l = iter.next().unwrap().parse().ok()?;
+                        let a = iter.next().unwrap_or("").parse().ok()?;
+                        Some((l, a))
+                    })
+                    .collect())
             }
         }
     };

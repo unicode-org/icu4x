@@ -11,6 +11,7 @@ use icu_properties::script::ScriptWithExt;
 use icu_properties::Script;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
@@ -61,8 +62,8 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
 }
 
 impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for DatagenProvider {
-    fn supported_requests(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
+    fn supported_requests(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError>  {
+        Ok(HashSet::from_iter([Default::default()]))
     }
 }
 

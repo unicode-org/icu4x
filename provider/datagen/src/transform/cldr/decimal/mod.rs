@@ -75,7 +75,7 @@ impl DatagenProvider {
             .collect())
     }
 
-    fn supported_locales_for_numbers(&self) -> Result<HashSet<DataLocale>, DataError> {
+    fn supported_locales_for_numbers(&self) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
@@ -92,9 +92,9 @@ impl DatagenProvider {
                             Value::try_from_single_subtag(nsname.as_bytes())
                                 .expect("CLDR should have valid numbering system names"),
                         );
-                        data_locale
+                        (data_locale, Default::default())
                     })
-                    .chain([last])
+                    .chain([(last, Default::default())])
             })
             .collect())
     }

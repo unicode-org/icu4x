@@ -4,7 +4,7 @@
 
 use std::collections::HashSet;
 
-use crate::provider::{DatagenProvider, IterableDataProviderInternal};
+use crate::provider::{DatagenProvider, IterableDataProviderCached};
 use either::Either;
 use icu_datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
@@ -128,70 +128,63 @@ impl DatagenProvider {
         })
     }
 
-    fn neo_time_skeleton_supported_locales(&self) -> Result<HashSet<DataLocale>, DataError> {
-        let mut r = HashSet::new();
-
-        r.extend(
-            self.cldr()?
-                .dates("generic")
-                .list_langs()?
-                .flat_map(|langid| {
-                    NeoTimeComponents::VALUES
-                        .iter()
-                        .filter(|neo_components| {
-                            matches!(neo_components, NeoTimeComponents::Hour)
-                                || matches!(neo_components, NeoTimeComponents::HourMinute)
-                                || matches!(neo_components, NeoTimeComponents::HourMinuteSecond)
-                                || matches!(neo_components, NeoTimeComponents::Auto)
-                        })
-                        .copied()
-                        .map(NeoTimeComponents::id_str)
-                        .map(move |subtag| {
-                            let langid = &langid;
-                            let subtag = subtag;
-                            let mut data_locale = DataLocale::from(langid);
-                            // data_locale.set_aux(DataKeyAttributes::from_subtag(Subtag::try_from_raw(*subtag.all_bytes()).unwrap()));
-                            data_locale
-                        })
-                }),
-        );
-
-        Ok(r)
+    fn neo_time_skeleton_supported_locales(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
+        Ok(self
+            .cldr()?
+            .dates("generic")
+            .list_langs()?
+            .flat_map(|langid| {
+                NeoTimeComponents::VALUES
+                    .iter()
+                    .filter(|neo_components| {
+                        matches!(neo_components, NeoTimeComponents::Hour)
+                            || matches!(neo_components, NeoTimeComponents::HourMinute)
+                            || matches!(neo_components, NeoTimeComponents::HourMinuteSecond)
+                            || matches!(neo_components, NeoTimeComponents::Auto)
+                    })
+                    .copied()
+                    .map(NeoTimeComponents::id_str)
+                    .map(move |id| {
+                        (
+                            DataLocale::from(&langid),
+                            DataKeyAttributes::from_tinystr(id),
+                        )
+                    })
+            })
+            .collect())
     }
 
     fn neo_date_skeleton_supported_locales(
         &self,
         calendar: &Value,
-    ) -> Result<HashSet<DataLocale>, DataError> {
-        let mut r = HashSet::new();
-
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         let cldr_cal = supported_cals()
             .get(calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-        r.extend(
-            self.cldr()?
-                .dates(cldr_cal)
-                .list_langs()?
-                .flat_map(|langid| {
-                    NeoDateComponents::VALUES
-                        .iter()
-                        .filter(|neo_components| {
-                            !matches!(neo_components, NeoDateComponents::Quarter)
-                                && !matches!(neo_components, NeoDateComponents::YearQuarter)
-                        })
-                        .copied()
-                        .map(NeoDateComponents::id_str)
-                        .map(move |subtag| {
-                            let langid = &langid;
-                            let subtag = subtag;
-                            let mut data_locale = DataLocale::from(langid);
-                            // data_locale.set_aux(DataKeyAttributes::from_subtag(Subtag::try_from_raw(*subtag.all_bytes()).unwrap()));
-                            data_locale
-                        })
-                }),
-        );
 
-        Ok(r)
+        Ok(self
+            .cldr()?
+            .dates(cldr_cal)
+            .list_langs()?
+            .flat_map(|langid| {
+                NeoDateComponents::VALUES
+                    .iter()
+                    .filter(|neo_components| {
+                        !matches!(neo_components, NeoDateComponents::Quarter)
+                            && !matches!(neo_components, NeoDateComponents::YearQuarter)
+                    })
+                    .copied()
+                    .map(NeoDateComponents::id_str)
+                    .map(move |id| {
+                        (
+                            DataLocale::from(&langid),
+                            DataKeyAttributes::from_tinystr(id),
+                        )
+                    })
+            })
+            .collect())
     }
 }
 
@@ -212,8 +205,10 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
     }
 }
 
-impl IterableDataProviderInternal<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
-    fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for DatagenProvider {
+    fn supported_locales_cached(
+        &self,
+    ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
         self.neo_time_skeleton_supported_locales()
     }
 }
@@ -234,8 +229,10 @@ macro_rules! impl_neo_skeleton_datagen {
             }
         }
 
-        impl IterableDataProviderInternal<$marker> for DatagenProvider {
-            fn supported_locales_impl(&self) -> Result<HashSet<DataLocale>, DataError> {
+        impl IterableDataProviderCached<$marker> for DatagenProvider {
+            fn supported_locales_cached(
+                &self,
+            ) -> Result<HashSet<(DataLocale, DataKeyAttributes)>, DataError> {
                 self.neo_date_skeleton_supported_locales(&value!($calendar))
             }
         }

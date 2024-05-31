@@ -15,7 +15,15 @@ macro_rules! __impl_datetime_symbols_japanese_months_v1 {
                 static UND_X_3: <icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::MonthNamesV1::Linear(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\x15\0\x18\0\x1B\0\x1E\0!\0M01M02M03M04M05M06M07M08M09M10M11M12") });
                 static VALUES: [&<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::DataMarker>::Yokeable; 6usize] = [&UND_X_3, &UND_X_3, &UND_X_4, &UND_X_4, &UND_X_3, &UND_X_3];
                 static KEYS: [&str; 6usize] = ["und-x-3", "und-x-3s", "und-x-4", "und-x-4s", "und-x-5", "und-x-5s"];
-                if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                if let Ok(payload) = KEYS
+                    .binary_search_by(|k| {
+                        let mut iter = k.splitn(2, "-x-");
+                        let l = iter.next().unwrap();
+                        let a = iter.next().unwrap_or("");
+                        req.locale.strict_cmp(l.as_bytes()).reverse().then_with(|| a.cmp(req.key_attributes))
+                    })
+                    .map(|i| *unsafe { VALUES.get_unchecked(i) })
+                {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::MissingLocale.with_req(<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -33,8 +41,16 @@ macro_rules! __impliterable_datetime_symbols_japanese_months_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.70"]
         impl icu_provider::datagen::IterableDataProvider<icu::datetime::provider::neo::JapaneseMonthNamesV1Marker> for $provider {
-            fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_provider::DataLocale>, icu_provider::DataError> {
-                Ok(["und-x-3", "und-x-3s", "und-x-4", "und-x-4s", "und-x-5", "und-x-5s"].into_iter().map(|s| <icu_provider::DataLocale as core::str::FromStr>::from_str(s).unwrap()).collect())
+            fn supported_requests(&self) -> Result<std::collections::HashSet<(icu_provider::DataLocale, icu_provider::DataKeyAttributes)>, icu_provider::DataError> {
+                Ok(["und-x-3", "und-x-3s", "und-x-4", "und-x-4s", "und-x-5", "und-x-5s"]
+                    .into_iter()
+                    .filter_map(|s| {
+                        let mut iter = s.splitn(2, "-x-");
+                        let l = iter.next().unwrap().parse().ok()?;
+                        let a = iter.next().unwrap_or("").parse().ok()?;
+                        Some((l, a))
+                    })
+                    .collect())
             }
         }
     };
