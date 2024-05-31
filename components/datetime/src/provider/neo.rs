@@ -17,7 +17,7 @@ use crate::pattern::runtime::PatternBorrowed;
 #[cfg(feature = "experimental")]
 use core::ops::Range;
 
-/// Helpers involving the auxiliary subtags used for date symbols.
+/// Helpers involving the data key attributes used for date symbols.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -54,7 +54,7 @@ pub mod key_attrs {
     pub const PATTERN_MEDIUM24: TinyAsciiStr<8> = tinystr!(8, "m24");
     pub const PATTERN_SHORT24: TinyAsciiStr<8> = tinystr!(8, "s24");
 
-    /// Field lengths supported in auxiliary subtags.
+    /// Field lengths supported in data key attribute.
     ///
     /// For a stable version of this enum, use [`FieldLength`].
     ///
@@ -75,7 +75,7 @@ pub mod key_attrs {
         Numeric,
     }
 
-    /// Pattern lengths supported in auxiliary subtags.
+    /// Pattern lengths supported in data key attributes.
     ///
     /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
     ///
@@ -95,7 +95,7 @@ pub mod key_attrs {
         Short,
     }
 
-    /// Field contexts supported in auxiliary subtags.
+    /// Field contexts supported in data key attributes.
     ///
     /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
     ///
@@ -113,7 +113,7 @@ pub mod key_attrs {
         Standalone,
     }
 
-    /// Parses a symbol aux key subtag to enum values.
+    /// Parses a symbol data key attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -136,7 +136,7 @@ pub mod key_attrs {
         }
     }
 
-    /// Parses a pattern aux key subtag to enum values.
+    /// Parses a pattern data key attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -166,7 +166,7 @@ pub mod key_attrs {
         }
     }
 
-    /// Creates a symbol aux key from the enum values.
+    /// Creates a symbol data key attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -189,7 +189,7 @@ pub mod key_attrs {
         }
     }
 
-    /// Creates a pattern aux key from the enum values.
+    /// Creates a pattern data key attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -224,9 +224,9 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 
 /// Symbols used for representing the year name
 ///
-/// This uses an auxiliary subtag for length. The subtag is simply the number of
+/// This uses a data key attribute for length. The value is simply the number of
 /// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
-/// "abbreviated" (e.g. `MMM`) is `-x-3` or `-x-3s` depending on whether it is format or standalone
+/// "abbreviated" (e.g. `MMM`) is `3` or `3s` depending on whether it is format or standalone
 /// respectively.
 ///
 /// The full list is:
@@ -276,8 +276,8 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
-/// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
+/// This uses a data key attribute for length. See [`YearNamesV1`] for more information on the scheme. This
+/// has an additional `1` value used for numeric symbols, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -378,7 +378,7 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
+/// This uses a data key attribute for length. See [`YearNamesV1`] for more information on the scheme.
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -440,7 +440,7 @@ size_test!(DatePatternV1, date_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with dates
 ///
-/// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
+/// This uses a data key attribute for length. The value can be "f", "l", "m", "s" for
 /// "full", "long", "medium", or "short".
 #[doc = date_pattern_v1_size!()]
 ///
@@ -489,12 +489,12 @@ size_test!(TimePatternV1, time_pattern_v1_size, 32);
 
 /// The default per-length patterns associated with times
 ///
-/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
+/// This uses an data key attribute for length. See [`DatePatternV1`] for more information on the scheme.
 ///
-/// It also uses the subtag to track hour cycles; the data for the default hour cycle will
-/// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
+/// It also uses the attribute to track hour cycles; the data for the default hour cycle will
+/// use a regular length attribute (e.g. `f` for full), and the non-default
 /// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
-/// (`-x-fk` for full, non-default, 23/24 hours)
+/// (`fk` for full, non-default, 23/24 hours)
 #[doc = time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -521,7 +521,7 @@ size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
-/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
+/// This uses a data key attribute for length. See [`DatePatternV1`] for more information on the scheme.
 #[doc = date_time_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">

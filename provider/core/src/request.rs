@@ -237,18 +237,12 @@ impl DataLocale {
     ///     "ca-ES",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
-    ///     "ca-ES-x-gbp",
-    ///     "ca-ES-x-gbp-short",
-    ///     "ca-ES-x-usd",
-    ///     "ca-ES-xyzabc",
-    ///     "ca-x-eur",
     ///     "cat",
     ///     "pl-Latn-PL",
     ///     "und",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
-    ///     "und-x-mxn",
     ///     "zh",
     /// ];
     ///
@@ -298,15 +292,15 @@ impl DataLocale {
     ///     // Less than "ca-ES"
     ///     "CA",
     ///     "ar-x-gbp-FOO",
-    ///     // Greater than "ca-ES-x-gbp"
+    ///     // Greater than "ca-AR"
     ///     "ca_ES",
     ///     "ca-ES-x-gbp-FOO",
     /// ];
     ///
-    /// let data_locale = "ca-ES-x-gbp".parse::<DataLocale>().unwrap();
+    /// let data_locale = "ca-ES".parse::<DataLocale>().unwrap();
     ///
     /// for s in invalid_strings.iter() {
-    ///     let expected_ordering = "ca-ES-x-gbp".cmp(s);
+    ///     let expected_ordering = "ca-AR".cmp(s);
     ///     let actual_ordering = data_locale.strict_cmp(s.as_bytes());
     ///     assert_eq!(expected_ordering, actual_ordering, "{}", s);
     /// }
@@ -334,7 +328,6 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_empty());
-    /// assert!(!"und-x-aux".parse::<DataLocale>().unwrap().is_empty());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -369,7 +362,6 @@ impl DataLocale {
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
-    /// assert!("und-x-aux".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
     /// ```
     pub fn is_und(&self) -> bool {
@@ -395,7 +387,6 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_langid_und());
-    /// assert!("und-x-aux".parse::<DataLocale>().unwrap().is_langid_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
     /// ```
     pub fn is_langid_und(&self) -> bool {
@@ -467,19 +458,6 @@ impl DataLocale {
     ///
     /// let locale = locale.into_locale();
     /// assert_eq!(locale, locale!("it-IT-u-ca-coptic"));
-    /// ```
-    ///
-    /// Auxiliary keys are retained:
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let data_locale: DataLocale = "und-u-nu-arab-x-gbp".parse().unwrap();
-    /// assert_writeable_eq!(data_locale, "und-u-nu-arab-x-gbp");
-    ///
-    /// let recovered_locale = data_locale.into_locale();
-    /// assert_writeable_eq!(recovered_locale, "und-u-nu-arab-x-gbp");
     /// ```
     pub fn into_locale(self) -> Locale {
         let mut loc = Locale {
@@ -609,70 +587,7 @@ impl DataLocale {
     }
 }
 
-/// The "auxiliary key" is an annotation on [`DataLocale`] that can contain an arbitrary
-/// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
-///
-/// A [`DataLocale`] can have multiple auxiliary keys, represented by this struct. The auxiliary
-/// keys are stored as private use subtags following `-x-`.
-///
-/// An auxiliary key currently allows 1-8 lowercase alphanumerics.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the `icu_provider` crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3632">#3632</a>
-/// </div>
-///
-/// # Examples
-///
-/// ```
-/// use icu_locale_core::langid;
-/// use icu_provider::prelude::*;
-/// use writeable::assert_writeable_eq;
-///
-/// let mut data_locale: DataLocale = langid!("ar-EG").into();
-/// assert_writeable_eq!(data_locale, "ar-EG");
-/// assert!(!data_locale.has_aux());
-/// assert_eq!(data_locale.get_aux(), None);
-///
-/// let aux = "gbp"
-///     .parse::<AuxiliaryKeys>()
-///     .expect("contains valid characters");
-///
-/// data_locale.set_aux(aux);
-/// assert_writeable_eq!(data_locale, "ar-EG-x-gbp");
-/// assert!(data_locale.has_aux());
-/// assert_eq!(data_locale.get_aux(), Some(&"gbp".parse().unwrap()));
-/// ```
-///
-/// Multiple auxiliary keys are allowed:
-///
-/// ```
-/// use icu_provider::prelude::*;
-/// use writeable::assert_writeable_eq;
-///
-/// let data_locale = "ar-EG-x-gbp-long".parse::<DataLocale>().unwrap();
-/// assert_writeable_eq!(data_locale, "ar-EG-x-gbp-long");
-/// assert_eq!(data_locale.get_aux().unwrap().iter().count(), 2);
-/// ```
-///
-/// Not all strings are valid auxiliary keys.
-/// The string must be well-formed and case-normalized:
-///
-/// ```
-/// use icu_provider::prelude::*;
-///
-/// assert!("abcdefg".parse::<AuxiliaryKeys>().is_ok());
-/// assert!("abc-xyz".parse::<AuxiliaryKeys>().is_ok());
-///
-/// assert!("".parse::<AuxiliaryKeys>().is_err());
-/// assert!("!@#$%".parse::<AuxiliaryKeys>().is_err());
-/// assert!("abc_xyz".parse::<AuxiliaryKeys>().is_err());
-/// assert!("ABC123".parse::<AuxiliaryKeys>().is_err());
-/// ```
-///
-/// [`Keywords`]: unicode_ext::Keywords
+/// TODO
 #[derive(Clone, Default)]
 pub struct DataKeyAttributes {
     value: DataKeyAttributesInner,
@@ -748,29 +663,17 @@ impl FromStr for DataKeyAttributes {
     type Err = DataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if !s.is_empty()
-            && s.split('-').all(|b| {
-                if let Ok(subtag) = Subtag::from_str(b) {
-                    // Enforces normalization:
-                    b == subtag.as_str()
-                } else {
-                    false
-                }
-            })
-        {
-            if s.len() <= 23 {
-                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
-                Ok(Self {
-                    value: DataKeyAttributesInner::Stack(s.parse().unwrap()),
-                })
-            } else {
-                Ok(Self {
-                    value: DataKeyAttributesInner::Boxed(s.into()),
-                })
-            }
-        } else {
+        if s.is_empty() {
             Ok(Self {
                 value: DataKeyAttributesInner::Empty,
+            })
+        } else if let Ok(tiny) = s.parse() {
+            Ok(Self {
+                value: DataKeyAttributesInner::Stack(tiny),
+            })
+        } else {
+            Ok(Self {
+                value: DataKeyAttributesInner::Boxed(s.into()),
             })
         }
     }

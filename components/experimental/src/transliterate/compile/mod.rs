@@ -327,6 +327,7 @@ where
             let Some((source, reverse, visible)) =
                 exclusive_data.0.remove(req.key_attributes as &str)
             else {
+                dbg!(&exclusive_data);
                 return Err(
                     DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
                 );
