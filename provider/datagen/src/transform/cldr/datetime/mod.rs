@@ -404,7 +404,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .expect("Failed to load payload")
             .take_payload()
@@ -420,7 +420,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("haw").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .expect("Failed to load payload")
             .take_payload()
@@ -442,7 +442,7 @@ mod test {
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
                 locale: &"fil-u-ca-gregory".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .expect("Failed to load payload")
             .take_payload()
@@ -485,7 +485,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -515,7 +515,7 @@ mod test {
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("cs").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

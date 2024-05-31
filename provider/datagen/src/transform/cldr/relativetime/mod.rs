@@ -91,7 +91,7 @@ macro_rules! make_data_provider {
                     ))?;
 
                     Ok(DataResponse {
-                        metadata: Default::default(),
+            metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(data.try_into()?)),
                     })
                 }
@@ -194,7 +194,7 @@ mod tests {
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -214,7 +214,7 @@ mod tests {
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("ar").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

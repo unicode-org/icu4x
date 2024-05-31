@@ -14,23 +14,12 @@ use icu_datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, Ti
 use icu_datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu_datetime::provider::neo::*;
 use icu_datetime::DateTimeFormatterOptions;
-use icu_locale_core::extensions::private::Subtag;
 use icu_locale_core::extensions::unicode::{value, Value};
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
 use super::supported_cals;
-
-fn make_data_locale_with_tinystr_subtag(
-    langid: &LanguageIdentifier,
-    subtag: TinyAsciiStr<8>,
-) -> DataLocale {
-    let mut data_locale = DataLocale::from(langid);
-    let subtag = Subtag::try_from_raw(*subtag.all_bytes()).unwrap();
-    data_locale.set_aux(DataKeyAttributes::from_subtag(subtag));
-    data_locale
-}
 
 impl DatagenProvider {
     fn load_neo_skeletons_key<M, C>(
@@ -45,13 +34,12 @@ impl DatagenProvider {
         Self: icu_provider::datagen::IterableDataProvider<M>,
     {
         self.check_req::<M>(req)?;
-        let aux_subtag = req
-            .locale
-            .get_aux()
-            .and_then(|aux| aux.iter().next())
-            .expect("Skeleton data provider called without aux subtag");
-        let neo_components = from_id_str(aux_subtag.into_tinystr())
-            .expect("Skeleton data provider called with unknown skeleton");
+        let id_str = req
+            .key_attributes
+            .single()
+            .expect("Skeleton data provider called without key attribute");
+        let neo_components =
+            from_id_str(id_str).expect("Skeleton data provider called with unknown skeleton");
         let packed_skeleton_data = self.make_packed_skeleton_data(
             &req.locale.get_langid(),
             calendar,
@@ -158,7 +146,13 @@ impl DatagenProvider {
                         })
                         .copied()
                         .map(NeoTimeComponents::id_str)
-                        .map(move |subtag| make_data_locale_with_tinystr_subtag(&langid, subtag))
+                        .map(move |subtag| {
+                            let langid = &langid;
+                            let subtag = subtag;
+                            let mut data_locale = DataLocale::from(langid);
+                            // data_locale.set_aux(DataKeyAttributes::from_subtag(Subtag::try_from_raw(*subtag.all_bytes()).unwrap()));
+                            data_locale
+                        })
                 }),
         );
 
@@ -187,7 +181,13 @@ impl DatagenProvider {
                         })
                         .copied()
                         .map(NeoDateComponents::id_str)
-                        .map(move |subtag| make_data_locale_with_tinystr_subtag(&langid, subtag))
+                        .map(move |subtag| {
+                            let langid = &langid;
+                            let subtag = subtag;
+                            let mut data_locale = DataLocale::from(langid);
+                            // data_locale.set_aux(DataKeyAttributes::from_subtag(Subtag::try_from_raw(*subtag.all_bytes()).unwrap()));
+                            data_locale
+                        })
                 }),
         );
 

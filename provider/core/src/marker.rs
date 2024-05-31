@@ -118,7 +118,7 @@ pub trait KeyedDataMarker: DataMarker {
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
 ///         locale: &langid!("en").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     },
 /// );
 ///
@@ -167,7 +167,7 @@ where
 ///     &MyProvider,
 ///     DataRequest {
 ///         locale: &langid!("und").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     },
 /// );
 ///

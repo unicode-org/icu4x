@@ -110,7 +110,7 @@ impl RuleCollection {
         visible: bool,
     ) {
         self.data.borrow_mut().0.insert(
-            super::ids::bcp47_to_data_locale(id).to_string(),
+            super::ids::bcp47_to_data_key_attributes(id).to_string(),
             (source, reverse, visible),
         );
 
@@ -647,8 +647,8 @@ mod tests {
         let forward: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                locale: &super::super::ids::bcp47_to_data_locale(&locale!("fwd")),
-                metadata: Default::default(),
+                key_attributes: &super::super::ids::bcp47_to_data_key_attributes(&locale!("fwd")),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -657,8 +657,8 @@ mod tests {
         let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                locale: &super::super::ids::bcp47_to_data_locale(&locale!("rev")),
-                metadata: Default::default(),
+                key_attributes: &super::super::ids::bcp47_to_data_key_attributes(&locale!("rev")),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

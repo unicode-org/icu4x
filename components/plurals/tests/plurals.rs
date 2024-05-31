@@ -22,7 +22,7 @@ fn test_static_load_works() {
         &icu_plurals::provider::Baked,
         DataRequest {
             locale: &langid!("en").into(),
-            metadata: Default::default(),
+            ..Default::default()
         },
     )
     .expect("Failed to load payload")

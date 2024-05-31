@@ -178,7 +178,7 @@ fn test_basic() {
     let cs_rules: DataPayload<CardinalV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("cs").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -210,7 +210,7 @@ fn test_ranges() {
     let plural_ranges: DataPayload<PluralRangesV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("sl").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

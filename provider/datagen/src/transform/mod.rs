@@ -48,7 +48,7 @@ fn test_missing_locale() {
         &provider,
         DataRequest {
             locale: &langid!("fi").into(),
-            metadata: Default::default()
+            ..Default::default()
         }
     )
     .is_ok());
@@ -56,7 +56,7 @@ fn test_missing_locale() {
         &provider,
         DataRequest {
             locale: &langid!("arc").into(),
-            metadata: Default::default()
+            ..Default::default()
         }
     )
     .is_err());

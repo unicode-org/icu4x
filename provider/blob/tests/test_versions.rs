@@ -27,7 +27,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
         let blob_result = blob_provider
             .load(DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -35,7 +35,7 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
         let expected_result = hello_world_provider
             .load(DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -115,7 +115,7 @@ fn test_v2_bigger() {
             &blob_provider,
             DataRequest {
                 locale: &loc.parse().expect("locale must parse"),
-                metadata: Default::default(),
+                ..Default::default()
             },
         )
         .unwrap()

@@ -404,7 +404,7 @@ impl DataExporter for BakedExporter {
                     if req.locale.is_empty() {
                         Ok(icu_provider::DataResponse {
                             payload: Some(icu_provider::DataPayload::from_static_ref(Self::#singleton_ident)),
-                            metadata: Default::default(),
+                            ..Default::default()
                         })
                     } else {
                         Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))
@@ -542,7 +542,7 @@ impl BakedExporter {
                         if let Ok(payload) = #search {
                             Ok(icu_provider::DataResponse {
                                 payload: Some(#into_data_payload),
-                                metadata: Default::default(),
+                                ..Default::default()
                             })
                         } else {
                             Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req))

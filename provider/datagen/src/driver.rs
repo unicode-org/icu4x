@@ -727,7 +727,7 @@ impl DatagenDriver {
                 .map_err(|&e| e)
         };
 
-        let load_with_fallback = |key, locale: &_| {
+        let load_with_fallback = |key, locale: &_, key_attributes: &_| {
             log::trace!("Generating key/locale: {key}/{locale:}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
@@ -736,6 +736,7 @@ impl DatagenDriver {
             loop {
                 let req = DataRequest {
                     locale: locale_iter.as_ref().map(|i| i.get()).unwrap_or(locale),
+                    key_attributes,
                     metadata,
                 };
                 match provider.load_data(key, req) {
@@ -832,7 +833,7 @@ impl DatagenDriver {
                         .into_par_iter()
                         .filter_map(|locale| {
                             let instant2 = Instant::now();
-                            load_with_fallback(key, &locale)
+                            load_with_fallback(key, &locale, Default::default())
                                 .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
@@ -843,7 +844,7 @@ impl DatagenDriver {
                         .into_par_iter()
                         .filter_map(|locale| {
                             let instant2 = Instant::now();
-                            load_with_fallback(key, &locale)
+                            load_with_fallback(key, &locale, Default::default())
                                 .map(|r| r.map(|payload| (locale, (payload, instant2.elapsed()))))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()?;
@@ -853,7 +854,7 @@ impl DatagenDriver {
                     .into_par_iter()
                     .filter_map(|locale| {
                         let instant2 = Instant::now();
-                        let result = load_with_fallback(key, &locale)?;
+                        let result = load_with_fallback(key, &locale, Default::default())?;
                         let result = result
                             .and_then(|payload| sink.put_payload(key, &locale, &payload))
                             // Note: in Hybrid mode the elapsed time includes sink.put_payload.
@@ -864,7 +865,7 @@ impl DatagenDriver {
                                     key,
                                     DataRequest {
                                         locale: &locale,
-                                        metadata: Default::default(),
+                                        ..Default::default()
                                     },
                                 )
                             });
@@ -1108,7 +1109,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                         key,
                         DataRequest {
                             locale,
-                            metadata: Default::default(),
+                            ..Default::default()
                         },
                     )
                 });
@@ -1148,7 +1149,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                     key,
                     DataRequest {
                         locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     },
                 )
             })

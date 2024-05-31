@@ -19,7 +19,7 @@ fn overview_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
@@ -45,7 +45,7 @@ fn json_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
@@ -58,7 +58,7 @@ fn json_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
@@ -77,7 +77,7 @@ fn bincode_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");
@@ -90,7 +90,7 @@ fn bincode_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .expect("The data should be valid")
                 .take_payload()
@@ -110,7 +110,7 @@ fn postcard_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .expect("The data should be valid")
                 .take_payload()
@@ -124,7 +124,7 @@ fn postcard_bench(c: &mut Criterion) {
                 .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .and_then(DataResponse::take_payload)
                 .expect("Loading was successful");

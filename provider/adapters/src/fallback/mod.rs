@@ -31,7 +31,7 @@ pub use icu_provider::fallback::LocaleFallbackConfig;
 ///
 /// let req = DataRequest {
 ///     locale: &langid!("ja-JP").into(),
-///     metadata: Default::default(),
+///     ..Default::default()
 /// };
 ///
 /// // The provider does not have data for "ja-JP":
@@ -135,7 +135,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// let req = DataRequest {
     ///     locale: &langid!("de-CH").into(),
-    ///     metadata: Default::default(),
+    ///     ..Default::default()
     /// };
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
@@ -210,7 +210,7 @@ impl<P> LocaleFallbackProvider<P> {
         loop {
             let result = f1(DataRequest {
                 locale: fallback_iterator.get(),
-                metadata: base_req.metadata,
+                ..base_req
             });
             if !result_is_err_missing_locale(&result) {
                 return result

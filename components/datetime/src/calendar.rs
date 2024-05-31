@@ -387,7 +387,7 @@ where
     let payload = provider
         .load(DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         })?
         .take_payload()?;
     Ok(payload.cast())
@@ -404,7 +404,7 @@ where
     let payload = provider
         .load(DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         })?
         .take_payload()?;
     Ok(payload.cast())
@@ -433,7 +433,7 @@ where
 {
     let req = DataRequest {
         locale,
-        metadata: Default::default(),
+        ..Default::default()
     };
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
@@ -554,7 +554,7 @@ where
 {
     let req = DataRequest {
         locale,
-        metadata: Default::default(),
+        ..Default::default()
     };
     let payload = match kind {
         AnyCalendarKind::Buddhist => {

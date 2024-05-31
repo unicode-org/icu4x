@@ -33,7 +33,7 @@ fn blob_version_bench(c: &mut Criterion) {
                         HelloWorldV1Marker::KEY,
                         DataRequest {
                             locale,
-                            metadata: Default::default(),
+                            ..Default::default()
                         },
                     )
                     .unwrap();
@@ -49,7 +49,7 @@ fn blob_version_bench(c: &mut Criterion) {
                         HelloWorldV1Marker::KEY,
                         DataRequest {
                             locale,
-                            metadata: Default::default(),
+                            ..Default::default()
                         },
                     )
                     .unwrap();

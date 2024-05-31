@@ -96,7 +96,7 @@ fn basic_cldr_week_data() {
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-FR").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -107,7 +107,7 @@ fn basic_cldr_week_data() {
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-IQ").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -122,7 +122,7 @@ fn basic_cldr_week_data() {
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-GG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -227,7 +227,7 @@ fn test_basic_cldr_week_data_v2() {
     let fr_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-FR").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -242,7 +242,7 @@ fn test_basic_cldr_week_data_v2() {
     let iq_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-IQ").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -261,7 +261,7 @@ fn test_basic_cldr_week_data_v2() {
     let gg_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-GG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -280,7 +280,7 @@ fn test_basic_cldr_week_data_v2() {
     let ir_week_data: DataPayload<WeekDataV2Marker> = provider
         .load(DataRequest {
             locale: &langid!("und-IR").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

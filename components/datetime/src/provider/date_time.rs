@@ -120,7 +120,7 @@ where
     Ok(data_provider
         .load(DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         })?
         .take_payload()?
         .map_project(|data, _| pattern_for_time_length_inner(data, length, &preferences).into()))
@@ -230,7 +230,7 @@ where
             .data_provider
             .load(DataRequest {
                 locale: self.locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .and_then(DataResponse::take_payload)
             .map_err(PatternForLengthError::Data)?;
@@ -367,7 +367,7 @@ where
         self.data_provider
             .load(DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                ..Default::default()
             })
             .and_then(DataResponse::take_payload)
     }

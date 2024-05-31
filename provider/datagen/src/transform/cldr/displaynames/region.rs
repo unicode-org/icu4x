@@ -100,7 +100,7 @@ mod tests {
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -122,7 +122,7 @@ mod tests {
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

@@ -66,7 +66,7 @@ impl RegionDisplayNames {
         let region_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -141,7 +141,7 @@ impl ScriptDisplayNames {
         let script_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -217,7 +217,7 @@ impl VariantDisplayNames {
         let variant_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -286,7 +286,7 @@ impl LanguageDisplayNames {
         let language_data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -387,7 +387,7 @@ impl LocaleDisplayNamesFormatter {
     {
         let req = DataRequest {
             locale,
-            metadata: Default::default(),
+            ..Default::default()
         };
 
         Ok(Self {

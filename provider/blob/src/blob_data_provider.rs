@@ -205,7 +205,7 @@ mod test {
                         HelloSingletonV1Marker::KEY,
                         DataRequest {
                             locale: &icu_locale_core::langid!("de").into(),
-                            metadata: Default::default()
+                            ..Default::default()
                         }
                     ),
                     Err(DataError {

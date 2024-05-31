@@ -164,7 +164,7 @@ mod tests {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -187,7 +187,7 @@ mod tests {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 
@@ -235,7 +235,7 @@ mod tests {
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("es").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
 

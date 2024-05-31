@@ -6,30 +6,24 @@ use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-pub fn bcp47_to_data_locale(locale: &Locale) -> DataLocale {
-    let mut data_locale = DataLocale::default();
+pub fn bcp47_to_data_key_attributes(locale: &Locale) -> DataKeyAttributes {
     #[allow(clippy::unwrap_used)] // any BCP-47 locale is a valid aux key
-    data_locale.set_aux(
-        DataKeyAttributes::try_from_iter(
-            locale
-                .write_to_string()
-                .split('-')
-                .map(str::parse)
-                .filter_map(Result::ok),
-        )
-        .unwrap(),
-    );
-    data_locale
+    DataKeyAttributes::try_from_iter(
+        locale
+            .write_to_string()
+            .split('-')
+            .map(str::parse)
+            .filter_map(Result::ok),
+    )
+    .unwrap()
 }
 
-pub fn unparsed_bcp47_to_data_locale(dep: &str) -> Result<DataLocale, DataError> {
-    let mut data_locale = DataLocale::default();
-    data_locale.set_aux(DataKeyAttributes::try_from_iter(
+pub fn unparsed_bcp47_to_data_key_attributes(dep: &str) -> Result<DataKeyAttributes, DataError> {
+    DataKeyAttributes::try_from_iter(
         dep.split('-')
             .map(str::parse)
             // TODO: Bubble a potential subtag parse error out. Currently
             // we ignore it inside of the `filter_map`.
             .filter_map(Result::ok),
-    )?);
-    Ok(data_locale)
+    )
 }

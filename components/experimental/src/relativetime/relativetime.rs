@@ -131,7 +131,7 @@ macro_rules! constructor {
             let rt: DataPayload<$marker> = crate::provider::Baked
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?;
             let rt = rt.cast();
@@ -180,7 +180,7 @@ macro_rules! constructor {
             let rt: DataPayload<$marker> = provider
                 .load(DataRequest {
                     locale,
-                    metadata: Default::default(),
+                    ..Default::default()
                 })?
                 .take_payload()?;
             let rt = rt.cast();

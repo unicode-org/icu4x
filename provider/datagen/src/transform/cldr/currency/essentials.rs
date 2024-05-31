@@ -357,7 +357,7 @@ fn test_basic() {
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -396,7 +396,7 @@ fn test_basic() {
     let ar_eg: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

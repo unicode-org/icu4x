@@ -21,7 +21,7 @@ fn test_provider() {
         for locale in HelloWorldProvider.supported_locales().unwrap() {
             let req = DataRequest {
                 locale: &locale,
-                metadata: Default::default(),
+                ..Default::default()
             };
 
             let expected = HelloWorldProvider
@@ -57,7 +57,7 @@ fn test_errors() {
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {
                 locale: &langid!("zh-DE").into(),
-                metadata: Default::default(),
+                ..Default::default()
             });
 
         assert!(

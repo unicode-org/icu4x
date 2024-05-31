@@ -512,7 +512,7 @@ mod tests {
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en-001").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

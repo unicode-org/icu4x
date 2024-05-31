@@ -22,7 +22,7 @@ fn parser(c: &mut Criterion) {
             icu_plurals::provider::Baked
                 .load(DataRequest {
                     locale: &langid.into(),
-                    metadata: Default::default(),
+                    ..Default::default()
                 })
                 .unwrap()
                 .take_payload()

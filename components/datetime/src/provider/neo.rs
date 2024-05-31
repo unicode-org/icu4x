@@ -25,34 +25,34 @@ use core::ops::Range;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[allow(missing_docs)]
-pub mod aux {
+pub mod key_attrs {
     use crate::pattern::CoarseHourCycle;
-    use icu_locale_core::extensions::private::{subtag, Subtag};
+    use tinystr::{tinystr, TinyAsciiStr};
 
-    pub const NUMERIC: Subtag = subtag!("1");
-    pub const ABBR: Subtag = subtag!("3");
-    pub const NARROW: Subtag = subtag!("4");
-    pub const WIDE: Subtag = subtag!("5");
-    pub const SHORT: Subtag = subtag!("6");
-    pub const ABBR_STANDALONE: Subtag = subtag!("3s");
-    pub const NARROW_STANDALONE: Subtag = subtag!("4s");
-    pub const WIDE_STANDALONE: Subtag = subtag!("5s");
-    pub const SHORT_STANDALONE: Subtag = subtag!("6s");
+    pub const NUMERIC: TinyAsciiStr<8> = tinystr!(8, "1");
+    pub const ABBR: TinyAsciiStr<8> = tinystr!(8, "3");
+    pub const NARROW: TinyAsciiStr<8> = tinystr!(8, "4");
+    pub const WIDE: TinyAsciiStr<8> = tinystr!(8, "5");
+    pub const SHORT: TinyAsciiStr<8> = tinystr!(8, "6");
+    pub const ABBR_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "3s");
+    pub const NARROW_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "4s");
+    pub const WIDE_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "5s");
+    pub const SHORT_STANDALONE: TinyAsciiStr<8> = tinystr!(8, "6s");
 
-    pub const PATTERN_FULL: Subtag = subtag!("f");
-    pub const PATTERN_LONG: Subtag = subtag!("l");
-    pub const PATTERN_MEDIUM: Subtag = subtag!("m");
-    pub const PATTERN_SHORT: Subtag = subtag!("s");
+    pub const PATTERN_FULL: TinyAsciiStr<8> = tinystr!(8, "f");
+    pub const PATTERN_LONG: TinyAsciiStr<8> = tinystr!(8, "l");
+    pub const PATTERN_MEDIUM: TinyAsciiStr<8> = tinystr!(8, "m");
+    pub const PATTERN_SHORT: TinyAsciiStr<8> = tinystr!(8, "s");
 
-    pub const PATTERN_FULL12: Subtag = subtag!("f12");
-    pub const PATTERN_LONG12: Subtag = subtag!("l12");
-    pub const PATTERN_MEDIUM12: Subtag = subtag!("m12");
-    pub const PATTERN_SHORT12: Subtag = subtag!("s12");
+    pub const PATTERN_FULL12: TinyAsciiStr<8> = tinystr!(8, "f12");
+    pub const PATTERN_LONG12: TinyAsciiStr<8> = tinystr!(8, "l12");
+    pub const PATTERN_MEDIUM12: TinyAsciiStr<8> = tinystr!(8, "m12");
+    pub const PATTERN_SHORT12: TinyAsciiStr<8> = tinystr!(8, "s12");
 
-    pub const PATTERN_FULL24: Subtag = subtag!("f24");
-    pub const PATTERN_LONG24: Subtag = subtag!("l24");
-    pub const PATTERN_MEDIUM24: Subtag = subtag!("m24");
-    pub const PATTERN_SHORT24: Subtag = subtag!("s24");
+    pub const PATTERN_FULL24: TinyAsciiStr<8> = tinystr!(8, "f24");
+    pub const PATTERN_LONG24: TinyAsciiStr<8> = tinystr!(8, "l24");
+    pub const PATTERN_MEDIUM24: TinyAsciiStr<8> = tinystr!(8, "m24");
+    pub const PATTERN_SHORT24: TinyAsciiStr<8> = tinystr!(8, "s24");
 
     /// Field lengths supported in auxiliary subtags.
     ///
@@ -120,9 +120,9 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+    pub fn symbol_key_attr_info(key_attr: TinyAsciiStr<8>) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
-        match subtag {
+        match key_attr {
             NUMERIC => Some((Format, Numeric)),
             ABBR => Some((Format, Abbr)),
             NARROW => Some((Format, Narrow)),
@@ -143,9 +143,11 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_subtag_info(subtag: Subtag) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
+    pub fn pattern_key_attr_info(
+        key_attr: TinyAsciiStr<8>,
+    ) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
         use {CoarseHourCycle::*, PatternLength::*};
-        match subtag {
+        match key_attr {
             PATTERN_FULL => Some((Full, None)),
             PATTERN_LONG => Some((Long, None)),
             PATTERN_MEDIUM => Some((Medium, None)),
@@ -171,7 +173,7 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_for(context: Context, length: Length) -> Subtag {
+    pub fn symbol_subtag_for(context: Context, length: Length) -> TinyAsciiStr<8> {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -194,10 +196,10 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_subtag_for(
+    pub fn pattern_key_attr_for(
         length: PatternLength,
         hour_cycle: Option<CoarseHourCycle>,
-    ) -> Subtag {
+    ) -> TinyAsciiStr<8> {
         use {CoarseHourCycle::*, PatternLength::*};
         match (length, hour_cycle) {
             (Full, None) => PATTERN_FULL,

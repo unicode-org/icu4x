@@ -115,7 +115,7 @@ fn test_basic() {
     let en: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("en").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -138,7 +138,7 @@ fn test_basic() {
     let fr: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("fr").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -161,7 +161,7 @@ fn test_basic() {
     let tr: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("tr").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()
@@ -184,7 +184,7 @@ fn test_basic() {
     let ar_eg: DataPayload<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("ar-EG").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

@@ -68,7 +68,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &langid!("de").into(),
-///             metadata: Default::default(),
+///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed")
 ///         .take_payload()
@@ -87,7 +87,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             locale: &"en-x-reverse".parse().unwrap(),
-///             metadata: Default::default(),
+///             ..Default::default()
 ///         })
 ///         .expect("Loading should succeed")
 ///         .take_payload()
@@ -181,7 +181,7 @@ icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marke
 ///     .into_json_provider()
 ///     .load_buffer(HelloWorldV1Marker::KEY, DataRequest {
 ///         locale: &langid!("de").into(),
-///         metadata: Default::default(),
+///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -285,7 +285,7 @@ impl HelloWorldFormatter {
         let data = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
         Ok(Self { data })

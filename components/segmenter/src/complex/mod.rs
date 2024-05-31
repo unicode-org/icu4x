@@ -331,6 +331,7 @@ fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
             m.silent = true;
             m
         },
+        ..Default::default()
     }) {
         Ok(response) => Ok(Some(response.take_payload()?)),
         Err(DataError {

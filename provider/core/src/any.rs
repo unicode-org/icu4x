@@ -310,7 +310,7 @@ where
 ///
 /// let req = DataRequest {
 ///     locale: &icu_locale_core::langid!("de").into(),
-///     metadata: Default::default(),
+///     ..Default::default()
 /// };
 ///
 /// // Downcasting manually

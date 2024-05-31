@@ -145,7 +145,7 @@ impl FixedDecimalFormatter {
         let symbols = provider
             .load(DataRequest {
                 locale,
-                metadata: Default::default(),
+                ..Default::default()
             })?
             .take_payload()?;
         Ok(Self { options, symbols })

@@ -6,39 +6,18 @@ use crate::provider::calendar::*;
 use crate::provider::neo::*;
 use alloc::vec;
 use icu_calendar::types::MonthCode;
-use icu_locale_core::extensions::private::{subtag, Subtag};
 use icu_provider::prelude::*;
 
-mod subtag_consts {
-    use super::*;
-    pub const STADLN_ABBR: Subtag = subtag!("3s");
-    pub const STADLN_WIDE: Subtag = subtag!("4s");
-    pub const STADLN_NARW: Subtag = subtag!("5s");
-    pub const STADLN_SHRT: Subtag = subtag!("6s");
-    pub const FORMAT_ABBR: Subtag = subtag!("3");
-    pub const FORMAT_WIDE: Subtag = subtag!("4");
-    pub const FORMAT_NARW: Subtag = subtag!("5");
-    pub const FORMAT_SHRT: Subtag = subtag!("6");
-}
-
-fn single_aux_subtag<M: KeyedDataMarker>(locale: &DataLocale) -> Result<Subtag, DataError> {
-    let Some(aux) = locale.get_aux() else {
-        return Err(DataError::custom("Expected a single aux key")
-            .with_key(M::KEY)
-            .with_debug_context(locale));
-    };
-    let mut iter = aux.iter();
-    let Some(subtag) = iter.next() else {
-        return Err(DataError::custom("Expected a single aux key")
-            .with_key(M::KEY)
-            .with_debug_context(locale));
-    };
-    if iter.next().is_some() {
-        return Err(DataError::custom("Expected a single aux key")
-            .with_key(M::KEY)
-            .with_debug_context(locale));
-    }
-    Ok(subtag)
+mod key_attr_consts {
+    use tinystr::{tinystr, TinyAsciiStr};
+    pub const STADLN_ABBR: TinyAsciiStr<8> = tinystr!(8, "3s");
+    pub const STADLN_WIDE: TinyAsciiStr<8> = tinystr!(8, "4s");
+    pub const STADLN_NARW: TinyAsciiStr<8> = tinystr!(8, "5s");
+    pub const STADLN_SHRT: TinyAsciiStr<8> = tinystr!(8, "6s");
+    pub const FORMAT_ABBR: TinyAsciiStr<8> = tinystr!(8, "3");
+    pub const FORMAT_WIDE: TinyAsciiStr<8> = tinystr!(8, "4");
+    pub const FORMAT_NARW: TinyAsciiStr<8> = tinystr!(8, "5");
+    pub const FORMAT_SHRT: TinyAsciiStr<8> = tinystr!(8, "6");
 }
 
 fn month_symbols_map_project_cloned<M, P>(
@@ -49,9 +28,12 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let subtag = req
+        .key_attributes
+        .single()
+        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
+        use key_attr_consts::*;
         let result = match subtag {
             STADLN_ABBR => payload.months.stand_alone_abbreviated(),
             STADLN_WIDE => payload.months.stand_alone_wide(),
@@ -87,9 +69,12 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let subtag = req
+        .key_attributes
+        .single()
+        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
+        use key_attr_consts::*;
         let result = match subtag {
             STADLN_ABBR => payload.weekdays.stand_alone_abbreviated(),
             STADLN_WIDE => payload.weekdays.stand_alone_wide(),
@@ -135,9 +120,12 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let subtag = req
+        .key_attributes
+        .single()
+        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
+        use key_attr_consts::*;
         let result = match subtag {
             FORMAT_ABBR => &payload.eras.abbr,
             FORMAT_WIDE => &payload.eras.names,
@@ -164,9 +152,12 @@ where
     M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
 {
-    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let subtag = req
+        .key_attributes
+        .single()
+        .ok_or_else(|| DataError::custom("TODO"))?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
-        use subtag_consts::*;
+        use key_attr_consts::*;
         let result = match subtag {
             STADLN_ABBR => payload.day_periods.stand_alone_abbreviated(),
             STADLN_WIDE => payload.day_periods.stand_alone_wide(),
@@ -476,7 +467,7 @@ mod tests {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -484,7 +475,7 @@ mod tests {
         let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-3".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -501,7 +492,7 @@ mod tests {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -509,7 +500,7 @@ mod tests {
         let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-3".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -526,7 +517,7 @@ mod tests {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -534,7 +525,7 @@ mod tests {
         let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-3".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -551,7 +542,7 @@ mod tests {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -559,7 +550,7 @@ mod tests {
         let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-6s".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -576,7 +567,7 @@ mod tests {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -584,7 +575,7 @@ mod tests {
         let neo_eras_wide: DataPayload<GregorianYearNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-4".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -601,7 +592,7 @@ mod tests {
         let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -609,7 +600,7 @@ mod tests {
         let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-3s".parse().unwrap(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

@@ -122,7 +122,7 @@ fn test_basic() {
     let und: DataPayload<UnitsInfoV1Marker> = provider
         .load(DataRequest {
             locale: &langid!("und").into(),
-            metadata: Default::default(),
+            ..Default::default()
         })
         .unwrap()
         .take_payload()

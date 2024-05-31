@@ -152,7 +152,7 @@ where
                 .filter_map(|locale| {
                     if (self.predicate)(DataRequest {
                         locale: &locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     }) {
                         Some(locale)
                     } else {
@@ -178,7 +178,7 @@ where
                 .filter_map(|locale| {
                     if (self.predicate)(DataRequest {
                         locale: &locale,
-                        metadata: Default::default(),
+                        ..Default::default()
                     }) {
                         Some(locale)
                     } else {

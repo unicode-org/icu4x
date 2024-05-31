@@ -58,7 +58,7 @@ macro_rules! impl_data_provider {
                         &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
                     Ok(DataResponse {
-                        metadata: Default::default(),
+            metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(
                             <$marker as DataMarker>::Yokeable::from(CldrTimeZonesData {
                                 time_zone_names_resource,
@@ -116,7 +116,7 @@ mod tests {
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -126,7 +126,7 @@ mod tests {
         let exemplar_cities: DataPayload<ExemplarCitiesV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -143,7 +143,7 @@ mod tests {
         let generic_names_long: DataPayload<MetazoneGenericNamesLongV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -168,7 +168,7 @@ mod tests {
         let specific_names_long: DataPayload<MetazoneSpecificNamesLongV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -196,7 +196,7 @@ mod tests {
         let generic_names_short: DataPayload<MetazoneGenericNamesShortV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()
@@ -221,7 +221,7 @@ mod tests {
         let specific_names_short: DataPayload<MetazoneSpecificNamesShortV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
-                metadata: Default::default(),
+                ..Default::default()
             })
             .unwrap()
             .take_payload()

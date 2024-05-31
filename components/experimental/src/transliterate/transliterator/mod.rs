@@ -264,7 +264,7 @@ impl Transliterator {
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         let payload = Transliterator::load_rbt(
-            &super::ids::bcp47_to_data_locale(&locale),
+            &super::ids::bcp47_to_data_key_attributes(&locale),
             transliterator_provider,
         )?;
         let rbt = payload.get();
@@ -319,7 +319,7 @@ impl Transliterator {
                     // c) the data
                     .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
-                            &super::ids::unparsed_bcp47_to_data_locale(&dep)?,
+                            &super::ids::unparsed_bcp47_to_data_key_attributes(&dep)?,
                             transliterator_provider,
                         )?;
                         Ok(InternalTransliterator::RuleBased(rbt))
@@ -405,15 +405,16 @@ impl Transliterator {
     }
 
     fn load_rbt<P>(
-        id: &DataLocale,
+        key_attributes: &DataKeyAttributes,
         provider: &P,
     ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
         let req = DataRequest {
-            locale: id,
-            metadata: Default::default(),
+            locale: Default::default(),
+            key_attributes,
+            ..Default::default()
         };
         let payload = provider.load(req)?.take_payload()?;
         let rbt = payload.get();
