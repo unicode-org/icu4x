@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
+use icu_locale::extensions::unicode::key;
 use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 use icu_decimal::{
@@ -132,6 +133,11 @@ impl CompactDecimalFormatter {
                 &crate::provider::Baked,
                 DataRequest {
                     langid: &locale.id,
+                    key_attributes: &locale
+                        .keywords
+                        .get(&key!("nu"))
+                        .map(DataKeyAttributes::from_unicode_value)
+                        .unwrap_or_default(),
                     ..Default::default()
                 },
             )?
@@ -177,6 +183,11 @@ impl CompactDecimalFormatter {
                 provider,
                 DataRequest {
                     langid: &locale.id,
+                    key_attributes: &locale
+                        .keywords
+                        .get(&key!("nu"))
+                        .map(DataKeyAttributes::from_unicode_value)
+                        .unwrap_or_default(),
                     ..Default::default()
                 },
             )?
@@ -219,6 +230,11 @@ impl CompactDecimalFormatter {
                 &crate::provider::Baked,
                 DataRequest {
                     langid: &locale.id,
+                    key_attributes: &locale
+                        .keywords
+                        .get(&key!("nu"))
+                        .map(DataKeyAttributes::from_unicode_value)
+                        .unwrap_or_default(),
                     ..Default::default()
                 },
             )?
@@ -264,6 +280,11 @@ impl CompactDecimalFormatter {
                 provider,
                 DataRequest {
                     langid: &locale.id,
+                    key_attributes: &locale
+                        .keywords
+                        .get(&key!("nu"))
+                        .map(DataKeyAttributes::from_unicode_value)
+                        .unwrap_or_default(),
                     ..Default::default()
                 },
             )?
