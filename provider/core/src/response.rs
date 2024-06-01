@@ -777,7 +777,7 @@ where
     ///     inner: HelloWorldProvider,
     /// };
     /// let formatter =
-    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de"))
+    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
     ///         .unwrap();
     ///
     /// assert_eq!(formatter.format_to_string(), "✨ Hallo Welt");
