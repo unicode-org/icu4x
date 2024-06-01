@@ -29,12 +29,12 @@ impl TestingProvider {
         Self::new([
             (("ar", ""), "c3f15eb63fa35608"),
             (("ar-EG", ""), "c3f15eb63fa35608"),
-            (("ar-EG-u-nu-latn", ""), "29e2dc764329c56"),
-            (("ar-u-nu-latn", ""), "29e2dc764329c56"),
+            (("ar-EG", "latn"), "29e2dc764329c56"),
+            (("ar", "latn"), "29e2dc764329c56"),
             (("bn", ""), "31828215dcef2fcb"),
-            (("bn-u-nu-latn", ""), "1be94084ee7dcfbf"),
+            (("bn", "latn"), "1be94084ee7dcfbf"),
             (("ccp", ""), "c39715a84718596"),
-            (("ccp-u-nu-latn", ""), "1be94084ee7dcfbf"),
+            (("ccp", "latn"), "1be94084ee7dcfbf"),
             (("en", ""), "8df59f98704d3b0c"),
             (("en-001", ""), "8df59f98704d3b0c"),
             (("en-ZA", ""), "8df59f98704d3b0c"),
@@ -47,7 +47,7 @@ impl TestingProvider {
             (("sr", ""), "3ec76252c7ed8d8c"),
             (("sr-Latn", ""), "3ec76252c7ed8d8c"),
             (("th", ""), "8df59f98704d3b0c"),
-            (("th-u-nu-thai", ""), "db1d187d375ccfd2"),
+            (("th", "thai"), "db1d187d375ccfd2"),
             (("tr", ""), "3ec76252c7ed8d8c"),
             (("und", ""), "8df59f98704d3b0c"),
         ])
@@ -173,12 +173,12 @@ fn all_preferred() {
     let locales = [
         "ar",
         "ar-EG",
-        "ar-EG-u-nu-latn",
-        "ar-u-nu-latn",
+        "ar-EG-x-latn",
+        "ar-x-latn",
         "bn",
-        "bn-u-nu-latn",
+        "bn-x-latn",
         "ccp",
-        "ccp-u-nu-latn",
+        "ccp-x-latn",
         "en",
         "en-001",
         "en-ZA",
@@ -192,7 +192,7 @@ fn all_preferred() {
         // "sr-Cyrl", (normalizes to 'sr')
         "sr-Latn",
         "th",
-        "th-u-nu-thai",
+        "th-x-thai",
         "tr",
         "und",
     ];
@@ -218,12 +218,12 @@ fn all_hybrid() {
     let locales = [
         "ar",
         "ar-EG",
-        "ar-EG-u-nu-latn",
-        "ar-u-nu-latn",
+        "ar-EG-x-latn",
+        "ar-x-latn",
         "bn",
-        "bn-u-nu-latn",
+        "bn-x-latn",
         "ccp",
-        "ccp-u-nu-latn",
+        "ccp-x-latn",
         "en",
         "en-001",
         "en-ZA",
@@ -237,7 +237,7 @@ fn all_hybrid() {
         // "sr-Cyrl", (normalizes to 'sr')
         "sr-Latn",
         "th",
-        "th-u-nu-thai",
+        "th-x-thai",
         "tr",
         "und",
     ];
@@ -263,12 +263,12 @@ fn all_runtime() {
     let locales = [
         "ar",
         // "ar-EG", (same as 'ar')
-        "ar-EG-u-nu-latn", // (same as 'ar-u-nu-latn' but DIFFERENT than 'ar-EG')
-        "ar-u-nu-latn",
+        // "ar-EG-x-latn", (same as 'ar-x-latn')
+        "ar-x-latn",
         "bn",
-        "bn-u-nu-latn",
+        "bn-x-latn",
         "ccp",
-        "ccp-u-nu-latn",
+        "ccp-x-latn",
         // "en", (same as 'und')
         // "en-001", (same as 'und')
         // "en-ZA", (same as 'und')
@@ -281,7 +281,7 @@ fn all_runtime() {
         "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn",
         // "th", (same as 'und')
-        "th-u-nu-thai",
+        "th-x-thai",
         "tr",
         "und",
     ];
@@ -307,12 +307,12 @@ fn all_runtime_retain_base() {
     let locales = [
         "ar",
         // "ar-EG", (same as 'ar')
-        "ar-EG-u-nu-latn", // (same as 'ar-u-nu-latn' but DIFFERENT than 'ar-EG')
-        "ar-u-nu-latn",
+        // "ar-EG-x-latn", (same as 'ar-x-latn')
+        "ar-x-latn",
         "bn",
-        "bn-u-nu-latn",
+        "bn-x-latn",
         "ccp",
-        "ccp-u-nu-latn",
+        "ccp-x-latn",
         "en", // (same as 'und', but retained)
         // "en-001", (same as 'en')
         // "en-ZA", (same as 'en-001')
@@ -325,7 +325,7 @@ fn all_runtime_retain_base() {
         "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn",
         "th", // (same as 'und', but retained)
-        "th-u-nu-thai",
+        "th-x-thai",
         "tr",
         "und",
     ];
@@ -354,16 +354,16 @@ fn explicit_preferred() {
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
-        "ar",              // ancestor of ar-EG
-        "ar-EG",           // explicit locale
-        "ar-EG-u-nu-latn", // descendant of ar-EG
-        "ar-SA",           // explicit locale, inheriting from ar
-        "ar-SA-u-nu-latn", // extensions should be included (#4533)
-        "ar-u-nu-latn",    // extensions should be included (#4533)
-        "arc",             // Aramaic, inheriting from und
-        "en",              // ancestor of en-GB
-        "en-001",          // ancestor of en-GB
-        "en-GB",           // explicit locale not in supported locales
+        "ar",           // ancestor of ar-EG
+        "ar-EG",        // explicit locale
+        "ar-EG-x-latn", // descendant of ar-EG
+        "ar-SA",        // explicit locale, inheriting from ar
+        "ar-SA-x-latn", // extensions should be included (#4533)
+        "ar-x-latn",    // extensions should be included (#4533)
+        "arc",          // Aramaic, inheriting from und
+        "en",           // ancestor of en-GB
+        "en-001",       // ancestor of en-GB
+        "en-GB",        // explicit locale not in supported locales
         // "en-ZA", // not reachable
         "es",         // explicit and supported
         "es-AR",      // descendant of es
@@ -403,16 +403,16 @@ fn explicit_hybrid() {
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
-        "ar",              // ancestor of ar-EG
-        "ar-EG",           // explicit locale
-        "ar-EG-u-nu-latn", // descendant of ar-EG
-        "ar-SA",           // explicit locale, inheriting from ar
-        "ar-SA-u-nu-latn", // extensions should be included (#4533)
-        "ar-u-nu-latn",    // extensions should be included (#4533)
-        "arc",             // Aramaic, inheriting from und
-        "en",              // ancestor of en-GB
-        "en-001",          // ancestor of en-GB
-        "en-GB",           // explicit locale not in supported locales
+        "ar",           // ancestor of ar-EG
+        "ar-EG",        // explicit locale
+        "ar-EG-x-latn", // descendant of ar-EG
+        "ar-SA",        // explicit locale, inheriting from ar
+        "ar-SA-x-latn", // extensions should be included (#4533)
+        "ar-x-latn",    // extensions should be included (#4533)
+        "arc",          // Aramaic, inheriting from und
+        "en",           // ancestor of en-GB
+        "en-001",       // ancestor of en-GB
+        "en-GB",        // explicit locale not in supported locales
         // "en-ZA", // not reachable
         "es",         // explicit and supported
         "es-AR",      // descendant of es
@@ -455,10 +455,10 @@ fn explicit_runtime() {
         "ar",
         // "ar-Arab-EG", (same as 'ar')
         // "ar-EG", (same as 'ar')
-        "ar-EG-u-nu-latn",
+        // "ar-EG-x-latn", (same as 'ar-x-latn')
         // "ar-SA", (same as 'ar')
-        // "ar-SA-u-nu-latn", (same as 'ar-u-nu-latn')
-        "ar-u-nu-latn",
+        // "ar-SA-x-latn", (same as 'ar-x-latn')
+        "ar-x-latn",
         // "arc", (same as 'und')
         // "en", (same as 'und')
         // "en-001", (same as 'und')
@@ -503,10 +503,10 @@ fn explicit_runtime_retain_base() {
         "ar",
         // "ar-Arab-EG", (same as 'ar')
         // "ar-EG", (same as 'ar')
-        "ar-EG-u-nu-latn",
+        // "ar-EG-x-latn", (same as 'ar-x-latn')
         // "ar-SA", (same as 'ar')
-        // "ar-SA-u-nu-latn", (same as 'ar-u-nu-latn')
-        "ar-u-nu-latn",
+        // "ar-SA-x-latn", (same as 'ar-x-latn')
+        "ar-x-latn",
         "arc", // (same as 'und', but retained)
         "en",  // (same as 'und', but retained)
         // "en-001", (same as 'en')
@@ -545,9 +545,9 @@ fn explicit_preresolved() {
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
         "ar-EG",
-        "ar-EG-u-nu-latn", // extensions included even in preresolved mode
+        "ar-EG-x-latn", // extensions included even in preresolved mode
         "ar-SA",
-        "ar-SA-u-nu-latn", // extensions included even in preresolved mode
+        "ar-SA-x-latn", // extensions included even in preresolved mode
         "arc",
         "en-GB",
         "es",
@@ -579,16 +579,16 @@ fn explicit_hybrid_without_descendants() {
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
-        "ar",              // ancestor of ar-EG
-        "ar-EG",           // explicit locale
-        "ar-EG-u-nu-latn", // explicit with extensions
-        "ar-SA",           // explicit locale, inheriting from ar
-        "ar-SA-u-nu-latn", // extensions should be included (#4533)
-        "ar-u-nu-latn",    // extensions should be included (#4533)
-        "arc",             // Aramaic, inheriting from und
-        "en",              // ancestor of en-GB
-        "en-001",          // ancestor of en-GB
-        "en-GB",           // explicit locale not in supported locales
+        "ar",           // ancestor of ar-EG
+        "ar-EG",        // explicit locale
+        "ar-EG-x-latn", // explicit with extensions
+        "ar-SA",        // explicit locale, inheriting from ar
+        "ar-SA-x-latn", // extensions should be included (#4533)
+        "ar-x-latn",    // extensions should be included (#4533)
+        "arc",          // Aramaic, inheriting from und
+        "en",           // ancestor of en-GB
+        "en-001",       // ancestor of en-GB
+        "en-GB",        // explicit locale not in supported locales
         // "en-ZA",        // not reachable
         "es", // explicit and supported
         // "es-AR",        // excluded: descendant of es
@@ -625,11 +625,11 @@ fn explicit_hybrid_without_ancestors() {
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
     let locales = [
         // "ar",           // excluded: ancestor of ar-EG
-        "ar-EG",           // explicit locale
-        "ar-EG-u-nu-latn", // explicit with extensions
-        "ar-SA",           // explicit locale, inheriting from ar
-        "ar-SA-u-nu-latn", // extensions should be included (#4533)
-        // "ar-u-nu-latn",    // excluded: ancestor of ar-EG
+        "ar-EG",        // explicit locale
+        "ar-EG-x-latn", // explicit with extensions
+        "ar-SA",        // explicit locale, inheriting from ar
+        "ar-SA-x-latn", // extensions should be included (#4533)
+        // "ar-x-latn",    // excluded: ancestor of ar-EG
         "arc", // Aramaic, inheriting from und
         // "en",              // excluded: ancestor of en-GB
         // "en-001",          // excluded: ancestor of en-GB
@@ -670,11 +670,11 @@ fn explicit_hybrid_mixed_families() {
 
     let locales = [
         // "ar",              // excluded: ancestor of ar-EG
-        "ar-EG",           // explicit locale
-        "ar-EG-u-nu-latn", // explicit with extensions
+        "ar-EG",        // explicit locale
+        "ar-EG-x-latn", // explicit with extensions
         // "ar-SA",           // explicit locale, inheriting from ar
-        // "ar-SA-u-nu-latn", // not reachable
-        // "ar-u-nu-latn",    // not reachable
+        // "ar-SA-x-latn", // not reachable
+        // "ar-x-latn",    // not reachable
         "arc", // Aramaic, inheriting from und
         "en",  // included as a singleton
         // "en-001",          // excluded: ancestor of en-GB

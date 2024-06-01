@@ -440,7 +440,8 @@ mod test {
 
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
-                langid: &"fil-u-ca-gregory".parse().unwrap(),
+                langid: &"fil".parse().unwrap(),
+                key_attributes: &"gregory".parse().unwrap(),
                 ..Default::default()
             })
             .expect("Failed to load payload")
