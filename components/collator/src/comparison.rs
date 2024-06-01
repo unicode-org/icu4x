@@ -154,7 +154,11 @@ impl Collator {
                 .get(&key!("co"))
                 .map(DataKeyAttributes::from_unicode_value)
                 .unwrap_or_default(),
-            ..Default::default()
+            metadata: { 
+                let mut metadata = DataRequestMetadata::default();
+                metadata.silent = true;
+                metadata
+            }
         };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
