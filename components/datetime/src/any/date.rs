@@ -44,7 +44,7 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 /// let length = length::Date::Medium;
 ///
 /// let df = DateFormatter::try_new_with_length(
-///     &locale!("en-u-ca-gregory").into(),
+///     &locale!("en-u-ca-gregory"),
 ///     length,
 /// )
 /// .expect("Failed to create TypedDateFormatter instance.");

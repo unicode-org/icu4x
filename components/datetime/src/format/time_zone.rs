@@ -73,7 +73,7 @@ where
     /// use tinystr::tinystr;
     ///
     /// let mut tzf =
-    ///     TimeZoneFormatter::try_new(&locale!("en").into(), Default::default())
+    ///     TimeZoneFormatter::try_new(&locale!("en"), Default::default())
     ///         .unwrap();
     /// let mut buf = String::new();
     ///

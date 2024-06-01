@@ -724,7 +724,7 @@ macro_rules! impl_date_marker {
         /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
@@ -748,7 +748,7 @@ macro_rules! impl_date_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
@@ -874,7 +874,7 @@ macro_rules! impl_time_marker {
         /// use icu::locale::locale;
         /// use writeable::assert_try_writeable_eq;
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
@@ -898,7 +898,7 @@ macro_rules! impl_time_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();
@@ -963,7 +963,7 @@ macro_rules! impl_datetime_marker {
         /// use writeable::assert_try_writeable_eq;
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     NeoSkeletonLength::Medium,
         /// )
         /// .unwrap();

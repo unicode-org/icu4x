@@ -37,7 +37,7 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     locale: &langid!("de").into(),
+    ///     langid: &langid!("de"),
     ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -46,7 +46,7 @@ where
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     locale: &langid!("en-US").into(),
+    ///     langid: &langid!("en-US"),
     ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -113,7 +113,7 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     locale: &langid!("de").into(),
+    ///     langid: &langid!("de"),
     ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -122,7 +122,7 @@ where
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     locale: &langid!("en-US").into(),
+    ///     langid: &langid!("en-US"),
     ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -175,7 +175,7 @@ where
     ///
     /// // Requests with a langid should succeed:
     /// let req_with_langid = DataRequest {
-    ///     locale: &langid!("de").into(),
+    ///     langid: &langid!("de"),
     ///     ..Default::default()
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -183,10 +183,7 @@ where
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // Requests without a langid should fail:
-    /// let req_no_langid = DataRequest {
-    ///     locale: Default::default(),
-    ///     ..Default::default()
-    /// };
+    /// let req_no_langid = DataRequest::default();
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load(req_no_langid);
     /// assert!(matches!(

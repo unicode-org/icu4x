@@ -65,14 +65,14 @@ impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
 /// use writeable::assert_writeable_eq;
 ///
 /// let short_french = CompactDecimalFormatter::try_new_short(
-///    &locale!("fr").into(),
+///    &locale!("fr"),
 ///    Default::default(),
 /// ).unwrap();
 ///
 /// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
 ///     .map(|locale| {
 ///         CompactDecimalFormatter::try_new_long(
-///             &locale.into(),
+///             &locale,
 ///             Default::default(),
 ///         )
 ///         .unwrap()
@@ -113,7 +113,7 @@ impl CompactDecimalFormatter {
     /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_short(
-    ///     &locale!("sv").into(),
+    ///     &locale!("sv"),
     ///     Default::default(),
     /// );
     /// ```
@@ -200,7 +200,7 @@ impl CompactDecimalFormatter {
     /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_long(
-    ///     &locale!("sv").into(),
+    ///     &locale!("sv"),
     ///     Default::default(),
     /// );
     /// ```
@@ -287,7 +287,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -310,7 +310,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
+    /// #    &locale!("en"),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(short_english.format_i64(999_499), "999K");
@@ -342,7 +342,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -365,7 +365,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
+    /// #    &locale!("en"),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(short_english.format_f64(999_499.99).unwrap(), "999K");
@@ -407,7 +407,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -460,7 +460,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
+    /// #    &locale!("en"),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(
@@ -556,15 +556,15 @@ impl CompactDecimalFormatter {
     /// use fixed_decimal::CompactDecimal;
     ///
     /// # let short_french = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("fr").into(),
+    /// #    &locale!("fr"),
     /// #    Default::default(),
     /// # ).unwrap();
     /// # let long_french = CompactDecimalFormatter::try_new_long(
-    /// #    &locale!("fr").into(),
+    /// #    &locale!("fr"),
     /// #    Default::default()
     /// # ).unwrap();
     /// # let long_bangla = CompactDecimalFormatter::try_new_long(
-    /// #    &locale!("bn").into(),
+    /// #    &locale!("bn"),
     /// #    Default::default()
     /// # ).unwrap();
     /// #

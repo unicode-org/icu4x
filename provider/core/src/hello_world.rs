@@ -251,7 +251,7 @@ icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,
 ///
 /// let fmt = HelloWorldFormatter::try_new_unstable(
 ///     &HelloWorldProvider,
-///     &locale!("eo").into(),
+///     &locale!("eo"),
 /// )
 /// .expect("locale exists");
 ///

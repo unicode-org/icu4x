@@ -47,7 +47,7 @@ use writeable::{Part, Writeable};
 /// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locale::locale;
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     Default::default(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");

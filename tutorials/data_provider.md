@@ -28,7 +28,7 @@ let mut provider = MultiForkByErrorProvider::new_with_predicate(
 );
 
 // Helper function to add data into the growable provider on demand:
-let mut get_hello_world_formatter = |loc: &LanguageIdentifier| {
+let mut get_hello_world_formatter = |loc: &_| {
     // Try to create the formatter a first time with data that has already been loaded.
     if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
         return formatter;
@@ -39,7 +39,7 @@ let mut get_hello_world_formatter = |loc: &LanguageIdentifier| {
     // strategy for all use cases.
     let path_buf = 
         Path::new("../../provider/adapters/tests/data/langtest")
-        .join(loc.language().as_str());
+        .join(loc.id.language.as_str());
     let lang_provider = match FsDataProvider::try_new(&path_buf) {
         Ok(p) => p,
         Err(e) => panic!("Language not available? {:?}", e)
@@ -54,11 +54,11 @@ let mut get_hello_world_formatter = |loc: &LanguageIdentifier| {
 
 // Test that it works:
 assert_eq!(
-    get_hello_world_formatter(&locale!("de").into()).format().write_to_string(),
+    get_hello_world_formatter(&locale!("de")).format().write_to_string(),
     "Hallo Welt"
 );
 assert_eq!(
-    get_hello_world_formatter(&locale!("ro").into()).format().write_to_string(),
+    get_hello_world_formatter(&locale!("ro")).format().write_to_string(),
     "Salut, lume"
 );
 ```
@@ -115,7 +115,7 @@ where
         {
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
-            let borrowed_cache_key = CacheKey(M::KEY, Cow::Borrowed(req.locale));
+            let borrowed_cache_key = CacheKey(M::KEY, Cow::Borrowed(req.langid));
             if let Some(any_res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
@@ -124,7 +124,7 @@ where
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
-        let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
+        let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.langid.clone())));
         // Second lock: cache storage
         self.cache.lock()
             .unwrap()
@@ -151,7 +151,7 @@ assert_eq!(
     // Note: It is necessary to use `try_new_unstable` with LruDataCache.
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("ja").into()
+        &locale!("ja")
     )
     .unwrap()
     .format_to_string()
@@ -164,7 +164,7 @@ assert_eq!(
     "ওহে বিশ্ব",
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("bn").into()
+        &locale!("bn")
     )
     .unwrap()
     .format_to_string()
@@ -177,7 +177,7 @@ assert_eq!(
     "こんにちは世界",
     HelloWorldFormatter::try_new_unstable(
         &provider,
-        &locale!("ja").into()
+        &locale!("ja")
     )
     .unwrap()
     .format_to_string()
@@ -218,7 +218,7 @@ where
             // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
             let mut any_payload = generic_payload as &mut dyn Any;
             if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-                if req.locale.region() == Some(region!("CH")) {
+                if req.langid.region == Some(region!("CH")) {
                     decimal_payload.with_mut(|data| {
                         // Change the grouping separator for all Swiss locales to '🐮'
                         data.grouping_separator = Cow::Borrowed("🐮");
@@ -236,7 +236,7 @@ let provider = CustomDecimalSymbolsProvider(
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und").into(),
+    &locale!("und"),
     Default::default(),
 )
 .unwrap();
@@ -245,7 +245,7 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("und-CH").into(),
+    &locale!("und-CH"),
     Default::default(),
 )
 .unwrap();
@@ -303,7 +303,7 @@ let provider = ResolvedLocaleProvider {
 // Request data for sr-ME...
 HelloWorldFormatter::try_new_unstable(
     &provider,
-    &locale!("sr-ME").into(),
+    &locale!("sr-ME"),
 )
 .unwrap();
 

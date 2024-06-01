@@ -99,7 +99,7 @@ impl ListFormatter {
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and_with_length(
-    ///     &locale!("fr").into(),
+    ///     &locale!("fr"),
     ///     ListLength::Wide,
     /// )
     /// .unwrap();

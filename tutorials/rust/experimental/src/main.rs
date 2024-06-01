@@ -11,7 +11,7 @@ use icu::locale::{locale, subtags::region};
 
 fn main() {
     let names = RegionDisplayNames::try_new(
-        &locale!("fr").into(),
+        &locale!("fr"),
         Default::default(),
     )
     .expect("locale 'fr' should be present in compiled data");

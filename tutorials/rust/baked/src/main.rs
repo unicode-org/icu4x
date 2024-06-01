@@ -16,7 +16,7 @@ pub struct BakedProvider;
 impl_data_provider!(BakedProvider);
 
 fn main() {
-    let rules = PluralRules::try_new_cardinal_unstable(&BakedProvider, &locale!("ru").into())
+    let rules = PluralRules::try_new_cardinal_unstable(&BakedProvider, &locale!("ru"))
         .expect("locale 'ru' should be present in the baked data");
     let result = rules.category_for(3);
     assert_eq!(result, PluralCategory::Few);

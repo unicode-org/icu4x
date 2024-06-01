@@ -322,7 +322,7 @@ impl From<&CompactDecimal> for PluralOperands {
     ///     PluralOperands::from(&compact_decimal)
     /// );
     ///
-    /// let rules = PluralRules::try_new_cardinal(&locale!("fr").into()).unwrap();
+    /// let rules = PluralRules::try_new_cardinal(&locale!("fr")).unwrap();
     /// assert_eq!(rules.category_for(&fixed_decimal), PluralCategory::Other);
     /// assert_eq!(rules.category_for(&compact_decimal), PluralCategory::Many);
     /// ```

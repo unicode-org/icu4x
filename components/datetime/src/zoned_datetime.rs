@@ -62,7 +62,7 @@ use crate::{
 ///     length::Time::Long,
 /// );
 /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     options.into(),
 ///     TimeZoneFormatterOptions::default(),
 /// )
@@ -105,7 +105,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
@@ -244,7 +244,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
@@ -373,7 +373,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options.into(),
     ///     Default::default(),
     /// )
@@ -413,7 +413,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options.into(),
     ///     Default::default(),
     /// )

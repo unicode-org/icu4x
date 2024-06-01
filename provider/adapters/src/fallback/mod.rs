@@ -30,7 +30,7 @@ pub use icu_provider::fallback::LocaleFallbackConfig;
 /// # let provider = provider.as_deserializing();
 ///
 /// let req = DataRequest {
-///     locale: &langid!("ja-JP").into(),
+///     langid: &langid!("ja-JP"),
 ///     ..Default::default()
 /// };
 ///
@@ -134,7 +134,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// let provider = HelloWorldProvider;
     ///
     /// let req = DataRequest {
-    ///     locale: &langid!("de-CH").into(),
+    ///     langid: &langid!("de-CH"),
     ///     ..Default::default()
     /// };
     ///

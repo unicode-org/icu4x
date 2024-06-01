@@ -16,7 +16,7 @@ static SPANISH_LIST_FORMATTER: OnceLock<ListFormatter> = OnceLock::new();
 fn main() {
     let result = SPANISH_LIST_FORMATTER
         .get_or_init(|| {
-            ListFormatter::try_new_and_with_length(&locale!("es").into(), ListLength::Wide)
+            ListFormatter::try_new_and_with_length(&locale!("es"), ListLength::Wide)
                 .expect("locale 'es' should be present in compiled data")
         })
         .format_to_string(["uno", "dos", "tres"].iter());

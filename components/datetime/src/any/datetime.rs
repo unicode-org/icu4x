@@ -52,7 +52,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// );
 ///
 /// let dtf = DateTimeFormatter::try_new(
-///     &locale!("en-u-ca-gregory").into(),
+///     &locale!("en-u-ca-gregory"),
 ///     options.into(),
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
@@ -322,7 +322,7 @@ impl DateTimeFormatter {
     /// options.month = Some(components::Month::Long);
     ///
     /// let dtf = DateTimeFormatter::try_new_experimental(
-    ///     &locale!("en-u-ca-gregory").into(),
+    ///     &locale!("en-u-ca-gregory"),
     ///     options.into(),
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -467,13 +467,13 @@ impl DateTimeFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let df = DateFormatter::try_new_with_length(
-    ///     &locale!("en-u-ca-gregory").into(),
+    ///     &locale!("en-u-ca-gregory"),
     ///     length::Date::Medium,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let tf = TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     length::Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
@@ -560,7 +560,7 @@ where {
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let dtf =
-    ///     DateTimeFormatter::try_new(&locale!("en-u-ca-gregory").into(), options)
+    ///     DateTimeFormatter::try_new(&locale!("en-u-ca-gregory"), options)
     ///         .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let mut expected_components_bag = components::Bag::default();

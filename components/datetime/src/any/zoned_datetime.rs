@@ -166,7 +166,7 @@ impl ZonedDateTimeFormatter {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_experimental(
-    ///     &locale!("en-u-ca-gregory").into(),
+    ///     &locale!("en-u-ca-gregory"),
     ///     options.into(),
     ///     Default::default(),
     /// )

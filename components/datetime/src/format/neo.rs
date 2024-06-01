@@ -196,7 +196,7 @@ size_test!(
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
 /// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(&locale!("en").into()).unwrap();
+///     TypedDateTimeNames::try_new(&locale!("en")).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a";
@@ -445,7 +445,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -506,7 +506,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Month::Format;
     /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
@@ -574,7 +574,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
     ///         .unwrap();
     ///
     /// // First length is successful:
@@ -635,7 +635,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("und"))
     ///         .unwrap();
     /// let field_symbol = icu::datetime::fields::Weekday::Format;
     /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
@@ -686,12 +686,12 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en"))
     ///         .unwrap();
     ///
     /// // Load the week calculator and set it here:
     /// let mut week_calculator =
-    ///     WeekCalculator::try_new(&locale!("en").into()).unwrap();
+    ///     WeekCalculator::try_new(&locale!("en")).unwrap();
     /// names.set_week_calculator(week_calculator);
     ///
     /// // Format a pattern needing week data:
@@ -793,7 +793,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en").into())
+    ///     TypedDateTimeNames::<Gregorian>::try_new(&locale!("en"))
     ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -1267,7 +1267,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-GB").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(&locale!("en-GB")).unwrap();
     /// names
     ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
@@ -1317,7 +1317,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: TypedDateTimeNames<Gregorian> =
-    ///     TypedDateTimeNames::try_new(&locale!("en-US").into()).unwrap();
+    ///     TypedDateTimeNames::try_new(&locale!("en-US")).unwrap();
     /// names
     ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();

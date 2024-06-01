@@ -16,7 +16,7 @@ macro_rules! generate_test {
         #[test]
         fn $test_name(){
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &locale!("en").into(),
+                &locale!("en"),
                 $options
             )
             .expect("locale should be present");
@@ -29,7 +29,7 @@ macro_rules! generate_test {
             )+
 
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &locale!("ar").into(),
+                &locale!("ar"),
                 $options
             )
             .expect("locale should be present");

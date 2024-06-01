@@ -74,15 +74,15 @@ pub struct LocaleFallbackConfig {
     ///     .fallback_for(locale!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES-valencia").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-valencia").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("und"));
     /// ```
     ///
     /// Retain the region subtag until the final step:
@@ -102,15 +102,15 @@ pub struct LocaleFallbackConfig {
     ///     .fallback_for(locale!("ca-ES-valencia").into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES-valencia").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("ca-ES"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und-ES-valencia").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("und-ES-valencia"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und-ES").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("und-ES"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("und"));
     /// ```
     pub priority: LocaleFallbackPriority,
     /// Fallback supplement data key to customize fallback rules.
@@ -140,15 +140,15 @@ pub struct LocaleFallbackConfig {
     ///     .fallback_for(locale!("yue-HK").into());
     ///
     /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get(), &locale!("yue-HK").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("yue-HK"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("yue").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("yue"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("zh-Hant").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("zh-Hant"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("zh").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("zh"));
     /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
+    /// assert_eq!(fallback_iterator.get(), &locale!("und"));
     /// ```
     pub fallback_supplement: Option<LocaleFallbackSupplement>,
 }

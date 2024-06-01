@@ -158,7 +158,7 @@ impl<C: CldrCalendar> TypedNeoDateFormatter<C> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = TypedNeoDateFormatter::<Gregorian>::try_new_with_length(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     length::Date::Full,
     /// )
     /// .unwrap();
@@ -313,7 +313,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///
     /// let formatter =
     ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
-    ///         &locale!("es-MX").into(),
+    ///         &locale!("es-MX"),
     ///         NeoSkeletonLength::Long,
     ///     )
     ///     .unwrap();
@@ -437,7 +437,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///
     /// let formatter =
     ///     TypedNeoFormatter::<Buddhist, NeoYearMonthDayMarker>::try_new(
-    ///         &locale!("es-MX").into(),
+    ///         &locale!("es-MX"),
     ///         NeoSkeletonLength::Long,
     ///     )
     ///     .unwrap();
@@ -458,7 +458,7 @@ impl<C: CldrCalendar, R: TypedNeoFormatterMarker<C>> TypedNeoFormatter<C, R> {
     ///
     /// let formatter =
     ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
-    ///         &locale!("es-MX").into(),
+    ///         &locale!("es-MX"),
     ///         NeoSkeletonLength::Long,
     ///     )
     ///     .unwrap();
@@ -544,7 +544,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// let locale = locale!("en-u-ca-hebrew");
     ///
     /// let formatter =
-    ///     NeoFormatter::<NeoYearMonthDayMarker>::try_new(&locale.into(), length)
+    ///     NeoFormatter::<NeoYearMonthDayMarker>::try_new(&locale, length)
     ///         .unwrap();
     ///
     /// let datetime = DateTime::try_new_iso_datetime(2024, 5, 8, 0, 0, 0).unwrap();
@@ -826,7 +826,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::locale::locale;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
-    ///     &locale!("en-u-ca-hebrew").into(),
+    ///     &locale!("en-u-ca-hebrew"),
     ///     NeoSkeletonLength::Long,
     /// )
     /// .unwrap();
@@ -849,7 +849,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::locale::locale;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     NeoSkeletonLength::Long,
     /// )
     /// .unwrap();
@@ -911,7 +911,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
-    ///     &locale!("en-u-ca-hebrew").into(),
+    ///     &locale!("en-u-ca-hebrew"),
     ///     NeoSkeletonLength::Long,
     /// )
     /// .unwrap();
@@ -934,7 +934,7 @@ impl<R: NeoFormatterMarker> NeoFormatter<R> {
     /// use icu::locale::locale;
     ///
     /// let formatter = NeoFormatter::<NeoYearMonthDayMarker>::try_new(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     NeoSkeletonLength::Long,
     /// )
     /// .unwrap();
@@ -1013,7 +1013,7 @@ impl NeoDateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = NeoDateFormatter::try_new_with_length(&locale.into(), length)
+    /// let df = NeoDateFormatter::try_new_with_length(&locale, length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
@@ -1314,7 +1314,7 @@ impl NeoTimeFormatter {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoTimeFormatter::try_new_with_length(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     length::Time::Medium,
     /// )
     /// .unwrap();
@@ -1491,7 +1491,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_date_length(
-    ///         &locale!("es-MX").into(),
+    ///         &locale!("es-MX"),
     ///         length::Date::Full,
     ///     )
     ///     .unwrap();
@@ -1597,7 +1597,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_time_length(
-    ///         &locale!("es-MX").into(),
+    ///         &locale!("es-MX"),
     ///         length::Time::Medium,
     ///     )
     ///     .unwrap();
@@ -1689,7 +1689,7 @@ impl<C: CldrCalendar> TypedNeoDateTimeFormatter<C> {
     ///
     /// let formatter =
     ///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_lengths(
-    ///         &locale!("es-MX").into(),
+    ///         &locale!("es-MX"),
     ///         length::Date::Full,
     ///         length::Time::Medium,
     ///     )
@@ -1912,7 +1912,7 @@ impl NeoDateTimeFormatter {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoDateTimeFormatter::try_new_with_date_length(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     length::Date::Full,
     /// )
     /// .unwrap();
@@ -2126,7 +2126,7 @@ impl NeoDateTimeFormatter {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoDateTimeFormatter::try_new_with_time_length(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     length::Time::Medium,
     /// )
     /// .unwrap();
@@ -2231,7 +2231,7 @@ impl NeoDateTimeFormatter {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = NeoDateTimeFormatter::try_new_with_lengths(
-    ///     &locale!("es-MX").into(),
+    ///     &locale!("es-MX"),
     ///     length::Date::Full,
     ///     length::Time::Medium,
     /// )

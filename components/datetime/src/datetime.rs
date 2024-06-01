@@ -51,7 +51,7 @@ size_test!(TimeFormatter, time_formatter_size, 1200);
 /// use writeable::assert_writeable_eq;
 ///
 /// let tf =
-///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+///     TimeFormatter::try_new_with_length(&locale!("en"), Time::Short)
 ///         .expect("Failed to create TimeFormatter instance.");
 ///
 /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -81,7 +81,7 @@ impl TimeFormatter {
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locale::locale;
     ///
-    /// TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    /// TimeFormatter::try_new_with_length(&locale!("en"), Time::Short)
     ///     .unwrap();
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -147,7 +147,7 @@ impl TimeFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let tf =
-    ///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///     TimeFormatter::try_new_with_length(&locale!("en"), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -172,7 +172,7 @@ impl TimeFormatter {
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locale::locale;
     /// let tf =
-    ///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///     TimeFormatter::try_new_with_length(&locale!("en"), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -214,7 +214,7 @@ size_test!(
 /// use writeable::assert_writeable_eq;
 ///
 /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     length::Date::Full,
 /// )
 /// .expect("Failed to create TypedDateFormatter instance.");
@@ -249,7 +249,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     length::Date::Full,
     /// )
     /// .unwrap();
@@ -272,7 +272,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = TypedDateFormatter::<Indian>::try_new_with_length(
-    ///     &locale!("en-u-ca-japanese").into(),
+    ///     &locale!("en-u-ca-japanese"),
     ///     length::Date::Full,
     /// )
     /// .unwrap();
@@ -362,7 +362,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     length::Date::Full,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
@@ -389,7 +389,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locale::locale;
     /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     length::Date::Short,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -439,7 +439,7 @@ size_test!(
 /// );
 ///
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     options.into(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -470,12 +470,12 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     /// use icu::locale::locale;
     ///
     /// let tf = TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     length::Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     length::Date::Short,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
@@ -518,7 +518,7 @@ where {
     /// );
     ///
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options.into(),
     /// )
     /// .unwrap();
@@ -642,7 +642,7 @@ where {
     /// options.month = Some(components::Month::Long);
     ///
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options.into(),
     /// )
     /// .unwrap();
@@ -750,7 +750,7 @@ where {
     /// use writeable::assert_writeable_eq;
     /// use icu::locale::locale;
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en"), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -775,7 +775,7 @@ where {
     /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::locale::locale;
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en"), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -805,7 +805,7 @@ where {
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     options,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");

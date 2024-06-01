@@ -26,7 +26,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");
@@ -53,7 +53,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
-///     &locale!("es").into(),
+///     &locale!("es"),
 ///     RelativeTimeFormatterOptions {
 ///         numeric: Numeric::Auto,
 ///     },
@@ -88,7 +88,7 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(
-///     &locale!("bn").into(),
+///     &locale!("bn"),
 ///     RelativeTimeFormatterOptions::default(),
 /// )
 /// .expect("locale should be present");

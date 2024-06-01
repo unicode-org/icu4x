@@ -93,7 +93,7 @@ where
 ///
 /// // Set up the formatter
 /// let mut tzf = TimeZoneFormatter::try_new(
-///     &locale!("en").into(),
+///     &locale!("en"),
 ///     Default::default(),
 /// )
 /// .unwrap();
@@ -424,7 +424,7 @@ impl TimeZoneFormatter {
         /// use writeable::assert_writeable_eq;
         ///
         /// let tzf = TimeZoneFormatter::try_new(
-        ///     &locale!("es").into(),
+        ///     &locale!("es"),
         ///     TimeZoneFormatterOptions::default(),
         /// )
         /// .unwrap();
@@ -694,7 +694,7 @@ impl TimeZoneFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");

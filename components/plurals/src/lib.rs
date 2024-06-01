@@ -28,7 +28,7 @@
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
 //! let pr =
-//!     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+//!     PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
 //!         .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -143,7 +143,7 @@ pub enum PluralRuleType {
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
 /// let pr =
-///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///     PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
 ///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -274,7 +274,7 @@ impl PluralCategory {
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
 /// let pr =
-///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///     PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
 ///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
@@ -310,7 +310,7 @@ impl PluralRules {
         /// use icu::plurals::{PluralRuleType, PluralRules};
         ///
         /// let _ = PluralRules::try_new(
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     PluralRuleType::Cardinal,
         /// ).expect("locale should be present");
         /// ```
@@ -355,7 +355,7 @@ impl PluralRules {
         /// use icu::locale::locale;
         /// use icu::plurals::{PluralCategory, PluralRules};
         ///
-        /// let rules = PluralRules::try_new_cardinal(&locale!("ru").into()).expect("locale should be present");
+        /// let rules = PluralRules::try_new_cardinal(&locale!("ru")).expect("locale should be present");
         ///
         /// assert_eq!(rules.category_for(2_usize), PluralCategory::Few);
         /// ```
@@ -413,7 +413,7 @@ impl PluralRules {
         /// use icu::plurals::{PluralCategory, PluralRules};
         ///
         /// let rules = PluralRules::try_new_ordinal(
-        ///     &locale!("ru").into(),
+        ///     &locale!("ru"),
         /// )
         /// .expect("locale should be present");
         ///
@@ -458,7 +458,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
     /// let pr =
-    ///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    ///     PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
     ///         .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
@@ -483,7 +483,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
     /// #
-    /// # let pr = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
     /// #     .expect("locale should be present");
     ///
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
@@ -530,7 +530,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
     /// let pr =
-    ///     PluralRules::try_new(&locale!("fr").into(), PluralRuleType::Cardinal)
+    ///     PluralRules::try_new(&locale!("fr"), PluralRuleType::Cardinal)
     ///         .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
@@ -582,7 +582,7 @@ impl PluralRules {
 /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
 ///
 /// let ranges = PluralRulesWithRanges::try_new(
-///     &locale!("ar").into(),
+///     &locale!("ar"),
 ///     PluralRuleType::Cardinal,
 /// )
 /// .expect("locale should be present");
@@ -624,7 +624,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
         ///
         /// let _ = PluralRulesWithRanges::try_new(
-        ///     &locale!("en").into(),
+        ///     &locale!("en"),
         ///     PluralRuleType::Cardinal,
         /// ).expect("locale should be present");
         /// ```
@@ -664,7 +664,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// use icu::locale::locale;
         /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
         ///
-        /// let rules = PluralRulesWithRanges::try_new_cardinal(&locale!("ru").into())
+        /// let rules = PluralRulesWithRanges::try_new_cardinal(&locale!("ru"))
         ///     .expect("locale should be present");
         ///
         /// assert_eq!(rules.category_for_range(0_usize, 2_usize), PluralCategory::Few);
@@ -708,7 +708,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
         ///
         /// let rules = PluralRulesWithRanges::try_new_ordinal(
-        ///     &locale!("ru").into(),
+        ///     &locale!("ru"),
         /// )
         /// .expect("locale should be present");
         ///
@@ -761,11 +761,11 @@ where
         /// use icu::locale::locale;
         /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges, PluralRules};
         ///
-        /// let rules = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+        /// let rules = PluralRules::try_new(&locale!("en"), PluralRuleType::Cardinal)
         ///     .expect("locale should be present");
         ///
         /// let _ =
-        ///     PluralRulesWithRanges::try_new_with_rules(&locale!("en").into(), rules)
+        ///     PluralRulesWithRanges::try_new_with_rules(&locale!("en"), rules)
         ///         .expect("locale should be present");
         /// ```
         functions: [
@@ -801,7 +801,7 @@ where
     /// use icu::locale::locale;
     /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
     ///
-    /// let ranges = PluralRulesWithRanges::try_new_cardinal(&locale!("en").into())
+    /// let ranges = PluralRulesWithRanges::try_new_cardinal(&locale!("en"))
     ///     .expect("locale should be present");
     ///
     /// let rules = ranges.rules();
@@ -827,7 +827,7 @@ where
     /// };
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
-    ///     &locale!("ro").into(),
+    ///     &locale!("ro"),
     ///     PluralRuleType::Cardinal,
     /// )
     /// .expect("locale should be present");
@@ -868,7 +868,7 @@ where
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesWithRanges};
     ///
     /// let ranges = PluralRulesWithRanges::try_new(
-    ///     &locale!("sl").into(),
+    ///     &locale!("sl"),
     ///     PluralRuleType::Ordinal,
     /// )
     /// .expect("locale should be present");

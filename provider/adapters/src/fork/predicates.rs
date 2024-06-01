@@ -91,7 +91,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
 ///     .as_deserializing()
 ///     .load(DataRequest {
-///         locale: &langid!("de").into(),
+///         langid: &langid!("de"),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
@@ -103,7 +103,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// let romanian_hello_world: DataPayload<HelloWorldV1Marker> = provider
 ///     .as_deserializing()
 ///     .load(DataRequest {
-///         locale: &langid!("ro").into(),
+///         langid: &langid!("ro"),
 ///         ..Default::default()
 ///     })
 ///     .expect("Loading should succeed")
@@ -117,7 +117,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// DataProvider::<HelloWorldV1Marker>::load(
 ///     &provider.as_deserializing(),
 ///     DataRequest {
-///         locale: &langid!("en").into(),
+///         langid: &langid!("en"),
 ///         ..Default::default()
 ///     }
 /// )

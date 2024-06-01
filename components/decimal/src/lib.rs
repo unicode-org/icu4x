@@ -21,7 +21,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
-//!     &locale!("bn").into(),
+//!     &locale!("bn"),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
@@ -60,7 +60,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
-//!     &locale!("th-u-nu-thai").into(),
+//!     &locale!("th-u-nu-thai"),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");

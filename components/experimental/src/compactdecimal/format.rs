@@ -31,7 +31,7 @@ impl FormattedCompactDecimal<'_> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     &locale!("en"),
     ///     Default::default(),
     /// )
     /// .unwrap();
