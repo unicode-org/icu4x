@@ -414,7 +414,7 @@ impl ExtractedDateTimeInput {
                     "iso_weekday",
                 ))?;
         // We don't have any calendars with < 14 days per year, and it's unlikely we'll add one
-        debug_assert!(day_of_year_info.day_of_year >= icu_calendar::week::MIN_UNIT_DAYS);
+        debug_assert!(day_of_year_info.days_in_year >= icu_calendar::week::MIN_UNIT_DAYS);
         debug_assert!(day_of_year_info.days_in_prev_year >= icu_calendar::week::MIN_UNIT_DAYS);
         #[allow(clippy::unwrap_used)]
         let week_of = calculator
