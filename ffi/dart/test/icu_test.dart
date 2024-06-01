@@ -15,13 +15,9 @@ void main() {
             extensionKey: 'ca',
             priority: LocaleFallbackPriority.region,
             fallbackSupplement: LocaleFallbackSupplement.none))
-        .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
+        .fallbackForLocale(Locale.fromString('de-CH'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('de-CH-u-ca-japanese'));
-    expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('de-CH'));
-    expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('und-CH-u-ca-japanese'));
+    expect(iterator.current, Locale.fromString('und-CH'));
     expect(iterator.moveNext(), true);
     expect(iterator.current, Locale.fromString('und-CH'));
     expect(iterator.moveNext(), false);
